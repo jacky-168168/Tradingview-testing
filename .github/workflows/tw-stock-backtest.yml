@@ -3,13 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       start_date:
-        description: '開始日期 YYYY-MM-DD'
-        required: true
-        default: '2026-03-01'
+        description: '開始日期 YYYY-MM-DD；留空=最近180天'
+        required: false
+        default: ''
       end_date:
-        description: '結束日期 YYYY-MM-DD'
-        required: true
-        default: '2026-10-07'
+        description: '結束日期 YYYY-MM-DD；留空=今天'
+        required: false
+        default: ''
 permissions:
   contents: write
   pages: write
