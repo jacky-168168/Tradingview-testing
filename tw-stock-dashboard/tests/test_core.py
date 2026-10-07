@@ -1,9 +1,11 @@
 import unittest
 from unittest.mock import patch
 import numpy as np,pandas as pd
-from scoring import calc_metrics,precompute_features,d_pass,institution_score
+from scoring import calc_metrics,precompute_features,d_pass,institution_score,ema
 from edge import build
 from sar import parabolic_sar
+from institution import parse_twse
+from pipeline import _normalize_company
 import risk
 
 class CoreTests(unittest.TestCase):
@@ -14,6 +16,19 @@ class CoreTests(unittest.TestCase):
         d=self.frame();a=calc_metrics(d);b=precompute_features(d).iloc[-1]
         for k in ["dayRet","ret5","ret20","ma20","ma60","ma20Slope","rvol","rvol10","mom10Pct","ema20","ema50","ema20Slope5","prevHigh20","breakoutPct","atrPct","volD","closePosition"]:
             self.assertAlmostEqual(float(a[k]),float(b[k]),places=7,msg=k)
+    def test_120_bar_ema_window_matches_gas_slice(self):
+        d=self.frame(220);x=precompute_features(d).iloc[-1]
+        c=d["close"].astype(float)
+        self.assertAlmostEqual(float(x["ema20"]),ema(c.iloc[-120:],20),places=7)
+        self.assertAlmostEqual(float(x["ema50"]),ema(c.iloc[-120:],50),places=7)
+        self.assertAlmostEqual(float(x["ema20Slope5"]),(ema(c.iloc[-120:],20)/ema(c.iloc[-125:-5],20)-1)*100,places=7)
+    def test_tpex_company_field_mapping(self):
+        x=_normalize_company({"SecuritiesCompanyCode":"6147","CompanyAbbreviation":"頎邦","Paidin.Capital.NTDollars":"7445775390","SecuritiesIndustryCode":"24"},"上櫃")
+        self.assertEqual(x["code"],"6147");self.assertEqual(x["name"],"頎邦");self.assertAlmostEqual(x["capitalB"],74.4577539);self.assertEqual(x["industry"],"24")
+    def test_legacy_t86_field_match_parity(self):
+        j={"fields":["證券代號","外陸資買賣超股數(不含外資自營商)","外資自營商買賣超股數","投信買賣超股數","自營商買賣超股數"],"data":[["6278","3474693","0","59000","362826"]]}
+        x=parse_twse(j)["上市_6278"]
+        self.assertEqual(x["foreign"],3474693);self.assertEqual(x["trust"],59000);self.assertEqual(x["dealer"],0)
     def test_d_thresholds_are_strict(self):
         base={"volume":20_000_001,"rvol10":1.2001,"mom10Pct":.01,"volD":10.01}
         self.assertTrue(d_pass(base))
