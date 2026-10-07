@@ -19,7 +19,10 @@ def compare(py,gas):
         out["models"][mid]={"pythonTop20":pc,"gasTop20":gc,"overlap":len(inter),"overlapPct":round(len(inter)/max(1,min(20,len(gc),len(pc)))*100,1),"sameRank":same,"scoreMad":round(float(np.mean([abs(ps[k]-gs[k]) for k in common])),3) if common else None}
     pr=py.get("risk") or {};gr=gas.get("risk") or gas.get("marketRisk") or {}
     out["risk"]={"pythonScore":pr.get("score"),"gasScore":gr.get("score"),"delta":round(abs(float(pr.get("score",0))-float(gr.get("score",0))),2) if pr.get("score") is not None and gr.get("score") is not None else None}
-    out["passSuggested"]=all(out["models"][m]["overlap"]>=16 for m in ["A","D"])
+    checks=[]
+    for m in ["A","D"]:
+        z=out["models"][m];den=max(1,min(20,len(z["pythonTop20"]),len(z["gasTop20"])));need=max(1,int(np.ceil(den*.80)));z["requiredOverlap80"]=need;checks.append(z["overlap"]>=need)
+    out["passSuggested"]=all(checks)
     return out
 
 if __name__=="__main__":
