@@ -64,7 +64,7 @@ def _final_sort_d(r):return sort_key(r)
 
 def main():
     now=datetime.now();start=now-timedelta(days=LOOKBACK_CALENDAR_DAYS);universe=load_universe()
-    eligible=[x for x in universe if x.get("capitalB",0)<=0 or x["capitalB"]<MAX_CAPITAL_B]
+    eligible=[x for x in universe if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
     histories,errors=update_many([(x["code"],x["market"]) for x in eligible],start,now)
     _,idx,idxerr=update_symbol(BENCHMARK,start,now)
     if idxerr or idx is None or len(idx)<25:raise RuntimeError(f"benchmark unavailable: {idxerr}")
@@ -82,7 +82,7 @@ def main():
         if d_pass(m):
             z=score_d(m,rs20,ii);d.append({**base,**z,"baseScore":z["total"],"model":"D","sarBonus":0,"sarText":"讀取中"})
     a.sort(key=sort_key);d.sort(key=sort_key)
-    apply_sar(a,histories,to_symbol,min(len(a),max(TOP_N*2,SAR_CANDIDATES)));apply_sar(d,histories,to_symbol,min(len(d),max(TOP_N*2,SAR_CANDIDATES)))
+    apply_sar(a,market_date,min(len(a),max(TOP_N*2,SAR_CANDIDATES)));apply_sar(d,market_date,min(len(d),max(TOP_N*2,SAR_CANDIDATES)))
     for x in a+d:x["signal"]=_risk_signal(x,risk)
     a=sorted(a,key=_final_sort_a)[:TOP_N];d=sorted(d,key=_final_sort_d)[:TOP_N]
     enrich_chain(a);enrich_chain(d)
@@ -90,7 +90,7 @@ def main():
     payload={"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"benchmarkRet20":round(mkt20,4),"universeCount":len(eligible),
              "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d},"risk":risk,
              "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86／上櫃暫為0","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
-             "phase":"github-python-v3","notes":["Phase 3：A/D、Market Risk、Bottom/Top Watch、SAR、法人同買同賣、題材熱度與產業鏈已接入。","上櫃法人仍依 V12.2 口徑暫時視為0分。"]}
+             "candidateCounts":{"A":len(a),"D":len(d)},"phase":"github-python-v5","notes":["Phase 5：A/D、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。"]}
     DATA_DIR.mkdir(parents=True,exist_ok=True);LATEST_JSON.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps({"generatedAt":payload["generatedAt"],"dataDate":market_date,"universeCount":len(eligible),"A":len(a),"D":len(d),"risk":risk.get("score"),"historyErrors":len(errors),"institutionError":insterr},ensure_ascii=False))
 if __name__=="__main__":main()
