@@ -1,6 +1,7 @@
 from __future__ import annotations
 import json,sys
 from datetime import datetime,timedelta
+from zoneinfo import ZoneInfo
 import requests
 from config import *
 from yahoo_cache import update_many,update_symbol,to_symbol
@@ -63,7 +64,7 @@ def _final_sort_a(r):return (-r["total"],-r.get("sarBonus",0),-r["rs20"],-r["rvo
 def _final_sort_d(r):return sort_key(r)
 
 def main():
-    now=datetime.now();start=now-timedelta(days=LOOKBACK_CALENDAR_DAYS);universe=load_universe()
+    now=datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None);start=now-timedelta(days=LOOKBACK_CALENDAR_DAYS);universe=load_universe()
     eligible=[x for x in universe if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
     histories,errors=update_many([(x["code"],x["market"]) for x in eligible],start,now)
     _,idx,idxerr=update_symbol(BENCHMARK,start,now)
@@ -72,7 +73,7 @@ def main():
     _,inst,insterr=fetch_day(market_date);names={f'{x["market"]}_{x["code"]}':x["name"] for x in universe}
     a=[];d=[]
     for s in eligible:
-        h=histories.get(to_symbol(s["code"],s["market"]));m=calc_metrics(h) if h is not None and not h.empty else None
+        h=histories.get(to_symbol(s["code"],s["market"]));m=calc_metrics(h.tail(75)) if h is not None and len(h)>=60 else None
         if not m or m["close"]<MIN_PRICE:continue
         rs20=m["ret20"]-mkt20;turnover_b=m["close"]*m["volume"]/100_000_000;ii=inst.get(f'{s["market"]}_{s["code"]}',{})
         base={**s,"close":m["close"],"dayRet":m["dayRet"],"ret5":m["ret5"],"ret20":m["ret20"],"marketRet20":mkt20,"rs20":rs20,"rvol":m["rvol"],"rvol10":m["rvol10"],"mom10Pct":m["mom10Pct"],"volD":m["volD"],"atrPct":m["atrPct"],"breakoutPct":m["breakoutPct"],"ma20Slope":m["ma20Slope"],"turnoverB":turnover_b,
