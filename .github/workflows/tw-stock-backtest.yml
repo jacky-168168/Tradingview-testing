@@ -15,6 +15,9 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/tw-stock-backtest.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/tw-stock-backtest.yml'
 permissions:
   contents: write
   pages: write
