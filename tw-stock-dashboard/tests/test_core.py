@@ -1,11 +1,13 @@
-import unittest
+import unittest,tempfile,json
+from pathlib import Path
 from unittest.mock import patch
 import numpy as np,pandas as pd
 from scoring import calc_metrics,precompute_features,d_pass,institution_score,ema
 from edge import build
 from sar import parabolic_sar
 from institution import parse_twse
-from pipeline import _normalize_company
+import pipeline
+from pipeline import _normalize_company,published_data_date
 from industry_chain import looks_mojibake,parse as parse_chain
 import risk
 
@@ -46,6 +48,13 @@ class CoreTests(unittest.TestCase):
     def test_industry_chain_utf8_guard(self):
         self.assertTrue(looks_mojibake("å¹³é¢é¡¯ç¤ºå¨"));self.assertFalse(looks_mojibake("平面顯示器"))
         x=parse_chain("<div>► 電子零組件 > 連接器</div>");self.assertEqual(x["subIndustry"],"電子零組件");self.assertEqual(x["theme"],"連接器")
+    def test_published_date_never_regresses(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);latest=root/"latest.json";daily=root/"daily";daily.mkdir()
+            latest.write_text(json.dumps({"dataDate":"2026-10-06"}),encoding="utf-8")
+            (daily/"index.json").write_text(json.dumps([{"date":"2026-10-07"},{"date":"2026-10-05"}]),encoding="utf-8")
+            with patch.object(pipeline,"LATEST_JSON",latest),patch.object(pipeline,"DATA_DIR",root):
+                self.assertEqual(published_data_date(),"2026-10-07")
     @patch("risk.breadth",return_value=(650,350))
     @patch("risk.foreign_market_net",return_value=25.0)
     def test_risk_build(self,_f,_b):

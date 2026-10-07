@@ -11,6 +11,7 @@
 - 長區間回測使用 **TW Stock Backtest** 手動 Workflow，可輸入自訂開始 / 結束日期。
 - Yahoo 日 K 使用 Parquet 雙向增量快取；重疊區間不重抓。
 - GitHub Pages 直接讀取已產生 JSON，不再等待 Apps Script 現場運算。
+- 完整更新加入交易日單調保護：若 Yahoo / benchmark 暫時回傳較舊交易日，不會覆蓋較新的已發布快照。
 
 ## 已完成
 - 上市＋上櫃股票池。
@@ -26,6 +27,7 @@
 - 1D / 3D / 5D / 10D / 20D Edge Audit。
 - Expectancy、PF、Sharpe、Sortino、MDD、t-test、bootstrap、OOS、Monte Carlo。
 - Python 單元測試與 GAS V12.2 parity 驗證。
+- GAS parity 改為手動的 2026-10-07 固定快照稽核，避免未來日期用即時行情誤比舊 fixture 造成假失敗。
 - GitHub Pages 正式 UI。
 
 ## 2026-10-07 對齊驗證
