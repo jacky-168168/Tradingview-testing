@@ -43,13 +43,12 @@
 - 新增 PR CI：語法編譯＋核心 parity 單元測試（vectorized 指標、D 硬條件、法人權重、Edge 五週期、SAR、Risk）。
 
 ## 遷移驗證結果
-2026-10-07 同日 GAS V12.2 對照已通過 GitHub Actions Full Parity：
-- A Top20：19/20 重疊（95%），15 檔名次完全相同，Score MAD 0.526。
-- D：10/10 重疊（100%），8 檔名次完全相同，Score MAD 0.8。
+2026-10-07 正式 production build 與 GAS V12.2 同日快照已達完整對齊：
+- A Top20：20/20 重疊（100%），20 檔名次完全相同，Score MAD 0。
+- D：10/10 重疊（100%），10 檔名次完全相同，Score MAD 0。
 - Market Risk：60 vs 60，差異 0。
+- Production：1950 / 1950 檔歷史 K 成功，historyErrors = 0。
 - Python CI 與 Full Parity workflow 均通過。
-
-A 的 1 檔差異主要來自同日稍晚重新抓取的法人 / 行情細節；核心模型與排序已達上線門檻。
 
 ## 正式架構
 - `main` 已成為正式版本。
