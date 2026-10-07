@@ -21,6 +21,10 @@ on:
         description: '自訂結束日 YYYY-MM-DD（自訂日期可填；留空=今天）'
         required: false
         default: ''
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/.backtest-smoke'
 permissions:
   contents: write
   pages: write
