@@ -24,7 +24,7 @@ class CoreTests(unittest.TestCase):
         self.assertAlmostEqual(float(x["ema20Slope5"]),(ema(c.iloc[-120:],20)/ema(c.iloc[-120:-5],20)-1)*100,places=7)
     def test_tpex_company_field_mapping(self):
         x=_normalize_company({"SecuritiesCompanyCode":"6147","CompanyAbbreviation":"頎邦","Paidin.Capital.NTDollars":"7445775390","SecuritiesIndustryCode":"24"},"上櫃")
-        self.assertEqual(x["code"],"6147");self.assertEqual(x["name"],"頎邦");self.assertAlmostEqual(x["capitalB"],74.4577539);self.assertEqual(x["industry"],"24")
+        self.assertEqual(x["code"],"6147");self.assertEqual(x["name"],"頎邦");self.assertAlmostEqual(x["capitalB"],74.4577539);self.assertEqual(x["industry"],"半導體業")
     def test_legacy_t86_field_match_parity(self):
         j={"fields":["證券代號","外陸資買賣超股數(不含外資自營商)","外資自營商買賣超股數","投信買賣超股數","自營商買賣超股數"],"data":[["6278","3474693","0","59000","362826"]]}
         x=parse_twse(j)["上市_6278"]
