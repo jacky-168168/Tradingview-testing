@@ -27,9 +27,9 @@ def _capital_b(v):
 def _normalize_company(row,market):
     code=str(_pick(row,"公司代號","SecuritiesCompanyCode","Code","股票代號","公司代碼")).strip()
     if not(len(code)==4 and code.isdigit()):return None
-    return {"code":code,"name":str(_pick(row,"公司簡稱","CompanyName","公司名稱","Name",default=code)).strip(),"market":market,
-            "capitalB":_capital_b(_pick(row,"實收資本額","PaidInCapital","實收資本額(元)",default=0)),
-            "industry":str(_pick(row,"產業別","Industry","產業類別",default="未分類"))}
+    return {"code":code,"name":str(_pick(row,"公司簡稱","CompanyAbbreviation","CompanyName","公司名稱","Name",default=code)).strip(),"market":market,
+            "capitalB":_capital_b(_pick(row,"實收資本額","PaidInCapital","Paidin.Capital.NTDollars","PaidIn.Capital.NTDollars","實收資本額(元)",default=0)),
+            "industry":str(_pick(row,"產業別","Industry","產業類別","SecuritiesIndustryCode",default="未分類"))}
 
 def fetch_json(url):
     r=requests.get(url,headers=HEADERS,timeout=25);r.raise_for_status();return r.json()
