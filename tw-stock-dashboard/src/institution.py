@@ -11,10 +11,12 @@ def _num(v):
     except:return 0.0
 
 def _field(fields,names):
-    for n in names:
-        if n in fields:return fields.index(n)
+    # Deliberately mirrors GAS findFieldIndex_: scan fields first, substring match.
+    # This preserves V12.2 historical scoring parity (including its dealer-column behavior).
     for i,f in enumerate(fields):
-        if any(n in str(f) for n in names):return i
+        s=str(f).replace(" ","")
+        for n in names:
+            if str(n).replace(" ","") in s:return i
     return -1
 
 def parse_twse(j):
