@@ -110,6 +110,13 @@ def main():
              "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d},"risk":risk,
              "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86／上櫃暫為0","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
              "candidateCounts":candidate_counts,"phase":"github-python-v5","notes":["Phase 5：A/D、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。"]}
-    DATA_DIR.mkdir(parents=True,exist_ok=True);LATEST_JSON.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8")
+    DATA_DIR.mkdir(parents=True,exist_ok=True);body=json.dumps(payload,ensure_ascii=False,indent=2);LATEST_JSON.write_text(body,encoding="utf-8")
+    daily=DATA_DIR/"daily";daily.mkdir(parents=True,exist_ok=True);(daily/f"{market_date}.json").write_text(body,encoding="utf-8")
+    ip=daily/"index.json"
+    try:di=json.loads(ip.read_text(encoding="utf-8")) if ip.exists() else []
+    except:di=[]
+    item={"date":market_date,"generatedAt":payload["generatedAt"],"riskScore":risk.get("score"),"riskState":risk.get("state"),"aCount":len(a),"dCount":len(d)}
+    di=[x for x in di if x.get("date")!=market_date];di.insert(0,item);di.sort(key=lambda x:x.get("date",""),reverse=True)
+    ip.write_text(json.dumps(di[:750],ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps({"generatedAt":payload["generatedAt"],"dataDate":market_date,"universeCount":len(eligible),"A":len(a),"D":len(d),"risk":risk.get("score"),"historyErrors":len(errors),"institutionError":insterr},ensure_ascii=False))
 if __name__=="__main__":main()
