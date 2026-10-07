@@ -80,13 +80,32 @@ def _base_sort_a(r):return (-r["baseScore"],-r["rs20"],-r["rvol"],-r["ret20"],-r
 def _final_sort_a(r):return (-r["total"],-r.get("sarBonus",0),-r["rs20"],-r["rvol"],-r["ret20"],-r["turnoverB"])
 def _final_sort_d(r):return sort_key(r)
 
+def published_data_date():
+    dates=[]
+    try:
+        if LATEST_JSON.exists():
+            x=json.loads(LATEST_JSON.read_text(encoding="utf-8"));d=str(x.get("dataDate") or "")
+            if d:dates.append(d)
+    except Exception:pass
+    try:
+        p=DATA_DIR/"daily"/"index.json"
+        if p.exists():
+            for x in json.loads(p.read_text(encoding="utf-8")):
+                d=str((x or {}).get("date") or "")
+                if d:dates.append(d)
+    except Exception:pass
+    return max(dates) if dates else ""
+
 def main():
-    now=datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None);start=now-timedelta(days=LOOKBACK_CALENDAR_DAYS);universe=load_universe()
-    eligible=[x for x in universe if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
-    histories,errors=update_many([(x["code"],x["market"]) for x in eligible],start,now)
+    now=datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None);start=now-timedelta(days=LOOKBACK_CALENDAR_DAYS)
     _,idx,idxerr=update_symbol(BENCHMARK,start,now)
     if idxerr or idx is None or len(idx)<25:raise RuntimeError(f"benchmark unavailable: {idxerr}")
-    market_date=str(idx.iloc[-1]["date"]);risk=build_risk(idx,RISK_ON,RISK_STRONG,RISK_OFF);mkt20=float(risk.get("ret20",0) or 0)
+    market_date=str(idx.iloc[-1]["date"]);published=published_data_date()
+    if published and market_date<published:
+        print(json.dumps({"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"publishedDate":published,"skipped":"stale-market-date"},ensure_ascii=False));return
+    universe=load_universe();eligible=[x for x in universe if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
+    histories,errors=update_many([(x["code"],x["market"]) for x in eligible],start,now)
+    risk=build_risk(idx,RISK_ON,RISK_STRONG,RISK_OFF);mkt20=float(risk.get("ret20",0) or 0)
     _,inst,insterr=fetch_day(market_date);names={f'{x["market"]}_{x["code"]}':x["name"] for x in universe}
     a=[];d=[]
     for s in eligible:
