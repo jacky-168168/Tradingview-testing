@@ -1,6 +1,7 @@
 from __future__ import annotations
 import argparse,json,os,time
 from datetime import datetime,timedelta
+from zoneinfo import ZoneInfo
 import numpy as np,pandas as pd
 from config import DATA_DIR,MAX_CAPITAL_B,MIN_PRICE,MIN_TURNOVER_M,BENCHMARK
 from pipeline import load_universe
@@ -88,13 +89,22 @@ def evaluate(signals,idx,pos,ranks,cand,prices):
 def run(start,end):
     t=time.time();sd=datetime.fromisoformat(start);ed=datetime.fromisoformat(end)
     if sd>ed:raise ValueError("start > end")
-    fs=sd-timedelta(days=180);fe=min(datetime.now(),ed+timedelta(days=50));u=[x for x in load_universe() if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
+    fs=sd-timedelta(days=180);fe=min(datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None),ed+timedelta(days=50));u=[x for x in load_universe() if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
     print(f"universe={len(u)} fetch={fs.date()}..{fe.date()}",flush=True)
     hist,he=update_many([(x["code"],x["market"]) for x in u],fs,fe);_,ix,ie=update_symbol(BENCHMARK,fs,fe)
     if ie or ix is None or len(ix)<60:raise RuntimeError(f"benchmark unavailable: {ie}")
     sdts=[d for d in ix.date.astype(str) if start<=d<=end];inst,ine=fetch_many(sdts);sdts,idx,pos,ranks,cand,prices=rankings(u,hist,ix,inst,start,end);models,edge=evaluate(sdts,idx,pos,ranks,cand,prices)
-    out={"version":"PY-BT1-V12.2-COMPAT","generatedAt":datetime.now().isoformat(timespec="seconds"),"period":{"start":start,"end":end},"signalDays":len(sdts),"universeCount":len(u),"historySuccess":len(hist)-len(he),"historyErrors":len(he),"institutionErrors":len(ine),"models":models,"edgeAudit":edge,"elapsedSeconds":round(time.time()-t,1),"notes":["A/D核心評分、Top3固定三槽與Edge判讀對齊V12.2。","歷史法人沿用V12.2口徑：TWSE T86；上櫃法人0分。","Yahoo K使用雙向Parquet增量快取；已覆蓋日期不重抓。"]}
-    p=DATA_DIR/"backtest";p.mkdir(parents=True,exist_ok=True);(p/"latest.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8");print(json.dumps({"signalDays":out["signalDays"],"historyErrors":out["historyErrors"],"institutionErrors":out["institutionErrors"],"elapsedSeconds":out["elapsedSeconds"]},ensure_ascii=False),flush=True);return out
+    out={"version":"PY-BT1-V12.2-COMPAT","generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),"period":{"start":start,"end":end},"signalDays":len(sdts),"universeCount":len(u),"historySuccess":len(hist)-len(he),"historyErrors":len(he),"institutionErrors":len(ine),"models":models,"edgeAudit":edge,"elapsedSeconds":round(time.time()-t,1),"notes":["A/D核心評分、Top3固定三槽與Edge判讀對齊V12.2。","歷史法人沿用V12.2口徑：TWSE T86；上櫃法人0分。","Yahoo K使用雙向Parquet增量快取；已覆蓋日期不重抓。"]}
+    p=DATA_DIR/"backtest";p.mkdir(parents=True,exist_ok=True)
+    body=json.dumps(out,ensure_ascii=False,indent=2);(p/"latest.json").write_text(body,encoding="utf-8")
+    archive=f"{start}_{end}.json";(p/archive).write_text(body,encoding="utf-8")
+    ip=p/"index.json"
+    try:idx=json.loads(ip.read_text(encoding="utf-8")) if ip.exists() else []
+    except:idx=[]
+    idx=[x for x in idx if x.get("file")!=archive]
+    idx.insert(0,{"file":archive,"start":start,"end":end,"generatedAt":out["generatedAt"],"signalDays":out["signalDays"],"elapsedSeconds":out["elapsedSeconds"]})
+    ip.write_text(json.dumps(idx[:50],ensure_ascii=False,indent=2),encoding="utf-8")
+    print(json.dumps({"signalDays":out["signalDays"],"historyErrors":out["historyErrors"],"institutionErrors":out["institutionErrors"],"elapsedSeconds":out["elapsedSeconds"],"archive":archive},ensure_ascii=False),flush=True);return out
 
 if __name__=="__main__":
     ap=argparse.ArgumentParser();ap.add_argument("--start");ap.add_argument("--end");a=ap.parse_args();end=a.end or datetime.now().date().isoformat();start=a.start or (datetime.fromisoformat(end)-timedelta(days=180)).date().isoformat();run(start,end)
