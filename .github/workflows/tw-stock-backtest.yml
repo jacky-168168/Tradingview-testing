@@ -1,5 +1,4 @@
 name: TW Stock Backtest
-# production-smoke-trigger-2
 on:
   workflow_dispatch:
     inputs:
@@ -11,10 +10,6 @@ on:
         description: '結束日期 YYYY-MM-DD；留空=今天'
         required: false
         default: ''
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/tw-stock-backtest.yml'
 permissions:
   contents: write
   pages: write
@@ -24,7 +19,6 @@ concurrency:
   cancel-in-progress: false
 jobs:
   backtest:
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 330
     steps:
@@ -50,13 +44,7 @@ jobs:
           START="${{ inputs.start_date || '' }}"
           END="${{ inputs.end_date || '' }}"
           if [ -z "$END" ]; then END="$(date -u +%F)"; fi
-          if [ -z "$START" ]; then
-            if [ "${{ github.event_name }}" = "push" ]; then
-              START="$(date -u -d '30 days ago' +%F)"
-            else
-              START="$(date -u -d '180 days ago' +%F)"
-            fi
-          fi
+          if [ -z "$START" ]; then START="$(date -u -d '180 days ago' +%F)"; fi
           echo "start=$START" >> "$GITHUB_OUTPUT"
           echo "end=$END" >> "$GITHUB_OUTPUT"
           echo "Backtest: $START -> $END"
