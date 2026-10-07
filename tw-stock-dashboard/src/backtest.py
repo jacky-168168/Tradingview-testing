@@ -89,6 +89,9 @@ def evaluate(signals,idx,pos,ranks,cand,prices):
 def run(start,end):
     t=time.time();sd=datetime.fromisoformat(start);ed=datetime.fromisoformat(end)
     if sd>ed:raise ValueError("start > end")
+    if (ed.date()-sd.date()).days+1>731:raise ValueError("日期區間最多 731 天")
+    today=datetime.now(ZoneInfo("Asia/Taipei")).date()
+    if ed.date()>today:raise ValueError(f"結束日期不可晚於今天 {today.isoformat()}")
     fs=sd-timedelta(days=180);fe=min(datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None),ed+timedelta(days=50));u=[x for x in load_universe() if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
     print(f"universe={len(u)} fetch={fs.date()}..{fe.date()}",flush=True)
     hist,he=update_many([(x["code"],x["market"]) for x in u],fs,fe);_,ix,ie=update_symbol(BENCHMARK,fs,fe)
