@@ -25,7 +25,7 @@ def precompute_features(df):
     for c in ["open","high","low","close","volume"]:x[c]=pd.to_numeric(x[c],errors="coerce")
     c=x.close;v=x.volume;pc=c.shift(1);tr=pd.concat([x.high-x.low,(x.high-pc).abs(),(x.low-pc).abs()],axis=1).max(axis=1)
     x["dayRet"]=c.pct_change()*100;x["ret5"]=c.pct_change(5)*100;x["ret20"]=c.pct_change(20)*100
-    x["ma20"]=c.rolling(20).mean();x["ma60"]=c.rolling(60).mean();x["ma20Slope"]=(x.ma20/x.ma20.shift(5)-1)*100
+    x["ma20"]=c.rolling(20).mean();x["ma60"]=c.rolling(60,min_periods=1).mean();x["ma20Slope"]=(x.ma20/x.ma20.shift(5)-1)*100
     x["rvol"]=v/v.shift(1).rolling(20).mean();x["rvol10"]=v/v.shift(1).rolling(10).mean();x["mom10Pct"]=c.pct_change(10)*100
     x["ema20"]=c.ewm(span=20,adjust=False).mean();x["ema50"]=c.ewm(span=50,adjust=False).mean();x["ema20Slope5"]=(x.ema20/x.ema20.shift(5)-1)*100
     x["prevHigh20"]=x.high.shift(1).rolling(20).max();x["breakoutPct"]=(c/x.prevHigh20-1)*100;x["atrPct"]=tr.rolling(14).mean()/c*100;x["volD"]=tr/x.low.abs()*100
