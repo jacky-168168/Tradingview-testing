@@ -24,12 +24,19 @@ def _capital_b(v):
         x=float(str(v).replace(",",""));return x/100_000_000 if x>1_000_000 else x
     except:return 0.0
 
+def _industry(v,market):
+    raw=str(v or "").strip()
+    if not raw:return "未分類"
+    key=raw.zfill(2) if raw.isdigit() and len(raw)<=2 else raw
+    mp={"01":"水泥工業","02":"食品工業","03":"塑膠工業","04":"紡織纖維","05":"電機機械","06":"電器電纜","08":"玻璃陶瓷","09":"造紙工業","10":"鋼鐵工業","11":"橡膠工業","12":"汽車工業","14":"建材營造","15":"航運業","16":"觀光餐旅","17":"金融業" if market=="上櫃" else "金融保險","18":"貿易百貨","19":"綜合","20":"其他","21":"化學工業","22":"生技醫療業","23":"油電燃氣業","24":"半導體業","25":"電腦及週邊設備業","26":"光電業","27":"通信網路業","28":"電子零組件業","29":"電子通路業","30":"資訊服務業","31":"其他電子業","32":"文化創意業","33":"農業科技業","35":"綠能環保","36":"數位雲端","37":"運動休閒","38":"居家生活","80":"管理股票"}
+    return mp.get(key,raw)
+
 def _normalize_company(row,market):
     code=str(_pick(row,"公司代號","SecuritiesCompanyCode","Code","股票代號","公司代碼")).strip()
     if not(len(code)==4 and code.isdigit()):return None
     return {"code":code,"name":str(_pick(row,"公司簡稱","CompanyAbbreviation","CompanyName","公司名稱","Name",default=code)).strip(),"market":market,
             "capitalB":_capital_b(_pick(row,"實收資本額","PaidInCapital","Paidin.Capital.NTDollars","PaidIn.Capital.NTDollars","實收資本額(元)",default=0)),
-            "industry":str(_pick(row,"產業別","Industry","產業類別","SecuritiesIndustryCode",default="未分類"))}
+            "industry":_industry(_pick(row,"產業別","Industry","產業類別","SecuritiesIndustryCode",default="未分類"),market)}
 
 def fetch_json(url):
     r=requests.get(url,headers=HEADERS,timeout=25);r.raise_for_status();return r.json()
