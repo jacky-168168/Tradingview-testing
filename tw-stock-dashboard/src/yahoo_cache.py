@@ -9,6 +9,9 @@ UA={"User-Agent":"Mozilla/5.0 tw-stock-dashboard/2.0"}
 def to_symbol(code,market):return f"{code}.TW" if market=="上市" else f"{code}.TWO"
 
 def _fetch(symbol,start,end,retries=3):
+    now_utc=datetime.now(timezone.utc).replace(tzinfo=None)
+    if start>now_utc:return pd.DataFrame()
+    end=min(end,now_utc)
     if start.date()>end.date():return pd.DataFrame()
     p1=int(start.replace(tzinfo=timezone.utc).timestamp());p2=int((end+timedelta(days=2)).replace(tzinfo=timezone.utc).timestamp());err=None
     for n in range(retries):
