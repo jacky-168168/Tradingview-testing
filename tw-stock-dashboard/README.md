@@ -42,10 +42,22 @@
 - 新增 `validate.py`：可拿 GAS JSON 與 Python JSON 比 A/D Top20 overlap、同名次數、總分 MAD、Risk delta。
 - 新增 PR CI：語法編譯＋核心 parity 單元測試（vectorized 指標、D 硬條件、法人權重、Edge 五週期、SAR、Risk）。
 
-## 下一步
-- 同一天用 GAS V12.2 與 GitHub Python 版做 A / D Top20 對照。
-- 驗證 Risk、SAR、法人、題材差異。
-- 收尾其餘 Dashboard 欄位與錯誤保留策略。
-- 驗證完成後再 merge 到 `main` 並正式啟用 GitHub Pages / Actions。
+## 遷移驗證結果
+2026-10-07 同日 GAS V12.2 對照已通過 GitHub Actions Full Parity：
+- A Top20：19/20 重疊（95%），15 檔名次完全相同，Score MAD 0.526。
+- D：10/10 重疊（100%），8 檔名次完全相同，Score MAD 0.8。
+- Market Risk：60 vs 60，差異 0。
+- Python CI 與 Full Parity workflow 均通過。
 
-驗證 GitHub 版前，原 Apps Script 先保留。
+A 的 1 檔差異主要來自同日稍晚重新抓取的法人 / 行情細節；核心模型與排序已達上線門檻。
+
+## 正式架構
+- `main` 已成為正式版本。
+- 09:00 / 10:30 / 12:30 / 13:00：盤中 Top20 快刷。
+- 18:30 / 21:30：完整市場更新。
+- 長區間回測使用 **TW Stock Backtest** 手動 workflow。
+- Pages 主頁：`tw-stock-dashboard/docs/index.html`
+- 歷史快照：`history.html`
+- 回測 / Edge：`backtest.html`
+
+原 Apps Script V12.2 建議先保留一段時間作為備援與交叉驗證，不再讓它承擔長區間主回測。
