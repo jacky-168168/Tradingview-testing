@@ -2,6 +2,7 @@ from __future__ import annotations
 import json,time
 from concurrent.futures import ThreadPoolExecutor,as_completed
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import requests
 from config import LATEST_JSON
 from yahoo_cache import to_symbol
@@ -21,8 +22,14 @@ def quote(symbol):
     except Exception:return symbol,None
 
 def main():
-    if not LATEST_JSON.exists():raise RuntimeError("latest.json 尚不存在，請先執行 full pipeline")
-    d=json.loads(LATEST_JSON.read_text(encoding="utf-8"));rows=[]
+    if not LATEST_JSON.exists():
+        from pipeline import main as full_main
+        full_main()
+    d=json.loads(LATEST_JSON.read_text(encoding="utf-8"))
+    if not any((d.get("models") or {}).get(m) for m in ["A","D"]):
+        from pipeline import main as full_main
+        full_main();d=json.loads(LATEST_JSON.read_text(encoding="utf-8"))
+    rows=[]
     for model in ["A","D"]:rows.extend((d.get("models") or {}).get(model) or [])
     uniq={(x.get("code"),x.get("market")) for x in rows if x.get("code") and x.get("market")}
     prices={}
@@ -36,7 +43,7 @@ def main():
         if p is not None:
             x["currentPrice"]=round(p,2);x["currentPct"]=round((p/close-1)*100,2) if close else None
         else:x["currentPrice"]=None;x["currentPct"]=None
-    d["intradayUpdatedAt"]=datetime.now().isoformat(timespec="seconds");d["intradayQuoteOk"]=len(prices);d["intradayUniverse"]=len(uniq);d["updateMode"]="intraday-fast"
+    d["intradayUpdatedAt"]=datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds");d["intradayQuoteOk"]=len(prices);d["intradayUniverse"]=len(uniq);d["updateMode"]="intraday-fast"
     LATEST_JSON.write_text(json.dumps(d,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps({"intradayUpdatedAt":d["intradayUpdatedAt"],"quoteOk":len(prices),"symbols":len(uniq)},ensure_ascii=False))
 if __name__=="__main__":main()
