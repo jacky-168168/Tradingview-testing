@@ -1,9 +1,17 @@
 name: TW Stock Dashboard
-
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: '更新模式'
+        required: true
+        type: choice
+        options:
+          - auto
+          - intraday
+          - full
+        default: auto
   schedule:
-    # Asia/Taipei: 09:00 / 10:30 / 12:30 / 13:00 / 18:30 / 21:30
     - cron: '0 1 * * 1-5'
     - cron: '30 2 * * 1-5'
     - cron: '30 4 * * 1-5'
@@ -23,6 +31,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -39,25 +48,41 @@ jobs:
             tw-stock-cache-${{ runner.os }}-
       - name: Install
         run: pip install -r tw-stock-dashboard/requirements.txt
-      - name: Update A/D dashboard data
+      - name: Resolve update mode
+        id: mode
+        shell: bash
+        run: |
+          MODE="${{ inputs.mode || 'auto' }}"
+          if [ "$MODE" = "auto" ]; then
+            HM="$(date -u +%H:%M)"
+            case "$HM" in
+              01:00|02:30|04:30|05:00) MODE="intraday" ;;
+              *) MODE="full" ;;
+            esac
+          fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "Resolved mode: $MODE"
+      - name: Full market update
+        if: steps.mode.outputs.mode == 'full'
         working-directory: tw-stock-dashboard
         run: python src/pipeline.py
+      - name: Fast intraday Top20 price refresh
+        if: steps.mode.outputs.mode == 'intraday'
+        working-directory: tw-stock-dashboard
+        run: python src/intraday.py
       - name: Commit generated JSON
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add tw-stock-dashboard/docs/data/latest.json
-          git diff --cached --quiet || git commit -m "Update TW stock dashboard data"
+          git diff --cached --quiet || git commit -m "Update TW stock dashboard (${{ steps.mode.outputs.mode }})"
           git push
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: tw-stock-dashboard/docs
-      - name: Deploy Pages
+      - uses: actions/deploy-pages@v4
         id: deployment
-        uses: actions/deploy-pages@v4
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
