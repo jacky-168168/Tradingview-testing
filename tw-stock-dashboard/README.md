@@ -1,62 +1,54 @@
-# 台股 A/D Dashboard — GitHub/Python 移植版
+# 台股量化選股 Dashboard — GitHub/Python 正式版
 
-這個目錄是 Google Apps Script V12.2 的 GitHub/Python 移植主線。目標是把最耗時的全市場資料、A/D 排名與長區間回測搬到 GitHub Actions + Python，而不是只把 HTML 放到 Pages。
-
-## Phase 1
-- A 原始多因子模型核心評分。
-- D 技術強勢模型：Volume > 20M、RVOL10 > 1.2、Mom10 > 0、Vol.D > 10%。
-- TWSE / TPEx 股票母檔。
-- GitHub Pages A/D 快速切換。
-
-## Phase 2
-- Yahoo 日 K：每檔 Parquet 雙向增量快取，已覆蓋日期不重抓。
-- Python 自訂日期 A/D 回測：Top3、下一交易日開盤進場、1D/3D/5D/10D/20D、Top3 固定三槽。
-- Edge Audit：Expectancy、PF、Sharpe、Sortino、MDD、單尾 t-test、centered bootstrap、OOS 70/30、Monte Carlo。
-- 手動 GitHub Action：`.github/workflows/tw-stock-backtest.yml`。
-- Pages 回測頁：`tw-stock-dashboard/docs/backtest.html`。
-
-## Phase 3（目前）
-- Market Risk Score 對齊 V12.2。
-- Bottom / Top Watch 反轉狀態。
-- Parabolic SAR：沿用 V12.2「上一根已確認日 K」口徑，SAR 只做顯示／同分排序，不直接灌進總分。
-- 歷史 / 當日法人：TWSE T86；上櫃法人仍暫時視為 0 分，與 V12.2 現況一致。
-- 法人同買 / 同賣 Top5。
-- 題材熱度：股島優先、DannyQuant 備援。
-- TPEx 產業價值鏈：Top20 次產業 / 題材補齊。
-- GitHub Pages 主 Dashboard 已加入 Risk、Top/Bottom Watch、法人、題材與現行主要欄位。
-
-## 長區間回測
-合併到 `main` 後：
-1. GitHub → Actions。
-2. 選 **TW Stock Backtest**。
-3. 按 **Run workflow**。
-4. 輸入開始 / 結束日期。
-5. 結果輸出到 `tw-stock-dashboard/docs/data/backtest/latest.json`，Pages 讀取顯示。
-
-第一次建立約 1982 檔歷史快取仍需抓資料；之後重疊日期會沿用 Actions cache，只補缺少前段 / 後段，不再像 GAS 每月重新抓整批。
-
-## Phase 4（目前）
-- 09:00 / 10:30 / 12:30 / 13:00 改成 **盤中快速更新**：只抓現有 A/D Top20 的 1 分鐘現價，不重新掃 1982 檔。
-- 18:30 / 21:30 才執行 **完整市場更新**：K 線、A/D、Risk、SAR、法人、題材。
-- 題材熱度加入「最後有效結果」cache；股島 / DannyQuant 同時失敗時不再把面板洗成空白。
-- 新增 `validate.py`：可拿 GAS JSON 與 Python JSON 比 A/D Top20 overlap、同名次數、總分 MAD、Risk delta。
-- 新增 PR CI：語法編譯＋核心 parity 單元測試（vectorized 指標、D 硬條件、法人權重、Edge 五週期、SAR、Risk）。
-
-## 遷移驗證結果
-2026-10-07 正式 production build 與 GAS V12.2 同日快照已達完整對齊：
-- A Top20：20/20 重疊（100%），20 檔名次完全相同，Score MAD 0。
-- D：10/10 重疊（100%），10 檔名次完全相同，Score MAD 0。
-- Market Risk：60 vs 60，差異 0。
-- Production：1950 / 1950 檔歷史 K 成功，historyErrors = 0。
-- Python CI 與 Full Parity workflow 均通過。
+這個目錄是 Google Apps Script V12.2 的 GitHub/Python 正式移植版本。主運算已改由 GitHub Actions + Python 執行；Google Apps Script 暫時保留作備援與交叉驗證。
 
 ## 正式架構
-- `main` 已成為正式版本。
-- 09:00 / 10:30 / 12:30 / 13:00：盤中 Top20 快刷。
-- 18:30 / 21:30：完整市場更新。
-- 長區間回測使用 **TW Stock Backtest** 手動 workflow。
-- Pages 主頁：`tw-stock-dashboard/docs/index.html`
-- 歷史快照：`history.html`
-- 回測 / Edge：`backtest.html`
+- **D 技術強勢模型：主模型**
+- **A 原始多因子模型：備用 / 對照模型**
+- A / D 每次完整掃描會同時產生並寫入同一份 JSON，前端切換模型不需重新計算。
+- 09:00 / 10:30 / 12:30 / 13:00：只更新現有 A/D Top20 盤中價格。
+- 18:30 / 21:30：完整市場重掃，更新 K 線、Risk、Top/Bottom Watch、SAR、法人、題材與歷史快照。
+- 長區間回測使用 **TW Stock Backtest** 手動 Workflow，可輸入自訂開始 / 結束日期。
+- Yahoo 日 K 使用 Parquet 雙向增量快取；重疊區間不重抓。
+- GitHub Pages 直接讀取已產生 JSON，不再等待 Apps Script 現場運算。
 
-原 Apps Script V12.2 建議先保留一段時間作為備援與交叉驗證，不再讓它承擔長區間主回測。
+## 已完成
+- 上市＋上櫃股票池。
+- A / D 完整選股與 Top20。
+- Market Risk Score。
+- Bottom / Top Watch。
+- Parabolic SAR（上一根已確認日 K）。
+- TWSE T86 法人與同買 / 同賣 Top5。
+- 題材熱度與 TPEx 產業價值鏈。
+- 盤中 Top20 快速刷新。
+- 每日歷史快照。
+- 自訂日期回測。
+- 1D / 3D / 5D / 10D / 20D Edge Audit。
+- Expectancy、PF、Sharpe、Sortino、MDD、t-test、bootstrap、OOS、Monte Carlo。
+- Python 單元測試與 GAS V12.2 parity 驗證。
+- GitHub Pages 正式 UI。
+
+## 2026-10-07 對齊驗證
+- A Top20：20/20 重疊，名次完全相同，Score MAD = 0。
+- D：10/10 重疊，名次完全相同，Score MAD = 0。
+- Market Risk：60 vs 60，差異 0。
+- Production：1950 / 1950 檔歷史 K 成功，historyErrors = 0。
+- Python CI 與 Full Parity workflow 通過。
+
+## 網頁
+- 主選股：`tw-stock-dashboard/docs/index.html`
+- 歷史快照：`tw-stock-dashboard/docs/history.html`
+- 回測 / Edge：`tw-stock-dashboard/docs/backtest.html`
+
+## 手動回測
+GitHub → Actions → **TW Stock Backtest** → Run workflow → 輸入開始 / 結束日期。
+
+結果會寫入：
+- `docs/data/backtest/latest.json`
+- `docs/data/backtest/YYYY-MM-DD_YYYY-MM-DD.json`
+- `docs/data/backtest/index.json`
+
+## 注意
+目前 repository 是公開的，因此 GitHub Pages 與產出的 JSON 也是公開內容。不要把真正的密碼、API key 或券商憑證寫進前端或 repository。
+
+原 Apps Script V12.2 先保留作備援；正式主線以 GitHub/Python 為準。
