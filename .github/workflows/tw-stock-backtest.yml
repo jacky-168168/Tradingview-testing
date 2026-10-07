@@ -59,7 +59,7 @@ jobs:
           PERIOD="${{ inputs.period || '最近30天' }}"
           START="${{ inputs.start_date || '' }}"
           END="${{ inputs.end_date || '' }}"
-          if [ -z "$END" ]; then END="$(date -u +%F)"; fi
+          if [ -z "$END" ]; then END="$(TZ=Asia/Taipei date +%F)"; fi
           case "$PERIOD" in
             最近30天) START="$(date -u -d "$END - 30 days" +%F)" ;;
             最近90天) START="$(date -u -d "$END - 90 days" +%F)" ;;
