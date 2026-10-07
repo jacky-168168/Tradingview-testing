@@ -35,6 +35,13 @@
 
 第一次建立約 1982 檔歷史快取仍需抓資料；之後重疊日期會沿用 Actions cache，只補缺少前段 / 後段，不再像 GAS 每月重新抓整批。
 
+## Phase 4（目前）
+- 09:00 / 10:30 / 12:30 / 13:00 改成 **盤中快速更新**：只抓現有 A/D Top20 的 1 分鐘現價，不重新掃 1982 檔。
+- 18:30 / 21:30 才執行 **完整市場更新**：K 線、A/D、Risk、SAR、法人、題材。
+- 題材熱度加入「最後有效結果」cache；股島 / DannyQuant 同時失敗時不再把面板洗成空白。
+- 新增 `validate.py`：可拿 GAS JSON 與 Python JSON 比 A/D Top20 overlap、同名次數、總分 MAD、Risk delta。
+- 新增 PR CI：語法編譯＋核心 parity 單元測試（vectorized 指標、D 硬條件、法人權重、Edge 五週期、SAR、Risk）。
+
 ## 下一步
 - 同一天用 GAS V12.2 與 GitHub Python 版做 A / D Top20 對照。
 - 驗證 Risk、SAR、法人、題材差異。
