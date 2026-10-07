@@ -1,6 +1,7 @@
 from __future__ import annotations
 import html,json,re,requests
 from datetime import datetime
+from config import CACHE_DIR
 UA={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/154 Safari/537.36","Accept":"application/json,text/plain,*/*","Accept-Language":"zh-TW,zh;q=0.9"}
 
 def institution_flow(inst,names):
@@ -45,5 +46,16 @@ def danny_topic_heat():
     except Exception:return []
 
 def topic_heat(market_date=""):
+    cache=CACHE_DIR/"topic_heat.json"
     x=stockisland_topic_heat(market_date)
-    return x if x else danny_topic_heat()
+    if not x:x=danny_topic_heat()
+    if x:
+        cache.parent.mkdir(parents=True,exist_ok=True)
+        cache.write_text(json.dumps(x,ensure_ascii=False,indent=2),encoding="utf-8")
+        return x
+    if cache.exists():
+        try:
+            old=json.loads(cache.read_text(encoding="utf-8"))
+            if isinstance(old,list) and old:return old
+        except:pass
+    return []
