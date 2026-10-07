@@ -60,7 +60,8 @@ def _risk_signal(row,risk):
     else:sig="🔥 強勢" if score>=85 else "✅ 觀察" if score>=75 else "👀 備選" if score>=65 else "一般"
     return ("⚠ Risk非ON "+sig) if risk.get("score",0)<RISK_ON else sig
 
-def _final_sort_a(r):return (-r["total"],-r.get("sarBonus",0),-r["rs20"],-r["rvol"],-r["ret20"],-r["turnoverB"],str(r["code"]))
+def _base_sort_a(r):return (-r["baseScore"],-r["rs20"],-r["rvol"],-r["ret20"],-r["turnoverB"])
+def _final_sort_a(r):return (-r["total"],-r.get("sarBonus",0),-r["rs20"],-r["rvol"],-r["ret20"],-r["turnoverB"])
 def _final_sort_d(r):return sort_key(r)
 
 def main():
@@ -82,7 +83,8 @@ def main():
             z=score_a(m,rs20,ii);a.append({**base,**z,"baseScore":z["total"],"model":"A","sarBonus":0,"sarText":"讀取中"})
         if d_pass(m):
             z=score_d(m,rs20,ii);d.append({**base,**z,"baseScore":z["total"],"model":"D","sarBonus":0,"sarText":"讀取中"})
-    a.sort(key=sort_key);d.sort(key=sort_key)
+    a.sort(key=_base_sort_a);d.sort(key=sort_key)
+    candidate_counts={"A":len(a),"D":len(d)}
     apply_sar(a,market_date,min(len(a),max(TOP_N*2,SAR_CANDIDATES)));apply_sar(d,market_date,min(len(d),max(TOP_N*2,SAR_CANDIDATES)))
     for x in a+d:x["signal"]=_risk_signal(x,risk)
     a=sorted(a,key=_final_sort_a)[:TOP_N];d=sorted(d,key=_final_sort_d)[:TOP_N]
@@ -91,7 +93,7 @@ def main():
     payload={"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"benchmarkRet20":round(mkt20,4),"universeCount":len(eligible),
              "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d},"risk":risk,
              "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86／上櫃暫為0","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
-             "candidateCounts":{"A":len(a),"D":len(d)},"phase":"github-python-v5","notes":["Phase 5：A/D、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。"]}
+             "candidateCounts":candidate_counts,"phase":"github-python-v5","notes":["Phase 5：A/D、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。"]}
     DATA_DIR.mkdir(parents=True,exist_ok=True);LATEST_JSON.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps({"generatedAt":payload["generatedAt"],"dataDate":market_date,"universeCount":len(eligible),"A":len(a),"D":len(d),"risk":risk.get("score"),"historyErrors":len(errors),"institutionError":insterr},ensure_ascii=False))
 if __name__=="__main__":main()
