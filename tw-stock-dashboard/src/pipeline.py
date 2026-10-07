@@ -42,23 +42,32 @@ def fetch_json(url):
     r=requests.get(url,headers=HEADERS,timeout=25);r.raise_for_status();return r.json()
 
 def load_universe():
-    CACHE_DIR.mkdir(parents=True,exist_ok=True);rows=[]
+    CACHE_DIR.mkdir(parents=True,exist_ok=True);listed=[];otc=[]
     try:
         for x in fetch_json(TWSE_COMPANY_URL):
             z=_normalize_company(x,"上市")
-            if z:rows.append(z)
+            if z:listed.append(z)
     except Exception as e:print("TWSE universe failed",e,file=sys.stderr)
-    otc=[]
     for url in TPEX_COMPANY_URLS:
         try:
+            tmp=[]
             for x in fetch_json(url):
                 z=_normalize_company(x,"上櫃")
-                if z:otc.append(z)
-            if len(otc)>500:break
+                if z:tmp.append(z)
+            cov=(sum(x.get("capitalB",0)>0 for x in tmp)/len(tmp)) if tmp else 0
+            if len(tmp)>=MIN_OTC_UNIVERSE and cov>=.90:
+                otc=tmp;break
         except Exception as e:print("TPEx universe source failed",url,e,file=sys.stderr)
-    rows.extend(otc)
-    if len(rows)<1000 and UNIVERSE_CACHE.exists():return json.loads(UNIVERSE_CACHE.read_text(encoding="utf-8"))
-    rows=list({f'{x["market"]}_{x["code"]}':x for x in rows}.values())
+    good=len(listed)>=MIN_LISTED_UNIVERSE and len(otc)>=MIN_OTC_UNIVERSE
+    if not good and UNIVERSE_CACHE.exists():
+        try:
+            old=json.loads(UNIVERSE_CACHE.read_text(encoding="utf-8"))
+            ol=[x for x in old if x.get("market")=="上市"];oo=[x for x in old if x.get("market")=="上櫃"]
+            if len(ol)>=MIN_LISTED_UNIVERSE and len(oo)>=MIN_OTC_UNIVERSE:
+                print(f"company universe fallback cache: listed={len(ol)} otc={len(oo)}",file=sys.stderr);return old
+        except Exception:pass
+    if not good:raise RuntimeError(f"公司母檔不足：上市 {len(listed)} / 上櫃 {len(otc)}")
+    rows=list({f'{x["market"]}_{x["code"]}':x for x in listed+otc}.values())
     UNIVERSE_CACHE.write_text(json.dumps(rows,ensure_ascii=False,indent=2),encoding="utf-8");return rows
 
 def _risk_signal(row,risk):
