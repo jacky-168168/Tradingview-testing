@@ -21,7 +21,7 @@ class CoreTests(unittest.TestCase):
         c=d["close"].astype(float)
         self.assertAlmostEqual(float(x["ema20"]),ema(c.iloc[-120:],20),places=7)
         self.assertAlmostEqual(float(x["ema50"]),ema(c.iloc[-120:],50),places=7)
-        self.assertAlmostEqual(float(x["ema20Slope5"]),(ema(c.iloc[-120:],20)/ema(c.iloc[-125:-5],20)-1)*100,places=7)
+        self.assertAlmostEqual(float(x["ema20Slope5"]),(ema(c.iloc[-120:],20)/ema(c.iloc[-120:-5],20)-1)*100,places=7)
     def test_tpex_company_field_mapping(self):
         x=_normalize_company({"SecuritiesCompanyCode":"6147","CompanyAbbreviation":"頎邦","Paidin.Capital.NTDollars":"7445775390","SecuritiesIndustryCode":"24"},"上櫃")
         self.assertEqual(x["code"],"6147");self.assertEqual(x["name"],"頎邦");self.assertAlmostEqual(x["capitalB"],74.4577539);self.assertEqual(x["industry"],"24")
