@@ -11,8 +11,8 @@ import pipeline
 from pipeline import _normalize_company,published_data_date,previous_f2_state
 from industry_chain import looks_mojibake,parse as parse_chain
 import risk,yahoo_cache
-from backtest import _portfolio_stats,_has_unadjusted_scale_jump
-from bubbles import classify as bubble_classify,effective_backtest_end
+from backtest import _portfolio_stats,_has_unadjusted_scale_jump,effective_backtest_end
+from bubbles import classify as bubble_classify
 
 class CoreTests(unittest.TestCase):
     def frame(self,n=100):
