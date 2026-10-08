@@ -68,7 +68,7 @@ def run(start="2026-01-01",end="2026-10-07"):
         complete18=candle18[candle18.complete].to_dict("records") if not candle18.empty else []
         bar_sets[sy]=(complete3,[x["date"] for x in complete3],complete18,[x["date"] for x in complete18])
         if i%400==0:print(f"precomputed {i}/{len(universe)} candle histories",flush=True)
-    models={"G_BROAD":{"ranks":{},"counts":{}},"G_CANDLE":{"ranks":{},"counts":{}},"G_TRIGGER":{"ranks":{},"counts":{}}}
+    models={k:{"ranks":{},"counts":{}} for k in ("G_BROAD","G_CANDLE","G_TRIGGER","G_3D_BREAK","G_18D_BREAK","G_DOUBLE_BREAK","G_ENGULF")}
     samples={}
     for di,d in enumerate(signals,1):
         rows=[]
@@ -96,7 +96,11 @@ def run(start="2026-01-01",end="2026-10-07"):
         choice={
             "G_BROAD":sorted(candidates,key=lambda x:(-x["baselineScore"],x["code"])),
             "G_CANDLE":sorted(candidates,key=lambda x:(-x["candleScore"],x["code"])),
-            "G_TRIGGER":sorted([x for x in candidates if any(x["candleFlags"][f] for f in ("break3","break18","eng3","eng18"))],key=lambda x:(-x["candleScore"],x["code"]))
+            "G_TRIGGER":sorted([x for x in candidates if any(x["candleFlags"][f] for f in ("break3","break18","eng3","eng18"))],key=lambda x:(-x["candleScore"],x["code"])),
+            "G_3D_BREAK":sorted([x for x in candidates if x["candleFlags"]["break3"]],key=lambda x:(-x["baselineScore"],x["code"])),
+            "G_18D_BREAK":sorted([x for x in candidates if x["candleFlags"]["break18"]],key=lambda x:(-x["baselineScore"],x["code"])),
+            "G_DOUBLE_BREAK":sorted([x for x in candidates if x["candleFlags"]["break3"] and x["candleFlags"]["break18"]],key=lambda x:(-x["baselineScore"],x["code"])),
+            "G_ENGULF":sorted([x for x in candidates if x["candleFlags"]["eng3"] or x["candleFlags"]["eng18"]],key=lambda x:(-x["baselineScore"],x["code"]))
         }
         for key,order in choice.items():
             models[key]["counts"][d]=len(order)
@@ -131,7 +135,7 @@ def run(start="2026-01-01",end="2026-10-07"):
             check.append({"code":s["code"],"postDate":s["date"],"postTime":s.get("time"),"anchor":s["anchor"],"rank":r,"top3":bool(r and r<=3),"top20":bool(r and r<=20),"flags":row.get("candleFlags") if row else None})
         summary={"n":len(check),"eligible":sum(x["flags"] is not None for x in check),"top20":sum(x["top20"] for x in check),"top3":sum(x["top3"] for x in check)}
         out_models[key]={"candidateStats":{"avg":round(float(np.mean(list(content["counts"].values()))),1),"min":min(content["counts"].values()),"max":max(content["counts"].values()),"days":len(content["counts"])},"summary":[{"horizon":h,"top3Daily":stat(returns[h]),"rank1":stat(per_rank[h][1]),"rank2":stat(per_rank[h][2]),"rank3":stat(per_rank[h][3]),"phasePortfolio":phase_portfolio(signals,calendar,pos,rs,prices,{},h)} for h in H],"sampleAudit":{**summary,"checks":check},"signals":trade_rows}
-    out={"version":"G-CANDLE-3D-18D-2026-V1","generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),"period":{"start":start,"end":end},"days":len(signals),"historyErrors":len(errors),"universe":len(universe),"weights":WEIGHTS,"hardTrigger":"3D/18D prior confirmed bar high broken by close, OR latest confirmed 3D/18D bullish body engulf","models":out_models,"notes":["2026-only historical day-close selection; next trading session open entry; no poster trigger-price strategy claimed.","3D/18D bars use year-reset trading sessions; only fully completed multi-day bars may qualify as engulf.","Same broad G gate in all three models, without 500B stock-cap hard gate; G_BROAD is not exactly the previously published G_BASE.","G_CANDLE bonuses fixed in exploratory research; informed by already seen 20 samples, so neither that label fit nor 2026 retrospective returns is a true independent prospective test.","Rank 4-20 are diagnostic only; trading PnL simulates only top 3.","Before enough completed 18D bars in 2026, G_CANDLE has fewer active higher-timeframe conditions.","Current stock universe may suffer survivorship bias."]}
+    out={"version":"G-CANDLE-3D-18D-2026-V2","generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),"period":{"start":start,"end":end},"days":len(signals),"historyErrors":len(errors),"universe":len(universe),"weights":WEIGHTS,"hardTrigger":"3D/18D prior confirmed bar high broken by close, OR latest confirmed 3D/18D bullish body engulf","models":out_models,"notes":["2026-only historical day-close selection; next trading session open entry; no poster trigger-price strategy claimed.","3D/18D bars use year-reset trading sessions; only fully completed multi-day bars may qualify as engulf.","Same broad G gate in all three models, without 500B stock-cap hard gate; G_BROAD is not exactly the previously published G_BASE.","3D, 18D and double-break models isolate confirmed higher-timeframe high breakouts. G_ENGULF requires latest confirmed bullish real-body engulf.","G_CANDLE bonuses fixed in exploratory research; informed by already seen 20 samples, so neither that label fit nor 2026 retrospective returns is a true independent prospective test.","Rank 4-20 are diagnostic only; trading PnL simulates only top 3.","Before enough completed 18D bars in 2026, G_CANDLE has fewer active higher-timeframe conditions.","Current stock universe may suffer survivorship bias."]}
     target=DATA_DIR/"backtest_g";target.mkdir(parents=True,exist_ok=True)
     (target/"g_candle_2026.json").write_text(json.dumps(out,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     print(json.dumps({"period":out["period"],"historyErrors":out["historyErrors"],"runtime":round(time.time()-t,1),"results":{k:{"samples":v["sampleAudit"]["top20"],"samplesTop3":v["sampleAudit"]["top3"],"stats":{x["horizon"]:x["top3Daily"] for x in v["summary"]}} for k,v in out_models.items()}},ensure_ascii=False),flush=True)

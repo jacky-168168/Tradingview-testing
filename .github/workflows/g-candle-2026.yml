@@ -7,15 +7,10 @@ on:
       - 'tw-stock-dashboard/.g-candle-trigger'
 permissions:
   contents: write
-  pages: write
-  id-token: write
 jobs:
   candle2026:
     runs-on: ubuntu-latest
     timeout-minutes: 180
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -48,9 +43,3 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: tw-stock-dashboard/docs
-      - uses: actions/deploy-pages@v4
-        id: deployment
