@@ -40,9 +40,9 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(institution_score({"foreign":1,"trust":1,"dealer":1}),10);self.assertEqual(institution_score({"foreign":1,"trust":0,"dealer":0}),5);self.assertEqual(institution_score({"foreign":0,"trust":1,"dealer":0}),7)
     def test_edge_all_horizons(self):
         m={}
-        for mid in ["A","D","F"]:m[mid]={h:[{"date":str(i),"ret":(1.5 if i%4 else -1.0)+(0.2 if mid in ("D","F") else 0)} for i in range(1,121)] for h in [1,3,5,10,20]}
+        for mid in ["A","D","F","F2"]:m[mid]={h:[{"date":str(i),"ret":(1.5 if i%4 else -1.0)+(0.2 if mid in ("D","F") else 0)} for i in range(1,121)] for h in [1,3,5,10,20]}
         x=build(m)
-        for mid in ["A","D","F"]:
+        for mid in ["A","D","F","F2"]:
             for h in [1,3,5,10,20]:
                 z=x["models"][mid][f"d{h}"];self.assertGreater(z["n"],0);self.assertIn(z["verdict"],{"gambling","insufficient","luck_suspected","fragile_edge","statistical_edge"})
     def test_sar_uptrend(self):
@@ -79,6 +79,12 @@ class CoreTests(unittest.TestCase):
         self.assertTrue(risk.f_gate({"score":60,"bottomState":"⚪ Bottom Watch"})["allowed"])
         x=risk.f_gate({"score":30,"bottomState":"🟢 Strong Bottom Reversal"});self.assertTrue(x["allowed"]);self.assertTrue(x["exception"])
         self.assertFalse(risk.f_gate({"score":59,"bottomState":"🟣 Extreme Oversold"})["allowed"])
+    def test_f2_gate_hysteresis_and_veto(self):
+        x=risk.f2_gate({"score":60,"activeState":"⚪ Normal"},False);self.assertTrue(x["allowed"]);self.assertTrue(x["stateOn"])
+        x=risk.f2_gate({"score":57,"activeState":"⚪ Normal"},True);self.assertTrue(x["allowed"]);self.assertEqual(x["reason"],"HYSTERESIS_HOLD")
+        x=risk.f2_gate({"score":54,"activeState":"⚪ Normal"},True);self.assertFalse(x["allowed"]);self.assertFalse(x["stateOn"])
+        x=risk.f2_gate({"score":40,"activeState":"🟢 Strong Bottom Reversal"},False);self.assertTrue(x["allowed"]);self.assertTrue(x["exception"]);self.assertFalse(x["stateOn"])
+        x=risk.f2_gate({"score":80,"activeState":"🟠 Top Reversal Attempt"},True);self.assertFalse(x["allowed"]);self.assertTrue(x["topVeto"]);self.assertFalse(x["stateOn"])
     def test_historical_risk_no_network(self):
         x=risk.build_historical(self.frame(80),breadth_value=60,foreign_value=10)
         self.assertGreaterEqual(x["score"],0);self.assertLessEqual(x["score"],100);self.assertIn("activeState",x)
