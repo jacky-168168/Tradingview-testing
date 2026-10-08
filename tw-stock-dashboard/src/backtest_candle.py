@@ -15,6 +15,7 @@ from multi_day_candles import aggregate_bars,candle_test
 from research_signal_samples import SAMPLES
 from backtest_signal_model import H,stat,price_return,phase_portfolio
 from g_target import eligible
+from g_persistence import persistence_features,pocket_snapshot,repeat_audit,pocket_segment_stats
 FEAT=("ret20","ma20Slope","atrPct","range20Pct","turnoverB")
 PCT=("ret20P","slopeP","atrP","range20P","turnoverP")
 WEIGHTS={"break3":4,"break18":3,"bull3":2,"bull18":1,"eng18":2,"eng3":1}
@@ -68,7 +69,8 @@ def run(start="2026-01-01",end="2026-10-07"):
         complete18=candle18[candle18.complete].to_dict("records") if not candle18.empty else []
         bar_sets[sy]=(complete3,[x["date"] for x in complete3],complete18,[x["date"] for x in complete18])
         if i%400==0:print(f"precomputed {i}/{len(universe)} candle histories",flush=True)
-    models={k:{"ranks":{},"counts":{}} for k in ("G_BROAD","G_CANDLE","G_TRIGGER","G_3D_BREAK","G_18D_BREAK","G_DOUBLE_BREAK","G_ENGULF")}
+    models={k:{"ranks":{},"counts":{}} for k in ("G_BROAD","G_CANDLE","G_TRIGGER","G_3D_BREAK","G_18D_BREAK","G_DOUBLE_BREAK","G_ENGULF","G_PERSIST","G_DOUBLE_PERSIST")}
+    historical_pockets={"G_BROAD":[],"G_DOUBLE_BREAK":[]}
     samples={}
     for di,d in enumerate(signals,1):
         rows=[]
@@ -102,14 +104,23 @@ def run(start="2026-01-01",end="2026-10-07"):
             "G_DOUBLE_BREAK":sorted([x for x in candidates if x["candleFlags"]["break3"] and x["candleFlags"]["break18"]],key=lambda x:(-x["baselineScore"],x["code"])),
             "G_ENGULF":sorted([x for x in candidates if x["candleFlags"]["eng3"] or x["candleFlags"]["eng18"]],key=lambda x:(-x["baselineScore"],x["code"]))
         }
+        # Prior pocket snapshots exclude today's selection. Repeats are signals of strength,
+        # NOT forced additional trades. A stock can stay on the list for many days.
+        for new_key,source_key in (("G_PERSIST","G_BROAD"),("G_DOUBLE_PERSIST","G_DOUBLE_BREAK")):
+            augmented=[]
+            for candidate in (candidates if source_key=="G_BROAD" else choice[source_key]):
+                p=persistence_features(candidate["code"],historical_pockets[source_key],candidate["baselineScore"])
+                augmented.append({**candidate,"persistence":p,"persistenceScore":round(candidate["baselineScore"]+p["bonus"],4)})
+            choice[new_key]=sorted(augmented,key=lambda x:(-x["persistenceScore"],-x["baselineScore"],x["code"]))
         for key,order in choice.items():
             models[key]["counts"][d]=len(order)
-            models[key]["ranks"][d]=[{**x,"rank":i+1,"score":x["baselineScore"] if key=="G_BROAD" else x["candleScore"]} for i,x in enumerate(order[:20])]
+            models[key]["ranks"][d]=[{**x,"rank":i+1,"score":x["persistenceScore"] if key in ("G_PERSIST","G_DOUBLE_PERSIST") else (x["baselineScore"] if key in ("G_BROAD","G_3D_BREAK","G_18D_BREAK","G_DOUBLE_BREAK","G_ENGULF") else x["candleScore"])} for i,x in enumerate(order[:20])]
             if d in targets:
                 models[key].setdefault("targetRanks",{})
                 for i,x in enumerate(order):
                     if x["code"] in targets[d]:models[key]["targetRanks"][(d,x["code"])]=i+1
-        if di%35==0 or di==len(signals):print(f"{d} candle {di}/{len(signals)} candidates={len(candidates)}",flush=True)
+        for source_key in historical_pockets:historical_pockets[source_key].append(pocket_snapshot(choice[source_key]))
+        if di%35==0 or di==len(signals):print(f"{d} candle+persistence {di}/{len(signals)} candidates={len(candidates)}",flush=True)
     out_models={}
     for key,content in models.items():
         rs=content["ranks"];returns={h:[] for h in H};per_rank={h:{i:[] for i in (1,2,3)} for h in H};trade_rows=[]
@@ -119,7 +130,7 @@ def run(start="2026-01-01",end="2026-10-07"):
             buydate=calendar[p+1];by_h={h:[] for h in H}
             for x in rs.get(d,[]):
                 if x["rank"]>3:continue
-                row={"signalDate":d,"rank":x["rank"],"code":x["code"],"name":x["name"],"score":x["score"],"flags":x["candleFlags"]}
+                row={"signalDate":d,"rank":x["rank"],"code":x["code"],"name":x["name"],"score":x["score"],"flags":x["candleFlags"],"persistence":x.get("persistence")}
                 sy=to_symbol(x["code"],x["market"])
                 for h in H:
                     r=price_return(prices.get(sy),buydate,calendar[p+h]) if p+h<len(calendar) else None
@@ -134,10 +145,18 @@ def run(start="2026-01-01",end="2026-10-07"):
             row=samples.get((s["anchor"],s["code"]))
             check.append({"code":s["code"],"postDate":s["date"],"postTime":s.get("time"),"anchor":s["anchor"],"rank":r,"top3":bool(r and r<=3),"top20":bool(r and r<=20),"flags":row.get("candleFlags") if row else None})
         summary={"n":len(check),"eligible":sum(x["flags"] is not None for x in check),"top20":sum(x["top20"] for x in check),"top3":sum(x["top3"] for x in check)}
-        out_models[key]={"candidateStats":{"avg":round(float(np.mean(list(content["counts"].values()))),1),"min":min(content["counts"].values()),"max":max(content["counts"].values()),"days":len(content["counts"])},"summary":[{"horizon":h,"top3Daily":stat(returns[h]),"rank1":stat(per_rank[h][1]),"rank2":stat(per_rank[h][2]),"rank3":stat(per_rank[h][3]),"phasePortfolio":phase_portfolio(signals,calendar,pos,rs,prices,{},h)} for h in H],"sampleAudit":{**summary,"checks":check},"signals":trade_rows}
+        # Persistence-specific signal quality: first-time versus continuing membership,
+        # plus H-day hold suppression without deleting repeated pocket appearances.
+        audit={"noDoubleBuy":{str(h):repeat_audit(trade_rows,calendar,h) for h in (5,10,20)},"pocketSegments":{str(h):pocket_segment_stats(trade_rows,h) for h in (5,10,20)}} if key in ("G_PERSIST","G_DOUBLE_PERSIST") else None
+        out_models[key]={"candidateStats":{"avg":round(float(np.mean(list(content["counts"].values()))),1),"min":min(content["counts"].values()),"max":max(content["counts"].values()),"days":len(content["counts"])},"summary":[{"horizon":h,"top3Daily":stat(returns[h]),"rank1":stat(per_rank[h][1]),"rank2":stat(per_rank[h][2]),"rank3":stat(per_rank[h][3]),"phasePortfolio":phase_portfolio(signals,calendar,pos,rs,prices,{},h)} for h in H],"sampleAudit":{**summary,"checks":check},"signals":trade_rows,**({"repeatAudit":audit} if audit else {})}
     out={"version":"G-CANDLE-3D-18D-2026-V2","generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),"period":{"start":start,"end":end},"days":len(signals),"historyErrors":len(errors),"universe":len(universe),"weights":WEIGHTS,"hardTrigger":"3D/18D prior confirmed bar high broken by close, OR latest confirmed 3D/18D bullish body engulf","models":out_models,"notes":["2026-only historical day-close selection; next trading session open entry; no poster trigger-price strategy claimed.","3D/18D bars use year-reset trading sessions; only fully completed multi-day bars may qualify as engulf.","Same broad G gate in all three models, without 500B stock-cap hard gate; G_BROAD is not exactly the previously published G_BASE.","3D, 18D and double-break models isolate confirmed higher-timeframe high breakouts. G_ENGULF requires latest confirmed bullish real-body engulf.","G_CANDLE bonuses fixed in exploratory research; informed by already seen 20 samples, so neither that label fit nor 2026 retrospective returns is a true independent prospective test.","Rank 4-20 are diagnostic only; trading PnL simulates only top 3.","Before enough completed 18D bars in 2026, G_CANDLE has fewer active higher-timeframe conditions.","Current stock universe may suffer survivorship bias."]}
     target=DATA_DIR/"backtest_g";target.mkdir(parents=True,exist_ok=True)
-    (target/"g_candle_2026.json").write_text(json.dumps(out,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
+    regular_names=("G_BROAD","G_CANDLE","G_TRIGGER","G_3D_BREAK","G_18D_BREAK","G_DOUBLE_BREAK","G_ENGULF")
+    old_out={**out,"models":{k:out_models[k] for k in regular_names}}
+    (target/"g_candle_2026.json").write_text(json.dumps(old_out,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
+    persistence_names=("G_PERSIST","G_DOUBLE_PERSIST")
+    pocket_out={"version":"G-PERSISTENCE-2026-V1","generatedAt":out["generatedAt"],"period":out["period"],"signalDays":out["days"],"historyErrors":out["historyErrors"],"universeCount":out["universe"],"formula":{"lookback":"ONLY previous 10 completed trading days","top20FrequencyWeight":45,"last5Top3Weight":25,"priorConsecutiveTop20Weight":20,"baselineScoreImprovementWeight":10,"maxBonusPoints":7,"sourcePocket":"G_BROAD original Top20 for G_PERSIST; G_DOUBLE_BREAK original Top20 for G_DOUBLE_PERSIST","trades":"No extra purchase merely due to repeat selection"},"models":{k:out_models[k] for k in persistence_names},"benchmarks":{k:{"candidateStats":out_models[k]["candidateStats"],"summary":out_models[k]["summary"],"sampleAudit":{a:v for a,v in out_models[k]["sampleAudit"].items() if a!="checks"}} for k in ("G_BROAD","G_DOUBLE_BREAK")},"notes":["既有 G_BASE／G 雙突破模型保留不改；持續度為額外研究分支。","G_PERSIST 以 G_BROAD 每日原 Top20 建立口袋歷史；G_DOUBLE_PERSIST 以原雙突破 Top20 建立口袋歷史；歷史窗口不含當日、沒有未來資料。","同一股票可連續入選口袋名單；不應當成每天必須重複買入。","每筆訊號的 5D／10D／20D 是相依、重疊的預測事件；不可當作獨立樣本。","noDoubleBuy 為同股票在持有期 H 內不重開倉的事件分析，未重建資金占用與現金流；phasePortfolio 仍為非重疊週期淨報酬。","重複入選強度加分不代表可預測未來獲利；2026 資料已用於策略概念發展，不是獨立前瞻驗證。"]}
+    (target/"g_persistence_2026.json").write_text(json.dumps(pocket_out,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     print(json.dumps({"period":out["period"],"historyErrors":out["historyErrors"],"runtime":round(time.time()-t,1),"results":{k:{"samples":v["sampleAudit"]["top20"],"samplesTop3":v["sampleAudit"]["top3"],"stats":{x["horizon"]:x["top3Daily"] for x in v["summary"]}} for k,v in out_models.items()}},ensure_ascii=False),flush=True)
 if __name__=="__main__":
     ap=argparse.ArgumentParser();ap.add_argument("--start",default="2026-01-01");ap.add_argument("--end",default="2026-10-07");a=ap.parse_args();run(a.start,a.end)
