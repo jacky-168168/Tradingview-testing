@@ -1,0 +1,33 @@
+name: Verify Extended Research Archive UI
+on:
+  push:
+    branches: [feature/backtest-archive-h1-full-trades]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JavaScript
+        run: node --check tw-stock-dashboard/docs/backtest-research.js
+      - name: Assert archived H1/H2, UI pagination, and 17-model history remain
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=Path("tw-stock-dashboard/docs")
+          js=(r/"backtest-research.js").read_text()
+          html=(r/"backtest.html").read_text()
+          manifest=json.loads((r/"data/research/model_execution_2026/index.json").read_text())
+          assert len(manifest["modelIds"])==17
+          assert all(y in html for y in ("researchTradePrev","researchTradeNext","researchTradeFullJson","H1～H5"))
+          assert all(y in js for y in ("tradePage","researchTradeNext","h1_2026.json","h2_2026.json"))
+          h1=json.loads((r/"data/research/model_execution_2026/h1_2026.json").read_text())
+          h2=json.loads((r/"data/research/model_execution_2026/h2_2026.json").read_text())
+          assert h1["comparison"]["5"]["H"]["trades"]==475
+          assert h2["summary"]["5"]["filledTrades"]==47
+          print("PASS: H1/H2 preserved; current 17-model UI still present; pagination controls and JS parse")
+          PY
