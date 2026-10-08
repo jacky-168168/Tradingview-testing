@@ -46,11 +46,18 @@ def fetch_day(date,retries=3):
         time.sleep(1+n)
     return date,{},str(err or "empty T86")
 
-def fetch_many(dates,workers=6):
+def fetch_many(dates,workers=4):
     out={};errors={}
     with ThreadPoolExecutor(max_workers=workers) as ex:
         fut={ex.submit(fetch_day,d):d for d in dates}
         for f in as_completed(fut):
             d,m,e=f.result();out[d]=m
             if e:errors[d]=e
+    # TWSE 偶爾會對平行請求限流；失敗日期改用低速序列重試，避免把 missing 當成 0。
+    if errors:
+        for d in list(errors):
+            time.sleep(.35)
+            dd,m,e=fetch_day(d,retries=5);out[dd]=m
+            if e:errors[d]=e
+            else:errors.pop(d,None)
     return out,errors
