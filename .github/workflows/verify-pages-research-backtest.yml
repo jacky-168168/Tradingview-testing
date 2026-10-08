@@ -1,0 +1,30 @@
+name: Verify Pages Research Backtest Archive
+on:
+  push:
+    branches: [feature/backtest-research-archive-ui, main]
+    paths:
+      - '.github/workflows/verify-pages-research-backtest.yml'
+      - 'tw-stock-dashboard/docs/backtest.html'
+      - 'tw-stock-dashboard/docs/index.html'
+      - 'tw-stock-dashboard/docs/backtest-research.js'
+      - 'tw-stock-dashboard/docs/data/research_archive/**'
+      - 'tw-stock-dashboard/tests/test_research_archive_ui.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check research UI JavaScript syntax
+        run: node --check tw-stock-dashboard/docs/backtest-research.js
+      - name: Validate all archived datasets and preserved Backtest/Edge controls
+        working-directory: tw-stock-dashboard
+        run: python -m unittest discover -s tests -p 'test_research_archive_ui.py' -v
+      - name: Confirm versioned Pages files for online navigation
+        run: |
+          test -s tw-stock-dashboard/docs/data/research_archive/index.json
+          test -s tw-stock-dashboard/docs/data/research_archive/selection_matrix_trades_2026.json
+          grep -q 'backtest.html#researchArchive' tw-stock-dashboard/docs/index.html
