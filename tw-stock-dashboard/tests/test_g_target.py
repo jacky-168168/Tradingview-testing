@@ -24,6 +24,11 @@ class TestGTarget(unittest.TestCase):
         self.assertEqual(info["groups"],1)
         self.assertEqual(len(weights),len(FEATURES))
         self.assertGreater(score(a,weights),score(b,weights))
+    def test_high_momentum_scores_do_not_saturate_into_ties(self):
+        high=self.row("A",99);low=self.row("B",89)
+        hi=score(high,PRIOR);lo=score(low,PRIOR)
+        self.assertLess(hi,100)
+        self.assertGreater(hi,lo)
     def test_empty_train_falls_back_prior(self):
         w,info=fit([]);self.assertTrue(np.allclose(w,PRIOR));self.assertFalse(info["optimized"])
 
