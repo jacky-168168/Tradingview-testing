@@ -50,7 +50,7 @@ class TestH2(unittest.TestCase):
         d="2026-02-02"
         x=self.make_trade([(d,104,108,102,105,1_000_000)])
         self.assertEqual(exit_trade(x,d,d,100)["status"],"gap_skip")
-        x=self.make_trade([(d,91,93,90,92,1_000_000)])
+        x=self.make_trade([(d,91,93,86,88,1_000_000)])
         out=exit_trade(x,d,d,100)
         self.assertEqual(out["status"],"filled")
         self.assertLess(out["netPct"],0)
