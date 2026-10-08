@@ -107,7 +107,7 @@ def main():
         bix=ix[ix.date.astype(str)<=anchor].tail(21);mret20=(float(bix.close.iloc[-1])/float(bix.close.iloc[-21])-1)*100 if len(bix)>=21 else 0.0
         rows=[]
         for meta in universe:
-            if not (0<num(meta.get("capitalB"),0)<MAX_CAPITAL_B):continue
+            if not (num(meta.get("capitalB"),0)>0):continue
             sym=to_symbol(meta["code"],meta["market"]);ft=feats.get(sym);rr=row_at(ft,anchor)
             if rr is None or pd.isna(rr.get("ret20")):continue
             df=hist.get(sym);q=df[df.date.astype(str)<=anchor].tail(20) if df is not None else pd.DataFrame()
