@@ -125,7 +125,7 @@ def run_model(signals,prices,cal,h,mode):
         if j is None or j+1+INITIAL_WAIT_DAYS-1+h>len(cal):continue
         # To avoid right-censoring and change of window after entry,
         # require all post-signal bars before END (horizon+initial wait).
-        if cal[j+h+INITIAL_WAIT_DAYS]>END:continue
+        if cal[j+h+INITIAL_WAIT_DAYS-1]>END:continue
         code=str(s["code"])
         if date<=track_until.get(code,""):excluded+=1;continue
         market=s.get("market");frame=prices.get(to_symbol(code,market))
