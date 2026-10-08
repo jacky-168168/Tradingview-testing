@@ -138,6 +138,14 @@ function archive(which){
   head.innerHTML="<tr><th>期限</th><th>首筆折價</th><th>開倉</th><th>+7%達標</th><th>停損率</th><th>已投入資金淨報酬</th><th>預留資金淨報酬</th></tr>";
   note.textContent="H5 的固定突破選股不變，測試首筆限價-2%、-2.5%、-3%，之後4筆每下跌首筆成交價2%加碼。此研究的首筆委託僅下一交易日有效，與上方17模型5日等待版不同，不可直接同比。";
   tbody.innerHTML=h5?.results?Object.entries(h5.results).flatMap(([h,discount])=>Object.entries(discount).map(([off,s])=>'<tr><td>'+e(h)+'D</td><td>-'+e(off)+'%</td><td>'+n(s.filled,0)+'</td><td>'+pct(s.targetHitPct)+'</td><td>'+pct(s.stopHitPct)+'</td><td>'+perf(s.avgNetOnDeployedPct)+'</td><td>'+perf(s.avgNetOnFiveTrancheBudgetPct)+'</td></tr>')).join(""):'<tr><td colspan="7">研究檔案未載入</td></tr>';
+ }else if(which==="timing"){
+  head.innerHTML="<tr><th>進場方式</th><th>大盤 MA20 首筆限制</th><th>已成交</th><th>+7% 停利率</th><th>-15% 停損率</th><th>淨勝率</th><th>預留資金淨報酬</th><th>PF</th><th>平均等待日</th></tr>";
+  note.textContent="G_STRICT 2026 Top3｜10D｜+7%停利、-15%停損。各方案重新模擬同股票重複入選、等待下單、交易成本與出場。僅用交易前已收盤大盤日K，仍非獨立樣本外驗證；非完整資金曲線。點選任一列可翻閱全部逐筆事件。";
+  const gates=[["baseline","不設大盤條件"],["signal_ma20","訊號日大盤收在MA20上"],["wait_ma20","5日內等待大盤站回MA20"],["wait_ma20_twoday","等待連續2日站上MA20"],["wait_ma20_rising","等待站回MA20且MA20向上"]];
+  tbody.innerHTML=timing?.statistics?.["10"]?["ladder","ma"].flatMap(mode=>gates.map(([key,label])=>{
+   const z=timing.statistics["10"]?.[mode]?.[key];if(!z)return "";
+   return '<tr data-market-mode="'+e(mode)+'" data-market-gate="'+e(key)+'" style="cursor:pointer"><td>'+type(mode)+'</td><td>'+e(label)+'</td><td>'+n(z.filled,0)+'</td><td>'+pct(z.takeProfitPct)+'</td><td>'+pct(z.stopPct)+'</td><td>'+pct(z.netWinPct)+'</td><td>'+perf(z.avgNetOnReservedPct)+'</td><td>'+n(z.profitFactor,2)+'</td><td>'+n(z.avgSignalToEntryDays,2)+'</td></tr>';
+  })).join(""):'<tr><td colspan="9">進場等待研究尚未載入，請查看資料 JSON。</td></tr>';
  }else if(which==="risk"){
   head.innerHTML="<tr><th>進場法</th><th>訊號當日大盤條件</th><th>成交</th><th>+7% 停利</th><th>-15% 停損</th><th>避免停損</th><th>錯過停利</th><th>預留資金淨%</th><th>7月成交</th><th>7月停損</th></tr>";
   note.textContent="G_STRICT 10D 固定向下／均線加碼，用「選股訊號日已完成的加權指數日K」判斷大盤位階。只從已完成歷史交易中剔除不符條件的訊號；未重選候補股票、未模擬同股票後續掛單或共享帳戶資金。2026年樣本內探索，不是因果證明。";
