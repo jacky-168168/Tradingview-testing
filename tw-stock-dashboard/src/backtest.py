@@ -14,6 +14,13 @@ from sar import parabolic_sar
 H=[1,3,5,10,20]
 BUY_FEE_PCT=.1425;SELL_FEE_PCT=.1425;SELL_TAX_PCT=.30
 
+def effective_backtest_end(end,now=None):
+    """Historical backtests never use the current trading day's still-forming daily bar."""
+    now=now or datetime.now(ZoneInfo("Asia/Taipei"))
+    ed=datetime.fromisoformat(end)
+    if ed.date()>now.date():raise ValueError(f"結束日期不可晚於今天 {now.date().isoformat()}")
+    return (now.date()-timedelta(days=1)).isoformat() if ed.date()==now.date() else end
+
 def stat(a):
     a=sorted(float(x) for x in a if x is not None and np.isfinite(x))
     if not a:return {"n":0,"avg":None,"median":None,"win":None,"max":None,"min":None}
@@ -194,11 +201,9 @@ def evaluate(signals,idx,pos,ranks,cand,prices,regimes):
     return [models["A"],models["D"],models["F"],models["F2"]],build_edge(edgein)
 
 def run(start,end):
-    t=time.time();sd=datetime.fromisoformat(start);ed=datetime.fromisoformat(end)
-    if sd>ed:raise ValueError("start > end")
+    t=time.time();requested_start=start;requested_end=end;end=effective_backtest_end(end);sd=datetime.fromisoformat(start);ed=datetime.fromisoformat(end)
+    if sd>ed:raise ValueError("有效回測區間沒有已完整收盤的交易日")
     if (ed.date()-sd.date()).days+1>731:raise ValueError("日期區間最多 731 天")
-    today=datetime.now(ZoneInfo("Asia/Taipei")).date()
-    if ed.date()>today:raise ValueError(f"結束日期不可晚於今天 {today.isoformat()}")
     fs=sd-timedelta(days=180);fe=min(datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None),ed+timedelta(days=50));all_u=load_universe();u=[x for x in all_u if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
     # 市場 Risk 需要較完整的上市 breadth，因此 K 線快取涵蓋公司母檔；選股仍維持 <500億股本條件。
     print(f"universe={len(u)} marketUniverse={len(all_u)} fetch={fs.date()}..{fe.date()}",flush=True)
@@ -207,7 +212,7 @@ def run(start,end):
     sdts=[d for d in ix.date.astype(str) if start<=d<=end];inst,ine=fetch_many(sdts);sdts,idx,pos,ranks,cand,prices,regimes=rankings(u,all_u,hist,ix,inst,set(ine),start,end);models,edge=evaluate(sdts,idx,pos,ranks,cand,prices,regimes)
     gate_stats={"riskOnDays":sum(r.get("score",0)>=RISK_ON for r in regimes.values()),"strongBottomExceptionDays":sum(r.get("fReason")=="STRONG_BOTTOM_REVERSAL" for r in regimes.values()),"blockedDays":sum(not r.get("fAllowed") for r in regimes.values()),"allowedDays":sum(bool(r.get("fAllowed")) for r in regimes.values()),"f2AllowedDays":sum(bool(r.get("f2Allowed")) for r in regimes.values()),"f2BlockedDays":sum(not r.get("f2Allowed") for r in regimes.values()),"f2EntryDays":sum(r.get("f2Reason")=="RISK_ON_ENTRY" for r in regimes.values()),"f2HoldDays":sum(r.get("f2Reason")=="HYSTERESIS_HOLD" for r in regimes.values()),"f2TopVetoDays":sum(bool(r.get("f2TopVeto")) for r in regimes.values()),"f2ExtremeOverboughtVetoDays":sum(r.get("f2Reason")=="EXTREME_OVERBOUGHT_VETO" for r in regimes.values()),"f2StrongBottomExceptionDays":sum(r.get("f2Reason")=="STRONG_BOTTOM_REVERSAL" for r in regimes.values())}
     compact_regime=[{"date":d,"score":r.get("score"),"state":r.get("state"),"activeState":r.get("activeState"),"breadth":r.get("breadth"),"foreign":r.get("foreign"),"fAllowed":r.get("fAllowed"),"fReason":r.get("fReason"),"f2Allowed":r.get("f2Allowed"),"f2Reason":r.get("f2Reason"),"f2StateOn":r.get("f2StateOn"),"f2TopVeto":r.get("f2TopVeto"),"institutionAvailable":r.get("institutionAvailable")} for d,r in regimes.items()]
-    out={"version":"PY-BT4-F2-DYNAMIC-GATE","generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),"period":{"start":start,"end":end},"signalDays":len(sdts),"universeCount":len(u),"marketUniverseCount":len(all_u),"historySuccess":len(hist)-len(he),"historyErrors":len(he),"institutionErrors":len(ine),"models":models,"edgeAudit":edge,"marketGateStats":gate_stats,"marketRegime":compact_regime,"elapsedSeconds":round(time.time()-t,1),"notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 才進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉 hysteresis，Extreme Overbought 禁止新進場但保留 regime 狀態。","歷史 Risk 依 Dashboard 權重重建：指數趨勢 + 上市 breadth + T86 外資淨買賣估值，不使用未來資料。","A 歷史排序補上 SAR bullish trend bonus 作同分排序，對齊正式版。","回測報酬優先使用 Yahoo adjusted close factor 修正公司行動；舊快取若尚無 adjclose，偵測極端單日價格尺度跳變並排除該筆報酬。","法人失敗日期會序列重試；仍失敗者標記 institutionAvailable=false，不再默認視為資料完整。","Yahoo K 使用雙向 Parquet 增量快取；舊快取若缺 adjusted close 會補抓本次所需區間一次，後續不重抓。","資金曲線採 Top3 等權、非重疊持有週期，逐日 mark-to-market，扣買賣手續費各0.1425%與賣出證交稅0.3%。","目前公司母檔仍以現存上市櫃公司為基礎，已上市但後續下市股票可能造成 survivorship bias，結果需保守解讀。"]}
+    out={"version":"PY-BT4-F2-DYNAMIC-GATE","generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),"requestedPeriod":{"start":requested_start,"end":requested_end},"period":{"start":start,"end":end},"signalDays":len(sdts),"universeCount":len(u),"marketUniverseCount":len(all_u),"historySuccess":len(hist)-len(he),"historyErrors":len(he),"institutionErrors":len(ine),"models":models,"edgeAudit":edge,"marketGateStats":gate_stats,"marketRegime":compact_regime,"elapsedSeconds":round(time.time()-t,1),"notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 才進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉 hysteresis，Extreme Overbought 禁止新進場但保留 regime 狀態。","歷史 Risk 依 Dashboard 權重重建：指數趨勢 + 上市 breadth + T86 外資淨買賣估值，不使用未來資料。","A 歷史排序補上 SAR bullish trend bonus 作同分排序，對齊正式版。","回測報酬優先使用 Yahoo adjusted close factor 修正公司行動；舊快取若尚無 adjclose，偵測極端單日價格尺度跳變並排除該筆報酬。","法人失敗日期會序列重試；仍失敗者標記 institutionAvailable=false，不再默認視為資料完整。","Yahoo K 使用雙向 Parquet 增量快取；舊快取若缺 adjusted close 會補抓本次所需區間一次，後續不重抓。","資金曲線採 Top3 等權、非重疊持有週期，逐日 mark-to-market，扣買賣手續費各0.1425%與賣出證交稅0.3%。","回測只使用已完整結束的交易日；若結束日填今天，會自動截止到前一曆日，再由基準指數交易日序列取最後完整交易日。","目前公司母檔仍以現存上市櫃公司為基礎，已上市但後續下市股票可能造成 survivorship bias，結果需保守解讀。"]}
     p=DATA_DIR/"backtest";p.mkdir(parents=True,exist_ok=True)
     body=json.dumps(out,ensure_ascii=False,indent=2);(p/"latest.json").write_text(body,encoding="utf-8")
     archive=f"{start}_{end}.json";(p/archive).write_text(body,encoding="utf-8")

@@ -11,7 +11,7 @@ import pipeline
 from pipeline import _normalize_company,published_data_date,previous_f2_state
 from industry_chain import looks_mojibake,parse as parse_chain
 import risk,yahoo_cache
-from backtest import _portfolio_stats,_has_unadjusted_scale_jump
+from backtest import _portfolio_stats,_has_unadjusted_scale_jump,effective_backtest_end
 
 class CoreTests(unittest.TestCase):
     def frame(self,n=100):
@@ -68,6 +68,11 @@ class CoreTests(unittest.TestCase):
         ranks={"D":{d:[{"code":"2330","market":"上市","rank":1}] for d in dates}}
         x=_portfolio_stats(dates,idx,pos,ranks,{"2330.TW":px},"D",1)
         self.assertGreater(x["investedPeriods"],0);self.assertIn("cagr",x);self.assertIn("maxDrawdown",x);self.assertAlmostEqual(x["costPct"],.585,places=3)
+    def test_effective_backtest_end_excludes_today(self):
+        now=datetime(2026,10,8,10,30,tzinfo=timezone.utc)
+        self.assertEqual(effective_backtest_end("2026-10-08",now),"2026-10-07")
+        self.assertEqual(effective_backtest_end("2026-10-07",now),"2026-10-07")
+        with self.assertRaises(ValueError):effective_backtest_end("2026-10-09",now)
     def test_previous_f2_state_rebuilds_legacy_hysteresis(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);daily=root/"daily";daily.mkdir()
@@ -87,13 +92,6 @@ class CoreTests(unittest.TestCase):
         self.assertTrue(risk.f_gate({"score":60,"bottomState":"⚪ Bottom Watch"})["allowed"])
         x=risk.f_gate({"score":30,"bottomState":"🟢 Strong Bottom Reversal"});self.assertTrue(x["allowed"]);self.assertTrue(x["exception"])
         self.assertFalse(risk.f_gate({"score":59,"bottomState":"🟣 Extreme Oversold"})["allowed"])
-    def test_f2_gate_hysteresis_and_veto(self):
-        x=risk.f2_gate({"score":60,"activeState":"⚪ Normal"},False);self.assertTrue(x["allowed"]);self.assertTrue(x["stateOn"])
-        x=risk.f2_gate({"score":57,"activeState":"⚪ Normal"},True);self.assertTrue(x["allowed"]);self.assertEqual(x["reason"],"HYSTERESIS_HOLD")
-        x=risk.f2_gate({"score":54,"activeState":"⚪ Normal"},True);self.assertFalse(x["allowed"]);self.assertFalse(x["stateOn"])
-        x=risk.f2_gate({"score":40,"activeState":"🟢 Strong Bottom Reversal"},False);self.assertTrue(x["allowed"]);self.assertTrue(x["exception"]);self.assertFalse(x["stateOn"])
-        x=risk.f2_gate({"score":80,"activeState":"🟠 Top Reversal Attempt"},True);self.assertFalse(x["allowed"]);self.assertTrue(x["topVeto"]);self.assertFalse(x["stateOn"])
-        x=risk.f2_gate({"score":82,"activeState":"🔴 Extreme Overbought"},True);self.assertFalse(x["allowed"]);self.assertTrue(x["topVeto"]);self.assertTrue(x["stateOn"]);self.assertEqual(x["reason"],"EXTREME_OVERBOUGHT_VETO")
     def test_f2_gate_hysteresis_and_veto(self):
         x=risk.f2_gate({"score":60,"activeState":"⚪ Normal"},False,60,55);self.assertTrue(x["allowed"]);self.assertTrue(x["stateOn"]);self.assertEqual(x["reason"],"RISK_ON_ENTRY")
         x=risk.f2_gate({"score":57,"activeState":"⚪ Normal"},True,60,55);self.assertTrue(x["allowed"]);self.assertEqual(x["reason"],"HYSTERESIS_HOLD")
