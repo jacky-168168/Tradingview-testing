@@ -10,7 +10,7 @@ from institution import parse_twse
 import pipeline
 from pipeline import _normalize_company,published_data_date,previous_f2_state
 from industry_chain import looks_mojibake,parse as parse_chain
-import risk,yahoo_cache
+import risk,yahoo_cache,sector_flow
 from backtest import _portfolio_stats,_has_unadjusted_scale_jump,effective_backtest_end
 
 class CoreTests(unittest.TestCase):
@@ -88,6 +88,17 @@ class CoreTests(unittest.TestCase):
             (daily/"index.json").write_text(json.dumps([{"date":"2026-10-07"},{"date":"2026-10-05"}]),encoding="utf-8")
             with patch.object(pipeline,"LATEST_JSON",latest),patch.object(pipeline,"DATA_DIR",root):
                 self.assertEqual(published_data_date(),"2026-10-07")
+    def test_sector_flow_quadrants(self):
+        self.assertEqual(sector_flow.classify(10,2),"漲潮")
+        self.assertEqual(sector_flow.classify(10,-2),"輪動")
+        self.assertEqual(sector_flow.classify(-10,2),"觀望")
+        self.assertEqual(sector_flow.classify(-10,-2),"退潮")
+    def test_sector_flow_twse_parser_exact_dealer(self):
+        j={"fields":["證券代號","外陸資買賣超股數(不含外資自營商)","外資自營商買賣超股數","投信買賣超股數","自營商買賣超股數"],"data":[["2330","100","5","20","30"]]}
+        x=sector_flow._parse_twse(j)["上市_2330"];self.assertEqual(x["foreign"],105);self.assertEqual(x["trust"],20);self.assertEqual(x["dealer"],30);self.assertEqual(x["total"],155)
+    def test_sector_flow_tpex_parser(self):
+        r=["6488","環球晶"]+["0"]*22;r[10]="100";r[13]="20";r[22]="30"
+        x=sector_flow._parse_tpex({"tables":[{"data":[r]}]})["上櫃_6488"];self.assertEqual(x["foreign"],100);self.assertEqual(x["trust"],20);self.assertEqual(x["dealer"],30);self.assertEqual(x["total"],150)
     def test_f_gate_rules(self):
         self.assertTrue(risk.f_gate({"score":60,"bottomState":"⚪ Bottom Watch"})["allowed"])
         x=risk.f_gate({"score":30,"bottomState":"🟢 Strong Bottom Reversal"});self.assertTrue(x["allowed"]);self.assertTrue(x["exception"])

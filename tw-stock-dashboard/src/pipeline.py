@@ -11,6 +11,7 @@ from risk import build as build_risk,f_gate,f2_gate
 from sar import apply as apply_sar
 from industry_chain import enrich as enrich_chain
 from panels import institution_flow,topic_heat
+from sector_flow import build as build_sector_flow
 
 HEADERS={"User-Agent":"Mozilla/5.0 tw-stock-dashboard/3.0","Accept":"application/json"}
 
@@ -120,6 +121,9 @@ def main():
         print(json.dumps({"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"publishedDate":published,"skipped":"stale-market-date"},ensure_ascii=False));return
     universe=load_universe();eligible=[x for x in universe if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
     histories,errors=update_many([(x["code"],x["market"]) for x in eligible],start,now)
+    extra=[x for x in universe if f'{x["market"]}_{x["code"]}' not in {f'{y["market"]}_{y["code"]}' for y in eligible}]
+    extra_hist,extra_err=update_many([(x["code"],x["market"]) for x in extra],start,now) if extra else ({},{})
+    all_hist={**histories,**extra_hist}
     risk=build_risk(idx,RISK_ON,RISK_STRONG,RISK_OFF);mkt20=float(risk.get("ret20",0) or 0)
     _,inst,insterr=fetch_day(market_date);names={f'{x["market"]}_{x["code"]}':x["name"] for x in universe}
     a=[];d=[]
@@ -146,10 +150,12 @@ def main():
     f2=[{**x,"model":"F2","marketGate":gate2["reason"],"signal":f2sig} for x in f2src]
     candidate_counts["F"]=len(f);candidate_counts["F2"]=len(f2)
     flow=institution_flow(inst,names);heat=topic_heat(market_date)
+    try:sector_flow=build_sector_flow(universe,all_hist,idx,market_date)
+    except Exception as e:sector_flow={"dataDate":market_date,"sectors":[],"error":str(e)}
     payload={"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"benchmarkRet20":round(mkt20,4),"universeCount":len(eligible),
              "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d,"F":f,"F2":f2},"risk":{**risk,"fGate":gate,"f2Gate":gate2},
-             "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86／上櫃暫為0","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
-             "candidateCounts":candidate_counts,"phase":"github-python-v7-f2","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。"]}
+             "panels":{"institutionFlow":flow,"topicHeat":heat,"sectorFlow":sector_flow,"institutionSource":"TWSE T86／上櫃維持V12.2計分口徑","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
+             "candidateCounts":candidate_counts,"phase":"github-python-v8-sector-flow","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。"]}
     DATA_DIR.mkdir(parents=True,exist_ok=True);body=json.dumps(payload,ensure_ascii=False,indent=2);LATEST_JSON.write_text(body,encoding="utf-8")
     daily=DATA_DIR/"daily";daily.mkdir(parents=True,exist_ok=True);(daily/f"{market_date}.json").write_text(body,encoding="utf-8")
     ip=daily/"index.json"
