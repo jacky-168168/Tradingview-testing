@@ -30,13 +30,16 @@ jobs:
       - name: Run 2026 only
         working-directory: tw-stock-dashboard
         run: python src/backtest_signal_model.py --start 2026-01-01 --end 2026-10-07
+      - name: Run chronological G_TARGET study and 2026 backtest
+        working-directory: tw-stock-dashboard
+        run: python src/backtest_target.py --start 2026-01-01 --end 2026-10-07
       - name: Commit 2026 result
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tw-stock-dashboard/docs/data/backtest_g/2026-01-01_2026-10-07.json
+          git add tw-stock-dashboard/docs/data/backtest_g/2026-01-01_2026-10-07.json tw-stock-dashboard/docs/data/backtest_g/target_2026.json
           if ! git diff --cached --quiet; then
-            git commit -m "Run 2026 G breakout backtest"
+            git commit -m "Run 2026 G_BASE and chronologically trained G_TARGET backtests"
             git pull --rebase origin main
             git push origin HEAD:main
           fi
