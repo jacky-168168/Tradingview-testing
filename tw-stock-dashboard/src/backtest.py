@@ -106,7 +106,7 @@ def _portfolio_stats(signals,idx,pos,ranks,prices,model,h):
     active=[x for x in cohort if abs(x)>1e-12]
     return {"horizon":h,"periods":len(cohort),"investedPeriods":invested,"totalReturn":round((equity-1)*100,2),"cagr":round(cagr,2),"sharpe":None if sh is None else round(sh,2),"maxDrawdown":round(mdd,2),"winRate":None if not active else round(sum(x>0 for x in active)/len(active)*100,1),"avgNet":None if not active else round(float(np.mean(active)),2),"costPct":round(BUY_FEE_PCT+SELL_FEE_PCT+SELL_TAX_PCT,4)}
 
-def rankings(universe,market_universe,hist,index_df,inst,inst_errors,start,end):
+def rankings(universe,market_universe,hist,index_df,inst,inst_errors,start,end,revenue=None):
     idx=index_df.copy().sort_values("date").reset_index(drop=True);idx["close"]=pd.to_numeric(idx.close,errors="coerce")
     dates=idx.date.astype(str).tolist();pos={d:i for i,d in enumerate(dates)};signals=[d for d in dates if start<=d<=end]
     feats={};prices={}
@@ -117,6 +117,7 @@ def rankings(universe,market_universe,hist,index_df,inst,inst_errors,start,end):
         prices[sym]=df.sort_values("date").set_index("date",drop=False)
         if sym in needed:feats[sym]=precompute_features(df).set_index("date",drop=False)
     ranks={"A":{},"D":{},"F":{},"F2":{}};cand={"A":{},"D":{},"F":{},"F2":{}};regimes={};f2_on=False
+    if revenue is not None:ranks["E"]={};cand["E"]={};revenue_audit={"dStrictTotal":0,"dRevenueAvailable":0,"ePassed":0}
     selection_keys={f'{x["market"]}_{x["code"]}':x for x in universe}
     for n,d in enumerate(signals,1):
         ip=pos[d]
@@ -155,6 +156,18 @@ def rankings(universe,market_universe,hist,index_df,inst,inst_errors,start,end):
             x["sarBonus"]=_historical_sar_bonus(prices.get(to_symbol(x["code"],x["market"])),d)
         rows["A"].sort(key=_final_sort_a);rows["D"].sort(key=sort_key)
         cand["A"][d]=len(rows["A"]);cand["D"][d]=len(rows["D"])
+        if revenue is not None:
+            erows=[]
+            for x in rows["D"]:
+                revenue_audit["dStrictTotal"]+=1
+                rev=revenue.asof(x["market"],x["code"],d)
+                if rev is None:continue
+                revenue_audit["dRevenueAvailable"]+=1
+                if (rev["mom"] is not None and rev["mom"]>0) or (rev["yoy"] is not None and rev["yoy"]>0):
+                    erows.append({**x,"model":"E","revenueMonth":rev["month"],"revenueMoM":rev["mom"],"revenueYoY":rev["yoy"]})
+                    revenue_audit["ePassed"]+=1
+            cand["E"][d]=len(erows)
+            ranks["E"][d]=[{**x,"rank":i+1} for i,x in enumerate(erows[:BACKTEST_DIAGNOSTIC_TOP_N])]
         ranks["A"][d]=[{**x,"rank":i+1} for i,x in enumerate(rows["A"][:BACKTEST_ENTRY_TOP_N])]
         ranks["D"][d]=[{**x,"rank":i+1} for i,x in enumerate(rows["D"][:BACKTEST_DIAGNOSTIC_TOP_N])]
         frows=[]
@@ -170,7 +183,7 @@ def rankings(universe,market_universe,hist,index_df,inst,inst_errors,start,end):
     return signals,idx,pos,ranks,cand,prices,regimes
 
 def rank_pool_analysis(signals,idx,pos,ranks,prices,model):
-    if model not in ("D","F","F2"):return None
+    if model not in ("D","F","F2","E"):return None
     bands=[("Rank1-3",1,3),("Rank4-10",4,10),("Rank11-20",11,20),("Rank4-20",4,20),("Top20",1,20)]
     stock={name:{h:[] for h in H} for name,_,_ in bands};daily={name:{h:[] for h in H} for name,_,_ in bands};spreads={h:[] for h in H};factor_rows=[]
     for d in signals:
@@ -227,7 +240,7 @@ def factor_analysis(sig):
 
 def evaluate(signals,idx,pos,ranks,cand,prices,regimes):
     models={};edgein={}
-    for model in ["A","D","F","F2"]:
+    for model in ["A","D","F","F2"]+(["E"] if "E" in ranks else []):
         rb={h:{1:[],2:[],3:[]} for h in H};avail={h:[] for h in H};fixed={h:[] for h in H};dated={h:[] for h in H};sig=[]
         for d in signals:
             sip=pos.get(d)
@@ -237,7 +250,7 @@ def evaluate(signals,idx,pos,ranks,cand,prices,regimes):
                 sym=to_symbol(p["code"],p["market"]);px=prices.get(sym);bo=None;buyrow=None
                 if px is not None and buydate in px.index:
                     q=px.loc[buydate];q=q.iloc[-1] if isinstance(q,pd.DataFrame) else q;buyrow=q;bo=_adj_price(q,"open")
-                rec={"model":model,"signalDate":d,"rank":p["rank"],"code":p["code"],"name":p["name"],"market":p["market"],"score":round(p["total"],2),"buyDate":buydate,"buyOpen":round(bo,4) if bo else None,"ret5Signal":round(p["ret5"],2),"ret20Signal":round(p["ret20"],2),"rs20":round(p["rs20"],2),"breakoutPct":round(p["breakoutPct"],2),"dist20High":round(p["breakoutPct"],2),"ma20Slope":round(p["ma20Slope"],2),"rvol":round(p["rvol"],2),"rvol10":round(p["rvol10"],2),"mom10Pct":round(p["mom10Pct"],2),"volD":round(p["volD"],2),"marketRiskScore":rg.get("score"),"marketState":rg.get("state"),"reversalState":rg.get("activeState"),"fReason":p.get("f2Reason") or p.get("fReason")}
+                rec={"model":model,"signalDate":d,"rank":p["rank"],"code":p["code"],"name":p["name"],"market":p["market"],"score":round(p["total"],2),"buyDate":buydate,"buyOpen":round(bo,4) if bo else None,"ret5Signal":round(p["ret5"],2),"ret20Signal":round(p["ret20"],2),"rs20":round(p["rs20"],2),"breakoutPct":round(p["breakoutPct"],2),"dist20High":round(p["breakoutPct"],2),"ma20Slope":round(p["ma20Slope"],2),"rvol":round(p["rvol"],2),"rvol10":round(p["rvol10"],2),"mom10Pct":round(p["mom10Pct"],2),"volD":round(p["volD"],2),"marketRiskScore":rg.get("score"),"marketState":rg.get("state"),"reversalState":rg.get("activeState"),"fReason":p.get("f2Reason") or p.get("fReason"),"revenueMonth":p.get("revenueMonth"),"revenueMoM":p.get("revenueMoM"),"revenueYoY":p.get("revenueYoY")}
                 for h in H:
                     target=sip+h;r=None
                     if bo and target<len(idx):
@@ -254,11 +267,11 @@ def evaluate(signals,idx,pos,ranks,cand,prices,regimes):
         summary=[{"group":f"Rank{r}",**{f"d{h}":stat(rb[h][r]) for h in H}} for r in [1,2,3]]
         summary+=[{"group":"Top3可用等權",**{f"d{h}":stat(avail[h]) for h in H}},{"group":"Top3固定三槽",**{f"d{h}":stat(fixed[h]) for h in H}}]
         cc=list(cand[model].values());cs={"avg":round(float(np.mean(cc)),1) if cc else 0,"min":min(cc) if cc else 0,"max":max(cc) if cc else 0,"days3":sum(x>=3 for x in cc),"totalDays":len(cc)}
-        name={"A":"原始版","D":"技術強勢","F":"D＋固定大盤濾網","F2":"D＋動態大盤濾網"}[model]
+        name={"A":"原始版","D":"技術強勢","F":"D＋固定大盤濾網","F2":"D＋動態大盤濾網","E":"D＋營收MoM/YoY任一為正"}[model]
         portfolio={f"d{h}":_portfolio_stats(signals,idx,pos,ranks,prices,model,h) for h in H};models[model]={"id":model,"name":name,"summary":summary,"candidateStats":cs,"signals":sig,"portfolio":portfolio,"factorAnalysis":factor_analysis(sig),"rankPoolAnalysis":rank_pool_analysis(signals,idx,pos,ranks,prices,model)};edgein[model]=dated
-    return [models["A"],models["D"],models["F"],models["F2"]],build_edge(edgein)
+    return [models[k] for k in ["A","D","F","F2","E"] if k in models],build_edge(edgein)
 
-def run(start,end):
+def run(start,end,revenue=None,output_namespace=None):
     t=time.time();requested_start=start;requested_end=end;end=effective_backtest_end(end);sd=datetime.fromisoformat(start);ed=datetime.fromisoformat(end)
     if sd>ed:raise ValueError("有效回測區間沒有已完整收盤的交易日")
     if (ed.date()-sd.date()).days+1>731:raise ValueError("日期區間最多 731 天")
@@ -267,11 +280,18 @@ def run(start,end):
     print(f"universe={len(u)} marketUniverse={len(all_u)} fetch={fs.date()}..{fe.date()}",flush=True)
     hist,he=update_many([(x["code"],x["market"]) for x in all_u],fs,fe);_,ix,ie=update_symbol(BENCHMARK,fs,fe)
     if ie or ix is None or len(ix)<60:raise RuntimeError(f"benchmark unavailable: {ie}")
-    sdts=[d for d in ix.date.astype(str) if start<=d<=end];inst,ine=fetch_many(sdts);sdts,idx,pos,ranks,cand,prices,regimes=rankings(u,all_u,hist,ix,inst,set(ine),start,end);models,edge=evaluate(sdts,idx,pos,ranks,cand,prices,regimes)
+    sdts=[d for d in ix.date.astype(str) if start<=d<=end];inst,ine=fetch_many(sdts);sdts,idx,pos,ranks,cand,prices,regimes=rankings(u,all_u,hist,ix,inst,set(ine),start,end,revenue=revenue);models,edge=evaluate(sdts,idx,pos,ranks,cand,prices,regimes)
     gate_stats={"riskOnDays":sum(r.get("score",0)>=RISK_ON for r in regimes.values()),"strongBottomExceptionDays":sum(r.get("fReason")=="STRONG_BOTTOM_REVERSAL" for r in regimes.values()),"blockedDays":sum(not r.get("fAllowed") for r in regimes.values()),"allowedDays":sum(bool(r.get("fAllowed")) for r in regimes.values()),"f2AllowedDays":sum(bool(r.get("f2Allowed")) for r in regimes.values()),"f2BlockedDays":sum(not r.get("f2Allowed") for r in regimes.values()),"f2EntryDays":sum(r.get("f2Reason")=="RISK_ON_ENTRY" for r in regimes.values()),"f2HoldDays":sum(r.get("f2Reason")=="HYSTERESIS_HOLD" for r in regimes.values()),"f2TopVetoDays":sum(bool(r.get("f2TopVeto")) for r in regimes.values()),"f2ExtremeOverboughtVetoDays":sum(r.get("f2Reason")=="EXTREME_OVERBOUGHT_VETO" for r in regimes.values()),"f2StrongBottomExceptionDays":sum(r.get("f2Reason")=="STRONG_BOTTOM_REVERSAL" for r in regimes.values())}
     compact_regime=[{"date":d,"score":r.get("score"),"state":r.get("state"),"activeState":r.get("activeState"),"breadth":r.get("breadth"),"foreign":r.get("foreign"),"fAllowed":r.get("fAllowed"),"fReason":r.get("fReason"),"f2Allowed":r.get("f2Allowed"),"f2Reason":r.get("f2Reason"),"f2StateOn":r.get("f2StateOn"),"f2TopVeto":r.get("f2TopVeto"),"institutionAvailable":r.get("institutionAvailable")} for d,r in regimes.items()]
     out={"version":"PY-BT4-F2-DYNAMIC-GATE","generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),"requestedPeriod":{"start":requested_start,"end":requested_end},"period":{"start":start,"end":end},"signalDays":len(sdts),"universeCount":len(u),"marketUniverseCount":len(all_u),"historySuccess":len(hist)-len(he),"historyErrors":len(he),"institutionErrors":len(ine),"models":models,"edgeAudit":edge,"marketGateStats":gate_stats,"marketRegime":compact_regime,"elapsedSeconds":round(time.time()-t,1),"notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 才進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉 hysteresis，Extreme Overbought 禁止新進場但保留 regime 狀態。","歷史 Risk 依 Dashboard 權重重建：指數趨勢 + 上市 breadth + T86 外資淨買賣估值，不使用未來資料。","A 歷史排序補上 SAR bullish trend bonus 作同分排序，對齊正式版。","回測報酬優先使用 Yahoo adjusted close factor 修正公司行動；舊快取若尚無 adjclose，偵測極端單日價格尺度跳變並排除該筆報酬。","法人失敗日期會序列重試；仍失敗者標記 institutionAvailable=false，不再默認視為資料完整。","Yahoo K 使用雙向 Parquet 增量快取；舊快取若缺 adjusted close 會補抓本次所需區間一次，後續不重抓。","資金曲線採 Top3 等權、非重疊持有週期，逐日 mark-to-market，扣買賣手續費各0.1425%與賣出證交稅0.3%。","回測只使用已完整結束的交易日；若結束日填今天，會自動截止到前一曆日，再由基準指數交易日序列取最後完整交易日。","正式選股可顯示 Top20；回測只模擬每個訊號日 Rank1~3，Top3 等權組合為主要進場績效。回測另保留 Rank1-3／4-10／11-20 的 Top20 診斷，不把 Rank4-20 當成實際持倉。","目前公司母檔仍以現存上市櫃公司為基礎，已上市但後續下市股票可能造成 survivorship bias，結果需保守解讀。"]}
-    p=DATA_DIR/"backtest";p.mkdir(parents=True,exist_ok=True)
+    if revenue is not None:
+        out["version"]="PY-BT-E-REVENUE-ASOF-1Y"
+        out["models"]=[m for m in models if m["id"] in ("D","E")]
+        out["edgeAudit"]={"models":{k:v for k,v in (edge.get("models") or {}).items() if k in ("D","E")}} if isinstance(edge,dict) else {}
+        out["revenueCoverage"]=revenue.coverage
+        out["revenuePolicy"]=revenue.policy
+        out["notes"].extend(["E 與 D 使用同一嚴格技術篩選，E 在全部 D 嚴格候選中以當時可用的最近一期月營收 MoM>0% 或 YoY>0% 篩選，再以 D 原分數重新排序取 Top3；缺少營收資料者不通過。","營收來源為官方 MOPS 歷史月報彙整快照，採次月11日起可用的保守時點假設；沒有個股精確公告日與歷次修正版本，不能宣稱完全 point-in-time。"])
+    p=DATA_DIR/(output_namespace or ("backtest_e" if revenue is not None else "backtest"));p.mkdir(parents=True,exist_ok=True)
     body=json.dumps(out,ensure_ascii=False,indent=2);(p/"latest.json").write_text(body,encoding="utf-8")
     archive=f"{start}_{end}.json";(p/archive).write_text(body,encoding="utf-8")
     ip=p/"index.json"
