@@ -92,3 +92,10 @@ GitHub → Actions → **TW Stock Backtest** → Run workflow → 輸入開始 /
 - 個別研究：`src/research_multiday.py`，輸出`docs/data/research/g_multiday_2026.json`與CSV；同日強勢候選對照：`src/research_multiday_controls.py`，輸出`docs/data/research/g_multiday_controls_2026.json`。
 - 年度比較：`src/backtest_candle.py`比較G_BROAD純強勢、G_CANDLE型態加分、G_TRIGGER前高突破或紅吞觸發，輸出`docs/data/backtest_g/g_candle_2026.json`，2026日K收盤選股後下一交易日開盤模擬進場，1/3/5/10/20D。
 - 基於僅20筆已知訊號設計的參數都屬回顧性探索；市場對照組並非與發訊者的非發訊決策完全一致，尚需未來新發文訊號作時間上真正未見資料驗證。沒有複製作者的指定突破價格與停損算法。
+
+## 網站進入密碼（瀏覽器端；非資料保密機制）
+- 所有 8 個 `docs/*.html` 頁面均載入 `docs/site-access.js`，直接開啟子頁也會出現密碼畫面；沿用原選股應用的網站通行碼（檔案只存驗證雜湊，不存明碼）。
+- 首次輸入正確後，這台裝置／瀏覽器使用 `localStorage` 保留 48 小時，下方「🔒 鎖定網站」可立即登出；清除瀏覽器儲存資料也會重新要求通行碼。
+- 驗證在瀏覽器內完成；**這不是伺服器身分驗證**。任何人仍可直接取得 GitHub Pages 上的 HTML、JS、JSON，以及公開 GitHub 倉庫原始碼；瀏覽器端檢查也能被技術性繞過。不能用來保護個人資料、交易秘密或商業機密。
+- 要真正限制訪客及資料下載，必須改為伺服器端驗證（例如搬到支援會員登入／存取政策的託管服務），並將需要保護的資料移離公開 GitHub 倉庫；只有前端登入頁是不夠的。
+- 修改網站密碼應先計算 `SHA-256(SITE_SALT + ":" + 新密碼)`，更新 `docs/site-access.js` 的 `SITE_PASS_SHA256`；換密碼時也應更換 `ACCESS_KEY`，使舊瀏覽器登入記錄失效。測試：`node tw-stock-dashboard/tests/test_site_access.cjs`。
