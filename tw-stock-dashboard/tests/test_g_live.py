@@ -81,6 +81,8 @@ class TestLiveG(unittest.TestCase):
         self.assertIn('TABLE_COMPACT=true',text)
         self.assertIn('function applyTableMode(){',text)
         self.assertIn('left:32px',text)
-        self.assertIn('gCols=new Set([0,1,3,4,6,7,8,9,10,13,15,16,17,18,19,20,21])',text)
+        self.assertIn('gCols=new Set([0,1,3,4,6,7,9,10,13,14,15,17,18,19,20,21])',text)
+        self.assertIn('gHiddenCols=new Set([8,16])',text)
+        self.assertIn('heads[14].textContent=isG?"投信買賣超"',text)
 
 if __name__=="__main__":unittest.main()
