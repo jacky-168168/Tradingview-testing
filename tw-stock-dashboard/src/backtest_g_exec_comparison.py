@@ -46,7 +46,7 @@ def execution(bars,first_day_index,signal_close,hold_days,mode):
     seq=frames.iloc[:hold_days+INITIAL_WAIT_DAYS-1]
     if len(seq)<hold_days+INITIAL_WAIT_DAYS-1:return {"status":"insufficient_future"}
     closes=pd.to_numeric(seq.close,errors="coerce").to_numpy(dtype=float)
-    if not np.isfinite(closes).all() or np.any((closes[1:]/closes[:-1]>.8e1)|(closes[1:]/closes[:-1]<.55)):return {"status":"invalid"}
+    if not np.isfinite(closes).all() or np.any((closes[1:]/closes[:-1]>1.80)|(closes[1:]/closes[:-1]<.55)):return {"status":"invalid"}
     first_limit=signal_close*.975
     bought={};orders=[];first_fill=None;first_fill_i=None;first_open=None
     def pay(px,k,day):
