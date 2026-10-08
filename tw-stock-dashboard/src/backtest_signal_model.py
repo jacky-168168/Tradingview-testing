@@ -3,7 +3,7 @@ import argparse,json,time
 from datetime import datetime,timedelta
 from zoneinfo import ZoneInfo
 import numpy as np,pandas as pd
-from config import DATA_DIR,MAX_CAPITAL_B,MIN_PRICE
+from config import DATA_DIR,MIN_PRICE
 from pipeline import load_universe
 from yahoo_cache import update_many,update_symbol,to_symbol
 from scoring import precompute_features
@@ -63,7 +63,7 @@ def phase_portfolio(signals,dates,pos,ranks,prices,meta,h):
     vals=[x["totalReturn"] for x in outs if x["periods"]]
     return {"phases":outs,"meanTotalReturn":round(float(np.mean(vals)),2) if vals else None,"medianTotalReturn":round(float(np.median(vals)),2) if vals else None,"worstTotalReturn":round(float(np.min(vals)),2) if vals else None,"bestTotalReturn":round(float(np.max(vals)),2) if vals else None}
 def run(start,end):
-    t=time.time();all_u=load_universe();u=[x for x in all_u if 0<num(x.get("capitalB"),0)<MAX_CAPITAL_B]
+    t=time.time();all_u=load_universe();u=[x for x in all_u if num(x.get("capitalB"),0)>0]
     fs=datetime.fromisoformat(start)-timedelta(days=180);fe=datetime.fromisoformat(end)+timedelta(days=35)
     hist,errors=update_many([(x["code"],x["market"]) for x in all_u],fs,fe);_,ix,ie=update_symbol("^TWII",fs,fe)
     if ie or ix is None or ix.empty:raise RuntimeError(f"benchmark unavailable {ie}")
