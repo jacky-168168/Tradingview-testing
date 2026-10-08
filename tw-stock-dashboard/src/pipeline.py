@@ -139,9 +139,11 @@ def main():
     for x in a+d:x["signal"]=_risk_signal(x,risk)
     a=sorted(a,key=_final_sort_a)[:TOP_N];d=sorted(d,key=_final_sort_d)[:TOP_N]
     enrich_chain(a);enrich_chain(d)
-    gate=f_gate(risk,RISK_ON);prev_f2_on=previous_f2_state(market_date);gate2=f2_gate(risk,prev_f2_on,RISK_ON,55);fsrc=(d[:3] if gate["exception"] else d) if gate["allowed"] else []
+    gate=f_gate(risk,RISK_ON);prev_f2_on=previous_f2_state(market_date);gate2=f2_gate(risk,prev_f2_on,RISK_ON,55)
+    # 正式選股頁是候選清單，不是實際下單：D/F/F2 一律保留最多 TOP_N(20)；只有回測才限制進場 Top3。
+    fsrc=d if gate["allowed"] else []
     f=[{**x,"model":"F","marketGate":gate["reason"],"signal":"🟣 F強反轉例外" if gate["exception"] else "🟢 F Risk ON"} for x in fsrc]
-    f2src=(d[:3] if gate2["exception"] else d) if gate2["allowed"] else []
+    f2src=d if gate2["allowed"] else []
     f2sig="🟣 F2 強反轉例外" if gate2["exception"] else "⛔ F2 Top Veto" if gate2["topVeto"] else "🟢 F2 維持ON" if gate2["reason"]=="HYSTERESIS_HOLD" else "🟢 F2 Risk ON"
     f2=[{**x,"model":"F2","marketGate":gate2["reason"],"signal":f2sig} for x in f2src]
     candidate_counts["F"]=len(f);candidate_counts["F2"]=len(f2)
@@ -149,7 +151,7 @@ def main():
     payload={"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"benchmarkRet20":round(mkt20,4),"universeCount":len(eligible),
              "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d,"F":f,"F2":f2},"risk":{**risk,"fGate":gate,"f2Gate":gate2},
              "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86／上櫃暫為0","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
-             "candidateCounts":candidate_counts,"phase":"github-python-v7-f2","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。"]}
+             "candidateCounts":candidate_counts,"phase":"github-python-v7-f2","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。","正式選股 D/F/F2 顯示最多 Top20；Top20 是候選清單，不代表全部進場。回測才固定模擬 Rank1~3。"]}
     DATA_DIR.mkdir(parents=True,exist_ok=True);body=json.dumps(payload,ensure_ascii=False,indent=2);LATEST_JSON.write_text(body,encoding="utf-8")
     daily=DATA_DIR/"daily";daily.mkdir(parents=True,exist_ok=True);(daily/f"{market_date}.json").write_text(body,encoding="utf-8")
     ip=daily/"index.json"
