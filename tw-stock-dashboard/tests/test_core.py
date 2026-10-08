@@ -10,7 +10,7 @@ from institution import parse_twse
 import pipeline
 from pipeline import _normalize_company,published_data_date
 from industry_chain import looks_mojibake,parse as parse_chain
-import risk,yahoo_cache
+import risk,yahoo_cache\nfrom backtest import _portfolio_stats
 
 class CoreTests(unittest.TestCase):
     def frame(self,n=100):
@@ -54,6 +54,16 @@ class CoreTests(unittest.TestCase):
         with patch("yahoo_cache.requests.get") as get:
             x=yahoo_cache._fetch("^TWII",future,future+timedelta(hours=1))
             self.assertTrue(x.empty);get.assert_not_called()
+    def test_adjusted_cache_backfill_detection(self):
+        d=self.frame(40);start=datetime(2026,1,5);end=datetime(2026,2,5)
+        self.assertTrue(yahoo_cache._needs_adj_backfill(d,start,end))
+        d["adjclose"]=d["close"];self.assertFalse(yahoo_cache._needs_adj_backfill(d,start,end))
+    def test_portfolio_stats_cost_aware(self):
+        dates=pd.date_range("2026-01-01",periods=12).strftime("%Y-%m-%d").tolist();idx=pd.DataFrame({"date":dates});pos={d:i for i,d in enumerate(dates)}
+        px=pd.DataFrame({"date":dates,"open":[100+i for i in range(12)],"high":[101+i for i in range(12)],"low":[99+i for i in range(12)],"close":[101+i for i in range(12)],"adjclose":[101+i for i in range(12)],"volume":[1_000_000]*12}).set_index("date",drop=False)
+        ranks={"D":{d:[{"code":"2330","market":"上市","rank":1}] for d in dates}}
+        x=_portfolio_stats(dates,idx,pos,ranks,{"2330.TW":px},"D",1)
+        self.assertGreater(x["investedPeriods"],0);self.assertIn("cagr",x);self.assertIn("maxDrawdown",x);self.assertAlmostEqual(x["costPct"],.585,places=3)
     def test_published_date_never_regresses(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);latest=root/"latest.json";daily=root/"daily";daily.mkdir()
