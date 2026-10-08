@@ -1,0 +1,52 @@
+name: G 2026 3D 18D Engulf Research
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/.g-multiday-trigger'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+jobs:
+  multiday:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore historical cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install packages
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Verify 3D and 18D candle logic
+        working-directory: tw-stock-dashboard
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -p 'test_multi_day_candles.py' -v
+      - name: Analyze all 20 posted signals using 1D 3D 18D
+        working-directory: tw-stock-dashboard
+        run: python src/research_multiday.py
+      - name: Commit audited 2026 signal results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/g_multiday_2026.json tw-stock-dashboard/docs/data/research/g_multiday_2026.csv
+          if ! git diff --cached --quiet; then
+            git commit -m "Compute 2026 3D 18D red engulf signal evidence"
+            for i in 1 2 3; do
+              git pull --rebase origin main || { git rebase --abort || true; continue; }
+              if git push origin HEAD:main; then break; fi
+              if [ "$i" = "3" ]; then exit 1; fi
+            done
+          fi
