@@ -65,7 +65,8 @@ def build_h(hist,stocks,market20,signal_dates):
     return result,aud
 def simulate_model(name,signals,dates,index_pos,pxmap,h):
     daily=[];all_trades=[];signals_with_positions=0;unavailable=0
-    for d in dates:
+    signal_days=[d for d in dates if START<=d<=END]
+    for d in signal_days:
         si=index_pos[d]
         if si+1>=len(index_pos) or si+h>=len(index_pos):continue
         buydate=dates[si+1];exitdate=dates[si+h]
@@ -90,15 +91,15 @@ def simulate_model(name,signals,dates,index_pos,pxmap,h):
     # A single 3-slot portfolio can only deploy every h-th signal date; stay in cash if no candidates.
     equity=1.;peak=1.;mdd=0.;curve=[];invested=0
     daily_map={x["date"]:x for x in daily}
-    for n in range(0,len(dates),h):
-        day=dates[n]
-        if n+1>=len(dates) or n+h>=len(dates):break
+    for n in range(0,len(signal_days),h):
+        day=signal_days[n];si=index_pos[day]
+        if si+1>=len(dates) or si+h>=len(dates):break
         rec=daily_map.get(day)
         net=rec["ret"] if rec else 0.
         if rec:invested+=1
         equity*=max(0.,1.+net/100.)
         peak=max(peak,equity);mdd=max(mdd,(1-equity/peak)*100)
-        curve.append({"date":dates[n+h],"equity":round(equity,6),"cohortNet":round(net,3)})
+        curve.append({"date":dates[si+h],"equity":round(equity,6),"cohortNet":round(net,3)})
     totalcohorts=len(curve)
     result={"daysWithPositions":signals_with_positions,"trades":len(all_trades),"unavailableBarPairs":unavailable,"tradeNet":stats(vals),
             "top3SlotDailyNet":stats([x["ret"] for x in daily]),"targetHits":by_reason["tp"]+by_reason["tp_gap"],"targetHitPct":round(100*(by_reason["tp"]+by_reason["tp_gap"])/len(vals),1) if vals else None,
