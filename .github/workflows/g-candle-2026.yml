@@ -30,6 +30,11 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m unittest discover -s tests -p 'test_backtest_candle.py' -v
+      - name: Test G persistence no-lookahead and no-double-buy
+        working-directory: tw-stock-dashboard
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -p 'test_g_persistence.py' -v
       - name: Run G_BROAD vs G_CANDLE vs G_TRIGGER 2026 backtest
         working-directory: tw-stock-dashboard
         run: python src/backtest_candle.py --start 2026-01-01 --end 2026-10-07
@@ -37,9 +42,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tw-stock-dashboard/docs/data/backtest_g/g_candle_2026.json
+          git add tw-stock-dashboard/docs/data/backtest_g/g_candle_2026.json tw-stock-dashboard/docs/data/backtest_g/g_persistence_2026.json
           if ! git diff --cached --quiet; then
-            git commit -m "Publish 2026 G 3D18D candle backtest"
+            git commit -m "Publish G 2026 candlestick and persistence backtests"
             git pull --rebase origin main
             git push origin HEAD:main
           fi
