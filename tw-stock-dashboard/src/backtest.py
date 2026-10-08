@@ -12,6 +12,7 @@ from edge import build as build_edge
 from risk import build_historical,f_gate
 from sar import parabolic_sar
 H=[1,3,5,10,20]
+BUY_FEE_PCT=.1425;SELL_FEE_PCT=.1425;SELL_TAX_PCT=.30
 
 def stat(a):
     a=sorted(float(x) for x in a if x is not None and np.isfinite(x))
@@ -54,6 +55,47 @@ def _historical_sar_bonus(px,date):
     x=parabolic_sar(q[["date","open","high","low","close","volume"]])
     if not x or not x.get("bullish"):return 0
     t=int(x.get("trendBars",1));return 5 if t==1 else 4 if t==2 else 3 if t==3 else 2 if t==4 else 1 if t in (5,6) else 0
+
+def _portfolio_stats(signals,idx,pos,ranks,prices,model,h):
+    equity=1.0;curve=[];cohort=[];invested=0
+    for si in range(0,len(signals),max(1,h)):
+        d=signals[si];sip=pos.get(d)
+        if sip is None or sip+1>=len(idx) or sip+h>=len(idx):continue
+        buydate=str(idx.iloc[sip+1].date);exitdate=str(idx.iloc[sip+h].date);positions=[]
+        for p in ranks[model].get(d,[])[:3]:
+            px=prices.get(to_symbol(p["code"],p["market"]))
+            if px is None or buydate not in px.index:continue
+            if _has_unadjusted_scale_jump(px.reset_index(drop=True),buydate,exitdate):continue
+            q=px.loc[buydate];q=q.iloc[-1] if isinstance(q,pd.DataFrame) else q;bo=_adj_price(q,"open")
+            if bo and bo>0:positions.append((px,bo))
+        start_eq=equity
+        if positions:invested+=1
+        for ti in range(sip+1,sip+h+1):
+            td=str(idx.iloc[ti].date)
+            if not positions:
+                val=start_eq
+            else:
+                ratios=[]
+                for px,bo in positions:
+                    q=px[px["date"].astype(str)<=td].tail(1)
+                    if q.empty:continue
+                    ec=_adj_price(q.iloc[-1],"close")
+                    if ec and ec>0:ratios.append(ec/bo)
+                val=start_eq if not ratios else start_eq*(1-BUY_FEE_PCT/100)*(sum(ratios)/len(ratios))
+                if ti==sip+h and ratios:val*=1-(SELL_FEE_PCT+SELL_TAX_PCT)/100
+            curve.append({"date":td,"equity":val});equity=val if ti==sip+h else equity
+        cohort.append((equity/start_eq-1)*100 if start_eq>0 else 0)
+    if not curve:return {"horizon":h,"periods":0,"investedPeriods":0,"totalReturn":0,"cagr":0,"sharpe":None,"maxDrawdown":0,"winRate":None,"avgNet":None,"costPct":round(BUY_FEE_PCT+SELL_FEE_PCT+SELL_TAX_PCT,4)}
+    vals=[float(x["equity"]) for x in curve];rets=[vals[i]/vals[i-1]-1 for i in range(1,len(vals)) if vals[i-1]>0]
+    peak=vals[0];mdd=0.0
+    for v in vals:peak=max(peak,v);mdd=max(mdd,(peak-v)/peak*100 if peak else 0)
+    days=max(1,len({x["date"] for x in curve}));cagr=(equity**(252/days)-1)*100 if equity>0 else -100
+    sh=None
+    if len(rets)>1:
+        sd=float(np.std(rets,ddof=1))
+        if sd>0:sh=float(np.mean(rets)/sd*np.sqrt(252))
+    active=[x for x in cohort if abs(x)>1e-12]
+    return {"horizon":h,"periods":len(cohort),"investedPeriods":invested,"totalReturn":round((equity-1)*100,2),"cagr":round(cagr,2),"sharpe":None if sh is None else round(sh,2),"maxDrawdown":round(mdd,2),"winRate":None if not active else round(sum(x>0 for x in active)/len(active)*100,1),"avgNet":None if not active else round(float(np.mean(active)),2),"costPct":round(BUY_FEE_PCT+SELL_FEE_PCT+SELL_TAX_PCT,4)}
 
 def rankings(universe,market_universe,hist,index_df,inst,inst_errors,start,end):
     idx=index_df.copy().sort_values("date").reset_index(drop=True);idx["close"]=pd.to_numeric(idx.close,errors="coerce")
@@ -144,7 +186,7 @@ def evaluate(signals,idx,pos,ranks,cand,prices,regimes):
         summary+=[{"group":"Top3可用等權",**{f"d{h}":stat(avail[h]) for h in H}},{"group":"Top3固定三槽",**{f"d{h}":stat(fixed[h]) for h in H}}]
         cc=list(cand[model].values());cs={"avg":round(float(np.mean(cc)),1) if cc else 0,"min":min(cc) if cc else 0,"max":max(cc) if cc else 0,"days3":sum(x>=3 for x in cc),"totalDays":len(cc)}
         name={"A":"原始版","D":"技術強勢","F":"D＋大盤濾網"}[model]
-        models[model]={"id":model,"name":name,"summary":summary,"candidateStats":cs,"signals":sig};edgein[model]=dated
+        portfolio={f"d{h}":_portfolio_stats(signals,idx,pos,ranks,prices,model,h) for h in H};models[model]={"id":model,"name":name,"summary":summary,"candidateStats":cs,"signals":sig,"portfolio":portfolio};edgein[model]=dated
     return [models["A"],models["D"],models["F"]],build_edge(edgein)
 
 def run(start,end):
@@ -161,7 +203,7 @@ def run(start,end):
     sdts=[d for d in ix.date.astype(str) if start<=d<=end];inst,ine=fetch_many(sdts);sdts,idx,pos,ranks,cand,prices,regimes=rankings(u,all_u,hist,ix,inst,set(ine),start,end);models,edge=evaluate(sdts,idx,pos,ranks,cand,prices,regimes)
     gate_stats={"riskOnDays":sum(r.get("score",0)>=RISK_ON for r in regimes.values()),"strongBottomExceptionDays":sum(r.get("fReason")=="STRONG_BOTTOM_REVERSAL" for r in regimes.values()),"blockedDays":sum(not r.get("fAllowed") for r in regimes.values()),"allowedDays":sum(bool(r.get("fAllowed")) for r in regimes.values())}
     compact_regime=[{"date":d,"score":r.get("score"),"state":r.get("state"),"activeState":r.get("activeState"),"breadth":r.get("breadth"),"foreign":r.get("foreign"),"fAllowed":r.get("fAllowed"),"fReason":r.get("fReason"),"institutionAvailable":r.get("institutionAvailable")} for d,r in regimes.items()]
-    out={"version":"PY-BT2-F-MARKET-GATE","generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),"period":{"start":start,"end":end},"signalDays":len(sdts),"universeCount":len(u),"marketUniverseCount":len(all_u),"historySuccess":len(hist)-len(he),"historyErrors":len(he),"institutionErrors":len(ine),"models":models,"edgeAudit":edge,"marketGateStats":gate_stats,"marketRegime":compact_regime,"elapsedSeconds":round(time.time()-t,1),"notes":["F = D 技術強勢 + 大盤濾網；Risk Score >=60 才進場，Strong Bottom Reversal 為唯一例外。","歷史 Risk 依 Dashboard 權重重建：指數趨勢 + 上市 breadth + T86 外資淨買賣估值，不使用未來資料。","A 歷史排序補上 SAR bullish trend bonus 作同分排序，對齊正式版。","回測報酬優先使用 Yahoo adjusted close factor 修正公司行動；舊快取若尚無 adjclose，偵測極端單日價格尺度跳變並排除該筆報酬。","法人失敗日期會序列重試；仍失敗者標記 institutionAvailable=false，不再默認視為資料完整。","Yahoo K 使用雙向 Parquet 增量快取；已覆蓋日期不重抓。"]}
+    out={"version":"PY-BT3-F-PORTFOLIO","generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),"period":{"start":start,"end":end},"signalDays":len(sdts),"universeCount":len(u),"marketUniverseCount":len(all_u),"historySuccess":len(hist)-len(he),"historyErrors":len(he),"institutionErrors":len(ine),"models":models,"edgeAudit":edge,"marketGateStats":gate_stats,"marketRegime":compact_regime,"elapsedSeconds":round(time.time()-t,1),"notes":["F = D 技術強勢 + 大盤濾網；Risk Score >=60 才進場，Strong Bottom Reversal 為唯一例外。","歷史 Risk 依 Dashboard 權重重建：指數趨勢 + 上市 breadth + T86 外資淨買賣估值，不使用未來資料。","A 歷史排序補上 SAR bullish trend bonus 作同分排序，對齊正式版。","回測報酬優先使用 Yahoo adjusted close factor 修正公司行動；舊快取若尚無 adjclose，偵測極端單日價格尺度跳變並排除該筆報酬。","法人失敗日期會序列重試；仍失敗者標記 institutionAvailable=false，不再默認視為資料完整。","Yahoo K 使用雙向 Parquet 增量快取；舊快取若缺 adjusted close 會補抓本次所需區間一次，後續不重抓。","資金曲線採 Top3 等權、非重疊持有週期，逐日 mark-to-market，扣買賣手續費各0.1425%與賣出證交稅0.3%。","目前公司母檔仍以現存上市櫃公司為基礎，已上市但後續下市股票可能造成 survivorship bias，結果需保守解讀。"]}
     p=DATA_DIR/"backtest";p.mkdir(parents=True,exist_ok=True)
     body=json.dumps(out,ensure_ascii=False,indent=2);(p/"latest.json").write_text(body,encoding="utf-8")
     archive=f"{start}_{end}.json";(p/archive).write_text(body,encoding="utf-8")

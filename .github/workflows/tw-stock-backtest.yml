@@ -24,7 +24,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'tw-stock-dashboard/.f-backtest-smoke'
+      - 'tw-stock-dashboard/.f-backtest-2026-smoke'
 permissions:
   contents: write
   pages: write
@@ -57,7 +57,7 @@ jobs:
         shell: bash
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
-            PERIOD="F固定驗證"
+            PERIOD="F_2026_SMOKE"
             START="2026-01-01"
             END="2026-10-08"
           else
