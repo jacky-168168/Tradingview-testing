@@ -37,6 +37,15 @@ def signal_market():
     z["belowMA20"]=c<ma20;z["belowMA60"]=c<ma60;z["ma20down"]=z["ma20trend"]<0
     z["bad5"]=z["ret5"]<(-2);z["bad10"]=z["ret10"]<(-4)
     z["down5"]=c<c.shift(5)
+    hi60=c.shift(1).rolling(60,min_periods=45).max();lo60=c.shift(1).rolling(60,min_periods=45).min()
+    hi120=c.shift(1).rolling(120,min_periods=80).max();lo120=c.shift(1).rolling(120,min_periods=80).min()
+    z["position60"]=(c-lo60)/(hi60-lo60).replace(0,np.nan)*100
+    z["position120"]=(c-lo120)/(hi120-lo120).replace(0,np.nan)*100
+    z["distHigh60"]=(c/hi60-1)*100
+    z["distMA60"]=(c/ma60-1)*100
+    z["distMA20"]=(c/ma20-1)*100
+    z["favorable"]=(~z["belowMA20"])&(~z["ma20down"])&(z["position60"]>=50)
+    z["caution"]=(z["position60"]<35)|(z["belowMA60"]&z["ma20down"])
     return {str(r.date):r for r in z.itertuples(index=False)}
 def run():
     source=json.loads((DATA_DIR/"backtest_g/2026-01-01_2026-10-07.json").read_text(encoding="utf-8"))
@@ -50,7 +59,7 @@ def run():
             s=signals.get((t["date"],t["code"]));mk=market.get(t["date"])
             if s is None:continue
             x={**t,"signal":s,"market":{key:getattr(mk,key) for key in
-              ("close","ma20","ma60","ret5","ret10","ma20trend","draw20","belowMA20","belowMA60","ma20down","bad5","bad10","down5")} if mk is not None else None}
+              ("close","ma20","ma60","ret5","ret10","ma20trend","draw20","belowMA20","belowMA60","ma20down","bad5","bad10","down5","position60","position120","distHigh60","distMA60","distMA20","favorable","caution")} if mk is not None else None}
             all.append(x)
         f=[x for x in all if x["status"]=="filled"]
         stop=[x for x in f if x["stop"]];tp=[x for x in f if x["tp"]];others=[x for x in f if not x["stop"]]
@@ -62,6 +71,18 @@ def run():
             "atrTop5":"Signal ATR cross-sectional >=95th pct",
             "turnTop5":"Signal turnover cross-sectional >=95th pct",
             "score97":"Signal score >=97",
+            "indexFavorable":"TWII >= MA20, MA20 not declining, position60 >=50",
+            "indexNotCaution":"TWII position60 >=35, no MA60 below + MA20 down",
+            "indexPosition60ge20":"TWII 60D position >=20%",
+            "indexPosition60ge35":"TWII 60D position >=35%",
+            "indexPosition60ge50":"TWII 60D position >=50%",
+            "indexPosition60ge65":"TWII 60D position >=65%",
+            "indexPosition120ge35":"TWII 120D position >=35%",
+            "indexPosition120ge50":"TWII 120D position >=50%",
+            "indexPosition120ge65":"TWII 120D position >=65%",
+            "indexPos60ge35AboveMA20":"TWII pos60 >=35 and close>=MA20",
+            "indexPos60ge35AboveMA60":"TWII pos60 >=35 and close>=MA60",
+            "indexPos60ge50MA20up":"TWII pos60 >=50 and MA20 slope >=0",
             "indexAboveMA20":"TWII signal-day close >=20D MA",
             "indexAboveMA60":"TWII signal-day close >=60D MA",
             "indexMA20up":"TWII 20D MA slope over 5 sessions >=0",
@@ -83,6 +104,18 @@ def run():
             if k=="turnTop5":return s["turnoverP"]>=95
             if k=="score97":return s["score"]>=97
             if i is None:return False
+            if k=="indexFavorable":return bool(i["favorable"])
+            if k=="indexNotCaution":return not bool(i["caution"])
+            if k=="indexPosition60ge20":return i["position60"]>=20
+            if k=="indexPosition60ge35":return i["position60"]>=35
+            if k=="indexPosition60ge50":return i["position60"]>=50
+            if k=="indexPosition60ge65":return i["position60"]>=65
+            if k=="indexPosition120ge35":return i["position120"]>=35
+            if k=="indexPosition120ge50":return i["position120"]>=50
+            if k=="indexPosition120ge65":return i["position120"]>=65
+            if k=="indexPos60ge35AboveMA20":return i["position60"]>=35 and not i["belowMA20"]
+            if k=="indexPos60ge35AboveMA60":return i["position60"]>=35 and not i["belowMA60"]
+            if k=="indexPos60ge50MA20up":return i["position60"]>=50 and not i["ma20down"]
             if k=="indexAboveMA20":return not i["belowMA20"]
             if k=="indexAboveMA60":return not i["belowMA60"]
             if k=="indexMA20up":return not i["ma20down"]
@@ -104,7 +137,7 @@ def run():
             slices={name:metrics([x for x in accept if lo<=x["date"]<=hi]) for name,(lo,hi) in PERIODS.items()}
             table=[[len(sid),len(held)-len(sid)],
                     [len(stop)-len(sid),len(f)-len(held)-(len(stop)-len(sid))]]
-            fisher=float(fisher_exact(table,alternative="two-sided").pvalue) if all(sum(row)>0 for row in table) else None
+            fisher=float(fisher_exact(table,alternative="two-sided").pvalue) if __import__("builtins").all(sum(row)>0 for row in table) else None
             result[key]={"description":filters[key],"accepted":metrics(accept),"rejected":metrics(reject),
                          "fractionStopsAvoided":round((len(stop)-len(sid))/len(stop)*100,2) if stop else None,
                          "profitTakingSignalsLost":len(lost),
@@ -124,7 +157,8 @@ def run():
                   "buyLots":x["tranches"],"start":x["firstEntryDate"],"exit":x["exitDate"],
                   "reason":x["reason"],"netReservedPct":x["netOnReservedPct"],
                   "signalTWII":{"close":round(x["market"]["close"],2),"aboveMA20":not x["market"]["belowMA20"],
-                  "aboveMA60":not x["market"]["belowMA60"],"ret5":round(x["market"]["ret5"],2)}
+                  "aboveMA60":not x["market"]["belowMA60"],"ret5":round(x["market"]["ret5"],2),
+                  "position60":round(x["market"]["position60"],1),"position120":round(x["market"]["position120"],1)}
                   if x["market"] is not None else None} for x in stop]
         modes[mode]={"baseline":metrics(all),"rankSummary":ranks,"bySignalMonth":months,
                      "signalFeatureMedians":seen,"stopLots":{str(n):sum(x["tranches"]==n for x in stop) for n in range(1,6 if mode=="ladder" else 5)},
