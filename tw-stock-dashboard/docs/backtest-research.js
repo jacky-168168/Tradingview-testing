@@ -9,6 +9,7 @@ const archiveLinks={
  g:'<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37833390271">G 原始完整逐筆資料及執行紀錄 ↗</a>',
  h:'<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37801819940">H5 五段加碼原始執行紀錄 ↗</a>',
  risk:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_strict_stop_diagnostic_2026.json">大盤位階 × 停損原始研究 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37839334095">GitHub 實際研究執行紀錄 ↗</a>',
+ timing:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_strict_ma20_entry_2026.json">下載 G_STRICT MA20 進場比較 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_strict_ma20_entry_trades_2026.json">下載全部逐筆交易 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37848392034">成功回測 GitHub Actions ↗</a>',
  legacy:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/h1_2026.json">H1 歷史 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/h2_2026.json">H2 歷史 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/blob/research/h-v5-limit-pullback-2026/tw-stock-dashboard/H_2026_research_consolidated_H2_H5.md">H2～H5 原始研究報告 ↗</a>'};
 const e=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const n=(v,d=2)=>v==null||!Number.isFinite(Number(v))?"—":Number(v).toFixed(d);
@@ -17,8 +18,8 @@ const clr=v=>v==null?"":Number(v)>=0?"research-positive":"research-negative";
 const perf=v=>'<span class="'+clr(v)+'">'+pct(v,3)+'</span>';
 const type=x=>x==="ma"?"B 均線觸價":"A 固定下跌";
 const full=x=>names[x]||x;
-let main=null,h5=null,g=null,risk=null,loading=null,current=null,activeArchive="g",modelTrades=null,tradeIdentity="",run=0,tradePage=0;
-async function get(path){const u=path+"?v=20261009a",r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("資料 HTTP "+r.status+"："+path);return r.json();}
+let main=null,h5=null,g=null,risk=null,timing=null,timingTrades=null,timingMode="",timingGate="",timingPage=0,loading=null,current=null,activeArchive="g",modelTrades=null,tradeIdentity="",run=0,tradePage=0;
+async function get(path){const u=path+"?v=20261009b",r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("資料 HTTP "+r.status+"："+path);return r.json();}
 function visible(){by("legacyView").style.display="none";by("gView").style.display="none";root.style.display="block";document.querySelectorAll("#modelTabs button").forEach(b=>b.classList.toggle("on",b.id==="RESEARCH"));if(main)render();else load();}
 function close(){root.style.display="none";}
 for(const id of ["G","D","F","F2","A"])by(id)?.addEventListener("click",close);
@@ -33,8 +34,8 @@ async function load(){
    const sel=by("researchModel");
    sel.innerHTML='<option value="all">全部 '+Object.keys(main.allModelStatistics).length+' 種模型</option>'+Object.keys(main.allModelStatistics).map(z=>'<option value="'+e(z)+'">'+e(full(z))+'</option>').join("");
    by("researchMeta").textContent=main.period.start+" ～ "+main.period.end+"｜"+Object.keys(main.allModelStatistics).length+" 個模型 × 2 種進場 × 3 週期｜資料產出 "+(main.generatedAt||"—");
-   const [gResult,hResult,riskResult]=await Promise.allSettled([get(rootpath+"g_ladder_vs_ma_2026.json"),get(rootpath+"h5_ladder_2026.json"),get(rootpath+"g_strict_stop_diagnostic_2026.json")]);
-   g=gResult.status==="fulfilled"?gResult.value:null;h5=hResult.status==="fulfilled"?hResult.value:null;risk=riskResult.status==="fulfilled"?riskResult.value:null;
+   const [gResult,hResult,riskResult,timingResult]=await Promise.allSettled([get(rootpath+"g_ladder_vs_ma_2026.json"),get(rootpath+"h5_ladder_2026.json"),get(rootpath+"g_strict_stop_diagnostic_2026.json"),get(rootpath+"g_strict_ma20_entry_2026.json")]);
+   g=gResult.status==="fulfilled"?gResult.value:null;h5=hResult.status==="fulfilled"?hResult.value:null;risk=riskResult.status==="fulfilled"?riskResult.value:null;timing=timingResult.status==="fulfilled"?timingResult.value:null;
    by("researchWarnings").textContent=(main.warnings||[]).slice(0,4).join(" ｜ ");
    render();
   }catch(err){by("researchMeta").textContent="載入失敗："+err.message;by("researchRankRows").innerHTML='<tr><td colspan="12">研究資料未發佈或網路有問題。請稍後重新整理。</td></tr>'}
@@ -93,7 +94,7 @@ by("researchRankRows").addEventListener("click",ev=>{
 });
 for(const id of ["researchHold","researchMethod","researchModel","researchSort","researchMinFills"])
  by(id).addEventListener("change",render);
-by("researchRefresh").addEventListener("click",()=>{main=null;h5=null;g=null;risk=null;current=null;loading=null;load();});
+by("researchRefresh").addEventListener("click",()=>{main=null;h5=null;g=null;risk=null;timing=null;timingTrades=null;timingMode="";timingGate="";current=null;loading=null;load();});
 function tradeRows(){
  if(!modelTrades||!current)return;
  const q=by("researchTradeQuery").value.trim().toLowerCase();
@@ -128,6 +129,7 @@ function archive(which){
  document.querySelectorAll("[data-archive]").forEach(b=>b.classList.toggle("active",b.dataset.archive===which));
  const head=by("researchArchiveHead"),tbody=by("researchArchiveRows"),note=by("researchArchiveNote");
  by("researchArchiveLinks").innerHTML=archiveLinks[which]||"";
+ by("researchTimingTradeSection").style.display=which==="timing"?"block":"none";
  if(which==="g"){
   head.innerHTML="<tr><th>期限</th><th>進場方式</th><th>開倉</th><th>+7%達標</th><th>停損率</th><th>預留資金淨報酬</th></tr>";
   note.textContent="先前 G_DOUBLE_PERSIST Top3 兩種加碼法對照；與17模型比較的一致範圍，但獨立執行的歷史歸檔。";
