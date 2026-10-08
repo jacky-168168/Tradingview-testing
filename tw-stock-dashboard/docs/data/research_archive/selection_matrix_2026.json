@@ -1,0 +1,3872 @@
+{
+  "version": "SELECTION_X_ENTRY_2026_V1",
+  "generatedAt": "2026-10-09T03:50:53+08:00",
+  "period": {
+    "start": "2026-01-01",
+    "end": "2026-10-07"
+  },
+  "dataSources": {
+    "A_D": {
+      "start": "2026-01-01",
+      "end": "2026-10-07"
+    },
+    "G_CANDLE": {
+      "start": "2026-01-01",
+      "end": "2026-10-07"
+    },
+    "G_PERSIST": {
+      "start": "2026-01-01",
+      "end": "2026-10-07"
+    },
+    "H5_FRESH_BREAK": {
+      "archive": "GitHub Actions run 37801819940 artifact 11561507449",
+      "n": 319
+    }
+  },
+  "comparisonScope": "A,D, G variants, frozen H5 selection; fixed same execution and same historical OHLC; exploratory retrospective 2026, NOT independent validation",
+  "executions": {
+    "ladder": "first signal-close -2.5% within 5 sessions, then 4×2% lower (first ACTUAL fill anchor), up to 5 equal-cash lots",
+    "ma": "only touch prior confirmed SMA5/10/20/60 during daily candle, each at most once, up to 4 equal-cash lots; track stop MA60 weakness",
+    "common": "average-cost TP+7% gross; SL-15% gross; holding 5/10/20 sessions after first entry, buy/sell fees and tax and assumed slippage; stock overlapping signal suppressed while own watch/position open"
+  },
+  "calendarDays": 1035,
+  "universe": 1982,
+  "selectedUniqueSymbols": 589,
+  "priceErrorCount": 0,
+  "priceErrorSample": [],
+  "marketMismatches": {},
+  "modelSources": {
+    "A": {
+      "events": 552,
+      "days": 184,
+      "stocks": 289
+    },
+    "D": {
+      "events": 507,
+      "days": 180,
+      "stocks": 212
+    },
+    "G_BROAD": {
+      "events": 552,
+      "days": 184,
+      "stocks": 152
+    },
+    "G_3D_BREAK": {
+      "events": 537,
+      "days": 179,
+      "stocks": 167
+    },
+    "G_18D_BREAK": {
+      "events": 498,
+      "days": 166,
+      "stocks": 146
+    },
+    "G_DOUBLE_BREAK": {
+      "events": 490,
+      "days": 164,
+      "stocks": 159
+    },
+    "G_TRIGGER": {
+      "events": 543,
+      "days": 181,
+      "stocks": 178
+    },
+    "G_ENGULF": {
+      "events": 527,
+      "days": 179,
+      "stocks": 166
+    },
+    "G_PERSIST": {
+      "events": 552,
+      "days": 184,
+      "stocks": 106
+    },
+    "G_DOUBLE_PERSIST": {
+      "events": 490,
+      "days": 164,
+      "stocks": 146
+    },
+    "H5_FRESH_BREAK": {
+      "events": 319,
+      "days": 146,
+      "stocks": 244
+    }
+  },
+  "scoreboard10DExploratory": [
+    {
+      "selector": "H5_FRESH_BREAK",
+      "style": "ladder",
+      "filled": 246,
+      "netBudgetPct": 1.234,
+      "netEligiblePct": 1.058,
+      "tpPct": 78.46,
+      "stopPct": 8.13,
+      "capitalExposure": 3.21,
+      "unique": 202
+    },
+    {
+      "selector": "G_BROAD",
+      "style": "ladder",
+      "filled": 210,
+      "netBudgetPct": 0.911,
+      "netEligiblePct": 0.709,
+      "tpPct": 79.52,
+      "stopPct": 16.19,
+      "capitalExposure": 3.53,
+      "unique": 126
+    },
+    {
+      "selector": "G_TRIGGER",
+      "style": "ladder",
+      "filled": 224,
+      "netBudgetPct": 0.61,
+      "netEligiblePct": 0.478,
+      "tpPct": 80.8,
+      "stopPct": 15.62,
+      "capitalExposure": 3.32,
+      "unique": 147
+    },
+    {
+      "selector": "G_BROAD",
+      "style": "ma",
+      "filled": 197,
+      "netBudgetPct": 0.547,
+      "netEligiblePct": 0.435,
+      "tpPct": 77.66,
+      "stopPct": 14.72,
+      "capitalExposure": 1.83,
+      "unique": 129
+    },
+    {
+      "selector": "A",
+      "style": "ladder",
+      "filled": 284,
+      "netBudgetPct": 0.577,
+      "netEligiblePct": 0.427,
+      "tpPct": 66.9,
+      "stopPct": 9.15,
+      "capitalExposure": 3.39,
+      "unique": 216
+    },
+    {
+      "selector": "H5_FRESH_BREAK",
+      "style": "ma",
+      "filled": 231,
+      "netBudgetPct": 0.43,
+      "netEligiblePct": 0.353,
+      "tpPct": 70.13,
+      "stopPct": 4.76,
+      "capitalExposure": 2.02,
+      "unique": 193
+    },
+    {
+      "selector": "G_PERSIST",
+      "style": "ladder",
+      "filled": 138,
+      "netBudgetPct": 0.448,
+      "netEligiblePct": 0.34,
+      "tpPct": 76.81,
+      "stopPct": 18.12,
+      "capitalExposure": 3.46,
+      "unique": 86
+    },
+    {
+      "selector": "G_3D_BREAK",
+      "style": "ma",
+      "filled": 210,
+      "netBudgetPct": 0.422,
+      "netEligiblePct": 0.323,
+      "tpPct": 77.14,
+      "stopPct": 14.29,
+      "capitalExposure": 1.8,
+      "unique": 142
+    },
+    {
+      "selector": "G_18D_BREAK",
+      "style": "ma",
+      "filled": 180,
+      "netBudgetPct": 0.386,
+      "netEligiblePct": 0.302,
+      "tpPct": 76.11,
+      "stopPct": 16.11,
+      "capitalExposure": 1.86,
+      "unique": 124
+    },
+    {
+      "selector": "D",
+      "style": "ladder",
+      "filled": 314,
+      "netBudgetPct": 0.369,
+      "netEligiblePct": 0.296,
+      "tpPct": 71.97,
+      "stopPct": 12.1,
+      "capitalExposure": 3.47,
+      "unique": 185
+    },
+    {
+      "selector": "G_ENGULF",
+      "style": "ma",
+      "filled": 166,
+      "netBudgetPct": 0.34,
+      "netEligiblePct": 0.277,
+      "tpPct": 74.7,
+      "stopPct": 14.46,
+      "capitalExposure": 2.07,
+      "unique": 131
+    },
+    {
+      "selector": "G_ENGULF",
+      "style": "ladder",
+      "filled": 167,
+      "netBudgetPct": 0.346,
+      "netEligiblePct": 0.273,
+      "tpPct": 74.25,
+      "stopPct": 13.77,
+      "capitalExposure": 3.43,
+      "unique": 132
+    },
+    {
+      "selector": "G_DOUBLE_BREAK",
+      "style": "ma",
+      "filled": 191,
+      "netBudgetPct": 0.341,
+      "netEligiblePct": 0.262,
+      "tpPct": 75.39,
+      "stopPct": 15.18,
+      "capitalExposure": 1.83,
+      "unique": 134
+    },
+    {
+      "selector": "G_PERSIST",
+      "style": "ma",
+      "filled": 136,
+      "netBudgetPct": 0.299,
+      "netEligiblePct": 0.245,
+      "tpPct": 75.74,
+      "stopPct": 16.18,
+      "capitalExposure": 1.84,
+      "unique": 89
+    },
+    {
+      "selector": "A",
+      "style": "ma",
+      "filled": 292,
+      "netBudgetPct": 0.28,
+      "netEligiblePct": 0.217,
+      "tpPct": 65.07,
+      "stopPct": 4.45,
+      "capitalExposure": 2.13,
+      "unique": 227
+    },
+    {
+      "selector": "G_TRIGGER",
+      "style": "ma",
+      "filled": 208,
+      "netBudgetPct": 0.249,
+      "netEligiblePct": 0.193,
+      "tpPct": 77.4,
+      "stopPct": 14.42,
+      "capitalExposure": 1.75,
+      "unique": 149
+    },
+    {
+      "selector": "G_3D_BREAK",
+      "style": "ladder",
+      "filled": 226,
+      "netBudgetPct": 0.219,
+      "netEligiblePct": 0.17,
+      "tpPct": 77.43,
+      "stopPct": 17.26,
+      "capitalExposure": 3.42,
+      "unique": 141
+    },
+    {
+      "selector": "G_18D_BREAK",
+      "style": "ladder",
+      "filled": 180,
+      "netBudgetPct": 0.124,
+      "netEligiblePct": 0.092,
+      "tpPct": 76.11,
+      "stopPct": 18.33,
+      "capitalExposure": 3.56,
+      "unique": 117
+    },
+    {
+      "selector": "G_DOUBLE_PERSIST",
+      "style": "ladder",
+      "filled": 171,
+      "netBudgetPct": -0.019,
+      "netEligiblePct": -0.015,
+      "tpPct": 73.68,
+      "stopPct": 18.71,
+      "capitalExposure": 3.58,
+      "unique": 121
+    },
+    {
+      "selector": "G_DOUBLE_PERSIST",
+      "style": "ma",
+      "filled": 158,
+      "netBudgetPct": -0.037,
+      "netEligiblePct": -0.028,
+      "tpPct": 72.15,
+      "stopPct": 17.72,
+      "capitalExposure": 1.86,
+      "unique": 124
+    },
+    {
+      "selector": "G_DOUBLE_BREAK",
+      "style": "ladder",
+      "filled": 202,
+      "netBudgetPct": -0.178,
+      "netEligiblePct": -0.137,
+      "tpPct": 75.25,
+      "stopPct": 18.81,
+      "capitalExposure": 3.46,
+      "unique": 135
+    },
+    {
+      "selector": "D",
+      "style": "ma",
+      "filled": 300,
+      "netBudgetPct": -0.306,
+      "netEligiblePct": -0.244,
+      "tpPct": 63.67,
+      "stopPct": 10.67,
+      "capitalExposure": 2.3,
+      "unique": 182
+    }
+  ],
+  "results": {
+    "A": {
+      "5": {
+        "ladder": {
+          "signalEvents": 395,
+          "filled": 289,
+          "duplicateSuppressed": 130,
+          "unfilled": 104,
+          "weakCancelled": 0,
+          "incomplete": 2,
+          "takeProfitN": 144,
+          "takeProfitPct": 49.83,
+          "stopN": 7,
+          "stopPct": 2.42,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 1.508,
+          "avgNetOnReservedPct": -0.366,
+          "netWinPct": 60.9,
+          "avgWinPct": 6.285,
+          "avgLossPct": -5.931,
+          "profitFactor": 1.65,
+          "avgTranches": 3.21,
+          "trancheCounts": {
+            "1": 59,
+            "2": 53,
+            "3": 44,
+            "4": 33,
+            "5": 100
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.67,
+          "avgHoldDays": 3.87,
+          "distinctStocks": 220,
+          "allEligibleEvents": 393,
+          "fillPct": 73.54,
+          "perEligibleSignalAvgNetOnReservedPct": -0.269,
+          "filledNetOnReservedMedianPct": 1.254,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -12.038,
+          "negativeReservedEvents": 113,
+          "earlyJanMay": {
+            "n": 155,
+            "meanNetOnReservedPct": 0.463,
+            "tpPct": 57.42
+          },
+          "laterJuneOct": {
+            "n": 134,
+            "meanNetOnReservedPct": -1.324,
+            "tpPct": 41.04
+          },
+          "avgReservedAtRiskPct": 64.29
+        },
+        "ma": {
+          "signalEvents": 389,
+          "filled": 298,
+          "duplicateSuppressed": 136,
+          "unfilled": 89,
+          "weakCancelled": 0,
+          "incomplete": 2,
+          "takeProfitN": 138,
+          "takeProfitPct": 46.31,
+          "stopN": 3,
+          "stopPct": 1.01,
+          "weakExitN": 3,
+          "weakExitPct": 1.01,
+          "avgNetOnDeployedPct": 1.285,
+          "avgNetOnReservedPct": -0.189,
+          "netWinPct": 58.72,
+          "avgWinPct": 5.863,
+          "avgLossPct": -5.228,
+          "profitFactor": 1.596,
+          "avgTranches": 1.87,
+          "trancheCounts": {
+            "1": 122,
+            "2": 109,
+            "3": 52,
+            "4": 15
+          },
+          "maFillCounts": {
+            "5": 290,
+            "10": 174,
+            "20": 69,
+            "60": 23
+          },
+          "avgSignalToEntryDays": 3.02,
+          "avgHoldDays": 4.14,
+          "distinctStocks": 231,
+          "allEligibleEvents": 387,
+          "fillPct": 77.0,
+          "perEligibleSignalAvgNetOnReservedPct": -0.145,
+          "filledNetOnReservedMedianPct": 0.972,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -6.382,
+          "negativeReservedEvents": 123,
+          "earlyJanMay": {
+            "n": 160,
+            "meanNetOnReservedPct": 0.04,
+            "tpPct": 50.62
+          },
+          "laterJuneOct": {
+            "n": 138,
+            "meanNetOnReservedPct": -0.454,
+            "tpPct": 41.3
+          },
+          "avgReservedAtRiskPct": 46.64
+        }
+      },
+      "10": {
+        "ladder": {
+          "signalEvents": 386,
+          "filled": 284,
+          "duplicateSuppressed": 124,
+          "unfilled": 100,
+          "weakCancelled": 0,
+          "incomplete": 2,
+          "takeProfitN": 190,
+          "takeProfitPct": 66.9,
+          "stopN": 26,
+          "stopPct": 9.15,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.601,
+          "avgNetOnReservedPct": 0.577,
+          "netWinPct": 72.18,
+          "avgWinPct": 6.768,
+          "avgLossPct": -8.212,
+          "profitFactor": 2.139,
+          "avgTranches": 3.39,
+          "trancheCounts": {
+            "1": 53,
+            "2": 44,
+            "3": 39,
+            "4": 36,
+            "5": 112
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.64,
+          "avgHoldDays": 5.7,
+          "distinctStocks": 216,
+          "allEligibleEvents": 384,
+          "fillPct": 73.96,
+          "perEligibleSignalAvgNetOnReservedPct": 0.427,
+          "filledNetOnReservedMedianPct": 2.507,
+          "filledNetOnReservedWorstPct": -19.167,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 79,
+          "earlyJanMay": {
+            "n": 155,
+            "meanNetOnReservedPct": 1.475,
+            "tpPct": 76.13
+          },
+          "laterJuneOct": {
+            "n": 129,
+            "meanNetOnReservedPct": -0.502,
+            "tpPct": 55.81
+          },
+          "avgReservedAtRiskPct": 67.75
+        },
+        "ma": {
+          "signalEvents": 379,
+          "filled": 292,
+          "duplicateSuppressed": 131,
+          "unfilled": 85,
+          "weakCancelled": 0,
+          "incomplete": 2,
+          "takeProfitN": 190,
+          "takeProfitPct": 65.07,
+          "stopN": 13,
+          "stopPct": 4.45,
+          "weakExitN": 8,
+          "weakExitPct": 2.74,
+          "avgNetOnDeployedPct": 2.595,
+          "avgNetOnReservedPct": 0.28,
+          "netWinPct": 69.52,
+          "avgWinPct": 6.642,
+          "avgLossPct": -6.637,
+          "profitFactor": 2.283,
+          "avgTranches": 2.13,
+          "trancheCounts": {
+            "1": 105,
+            "2": 75,
+            "3": 81,
+            "4": 31
+          },
+          "maFillCounts": {
+            "5": 289,
+            "10": 183,
+            "20": 112,
+            "60": 38
+          },
+          "avgSignalToEntryDays": 3.02,
+          "avgHoldDays": 6.17,
+          "distinctStocks": 227,
+          "allEligibleEvents": 377,
+          "fillPct": 77.45,
+          "perEligibleSignalAvgNetOnReservedPct": 0.217,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -8.936,
+          "negativeReservedEvents": 89,
+          "earlyJanMay": {
+            "n": 159,
+            "meanNetOnReservedPct": 0.802,
+            "tpPct": 70.44
+          },
+          "laterJuneOct": {
+            "n": 133,
+            "meanNetOnReservedPct": -0.345,
+            "tpPct": 58.65
+          },
+          "avgReservedAtRiskPct": 53.25
+        }
+      },
+      "20": {
+        "ladder": {
+          "signalEvents": 363,
+          "filled": 266,
+          "duplicateSuppressed": 117,
+          "unfilled": 95,
+          "weakCancelled": 0,
+          "incomplete": 2,
+          "takeProfitN": 200,
+          "takeProfitPct": 75.19,
+          "stopN": 31,
+          "stopPct": 11.65,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.825,
+          "avgNetOnReservedPct": 0.622,
+          "netWinPct": 77.07,
+          "avgWinPct": 7.031,
+          "avgLossPct": -11.308,
+          "profitFactor": 2.089,
+          "avgTranches": 3.42,
+          "trancheCounts": {
+            "1": 50,
+            "2": 40,
+            "3": 36,
+            "4": 28,
+            "5": 112
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.66,
+          "avgHoldDays": 7.39,
+          "distinctStocks": 205,
+          "allEligibleEvents": 361,
+          "fillPct": 73.68,
+          "perEligibleSignalAvgNetOnReservedPct": 0.458,
+          "filledNetOnReservedMedianPct": 2.507,
+          "filledNetOnReservedWorstPct": -19.167,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 61,
+          "earlyJanMay": {
+            "n": 155,
+            "meanNetOnReservedPct": 1.353,
+            "tpPct": 81.29
+          },
+          "laterJuneOct": {
+            "n": 111,
+            "meanNetOnReservedPct": -0.398,
+            "tpPct": 66.67
+          },
+          "avgReservedAtRiskPct": 68.42
+        },
+        "ma": {
+          "signalEvents": 357,
+          "filled": 272,
+          "duplicateSuppressed": 123,
+          "unfilled": 83,
+          "weakCancelled": 0,
+          "incomplete": 2,
+          "takeProfitN": 202,
+          "takeProfitPct": 74.26,
+          "stopN": 20,
+          "stopPct": 7.35,
+          "weakExitN": 20,
+          "weakExitPct": 7.35,
+          "avgNetOnDeployedPct": 2.907,
+          "avgNetOnReservedPct": 0.342,
+          "netWinPct": 77.21,
+          "avgWinPct": 6.749,
+          "avgLossPct": -10.104,
+          "profitFactor": 2.262,
+          "avgTranches": 2.23,
+          "trancheCounts": {
+            "1": 97,
+            "2": 61,
+            "3": 69,
+            "4": 45
+          },
+          "maFillCounts": {
+            "5": 269,
+            "10": 174,
+            "20": 113,
+            "60": 50
+          },
+          "avgSignalToEntryDays": 3.03,
+          "avgHoldDays": 8.08,
+          "distinctStocks": 213,
+          "allEligibleEvents": 355,
+          "fillPct": 76.62,
+          "perEligibleSignalAvgNetOnReservedPct": 0.262,
+          "filledNetOnReservedMedianPct": 1.595,
+          "filledNetOnReservedWorstPct": -15.62,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 62,
+          "earlyJanMay": {
+            "n": 159,
+            "meanNetOnReservedPct": 1.093,
+            "tpPct": 80.5
+          },
+          "laterJuneOct": {
+            "n": 113,
+            "meanNetOnReservedPct": -0.715,
+            "tpPct": 65.49
+          },
+          "avgReservedAtRiskPct": 55.7
+        }
+      }
+    },
+    "D": {
+      "5": {
+        "ladder": {
+          "signalEvents": 400,
+          "filled": 319,
+          "duplicateSuppressed": 83,
+          "unfilled": 81,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 186,
+          "takeProfitPct": 58.31,
+          "stopN": 20,
+          "stopPct": 6.27,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.052,
+          "avgNetOnReservedPct": -0.202,
+          "netWinPct": 65.83,
+          "avgWinPct": 7.14,
+          "avgLossPct": -7.749,
+          "profitFactor": 1.775,
+          "avgTranches": 3.4,
+          "trancheCounts": {
+            "1": 62,
+            "2": 45,
+            "3": 44,
+            "4": 39,
+            "5": 129
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.42,
+          "avgHoldDays": 3.66,
+          "distinctStocks": 186,
+          "allEligibleEvents": 400,
+          "fillPct": 79.75,
+          "perEligibleSignalAvgNetOnReservedPct": -0.161,
+          "filledNetOnReservedMedianPct": 1.319,
+          "filledNetOnReservedWorstPct": -23.58,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 109,
+          "earlyJanMay": {
+            "n": 181,
+            "meanNetOnReservedPct": 0.641,
+            "tpPct": 63.54
+          },
+          "laterJuneOct": {
+            "n": 138,
+            "meanNetOnReservedPct": -1.309,
+            "tpPct": 51.45
+          },
+          "avgReservedAtRiskPct": 68.03
+        },
+        "ma": {
+          "signalEvents": 387,
+          "filled": 309,
+          "duplicateSuppressed": 96,
+          "unfilled": 71,
+          "weakCancelled": 7,
+          "incomplete": 0,
+          "takeProfitN": 140,
+          "takeProfitPct": 45.31,
+          "stopN": 13,
+          "stopPct": 4.21,
+          "weakExitN": 4,
+          "weakExitPct": 1.29,
+          "avgNetOnDeployedPct": 0.64,
+          "avgNetOnReservedPct": -0.619,
+          "netWinPct": 54.37,
+          "avgWinPct": 6.633,
+          "avgLossPct": -6.5,
+          "profitFactor": 1.216,
+          "avgTranches": 2.09,
+          "trancheCounts": {
+            "1": 101,
+            "2": 102,
+            "3": 84,
+            "4": 22
+          },
+          "maFillCounts": {
+            "5": 303,
+            "10": 197,
+            "20": 111,
+            "60": 34
+          },
+          "avgSignalToEntryDays": 2.52,
+          "avgHoldDays": 4.05,
+          "distinctStocks": 184,
+          "allEligibleEvents": 387,
+          "fillPct": 79.84,
+          "perEligibleSignalAvgNetOnReservedPct": -0.495,
+          "filledNetOnReservedMedianPct": 0.422,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -9.458,
+          "negativeReservedEvents": 141,
+          "earlyJanMay": {
+            "n": 175,
+            "meanNetOnReservedPct": -0.17,
+            "tpPct": 49.14
+          },
+          "laterJuneOct": {
+            "n": 134,
+            "meanNetOnReservedPct": -1.207,
+            "tpPct": 40.3
+          },
+          "avgReservedAtRiskPct": 52.18
+        }
+      },
+      "10": {
+        "ladder": {
+          "signalEvents": 391,
+          "filled": 314,
+          "duplicateSuppressed": 79,
+          "unfilled": 77,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 226,
+          "takeProfitPct": 71.97,
+          "stopN": 38,
+          "stopPct": 12.1,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.707,
+          "avgNetOnReservedPct": 0.369,
+          "netWinPct": 75.16,
+          "avgWinPct": 7.265,
+          "avgLossPct": -11.085,
+          "profitFactor": 1.983,
+          "avgTranches": 3.47,
+          "trancheCounts": {
+            "1": 61,
+            "2": 42,
+            "3": 40,
+            "4": 31,
+            "5": 140
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.43,
+          "avgHoldDays": 4.97,
+          "distinctStocks": 185,
+          "allEligibleEvents": 391,
+          "fillPct": 80.31,
+          "perEligibleSignalAvgNetOnReservedPct": 0.296,
+          "filledNetOnReservedMedianPct": 2.507,
+          "filledNetOnReservedWorstPct": -23.58,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 78,
+          "earlyJanMay": {
+            "n": 180,
+            "meanNetOnReservedPct": 1.13,
+            "tpPct": 75.56
+          },
+          "laterJuneOct": {
+            "n": 134,
+            "meanNetOnReservedPct": -0.654,
+            "tpPct": 67.16
+          },
+          "avgReservedAtRiskPct": 69.36
+        },
+        "ma": {
+          "signalEvents": 376,
+          "filled": 300,
+          "duplicateSuppressed": 94,
+          "unfilled": 69,
+          "weakCancelled": 7,
+          "incomplete": 0,
+          "takeProfitN": 191,
+          "takeProfitPct": 63.67,
+          "stopN": 32,
+          "stopPct": 10.67,
+          "weakExitN": 16,
+          "weakExitPct": 5.33,
+          "avgNetOnDeployedPct": 1.722,
+          "avgNetOnReservedPct": -0.306,
+          "netWinPct": 69.0,
+          "avgWinPct": 7.066,
+          "avgLossPct": -10.172,
+          "profitFactor": 1.546,
+          "avgTranches": 2.3,
+          "trancheCounts": {
+            "1": 92,
+            "2": 70,
+            "3": 94,
+            "4": 44
+          },
+          "maFillCounts": {
+            "5": 295,
+            "10": 199,
+            "20": 142,
+            "60": 54
+          },
+          "avgSignalToEntryDays": 2.53,
+          "avgHoldDays": 5.86,
+          "distinctStocks": 182,
+          "allEligibleEvents": 376,
+          "fillPct": 79.79,
+          "perEligibleSignalAvgNetOnReservedPct": -0.244,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -17.137,
+          "p05FilledNetOnReservedPct": -12.891,
+          "negativeReservedEvents": 93,
+          "earlyJanMay": {
+            "n": 174,
+            "meanNetOnReservedPct": 0.109,
+            "tpPct": 67.82
+          },
+          "laterJuneOct": {
+            "n": 126,
+            "meanNetOnReservedPct": -0.878,
+            "tpPct": 57.94
+          },
+          "avgReservedAtRiskPct": 57.5
+        }
+      },
+      "20": {
+        "ladder": {
+          "signalEvents": 373,
+          "filled": 299,
+          "duplicateSuppressed": 72,
+          "unfilled": 74,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 233,
+          "takeProfitPct": 77.93,
+          "stopN": 48,
+          "stopPct": 16.05,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.942,
+          "avgNetOnReservedPct": 0.602,
+          "netWinPct": 78.6,
+          "avgWinPct": 7.429,
+          "avgLossPct": -13.532,
+          "profitFactor": 2.016,
+          "avgTranches": 3.5,
+          "trancheCounts": {
+            "1": 58,
+            "2": 39,
+            "3": 35,
+            "4": 29,
+            "5": 138
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.43,
+          "avgHoldDays": 6.01,
+          "distinctStocks": 183,
+          "allEligibleEvents": 373,
+          "fillPct": 80.16,
+          "perEligibleSignalAvgNetOnReservedPct": 0.482,
+          "filledNetOnReservedMedianPct": 2.961,
+          "filledNetOnReservedWorstPct": -23.58,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 64,
+          "earlyJanMay": {
+            "n": 180,
+            "meanNetOnReservedPct": 1.298,
+            "tpPct": 82.78
+          },
+          "laterJuneOct": {
+            "n": 119,
+            "meanNetOnReservedPct": -0.452,
+            "tpPct": 70.59
+          },
+          "avgReservedAtRiskPct": 70.03
+        },
+        "ma": {
+          "signalEvents": 361,
+          "filled": 287,
+          "duplicateSuppressed": 84,
+          "unfilled": 67,
+          "weakCancelled": 7,
+          "incomplete": 0,
+          "takeProfitN": 204,
+          "takeProfitPct": 71.08,
+          "stopN": 41,
+          "stopPct": 14.29,
+          "weakExitN": 28,
+          "weakExitPct": 9.76,
+          "avgNetOnDeployedPct": 2.021,
+          "avgNetOnReservedPct": -0.177,
+          "netWinPct": 73.17,
+          "avgWinPct": 7.229,
+          "avgLossPct": -12.183,
+          "profitFactor": 1.618,
+          "avgTranches": 2.35,
+          "trancheCounts": {
+            "1": 88,
+            "2": 61,
+            "3": 87,
+            "4": 51
+          },
+          "maFillCounts": {
+            "5": 282,
+            "10": 193,
+            "20": 141,
+            "60": 59
+          },
+          "avgSignalToEntryDays": 2.53,
+          "avgHoldDays": 6.98,
+          "distinctStocks": 180,
+          "allEligibleEvents": 361,
+          "fillPct": 79.5,
+          "perEligibleSignalAvgNetOnReservedPct": -0.141,
+          "filledNetOnReservedMedianPct": 1.926,
+          "filledNetOnReservedWorstPct": -17.137,
+          "p05FilledNetOnReservedPct": -14.906,
+          "negativeReservedEvents": 77,
+          "earlyJanMay": {
+            "n": 174,
+            "meanNetOnReservedPct": 0.384,
+            "tpPct": 78.16
+          },
+          "laterJuneOct": {
+            "n": 113,
+            "meanNetOnReservedPct": -1.042,
+            "tpPct": 60.18
+          },
+          "avgReservedAtRiskPct": 58.8
+        }
+      }
+    },
+    "G_BROAD": {
+      "5": {
+        "ladder": {
+          "signalEvents": 277,
+          "filled": 215,
+          "duplicateSuppressed": 248,
+          "unfilled": 62,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 146,
+          "takeProfitPct": 67.91,
+          "stopN": 17,
+          "stopPct": 7.91,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.924,
+          "avgNetOnReservedPct": 0.579,
+          "netWinPct": 72.56,
+          "avgWinPct": 7.528,
+          "avgLossPct": -9.252,
+          "profitFactor": 2.152,
+          "avgTranches": 3.47,
+          "trancheCounts": {
+            "1": 37,
+            "2": 27,
+            "3": 33,
+            "4": 33,
+            "5": 85
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.4,
+          "avgHoldDays": 3.43,
+          "distinctStocks": 127,
+          "allEligibleEvents": 277,
+          "fillPct": 77.62,
+          "perEligibleSignalAvgNetOnReservedPct": 0.45,
+          "filledNetOnReservedMedianPct": 2.507,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 59,
+          "earlyJanMay": {
+            "n": 116,
+            "meanNetOnReservedPct": 1.744,
+            "tpPct": 75.0
+          },
+          "laterJuneOct": {
+            "n": 99,
+            "meanNetOnReservedPct": -0.784,
+            "tpPct": 59.6
+          },
+          "avgReservedAtRiskPct": 69.49
+        },
+        "ma": {
+          "signalEvents": 255,
+          "filled": 203,
+          "duplicateSuppressed": 270,
+          "unfilled": 52,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 120,
+          "takeProfitPct": 59.11,
+          "stopN": 16,
+          "stopPct": 7.88,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.034,
+          "avgNetOnReservedPct": 0.205,
+          "netWinPct": 65.52,
+          "avgWinPct": 7.118,
+          "avgLossPct": -7.624,
+          "profitFactor": 1.774,
+          "avgTranches": 1.73,
+          "trancheCounts": {
+            "1": 92,
+            "2": 76,
+            "3": 33,
+            "4": 2
+          },
+          "maFillCounts": {
+            "5": 193,
+            "10": 114,
+            "20": 37,
+            "60": 7
+          },
+          "avgSignalToEntryDays": 2.73,
+          "avgHoldDays": 3.67,
+          "distinctStocks": 132,
+          "allEligibleEvents": 255,
+          "fillPct": 79.61,
+          "perEligibleSignalAvgNetOnReservedPct": 0.163,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -13.077,
+          "p05FilledNetOnReservedPct": -7.802,
+          "negativeReservedEvents": 70,
+          "earlyJanMay": {
+            "n": 106,
+            "meanNetOnReservedPct": 0.413,
+            "tpPct": 65.09
+          },
+          "laterJuneOct": {
+            "n": 97,
+            "meanNetOnReservedPct": -0.023,
+            "tpPct": 52.58
+          },
+          "avgReservedAtRiskPct": 43.23
+        }
+      },
+      "10": {
+        "ladder": {
+          "signalEvents": 270,
+          "filled": 210,
+          "duplicateSuppressed": 240,
+          "unfilled": 60,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 167,
+          "takeProfitPct": 79.52,
+          "stopN": 34,
+          "stopPct": 16.19,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.295,
+          "avgNetOnReservedPct": 0.911,
+          "netWinPct": 80.48,
+          "avgWinPct": 7.612,
+          "avgLossPct": -14.501,
+          "profitFactor": 2.164,
+          "avgTranches": 3.53,
+          "trancheCounts": {
+            "1": 34,
+            "2": 26,
+            "3": 33,
+            "4": 29,
+            "5": 88
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.41,
+          "avgHoldDays": 4.04,
+          "distinctStocks": 126,
+          "allEligibleEvents": 270,
+          "fillPct": 77.78,
+          "perEligibleSignalAvgNetOnReservedPct": 0.709,
+          "filledNetOnReservedMedianPct": 3.761,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -15.669,
+          "negativeReservedEvents": 41,
+          "earlyJanMay": {
+            "n": 114,
+            "meanNetOnReservedPct": 2.147,
+            "tpPct": 87.72
+          },
+          "laterJuneOct": {
+            "n": 96,
+            "meanNetOnReservedPct": -0.556,
+            "tpPct": 69.79
+          },
+          "avgReservedAtRiskPct": 70.57
+        },
+        "ma": {
+          "signalEvents": 248,
+          "filled": 197,
+          "duplicateSuppressed": 262,
+          "unfilled": 51,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 153,
+          "takeProfitPct": 77.66,
+          "stopN": 29,
+          "stopPct": 14.72,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.929,
+          "avgNetOnReservedPct": 0.547,
+          "netWinPct": 77.66,
+          "avgWinPct": 7.522,
+          "avgLossPct": -13.039,
+          "profitFactor": 2.006,
+          "avgTranches": 1.83,
+          "trancheCounts": {
+            "1": 87,
+            "2": 61,
+            "3": 44,
+            "4": 5
+          },
+          "maFillCounts": {
+            "5": 189,
+            "10": 112,
+            "20": 52,
+            "60": 8
+          },
+          "avgSignalToEntryDays": 2.73,
+          "avgHoldDays": 4.61,
+          "distinctStocks": 129,
+          "allEligibleEvents": 248,
+          "fillPct": 79.44,
+          "perEligibleSignalAvgNetOnReservedPct": 0.435,
+          "filledNetOnReservedMedianPct": 1.795,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 44,
+          "earlyJanMay": {
+            "n": 106,
+            "meanNetOnReservedPct": 1.165,
+            "tpPct": 84.91
+          },
+          "laterJuneOct": {
+            "n": 91,
+            "meanNetOnReservedPct": -0.173,
+            "tpPct": 69.23
+          },
+          "avgReservedAtRiskPct": 45.81
+        }
+      },
+      "20": {
+        "ladder": {
+          "signalEvents": 249,
+          "filled": 192,
+          "duplicateSuppressed": 231,
+          "unfilled": 57,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 160,
+          "takeProfitPct": 83.33,
+          "stopN": 31,
+          "stopPct": 16.15,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.84,
+          "avgNetOnReservedPct": 1.379,
+          "netWinPct": 83.33,
+          "avgWinPct": 7.745,
+          "avgLossPct": -15.683,
+          "profitFactor": 2.469,
+          "avgTranches": 3.5,
+          "trancheCounts": {
+            "1": 33,
+            "2": 23,
+            "3": 30,
+            "4": 27,
+            "5": 79
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.43,
+          "avgHoldDays": 4.08,
+          "distinctStocks": 118,
+          "allEligibleEvents": 249,
+          "fillPct": 77.11,
+          "perEligibleSignalAvgNetOnReservedPct": 1.063,
+          "filledNetOnReservedMedianPct": 3.802,
+          "filledNetOnReservedWorstPct": -20.857,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 32,
+          "earlyJanMay": {
+            "n": 114,
+            "meanNetOnReservedPct": 2.409,
+            "tpPct": 89.47
+          },
+          "laterJuneOct": {
+            "n": 78,
+            "meanNetOnReservedPct": -0.128,
+            "tpPct": 74.36
+          },
+          "avgReservedAtRiskPct": 70.0
+        },
+        "ma": {
+          "signalEvents": 229,
+          "filled": 183,
+          "duplicateSuppressed": 251,
+          "unfilled": 46,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 149,
+          "takeProfitPct": 81.42,
+          "stopN": 32,
+          "stopPct": 17.49,
+          "weakExitN": 2,
+          "weakExitPct": 1.09,
+          "avgNetOnDeployedPct": 3.192,
+          "avgNetOnReservedPct": 0.678,
+          "netWinPct": 81.42,
+          "avgWinPct": 7.519,
+          "avgLossPct": -15.767,
+          "profitFactor": 2.09,
+          "avgTranches": 1.83,
+          "trancheCounts": {
+            "1": 81,
+            "2": 57,
+            "3": 40,
+            "4": 5
+          },
+          "maFillCounts": {
+            "5": 175,
+            "10": 104,
+            "20": 48,
+            "60": 8
+          },
+          "avgSignalToEntryDays": 2.77,
+          "avgHoldDays": 4.75,
+          "distinctStocks": 123,
+          "allEligibleEvents": 229,
+          "fillPct": 79.91,
+          "perEligibleSignalAvgNetOnReservedPct": 0.542,
+          "filledNetOnReservedMedianPct": 2.082,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 34,
+          "earlyJanMay": {
+            "n": 106,
+            "meanNetOnReservedPct": 1.211,
+            "tpPct": 86.79
+          },
+          "laterJuneOct": {
+            "n": 77,
+            "meanNetOnReservedPct": -0.055,
+            "tpPct": 74.03
+          },
+          "avgReservedAtRiskPct": 45.77
+        }
+      }
+    },
+    "G_3D_BREAK": {
+      "5": {
+        "ladder": {
+          "signalEvents": 299,
+          "filled": 228,
+          "duplicateSuppressed": 211,
+          "unfilled": 71,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 148,
+          "takeProfitPct": 64.91,
+          "stopN": 20,
+          "stopPct": 8.77,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.548,
+          "avgNetOnReservedPct": 0.057,
+          "netWinPct": 71.05,
+          "avgWinPct": 7.404,
+          "avgLossPct": -9.372,
+          "profitFactor": 1.939,
+          "avgTranches": 3.37,
+          "trancheCounts": {
+            "1": 48,
+            "2": 28,
+            "3": 33,
+            "4": 29,
+            "5": 90
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.42,
+          "avgHoldDays": 3.39,
+          "distinctStocks": 142,
+          "allEligibleEvents": 299,
+          "fillPct": 76.25,
+          "perEligibleSignalAvgNetOnReservedPct": 0.044,
+          "filledNetOnReservedMedianPct": 2.507,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 66,
+          "earlyJanMay": {
+            "n": 117,
+            "meanNetOnReservedPct": 1.482,
+            "tpPct": 73.5
+          },
+          "laterJuneOct": {
+            "n": 111,
+            "meanNetOnReservedPct": -1.444,
+            "tpPct": 55.86
+          },
+          "avgReservedAtRiskPct": 67.46
+        },
+        "ma": {
+          "signalEvents": 280,
+          "filled": 215,
+          "duplicateSuppressed": 230,
+          "unfilled": 65,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 127,
+          "takeProfitPct": 59.07,
+          "stopN": 17,
+          "stopPct": 7.91,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.123,
+          "avgNetOnReservedPct": 0.123,
+          "netWinPct": 66.51,
+          "avgWinPct": 7.04,
+          "avgLossPct": -7.641,
+          "profitFactor": 1.83,
+          "avgTranches": 1.71,
+          "trancheCounts": {
+            "1": 101,
+            "2": 80,
+            "3": 30,
+            "4": 4
+          },
+          "maFillCounts": {
+            "5": 207,
+            "10": 116,
+            "20": 35,
+            "60": 9
+          },
+          "avgSignalToEntryDays": 2.8,
+          "avgHoldDays": 3.6,
+          "distinctStocks": 144,
+          "allEligibleEvents": 280,
+          "fillPct": 76.79,
+          "perEligibleSignalAvgNetOnReservedPct": 0.094,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -8.118,
+          "negativeReservedEvents": 72,
+          "earlyJanMay": {
+            "n": 112,
+            "meanNetOnReservedPct": 0.462,
+            "tpPct": 67.86
+          },
+          "laterJuneOct": {
+            "n": 103,
+            "meanNetOnReservedPct": -0.246,
+            "tpPct": 49.51
+          },
+          "avgReservedAtRiskPct": 42.67
+        }
+      },
+      "10": {
+        "ladder": {
+          "signalEvents": 292,
+          "filled": 226,
+          "duplicateSuppressed": 203,
+          "unfilled": 66,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 175,
+          "takeProfitPct": 77.43,
+          "stopN": 39,
+          "stopPct": 17.26,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.761,
+          "avgNetOnReservedPct": 0.219,
+          "netWinPct": 78.32,
+          "avgWinPct": 7.559,
+          "avgLossPct": -14.568,
+          "profitFactor": 1.874,
+          "avgTranches": 3.42,
+          "trancheCounts": {
+            "1": 46,
+            "2": 28,
+            "3": 32,
+            "4": 25,
+            "5": 95
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.41,
+          "avgHoldDays": 4.08,
+          "distinctStocks": 141,
+          "allEligibleEvents": 292,
+          "fillPct": 77.4,
+          "perEligibleSignalAvgNetOnReservedPct": 0.17,
+          "filledNetOnReservedMedianPct": 3.281,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -15.766,
+          "negativeReservedEvents": 49,
+          "earlyJanMay": {
+            "n": 117,
+            "meanNetOnReservedPct": 1.774,
+            "tpPct": 87.18
+          },
+          "laterJuneOct": {
+            "n": 109,
+            "meanNetOnReservedPct": -1.449,
+            "tpPct": 66.97
+          },
+          "avgReservedAtRiskPct": 68.41
+        },
+        "ma": {
+          "signalEvents": 274,
+          "filled": 210,
+          "duplicateSuppressed": 221,
+          "unfilled": 64,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 162,
+          "takeProfitPct": 77.14,
+          "stopN": 30,
+          "stopPct": 14.29,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.983,
+          "avgNetOnReservedPct": 0.422,
+          "netWinPct": 78.57,
+          "avgWinPct": 7.434,
+          "avgLossPct": -13.337,
+          "profitFactor": 2.044,
+          "avgTranches": 1.8,
+          "trancheCounts": {
+            "1": 99,
+            "2": 60,
+            "3": 45,
+            "4": 6
+          },
+          "maFillCounts": {
+            "5": 203,
+            "10": 113,
+            "20": 53,
+            "60": 9
+          },
+          "avgSignalToEntryDays": 2.79,
+          "avgHoldDays": 4.59,
+          "distinctStocks": 142,
+          "allEligibleEvents": 274,
+          "fillPct": 76.64,
+          "perEligibleSignalAvgNetOnReservedPct": 0.323,
+          "filledNetOnReservedMedianPct": 1.696,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 45,
+          "earlyJanMay": {
+            "n": 112,
+            "meanNetOnReservedPct": 1.088,
+            "tpPct": 84.82
+          },
+          "laterJuneOct": {
+            "n": 98,
+            "meanNetOnReservedPct": -0.339,
+            "tpPct": 68.37
+          },
+          "avgReservedAtRiskPct": 45.0
+        }
+      },
+      "20": {
+        "ladder": {
+          "signalEvents": 271,
+          "filled": 209,
+          "duplicateSuppressed": 194,
+          "unfilled": 62,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 171,
+          "takeProfitPct": 81.82,
+          "stopN": 37,
+          "stopPct": 17.7,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.422,
+          "avgNetOnReservedPct": 0.802,
+          "netWinPct": 81.82,
+          "avgWinPct": 7.675,
+          "avgLossPct": -15.714,
+          "profitFactor": 2.198,
+          "avgTranches": 3.39,
+          "trancheCounts": {
+            "1": 45,
+            "2": 24,
+            "3": 30,
+            "4": 24,
+            "5": 86
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.42,
+          "avgHoldDays": 4.11,
+          "distinctStocks": 133,
+          "allEligibleEvents": 271,
+          "fillPct": 77.12,
+          "perEligibleSignalAvgNetOnReservedPct": 0.618,
+          "filledNetOnReservedMedianPct": 3.761,
+          "filledNetOnReservedWorstPct": -20.857,
+          "p05FilledNetOnReservedPct": -15.677,
+          "negativeReservedEvents": 38,
+          "earlyJanMay": {
+            "n": 117,
+            "meanNetOnReservedPct": 2.03,
+            "tpPct": 88.89
+          },
+          "laterJuneOct": {
+            "n": 92,
+            "meanNetOnReservedPct": -0.759,
+            "tpPct": 72.83
+          },
+          "avgReservedAtRiskPct": 67.85
+        },
+        "ma": {
+          "signalEvents": 255,
+          "filled": 197,
+          "duplicateSuppressed": 210,
+          "unfilled": 58,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 160,
+          "takeProfitPct": 81.22,
+          "stopN": 35,
+          "stopPct": 17.77,
+          "weakExitN": 1,
+          "weakExitPct": 0.51,
+          "avgNetOnDeployedPct": 3.154,
+          "avgNetOnReservedPct": 0.47,
+          "netWinPct": 81.22,
+          "avgWinPct": 7.555,
+          "avgLossPct": -15.878,
+          "profitFactor": 2.058,
+          "avgTranches": 1.81,
+          "trancheCounts": {
+            "1": 93,
+            "2": 56,
+            "3": 41,
+            "4": 7
+          },
+          "maFillCounts": {
+            "5": 190,
+            "10": 106,
+            "20": 50,
+            "60": 10
+          },
+          "avgSignalToEntryDays": 2.82,
+          "avgHoldDays": 4.76,
+          "distinctStocks": 136,
+          "allEligibleEvents": 255,
+          "fillPct": 77.25,
+          "perEligibleSignalAvgNetOnReservedPct": 0.363,
+          "filledNetOnReservedMedianPct": 1.932,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 37,
+          "earlyJanMay": {
+            "n": 112,
+            "meanNetOnReservedPct": 1.251,
+            "tpPct": 88.39
+          },
+          "laterJuneOct": {
+            "n": 85,
+            "meanNetOnReservedPct": -0.558,
+            "tpPct": 71.76
+          },
+          "avgReservedAtRiskPct": 45.18
+        }
+      }
+    },
+    "G_18D_BREAK": {
+      "5": {
+        "ladder": {
+          "signalEvents": 252,
+          "filled": 186,
+          "duplicateSuppressed": 219,
+          "unfilled": 66,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 117,
+          "takeProfitPct": 62.9,
+          "stopN": 16,
+          "stopPct": 8.6,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.162,
+          "avgNetOnReservedPct": -0.109,
+          "netWinPct": 69.35,
+          "avgWinPct": 7.21,
+          "avgLossPct": -9.262,
+          "profitFactor": 1.762,
+          "avgTranches": 3.47,
+          "trancheCounts": {
+            "1": 34,
+            "2": 23,
+            "3": 27,
+            "4": 26,
+            "5": 76
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.39,
+          "avgHoldDays": 3.42,
+          "distinctStocks": 119,
+          "allEligibleEvents": 252,
+          "fillPct": 73.81,
+          "perEligibleSignalAvgNetOnReservedPct": -0.08,
+          "filledNetOnReservedMedianPct": 2.507,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 57,
+          "earlyJanMay": {
+            "n": 87,
+            "meanNetOnReservedPct": 1.145,
+            "tpPct": 68.97
+          },
+          "laterJuneOct": {
+            "n": 99,
+            "meanNetOnReservedPct": -1.211,
+            "tpPct": 57.58
+          },
+          "avgReservedAtRiskPct": 69.35
+        },
+        "ma": {
+          "signalEvents": 237,
+          "filled": 186,
+          "duplicateSuppressed": 234,
+          "unfilled": 51,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 107,
+          "takeProfitPct": 57.53,
+          "stopN": 16,
+          "stopPct": 8.6,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 1.749,
+          "avgNetOnReservedPct": 0.026,
+          "netWinPct": 63.98,
+          "avgWinPct": 7.149,
+          "avgLossPct": -7.841,
+          "profitFactor": 1.619,
+          "avgTranches": 1.75,
+          "trancheCounts": {
+            "1": 80,
+            "2": 74,
+            "3": 31,
+            "4": 1
+          },
+          "maFillCounts": {
+            "5": 178,
+            "10": 108,
+            "20": 33,
+            "60": 6
+          },
+          "avgSignalToEntryDays": 2.71,
+          "avgHoldDays": 3.67,
+          "distinctStocks": 127,
+          "allEligibleEvents": 237,
+          "fillPct": 78.48,
+          "perEligibleSignalAvgNetOnReservedPct": 0.021,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -13.077,
+          "p05FilledNetOnReservedPct": -7.984,
+          "negativeReservedEvents": 67,
+          "earlyJanMay": {
+            "n": 86,
+            "meanNetOnReservedPct": 0.225,
+            "tpPct": 63.95
+          },
+          "laterJuneOct": {
+            "n": 100,
+            "meanNetOnReservedPct": -0.144,
+            "tpPct": 52.0
+          },
+          "avgReservedAtRiskPct": 43.68
+        }
+      },
+      "10": {
+        "ladder": {
+          "signalEvents": 243,
+          "filled": 180,
+          "duplicateSuppressed": 213,
+          "unfilled": 63,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 137,
+          "takeProfitPct": 76.11,
+          "stopN": 33,
+          "stopPct": 18.33,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.413,
+          "avgNetOnReservedPct": 0.124,
+          "netWinPct": 77.22,
+          "avgWinPct": 7.407,
+          "avgLossPct": -14.518,
+          "profitFactor": 1.73,
+          "avgTranches": 3.56,
+          "trancheCounts": {
+            "1": 30,
+            "2": 22,
+            "3": 26,
+            "4": 22,
+            "5": 80
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.39,
+          "avgHoldDays": 4.16,
+          "distinctStocks": 117,
+          "allEligibleEvents": 243,
+          "fillPct": 74.07,
+          "perEligibleSignalAvgNetOnReservedPct": 0.092,
+          "filledNetOnReservedMedianPct": 3.761,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -16.213,
+          "negativeReservedEvents": 41,
+          "earlyJanMay": {
+            "n": 85,
+            "meanNetOnReservedPct": 1.441,
+            "tpPct": 84.71
+          },
+          "laterJuneOct": {
+            "n": 95,
+            "meanNetOnReservedPct": -1.055,
+            "tpPct": 68.42
+          },
+          "avgReservedAtRiskPct": 71.11
+        },
+        "ma": {
+          "signalEvents": 230,
+          "filled": 180,
+          "duplicateSuppressed": 226,
+          "unfilled": 50,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 137,
+          "takeProfitPct": 76.11,
+          "stopN": 29,
+          "stopPct": 16.11,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.588,
+          "avgNetOnReservedPct": 0.386,
+          "netWinPct": 76.11,
+          "avgWinPct": 7.491,
+          "avgLossPct": -13.031,
+          "profitFactor": 1.832,
+          "avgTranches": 1.86,
+          "trancheCounts": {
+            "1": 76,
+            "2": 57,
+            "3": 43,
+            "4": 4
+          },
+          "maFillCounts": {
+            "5": 174,
+            "10": 106,
+            "20": 49,
+            "60": 6
+          },
+          "avgSignalToEntryDays": 2.69,
+          "avgHoldDays": 4.64,
+          "distinctStocks": 124,
+          "allEligibleEvents": 230,
+          "fillPct": 78.26,
+          "perEligibleSignalAvgNetOnReservedPct": 0.302,
+          "filledNetOnReservedMedianPct": 1.792,
+          "filledNetOnReservedWorstPct": -13.077,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 43,
+          "earlyJanMay": {
+            "n": 86,
+            "meanNetOnReservedPct": 0.987,
+            "tpPct": 83.72
+          },
+          "laterJuneOct": {
+            "n": 94,
+            "meanNetOnReservedPct": -0.164,
+            "tpPct": 69.15
+          },
+          "avgReservedAtRiskPct": 46.53
+        }
+      },
+      "20": {
+        "ladder": {
+          "signalEvents": 223,
+          "filled": 162,
+          "duplicateSuppressed": 203,
+          "unfilled": 61,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 131,
+          "takeProfitPct": 80.86,
+          "stopN": 30,
+          "stopPct": 18.52,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.066,
+          "avgNetOnReservedPct": 0.731,
+          "netWinPct": 80.86,
+          "avgWinPct": 7.527,
+          "avgLossPct": -15.787,
+          "profitFactor": 2.015,
+          "avgTranches": 3.54,
+          "trancheCounts": {
+            "1": 28,
+            "2": 19,
+            "3": 24,
+            "4": 20,
+            "5": 71
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.41,
+          "avgHoldDays": 4.17,
+          "distinctStocks": 107,
+          "allEligibleEvents": 223,
+          "fillPct": 72.65,
+          "perEligibleSignalAvgNetOnReservedPct": 0.531,
+          "filledNetOnReservedMedianPct": 3.761,
+          "filledNetOnReservedWorstPct": -20.857,
+          "p05FilledNetOnReservedPct": -16.016,
+          "negativeReservedEvents": 31,
+          "earlyJanMay": {
+            "n": 85,
+            "meanNetOnReservedPct": 1.793,
+            "tpPct": 87.06
+          },
+          "laterJuneOct": {
+            "n": 77,
+            "meanNetOnReservedPct": -0.442,
+            "tpPct": 74.03
+          },
+          "avgReservedAtRiskPct": 70.74
+        },
+        "ma": {
+          "signalEvents": 212,
+          "filled": 166,
+          "duplicateSuppressed": 214,
+          "unfilled": 46,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 132,
+          "takeProfitPct": 79.52,
+          "stopN": 31,
+          "stopPct": 18.67,
+          "weakExitN": 2,
+          "weakExitPct": 1.2,
+          "avgNetOnDeployedPct": 2.762,
+          "avgNetOnReservedPct": 0.46,
+          "netWinPct": 79.52,
+          "avgWinPct": 7.496,
+          "avgLossPct": -15.618,
+          "profitFactor": 1.863,
+          "avgTranches": 1.87,
+          "trancheCounts": {
+            "1": 70,
+            "2": 52,
+            "3": 40,
+            "4": 4
+          },
+          "maFillCounts": {
+            "5": 160,
+            "10": 98,
+            "20": 46,
+            "60": 6
+          },
+          "avgSignalToEntryDays": 2.73,
+          "avgHoldDays": 4.85,
+          "distinctStocks": 117,
+          "allEligibleEvents": 212,
+          "fillPct": 78.3,
+          "perEligibleSignalAvgNetOnReservedPct": 0.36,
+          "filledNetOnReservedMedianPct": 2.117,
+          "filledNetOnReservedWorstPct": -13.077,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 34,
+          "earlyJanMay": {
+            "n": 86,
+            "meanNetOnReservedPct": 1.087,
+            "tpPct": 86.05
+          },
+          "laterJuneOct": {
+            "n": 80,
+            "meanNetOnReservedPct": -0.214,
+            "tpPct": 72.5
+          },
+          "avgReservedAtRiskPct": 46.69
+        }
+      }
+    },
+    "G_DOUBLE_BREAK": {
+      "5": {
+        "ladder": {
+          "signalEvents": 271,
+          "filled": 206,
+          "duplicateSuppressed": 192,
+          "unfilled": 65,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 128,
+          "takeProfitPct": 62.14,
+          "stopN": 19,
+          "stopPct": 9.22,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.171,
+          "avgNetOnReservedPct": -0.294,
+          "netWinPct": 68.93,
+          "avgWinPct": 7.37,
+          "avgLossPct": -9.364,
+          "profitFactor": 1.746,
+          "avgTranches": 3.38,
+          "trancheCounts": {
+            "1": 44,
+            "2": 24,
+            "3": 30,
+            "4": 25,
+            "5": 83
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.4,
+          "avgHoldDays": 3.37,
+          "distinctStocks": 137,
+          "allEligibleEvents": 271,
+          "fillPct": 76.01,
+          "perEligibleSignalAvgNetOnReservedPct": -0.223,
+          "filledNetOnReservedMedianPct": 1.92,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 64,
+          "earlyJanMay": {
+            "n": 96,
+            "meanNetOnReservedPct": 0.946,
+            "tpPct": 70.83
+          },
+          "laterJuneOct": {
+            "n": 110,
+            "meanNetOnReservedPct": -1.376,
+            "tpPct": 54.55
+          },
+          "avgReservedAtRiskPct": 67.67
+        },
+        "ma": {
+          "signalEvents": 255,
+          "filled": 196,
+          "duplicateSuppressed": 208,
+          "unfilled": 59,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 115,
+          "takeProfitPct": 58.67,
+          "stopN": 16,
+          "stopPct": 8.16,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.022,
+          "avgNetOnReservedPct": 0.068,
+          "netWinPct": 64.8,
+          "avgWinPct": 7.306,
+          "avgLossPct": -7.704,
+          "profitFactor": 1.745,
+          "avgTranches": 1.73,
+          "trancheCounts": {
+            "1": 89,
+            "2": 74,
+            "3": 30,
+            "4": 3
+          },
+          "maFillCounts": {
+            "5": 188,
+            "10": 110,
+            "20": 33,
+            "60": 8
+          },
+          "avgSignalToEntryDays": 2.77,
+          "avgHoldDays": 3.62,
+          "distinctStocks": 137,
+          "allEligibleEvents": 255,
+          "fillPct": 76.86,
+          "perEligibleSignalAvgNetOnReservedPct": 0.052,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -8.105,
+          "negativeReservedEvents": 69,
+          "earlyJanMay": {
+            "n": 93,
+            "meanNetOnReservedPct": 0.251,
+            "tpPct": 65.59
+          },
+          "laterJuneOct": {
+            "n": 103,
+            "meanNetOnReservedPct": -0.097,
+            "tpPct": 52.43
+          },
+          "avgReservedAtRiskPct": 43.24
+        }
+      },
+      "10": {
+        "ladder": {
+          "signalEvents": 263,
+          "filled": 202,
+          "duplicateSuppressed": 185,
+          "unfilled": 61,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 152,
+          "takeProfitPct": 75.25,
+          "stopN": 38,
+          "stopPct": 18.81,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.334,
+          "avgNetOnReservedPct": -0.178,
+          "netWinPct": 76.24,
+          "avgWinPct": 7.59,
+          "avgLossPct": -14.532,
+          "profitFactor": 1.676,
+          "avgTranches": 3.46,
+          "trancheCounts": {
+            "1": 40,
+            "2": 24,
+            "3": 29,
+            "4": 21,
+            "5": 88
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.39,
+          "avgHoldDays": 4.11,
+          "distinctStocks": 135,
+          "allEligibleEvents": 263,
+          "fillPct": 76.81,
+          "perEligibleSignalAvgNetOnReservedPct": -0.137,
+          "filledNetOnReservedMedianPct": 3.175,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -16.017,
+          "negativeReservedEvents": 48,
+          "earlyJanMay": {
+            "n": 95,
+            "meanNetOnReservedPct": 1.156,
+            "tpPct": 84.21
+          },
+          "laterJuneOct": {
+            "n": 107,
+            "meanNetOnReservedPct": -1.362,
+            "tpPct": 67.29
+          },
+          "avgReservedAtRiskPct": 69.21
+        },
+        "ma": {
+          "signalEvents": 249,
+          "filled": 191,
+          "duplicateSuppressed": 199,
+          "unfilled": 58,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 144,
+          "takeProfitPct": 75.39,
+          "stopN": 29,
+          "stopPct": 15.18,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.756,
+          "avgNetOnReservedPct": 0.341,
+          "netWinPct": 76.96,
+          "avgWinPct": 7.555,
+          "avgLossPct": -13.278,
+          "profitFactor": 1.901,
+          "avgTranches": 1.83,
+          "trancheCounts": {
+            "1": 87,
+            "2": 54,
+            "3": 45,
+            "4": 5
+          },
+          "maFillCounts": {
+            "5": 184,
+            "10": 107,
+            "20": 51,
+            "60": 8
+          },
+          "avgSignalToEntryDays": 2.73,
+          "avgHoldDays": 4.61,
+          "distinctStocks": 134,
+          "allEligibleEvents": 249,
+          "fillPct": 76.71,
+          "perEligibleSignalAvgNetOnReservedPct": 0.262,
+          "filledNetOnReservedMedianPct": 1.692,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 44,
+          "earlyJanMay": {
+            "n": 93,
+            "meanNetOnReservedPct": 0.804,
+            "tpPct": 81.72
+          },
+          "laterJuneOct": {
+            "n": 98,
+            "meanNetOnReservedPct": -0.098,
+            "tpPct": 69.39
+          },
+          "avgReservedAtRiskPct": 45.81
+        }
+      },
+      "20": {
+        "ladder": {
+          "signalEvents": 243,
+          "filled": 185,
+          "duplicateSuppressed": 175,
+          "unfilled": 58,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 149,
+          "takeProfitPct": 80.54,
+          "stopN": 35,
+          "stopPct": 18.92,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.13,
+          "avgNetOnReservedPct": 0.571,
+          "netWinPct": 80.54,
+          "avgWinPct": 7.685,
+          "avgLossPct": -15.721,
+          "profitFactor": 2.023,
+          "avgTranches": 3.44,
+          "trancheCounts": {
+            "1": 38,
+            "2": 21,
+            "3": 27,
+            "4": 19,
+            "5": 80
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.39,
+          "avgHoldDays": 4.18,
+          "distinctStocks": 126,
+          "allEligibleEvents": 243,
+          "fillPct": 76.13,
+          "perEligibleSignalAvgNetOnReservedPct": 0.435,
+          "filledNetOnReservedMedianPct": 3.761,
+          "filledNetOnReservedWorstPct": -20.857,
+          "p05FilledNetOnReservedPct": -15.767,
+          "negativeReservedEvents": 36,
+          "earlyJanMay": {
+            "n": 95,
+            "meanNetOnReservedPct": 1.471,
+            "tpPct": 86.32
+          },
+          "laterJuneOct": {
+            "n": 90,
+            "meanNetOnReservedPct": -0.379,
+            "tpPct": 74.44
+          },
+          "avgReservedAtRiskPct": 68.86
+        },
+        "ma": {
+          "signalEvents": 231,
+          "filled": 178,
+          "duplicateSuppressed": 187,
+          "unfilled": 53,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 143,
+          "takeProfitPct": 80.34,
+          "stopN": 33,
+          "stopPct": 18.54,
+          "weakExitN": 1,
+          "weakExitPct": 0.56,
+          "avgNetOnDeployedPct": 3.049,
+          "avgNetOnReservedPct": 0.502,
+          "netWinPct": 80.34,
+          "avgWinPct": 7.686,
+          "avgLossPct": -15.895,
+          "profitFactor": 1.976,
+          "avgTranches": 1.84,
+          "trancheCounts": {
+            "1": 81,
+            "2": 50,
+            "3": 42,
+            "4": 5
+          },
+          "maFillCounts": {
+            "5": 171,
+            "10": 100,
+            "20": 48,
+            "60": 8
+          },
+          "avgSignalToEntryDays": 2.76,
+          "avgHoldDays": 4.84,
+          "distinctStocks": 128,
+          "allEligibleEvents": 231,
+          "fillPct": 77.06,
+          "perEligibleSignalAvgNetOnReservedPct": 0.386,
+          "filledNetOnReservedMedianPct": 2.104,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 35,
+          "earlyJanMay": {
+            "n": 93,
+            "meanNetOnReservedPct": 1.022,
+            "tpPct": 86.02
+          },
+          "laterJuneOct": {
+            "n": 85,
+            "meanNetOnReservedPct": -0.068,
+            "tpPct": 74.12
+          },
+          "avgReservedAtRiskPct": 45.93
+        }
+      }
+    },
+    "G_TRIGGER": {
+      "5": {
+        "ladder": {
+          "signalEvents": 295,
+          "filled": 228,
+          "duplicateSuppressed": 221,
+          "unfilled": 67,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 150,
+          "takeProfitPct": 65.79,
+          "stopN": 18,
+          "stopPct": 7.89,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.772,
+          "avgNetOnReservedPct": 0.352,
+          "netWinPct": 73.25,
+          "avgWinPct": 7.043,
+          "avgLossPct": -8.923,
+          "profitFactor": 2.161,
+          "avgTranches": 3.31,
+          "trancheCounts": {
+            "1": 52,
+            "2": 28,
+            "3": 37,
+            "4": 19,
+            "5": 92
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.46,
+          "avgHoldDays": 3.37,
+          "distinctStocks": 150,
+          "allEligibleEvents": 295,
+          "fillPct": 77.29,
+          "perEligibleSignalAvgNetOnReservedPct": 0.272,
+          "filledNetOnReservedMedianPct": 2.223,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 61,
+          "earlyJanMay": {
+            "n": 119,
+            "meanNetOnReservedPct": 0.976,
+            "tpPct": 70.59
+          },
+          "laterJuneOct": {
+            "n": 109,
+            "meanNetOnReservedPct": -0.329,
+            "tpPct": 60.55
+          },
+          "avgReservedAtRiskPct": 66.23
+        },
+        "ma": {
+          "signalEvents": 277,
+          "filled": 215,
+          "duplicateSuppressed": 239,
+          "unfilled": 62,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 131,
+          "takeProfitPct": 60.93,
+          "stopN": 18,
+          "stopPct": 8.37,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.039,
+          "avgNetOnReservedPct": 0.062,
+          "netWinPct": 68.84,
+          "avgWinPct": 6.844,
+          "avgLossPct": -8.574,
+          "profitFactor": 1.763,
+          "avgTranches": 1.67,
+          "trancheCounts": {
+            "1": 106,
+            "2": 76,
+            "3": 32,
+            "4": 1
+          },
+          "maFillCounts": {
+            "5": 204,
+            "10": 112,
+            "20": 39,
+            "60": 3
+          },
+          "avgSignalToEntryDays": 2.89,
+          "avgHoldDays": 3.58,
+          "distinctStocks": 152,
+          "allEligibleEvents": 277,
+          "fillPct": 77.62,
+          "perEligibleSignalAvgNetOnReservedPct": 0.048,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -13.077,
+          "p05FilledNetOnReservedPct": -8.079,
+          "negativeReservedEvents": 67,
+          "earlyJanMay": {
+            "n": 113,
+            "meanNetOnReservedPct": 0.287,
+            "tpPct": 67.26
+          },
+          "laterJuneOct": {
+            "n": 102,
+            "meanNetOnReservedPct": -0.188,
+            "tpPct": 53.92
+          },
+          "avgReservedAtRiskPct": 41.63
+        }
+      },
+      "10": {
+        "ladder": {
+          "signalEvents": 286,
+          "filled": 224,
+          "duplicateSuppressed": 215,
+          "unfilled": 62,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 181,
+          "takeProfitPct": 80.8,
+          "stopN": 35,
+          "stopPct": 15.62,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.16,
+          "avgNetOnReservedPct": 0.61,
+          "netWinPct": 81.25,
+          "avgWinPct": 7.339,
+          "avgLossPct": -14.951,
+          "profitFactor": 2.127,
+          "avgTranches": 3.32,
+          "trancheCounts": {
+            "1": 52,
+            "2": 27,
+            "3": 34,
+            "4": 19,
+            "5": 92
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.46,
+          "avgHoldDays": 4.0,
+          "distinctStocks": 147,
+          "allEligibleEvents": 286,
+          "fillPct": 78.32,
+          "perEligibleSignalAvgNetOnReservedPct": 0.478,
+          "filledNetOnReservedMedianPct": 3.053,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 42,
+          "earlyJanMay": {
+            "n": 120,
+            "meanNetOnReservedPct": 1.452,
+            "tpPct": 85.83
+          },
+          "laterJuneOct": {
+            "n": 104,
+            "meanNetOnReservedPct": -0.361,
+            "tpPct": 75.0
+          },
+          "avgReservedAtRiskPct": 66.43
+        },
+        "ma": {
+          "signalEvents": 268,
+          "filled": 208,
+          "duplicateSuppressed": 233,
+          "unfilled": 60,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 161,
+          "takeProfitPct": 77.4,
+          "stopN": 30,
+          "stopPct": 14.42,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.709,
+          "avgNetOnReservedPct": 0.249,
+          "netWinPct": 77.4,
+          "avgWinPct": 7.39,
+          "avgLossPct": -13.327,
+          "profitFactor": 1.899,
+          "avgTranches": 1.75,
+          "trancheCounts": {
+            "1": 100,
+            "2": 62,
+            "3": 43,
+            "4": 3
+          },
+          "maFillCounts": {
+            "5": 199,
+            "10": 111,
+            "20": 51,
+            "60": 4
+          },
+          "avgSignalToEntryDays": 2.9,
+          "avgHoldDays": 4.53,
+          "distinctStocks": 149,
+          "allEligibleEvents": 268,
+          "fillPct": 77.61,
+          "perEligibleSignalAvgNetOnReservedPct": 0.193,
+          "filledNetOnReservedMedianPct": 1.635,
+          "filledNetOnReservedWorstPct": -13.903,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 47,
+          "earlyJanMay": {
+            "n": 113,
+            "meanNetOnReservedPct": 0.959,
+            "tpPct": 84.07
+          },
+          "laterJuneOct": {
+            "n": 95,
+            "meanNetOnReservedPct": -0.597,
+            "tpPct": 69.47
+          },
+          "avgReservedAtRiskPct": 43.87
+        }
+      },
+      "20": {
+        "ladder": {
+          "signalEvents": 271,
+          "filled": 212,
+          "duplicateSuppressed": 200,
+          "unfilled": 59,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 177,
+          "takeProfitPct": 83.49,
+          "stopN": 34,
+          "stopPct": 16.04,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.571,
+          "avgNetOnReservedPct": 0.978,
+          "netWinPct": 83.49,
+          "avgWinPct": 7.416,
+          "avgLossPct": -15.872,
+          "profitFactor": 2.363,
+          "avgTranches": 3.31,
+          "trancheCounts": {
+            "1": 50,
+            "2": 25,
+            "3": 33,
+            "4": 18,
+            "5": 86
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.46,
+          "avgHoldDays": 4.05,
+          "distinctStocks": 139,
+          "allEligibleEvents": 271,
+          "fillPct": 78.23,
+          "perEligibleSignalAvgNetOnReservedPct": 0.765,
+          "filledNetOnReservedMedianPct": 3.761,
+          "filledNetOnReservedWorstPct": -20.857,
+          "p05FilledNetOnReservedPct": -15.601,
+          "negativeReservedEvents": 35,
+          "earlyJanMay": {
+            "n": 120,
+            "meanNetOnReservedPct": 1.714,
+            "tpPct": 88.33
+          },
+          "laterJuneOct": {
+            "n": 92,
+            "meanNetOnReservedPct": 0.017,
+            "tpPct": 77.17
+          },
+          "avgReservedAtRiskPct": 66.13
+        },
+        "ma": {
+          "signalEvents": 253,
+          "filled": 198,
+          "duplicateSuppressed": 218,
+          "unfilled": 55,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 160,
+          "takeProfitPct": 80.81,
+          "stopN": 36,
+          "stopPct": 18.18,
+          "weakExitN": 1,
+          "weakExitPct": 0.51,
+          "avgNetOnDeployedPct": 2.879,
+          "avgNetOnReservedPct": 0.392,
+          "netWinPct": 80.81,
+          "avgWinPct": 7.378,
+          "avgLossPct": -16.062,
+          "profitFactor": 1.934,
+          "avgTranches": 1.75,
+          "trancheCounts": {
+            "1": 96,
+            "2": 59,
+            "3": 40,
+            "4": 3
+          },
+          "maFillCounts": {
+            "5": 189,
+            "10": 105,
+            "20": 48,
+            "60": 4
+          },
+          "avgSignalToEntryDays": 2.93,
+          "avgHoldDays": 4.78,
+          "distinctStocks": 142,
+          "allEligibleEvents": 253,
+          "fillPct": 78.26,
+          "perEligibleSignalAvgNetOnReservedPct": 0.307,
+          "filledNetOnReservedMedianPct": 1.829,
+          "filledNetOnReservedWorstPct": -13.903,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 38,
+          "earlyJanMay": {
+            "n": 113,
+            "meanNetOnReservedPct": 0.963,
+            "tpPct": 86.73
+          },
+          "laterJuneOct": {
+            "n": 85,
+            "meanNetOnReservedPct": -0.367,
+            "tpPct": 72.94
+          },
+          "avgReservedAtRiskPct": 43.69
+        }
+      }
+    },
+    "G_ENGULF": {
+      "5": {
+        "ladder": {
+          "signalEvents": 219,
+          "filled": 172,
+          "duplicateSuppressed": 281,
+          "unfilled": 47,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 110,
+          "takeProfitPct": 63.95,
+          "stopN": 9,
+          "stopPct": 5.23,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.456,
+          "avgNetOnReservedPct": 0.396,
+          "netWinPct": 69.19,
+          "avgWinPct": 6.716,
+          "avgLossPct": -7.109,
+          "profitFactor": 2.121,
+          "avgTranches": 3.42,
+          "trancheCounts": {
+            "1": 30,
+            "2": 28,
+            "3": 21,
+            "4": 26,
+            "5": 67
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.47,
+          "avgHoldDays": 3.59,
+          "distinctStocks": 135,
+          "allEligibleEvents": 219,
+          "fillPct": 78.54,
+          "perEligibleSignalAvgNetOnReservedPct": 0.311,
+          "filledNetOnReservedMedianPct": 2.357,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -14.171,
+          "negativeReservedEvents": 53,
+          "earlyJanMay": {
+            "n": 86,
+            "meanNetOnReservedPct": 0.724,
+            "tpPct": 63.95
+          },
+          "laterJuneOct": {
+            "n": 86,
+            "meanNetOnReservedPct": 0.067,
+            "tpPct": 63.95
+          },
+          "avgReservedAtRiskPct": 68.37
+        },
+        "ma": {
+          "signalEvents": 210,
+          "filled": 170,
+          "duplicateSuppressed": 290,
+          "unfilled": 39,
+          "weakCancelled": 1,
+          "incomplete": 0,
+          "takeProfitN": 99,
+          "takeProfitPct": 58.24,
+          "stopN": 10,
+          "stopPct": 5.88,
+          "weakExitN": 1,
+          "weakExitPct": 0.59,
+          "avgNetOnDeployedPct": 2.161,
+          "avgNetOnReservedPct": 0.363,
+          "netWinPct": 65.88,
+          "avgWinPct": 7.166,
+          "avgLossPct": -7.506,
+          "profitFactor": 1.844,
+          "avgTranches": 1.94,
+          "trancheCounts": {
+            "1": 58,
+            "2": 65,
+            "3": 46,
+            "4": 1
+          },
+          "maFillCounts": {
+            "5": 162,
+            "10": 110,
+            "20": 52,
+            "60": 6
+          },
+          "avgSignalToEntryDays": 2.45,
+          "avgHoldDays": 3.67,
+          "distinctStocks": 134,
+          "allEligibleEvents": 210,
+          "fillPct": 80.95,
+          "perEligibleSignalAvgNetOnReservedPct": 0.294,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -11.738,
+          "p05FilledNetOnReservedPct": -8.04,
+          "negativeReservedEvents": 58,
+          "earlyJanMay": {
+            "n": 87,
+            "meanNetOnReservedPct": 0.56,
+            "tpPct": 58.62
+          },
+          "laterJuneOct": {
+            "n": 83,
+            "meanNetOnReservedPct": 0.157,
+            "tpPct": 57.83
+          },
+          "avgReservedAtRiskPct": 48.53
+        }
+      },
+      "10": {
+        "ladder": {
+          "signalEvents": 212,
+          "filled": 167,
+          "duplicateSuppressed": 273,
+          "unfilled": 45,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 124,
+          "takeProfitPct": 74.25,
+          "stopN": 23,
+          "stopPct": 13.77,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.563,
+          "avgNetOnReservedPct": 0.346,
+          "netWinPct": 78.44,
+          "avgWinPct": 6.812,
+          "avgLossPct": -12.895,
+          "profitFactor": 1.922,
+          "avgTranches": 3.43,
+          "trancheCounts": {
+            "1": 32,
+            "2": 24,
+            "3": 21,
+            "4": 20,
+            "5": 70
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.43,
+          "avgHoldDays": 4.68,
+          "distinctStocks": 132,
+          "allEligibleEvents": 212,
+          "fillPct": 78.77,
+          "perEligibleSignalAvgNetOnReservedPct": 0.273,
+          "filledNetOnReservedMedianPct": 2.507,
+          "filledNetOnReservedWorstPct": -21.086,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 36,
+          "earlyJanMay": {
+            "n": 86,
+            "meanNetOnReservedPct": 0.784,
+            "tpPct": 75.58
+          },
+          "laterJuneOct": {
+            "n": 81,
+            "meanNetOnReservedPct": -0.118,
+            "tpPct": 72.84
+          },
+          "avgReservedAtRiskPct": 68.62
+        },
+        "ma": {
+          "signalEvents": 204,
+          "filled": 166,
+          "duplicateSuppressed": 281,
+          "unfilled": 37,
+          "weakCancelled": 1,
+          "incomplete": 0,
+          "takeProfitN": 124,
+          "takeProfitPct": 74.7,
+          "stopN": 24,
+          "stopPct": 14.46,
+          "weakExitN": 3,
+          "weakExitPct": 1.81,
+          "avgNetOnDeployedPct": 2.482,
+          "avgNetOnReservedPct": 0.34,
+          "netWinPct": 75.3,
+          "avgWinPct": 7.565,
+          "avgLossPct": -13.014,
+          "profitFactor": 1.772,
+          "avgTranches": 2.07,
+          "trancheCounts": {
+            "1": 54,
+            "2": 54,
+            "3": 50,
+            "4": 8
+          },
+          "maFillCounts": {
+            "5": 160,
+            "10": 110,
+            "20": 62,
+            "60": 12
+          },
+          "avgSignalToEntryDays": 2.43,
+          "avgHoldDays": 4.8,
+          "distinctStocks": 131,
+          "allEligibleEvents": 204,
+          "fillPct": 81.37,
+          "perEligibleSignalAvgNetOnReservedPct": 0.277,
+          "filledNetOnReservedMedianPct": 2.339,
+          "filledNetOnReservedWorstPct": -17.084,
+          "p05FilledNetOnReservedPct": -11.725,
+          "negativeReservedEvents": 41,
+          "earlyJanMay": {
+            "n": 87,
+            "meanNetOnReservedPct": 0.301,
+            "tpPct": 75.86
+          },
+          "laterJuneOct": {
+            "n": 79,
+            "meanNetOnReservedPct": 0.383,
+            "tpPct": 73.42
+          },
+          "avgReservedAtRiskPct": 51.81
+        }
+      },
+      "20": {
+        "ladder": {
+          "signalEvents": 200,
+          "filled": 159,
+          "duplicateSuppressed": 255,
+          "unfilled": 41,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 127,
+          "takeProfitPct": 79.87,
+          "stopN": 25,
+          "stopPct": 15.72,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.99,
+          "avgNetOnReservedPct": 0.791,
+          "netWinPct": 81.13,
+          "avgWinPct": 6.956,
+          "avgLossPct": -14.061,
+          "profitFactor": 2.127,
+          "avgTranches": 3.45,
+          "trancheCounts": {
+            "1": 30,
+            "2": 23,
+            "3": 20,
+            "4": 18,
+            "5": 68
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.43,
+          "avgHoldDays": 5.37,
+          "distinctStocks": 126,
+          "allEligibleEvents": 200,
+          "fillPct": 79.5,
+          "perEligibleSignalAvgNetOnReservedPct": 0.629,
+          "filledNetOnReservedMedianPct": 3.026,
+          "filledNetOnReservedWorstPct": -19.456,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 30,
+          "earlyJanMay": {
+            "n": 86,
+            "meanNetOnReservedPct": 1.044,
+            "tpPct": 80.23
+          },
+          "laterJuneOct": {
+            "n": 73,
+            "meanNetOnReservedPct": 0.494,
+            "tpPct": 79.45
+          },
+          "avgReservedAtRiskPct": 68.93
+        },
+        "ma": {
+          "signalEvents": 192,
+          "filled": 157,
+          "duplicateSuppressed": 263,
+          "unfilled": 34,
+          "weakCancelled": 1,
+          "incomplete": 0,
+          "takeProfitN": 120,
+          "takeProfitPct": 76.43,
+          "stopN": 26,
+          "stopPct": 16.56,
+          "weakExitN": 7,
+          "weakExitPct": 4.46,
+          "avgNetOnDeployedPct": 2.35,
+          "avgNetOnReservedPct": 0.291,
+          "netWinPct": 76.43,
+          "avgWinPct": 7.498,
+          "avgLossPct": -14.343,
+          "profitFactor": 1.695,
+          "avgTranches": 2.13,
+          "trancheCounts": {
+            "1": 48,
+            "2": 53,
+            "3": 43,
+            "4": 13
+          },
+          "maFillCounts": {
+            "5": 151,
+            "10": 107,
+            "20": 60,
+            "60": 17
+          },
+          "avgSignalToEntryDays": 2.45,
+          "avgHoldDays": 5.35,
+          "distinctStocks": 126,
+          "allEligibleEvents": 192,
+          "fillPct": 81.77,
+          "perEligibleSignalAvgNetOnReservedPct": 0.238,
+          "filledNetOnReservedMedianPct": 3.134,
+          "filledNetOnReservedWorstPct": -19.322,
+          "p05FilledNetOnReservedPct": -11.882,
+          "negativeReservedEvents": 37,
+          "earlyJanMay": {
+            "n": 87,
+            "meanNetOnReservedPct": -0.008,
+            "tpPct": 77.01
+          },
+          "laterJuneOct": {
+            "n": 70,
+            "meanNetOnReservedPct": 0.661,
+            "tpPct": 75.71
+          },
+          "avgReservedAtRiskPct": 53.34
+        }
+      }
+    },
+    "G_PERSIST": {
+      "5": {
+        "ladder": {
+          "signalEvents": 187,
+          "filled": 142,
+          "duplicateSuppressed": 338,
+          "unfilled": 45,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 89,
+          "takeProfitPct": 62.68,
+          "stopN": 13,
+          "stopPct": 9.15,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 1.932,
+          "avgNetOnReservedPct": -0.481,
+          "netWinPct": 66.9,
+          "avgWinPct": 7.673,
+          "avgLossPct": -9.674,
+          "profitFactor": 1.603,
+          "avgTranches": 3.42,
+          "trancheCounts": {
+            "1": 24,
+            "2": 20,
+            "3": 26,
+            "4": 17,
+            "5": 55
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.48,
+          "avgHoldDays": 3.45,
+          "distinctStocks": 90,
+          "allEligibleEvents": 187,
+          "fillPct": 75.94,
+          "perEligibleSignalAvgNetOnReservedPct": -0.365,
+          "filledNetOnReservedMedianPct": 2.338,
+          "filledNetOnReservedWorstPct": -23.163,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 47,
+          "earlyJanMay": {
+            "n": 71,
+            "meanNetOnReservedPct": -0.1,
+            "tpPct": 67.61
+          },
+          "laterJuneOct": {
+            "n": 71,
+            "meanNetOnReservedPct": -0.862,
+            "tpPct": 57.75
+          },
+          "avgReservedAtRiskPct": 68.31
+        },
+        "ma": {
+          "signalEvents": 172,
+          "filled": 142,
+          "duplicateSuppressed": 353,
+          "unfilled": 30,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 85,
+          "takeProfitPct": 59.86,
+          "stopN": 13,
+          "stopPct": 9.15,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 1.774,
+          "avgNetOnReservedPct": 0.03,
+          "netWinPct": 66.2,
+          "avgWinPct": 7.163,
+          "avgLossPct": -8.779,
+          "profitFactor": 1.598,
+          "avgTranches": 1.76,
+          "trancheCounts": {
+            "1": 60,
+            "2": 58,
+            "3": 22,
+            "4": 2
+          },
+          "maFillCounts": {
+            "5": 132,
+            "10": 87,
+            "20": 28,
+            "60": 3
+          },
+          "avgSignalToEntryDays": 2.56,
+          "avgHoldDays": 3.66,
+          "distinctStocks": 95,
+          "allEligibleEvents": 172,
+          "fillPct": 82.56,
+          "perEligibleSignalAvgNetOnReservedPct": 0.025,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -13.077,
+          "p05FilledNetOnReservedPct": -8.616,
+          "negativeReservedEvents": 48,
+          "earlyJanMay": {
+            "n": 73,
+            "meanNetOnReservedPct": 0.266,
+            "tpPct": 69.86
+          },
+          "laterJuneOct": {
+            "n": 69,
+            "meanNetOnReservedPct": -0.221,
+            "tpPct": 49.28
+          },
+          "avgReservedAtRiskPct": 44.01
+        }
+      },
+      "10": {
+        "ladder": {
+          "signalEvents": 182,
+          "filled": 138,
+          "duplicateSuppressed": 328,
+          "unfilled": 44,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 106,
+          "takeProfitPct": 76.81,
+          "stopN": 25,
+          "stopPct": 18.12,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.954,
+          "avgNetOnReservedPct": 0.448,
+          "netWinPct": 79.71,
+          "avgWinPct": 7.585,
+          "avgLossPct": -15.242,
+          "profitFactor": 1.955,
+          "avgTranches": 3.46,
+          "trancheCounts": {
+            "1": 23,
+            "2": 20,
+            "3": 23,
+            "4": 14,
+            "5": 58
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.49,
+          "avgHoldDays": 4.25,
+          "distinctStocks": 86,
+          "allEligibleEvents": 182,
+          "fillPct": 75.82,
+          "perEligibleSignalAvgNetOnReservedPct": 0.34,
+          "filledNetOnReservedMedianPct": 3.635,
+          "filledNetOnReservedWorstPct": -23.163,
+          "p05FilledNetOnReservedPct": -15.996,
+          "negativeReservedEvents": 28,
+          "earlyJanMay": {
+            "n": 71,
+            "meanNetOnReservedPct": 1.521,
+            "tpPct": 85.92
+          },
+          "laterJuneOct": {
+            "n": 67,
+            "meanNetOnReservedPct": -0.688,
+            "tpPct": 67.16
+          },
+          "avgReservedAtRiskPct": 69.28
+        },
+        "ma": {
+          "signalEvents": 166,
+          "filled": 136,
+          "duplicateSuppressed": 344,
+          "unfilled": 30,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 103,
+          "takeProfitPct": 75.74,
+          "stopN": 22,
+          "stopPct": 16.18,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.527,
+          "avgNetOnReservedPct": 0.299,
+          "netWinPct": 76.47,
+          "avgWinPct": 7.471,
+          "avgLossPct": -13.541,
+          "profitFactor": 1.793,
+          "avgTranches": 1.84,
+          "trancheCounts": {
+            "1": 56,
+            "2": 49,
+            "3": 28,
+            "4": 3
+          },
+          "maFillCounts": {
+            "5": 126,
+            "10": 84,
+            "20": 36,
+            "60": 4
+          },
+          "avgSignalToEntryDays": 2.53,
+          "avgHoldDays": 4.57,
+          "distinctStocks": 89,
+          "allEligibleEvents": 166,
+          "fillPct": 81.93,
+          "perEligibleSignalAvgNetOnReservedPct": 0.245,
+          "filledNetOnReservedMedianPct": 2.066,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 32,
+          "earlyJanMay": {
+            "n": 73,
+            "meanNetOnReservedPct": 1.254,
+            "tpPct": 86.3
+          },
+          "laterJuneOct": {
+            "n": 63,
+            "meanNetOnReservedPct": -0.808,
+            "tpPct": 63.49
+          },
+          "avgReservedAtRiskPct": 45.96
+        }
+      },
+      "20": {
+        "ladder": {
+          "signalEvents": 172,
+          "filled": 130,
+          "duplicateSuppressed": 308,
+          "unfilled": 42,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 105,
+          "takeProfitPct": 80.77,
+          "stopN": 24,
+          "stopPct": 18.46,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.303,
+          "avgNetOnReservedPct": 0.782,
+          "netWinPct": 80.77,
+          "avgWinPct": 7.818,
+          "avgLossPct": -15.659,
+          "profitFactor": 2.097,
+          "avgTranches": 3.48,
+          "trancheCounts": {
+            "1": 21,
+            "2": 19,
+            "3": 22,
+            "4": 13,
+            "5": 55
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.51,
+          "avgHoldDays": 4.39,
+          "distinctStocks": 80,
+          "allEligibleEvents": 172,
+          "fillPct": 75.58,
+          "perEligibleSignalAvgNetOnReservedPct": 0.591,
+          "filledNetOnReservedMedianPct": 3.761,
+          "filledNetOnReservedWorstPct": -20.857,
+          "p05FilledNetOnReservedPct": -15.81,
+          "negativeReservedEvents": 25,
+          "earlyJanMay": {
+            "n": 71,
+            "meanNetOnReservedPct": 1.573,
+            "tpPct": 87.32
+          },
+          "laterJuneOct": {
+            "n": 59,
+            "meanNetOnReservedPct": -0.169,
+            "tpPct": 72.88
+          },
+          "avgReservedAtRiskPct": 69.54
+        },
+        "ma": {
+          "signalEvents": 158,
+          "filled": 129,
+          "duplicateSuppressed": 322,
+          "unfilled": 29,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 104,
+          "takeProfitPct": 80.62,
+          "stopN": 24,
+          "stopPct": 18.6,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.031,
+          "avgNetOnReservedPct": 0.606,
+          "netWinPct": 81.4,
+          "avgWinPct": 7.472,
+          "avgLossPct": -16.402,
+          "profitFactor": 1.993,
+          "avgTranches": 1.84,
+          "trancheCounts": {
+            "1": 52,
+            "2": 48,
+            "3": 26,
+            "4": 3
+          },
+          "maFillCounts": {
+            "5": 120,
+            "10": 81,
+            "20": 33,
+            "60": 4
+          },
+          "avgSignalToEntryDays": 2.56,
+          "avgHoldDays": 4.81,
+          "distinctStocks": 84,
+          "allEligibleEvents": 158,
+          "fillPct": 81.65,
+          "perEligibleSignalAvgNetOnReservedPct": 0.495,
+          "filledNetOnReservedMedianPct": 2.327,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 24,
+          "earlyJanMay": {
+            "n": 73,
+            "meanNetOnReservedPct": 1.192,
+            "tpPct": 87.67
+          },
+          "laterJuneOct": {
+            "n": 56,
+            "meanNetOnReservedPct": -0.158,
+            "tpPct": 71.43
+          },
+          "avgReservedAtRiskPct": 46.12
+        }
+      }
+    },
+    "G_DOUBLE_PERSIST": {
+      "5": {
+        "ladder": {
+          "signalEvents": 225,
+          "filled": 177,
+          "duplicateSuppressed": 238,
+          "unfilled": 48,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 103,
+          "takeProfitPct": 58.19,
+          "stopN": 20,
+          "stopPct": 11.3,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 1.821,
+          "avgNetOnReservedPct": -0.52,
+          "netWinPct": 66.67,
+          "avgWinPct": 7.398,
+          "avgLossPct": -9.333,
+          "profitFactor": 1.585,
+          "avgTranches": 3.49,
+          "trancheCounts": {
+            "1": 35,
+            "2": 18,
+            "3": 27,
+            "4": 20,
+            "5": 77
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.49,
+          "avgHoldDays": 3.46,
+          "distinctStocks": 124,
+          "allEligibleEvents": 225,
+          "fillPct": 78.67,
+          "perEligibleSignalAvgNetOnReservedPct": -0.409,
+          "filledNetOnReservedMedianPct": 1.511,
+          "filledNetOnReservedWorstPct": -20.857,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 59,
+          "earlyJanMay": {
+            "n": 80,
+            "meanNetOnReservedPct": 0.29,
+            "tpPct": 62.5
+          },
+          "laterJuneOct": {
+            "n": 97,
+            "meanNetOnReservedPct": -1.188,
+            "tpPct": 54.64
+          },
+          "avgReservedAtRiskPct": 69.72
+        },
+        "ma": {
+          "signalEvents": 210,
+          "filled": 162,
+          "duplicateSuppressed": 253,
+          "unfilled": 48,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 92,
+          "takeProfitPct": 56.79,
+          "stopN": 15,
+          "stopPct": 9.26,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 1.694,
+          "avgNetOnReservedPct": -0.095,
+          "netWinPct": 62.96,
+          "avgWinPct": 7.527,
+          "avgLossPct": -8.22,
+          "profitFactor": 1.557,
+          "avgTranches": 1.74,
+          "trancheCounts": {
+            "1": 73,
+            "2": 61,
+            "3": 25,
+            "4": 3
+          },
+          "maFillCounts": {
+            "5": 155,
+            "10": 93,
+            "20": 27,
+            "60": 7
+          },
+          "avgSignalToEntryDays": 2.73,
+          "avgHoldDays": 3.64,
+          "distinctStocks": 127,
+          "allEligibleEvents": 210,
+          "fillPct": 77.14,
+          "perEligibleSignalAvgNetOnReservedPct": -0.073,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -7.791,
+          "negativeReservedEvents": 60,
+          "earlyJanMay": {
+            "n": 75,
+            "meanNetOnReservedPct": -0.141,
+            "tpPct": 60.0
+          },
+          "laterJuneOct": {
+            "n": 87,
+            "meanNetOnReservedPct": -0.055,
+            "tpPct": 54.02
+          },
+          "avgReservedAtRiskPct": 43.52
+        }
+      },
+      "10": {
+        "ladder": {
+          "signalEvents": 218,
+          "filled": 171,
+          "duplicateSuppressed": 230,
+          "unfilled": 47,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 126,
+          "takeProfitPct": 73.68,
+          "stopN": 32,
+          "stopPct": 18.71,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.291,
+          "avgNetOnReservedPct": -0.019,
+          "netWinPct": 75.44,
+          "avgWinPct": 7.66,
+          "avgLossPct": -14.196,
+          "profitFactor": 1.657,
+          "avgTranches": 3.58,
+          "trancheCounts": {
+            "1": 32,
+            "2": 16,
+            "3": 24,
+            "4": 18,
+            "5": 81
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.5,
+          "avgHoldDays": 4.31,
+          "distinctStocks": 121,
+          "allEligibleEvents": 218,
+          "fillPct": 78.44,
+          "perEligibleSignalAvgNetOnReservedPct": -0.015,
+          "filledNetOnReservedMedianPct": 3.451,
+          "filledNetOnReservedWorstPct": -20.857,
+          "p05FilledNetOnReservedPct": -15.758,
+          "negativeReservedEvents": 42,
+          "earlyJanMay": {
+            "n": 78,
+            "meanNetOnReservedPct": 1.101,
+            "tpPct": 78.21
+          },
+          "laterJuneOct": {
+            "n": 93,
+            "meanNetOnReservedPct": -0.959,
+            "tpPct": 69.89
+          },
+          "avgReservedAtRiskPct": 71.7
+        },
+        "ma": {
+          "signalEvents": 205,
+          "filled": 158,
+          "duplicateSuppressed": 243,
+          "unfilled": 47,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 114,
+          "takeProfitPct": 72.15,
+          "stopN": 28,
+          "stopPct": 17.72,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.201,
+          "avgNetOnReservedPct": -0.037,
+          "netWinPct": 73.42,
+          "avgWinPct": 7.801,
+          "avgLossPct": -13.268,
+          "profitFactor": 1.624,
+          "avgTranches": 1.86,
+          "trancheCounts": {
+            "1": 71,
+            "2": 43,
+            "3": 39,
+            "4": 5
+          },
+          "maFillCounts": {
+            "5": 152,
+            "10": 91,
+            "20": 44,
+            "60": 7
+          },
+          "avgSignalToEntryDays": 2.73,
+          "avgHoldDays": 4.69,
+          "distinctStocks": 124,
+          "allEligibleEvents": 205,
+          "fillPct": 77.07,
+          "perEligibleSignalAvgNetOnReservedPct": -0.028,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 42,
+          "earlyJanMay": {
+            "n": 75,
+            "meanNetOnReservedPct": 0.335,
+            "tpPct": 76.0
+          },
+          "laterJuneOct": {
+            "n": 83,
+            "meanNetOnReservedPct": -0.373,
+            "tpPct": 68.67
+          },
+          "avgReservedAtRiskPct": 46.52
+        }
+      },
+      "20": {
+        "ladder": {
+          "signalEvents": 202,
+          "filled": 157,
+          "duplicateSuppressed": 216,
+          "unfilled": 45,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 124,
+          "takeProfitPct": 78.98,
+          "stopN": 31,
+          "stopPct": 19.75,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.052,
+          "avgNetOnReservedPct": 0.727,
+          "netWinPct": 79.62,
+          "avgWinPct": 7.819,
+          "avgLossPct": -15.566,
+          "profitFactor": 1.962,
+          "avgTranches": 3.61,
+          "trancheCounts": {
+            "1": 30,
+            "2": 13,
+            "3": 21,
+            "4": 17,
+            "5": 76
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.51,
+          "avgHoldDays": 4.58,
+          "distinctStocks": 115,
+          "allEligibleEvents": 202,
+          "fillPct": 77.72,
+          "perEligibleSignalAvgNetOnReservedPct": 0.565,
+          "filledNetOnReservedMedianPct": 3.761,
+          "filledNetOnReservedWorstPct": -20.857,
+          "p05FilledNetOnReservedPct": -15.748,
+          "negativeReservedEvents": 32,
+          "earlyJanMay": {
+            "n": 78,
+            "meanNetOnReservedPct": 1.853,
+            "tpPct": 84.62
+          },
+          "laterJuneOct": {
+            "n": 79,
+            "meanNetOnReservedPct": -0.384,
+            "tpPct": 73.42
+          },
+          "avgReservedAtRiskPct": 72.23
+        },
+        "ma": {
+          "signalEvents": 191,
+          "filled": 148,
+          "duplicateSuppressed": 227,
+          "unfilled": 43,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 114,
+          "takeProfitPct": 77.03,
+          "stopN": 32,
+          "stopPct": 21.62,
+          "weakExitN": 1,
+          "weakExitPct": 0.68,
+          "avgNetOnDeployedPct": 2.416,
+          "avgNetOnReservedPct": 0.099,
+          "netWinPct": 77.03,
+          "avgWinPct": 7.862,
+          "avgLossPct": -15.846,
+          "profitFactor": 1.664,
+          "avgTranches": 1.89,
+          "trancheCounts": {
+            "1": 65,
+            "2": 40,
+            "3": 38,
+            "4": 5
+          },
+          "maFillCounts": {
+            "5": 142,
+            "10": 87,
+            "20": 43,
+            "60": 7
+          },
+          "avgSignalToEntryDays": 2.76,
+          "avgHoldDays": 5.09,
+          "distinctStocks": 118,
+          "allEligibleEvents": 191,
+          "fillPct": 77.49,
+          "perEligibleSignalAvgNetOnReservedPct": 0.077,
+          "filledNetOnReservedMedianPct": 2.089,
+          "filledNetOnReservedWorstPct": -15.581,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 34,
+          "earlyJanMay": {
+            "n": 75,
+            "meanNetOnReservedPct": 0.758,
+            "tpPct": 82.67
+          },
+          "laterJuneOct": {
+            "n": 73,
+            "meanNetOnReservedPct": -0.579,
+            "tpPct": 71.23
+          },
+          "avgReservedAtRiskPct": 47.13
+        }
+      }
+    },
+    "H5_FRESH_BREAK": {
+      "5": {
+        "ladder": {
+          "signalEvents": 294,
+          "filled": 252,
+          "duplicateSuppressed": 17,
+          "unfilled": 42,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 150,
+          "takeProfitPct": 59.52,
+          "stopN": 7,
+          "stopPct": 2.78,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 2.66,
+          "avgNetOnReservedPct": 0.294,
+          "netWinPct": 68.25,
+          "avgWinPct": 6.739,
+          "avgLossPct": -6.111,
+          "profitFactor": 2.371,
+          "avgTranches": 3.12,
+          "trancheCounts": {
+            "1": 63,
+            "2": 43,
+            "3": 34,
+            "4": 26,
+            "5": 86
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.46,
+          "avgHoldDays": 3.59,
+          "distinctStocks": 207,
+          "allEligibleEvents": 294,
+          "fillPct": 85.71,
+          "perEligibleSignalAvgNetOnReservedPct": 0.252,
+          "filledNetOnReservedMedianPct": 1.254,
+          "filledNetOnReservedWorstPct": -15.805,
+          "p05FilledNetOnReservedPct": -11.05,
+          "negativeReservedEvents": 80,
+          "earlyJanMay": {
+            "n": 172,
+            "meanNetOnReservedPct": -0.102,
+            "tpPct": 56.98
+          },
+          "laterJuneOct": {
+            "n": 80,
+            "meanNetOnReservedPct": 1.144,
+            "tpPct": 65.0
+          },
+          "avgReservedAtRiskPct": 62.3
+        },
+        "ma": {
+          "signalEvents": 289,
+          "filled": 237,
+          "duplicateSuppressed": 22,
+          "unfilled": 52,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 118,
+          "takeProfitPct": 49.79,
+          "stopN": 2,
+          "stopPct": 0.84,
+          "weakExitN": 1,
+          "weakExitPct": 0.42,
+          "avgNetOnDeployedPct": 1.385,
+          "avgNetOnReservedPct": -0.162,
+          "netWinPct": 58.23,
+          "avgWinPct": 6.23,
+          "avgLossPct": -5.368,
+          "profitFactor": 1.618,
+          "avgTranches": 1.78,
+          "trancheCounts": {
+            "1": 103,
+            "2": 90,
+            "3": 36,
+            "4": 8
+          },
+          "maFillCounts": {
+            "5": 227,
+            "10": 136,
+            "20": 43,
+            "60": 17
+          },
+          "avgSignalToEntryDays": 3.14,
+          "avgHoldDays": 4.05,
+          "distinctStocks": 197,
+          "allEligibleEvents": 289,
+          "fillPct": 82.01,
+          "perEligibleSignalAvgNetOnReservedPct": -0.133,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -9.706,
+          "p05FilledNetOnReservedPct": -5.878,
+          "negativeReservedEvents": 99,
+          "earlyJanMay": {
+            "n": 160,
+            "meanNetOnReservedPct": -0.435,
+            "tpPct": 48.12
+          },
+          "laterJuneOct": {
+            "n": 77,
+            "meanNetOnReservedPct": 0.407,
+            "tpPct": 53.25
+          },
+          "avgReservedAtRiskPct": 44.62
+        }
+      },
+      "10": {
+        "ladder": {
+          "signalEvents": 287,
+          "filled": 246,
+          "duplicateSuppressed": 17,
+          "unfilled": 41,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 193,
+          "takeProfitPct": 78.46,
+          "stopN": 20,
+          "stopPct": 8.13,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.833,
+          "avgNetOnReservedPct": 1.234,
+          "netWinPct": 81.3,
+          "avgWinPct": 7.144,
+          "avgLossPct": -10.562,
+          "profitFactor": 2.941,
+          "avgTranches": 3.21,
+          "trancheCounts": {
+            "1": 60,
+            "2": 40,
+            "3": 27,
+            "4": 26,
+            "5": 93
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.45,
+          "avgHoldDays": 4.88,
+          "distinctStocks": 202,
+          "allEligibleEvents": 287,
+          "fillPct": 85.71,
+          "perEligibleSignalAvgNetOnReservedPct": 1.058,
+          "filledNetOnReservedMedianPct": 2.507,
+          "filledNetOnReservedWorstPct": -20.084,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 46,
+          "earlyJanMay": {
+            "n": 172,
+            "meanNetOnReservedPct": 0.956,
+            "tpPct": 76.74
+          },
+          "laterJuneOct": {
+            "n": 74,
+            "meanNetOnReservedPct": 1.882,
+            "tpPct": 82.43
+          },
+          "avgReservedAtRiskPct": 64.23
+        },
+        "ma": {
+          "signalEvents": 281,
+          "filled": 231,
+          "duplicateSuppressed": 23,
+          "unfilled": 50,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 162,
+          "takeProfitPct": 70.13,
+          "stopN": 11,
+          "stopPct": 4.76,
+          "weakExitN": 6,
+          "weakExitPct": 2.6,
+          "avgNetOnDeployedPct": 2.854,
+          "avgNetOnReservedPct": 0.43,
+          "netWinPct": 76.62,
+          "avgWinPct": 6.548,
+          "avgLossPct": -9.253,
+          "profitFactor": 2.32,
+          "avgTranches": 2.02,
+          "trancheCounts": {
+            "1": 93,
+            "2": 62,
+            "3": 55,
+            "4": 21
+          },
+          "maFillCounts": {
+            "5": 226,
+            "10": 138,
+            "20": 74,
+            "60": 28
+          },
+          "avgSignalToEntryDays": 3.16,
+          "avgHoldDays": 5.88,
+          "distinctStocks": 193,
+          "allEligibleEvents": 281,
+          "fillPct": 82.21,
+          "perEligibleSignalAvgNetOnReservedPct": 0.353,
+          "filledNetOnReservedMedianPct": 1.567,
+          "filledNetOnReservedWorstPct": -19.503,
+          "p05FilledNetOnReservedPct": -11.116,
+          "negativeReservedEvents": 54,
+          "earlyJanMay": {
+            "n": 159,
+            "meanNetOnReservedPct": 0.367,
+            "tpPct": 71.07
+          },
+          "laterJuneOct": {
+            "n": 72,
+            "meanNetOnReservedPct": 0.568,
+            "tpPct": 68.06
+          },
+          "avgReservedAtRiskPct": 50.43
+        }
+      },
+      "20": {
+        "ladder": {
+          "signalEvents": 280,
+          "filled": 239,
+          "duplicateSuppressed": 16,
+          "unfilled": 41,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 200,
+          "takeProfitPct": 83.68,
+          "stopN": 31,
+          "stopPct": 12.97,
+          "weakExitN": 0,
+          "weakExitPct": 0.0,
+          "avgNetOnDeployedPct": 3.827,
+          "avgNetOnReservedPct": 1.256,
+          "netWinPct": 84.1,
+          "avgWinPct": 7.286,
+          "avgLossPct": -14.472,
+          "profitFactor": 2.663,
+          "avgTranches": 3.24,
+          "trancheCounts": {
+            "1": 57,
+            "2": 38,
+            "3": 27,
+            "4": 24,
+            "5": 93
+          },
+          "maFillCounts": null,
+          "avgSignalToEntryDays": 1.42,
+          "avgHoldDays": 5.68,
+          "distinctStocks": 197,
+          "allEligibleEvents": 280,
+          "fillPct": 85.36,
+          "perEligibleSignalAvgNetOnReservedPct": 1.072,
+          "filledNetOnReservedMedianPct": 2.507,
+          "filledNetOnReservedWorstPct": -21.102,
+          "p05FilledNetOnReservedPct": -15.581,
+          "negativeReservedEvents": 38,
+          "earlyJanMay": {
+            "n": 172,
+            "meanNetOnReservedPct": 1.006,
+            "tpPct": 82.56
+          },
+          "laterJuneOct": {
+            "n": 67,
+            "meanNetOnReservedPct": 1.897,
+            "tpPct": 86.57
+          },
+          "avgReservedAtRiskPct": 64.85
+        },
+        "ma": {
+          "signalEvents": 275,
+          "filled": 226,
+          "duplicateSuppressed": 21,
+          "unfilled": 49,
+          "weakCancelled": 0,
+          "incomplete": 0,
+          "takeProfitN": 175,
+          "takeProfitPct": 77.43,
+          "stopN": 21,
+          "stopPct": 9.29,
+          "weakExitN": 12,
+          "weakExitPct": 5.31,
+          "avgNetOnDeployedPct": 3.157,
+          "avgNetOnReservedPct": 0.557,
+          "netWinPct": 79.65,
+          "avgWinPct": 6.914,
+          "avgLossPct": -11.543,
+          "profitFactor": 2.344,
+          "avgTranches": 2.09,
+          "trancheCounts": {
+            "1": 90,
+            "2": 54,
+            "3": 53,
+            "4": 29
+          },
+          "maFillCounts": {
+            "5": 221,
+            "10": 137,
+            "20": 79,
+            "60": 36
+          },
+          "avgSignalToEntryDays": 3.16,
+          "avgHoldDays": 7.31,
+          "distinctStocks": 189,
+          "allEligibleEvents": 275,
+          "fillPct": 82.18,
+          "perEligibleSignalAvgNetOnReservedPct": 0.458,
+          "filledNetOnReservedMedianPct": 1.595,
+          "filledNetOnReservedWorstPct": -19.503,
+          "p05FilledNetOnReservedPct": -11.686,
+          "negativeReservedEvents": 46,
+          "earlyJanMay": {
+            "n": 159,
+            "meanNetOnReservedPct": 0.681,
+            "tpPct": 79.87
+          },
+          "laterJuneOct": {
+            "n": 67,
+            "meanNetOnReservedPct": 0.262,
+            "tpPct": 71.64
+          },
+          "avgReservedAtRiskPct": 52.32
+        }
+      }
+    }
+  },
+  "limits": [
+    "2026 already used in previous model development; this IS NOT a new independent out-of-sample year.",
+    "H5 Top3 had distinct forward source from previous research; no 2026 H5 selector hyperparam search in this run.",
+    "A,D,G candidates may have different eligible signal day coverage and signal frequencies; compare covered days and fill counts.",
+    "Same-symbol repeated signals suppressed; between-symbol overlapping baskets not shared-cash constrained.",
+    "Reserved-capital per-event returns cannot be added or compounded into a realistic account strategy.",
+    "MA weakness implementation is two previous completed closes below their MA60 and MA20 declines over three bars; user has not finalized this definition.",
+    "Daily high/low cannot recover intraday chronology; conservative new intraday buy prevents same-day TP credit.",
+    "Actual Taiwan limit lock, corporate actions and broker order queue may differ significantly from model; no 2min data."
+  ],
+  "elapsedSeconds": 30.3
+}
