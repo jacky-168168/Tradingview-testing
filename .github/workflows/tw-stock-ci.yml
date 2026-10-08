@@ -22,6 +22,8 @@ jobs:
         run: |
           node --check tw-stock-dashboard/docs/site-access.js
           node tw-stock-dashboard/tests/test_site_access.cjs
+          node --check tw-stock-dashboard/docs/backtest-g-panel.js
+          node tw-stock-dashboard/tests/test_backtest_ui.cjs
       - name: Compile Python
         working-directory: tw-stock-dashboard
         run: python -m compileall -q src tests
