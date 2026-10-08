@@ -18,7 +18,8 @@ from pipeline import load_universe
 from yahoo_cache import update_many,update_symbol,to_symbol
 from backtest_h_v3 import features,stat,percent_wilson_lower
 from config import DATA_DIR
-from backtest_h_v3 import START,END,labels
+from backtest_h_v3 import START,END
+labels=["date","turn","turn5","vrel","p120","b8","b20","draw20","ret5","prev5","ret20","day","priorDay","range8","vcon","pos","body","aboveEma","emaSlope","aboveMa60","atr","tradedM","status","tp","stop","net","reason"]
 # Independent training, chronological threshold calibration, single later evaluation.
 TRAIN_START="2025-07-01";TRAIN_END="2025-12-31"
 VALID_START="2026-01-01";VALID_END="2026-05-29"
