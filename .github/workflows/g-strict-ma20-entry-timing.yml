@@ -1,0 +1,70 @@
+name: G_STRICT 2026 MA20 First Entry Timing Study
+on:
+  push:
+    branches: [research/g-strict-ma20-entry-timing-2026]
+    paths:
+      - '.github/workflows/g-strict-ma20-entry-timing.yml'
+      - 'tw-stock-dashboard/src/research_g_strict_ma20_gate.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore stock OHLC history
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: g-strict-market-gate-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            g-execution-cache-${{ runner.os }}-
+            selector-exec-cache-${{ runner.os }}-
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install libraries
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Verify Python syntax
+        run: python -m py_compile tw-stock-dashboard/src/research_g_strict_ma20_gate.py
+      - name: Replay G_STRICT and evaluate MA20 initial-entry timing
+        working-directory: tw-stock-dashboard
+        run: python src/research_g_strict_ma20_gate.py
+      - name: Verify scenarios and sample coverage
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("docs/data/research/g_strict_ma20_wait_2026/summary.json")
+          x=json.loads(p.read_text())
+          expected={"baseline","signal_ma20","wait_ma20","wait_ma20_twoday","wait_ma20_rising"}
+          for m in ("ladder","ma"):
+              stats=x["statistics"]["10"][m]
+              assert set(stats)==expected,(m,list(stats))
+              assert stats["baseline"]["filled"]>=100,(m,stats["baseline"])
+              assert 0<=stats["baseline"]["stopN"]<=stats["baseline"]["filled"]
+              for k,s in stats.items():
+                  assert s["filled"]>=0 and s["stopN"]<=s["filled"],(m,k,s)
+          print("PASS: five MA20 initial-entry scenarios x two unchanged execution modes")
+          PY
+      - name: Upload independent experiment
+        uses: actions/upload-artifact@v4
+        with:
+          name: g-strict-market-entry-timing-2026
+          path: tw-stock-dashboard/docs/data/research/g_strict_ma20_wait_2026/*.json
+          retention-days: 30
+      - name: Preserve results on research branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/g_strict_ma20_wait_2026/
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive G_STRICT MA20 first-entry timing results"
+            git push origin HEAD:research/g-strict-ma20-entry-timing-2026
+          fi
