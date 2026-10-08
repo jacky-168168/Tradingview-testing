@@ -143,7 +143,7 @@ def run():
                          "profitTakingSignalsLost":len(lost),
                          "fractionTPsForgone":round(len(lost)/len(tp)*100,2) if tp else None,
                          "fisherTwoSidedP":round(fisher,5) if fisher is not None else None,
-                         "slices":slices}
+                         "slices":slices,"july":metrics([x for x in accept if x["date"].startswith("2026-07")]),"julySkipped":metrics([x for x in reject if x["date"].startswith("2026-07")])}
         months={}
         for x in f:
             month=x["date"][:7]
@@ -164,13 +164,14 @@ def run():
                      "signalFeatureMedians":seen,"stopLots":{str(n):sum(x["tranches"]==n for x in stop) for n in range(1,6 if mode=="ladder" else 5)},
                      "tpLots":{str(n):sum(x["tranches"]==n for x in tp) for n in range(1,6 if mode=="ladder" else 5)},
                      "filters":result,"stopTrades":stoplog}
-        print("RISK_DIAG "+json.dumps({"mode":mode,"baseline":metrics(all),"rank":ranks,"filters":{k:{"filled":v["accepted"]["filled"],"stops":v["accepted"]["stopN"],"stopPct":v["accepted"]["stopPct"],"meanReserved":v["accepted"]["avgNetReservedPct"],"forgoneTP":v["profitTakingSignalsLost"],"avoidedStop":v["fractionStopsAvoided"],"p":v["fisherTwoSidedP"],"late":v["slices"]["late"]["stopPct"]} for k,v in result.items()}},ensure_ascii=False),flush=True)
+        print("RISK_DIAG "+json.dumps({"mode":mode,"baseline":metrics(all),"rank":ranks,"filters":{k:{"filled":v["accepted"]["filled"],"stops":v["accepted"]["stopN"],"stopPct":v["accepted"]["stopPct"],"meanReserved":v["accepted"]["avgNetReservedPct"],"forgoneTP":v["profitTakingSignalsLost"],"avoidedStop":v["fractionStopsAvoided"],"p":v["fisherTwoSidedP"],"late":v["slices"]["late"]["stopPct"],"july":v["july"]} for k,v in result.items()}},ensure_ascii=False),flush=True)
     report={"version":"G_STRICT_2026_STOP_SIGNAL_FEATURES_AND_TWII_MARKET_1",
             "asOf":"2026-10-07","period":"2026-01-01..2026-10-07",
             "baseline":"Frozen G_STRICT Rank1-3, 5-tranche ladder or 4-SMA touch, gross TP +7% and stop -15%, 10D maximum holding, first limit valid next 5 sessions",
             "signalFeaturesFrom":"docs/data/backtest_g/2026-01-01_2026-10-07.json",
             "tradeOutcomesFrom":"docs/data/research/model_execution_2026/trades/G_STRICT.json",
             "index":"Yahoo ^TWII signal-date completed close, only present and prior trailing values",
+            "positionFormula":"100 * (signal-day TWII close - previous 60/120-session LOW) / (previous 60/120-session HIGH - LOW). It may exceed 100 or go below zero on new highs/lows; not clamped.",
             "warnings":["ALL risk factor results are post-hoc diagnostic on already-selected 2026 data; no fresh out-of-sample and numerous thresholds inspected.",
              "Filters applied to ALREADY generated and de-duplicated trade events; removing signals does NOT refill ranks or recompute altered watch occupancy. It is not a new full portfolio backtest.",
              "In 5-tranche ladder all stop-loss trades have hit all 5 tranches by construction of a downward path; this is descriptive after entry, not a usable at-selection filter.",
