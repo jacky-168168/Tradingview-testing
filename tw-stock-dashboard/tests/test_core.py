@@ -85,6 +85,7 @@ class CoreTests(unittest.TestCase):
         x=risk.f2_gate({"score":54,"activeState":"⚪ Normal"},True);self.assertFalse(x["allowed"]);self.assertFalse(x["stateOn"])
         x=risk.f2_gate({"score":40,"activeState":"🟢 Strong Bottom Reversal"},False);self.assertTrue(x["allowed"]);self.assertTrue(x["exception"]);self.assertFalse(x["stateOn"])
         x=risk.f2_gate({"score":80,"activeState":"🟠 Top Reversal Attempt"},True);self.assertFalse(x["allowed"]);self.assertTrue(x["topVeto"]);self.assertFalse(x["stateOn"])
+        x=risk.f2_gate({"score":82,"activeState":"🔴 Extreme Overbought"},True);self.assertFalse(x["allowed"]);self.assertTrue(x["topVeto"]);self.assertTrue(x["stateOn"]);self.assertEqual(x["reason"],"EXTREME_OVERBOUGHT_VETO")
     def test_f2_gate_hysteresis_and_veto(self):
         x=risk.f2_gate({"score":60,"activeState":"⚪ Normal"},False,60,55);self.assertTrue(x["allowed"]);self.assertTrue(x["stateOn"]);self.assertEqual(x["reason"],"RISK_ON_ENTRY")
         x=risk.f2_gate({"score":57,"activeState":"⚪ Normal"},True,60,55);self.assertTrue(x["allowed"]);self.assertEqual(x["reason"],"HYSTERESIS_HOLD")
