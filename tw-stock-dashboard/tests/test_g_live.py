@@ -39,7 +39,8 @@ class TestLiveG(unittest.TestCase):
             self.assertEqual(n,3)
             self.assertEqual(sum("1000" in x for x in pockets),3)
             self.assertEqual(pockets[-1],{})
-            self.assertEqual(pockets[0],{"1000":{"rank":1,"score":96.}})
+            self.assertEqual(pockets[0],{})
+            self.assertEqual(pockets[1],{"1000":{"rank":1,"score":96.}})
     def test_live_selection_prior_pocket_bonus_separate_from_baseline(self):
         dates=self.calendar(54);day=dates[-1]
         symbols=[{"code":x,"market":"上市","name":x,"industry":"其他","capitalB":20} for x in ("1000","1001","1002")]
