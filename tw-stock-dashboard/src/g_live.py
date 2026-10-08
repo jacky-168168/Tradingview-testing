@@ -73,7 +73,7 @@ def prior_pockets(data_dir,year_calendar,day,lookback=10):
         except (ValueError,TypeError,OSError):out.append({})
     return out,found
 
-def select(universe,histories,market_days,asof,inst=None,previous_pockets=None,known_metrics=None):
+def select(universe,histories,market_days,asof,inst=None,previous_pockets=None,known_metrics=None,market_ret20=0.):
     """Returns (top20, original_top20_snapshot, metadata). Never substitutes D for G."""
     days=sorted(set(str(d)[:10] for d in market_days if str(d)[:4]==asof[:4] and str(d)[:10]<=asof))
     if not days or days[-1]!=asof:raise ValueError("G benchmark calendar does not contain selected market date")
@@ -132,7 +132,7 @@ def select(universe,histories,market_days,asof,inst=None,previous_pockets=None,k
                        "gPast10":persistence["past10Top20"],"gPast5Top3":persistence["past5Top3"],"gStreak":persistence["priorStreak"],
                        "gBreak3":bool(r["gFlags"]["break3"]),"gBreak18":bool(r["gFlags"]["break18"]),
                        "sarBonus":0,"sarText":"尚未計算","strictPass":True,"candidateTier":"G雙突破","signal":signal,
-                       "rs20":r["ret20"],"theme":r["industry"]})
+                       "rs20":r["ret20"]-market_ret20,"theme":r["industry"]})
     ranked.sort(key=lambda x:(-x["total"],-x["gScore"],x["code"]))
     return ranked[:TOP_N],old_snapshot,{"variant":G_MODEL,"source":"live-year-anchored-market-OHLC",
            "dataDate":asof,"percentileUniverse":len(rows),"strongCandidates":len(strong),"doubleBreakCandidates":len(qualified),
