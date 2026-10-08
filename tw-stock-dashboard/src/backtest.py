@@ -11,7 +11,8 @@ from institution import fetch_many
 from edge import build as build_edge
 from risk import build_historical,f_gate
 from sar import parabolic_sar
-H=[1,3,5,10,20]\nBUY_FEE_PCT=.1425;SELL_FEE_PCT=.1425;SELL_TAX_PCT=.30
+H=[1,3,5,10,20]
+BUY_FEE_PCT=.1425;SELL_FEE_PCT=.1425;SELL_TAX_PCT=.30
 
 def stat(a):
     a=sorted(float(x) for x in a if x is not None and np.isfinite(x))
