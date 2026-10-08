@@ -21,10 +21,6 @@ on:
         description: '自訂結束日 YYYY-MM-DD（自訂日期可填；留空=今天）'
         required: false
         default: ''
-  push:
-    branches: [main]
-    paths:
-      - 'tw-stock-dashboard/.f-final-smoke'
 permissions:
   contents: write
   pages: write
@@ -56,23 +52,17 @@ jobs:
         id: range
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
-            PERIOD="FINAL_2026_VALIDATION"
-            START="2026-01-01"
-            END="2026-10-08"
-          else
-            PERIOD="${{ inputs.period || '最近30天' }}"
-            START="${{ inputs.start_date || '' }}"
-            END="${{ inputs.end_date || '' }}"
-            if [ -z "$END" ]; then END="$(TZ=Asia/Taipei date +%F)"; fi
-            case "$PERIOD" in
-              最近30天) START="$(date -u -d "$END - 30 days" +%F)" ;;
-              最近90天) START="$(date -u -d "$END - 90 days" +%F)" ;;
-              最近180天) START="$(date -u -d "$END - 180 days" +%F)" ;;
-              今年以來) START="$(date -u -d "$END" +%Y)-01-01" ;;
-              自訂日期) if [ -z "$START" ]; then echo "自訂日期需要填 start_date"; exit 1; fi ;;
-            esac
-          fi
+          PERIOD="${{ inputs.period || '最近30天' }}"
+          START="${{ inputs.start_date || '' }}"
+          END="${{ inputs.end_date || '' }}"
+          if [ -z "$END" ]; then END="$(TZ=Asia/Taipei date +%F)"; fi
+          case "$PERIOD" in
+            最近30天) START="$(date -u -d "$END - 30 days" +%F)" ;;
+            最近90天) START="$(date -u -d "$END - 90 days" +%F)" ;;
+            最近180天) START="$(date -u -d "$END - 180 days" +%F)" ;;
+            今年以來) START="$(date -u -d "$END" +%Y)-01-01" ;;
+            自訂日期) if [ -z "$START" ]; then echo "自訂日期需要填 start_date"; exit 1; fi ;;
+          esac
           echo "start=$START" >> "$GITHUB_OUTPUT"
           echo "end=$END" >> "$GITHUB_OUTPUT"
           echo "Backtest: $START -> $END ($PERIOD)"
