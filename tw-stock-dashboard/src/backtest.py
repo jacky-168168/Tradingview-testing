@@ -13,6 +13,7 @@ from risk import build_historical,f_gate,f2_gate
 from sar import parabolic_sar
 H=[1,3,5,10,20]
 BACKTEST_ENTRY_TOP_N=3
+BACKTEST_DIAGNOSTIC_TOP_N=20
 BUY_FEE_PCT=.1425;SELL_FEE_PCT=.1425;SELL_TAX_PCT=.30
 
 def effective_backtest_end(end,now=None):
@@ -70,7 +71,7 @@ def _portfolio_stats(signals,idx,pos,ranks,prices,model,h):
         d=signals[si];sip=pos.get(d)
         if sip is None or sip+1>=len(idx) or sip+h>=len(idx):continue
         buydate=str(idx.iloc[sip+1].date);exitdate=str(idx.iloc[sip+h].date);positions=[]
-        for p in ranks[model].get(d,[])[:3]:
+        for p in ranks[model].get(d,[])[:BACKTEST_ENTRY_TOP_N]:
             px=prices.get(to_symbol(p["code"],p["market"]))
             if px is None or buydate not in px.index:continue
             if _has_unadjusted_scale_jump(px.reset_index(drop=True),buydate,exitdate):continue
@@ -155,18 +156,57 @@ def rankings(universe,market_universe,hist,index_df,inst,inst_errors,start,end):
         rows["A"].sort(key=_final_sort_a);rows["D"].sort(key=sort_key)
         cand["A"][d]=len(rows["A"]);cand["D"][d]=len(rows["D"])
         ranks["A"][d]=[{**x,"rank":i+1} for i,x in enumerate(rows["A"][:BACKTEST_ENTRY_TOP_N])]
-        ranks["D"][d]=[{**x,"rank":i+1} for i,x in enumerate(rows["D"][:BACKTEST_ENTRY_TOP_N])]
+        ranks["D"][d]=[{**x,"rank":i+1} for i,x in enumerate(rows["D"][:BACKTEST_DIAGNOSTIC_TOP_N])]
         frows=[]
         if gate["allowed"]:
-            limit=BACKTEST_ENTRY_TOP_N
+            limit=BACKTEST_DIAGNOSTIC_TOP_N
             for i,x in enumerate(rows["D"][:limit]):frows.append({**x,"model":"F","rank":i+1,"fReason":gate["reason"]})
-        ranks["F"][d]=frows;cand["F"][d]=(min(len(rows["D"]),BACKTEST_ENTRY_TOP_N) if gate["allowed"] else 0)
+        ranks["F"][d]=frows;cand["F"][d]=(min(len(rows["D"]),BACKTEST_DIAGNOSTIC_TOP_N) if gate["allowed"] else 0)
         f2rows=[]
         if gate2["allowed"]:
-            for i,x in enumerate(rows["D"][:BACKTEST_ENTRY_TOP_N]):f2rows.append({**x,"model":"F2","rank":i+1,"f2Reason":gate2["reason"]})
-        ranks["F2"][d]=f2rows;cand["F2"][d]=(min(len(rows["D"]),3) if gate2["allowed"] else 0)
+            for i,x in enumerate(rows["D"][:BACKTEST_DIAGNOSTIC_TOP_N]):f2rows.append({**x,"model":"F2","rank":i+1,"f2Reason":gate2["reason"]})
+        ranks["F2"][d]=f2rows;cand["F2"][d]=(min(len(rows["D"]),BACKTEST_DIAGNOSTIC_TOP_N) if gate2["allowed"] else 0)
         if n%10==0 or n==len(signals):print(f"rank {n}/{len(signals)} {d} risk={rrisk.get('score')} F={gate['reason']} F2={gate2['reason']} D={len(rows['D'])}",flush=True)
     return signals,idx,pos,ranks,cand,prices,regimes
+
+def rank_pool_analysis(signals,idx,pos,ranks,prices,model):
+    if model not in ("D","F","F2"):return None
+    bands=[("Rank1-3",1,3),("Rank4-10",4,10),("Rank11-20",11,20),("Rank4-20",4,20),("Top20",1,20)]
+    stock={name:{h:[] for h in H} for name,_,_ in bands};daily={name:{h:[] for h in H} for name,_,_ in bands};spreads={h:[] for h in H};factor_rows=[]
+    for d in signals:
+        sip=pos.get(d)
+        if sip is None or sip+1>=len(idx):continue
+        buydate=str(idx.iloc[sip+1].date);by_h={h:[] for h in H}
+        for p in ranks[model].get(d,[])[:BACKTEST_DIAGNOSTIC_TOP_N]:
+            sym=to_symbol(p["code"],p["market"]);px=prices.get(sym);bo=None
+            if px is not None and buydate in px.index:
+                q=px.loc[buydate];q=q.iloc[-1] if isinstance(q,pd.DataFrame) else q;bo=_adj_price(q,"open")
+            rec={"rank":p["rank"],"rs20":p.get("rs20"),"rvol":p.get("rvol"),"ret5Signal":p.get("ret5"),"ret20Signal":p.get("ret20"),"dist20High":p.get("breakoutPct"),"ma20Slope":p.get("ma20Slope")}
+            for h in H:
+                target=sip+h;r=None
+                if bo and target<len(idx):
+                    ed=str(idx.iloc[target].date)
+                    if px is not None and ed in px.index and not _has_unadjusted_scale_jump(px.reset_index(drop=True),buydate,ed):
+                        q=px.loc[ed];q=q.iloc[-1] if isinstance(q,pd.DataFrame) else q;ec=_adj_price(q,"close")
+                        if ec:r=round((ec/bo-1)*100,2);by_h[h].append((p["rank"],r))
+                rec[f"ret{h}"]=r
+            factor_rows.append(rec)
+        for h in H:
+            pairs=by_h[h]
+            for name,lo,hi in bands:
+                vals=[r for rk,r in pairs if lo<=rk<=hi]
+                if vals:stock[name][h].extend(vals);daily[name][h].append(float(np.mean(vals)))
+            a=[r for rk,r in pairs if rk<=3];b=[r for rk,r in pairs if 4<=rk<=20]
+            if a and b:spreads[h].append(float(np.mean(a)-np.mean(b)))
+    out={"bands":{},"top3MinusRank4_20":{},"factorAnalysisTop20":factor_analysis(factor_rows)}
+    for name,_,_ in bands:
+        out["bands"][name]={f"d{h}":{"stock":stat(stock[name][h]),"dailyEqualWeight":stat(daily[name][h])} for h in H}
+    out["top3MinusRank4_20"]={f"d{h}":stat(spreads[h]) for h in H}
+    out["monotonic"]={}
+    for h in H:
+        a=out["bands"]["Rank1-3"][f"d{h}"]["dailyEqualWeight"].get("avg");b=out["bands"]["Rank4-10"][f"d{h}"]["dailyEqualWeight"].get("avg");z=out["bands"]["Rank11-20"][f"d{h}"]["dailyEqualWeight"].get("avg")
+        out["monotonic"][f"d{h}"]=None if None in (a,b,z) else bool(a>b>z)
+    return out
 
 def factor_analysis(sig):
     factors=[("rs20","RS20"),("rvol","RVOL"),("ret5Signal","5D"),("ret20Signal","20D"),("dist20High","距20日高"),("ma20Slope","MA20斜率")]
@@ -193,7 +233,7 @@ def evaluate(signals,idx,pos,ranks,cand,prices,regimes):
             sip=pos.get(d)
             if sip is None or sip+1>=len(idx):continue
             buydate=str(idx.iloc[sip+1].date);day={h:[] for h in H};rg=regimes.get(d,{})
-            for p in ranks[model].get(d,[]):
+            for p in ranks[model].get(d,[])[:BACKTEST_ENTRY_TOP_N]:
                 sym=to_symbol(p["code"],p["market"]);px=prices.get(sym);bo=None;buyrow=None
                 if px is not None and buydate in px.index:
                     q=px.loc[buydate];q=q.iloc[-1] if isinstance(q,pd.DataFrame) else q;buyrow=q;bo=_adj_price(q,"open")
@@ -215,7 +255,7 @@ def evaluate(signals,idx,pos,ranks,cand,prices,regimes):
         summary+=[{"group":"Top3可用等權",**{f"d{h}":stat(avail[h]) for h in H}},{"group":"Top3固定三槽",**{f"d{h}":stat(fixed[h]) for h in H}}]
         cc=list(cand[model].values());cs={"avg":round(float(np.mean(cc)),1) if cc else 0,"min":min(cc) if cc else 0,"max":max(cc) if cc else 0,"days3":sum(x>=3 for x in cc),"totalDays":len(cc)}
         name={"A":"原始版","D":"技術強勢","F":"D＋固定大盤濾網","F2":"D＋動態大盤濾網"}[model]
-        portfolio={f"d{h}":_portfolio_stats(signals,idx,pos,ranks,prices,model,h) for h in H};models[model]={"id":model,"name":name,"summary":summary,"candidateStats":cs,"signals":sig,"portfolio":portfolio,"factorAnalysis":factor_analysis(sig)};edgein[model]=dated
+        portfolio={f"d{h}":_portfolio_stats(signals,idx,pos,ranks,prices,model,h) for h in H};models[model]={"id":model,"name":name,"summary":summary,"candidateStats":cs,"signals":sig,"portfolio":portfolio,"factorAnalysis":factor_analysis(sig),"rankPoolAnalysis":rank_pool_analysis(signals,idx,pos,ranks,prices,model)};edgein[model]=dated
     return [models["A"],models["D"],models["F"],models["F2"]],build_edge(edgein)
 
 def run(start,end):
@@ -230,7 +270,7 @@ def run(start,end):
     sdts=[d for d in ix.date.astype(str) if start<=d<=end];inst,ine=fetch_many(sdts);sdts,idx,pos,ranks,cand,prices,regimes=rankings(u,all_u,hist,ix,inst,set(ine),start,end);models,edge=evaluate(sdts,idx,pos,ranks,cand,prices,regimes)
     gate_stats={"riskOnDays":sum(r.get("score",0)>=RISK_ON for r in regimes.values()),"strongBottomExceptionDays":sum(r.get("fReason")=="STRONG_BOTTOM_REVERSAL" for r in regimes.values()),"blockedDays":sum(not r.get("fAllowed") for r in regimes.values()),"allowedDays":sum(bool(r.get("fAllowed")) for r in regimes.values()),"f2AllowedDays":sum(bool(r.get("f2Allowed")) for r in regimes.values()),"f2BlockedDays":sum(not r.get("f2Allowed") for r in regimes.values()),"f2EntryDays":sum(r.get("f2Reason")=="RISK_ON_ENTRY" for r in regimes.values()),"f2HoldDays":sum(r.get("f2Reason")=="HYSTERESIS_HOLD" for r in regimes.values()),"f2TopVetoDays":sum(bool(r.get("f2TopVeto")) for r in regimes.values()),"f2ExtremeOverboughtVetoDays":sum(r.get("f2Reason")=="EXTREME_OVERBOUGHT_VETO" for r in regimes.values()),"f2StrongBottomExceptionDays":sum(r.get("f2Reason")=="STRONG_BOTTOM_REVERSAL" for r in regimes.values())}
     compact_regime=[{"date":d,"score":r.get("score"),"state":r.get("state"),"activeState":r.get("activeState"),"breadth":r.get("breadth"),"foreign":r.get("foreign"),"fAllowed":r.get("fAllowed"),"fReason":r.get("fReason"),"f2Allowed":r.get("f2Allowed"),"f2Reason":r.get("f2Reason"),"f2StateOn":r.get("f2StateOn"),"f2TopVeto":r.get("f2TopVeto"),"institutionAvailable":r.get("institutionAvailable")} for d,r in regimes.items()]
-    out={"version":"PY-BT4-F2-DYNAMIC-GATE","generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),"requestedPeriod":{"start":requested_start,"end":requested_end},"period":{"start":start,"end":end},"signalDays":len(sdts),"universeCount":len(u),"marketUniverseCount":len(all_u),"historySuccess":len(hist)-len(he),"historyErrors":len(he),"institutionErrors":len(ine),"models":models,"edgeAudit":edge,"marketGateStats":gate_stats,"marketRegime":compact_regime,"elapsedSeconds":round(time.time()-t,1),"notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 才進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉 hysteresis，Extreme Overbought 禁止新進場但保留 regime 狀態。","歷史 Risk 依 Dashboard 權重重建：指數趨勢 + 上市 breadth + T86 外資淨買賣估值，不使用未來資料。","A 歷史排序補上 SAR bullish trend bonus 作同分排序，對齊正式版。","回測報酬優先使用 Yahoo adjusted close factor 修正公司行動；舊快取若尚無 adjclose，偵測極端單日價格尺度跳變並排除該筆報酬。","法人失敗日期會序列重試；仍失敗者標記 institutionAvailable=false，不再默認視為資料完整。","Yahoo K 使用雙向 Parquet 增量快取；舊快取若缺 adjusted close 會補抓本次所需區間一次，後續不重抓。","資金曲線採 Top3 等權、非重疊持有週期，逐日 mark-to-market，扣買賣手續費各0.1425%與賣出證交稅0.3%。","回測只使用已完整結束的交易日；若結束日填今天，會自動截止到前一曆日，再由基準指數交易日序列取最後完整交易日。","正式選股可顯示 Top20；回測只模擬每個訊號日 Rank1~3，Top3 等權組合為主要進場績效，Rank1/2/3 另做個別診斷。","目前公司母檔仍以現存上市櫃公司為基礎，已上市但後續下市股票可能造成 survivorship bias，結果需保守解讀。"]}
+    out={"version":"PY-BT4-F2-DYNAMIC-GATE","generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),"requestedPeriod":{"start":requested_start,"end":requested_end},"period":{"start":start,"end":end},"signalDays":len(sdts),"universeCount":len(u),"marketUniverseCount":len(all_u),"historySuccess":len(hist)-len(he),"historyErrors":len(he),"institutionErrors":len(ine),"models":models,"edgeAudit":edge,"marketGateStats":gate_stats,"marketRegime":compact_regime,"elapsedSeconds":round(time.time()-t,1),"notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 才進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉 hysteresis，Extreme Overbought 禁止新進場但保留 regime 狀態。","歷史 Risk 依 Dashboard 權重重建：指數趨勢 + 上市 breadth + T86 外資淨買賣估值，不使用未來資料。","A 歷史排序補上 SAR bullish trend bonus 作同分排序，對齊正式版。","回測報酬優先使用 Yahoo adjusted close factor 修正公司行動；舊快取若尚無 adjclose，偵測極端單日價格尺度跳變並排除該筆報酬。","法人失敗日期會序列重試；仍失敗者標記 institutionAvailable=false，不再默認視為資料完整。","Yahoo K 使用雙向 Parquet 增量快取；舊快取若缺 adjusted close 會補抓本次所需區間一次，後續不重抓。","資金曲線採 Top3 等權、非重疊持有週期，逐日 mark-to-market，扣買賣手續費各0.1425%與賣出證交稅0.3%。","回測只使用已完整結束的交易日；若結束日填今天，會自動截止到前一曆日，再由基準指數交易日序列取最後完整交易日。","正式選股可顯示 Top20；回測只模擬每個訊號日 Rank1~3，Top3 等權組合為主要進場績效。回測另保留 Rank1-3／4-10／11-20 的 Top20 診斷，不把 Rank4-20 當成實際持倉。","目前公司母檔仍以現存上市櫃公司為基礎，已上市但後續下市股票可能造成 survivorship bias，結果需保守解讀。"]}
     p=DATA_DIR/"backtest";p.mkdir(parents=True,exist_ok=True)
     body=json.dumps(out,ensure_ascii=False,indent=2);(p/"latest.json").write_text(body,encoding="utf-8")
     archive=f"{start}_{end}.json";(p/archive).write_text(body,encoding="utf-8")
