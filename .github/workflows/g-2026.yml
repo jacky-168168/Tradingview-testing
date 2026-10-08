@@ -7,9 +7,14 @@ on:
       - 'tw-stock-dashboard/.g-2026-trigger'
 permissions:
   contents: write
+  pages: write
+  id-token: write
 jobs:
   g2026:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
@@ -43,3 +48,9 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - uses: actions/deploy-pages@v4
+        id: deployment
