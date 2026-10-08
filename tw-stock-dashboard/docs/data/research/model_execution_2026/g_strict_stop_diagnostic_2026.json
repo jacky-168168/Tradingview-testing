@@ -1,0 +1,6601 @@
+{
+  "version": "G_STRICT_2026_STOP_SIGNAL_FEATURES_AND_TWII_MARKET_1",
+  "asOf": "2026-10-07",
+  "period": "2026-01-01..2026-10-07",
+  "baseline": "Frozen G_STRICT Rank1-3, 5-tranche ladder or 4-SMA touch, gross TP +7% and stop -15%, 10D maximum holding, first limit valid next 5 sessions",
+  "signalFeaturesFrom": "docs/data/backtest_g/2026-01-01_2026-10-07.json",
+  "tradeOutcomesFrom": "docs/data/research/model_execution_2026/trades/G_STRICT.json",
+  "index": "Yahoo ^TWII signal-date completed close, only present and prior trailing values",
+  "positionFormula": "100 * (signal-day TWII close - previous 60/120-session LOW) / (previous 60/120-session HIGH - LOW). It may exceed 100 or go below zero on new highs/lows; not clamped.",
+  "warnings": [
+    "ALL risk factor results are post-hoc diagnostic on already-selected 2026 data; no fresh out-of-sample and numerous thresholds inspected.",
+    "Filters applied to ALREADY generated and de-duplicated trade events; removing signals does NOT refill ranks or recompute altered watch occupancy. It is not a new full portfolio backtest.",
+    "In 5-tranche ladder all stop-loss trades have hit all 5 tranches by construction of a downward path; this is descriptive after entry, not a usable at-selection filter.",
+    "Market weakness only uses signal day and cannot prevent a subsequent sharp selloff within a 5-session pending order or while in trade.",
+    "Daily OHLC cannot determine true intra-bar prices/order or limit fills; -15% stop can gap beyond.",
+    "Monthly clustering and 2026 risk rules are research hypotheses, NOT an independently verified hedge.",
+    "Stock universe suffers possible survivor and corporate-action biases."
+  ],
+  "modes": {
+    "ladder": {
+      "baseline": {
+        "allEvents": 260,
+        "filled": 201,
+        "stopN": 28,
+        "stopPct": 13.93,
+        "tpN": 163,
+        "tpPct": 81.09,
+        "avgNetReservedPct": 1.281,
+        "netReservedPerEventPct": 0.991,
+        "netReservedSum": 257.547
+      },
+      "rankSummary": {
+        "1": {
+          "allEvents": 50,
+          "filled": 50,
+          "stopN": 3,
+          "stopPct": 6.0,
+          "tpN": 46,
+          "tpPct": 92.0,
+          "avgNetReservedPct": 3.683,
+          "netReservedPerEventPct": 3.683,
+          "netReservedSum": 184.168
+        },
+        "2": {
+          "allEvents": 68,
+          "filled": 68,
+          "stopN": 13,
+          "stopPct": 19.12,
+          "tpN": 53,
+          "tpPct": 77.94,
+          "avgNetReservedPct": 0.452,
+          "netReservedPerEventPct": 0.452,
+          "netReservedSum": 30.751
+        },
+        "3": {
+          "allEvents": 83,
+          "filled": 83,
+          "stopN": 12,
+          "stopPct": 14.46,
+          "tpN": 64,
+          "tpPct": 77.11,
+          "avgNetReservedPct": 0.514,
+          "netReservedPerEventPct": 0.514,
+          "netReservedSum": 42.628
+        }
+      },
+      "bySignalMonth": {
+        "2026-01": {
+          "allEvents": 23,
+          "filled": 23,
+          "stopN": 2,
+          "stopPct": 8.7,
+          "tpN": 21,
+          "tpPct": 91.3,
+          "avgNetReservedPct": 2.224,
+          "netReservedPerEventPct": 2.224,
+          "netReservedSum": 51.146
+        },
+        "2026-02": {
+          "allEvents": 15,
+          "filled": 15,
+          "stopN": 1,
+          "stopPct": 6.67,
+          "tpN": 14,
+          "tpPct": 93.33,
+          "avgNetReservedPct": 3.773,
+          "netReservedPerEventPct": 3.773,
+          "netReservedSum": 56.588
+        },
+        "2026-03": {
+          "allEvents": 27,
+          "filled": 27,
+          "stopN": 3,
+          "stopPct": 11.11,
+          "tpN": 24,
+          "tpPct": 88.89,
+          "avgNetReservedPct": 1.565,
+          "netReservedPerEventPct": 1.565,
+          "netReservedSum": 42.256
+        },
+        "2026-04": {
+          "allEvents": 22,
+          "filled": 22,
+          "stopN": 0,
+          "stopPct": 0.0,
+          "tpN": 20,
+          "tpPct": 90.91,
+          "avgNetReservedPct": 3.381,
+          "netReservedPerEventPct": 3.381,
+          "netReservedSum": 74.382
+        },
+        "2026-05": {
+          "allEvents": 25,
+          "filled": 25,
+          "stopN": 4,
+          "stopPct": 16.0,
+          "tpN": 21,
+          "tpPct": 84.0,
+          "avgNetReservedPct": 2.091,
+          "netReservedPerEventPct": 2.091,
+          "netReservedSum": 52.271
+        },
+        "2026-06": {
+          "allEvents": 17,
+          "filled": 17,
+          "stopN": 2,
+          "stopPct": 11.76,
+          "tpN": 15,
+          "tpPct": 88.24,
+          "avgNetReservedPct": 3.578,
+          "netReservedPerEventPct": 3.578,
+          "netReservedSum": 60.819
+        },
+        "2026-07": {
+          "allEvents": 22,
+          "filled": 22,
+          "stopN": 10,
+          "stopPct": 45.45,
+          "tpN": 11,
+          "tpPct": 50.0,
+          "avgNetReservedPct": -5.036,
+          "netReservedPerEventPct": -5.036,
+          "netReservedSum": -110.788
+        },
+        "2026-08": {
+          "allEvents": 30,
+          "filled": 30,
+          "stopN": 2,
+          "stopPct": 6.67,
+          "tpN": 23,
+          "tpPct": 76.67,
+          "avgNetReservedPct": 1.655,
+          "netReservedPerEventPct": 1.655,
+          "netReservedSum": 49.641
+        },
+        "2026-09": {
+          "allEvents": 20,
+          "filled": 20,
+          "stopN": 4,
+          "stopPct": 20.0,
+          "tpN": 14,
+          "tpPct": 70.0,
+          "avgNetReservedPct": -0.938,
+          "netReservedPerEventPct": -0.938,
+          "netReservedSum": -18.768
+        }
+      },
+      "signalFeatureMedians": {
+        "score": {
+          "stop": 98.01,
+          "tp": 97.96,
+          "other": 97.93
+        },
+        "ret20P": {
+          "stop": 99.45,
+          "tp": 99.5,
+          "other": 99.5
+        },
+        "slopeP": {
+          "stop": 99.1,
+          "tp": 99.2,
+          "other": 99.1
+        },
+        "atrP": {
+          "stop": 92.2,
+          "tp": 93.5,
+          "other": 93.5
+        },
+        "range20P": {
+          "stop": 98.9,
+          "tp": 99.0,
+          "other": 99.0
+        },
+        "turnoverP": {
+          "stop": 97.75,
+          "tp": 97.5,
+          "other": 97.4
+        },
+        "breakoutPct": {
+          "stop": 2.43,
+          "tp": 1.77,
+          "other": 1.77
+        },
+        "rank": {
+          "stop": 2.0,
+          "tp": 2.0,
+          "other": 2.0
+        }
+      },
+      "stopLots": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 28
+      },
+      "tpLots": {
+        "1": 37,
+        "2": 24,
+        "3": 31,
+        "4": 28,
+        "5": 43
+      },
+      "filters": {
+        "All": {
+          "description": "All signals",
+          "accepted": {
+            "allEvents": 260,
+            "filled": 201,
+            "stopN": 28,
+            "stopPct": 13.93,
+            "tpN": 163,
+            "tpPct": 81.09,
+            "avgNetReservedPct": 1.281,
+            "netReservedPerEventPct": 0.991,
+            "netReservedSum": 257.547
+          },
+          "rejected": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 0,
+          "fractionTPsForgone": 0.0,
+          "fisherTwoSidedP": null,
+          "slices": {
+            "early": {
+              "allEvents": 117,
+              "filled": 87,
+              "stopN": 6,
+              "stopPct": 6.9,
+              "tpN": 79,
+              "tpPct": 90.8,
+              "avgNetReservedPct": 2.579,
+              "netReservedPerEventPct": 1.918,
+              "netReservedSum": 224.372
+            },
+            "middle": {
+              "allEvents": 85,
+              "filled": 64,
+              "stopN": 16,
+              "stopPct": 25.0,
+              "tpN": 47,
+              "tpPct": 73.44,
+              "avgNetReservedPct": 0.036,
+              "netReservedPerEventPct": 0.027,
+              "netReservedSum": 2.302
+            },
+            "late": {
+              "allEvents": 58,
+              "filled": 50,
+              "stopN": 6,
+              "stopPct": 12.0,
+              "tpN": 37,
+              "tpPct": 74.0,
+              "avgNetReservedPct": 0.617,
+              "netReservedPerEventPct": 0.532,
+              "netReservedSum": 30.873
+            }
+          },
+          "july": {
+            "allEvents": 23,
+            "filled": 22,
+            "stopN": 10,
+            "stopPct": 45.45,
+            "tpN": 11,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -5.036,
+            "netReservedPerEventPct": -4.817,
+            "netReservedSum": -110.788
+          },
+          "julySkipped": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          }
+        },
+        "only_rank1": {
+          "description": "Rank1 only",
+          "accepted": {
+            "allEvents": 65,
+            "filled": 50,
+            "stopN": 3,
+            "stopPct": 6.0,
+            "tpN": 46,
+            "tpPct": 92.0,
+            "avgNetReservedPct": 3.683,
+            "netReservedPerEventPct": 2.833,
+            "netReservedSum": 184.168
+          },
+          "rejected": {
+            "allEvents": 195,
+            "filled": 151,
+            "stopN": 25,
+            "stopPct": 16.56,
+            "tpN": 117,
+            "tpPct": 77.48,
+            "avgNetReservedPct": 0.486,
+            "netReservedPerEventPct": 0.376,
+            "netReservedSum": 73.379
+          },
+          "fractionStopsAvoided": 89.29,
+          "profitTakingSignalsLost": 117,
+          "fractionTPsForgone": 71.78,
+          "fisherTwoSidedP": 0.09632,
+          "slices": {
+            "early": {
+              "allEvents": 31,
+              "filled": 25,
+              "stopN": 0,
+              "stopPct": 0.0,
+              "tpN": 25,
+              "tpPct": 100.0,
+              "avgNetReservedPct": 4.826,
+              "netReservedPerEventPct": 3.892,
+              "netReservedSum": 120.643
+            },
+            "middle": {
+              "allEvents": 21,
+              "filled": 15,
+              "stopN": 3,
+              "stopPct": 20.0,
+              "tpN": 12,
+              "tpPct": 80.0,
+              "avgNetReservedPct": 1.582,
+              "netReservedPerEventPct": 1.13,
+              "netReservedSum": 23.736
+            },
+            "late": {
+              "allEvents": 13,
+              "filled": 10,
+              "stopN": 0,
+              "stopPct": 0.0,
+              "tpN": 9,
+              "tpPct": 90.0,
+              "avgNetReservedPct": 3.979,
+              "netReservedPerEventPct": 3.061,
+              "netReservedSum": 39.789
+            }
+          },
+          "july": {
+            "allEvents": 6,
+            "filled": 6,
+            "stopN": 3,
+            "stopPct": 50.0,
+            "tpN": 3,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -4.284,
+            "netReservedPerEventPct": -4.284,
+            "netReservedSum": -25.704
+          },
+          "julySkipped": {
+            "allEvents": 17,
+            "filled": 16,
+            "stopN": 7,
+            "stopPct": 43.75,
+            "tpN": 8,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -5.318,
+            "netReservedPerEventPct": -5.005,
+            "netReservedSum": -85.084
+          }
+        },
+        "rank12": {
+          "description": "Rank <=2",
+          "accepted": {
+            "allEvents": 155,
+            "filled": 118,
+            "stopN": 16,
+            "stopPct": 13.56,
+            "tpN": 99,
+            "tpPct": 83.9,
+            "avgNetReservedPct": 1.821,
+            "netReservedPerEventPct": 1.387,
+            "netReservedSum": 214.919
+          },
+          "rejected": {
+            "allEvents": 105,
+            "filled": 83,
+            "stopN": 12,
+            "stopPct": 14.46,
+            "tpN": 64,
+            "tpPct": 77.11,
+            "avgNetReservedPct": 0.514,
+            "netReservedPerEventPct": 0.406,
+            "netReservedSum": 42.628
+          },
+          "fractionStopsAvoided": 42.86,
+          "profitTakingSignalsLost": 64,
+          "fractionTPsForgone": 39.26,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 67,
+              "filled": 48,
+              "stopN": 0,
+              "stopPct": 0.0,
+              "tpN": 47,
+              "tpPct": 97.92,
+              "avgNetReservedPct": 4.568,
+              "netReservedPerEventPct": 3.273,
+              "netReservedSum": 219.278
+            },
+            "middle": {
+              "allEvents": 53,
+              "filled": 40,
+              "stopN": 12,
+              "stopPct": 30.0,
+              "tpN": 28,
+              "tpPct": 70.0,
+              "avgNetReservedPct": -0.882,
+              "netReservedPerEventPct": -0.665,
+              "netReservedSum": -35.27
+            },
+            "late": {
+              "allEvents": 35,
+              "filled": 30,
+              "stopN": 4,
+              "stopPct": 13.33,
+              "tpN": 24,
+              "tpPct": 80.0,
+              "avgNetReservedPct": 1.03,
+              "netReservedPerEventPct": 0.883,
+              "netReservedSum": 30.911
+            }
+          },
+          "july": {
+            "allEvents": 16,
+            "filled": 15,
+            "stopN": 8,
+            "stopPct": 53.33,
+            "tpN": 7,
+            "tpPct": 46.67,
+            "avgNetReservedPct": -5.884,
+            "netReservedPerEventPct": -5.516,
+            "netReservedSum": -88.256
+          },
+          "julySkipped": {
+            "allEvents": 7,
+            "filled": 7,
+            "stopN": 2,
+            "stopPct": 28.57,
+            "tpN": 4,
+            "tpPct": 57.14,
+            "avgNetReservedPct": -3.219,
+            "netReservedPerEventPct": -3.219,
+            "netReservedSum": -22.532
+          }
+        },
+        "exclude_breakout9": {
+          "description": "Signal 20D breakout <9%",
+          "accepted": {
+            "allEvents": 234,
+            "filled": 178,
+            "stopN": 23,
+            "stopPct": 12.92,
+            "tpN": 146,
+            "tpPct": 82.02,
+            "avgNetReservedPct": 1.589,
+            "netReservedPerEventPct": 1.209,
+            "netReservedSum": 282.907
+          },
+          "rejected": {
+            "allEvents": 26,
+            "filled": 23,
+            "stopN": 5,
+            "stopPct": 21.74,
+            "tpN": 17,
+            "tpPct": 73.91,
+            "avgNetReservedPct": -1.103,
+            "netReservedPerEventPct": -0.975,
+            "netReservedSum": -25.36
+          },
+          "fractionStopsAvoided": 17.86,
+          "profitTakingSignalsLost": 17,
+          "fractionTPsForgone": 10.43,
+          "fisherTwoSidedP": 0.33158,
+          "slices": {
+            "early": {
+              "allEvents": 104,
+              "filled": 75,
+              "stopN": 4,
+              "stopPct": 5.33,
+              "tpN": 69,
+              "tpPct": 92.0,
+              "avgNetReservedPct": 2.941,
+              "netReservedPerEventPct": 2.121,
+              "netReservedSum": 220.588
+            },
+            "middle": {
+              "allEvents": 79,
+              "filled": 58,
+              "stopN": 13,
+              "stopPct": 22.41,
+              "tpN": 44,
+              "tpPct": 75.86,
+              "avgNetReservedPct": 0.628,
+              "netReservedPerEventPct": 0.461,
+              "netReservedSum": 36.438
+            },
+            "late": {
+              "allEvents": 51,
+              "filled": 45,
+              "stopN": 6,
+              "stopPct": 13.33,
+              "tpN": 33,
+              "tpPct": 73.33,
+              "avgNetReservedPct": 0.575,
+              "netReservedPerEventPct": 0.507,
+              "netReservedSum": 25.881
+            }
+          },
+          "july": {
+            "allEvents": 21,
+            "filled": 20,
+            "stopN": 9,
+            "stopPct": 45.0,
+            "tpN": 10,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -4.886,
+            "netReservedPerEventPct": -4.653,
+            "netReservedSum": -97.714
+          },
+          "julySkipped": {
+            "allEvents": 2,
+            "filled": 2,
+            "stopN": 1,
+            "stopPct": 50.0,
+            "tpN": 1,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -6.537,
+            "netReservedPerEventPct": -6.537,
+            "netReservedSum": -13.074
+          }
+        },
+        "no_negative_breakout": {
+          "description": "Signal breakout >=0%",
+          "accepted": {
+            "allEvents": 182,
+            "filled": 141,
+            "stopN": 22,
+            "stopPct": 15.6,
+            "tpN": 113,
+            "tpPct": 80.14,
+            "avgNetReservedPct": 0.853,
+            "netReservedPerEventPct": 0.661,
+            "netReservedSum": 120.238
+          },
+          "rejected": {
+            "allEvents": 78,
+            "filled": 60,
+            "stopN": 6,
+            "stopPct": 10.0,
+            "tpN": 50,
+            "tpPct": 83.33,
+            "avgNetReservedPct": 2.288,
+            "netReservedPerEventPct": 1.76,
+            "netReservedSum": 137.309
+          },
+          "fractionStopsAvoided": 21.43,
+          "profitTakingSignalsLost": 50,
+          "fractionTPsForgone": 30.67,
+          "fisherTwoSidedP": 0.37588,
+          "slices": {
+            "early": {
+              "allEvents": 88,
+              "filled": 62,
+              "stopN": 6,
+              "stopPct": 9.68,
+              "tpN": 54,
+              "tpPct": 87.1,
+              "avgNetReservedPct": 1.884,
+              "netReservedPerEventPct": 1.328,
+              "netReservedSum": 116.834
+            },
+            "middle": {
+              "allEvents": 56,
+              "filled": 43,
+              "stopN": 11,
+              "stopPct": 25.58,
+              "tpN": 32,
+              "tpPct": 74.42,
+              "avgNetReservedPct": -0.156,
+              "netReservedPerEventPct": -0.12,
+              "netReservedSum": -6.71
+            },
+            "late": {
+              "allEvents": 38,
+              "filled": 36,
+              "stopN": 5,
+              "stopPct": 13.89,
+              "tpN": 27,
+              "tpPct": 75.0,
+              "avgNetReservedPct": 0.281,
+              "netReservedPerEventPct": 0.266,
+              "netReservedSum": 10.114
+            }
+          },
+          "july": {
+            "allEvents": 10,
+            "filled": 10,
+            "stopN": 6,
+            "stopPct": 60.0,
+            "tpN": 4,
+            "tpPct": 40.0,
+            "avgNetReservedPct": -8.092,
+            "netReservedPerEventPct": -8.092,
+            "netReservedSum": -80.916
+          },
+          "julySkipped": {
+            "allEvents": 13,
+            "filled": 12,
+            "stopN": 4,
+            "stopPct": 33.33,
+            "tpN": 7,
+            "tpPct": 58.33,
+            "avgNetReservedPct": -2.489,
+            "netReservedPerEventPct": -2.298,
+            "netReservedSum": -29.872
+          }
+        },
+        "atrTop5": {
+          "description": "Signal ATR cross-sectional >=95th pct",
+          "accepted": {
+            "allEvents": 82,
+            "filled": 68,
+            "stopN": 5,
+            "stopPct": 7.35,
+            "tpN": 60,
+            "tpPct": 88.24,
+            "avgNetReservedPct": 2.969,
+            "netReservedPerEventPct": 2.462,
+            "netReservedSum": 201.9
+          },
+          "rejected": {
+            "allEvents": 178,
+            "filled": 133,
+            "stopN": 23,
+            "stopPct": 17.29,
+            "tpN": 103,
+            "tpPct": 77.44,
+            "avgNetReservedPct": 0.418,
+            "netReservedPerEventPct": 0.313,
+            "netReservedSum": 55.647
+          },
+          "fractionStopsAvoided": 82.14,
+          "profitTakingSignalsLost": 103,
+          "fractionTPsForgone": 63.19,
+          "fisherTwoSidedP": 0.08317,
+          "slices": {
+            "early": {
+              "allEvents": 40,
+              "filled": 34,
+              "stopN": 2,
+              "stopPct": 5.88,
+              "tpN": 32,
+              "tpPct": 94.12,
+              "avgNetReservedPct": 3.383,
+              "netReservedPerEventPct": 2.875,
+              "netReservedSum": 115.018
+            },
+            "middle": {
+              "allEvents": 20,
+              "filled": 16,
+              "stopN": 2,
+              "stopPct": 12.5,
+              "tpN": 14,
+              "tpPct": 87.5,
+              "avgNetReservedPct": 2.758,
+              "netReservedPerEventPct": 2.206,
+              "netReservedSum": 44.125
+            },
+            "late": {
+              "allEvents": 22,
+              "filled": 18,
+              "stopN": 1,
+              "stopPct": 5.56,
+              "tpN": 14,
+              "tpPct": 77.78,
+              "avgNetReservedPct": 2.375,
+              "netReservedPerEventPct": 1.944,
+              "netReservedSum": 42.757
+            }
+          },
+          "july": {
+            "allEvents": 3,
+            "filled": 3,
+            "stopN": 1,
+            "stopPct": 33.33,
+            "tpN": 2,
+            "tpPct": 66.67,
+            "avgNetReservedPct": -2.686,
+            "netReservedPerEventPct": -2.686,
+            "netReservedSum": -8.058
+          },
+          "julySkipped": {
+            "allEvents": 20,
+            "filled": 19,
+            "stopN": 9,
+            "stopPct": 47.37,
+            "tpN": 9,
+            "tpPct": 47.37,
+            "avgNetReservedPct": -5.407,
+            "netReservedPerEventPct": -5.136,
+            "netReservedSum": -102.73
+          }
+        },
+        "turnTop5": {
+          "description": "Signal turnover cross-sectional >=95th pct",
+          "accepted": {
+            "allEvents": 190,
+            "filled": 145,
+            "stopN": 18,
+            "stopPct": 12.41,
+            "tpN": 122,
+            "tpPct": 84.14,
+            "avgNetReservedPct": 1.809,
+            "netReservedPerEventPct": 1.381,
+            "netReservedSum": 262.356
+          },
+          "rejected": {
+            "allEvents": 70,
+            "filled": 56,
+            "stopN": 10,
+            "stopPct": 17.86,
+            "tpN": 41,
+            "tpPct": 73.21,
+            "avgNetReservedPct": -0.086,
+            "netReservedPerEventPct": -0.069,
+            "netReservedSum": -4.809
+          },
+          "fractionStopsAvoided": 35.71,
+          "profitTakingSignalsLost": 41,
+          "fractionTPsForgone": 25.15,
+          "fisherTwoSidedP": 0.36445,
+          "slices": {
+            "early": {
+              "allEvents": 83,
+              "filled": 60,
+              "stopN": 4,
+              "stopPct": 6.67,
+              "tpN": 56,
+              "tpPct": 93.33,
+              "avgNetReservedPct": 2.645,
+              "netReservedPerEventPct": 1.912,
+              "netReservedSum": 158.68
+            },
+            "middle": {
+              "allEvents": 59,
+              "filled": 45,
+              "stopN": 11,
+              "stopPct": 24.44,
+              "tpN": 34,
+              "tpPct": 75.56,
+              "avgNetReservedPct": 0.915,
+              "netReservedPerEventPct": 0.698,
+              "netReservedSum": 41.18
+            },
+            "late": {
+              "allEvents": 48,
+              "filled": 40,
+              "stopN": 3,
+              "stopPct": 7.5,
+              "tpN": 32,
+              "tpPct": 80.0,
+              "avgNetReservedPct": 1.562,
+              "netReservedPerEventPct": 1.302,
+              "netReservedSum": 62.496
+            }
+          },
+          "july": {
+            "allEvents": 15,
+            "filled": 14,
+            "stopN": 6,
+            "stopPct": 42.86,
+            "tpN": 8,
+            "tpPct": 57.14,
+            "avgNetReservedPct": -3.61,
+            "netReservedPerEventPct": -3.369,
+            "netReservedSum": -50.541
+          },
+          "julySkipped": {
+            "allEvents": 8,
+            "filled": 8,
+            "stopN": 4,
+            "stopPct": 50.0,
+            "tpN": 3,
+            "tpPct": 37.5,
+            "avgNetReservedPct": -7.531,
+            "netReservedPerEventPct": -7.531,
+            "netReservedSum": -60.247
+          }
+        },
+        "score97": {
+          "description": "Signal score >=97",
+          "accepted": {
+            "allEvents": 201,
+            "filled": 159,
+            "stopN": 21,
+            "stopPct": 13.21,
+            "tpN": 133,
+            "tpPct": 83.65,
+            "avgNetReservedPct": 1.453,
+            "netReservedPerEventPct": 1.15,
+            "netReservedSum": 231.062
+          },
+          "rejected": {
+            "allEvents": 59,
+            "filled": 42,
+            "stopN": 7,
+            "stopPct": 16.67,
+            "tpN": 30,
+            "tpPct": 71.43,
+            "avgNetReservedPct": 0.631,
+            "netReservedPerEventPct": 0.449,
+            "netReservedSum": 26.485
+          },
+          "fractionStopsAvoided": 25.0,
+          "profitTakingSignalsLost": 30,
+          "fractionTPsForgone": 18.4,
+          "fisherTwoSidedP": 0.61694,
+          "slices": {
+            "early": {
+              "allEvents": 98,
+              "filled": 74,
+              "stopN": 6,
+              "stopPct": 8.11,
+              "tpN": 67,
+              "tpPct": 90.54,
+              "avgNetReservedPct": 2.314,
+              "netReservedPerEventPct": 1.747,
+              "netReservedSum": 171.248
+            },
+            "middle": {
+              "allEvents": 57,
+              "filled": 45,
+              "stopN": 10,
+              "stopPct": 22.22,
+              "tpN": 35,
+              "tpPct": 77.78,
+              "avgNetReservedPct": 0.695,
+              "netReservedPerEventPct": 0.549,
+              "netReservedSum": 31.265
+            },
+            "late": {
+              "allEvents": 46,
+              "filled": 40,
+              "stopN": 5,
+              "stopPct": 12.5,
+              "tpN": 31,
+              "tpPct": 77.5,
+              "avgNetReservedPct": 0.714,
+              "netReservedPerEventPct": 0.621,
+              "netReservedSum": 28.549
+            }
+          },
+          "july": {
+            "allEvents": 10,
+            "filled": 10,
+            "stopN": 4,
+            "stopPct": 40.0,
+            "tpN": 6,
+            "tpPct": 60.0,
+            "avgNetReservedPct": -3.545,
+            "netReservedPerEventPct": -3.545,
+            "netReservedSum": -35.45
+          },
+          "julySkipped": {
+            "allEvents": 13,
+            "filled": 12,
+            "stopN": 6,
+            "stopPct": 50.0,
+            "tpN": 5,
+            "tpPct": 41.67,
+            "avgNetReservedPct": -6.278,
+            "netReservedPerEventPct": -5.795,
+            "netReservedSum": -75.338
+          }
+        },
+        "indexFavorable": {
+          "description": "TWII >= MA20, MA20 not declining, position60 >=50",
+          "accepted": {
+            "allEvents": 185,
+            "filled": 146,
+            "stopN": 17,
+            "stopPct": 11.64,
+            "tpN": 123,
+            "tpPct": 84.25,
+            "avgNetReservedPct": 1.747,
+            "netReservedPerEventPct": 1.379,
+            "netReservedSum": 255.103
+          },
+          "rejected": {
+            "allEvents": 75,
+            "filled": 55,
+            "stopN": 11,
+            "stopPct": 20.0,
+            "tpN": 40,
+            "tpPct": 72.73,
+            "avgNetReservedPct": 0.044,
+            "netReservedPerEventPct": 0.033,
+            "netReservedSum": 2.444
+          },
+          "fractionStopsAvoided": 39.29,
+          "profitTakingSignalsLost": 40,
+          "fractionTPsForgone": 24.54,
+          "fisherTwoSidedP": 0.16885,
+          "slices": {
+            "early": {
+              "allEvents": 90,
+              "filled": 68,
+              "stopN": 5,
+              "stopPct": 7.35,
+              "tpN": 61,
+              "tpPct": 89.71,
+              "avgNetReservedPct": 2.413,
+              "netReservedPerEventPct": 1.823,
+              "netReservedSum": 164.086
+            },
+            "middle": {
+              "allEvents": 56,
+              "filled": 41,
+              "stopN": 8,
+              "stopPct": 19.51,
+              "tpN": 33,
+              "tpPct": 80.49,
+              "avgNetReservedPct": 1.375,
+              "netReservedPerEventPct": 1.007,
+              "netReservedSum": 56.372
+            },
+            "late": {
+              "allEvents": 39,
+              "filled": 37,
+              "stopN": 4,
+              "stopPct": 10.81,
+              "tpN": 29,
+              "tpPct": 78.38,
+              "avgNetReservedPct": 0.936,
+              "netReservedPerEventPct": 0.888,
+              "netReservedSum": 34.645
+            }
+          },
+          "july": {
+            "allEvents": 3,
+            "filled": 3,
+            "stopN": 2,
+            "stopPct": 66.67,
+            "tpN": 1,
+            "tpPct": 33.33,
+            "avgNetReservedPct": -9.784,
+            "netReservedPerEventPct": -9.784,
+            "netReservedSum": -29.351
+          },
+          "julySkipped": {
+            "allEvents": 20,
+            "filled": 19,
+            "stopN": 8,
+            "stopPct": 42.11,
+            "tpN": 10,
+            "tpPct": 52.63,
+            "avgNetReservedPct": -4.286,
+            "netReservedPerEventPct": -4.072,
+            "netReservedSum": -81.437
+          }
+        },
+        "indexNotCaution": {
+          "description": "TWII position60 >=35, no MA60 below + MA20 down",
+          "accepted": {
+            "allEvents": 247,
+            "filled": 191,
+            "stopN": 26,
+            "stopPct": 13.61,
+            "tpN": 156,
+            "tpPct": 81.68,
+            "avgNetReservedPct": 1.361,
+            "netReservedPerEventPct": 1.052,
+            "netReservedSum": 259.957
+          },
+          "rejected": {
+            "allEvents": 13,
+            "filled": 10,
+            "stopN": 2,
+            "stopPct": 20.0,
+            "tpN": 7,
+            "tpPct": 70.0,
+            "avgNetReservedPct": -0.241,
+            "netReservedPerEventPct": -0.185,
+            "netReservedSum": -2.41
+          },
+          "fractionStopsAvoided": 7.14,
+          "profitTakingSignalsLost": 7,
+          "fractionTPsForgone": 4.29,
+          "fisherTwoSidedP": 0.63312,
+          "slices": {
+            "early": {
+              "allEvents": 114,
+              "filled": 85,
+              "stopN": 6,
+              "stopPct": 7.06,
+              "tpN": 77,
+              "tpPct": 90.59,
+              "avgNetReservedPct": 2.551,
+              "netReservedPerEventPct": 1.902,
+              "netReservedSum": 216.811
+            },
+            "middle": {
+              "allEvents": 78,
+              "filled": 58,
+              "stopN": 15,
+              "stopPct": 25.86,
+              "tpN": 43,
+              "tpPct": 74.14,
+              "avgNetReservedPct": 0.029,
+              "netReservedPerEventPct": 0.022,
+              "netReservedSum": 1.707
+            },
+            "late": {
+              "allEvents": 55,
+              "filled": 48,
+              "stopN": 5,
+              "stopPct": 10.42,
+              "tpN": 36,
+              "tpPct": 75.0,
+              "avgNetReservedPct": 0.863,
+              "netReservedPerEventPct": 0.753,
+              "netReservedSum": 41.439
+            }
+          },
+          "july": {
+            "allEvents": 16,
+            "filled": 16,
+            "stopN": 9,
+            "stopPct": 56.25,
+            "tpN": 7,
+            "tpPct": 43.75,
+            "avgNetReservedPct": -6.961,
+            "netReservedPerEventPct": -6.961,
+            "netReservedSum": -111.383
+          },
+          "julySkipped": {
+            "allEvents": 7,
+            "filled": 6,
+            "stopN": 1,
+            "stopPct": 16.67,
+            "tpN": 4,
+            "tpPct": 66.67,
+            "avgNetReservedPct": 0.099,
+            "netReservedPerEventPct": 0.085,
+            "netReservedSum": 0.595
+          }
+        },
+        "indexPosition60ge20": {
+          "description": "TWII 60D position >=20%",
+          "accepted": {
+            "allEvents": 260,
+            "filled": 201,
+            "stopN": 28,
+            "stopPct": 13.93,
+            "tpN": 163,
+            "tpPct": 81.09,
+            "avgNetReservedPct": 1.281,
+            "netReservedPerEventPct": 0.991,
+            "netReservedSum": 257.547
+          },
+          "rejected": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 0,
+          "fractionTPsForgone": 0.0,
+          "fisherTwoSidedP": null,
+          "slices": {
+            "early": {
+              "allEvents": 117,
+              "filled": 87,
+              "stopN": 6,
+              "stopPct": 6.9,
+              "tpN": 79,
+              "tpPct": 90.8,
+              "avgNetReservedPct": 2.579,
+              "netReservedPerEventPct": 1.918,
+              "netReservedSum": 224.372
+            },
+            "middle": {
+              "allEvents": 85,
+              "filled": 64,
+              "stopN": 16,
+              "stopPct": 25.0,
+              "tpN": 47,
+              "tpPct": 73.44,
+              "avgNetReservedPct": 0.036,
+              "netReservedPerEventPct": 0.027,
+              "netReservedSum": 2.302
+            },
+            "late": {
+              "allEvents": 58,
+              "filled": 50,
+              "stopN": 6,
+              "stopPct": 12.0,
+              "tpN": 37,
+              "tpPct": 74.0,
+              "avgNetReservedPct": 0.617,
+              "netReservedPerEventPct": 0.532,
+              "netReservedSum": 30.873
+            }
+          },
+          "july": {
+            "allEvents": 23,
+            "filled": 22,
+            "stopN": 10,
+            "stopPct": 45.45,
+            "tpN": 11,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -5.036,
+            "netReservedPerEventPct": -4.817,
+            "netReservedSum": -110.788
+          },
+          "julySkipped": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          }
+        },
+        "indexPosition60ge35": {
+          "description": "TWII 60D position >=35%",
+          "accepted": {
+            "allEvents": 259,
+            "filled": 200,
+            "stopN": 28,
+            "stopPct": 14.0,
+            "tpN": 162,
+            "tpPct": 81.0,
+            "avgNetReservedPct": 1.251,
+            "netReservedPerEventPct": 0.966,
+            "netReservedSum": 250.252
+          },
+          "rejected": {
+            "allEvents": 1,
+            "filled": 1,
+            "stopN": 0,
+            "stopPct": 0.0,
+            "tpN": 1,
+            "tpPct": 100.0,
+            "avgNetReservedPct": 7.295,
+            "netReservedPerEventPct": 7.295,
+            "netReservedSum": 7.295
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 1,
+          "fractionTPsForgone": 0.61,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 117,
+              "filled": 87,
+              "stopN": 6,
+              "stopPct": 6.9,
+              "tpN": 79,
+              "tpPct": 90.8,
+              "avgNetReservedPct": 2.579,
+              "netReservedPerEventPct": 1.918,
+              "netReservedSum": 224.372
+            },
+            "middle": {
+              "allEvents": 84,
+              "filled": 63,
+              "stopN": 16,
+              "stopPct": 25.4,
+              "tpN": 46,
+              "tpPct": 73.02,
+              "avgNetReservedPct": -0.079,
+              "netReservedPerEventPct": -0.059,
+              "netReservedSum": -4.993
+            },
+            "late": {
+              "allEvents": 58,
+              "filled": 50,
+              "stopN": 6,
+              "stopPct": 12.0,
+              "tpN": 37,
+              "tpPct": 74.0,
+              "avgNetReservedPct": 0.617,
+              "netReservedPerEventPct": 0.532,
+              "netReservedSum": 30.873
+            }
+          },
+          "july": {
+            "allEvents": 22,
+            "filled": 21,
+            "stopN": 10,
+            "stopPct": 47.62,
+            "tpN": 10,
+            "tpPct": 47.62,
+            "avgNetReservedPct": -5.623,
+            "netReservedPerEventPct": -5.367,
+            "netReservedSum": -118.083
+          },
+          "julySkipped": {
+            "allEvents": 1,
+            "filled": 1,
+            "stopN": 0,
+            "stopPct": 0.0,
+            "tpN": 1,
+            "tpPct": 100.0,
+            "avgNetReservedPct": 7.295,
+            "netReservedPerEventPct": 7.295,
+            "netReservedSum": 7.295
+          }
+        },
+        "indexPosition60ge50": {
+          "description": "TWII 60D position >=50%",
+          "accepted": {
+            "allEvents": 251,
+            "filled": 194,
+            "stopN": 27,
+            "stopPct": 13.92,
+            "tpN": 158,
+            "tpPct": 81.44,
+            "avgNetReservedPct": 1.298,
+            "netReservedPerEventPct": 1.004,
+            "netReservedSum": 251.899
+          },
+          "rejected": {
+            "allEvents": 9,
+            "filled": 7,
+            "stopN": 1,
+            "stopPct": 14.29,
+            "tpN": 5,
+            "tpPct": 71.43,
+            "avgNetReservedPct": 0.807,
+            "netReservedPerEventPct": 0.628,
+            "netReservedSum": 5.648
+          },
+          "fractionStopsAvoided": 3.57,
+          "profitTakingSignalsLost": 5,
+          "fractionTPsForgone": 3.07,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 114,
+              "filled": 85,
+              "stopN": 6,
+              "stopPct": 7.06,
+              "tpN": 77,
+              "tpPct": 90.59,
+              "avgNetReservedPct": 2.551,
+              "netReservedPerEventPct": 1.902,
+              "netReservedSum": 216.811
+            },
+            "middle": {
+              "allEvents": 81,
+              "filled": 61,
+              "stopN": 16,
+              "stopPct": 26.23,
+              "tpN": 45,
+              "tpPct": 73.77,
+              "avgNetReservedPct": -0.104,
+              "netReservedPerEventPct": -0.078,
+              "netReservedSum": -6.351
+            },
+            "late": {
+              "allEvents": 56,
+              "filled": 48,
+              "stopN": 5,
+              "stopPct": 10.42,
+              "tpN": 36,
+              "tpPct": 75.0,
+              "avgNetReservedPct": 0.863,
+              "netReservedPerEventPct": 0.74,
+              "netReservedSum": 41.439
+            }
+          },
+          "july": {
+            "allEvents": 19,
+            "filled": 19,
+            "stopN": 10,
+            "stopPct": 52.63,
+            "tpN": 9,
+            "tpPct": 47.37,
+            "avgNetReservedPct": -6.286,
+            "netReservedPerEventPct": -6.286,
+            "netReservedSum": -119.441
+          },
+          "julySkipped": {
+            "allEvents": 4,
+            "filled": 3,
+            "stopN": 0,
+            "stopPct": 0.0,
+            "tpN": 2,
+            "tpPct": 66.67,
+            "avgNetReservedPct": 2.884,
+            "netReservedPerEventPct": 2.163,
+            "netReservedSum": 8.653
+          }
+        },
+        "indexPosition60ge65": {
+          "description": "TWII 60D position >=65%",
+          "accepted": {
+            "allEvents": 226,
+            "filled": 173,
+            "stopN": 26,
+            "stopPct": 15.03,
+            "tpN": 140,
+            "tpPct": 80.92,
+            "avgNetReservedPct": 1.164,
+            "netReservedPerEventPct": 0.891,
+            "netReservedSum": 201.31
+          },
+          "rejected": {
+            "allEvents": 34,
+            "filled": 28,
+            "stopN": 2,
+            "stopPct": 7.14,
+            "tpN": 23,
+            "tpPct": 82.14,
+            "avgNetReservedPct": 2.008,
+            "netReservedPerEventPct": 1.654,
+            "netReservedSum": 56.237
+          },
+          "fractionStopsAvoided": 7.14,
+          "profitTakingSignalsLost": 23,
+          "fractionTPsForgone": 14.11,
+          "fisherTwoSidedP": 0.38155,
+          "slices": {
+            "early": {
+              "allEvents": 107,
+              "filled": 80,
+              "stopN": 6,
+              "stopPct": 7.5,
+              "tpN": 72,
+              "tpPct": 90.0,
+              "avgNetReservedPct": 2.532,
+              "netReservedPerEventPct": 1.893,
+              "netReservedSum": 202.576
+            },
+            "middle": {
+              "allEvents": 78,
+              "filled": 58,
+              "stopN": 15,
+              "stopPct": 25.86,
+              "tpN": 43,
+              "tpPct": 74.14,
+              "avgNetReservedPct": 0.029,
+              "netReservedPerEventPct": 0.022,
+              "netReservedSum": 1.707
+            },
+            "late": {
+              "allEvents": 41,
+              "filled": 35,
+              "stopN": 5,
+              "stopPct": 14.29,
+              "tpN": 25,
+              "tpPct": 71.43,
+              "avgNetReservedPct": -0.085,
+              "netReservedPerEventPct": -0.073,
+              "netReservedSum": -2.973
+            }
+          },
+          "july": {
+            "allEvents": 16,
+            "filled": 16,
+            "stopN": 9,
+            "stopPct": 56.25,
+            "tpN": 7,
+            "tpPct": 43.75,
+            "avgNetReservedPct": -6.961,
+            "netReservedPerEventPct": -6.961,
+            "netReservedSum": -111.383
+          },
+          "julySkipped": {
+            "allEvents": 7,
+            "filled": 6,
+            "stopN": 1,
+            "stopPct": 16.67,
+            "tpN": 4,
+            "tpPct": 66.67,
+            "avgNetReservedPct": 0.099,
+            "netReservedPerEventPct": 0.085,
+            "netReservedSum": 0.595
+          }
+        },
+        "indexPosition120ge35": {
+          "description": "TWII 120D position >=35%",
+          "accepted": {
+            "allEvents": 260,
+            "filled": 201,
+            "stopN": 28,
+            "stopPct": 13.93,
+            "tpN": 163,
+            "tpPct": 81.09,
+            "avgNetReservedPct": 1.281,
+            "netReservedPerEventPct": 0.991,
+            "netReservedSum": 257.547
+          },
+          "rejected": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 0,
+          "fractionTPsForgone": 0.0,
+          "fisherTwoSidedP": null,
+          "slices": {
+            "early": {
+              "allEvents": 117,
+              "filled": 87,
+              "stopN": 6,
+              "stopPct": 6.9,
+              "tpN": 79,
+              "tpPct": 90.8,
+              "avgNetReservedPct": 2.579,
+              "netReservedPerEventPct": 1.918,
+              "netReservedSum": 224.372
+            },
+            "middle": {
+              "allEvents": 85,
+              "filled": 64,
+              "stopN": 16,
+              "stopPct": 25.0,
+              "tpN": 47,
+              "tpPct": 73.44,
+              "avgNetReservedPct": 0.036,
+              "netReservedPerEventPct": 0.027,
+              "netReservedSum": 2.302
+            },
+            "late": {
+              "allEvents": 58,
+              "filled": 50,
+              "stopN": 6,
+              "stopPct": 12.0,
+              "tpN": 37,
+              "tpPct": 74.0,
+              "avgNetReservedPct": 0.617,
+              "netReservedPerEventPct": 0.532,
+              "netReservedSum": 30.873
+            }
+          },
+          "july": {
+            "allEvents": 23,
+            "filled": 22,
+            "stopN": 10,
+            "stopPct": 45.45,
+            "tpN": 11,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -5.036,
+            "netReservedPerEventPct": -4.817,
+            "netReservedSum": -110.788
+          },
+          "julySkipped": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          }
+        },
+        "indexPosition120ge50": {
+          "description": "TWII 120D position >=50%",
+          "accepted": {
+            "allEvents": 260,
+            "filled": 201,
+            "stopN": 28,
+            "stopPct": 13.93,
+            "tpN": 163,
+            "tpPct": 81.09,
+            "avgNetReservedPct": 1.281,
+            "netReservedPerEventPct": 0.991,
+            "netReservedSum": 257.547
+          },
+          "rejected": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 0,
+          "fractionTPsForgone": 0.0,
+          "fisherTwoSidedP": null,
+          "slices": {
+            "early": {
+              "allEvents": 117,
+              "filled": 87,
+              "stopN": 6,
+              "stopPct": 6.9,
+              "tpN": 79,
+              "tpPct": 90.8,
+              "avgNetReservedPct": 2.579,
+              "netReservedPerEventPct": 1.918,
+              "netReservedSum": 224.372
+            },
+            "middle": {
+              "allEvents": 85,
+              "filled": 64,
+              "stopN": 16,
+              "stopPct": 25.0,
+              "tpN": 47,
+              "tpPct": 73.44,
+              "avgNetReservedPct": 0.036,
+              "netReservedPerEventPct": 0.027,
+              "netReservedSum": 2.302
+            },
+            "late": {
+              "allEvents": 58,
+              "filled": 50,
+              "stopN": 6,
+              "stopPct": 12.0,
+              "tpN": 37,
+              "tpPct": 74.0,
+              "avgNetReservedPct": 0.617,
+              "netReservedPerEventPct": 0.532,
+              "netReservedSum": 30.873
+            }
+          },
+          "july": {
+            "allEvents": 23,
+            "filled": 22,
+            "stopN": 10,
+            "stopPct": 45.45,
+            "tpN": 11,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -5.036,
+            "netReservedPerEventPct": -4.817,
+            "netReservedSum": -110.788
+          },
+          "julySkipped": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          }
+        },
+        "indexPosition120ge65": {
+          "description": "TWII 120D position >=65%",
+          "accepted": {
+            "allEvents": 256,
+            "filled": 198,
+            "stopN": 28,
+            "stopPct": 14.14,
+            "tpN": 160,
+            "tpPct": 80.81,
+            "avgNetReservedPct": 1.226,
+            "netReservedPerEventPct": 0.948,
+            "netReservedSum": 242.691
+          },
+          "rejected": {
+            "allEvents": 4,
+            "filled": 3,
+            "stopN": 0,
+            "stopPct": 0.0,
+            "tpN": 3,
+            "tpPct": 100.0,
+            "avgNetReservedPct": 4.952,
+            "netReservedPerEventPct": 3.714,
+            "netReservedSum": 14.856
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 3,
+          "fractionTPsForgone": 1.84,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 114,
+              "filled": 85,
+              "stopN": 6,
+              "stopPct": 7.06,
+              "tpN": 77,
+              "tpPct": 90.59,
+              "avgNetReservedPct": 2.551,
+              "netReservedPerEventPct": 1.902,
+              "netReservedSum": 216.811
+            },
+            "middle": {
+              "allEvents": 84,
+              "filled": 63,
+              "stopN": 16,
+              "stopPct": 25.4,
+              "tpN": 46,
+              "tpPct": 73.02,
+              "avgNetReservedPct": -0.079,
+              "netReservedPerEventPct": -0.059,
+              "netReservedSum": -4.993
+            },
+            "late": {
+              "allEvents": 58,
+              "filled": 50,
+              "stopN": 6,
+              "stopPct": 12.0,
+              "tpN": 37,
+              "tpPct": 74.0,
+              "avgNetReservedPct": 0.617,
+              "netReservedPerEventPct": 0.532,
+              "netReservedSum": 30.873
+            }
+          },
+          "july": {
+            "allEvents": 22,
+            "filled": 21,
+            "stopN": 10,
+            "stopPct": 47.62,
+            "tpN": 10,
+            "tpPct": 47.62,
+            "avgNetReservedPct": -5.623,
+            "netReservedPerEventPct": -5.367,
+            "netReservedSum": -118.083
+          },
+          "julySkipped": {
+            "allEvents": 1,
+            "filled": 1,
+            "stopN": 0,
+            "stopPct": 0.0,
+            "tpN": 1,
+            "tpPct": 100.0,
+            "avgNetReservedPct": 7.295,
+            "netReservedPerEventPct": 7.295,
+            "netReservedSum": 7.295
+          }
+        },
+        "indexPos60ge35AboveMA20": {
+          "description": "TWII pos60 >=35 and close>=MA20",
+          "accepted": {
+            "allEvents": 201,
+            "filled": 157,
+            "stopN": 17,
+            "stopPct": 10.83,
+            "tpN": 131,
+            "tpPct": 83.44,
+            "avgNetReservedPct": 1.84,
+            "netReservedPerEventPct": 1.437,
+            "netReservedSum": 288.838
+          },
+          "rejected": {
+            "allEvents": 59,
+            "filled": 44,
+            "stopN": 11,
+            "stopPct": 25.0,
+            "tpN": 32,
+            "tpPct": 72.73,
+            "avgNetReservedPct": -0.711,
+            "netReservedPerEventPct": -0.53,
+            "netReservedSum": -31.291
+          },
+          "fractionStopsAvoided": 39.29,
+          "profitTakingSignalsLost": 32,
+          "fractionTPsForgone": 19.63,
+          "fisherTwoSidedP": 0.0251,
+          "slices": {
+            "early": {
+              "allEvents": 94,
+              "filled": 70,
+              "stopN": 5,
+              "stopPct": 7.14,
+              "tpN": 63,
+              "tpPct": 90.0,
+              "avgNetReservedPct": 2.583,
+              "netReservedPerEventPct": 1.923,
+              "netReservedSum": 180.782
+            },
+            "middle": {
+              "allEvents": 56,
+              "filled": 41,
+              "stopN": 8,
+              "stopPct": 19.51,
+              "tpN": 33,
+              "tpPct": 80.49,
+              "avgNetReservedPct": 1.375,
+              "netReservedPerEventPct": 1.007,
+              "netReservedSum": 56.372
+            },
+            "late": {
+              "allEvents": 51,
+              "filled": 46,
+              "stopN": 4,
+              "stopPct": 8.7,
+              "tpN": 35,
+              "tpPct": 76.09,
+              "avgNetReservedPct": 1.124,
+              "netReservedPerEventPct": 1.013,
+              "netReservedSum": 51.684
+            }
+          },
+          "july": {
+            "allEvents": 3,
+            "filled": 3,
+            "stopN": 2,
+            "stopPct": 66.67,
+            "tpN": 1,
+            "tpPct": 33.33,
+            "avgNetReservedPct": -9.784,
+            "netReservedPerEventPct": -9.784,
+            "netReservedSum": -29.351
+          },
+          "julySkipped": {
+            "allEvents": 20,
+            "filled": 19,
+            "stopN": 8,
+            "stopPct": 42.11,
+            "tpN": 10,
+            "tpPct": 52.63,
+            "avgNetReservedPct": -4.286,
+            "netReservedPerEventPct": -4.072,
+            "netReservedSum": -81.437
+          }
+        },
+        "indexPos60ge35AboveMA60": {
+          "description": "TWII pos60 >=35 and close>=MA60",
+          "accepted": {
+            "allEvents": 242,
+            "filled": 186,
+            "stopN": 26,
+            "stopPct": 13.98,
+            "tpN": 151,
+            "tpPct": 81.18,
+            "avgNetReservedPct": 1.292,
+            "netReservedPerEventPct": 0.993,
+            "netReservedSum": 240.298
+          },
+          "rejected": {
+            "allEvents": 18,
+            "filled": 15,
+            "stopN": 2,
+            "stopPct": 13.33,
+            "tpN": 12,
+            "tpPct": 80.0,
+            "avgNetReservedPct": 1.15,
+            "netReservedPerEventPct": 0.958,
+            "netReservedSum": 17.249
+          },
+          "fractionStopsAvoided": 7.14,
+          "profitTakingSignalsLost": 12,
+          "fractionTPsForgone": 7.36,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 114,
+              "filled": 85,
+              "stopN": 6,
+              "stopPct": 7.06,
+              "tpN": 77,
+              "tpPct": 90.59,
+              "avgNetReservedPct": 2.551,
+              "netReservedPerEventPct": 1.902,
+              "netReservedSum": 216.811
+            },
+            "middle": {
+              "allEvents": 78,
+              "filled": 58,
+              "stopN": 15,
+              "stopPct": 25.86,
+              "tpN": 43,
+              "tpPct": 74.14,
+              "avgNetReservedPct": 0.029,
+              "netReservedPerEventPct": 0.022,
+              "netReservedSum": 1.707
+            },
+            "late": {
+              "allEvents": 50,
+              "filled": 43,
+              "stopN": 5,
+              "stopPct": 11.63,
+              "tpN": 31,
+              "tpPct": 72.09,
+              "avgNetReservedPct": 0.507,
+              "netReservedPerEventPct": 0.436,
+              "netReservedSum": 21.78
+            }
+          },
+          "july": {
+            "allEvents": 16,
+            "filled": 16,
+            "stopN": 9,
+            "stopPct": 56.25,
+            "tpN": 7,
+            "tpPct": 43.75,
+            "avgNetReservedPct": -6.961,
+            "netReservedPerEventPct": -6.961,
+            "netReservedSum": -111.383
+          },
+          "julySkipped": {
+            "allEvents": 7,
+            "filled": 6,
+            "stopN": 1,
+            "stopPct": 16.67,
+            "tpN": 4,
+            "tpPct": 66.67,
+            "avgNetReservedPct": 0.099,
+            "netReservedPerEventPct": 0.085,
+            "netReservedSum": 0.595
+          }
+        },
+        "indexPos60ge50MA20up": {
+          "description": "TWII pos60 >=50 and MA20 slope >=0",
+          "accepted": {
+            "allEvents": 225,
+            "filled": 174,
+            "stopN": 25,
+            "stopPct": 14.37,
+            "tpN": 143,
+            "tpPct": 82.18,
+            "avgNetReservedPct": 1.286,
+            "netReservedPerEventPct": 0.995,
+            "netReservedSum": 223.807
+          },
+          "rejected": {
+            "allEvents": 35,
+            "filled": 27,
+            "stopN": 3,
+            "stopPct": 11.11,
+            "tpN": 20,
+            "tpPct": 74.07,
+            "avgNetReservedPct": 1.25,
+            "netReservedPerEventPct": 0.964,
+            "netReservedSum": 33.74
+          },
+          "fractionStopsAvoided": 10.71,
+          "profitTakingSignalsLost": 20,
+          "fractionTPsForgone": 12.27,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 104,
+              "filled": 78,
+              "stopN": 6,
+              "stopPct": 7.69,
+              "tpN": 70,
+              "tpPct": 89.74,
+              "avgNetReservedPct": 2.335,
+              "netReservedPerEventPct": 1.751,
+              "netReservedSum": 182.119
+            },
+            "middle": {
+              "allEvents": 77,
+              "filled": 57,
+              "stopN": 14,
+              "stopPct": 24.56,
+              "tpN": 43,
+              "tpPct": 75.44,
+              "avgNetReservedPct": 0.303,
+              "netReservedPerEventPct": 0.225,
+              "netReservedSum": 17.288
+            },
+            "late": {
+              "allEvents": 44,
+              "filled": 39,
+              "stopN": 5,
+              "stopPct": 12.82,
+              "tpN": 30,
+              "tpPct": 76.92,
+              "avgNetReservedPct": 0.626,
+              "netReservedPerEventPct": 0.555,
+              "netReservedSum": 24.4
+            }
+          },
+          "july": {
+            "allEvents": 15,
+            "filled": 15,
+            "stopN": 8,
+            "stopPct": 53.33,
+            "tpN": 7,
+            "tpPct": 46.67,
+            "avgNetReservedPct": -6.387,
+            "netReservedPerEventPct": -6.387,
+            "netReservedSum": -95.802
+          },
+          "julySkipped": {
+            "allEvents": 8,
+            "filled": 7,
+            "stopN": 2,
+            "stopPct": 28.57,
+            "tpN": 4,
+            "tpPct": 57.14,
+            "avgNetReservedPct": -2.141,
+            "netReservedPerEventPct": -1.873,
+            "netReservedSum": -14.986
+          }
+        },
+        "indexAboveMA20": {
+          "description": "TWII signal-day close >=20D MA",
+          "accepted": {
+            "allEvents": 201,
+            "filled": 157,
+            "stopN": 17,
+            "stopPct": 10.83,
+            "tpN": 131,
+            "tpPct": 83.44,
+            "avgNetReservedPct": 1.84,
+            "netReservedPerEventPct": 1.437,
+            "netReservedSum": 288.838
+          },
+          "rejected": {
+            "allEvents": 59,
+            "filled": 44,
+            "stopN": 11,
+            "stopPct": 25.0,
+            "tpN": 32,
+            "tpPct": 72.73,
+            "avgNetReservedPct": -0.711,
+            "netReservedPerEventPct": -0.53,
+            "netReservedSum": -31.291
+          },
+          "fractionStopsAvoided": 39.29,
+          "profitTakingSignalsLost": 32,
+          "fractionTPsForgone": 19.63,
+          "fisherTwoSidedP": 0.0251,
+          "slices": {
+            "early": {
+              "allEvents": 94,
+              "filled": 70,
+              "stopN": 5,
+              "stopPct": 7.14,
+              "tpN": 63,
+              "tpPct": 90.0,
+              "avgNetReservedPct": 2.583,
+              "netReservedPerEventPct": 1.923,
+              "netReservedSum": 180.782
+            },
+            "middle": {
+              "allEvents": 56,
+              "filled": 41,
+              "stopN": 8,
+              "stopPct": 19.51,
+              "tpN": 33,
+              "tpPct": 80.49,
+              "avgNetReservedPct": 1.375,
+              "netReservedPerEventPct": 1.007,
+              "netReservedSum": 56.372
+            },
+            "late": {
+              "allEvents": 51,
+              "filled": 46,
+              "stopN": 4,
+              "stopPct": 8.7,
+              "tpN": 35,
+              "tpPct": 76.09,
+              "avgNetReservedPct": 1.124,
+              "netReservedPerEventPct": 1.013,
+              "netReservedSum": 51.684
+            }
+          },
+          "july": {
+            "allEvents": 3,
+            "filled": 3,
+            "stopN": 2,
+            "stopPct": 66.67,
+            "tpN": 1,
+            "tpPct": 33.33,
+            "avgNetReservedPct": -9.784,
+            "netReservedPerEventPct": -9.784,
+            "netReservedSum": -29.351
+          },
+          "julySkipped": {
+            "allEvents": 20,
+            "filled": 19,
+            "stopN": 8,
+            "stopPct": 42.11,
+            "tpN": 10,
+            "tpPct": 52.63,
+            "avgNetReservedPct": -4.286,
+            "netReservedPerEventPct": -4.072,
+            "netReservedSum": -81.437
+          }
+        },
+        "indexAboveMA60": {
+          "description": "TWII signal-day close >=60D MA",
+          "accepted": {
+            "allEvents": 242,
+            "filled": 186,
+            "stopN": 26,
+            "stopPct": 13.98,
+            "tpN": 151,
+            "tpPct": 81.18,
+            "avgNetReservedPct": 1.292,
+            "netReservedPerEventPct": 0.993,
+            "netReservedSum": 240.298
+          },
+          "rejected": {
+            "allEvents": 18,
+            "filled": 15,
+            "stopN": 2,
+            "stopPct": 13.33,
+            "tpN": 12,
+            "tpPct": 80.0,
+            "avgNetReservedPct": 1.15,
+            "netReservedPerEventPct": 0.958,
+            "netReservedSum": 17.249
+          },
+          "fractionStopsAvoided": 7.14,
+          "profitTakingSignalsLost": 12,
+          "fractionTPsForgone": 7.36,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 114,
+              "filled": 85,
+              "stopN": 6,
+              "stopPct": 7.06,
+              "tpN": 77,
+              "tpPct": 90.59,
+              "avgNetReservedPct": 2.551,
+              "netReservedPerEventPct": 1.902,
+              "netReservedSum": 216.811
+            },
+            "middle": {
+              "allEvents": 78,
+              "filled": 58,
+              "stopN": 15,
+              "stopPct": 25.86,
+              "tpN": 43,
+              "tpPct": 74.14,
+              "avgNetReservedPct": 0.029,
+              "netReservedPerEventPct": 0.022,
+              "netReservedSum": 1.707
+            },
+            "late": {
+              "allEvents": 50,
+              "filled": 43,
+              "stopN": 5,
+              "stopPct": 11.63,
+              "tpN": 31,
+              "tpPct": 72.09,
+              "avgNetReservedPct": 0.507,
+              "netReservedPerEventPct": 0.436,
+              "netReservedSum": 21.78
+            }
+          },
+          "july": {
+            "allEvents": 16,
+            "filled": 16,
+            "stopN": 9,
+            "stopPct": 56.25,
+            "tpN": 7,
+            "tpPct": 43.75,
+            "avgNetReservedPct": -6.961,
+            "netReservedPerEventPct": -6.961,
+            "netReservedSum": -111.383
+          },
+          "julySkipped": {
+            "allEvents": 7,
+            "filled": 6,
+            "stopN": 1,
+            "stopPct": 16.67,
+            "tpN": 4,
+            "tpPct": 66.67,
+            "avgNetReservedPct": 0.099,
+            "netReservedPerEventPct": 0.085,
+            "netReservedSum": 0.595
+          }
+        },
+        "indexMA20up": {
+          "description": "TWII 20D MA slope over 5 sessions >=0",
+          "accepted": {
+            "allEvents": 225,
+            "filled": 174,
+            "stopN": 25,
+            "stopPct": 14.37,
+            "tpN": 143,
+            "tpPct": 82.18,
+            "avgNetReservedPct": 1.286,
+            "netReservedPerEventPct": 0.995,
+            "netReservedSum": 223.807
+          },
+          "rejected": {
+            "allEvents": 35,
+            "filled": 27,
+            "stopN": 3,
+            "stopPct": 11.11,
+            "tpN": 20,
+            "tpPct": 74.07,
+            "avgNetReservedPct": 1.25,
+            "netReservedPerEventPct": 0.964,
+            "netReservedSum": 33.74
+          },
+          "fractionStopsAvoided": 10.71,
+          "profitTakingSignalsLost": 20,
+          "fractionTPsForgone": 12.27,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 104,
+              "filled": 78,
+              "stopN": 6,
+              "stopPct": 7.69,
+              "tpN": 70,
+              "tpPct": 89.74,
+              "avgNetReservedPct": 2.335,
+              "netReservedPerEventPct": 1.751,
+              "netReservedSum": 182.119
+            },
+            "middle": {
+              "allEvents": 77,
+              "filled": 57,
+              "stopN": 14,
+              "stopPct": 24.56,
+              "tpN": 43,
+              "tpPct": 75.44,
+              "avgNetReservedPct": 0.303,
+              "netReservedPerEventPct": 0.225,
+              "netReservedSum": 17.288
+            },
+            "late": {
+              "allEvents": 44,
+              "filled": 39,
+              "stopN": 5,
+              "stopPct": 12.82,
+              "tpN": 30,
+              "tpPct": 76.92,
+              "avgNetReservedPct": 0.626,
+              "netReservedPerEventPct": 0.555,
+              "netReservedSum": 24.4
+            }
+          },
+          "july": {
+            "allEvents": 15,
+            "filled": 15,
+            "stopN": 8,
+            "stopPct": 53.33,
+            "tpN": 7,
+            "tpPct": 46.67,
+            "avgNetReservedPct": -6.387,
+            "netReservedPerEventPct": -6.387,
+            "netReservedSum": -95.802
+          },
+          "julySkipped": {
+            "allEvents": 8,
+            "filled": 7,
+            "stopN": 2,
+            "stopPct": 28.57,
+            "tpN": 4,
+            "tpPct": 57.14,
+            "avgNetReservedPct": -2.141,
+            "netReservedPerEventPct": -1.873,
+            "netReservedSum": -14.986
+          }
+        },
+        "indexNotDown2Pct5D": {
+          "description": "TWII 5D return >=-2%",
+          "accepted": {
+            "allEvents": 206,
+            "filled": 167,
+            "stopN": 23,
+            "stopPct": 13.77,
+            "tpN": 135,
+            "tpPct": 80.84,
+            "avgNetReservedPct": 1.187,
+            "netReservedPerEventPct": 0.962,
+            "netReservedSum": 198.149
+          },
+          "rejected": {
+            "allEvents": 54,
+            "filled": 34,
+            "stopN": 5,
+            "stopPct": 14.71,
+            "tpN": 28,
+            "tpPct": 82.35,
+            "avgNetReservedPct": 1.747,
+            "netReservedPerEventPct": 1.1,
+            "netReservedSum": 59.398
+          },
+          "fractionStopsAvoided": 17.86,
+          "profitTakingSignalsLost": 28,
+          "fractionTPsForgone": 17.18,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 99,
+              "filled": 75,
+              "stopN": 6,
+              "stopPct": 8.0,
+              "tpN": 67,
+              "tpPct": 89.33,
+              "avgNetReservedPct": 2.342,
+              "netReservedPerEventPct": 1.774,
+              "netReservedSum": 175.655
+            },
+            "middle": {
+              "allEvents": 58,
+              "filled": 48,
+              "stopN": 12,
+              "stopPct": 25.0,
+              "tpN": 36,
+              "tpPct": 75.0,
+              "avgNetReservedPct": 0.022,
+              "netReservedPerEventPct": 0.018,
+              "netReservedSum": 1.036
+            },
+            "late": {
+              "allEvents": 49,
+              "filled": 44,
+              "stopN": 5,
+              "stopPct": 11.36,
+              "tpN": 32,
+              "tpPct": 72.73,
+              "avgNetReservedPct": 0.488,
+              "netReservedPerEventPct": 0.438,
+              "netReservedSum": 21.458
+            }
+          },
+          "july": {
+            "allEvents": 11,
+            "filled": 11,
+            "stopN": 6,
+            "stopPct": 54.55,
+            "tpN": 5,
+            "tpPct": 45.45,
+            "avgNetReservedPct": -7.129,
+            "netReservedPerEventPct": -7.129,
+            "netReservedSum": -78.418
+          },
+          "julySkipped": {
+            "allEvents": 12,
+            "filled": 11,
+            "stopN": 4,
+            "stopPct": 36.36,
+            "tpN": 6,
+            "tpPct": 54.55,
+            "avgNetReservedPct": -2.943,
+            "netReservedPerEventPct": -2.697,
+            "netReservedSum": -32.37
+          }
+        },
+        "indexNotDown4Pct10D": {
+          "description": "TWII 10D return >=-4%",
+          "accepted": {
+            "allEvents": 247,
+            "filled": 191,
+            "stopN": 28,
+            "stopPct": 14.66,
+            "tpN": 154,
+            "tpPct": 80.63,
+            "avgNetReservedPct": 1.161,
+            "netReservedPerEventPct": 0.898,
+            "netReservedSum": 221.835
+          },
+          "rejected": {
+            "allEvents": 13,
+            "filled": 10,
+            "stopN": 0,
+            "stopPct": 0.0,
+            "tpN": 9,
+            "tpPct": 90.0,
+            "avgNetReservedPct": 3.571,
+            "netReservedPerEventPct": 2.747,
+            "netReservedSum": 35.712
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 9,
+          "fractionTPsForgone": 5.52,
+          "fisherTwoSidedP": 0.36297,
+          "slices": {
+            "early": {
+              "allEvents": 108,
+              "filled": 80,
+              "stopN": 6,
+              "stopPct": 7.5,
+              "tpN": 72,
+              "tpPct": 90.0,
+              "avgNetReservedPct": 2.466,
+              "netReservedPerEventPct": 1.827,
+              "netReservedSum": 197.313
+            },
+            "middle": {
+              "allEvents": 81,
+              "filled": 61,
+              "stopN": 16,
+              "stopPct": 26.23,
+              "tpN": 45,
+              "tpPct": 73.77,
+              "avgNetReservedPct": -0.104,
+              "netReservedPerEventPct": -0.078,
+              "netReservedSum": -6.351
+            },
+            "late": {
+              "allEvents": 58,
+              "filled": 50,
+              "stopN": 6,
+              "stopPct": 12.0,
+              "tpN": 37,
+              "tpPct": 74.0,
+              "avgNetReservedPct": 0.617,
+              "netReservedPerEventPct": 0.532,
+              "netReservedSum": 30.873
+            }
+          },
+          "july": {
+            "allEvents": 19,
+            "filled": 19,
+            "stopN": 10,
+            "stopPct": 52.63,
+            "tpN": 9,
+            "tpPct": 47.37,
+            "avgNetReservedPct": -6.286,
+            "netReservedPerEventPct": -6.286,
+            "netReservedSum": -119.441
+          },
+          "julySkipped": {
+            "allEvents": 4,
+            "filled": 3,
+            "stopN": 0,
+            "stopPct": 0.0,
+            "tpN": 2,
+            "tpPct": 66.67,
+            "avgNetReservedPct": 2.884,
+            "netReservedPerEventPct": 2.163,
+            "netReservedSum": 8.653
+          }
+        },
+        "indexNotDown5Days": {
+          "description": "TWII close >=5D ago",
+          "accepted": {
+            "allEvents": 168,
+            "filled": 133,
+            "stopN": 19,
+            "stopPct": 14.29,
+            "tpN": 106,
+            "tpPct": 79.7,
+            "avgNetReservedPct": 0.999,
+            "netReservedPerEventPct": 0.791,
+            "netReservedSum": 132.891
+          },
+          "rejected": {
+            "allEvents": 92,
+            "filled": 68,
+            "stopN": 9,
+            "stopPct": 13.24,
+            "tpN": 57,
+            "tpPct": 83.82,
+            "avgNetReservedPct": 1.833,
+            "netReservedPerEventPct": 1.355,
+            "netReservedSum": 124.656
+          },
+          "fractionStopsAvoided": 32.14,
+          "profitTakingSignalsLost": 57,
+          "fractionTPsForgone": 34.97,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 83,
+              "filled": 61,
+              "stopN": 6,
+              "stopPct": 9.84,
+              "tpN": 53,
+              "tpPct": 86.89,
+              "avgNetReservedPct": 1.729,
+              "netReservedPerEventPct": 1.271,
+              "netReservedSum": 105.46
+            },
+            "middle": {
+              "allEvents": 47,
+              "filled": 37,
+              "stopN": 8,
+              "stopPct": 21.62,
+              "tpN": 29,
+              "tpPct": 78.38,
+              "avgNetReservedPct": 0.8,
+              "netReservedPerEventPct": 0.63,
+              "netReservedSum": 29.613
+            },
+            "late": {
+              "allEvents": 38,
+              "filled": 35,
+              "stopN": 5,
+              "stopPct": 14.29,
+              "tpN": 24,
+              "tpPct": 68.57,
+              "avgNetReservedPct": -0.062,
+              "netReservedPerEventPct": -0.057,
+              "netReservedSum": -2.182
+            }
+          },
+          "july": {
+            "allEvents": 6,
+            "filled": 6,
+            "stopN": 3,
+            "stopPct": 50.0,
+            "tpN": 3,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -6.235,
+            "netReservedPerEventPct": -6.235,
+            "netReservedSum": -37.409
+          },
+          "julySkipped": {
+            "allEvents": 17,
+            "filled": 16,
+            "stopN": 7,
+            "stopPct": 43.75,
+            "tpN": 8,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -4.586,
+            "netReservedPerEventPct": -4.316,
+            "netReservedSum": -73.379
+          }
+        },
+        "rank1_indexAbove20": {
+          "description": "Rank1 and TWII >= MA20",
+          "accepted": {
+            "allEvents": 49,
+            "filled": 37,
+            "stopN": 1,
+            "stopPct": 2.7,
+            "tpN": 35,
+            "tpPct": 94.59,
+            "avgNetReservedPct": 4.258,
+            "netReservedPerEventPct": 3.215,
+            "netReservedSum": 157.538
+          },
+          "rejected": {
+            "allEvents": 211,
+            "filled": 164,
+            "stopN": 27,
+            "stopPct": 16.46,
+            "tpN": 128,
+            "tpPct": 78.05,
+            "avgNetReservedPct": 0.61,
+            "netReservedPerEventPct": 0.474,
+            "netReservedSum": 100.009
+          },
+          "fractionStopsAvoided": 96.43,
+          "profitTakingSignalsLost": 128,
+          "fractionTPsForgone": 78.53,
+          "fisherTwoSidedP": 0.03299,
+          "slices": {
+            "early": {
+              "allEvents": 23,
+              "filled": 18,
+              "stopN": 0,
+              "stopPct": 0.0,
+              "tpN": 18,
+              "tpPct": 100.0,
+              "avgNetReservedPct": 4.939,
+              "netReservedPerEventPct": 3.865,
+              "netReservedSum": 88.905
+            },
+            "middle": {
+              "allEvents": 15,
+              "filled": 10,
+              "stopN": 1,
+              "stopPct": 10.0,
+              "tpN": 9,
+              "tpPct": 90.0,
+              "avgNetReservedPct": 3.386,
+              "netReservedPerEventPct": 2.257,
+              "netReservedSum": 33.859
+            },
+            "late": {
+              "allEvents": 11,
+              "filled": 9,
+              "stopN": 0,
+              "stopPct": 0.0,
+              "tpN": 8,
+              "tpPct": 88.89,
+              "avgNetReservedPct": 3.864,
+              "netReservedPerEventPct": 3.161,
+              "netReservedSum": 34.774
+            }
+          },
+          "july": {
+            "allEvents": 1,
+            "filled": 1,
+            "stopN": 1,
+            "stopPct": 100.0,
+            "tpN": 0,
+            "tpPct": 0.0,
+            "avgNetReservedPct": -15.581,
+            "netReservedPerEventPct": -15.581,
+            "netReservedSum": -15.581
+          },
+          "julySkipped": {
+            "allEvents": 22,
+            "filled": 21,
+            "stopN": 9,
+            "stopPct": 42.86,
+            "tpN": 11,
+            "tpPct": 52.38,
+            "avgNetReservedPct": -4.534,
+            "netReservedPerEventPct": -4.328,
+            "netReservedSum": -95.207
+          }
+        },
+        "rank12_indexAbove20": {
+          "description": "Rank <=2 and TWII >=MA20",
+          "accepted": {
+            "allEvents": 117,
+            "filled": 90,
+            "stopN": 9,
+            "stopPct": 10.0,
+            "tpN": 78,
+            "tpPct": 86.67,
+            "avgNetReservedPct": 2.47,
+            "netReservedPerEventPct": 1.9,
+            "netReservedSum": 222.26
+          },
+          "rejected": {
+            "allEvents": 143,
+            "filled": 111,
+            "stopN": 19,
+            "stopPct": 17.12,
+            "tpN": 85,
+            "tpPct": 76.58,
+            "avgNetReservedPct": 0.318,
+            "netReservedPerEventPct": 0.247,
+            "netReservedSum": 35.287
+          },
+          "fractionStopsAvoided": 67.86,
+          "profitTakingSignalsLost": 85,
+          "fractionTPsForgone": 52.15,
+          "fisherTwoSidedP": 0.15846,
+          "slices": {
+            "early": {
+              "allEvents": 53,
+              "filled": 38,
+              "stopN": 0,
+              "stopPct": 0.0,
+              "tpN": 37,
+              "tpPct": 97.37,
+              "avgNetReservedPct": 4.639,
+              "netReservedPerEventPct": 3.326,
+              "netReservedSum": 176.266
+            },
+            "middle": {
+              "allEvents": 34,
+              "filled": 25,
+              "stopN": 6,
+              "stopPct": 24.0,
+              "tpN": 19,
+              "tpPct": 76.0,
+              "avgNetReservedPct": 0.394,
+              "netReservedPerEventPct": 0.29,
+              "netReservedSum": 9.853
+            },
+            "late": {
+              "allEvents": 30,
+              "filled": 27,
+              "stopN": 3,
+              "stopPct": 11.11,
+              "tpN": 22,
+              "tpPct": 81.48,
+              "avgNetReservedPct": 1.339,
+              "netReservedPerEventPct": 1.205,
+              "netReservedSum": 36.141
+            }
+          },
+          "july": {
+            "allEvents": 2,
+            "filled": 2,
+            "stopN": 2,
+            "stopPct": 100.0,
+            "tpN": 0,
+            "tpPct": 0.0,
+            "avgNetReservedPct": -15.929,
+            "netReservedPerEventPct": -15.929,
+            "netReservedSum": -31.858
+          },
+          "julySkipped": {
+            "allEvents": 21,
+            "filled": 20,
+            "stopN": 8,
+            "stopPct": 40.0,
+            "tpN": 11,
+            "tpPct": 55.0,
+            "avgNetReservedPct": -3.946,
+            "netReservedPerEventPct": -3.759,
+            "netReservedSum": -78.93
+          }
+        },
+        "rank12_indexUp": {
+          "description": "Rank <=2 and TWII MA20 slope >=0",
+          "accepted": {
+            "allEvents": 129,
+            "filled": 98,
+            "stopN": 13,
+            "stopPct": 13.27,
+            "tpN": 83,
+            "tpPct": 84.69,
+            "avgNetReservedPct": 1.85,
+            "netReservedPerEventPct": 1.405,
+            "netReservedSum": 181.305
+          },
+          "rejected": {
+            "allEvents": 131,
+            "filled": 103,
+            "stopN": 15,
+            "stopPct": 14.56,
+            "tpN": 80,
+            "tpPct": 77.67,
+            "avgNetReservedPct": 0.74,
+            "netReservedPerEventPct": 0.582,
+            "netReservedSum": 76.242
+          },
+          "fractionStopsAvoided": 53.57,
+          "profitTakingSignalsLost": 80,
+          "fractionTPsForgone": 49.08,
+          "fisherTwoSidedP": 0.84054,
+          "slices": {
+            "early": {
+              "allEvents": 57,
+              "filled": 41,
+              "stopN": 0,
+              "stopPct": 0.0,
+              "tpN": 40,
+              "tpPct": 97.56,
+              "avgNetReservedPct": 4.471,
+              "netReservedPerEventPct": 3.216,
+              "netReservedSum": 183.294
+            },
+            "middle": {
+              "allEvents": 46,
+              "filled": 34,
+              "stopN": 10,
+              "stopPct": 29.41,
+              "tpN": 24,
+              "tpPct": 70.59,
+              "avgNetReservedPct": -0.807,
+              "netReservedPerEventPct": -0.596,
+              "netReservedSum": -27.427
+            },
+            "late": {
+              "allEvents": 26,
+              "filled": 23,
+              "stopN": 3,
+              "stopPct": 13.04,
+              "tpN": 19,
+              "tpPct": 82.61,
+              "avgNetReservedPct": 1.106,
+              "netReservedPerEventPct": 0.978,
+              "netReservedSum": 25.438
+            }
+          },
+          "july": {
+            "allEvents": 9,
+            "filled": 9,
+            "stopN": 6,
+            "stopPct": 66.67,
+            "tpN": 3,
+            "tpPct": 33.33,
+            "avgNetReservedPct": -8.935,
+            "netReservedPerEventPct": -8.935,
+            "netReservedSum": -80.413
+          },
+          "julySkipped": {
+            "allEvents": 14,
+            "filled": 13,
+            "stopN": 4,
+            "stopPct": 30.77,
+            "tpN": 8,
+            "tpPct": 61.54,
+            "avgNetReservedPct": -2.337,
+            "netReservedPerEventPct": -2.17,
+            "netReservedSum": -30.375
+          }
+        }
+      },
+      "stopTrades": [
+        {
+          "date": "2026-01-27",
+          "code": "5347",
+          "name": "世界",
+          "rank": 3,
+          "signalScore": 98.38,
+          "signalBreakoutPct": 2.9,
+          "buyLots": 5,
+          "start": "2026-01-29",
+          "exit": "2026-02-04",
+          "reason": "stop_gap",
+          "netReservedPct": -17.187,
+          "signalTWII": {
+            "close": 32317.92,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 1.76,
+            "position60": 104.5,
+            "position120": 102.9
+          }
+        },
+        {
+          "date": "2026-01-28",
+          "code": "7792",
+          "name": "安葆",
+          "rank": 3,
+          "signalScore": 98.46,
+          "signalBreakoutPct": 4.5,
+          "buyLots": 5,
+          "start": "2026-01-29",
+          "exit": "2026-02-05",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 32803.82,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 4.98,
+            "position60": 108.3,
+            "position120": 105.5
+          }
+        },
+        {
+          "date": "2026-02-25",
+          "code": "8046",
+          "name": "南電",
+          "rank": 3,
+          "signalScore": 98.44,
+          "signalBreakoutPct": 9.94,
+          "buyLots": 5,
+          "start": "2026-02-26",
+          "exit": "2026-03-09",
+          "reason": "stop_gap",
+          "netReservedPct": -17.756,
+          "signalTWII": {
+            "close": 35413.07,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 9.28,
+            "position60": 108.6,
+            "position120": 106.5
+          }
+        },
+        {
+          "date": "2026-03-02",
+          "code": "6442",
+          "name": "光聖",
+          "rank": 3,
+          "signalScore": 98.41,
+          "signalBreakoutPct": 4.2,
+          "buyLots": 5,
+          "start": "2026-03-04",
+          "exit": "2026-03-09",
+          "reason": "stop_gap",
+          "netReservedPct": -20.857,
+          "signalTWII": {
+            "close": 35095.09,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 4.43,
+            "position60": 96.4,
+            "position120": 97.2
+          }
+        },
+        {
+          "date": "2026-03-17",
+          "code": "3576",
+          "name": "聯合再生",
+          "rank": 3,
+          "signalScore": 98.17,
+          "signalBreakoutPct": 0.0,
+          "buyLots": 5,
+          "start": "2026-03-18",
+          "exit": "2026-03-23",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 33836.57,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 3.25,
+            "position60": 80.1,
+            "position120": 84.6
+          }
+        },
+        {
+          "date": "2026-03-19",
+          "code": "2337",
+          "name": "旺宏",
+          "rank": 3,
+          "signalScore": 98.09,
+          "signalBreakoutPct": 9.41,
+          "buyLots": 5,
+          "start": "2026-03-20",
+          "exit": "2026-03-27",
+          "reason": "stop_gap",
+          "netReservedPct": -20.261,
+          "signalTWII": {
+            "close": 33689.68,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": 0.32,
+            "position60": 78.3,
+            "position120": 82.9
+          }
+        },
+        {
+          "date": "2026-05-06",
+          "code": "2426",
+          "name": "鼎元",
+          "rank": 2,
+          "signalScore": 97.64,
+          "signalBreakoutPct": 9.96,
+          "buyLots": 5,
+          "start": "2026-05-07",
+          "exit": "2026-05-18",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 41138.85,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 4.09,
+            "position60": 104.0,
+            "position120": 102.6
+          }
+        },
+        {
+          "date": "2026-05-07",
+          "code": "1785",
+          "name": "光洋科",
+          "rank": 2,
+          "signalScore": 98.39,
+          "signalBreakoutPct": 2.78,
+          "buyLots": 5,
+          "start": "2026-05-08",
+          "exit": "2026-05-18",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 41933.78,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 6.69,
+            "position60": 108.4,
+            "position120": 105.4
+          }
+        },
+        {
+          "date": "2026-05-14",
+          "code": "8299",
+          "name": "群聯",
+          "rank": 2,
+          "signalScore": 97.57,
+          "signalBreakoutPct": 0.7,
+          "buyLots": 5,
+          "start": "2026-05-15",
+          "exit": "2026-05-20",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 41751.75,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": -0.43,
+            "position60": 98.2,
+            "position120": 98.8
+          }
+        },
+        {
+          "date": "2026-05-28",
+          "code": "5425",
+          "name": "台半",
+          "rank": 3,
+          "signalScore": 97.19,
+          "signalBreakoutPct": 3.62,
+          "buyLots": 5,
+          "start": "2026-06-01",
+          "exit": "2026-06-08",
+          "reason": "stop_gap",
+          "netReservedPct": -15.774,
+          "signalTWII": {
+            "close": 43636.44,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 5.48,
+            "position60": 95.1,
+            "position120": 96.5
+          }
+        },
+        {
+          "date": "2026-06-17",
+          "code": "8043",
+          "name": "蜜望實",
+          "rank": 3,
+          "signalScore": 98.46,
+          "signalBreakoutPct": -1.12,
+          "buyLots": 5,
+          "start": "2026-06-22",
+          "exit": "2026-06-29",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 45877.39,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 6.13,
+            "position60": 96.1,
+            "position120": 96.9
+          }
+        },
+        {
+          "date": "2026-06-22",
+          "code": "3624",
+          "name": "光頡",
+          "rank": 2,
+          "signalScore": 98.02,
+          "signalBreakoutPct": 9.97,
+          "buyLots": 5,
+          "start": "2026-06-23",
+          "exit": "2026-06-26",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 47741.51,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 8.09,
+            "position60": 108.7,
+            "position120": 106.7
+          }
+        },
+        {
+          "date": "2026-07-02",
+          "code": "5328",
+          "name": "華容",
+          "rank": 1,
+          "signalScore": 98.62,
+          "signalBreakoutPct": 4.73,
+          "buyLots": 5,
+          "start": "2026-07-07",
+          "exit": "2026-07-13",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 46744.16,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 1.06,
+            "position60": 93.1,
+            "position120": 94.8
+          }
+        },
+        {
+          "date": "2026-07-06",
+          "code": "6213",
+          "name": "聯茂",
+          "rank": 2,
+          "signalScore": 97.74,
+          "signalBreakoutPct": 0.51,
+          "buyLots": 5,
+          "start": "2026-07-07",
+          "exit": "2026-07-17",
+          "reason": "stop_gap",
+          "netReservedPct": -16.277,
+          "signalTWII": {
+            "close": 46556.39,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 3.46,
+            "position60": 90.8,
+            "position120": 93.7
+          }
+        },
+        {
+          "date": "2026-07-07",
+          "code": "6525",
+          "name": "捷敏-KY",
+          "rank": 2,
+          "signalScore": 96.74,
+          "signalBreakoutPct": 9.95,
+          "buyLots": 5,
+          "start": "2026-07-08",
+          "exit": "2026-07-14",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 45479.11,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -1.4,
+            "position60": 81.6,
+            "position120": 87.7
+          }
+        },
+        {
+          "date": "2026-07-08",
+          "code": "8261",
+          "name": "富鼎",
+          "rank": 1,
+          "signalScore": 96.67,
+          "signalBreakoutPct": -8.54,
+          "buyLots": 5,
+          "start": "2026-07-09",
+          "exit": "2026-07-14",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 45734.41,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -2.73,
+            "position60": 83.7,
+            "position120": 88.6
+          }
+        },
+        {
+          "date": "2026-07-08",
+          "code": "2061",
+          "name": "風青",
+          "rank": 3,
+          "signalScore": 96.53,
+          "signalBreakoutPct": 2.09,
+          "buyLots": 5,
+          "start": "2026-07-09",
+          "exit": "2026-07-14",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 45734.41,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -2.73,
+            "position60": 83.7,
+            "position120": 88.6
+          }
+        },
+        {
+          "date": "2026-07-09",
+          "code": "6182",
+          "name": "合晶",
+          "rank": 1,
+          "signalScore": 98.67,
+          "signalBreakoutPct": -0.86,
+          "buyLots": 5,
+          "start": "2026-07-16",
+          "exit": "2026-07-21",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 45354.61,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -2.97,
+            "position60": 79.1,
+            "position120": 86.3
+          }
+        },
+        {
+          "date": "2026-07-09",
+          "code": "3026",
+          "name": "禾伸堂",
+          "rank": 2,
+          "signalScore": 97.45,
+          "signalBreakoutPct": -1.47,
+          "buyLots": 5,
+          "start": "2026-07-13",
+          "exit": "2026-07-15",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 45354.61,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -2.97,
+            "position60": 79.1,
+            "position120": 86.3
+          }
+        },
+        {
+          "date": "2026-07-16",
+          "code": "7610",
+          "name": "聯友金屬-創",
+          "rank": 3,
+          "signalScore": 95.83,
+          "signalBreakoutPct": 0.58,
+          "buyLots": 5,
+          "start": "2026-07-17",
+          "exit": "2026-07-21",
+          "reason": "stop_gap",
+          "netReservedPct": -17.37,
+          "signalTWII": {
+            "close": 45624.98,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -0.24,
+            "position60": 80.4,
+            "position120": 87.7
+          }
+        },
+        {
+          "date": "2026-07-22",
+          "code": "3374",
+          "name": "精材",
+          "rank": 2,
+          "signalScore": 96.74,
+          "signalBreakoutPct": 0.0,
+          "buyLots": 5,
+          "start": "2026-07-23",
+          "exit": "2026-07-27",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 44825.78,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -1.77,
+            "position60": 66.9,
+            "position120": 82.3
+          }
+        },
+        {
+          "date": "2026-07-24",
+          "code": "4541",
+          "name": "晟田",
+          "rank": 2,
+          "signalScore": 94.8,
+          "signalBreakoutPct": -12.5,
+          "buyLots": 5,
+          "start": "2026-07-27",
+          "exit": "2026-07-30",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 43654.84,
+            "aboveMA20": false,
+            "aboveMA60": false,
+            "ret5": 2.3,
+            "position60": 53.6,
+            "position120": 75.2
+          }
+        },
+        {
+          "date": "2026-08-04",
+          "code": "7734",
+          "name": "印能科技",
+          "rank": 2,
+          "signalScore": 95.47,
+          "signalBreakoutPct": -0.14,
+          "buyLots": 5,
+          "start": "2026-08-05",
+          "exit": "2026-08-18",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 43360.66,
+            "aboveMA20": false,
+            "aboveMA60": false,
+            "ret5": 4.22,
+            "position60": 43.9,
+            "position120": 72.8
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "code": "3008",
+          "name": "大立光",
+          "rank": 2,
+          "signalScore": 98.52,
+          "signalBreakoutPct": 5.23,
+          "buyLots": 5,
+          "start": "2026-09-03",
+          "exit": "2026-09-14",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 46128.47,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 3.05,
+            "position60": 79.3,
+            "position120": 89.9
+          }
+        },
+        {
+          "date": "2026-09-02",
+          "code": "3234",
+          "name": "光環",
+          "rank": 3,
+          "signalScore": 98.14,
+          "signalBreakoutPct": 3.94,
+          "buyLots": 5,
+          "start": "2026-09-03",
+          "exit": "2026-09-15",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 46164.72,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 0.72,
+            "position60": 79.8,
+            "position120": 90.2
+          }
+        },
+        {
+          "date": "2026-09-04",
+          "code": "7711",
+          "name": "永擎",
+          "rank": 2,
+          "signalScore": 97.85,
+          "signalBreakoutPct": 1.12,
+          "buyLots": 5,
+          "start": "2026-09-08",
+          "exit": "2026-09-14",
+          "reason": "stop_gap",
+          "netReservedPct": -18.627,
+          "signalTWII": {
+            "close": 46551.13,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 0.47,
+            "position60": 84.8,
+            "position120": 92.6
+          }
+        },
+        {
+          "date": "2026-09-09",
+          "code": "5314",
+          "name": "世紀*",
+          "rank": 2,
+          "signalScore": 99.1,
+          "signalBreakoutPct": 1.79,
+          "buyLots": 5,
+          "start": "2026-09-14",
+          "exit": "2026-09-17",
+          "reason": "stop_gap",
+          "netReservedPct": -21.086,
+          "signalTWII": {
+            "close": 47183.36,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 2.21,
+            "position60": 92.9,
+            "position120": 96.5
+          }
+        },
+        {
+          "date": "2026-09-14",
+          "code": "2351",
+          "name": "順德",
+          "rank": 3,
+          "signalScore": 98.0,
+          "signalBreakoutPct": 3.63,
+          "buyLots": 5,
+          "start": "2026-09-15",
+          "exit": "2026-09-30",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 45862.52,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -3.09,
+            "position60": 75.9,
+            "position120": 88.3
+          }
+        }
+      ]
+    },
+    "ma": {
+      "baseline": {
+        "allEvents": 242,
+        "filled": 191,
+        "stopN": 28,
+        "stopPct": 14.66,
+        "tpN": 149,
+        "tpPct": 78.01,
+        "avgNetReservedPct": 0.561,
+        "netReservedPerEventPct": 0.443,
+        "netReservedSum": 107.215
+      },
+      "rankSummary": {
+        "1": {
+          "allEvents": 39,
+          "filled": 39,
+          "stopN": 5,
+          "stopPct": 12.82,
+          "tpN": 33,
+          "tpPct": 84.62,
+          "avgNetReservedPct": 0.946,
+          "netReservedPerEventPct": 0.946,
+          "netReservedSum": 36.886
+        },
+        "2": {
+          "allEvents": 68,
+          "filled": 68,
+          "stopN": 12,
+          "stopPct": 17.65,
+          "tpN": 53,
+          "tpPct": 77.94,
+          "avgNetReservedPct": 0.375,
+          "netReservedPerEventPct": 0.375,
+          "netReservedSum": 25.478
+        },
+        "3": {
+          "allEvents": 84,
+          "filled": 84,
+          "stopN": 11,
+          "stopPct": 13.1,
+          "tpN": 63,
+          "tpPct": 75.0,
+          "avgNetReservedPct": 0.534,
+          "netReservedPerEventPct": 0.534,
+          "netReservedSum": 44.851
+        }
+      },
+      "bySignalMonth": {
+        "2026-01": {
+          "allEvents": 23,
+          "filled": 23,
+          "stopN": 2,
+          "stopPct": 8.7,
+          "tpN": 19,
+          "tpPct": 82.61,
+          "avgNetReservedPct": 0.455,
+          "netReservedPerEventPct": 0.455,
+          "netReservedSum": 10.47
+        },
+        "2026-02": {
+          "allEvents": 14,
+          "filled": 14,
+          "stopN": 2,
+          "stopPct": 14.29,
+          "tpN": 12,
+          "tpPct": 85.71,
+          "avgNetReservedPct": 1.644,
+          "netReservedPerEventPct": 1.644,
+          "netReservedSum": 23.018
+        },
+        "2026-03": {
+          "allEvents": 21,
+          "filled": 21,
+          "stopN": 1,
+          "stopPct": 4.76,
+          "tpN": 18,
+          "tpPct": 85.71,
+          "avgNetReservedPct": 1.505,
+          "netReservedPerEventPct": 1.505,
+          "netReservedSum": 31.595
+        },
+        "2026-04": {
+          "allEvents": 19,
+          "filled": 19,
+          "stopN": 2,
+          "stopPct": 10.53,
+          "tpN": 15,
+          "tpPct": 78.95,
+          "avgNetReservedPct": 0.668,
+          "netReservedPerEventPct": 0.668,
+          "netReservedSum": 12.69
+        },
+        "2026-05": {
+          "allEvents": 26,
+          "filled": 26,
+          "stopN": 2,
+          "stopPct": 7.69,
+          "tpN": 24,
+          "tpPct": 92.31,
+          "avgNetReservedPct": 1.893,
+          "netReservedPerEventPct": 1.893,
+          "netReservedSum": 49.231
+        },
+        "2026-06": {
+          "allEvents": 20,
+          "filled": 20,
+          "stopN": 2,
+          "stopPct": 10.0,
+          "tpN": 18,
+          "tpPct": 90.0,
+          "avgNetReservedPct": 3.209,
+          "netReservedPerEventPct": 3.209,
+          "netReservedSum": 64.177
+        },
+        "2026-07": {
+          "allEvents": 24,
+          "filled": 24,
+          "stopN": 13,
+          "stopPct": 54.17,
+          "tpN": 11,
+          "tpPct": 45.83,
+          "avgNetReservedPct": -3.883,
+          "netReservedPerEventPct": -3.883,
+          "netReservedSum": -93.182
+        },
+        "2026-08": {
+          "allEvents": 29,
+          "filled": 29,
+          "stopN": 3,
+          "stopPct": 10.34,
+          "tpN": 22,
+          "tpPct": 75.86,
+          "avgNetReservedPct": 0.325,
+          "netReservedPerEventPct": 0.325,
+          "netReservedSum": 9.436
+        },
+        "2026-09": {
+          "allEvents": 15,
+          "filled": 15,
+          "stopN": 1,
+          "stopPct": 6.67,
+          "tpN": 10,
+          "tpPct": 66.67,
+          "avgNetReservedPct": -0.015,
+          "netReservedPerEventPct": -0.015,
+          "netReservedSum": -0.22
+        }
+      },
+      "signalFeatureMedians": {
+        "score": {
+          "stop": 97.65,
+          "tp": 97.87,
+          "other": 97.88
+        },
+        "ret20P": {
+          "stop": 99.5,
+          "tp": 99.4,
+          "other": 99.4
+        },
+        "slopeP": {
+          "stop": 99.35,
+          "tp": 98.9,
+          "other": 98.9
+        },
+        "atrP": {
+          "stop": 92.05,
+          "tp": 92.9,
+          "other": 93.0
+        },
+        "range20P": {
+          "stop": 98.85,
+          "tp": 98.9,
+          "other": 98.9
+        },
+        "turnoverP": {
+          "stop": 97.75,
+          "tp": 97.5,
+          "other": 97.5
+        },
+        "breakoutPct": {
+          "stop": 0.85,
+          "tp": 1.97,
+          "other": 2.06
+        },
+        "rank": {
+          "stop": 2.0,
+          "tp": 2.0,
+          "other": 2.0
+        }
+      },
+      "stopLots": {
+        "1": 6,
+        "2": 5,
+        "3": 16,
+        "4": 1
+      },
+      "tpLots": {
+        "1": 79,
+        "2": 52,
+        "3": 17,
+        "4": 1
+      },
+      "filters": {
+        "All": {
+          "description": "All signals",
+          "accepted": {
+            "allEvents": 242,
+            "filled": 191,
+            "stopN": 28,
+            "stopPct": 14.66,
+            "tpN": 149,
+            "tpPct": 78.01,
+            "avgNetReservedPct": 0.561,
+            "netReservedPerEventPct": 0.443,
+            "netReservedSum": 107.215
+          },
+          "rejected": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 0,
+          "fractionTPsForgone": 0.0,
+          "fisherTwoSidedP": null,
+          "slices": {
+            "early": {
+              "allEvents": 107,
+              "filled": 77,
+              "stopN": 7,
+              "stopPct": 9.09,
+              "tpN": 64,
+              "tpPct": 83.12,
+              "avgNetReservedPct": 1.01,
+              "netReservedPerEventPct": 0.727,
+              "netReservedSum": 77.773
+            },
+            "middle": {
+              "allEvents": 83,
+              "filled": 70,
+              "stopN": 17,
+              "stopPct": 24.29,
+              "tpN": 53,
+              "tpPct": 75.71,
+              "avgNetReservedPct": 0.289,
+              "netReservedPerEventPct": 0.244,
+              "netReservedSum": 20.226
+            },
+            "late": {
+              "allEvents": 52,
+              "filled": 44,
+              "stopN": 4,
+              "stopPct": 9.09,
+              "tpN": 32,
+              "tpPct": 72.73,
+              "avgNetReservedPct": 0.209,
+              "netReservedPerEventPct": 0.177,
+              "netReservedSum": 9.216
+            }
+          },
+          "july": {
+            "allEvents": 24,
+            "filled": 24,
+            "stopN": 13,
+            "stopPct": 54.17,
+            "tpN": 11,
+            "tpPct": 45.83,
+            "avgNetReservedPct": -3.883,
+            "netReservedPerEventPct": -3.883,
+            "netReservedSum": -93.182
+          },
+          "julySkipped": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          }
+        },
+        "only_rank1": {
+          "description": "Rank1 only",
+          "accepted": {
+            "allEvents": 53,
+            "filled": 39,
+            "stopN": 5,
+            "stopPct": 12.82,
+            "tpN": 33,
+            "tpPct": 84.62,
+            "avgNetReservedPct": 0.946,
+            "netReservedPerEventPct": 0.696,
+            "netReservedSum": 36.886
+          },
+          "rejected": {
+            "allEvents": 189,
+            "filled": 152,
+            "stopN": 23,
+            "stopPct": 15.13,
+            "tpN": 116,
+            "tpPct": 76.32,
+            "avgNetReservedPct": 0.463,
+            "netReservedPerEventPct": 0.372,
+            "netReservedSum": 70.329
+          },
+          "fractionStopsAvoided": 82.14,
+          "profitTakingSignalsLost": 116,
+          "fractionTPsForgone": 77.85,
+          "fisherTwoSidedP": 0.80545,
+          "slices": {
+            "early": {
+              "allEvents": 26,
+              "filled": 17,
+              "stopN": 1,
+              "stopPct": 5.88,
+              "tpN": 16,
+              "tpPct": 94.12,
+              "avgNetReservedPct": 1.813,
+              "netReservedPerEventPct": 1.186,
+              "netReservedSum": 30.828
+            },
+            "middle": {
+              "allEvents": 17,
+              "filled": 14,
+              "stopN": 3,
+              "stopPct": 21.43,
+              "tpN": 11,
+              "tpPct": 78.57,
+              "avgNetReservedPct": 0.106,
+              "netReservedPerEventPct": 0.087,
+              "netReservedSum": 1.487
+            },
+            "late": {
+              "allEvents": 10,
+              "filled": 8,
+              "stopN": 1,
+              "stopPct": 12.5,
+              "tpN": 6,
+              "tpPct": 75.0,
+              "avgNetReservedPct": 0.571,
+              "netReservedPerEventPct": 0.457,
+              "netReservedSum": 4.571
+            }
+          },
+          "july": {
+            "allEvents": 6,
+            "filled": 6,
+            "stopN": 3,
+            "stopPct": 50.0,
+            "tpN": 3,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -3.957,
+            "netReservedPerEventPct": -3.957,
+            "netReservedSum": -23.74
+          },
+          "julySkipped": {
+            "allEvents": 18,
+            "filled": 18,
+            "stopN": 10,
+            "stopPct": 55.56,
+            "tpN": 8,
+            "tpPct": 44.44,
+            "avgNetReservedPct": -3.858,
+            "netReservedPerEventPct": -3.858,
+            "netReservedSum": -69.442
+          }
+        },
+        "rank12": {
+          "description": "Rank <=2",
+          "accepted": {
+            "allEvents": 138,
+            "filled": 107,
+            "stopN": 17,
+            "stopPct": 15.89,
+            "tpN": 86,
+            "tpPct": 80.37,
+            "avgNetReservedPct": 0.583,
+            "netReservedPerEventPct": 0.452,
+            "netReservedSum": 62.364
+          },
+          "rejected": {
+            "allEvents": 104,
+            "filled": 84,
+            "stopN": 11,
+            "stopPct": 13.1,
+            "tpN": 63,
+            "tpPct": 75.0,
+            "avgNetReservedPct": 0.534,
+            "netReservedPerEventPct": 0.431,
+            "netReservedSum": 44.851
+          },
+          "fractionStopsAvoided": 39.29,
+          "profitTakingSignalsLost": 63,
+          "fractionTPsForgone": 42.28,
+          "fisherTwoSidedP": 0.68209,
+          "slices": {
+            "early": {
+              "allEvents": 59,
+              "filled": 41,
+              "stopN": 3,
+              "stopPct": 7.32,
+              "tpN": 36,
+              "tpPct": 87.8,
+              "avgNetReservedPct": 1.371,
+              "netReservedPerEventPct": 0.953,
+              "netReservedSum": 56.219
+            },
+            "middle": {
+              "allEvents": 49,
+              "filled": 41,
+              "stopN": 10,
+              "stopPct": 24.39,
+              "tpN": 31,
+              "tpPct": 75.61,
+              "avgNetReservedPct": 0.059,
+              "netReservedPerEventPct": 0.049,
+              "netReservedSum": 2.403
+            },
+            "late": {
+              "allEvents": 30,
+              "filled": 25,
+              "stopN": 4,
+              "stopPct": 16.0,
+              "tpN": 19,
+              "tpPct": 76.0,
+              "avgNetReservedPct": 0.15,
+              "netReservedPerEventPct": 0.125,
+              "netReservedSum": 3.742
+            }
+          },
+          "july": {
+            "allEvents": 16,
+            "filled": 16,
+            "stopN": 9,
+            "stopPct": 56.25,
+            "tpN": 7,
+            "tpPct": 43.75,
+            "avgNetReservedPct": -4.6,
+            "netReservedPerEventPct": -4.6,
+            "netReservedSum": -73.596
+          },
+          "julySkipped": {
+            "allEvents": 8,
+            "filled": 8,
+            "stopN": 4,
+            "stopPct": 50.0,
+            "tpN": 4,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -2.448,
+            "netReservedPerEventPct": -2.448,
+            "netReservedSum": -19.586
+          }
+        },
+        "exclude_breakout9": {
+          "description": "Signal 20D breakout <9%",
+          "accepted": {
+            "allEvents": 215,
+            "filled": 172,
+            "stopN": 25,
+            "stopPct": 14.53,
+            "tpN": 134,
+            "tpPct": 77.91,
+            "avgNetReservedPct": 0.538,
+            "netReservedPerEventPct": 0.431,
+            "netReservedSum": 92.595
+          },
+          "rejected": {
+            "allEvents": 27,
+            "filled": 19,
+            "stopN": 3,
+            "stopPct": 15.79,
+            "tpN": 15,
+            "tpPct": 78.95,
+            "avgNetReservedPct": 0.769,
+            "netReservedPerEventPct": 0.541,
+            "netReservedSum": 14.62
+          },
+          "fractionStopsAvoided": 10.71,
+          "profitTakingSignalsLost": 15,
+          "fractionTPsForgone": 10.07,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 93,
+              "filled": 67,
+              "stopN": 5,
+              "stopPct": 7.46,
+              "tpN": 57,
+              "tpPct": 85.07,
+              "avgNetReservedPct": 1.063,
+              "netReservedPerEventPct": 0.766,
+              "netReservedSum": 71.219
+            },
+            "middle": {
+              "allEvents": 77,
+              "filled": 64,
+              "stopN": 16,
+              "stopPct": 25.0,
+              "tpN": 48,
+              "tpPct": 75.0,
+              "avgNetReservedPct": 0.288,
+              "netReservedPerEventPct": 0.239,
+              "netReservedSum": 18.428
+            },
+            "late": {
+              "allEvents": 45,
+              "filled": 41,
+              "stopN": 4,
+              "stopPct": 9.76,
+              "tpN": 29,
+              "tpPct": 70.73,
+              "avgNetReservedPct": 0.072,
+              "netReservedPerEventPct": 0.066,
+              "netReservedSum": 2.948
+            }
+          },
+          "july": {
+            "allEvents": 22,
+            "filled": 22,
+            "stopN": 12,
+            "stopPct": 54.55,
+            "tpN": 10,
+            "tpPct": 45.45,
+            "avgNetReservedPct": -3.776,
+            "netReservedPerEventPct": -3.776,
+            "netReservedSum": -83.063
+          },
+          "julySkipped": {
+            "allEvents": 2,
+            "filled": 2,
+            "stopN": 1,
+            "stopPct": 50.0,
+            "tpN": 1,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -5.059,
+            "netReservedPerEventPct": -5.059,
+            "netReservedSum": -10.119
+          }
+        },
+        "no_negative_breakout": {
+          "description": "Signal breakout >=0%",
+          "accepted": {
+            "allEvents": 169,
+            "filled": 131,
+            "stopN": 16,
+            "stopPct": 12.21,
+            "tpN": 104,
+            "tpPct": 79.39,
+            "avgNetReservedPct": 0.476,
+            "netReservedPerEventPct": 0.369,
+            "netReservedSum": 62.417
+          },
+          "rejected": {
+            "allEvents": 73,
+            "filled": 60,
+            "stopN": 12,
+            "stopPct": 20.0,
+            "tpN": 45,
+            "tpPct": 75.0,
+            "avgNetReservedPct": 0.747,
+            "netReservedPerEventPct": 0.614,
+            "netReservedSum": 44.798
+          },
+          "fractionStopsAvoided": 42.86,
+          "profitTakingSignalsLost": 45,
+          "fractionTPsForgone": 30.2,
+          "fisherTwoSidedP": 0.18713,
+          "slices": {
+            "early": {
+              "allEvents": 82,
+              "filled": 57,
+              "stopN": 6,
+              "stopPct": 10.53,
+              "tpN": 45,
+              "tpPct": 78.95,
+              "avgNetReservedPct": 0.373,
+              "netReservedPerEventPct": 0.259,
+              "netReservedSum": 21.235
+            },
+            "middle": {
+              "allEvents": 52,
+              "filled": 44,
+              "stopN": 7,
+              "stopPct": 15.91,
+              "tpN": 37,
+              "tpPct": 84.09,
+              "avgNetReservedPct": 0.93,
+              "netReservedPerEventPct": 0.787,
+              "netReservedSum": 40.904
+            },
+            "late": {
+              "allEvents": 35,
+              "filled": 30,
+              "stopN": 3,
+              "stopPct": 10.0,
+              "tpN": 22,
+              "tpPct": 73.33,
+              "avgNetReservedPct": 0.009,
+              "netReservedPerEventPct": 0.008,
+              "netReservedSum": 0.278
+            }
+          },
+          "july": {
+            "allEvents": 9,
+            "filled": 9,
+            "stopN": 5,
+            "stopPct": 55.56,
+            "tpN": 4,
+            "tpPct": 44.44,
+            "avgNetReservedPct": -4.948,
+            "netReservedPerEventPct": -4.948,
+            "netReservedSum": -44.533
+          },
+          "julySkipped": {
+            "allEvents": 15,
+            "filled": 15,
+            "stopN": 8,
+            "stopPct": 53.33,
+            "tpN": 7,
+            "tpPct": 46.67,
+            "avgNetReservedPct": -3.243,
+            "netReservedPerEventPct": -3.243,
+            "netReservedSum": -48.649
+          }
+        },
+        "atrTop5": {
+          "description": "Signal ATR cross-sectional >=95th pct",
+          "accepted": {
+            "allEvents": 71,
+            "filled": 56,
+            "stopN": 5,
+            "stopPct": 8.93,
+            "tpN": 45,
+            "tpPct": 80.36,
+            "avgNetReservedPct": 1.224,
+            "netReservedPerEventPct": 0.966,
+            "netReservedSum": 68.564
+          },
+          "rejected": {
+            "allEvents": 171,
+            "filled": 135,
+            "stopN": 23,
+            "stopPct": 17.04,
+            "tpN": 104,
+            "tpPct": 77.04,
+            "avgNetReservedPct": 0.286,
+            "netReservedPerEventPct": 0.226,
+            "netReservedSum": 38.651
+          },
+          "fractionStopsAvoided": 82.14,
+          "profitTakingSignalsLost": 104,
+          "fractionTPsForgone": 69.8,
+          "fisherTwoSidedP": 0.1814,
+          "slices": {
+            "early": {
+              "allEvents": 34,
+              "filled": 26,
+              "stopN": 2,
+              "stopPct": 7.69,
+              "tpN": 21,
+              "tpPct": 80.77,
+              "avgNetReservedPct": 0.87,
+              "netReservedPerEventPct": 0.666,
+              "netReservedSum": 22.629
+            },
+            "middle": {
+              "allEvents": 18,
+              "filled": 15,
+              "stopN": 2,
+              "stopPct": 13.33,
+              "tpN": 13,
+              "tpPct": 86.67,
+              "avgNetReservedPct": 2.476,
+              "netReservedPerEventPct": 2.063,
+              "netReservedSum": 37.138
+            },
+            "late": {
+              "allEvents": 19,
+              "filled": 15,
+              "stopN": 1,
+              "stopPct": 6.67,
+              "tpN": 11,
+              "tpPct": 73.33,
+              "avgNetReservedPct": 0.586,
+              "netReservedPerEventPct": 0.463,
+              "netReservedSum": 8.797
+            }
+          },
+          "july": {
+            "allEvents": 3,
+            "filled": 3,
+            "stopN": 1,
+            "stopPct": 33.33,
+            "tpN": 2,
+            "tpPct": 66.67,
+            "avgNetReservedPct": -1.284,
+            "netReservedPerEventPct": -1.284,
+            "netReservedSum": -3.851
+          },
+          "julySkipped": {
+            "allEvents": 21,
+            "filled": 21,
+            "stopN": 12,
+            "stopPct": 57.14,
+            "tpN": 9,
+            "tpPct": 42.86,
+            "avgNetReservedPct": -4.254,
+            "netReservedPerEventPct": -4.254,
+            "netReservedSum": -89.331
+          }
+        },
+        "turnTop5": {
+          "description": "Signal turnover cross-sectional >=95th pct",
+          "accepted": {
+            "allEvents": 175,
+            "filled": 137,
+            "stopN": 17,
+            "stopPct": 12.41,
+            "tpN": 110,
+            "tpPct": 80.29,
+            "avgNetReservedPct": 0.797,
+            "netReservedPerEventPct": 0.624,
+            "netReservedSum": 109.242
+          },
+          "rejected": {
+            "allEvents": 67,
+            "filled": 54,
+            "stopN": 11,
+            "stopPct": 20.37,
+            "tpN": 39,
+            "tpPct": 72.22,
+            "avgNetReservedPct": -0.038,
+            "netReservedPerEventPct": -0.03,
+            "netReservedSum": -2.027
+          },
+          "fractionStopsAvoided": 39.29,
+          "profitTakingSignalsLost": 39,
+          "fractionTPsForgone": 26.17,
+          "fisherTwoSidedP": 0.17669,
+          "slices": {
+            "early": {
+              "allEvents": 77,
+              "filled": 54,
+              "stopN": 5,
+              "stopPct": 9.26,
+              "tpN": 45,
+              "tpPct": 83.33,
+              "avgNetReservedPct": 0.779,
+              "netReservedPerEventPct": 0.546,
+              "netReservedSum": 42.059
+            },
+            "middle": {
+              "allEvents": 56,
+              "filled": 49,
+              "stopN": 10,
+              "stopPct": 20.41,
+              "tpN": 39,
+              "tpPct": 79.59,
+              "avgNetReservedPct": 0.896,
+              "netReservedPerEventPct": 0.784,
+              "netReservedSum": 43.925
+            },
+            "late": {
+              "allEvents": 42,
+              "filled": 34,
+              "stopN": 2,
+              "stopPct": 5.88,
+              "tpN": 26,
+              "tpPct": 76.47,
+              "avgNetReservedPct": 0.684,
+              "netReservedPerEventPct": 0.554,
+              "netReservedSum": 23.258
+            }
+          },
+          "july": {
+            "allEvents": 15,
+            "filled": 15,
+            "stopN": 7,
+            "stopPct": 46.67,
+            "tpN": 8,
+            "tpPct": 53.33,
+            "avgNetReservedPct": -2.87,
+            "netReservedPerEventPct": -2.87,
+            "netReservedSum": -43.055
+          },
+          "julySkipped": {
+            "allEvents": 9,
+            "filled": 9,
+            "stopN": 6,
+            "stopPct": 66.67,
+            "tpN": 3,
+            "tpPct": 33.33,
+            "avgNetReservedPct": -5.57,
+            "netReservedPerEventPct": -5.57,
+            "netReservedSum": -50.127
+          }
+        },
+        "score97": {
+          "description": "Signal score >=97",
+          "accepted": {
+            "allEvents": 184,
+            "filled": 146,
+            "stopN": 17,
+            "stopPct": 11.64,
+            "tpN": 117,
+            "tpPct": 80.14,
+            "avgNetReservedPct": 0.788,
+            "netReservedPerEventPct": 0.625,
+            "netReservedSum": 115.043
+          },
+          "rejected": {
+            "allEvents": 58,
+            "filled": 45,
+            "stopN": 11,
+            "stopPct": 24.44,
+            "tpN": 32,
+            "tpPct": 71.11,
+            "avgNetReservedPct": -0.174,
+            "netReservedPerEventPct": -0.135,
+            "netReservedSum": -7.828
+          },
+          "fractionStopsAvoided": 39.29,
+          "profitTakingSignalsLost": 32,
+          "fractionTPsForgone": 21.48,
+          "fisherTwoSidedP": 0.05134,
+          "slices": {
+            "early": {
+              "allEvents": 89,
+              "filled": 65,
+              "stopN": 7,
+              "stopPct": 10.77,
+              "tpN": 52,
+              "tpPct": 80.0,
+              "avgNetReservedPct": 0.6,
+              "netReservedPerEventPct": 0.438,
+              "netReservedSum": 38.996
+            },
+            "middle": {
+              "allEvents": 55,
+              "filled": 48,
+              "stopN": 7,
+              "stopPct": 14.58,
+              "tpN": 41,
+              "tpPct": 85.42,
+              "avgNetReservedPct": 1.399,
+              "netReservedPerEventPct": 1.221,
+              "netReservedSum": 67.165
+            },
+            "late": {
+              "allEvents": 40,
+              "filled": 33,
+              "stopN": 3,
+              "stopPct": 9.09,
+              "tpN": 24,
+              "tpPct": 72.73,
+              "avgNetReservedPct": 0.269,
+              "netReservedPerEventPct": 0.222,
+              "netReservedSum": 8.882
+            }
+          },
+          "july": {
+            "allEvents": 10,
+            "filled": 10,
+            "stopN": 4,
+            "stopPct": 40.0,
+            "tpN": 6,
+            "tpPct": 60.0,
+            "avgNetReservedPct": -2.565,
+            "netReservedPerEventPct": -2.565,
+            "netReservedSum": -25.652
+          },
+          "julySkipped": {
+            "allEvents": 14,
+            "filled": 14,
+            "stopN": 9,
+            "stopPct": 64.29,
+            "tpN": 5,
+            "tpPct": 35.71,
+            "avgNetReservedPct": -4.824,
+            "netReservedPerEventPct": -4.824,
+            "netReservedSum": -67.53
+          }
+        },
+        "indexFavorable": {
+          "description": "TWII >= MA20, MA20 not declining, position60 >=50",
+          "accepted": {
+            "allEvents": 173,
+            "filled": 137,
+            "stopN": 13,
+            "stopPct": 9.49,
+            "tpN": 112,
+            "tpPct": 81.75,
+            "avgNetReservedPct": 1.179,
+            "netReservedPerEventPct": 0.934,
+            "netReservedSum": 161.566
+          },
+          "rejected": {
+            "allEvents": 69,
+            "filled": 54,
+            "stopN": 15,
+            "stopPct": 27.78,
+            "tpN": 37,
+            "tpPct": 68.52,
+            "avgNetReservedPct": -1.006,
+            "netReservedPerEventPct": -0.788,
+            "netReservedSum": -54.351
+          },
+          "fractionStopsAvoided": 53.57,
+          "profitTakingSignalsLost": 37,
+          "fractionTPsForgone": 24.83,
+          "fisherTwoSidedP": 0.00257,
+          "slices": {
+            "early": {
+              "allEvents": 84,
+              "filled": 61,
+              "stopN": 6,
+              "stopPct": 9.84,
+              "tpN": 49,
+              "tpPct": 80.33,
+              "avgNetReservedPct": 0.808,
+              "netReservedPerEventPct": 0.587,
+              "netReservedSum": 49.309
+            },
+            "middle": {
+              "allEvents": 53,
+              "filled": 44,
+              "stopN": 4,
+              "stopPct": 9.09,
+              "tpN": 40,
+              "tpPct": 90.91,
+              "avgNetReservedPct": 2.319,
+              "netReservedPerEventPct": 1.925,
+              "netReservedSum": 102.049
+            },
+            "late": {
+              "allEvents": 36,
+              "filled": 32,
+              "stopN": 3,
+              "stopPct": 9.38,
+              "tpN": 23,
+              "tpPct": 71.88,
+              "avgNetReservedPct": 0.319,
+              "netReservedPerEventPct": 0.284,
+              "netReservedSum": 10.208
+            }
+          },
+          "july": {
+            "allEvents": 3,
+            "filled": 3,
+            "stopN": 1,
+            "stopPct": 33.33,
+            "tpN": 2,
+            "tpPct": 66.67,
+            "avgNetReservedPct": -2.851,
+            "netReservedPerEventPct": -2.851,
+            "netReservedSum": -8.552
+          },
+          "julySkipped": {
+            "allEvents": 21,
+            "filled": 21,
+            "stopN": 12,
+            "stopPct": 57.14,
+            "tpN": 9,
+            "tpPct": 42.86,
+            "avgNetReservedPct": -4.03,
+            "netReservedPerEventPct": -4.03,
+            "netReservedSum": -84.63
+          }
+        },
+        "indexNotCaution": {
+          "description": "TWII position60 >=35, no MA60 below + MA20 down",
+          "accepted": {
+            "allEvents": 229,
+            "filled": 180,
+            "stopN": 25,
+            "stopPct": 13.89,
+            "tpN": 141,
+            "tpPct": 78.33,
+            "avgNetReservedPct": 0.639,
+            "netReservedPerEventPct": 0.502,
+            "netReservedSum": 114.951
+          },
+          "rejected": {
+            "allEvents": 13,
+            "filled": 11,
+            "stopN": 3,
+            "stopPct": 27.27,
+            "tpN": 8,
+            "tpPct": 72.73,
+            "avgNetReservedPct": -0.703,
+            "netReservedPerEventPct": -0.595,
+            "netReservedSum": -7.736
+          },
+          "fractionStopsAvoided": 10.71,
+          "profitTakingSignalsLost": 8,
+          "fractionTPsForgone": 5.37,
+          "fisherTwoSidedP": 0.2065,
+          "slices": {
+            "early": {
+              "allEvents": 104,
+              "filled": 75,
+              "stopN": 7,
+              "stopPct": 9.33,
+              "tpN": 62,
+              "tpPct": 82.67,
+              "avgNetReservedPct": 0.995,
+              "netReservedPerEventPct": 0.718,
+              "netReservedSum": 74.639
+            },
+            "middle": {
+              "allEvents": 76,
+              "filled": 63,
+              "stopN": 15,
+              "stopPct": 23.81,
+              "tpN": 48,
+              "tpPct": 76.19,
+              "avgNetReservedPct": 0.271,
+              "netReservedPerEventPct": 0.225,
+              "netReservedSum": 17.082
+            },
+            "late": {
+              "allEvents": 49,
+              "filled": 42,
+              "stopN": 3,
+              "stopPct": 7.14,
+              "tpN": 31,
+              "tpPct": 73.81,
+              "avgNetReservedPct": 0.553,
+              "netReservedPerEventPct": 0.474,
+              "netReservedSum": 23.23
+            }
+          },
+          "july": {
+            "allEvents": 17,
+            "filled": 17,
+            "stopN": 11,
+            "stopPct": 64.71,
+            "tpN": 6,
+            "tpPct": 35.29,
+            "avgNetReservedPct": -5.666,
+            "netReservedPerEventPct": -5.666,
+            "netReservedSum": -96.326
+          },
+          "julySkipped": {
+            "allEvents": 7,
+            "filled": 7,
+            "stopN": 2,
+            "stopPct": 28.57,
+            "tpN": 5,
+            "tpPct": 71.43,
+            "avgNetReservedPct": 0.449,
+            "netReservedPerEventPct": 0.449,
+            "netReservedSum": 3.144
+          }
+        },
+        "indexPosition60ge20": {
+          "description": "TWII 60D position >=20%",
+          "accepted": {
+            "allEvents": 242,
+            "filled": 191,
+            "stopN": 28,
+            "stopPct": 14.66,
+            "tpN": 149,
+            "tpPct": 78.01,
+            "avgNetReservedPct": 0.561,
+            "netReservedPerEventPct": 0.443,
+            "netReservedSum": 107.215
+          },
+          "rejected": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 0,
+          "fractionTPsForgone": 0.0,
+          "fisherTwoSidedP": null,
+          "slices": {
+            "early": {
+              "allEvents": 107,
+              "filled": 77,
+              "stopN": 7,
+              "stopPct": 9.09,
+              "tpN": 64,
+              "tpPct": 83.12,
+              "avgNetReservedPct": 1.01,
+              "netReservedPerEventPct": 0.727,
+              "netReservedSum": 77.773
+            },
+            "middle": {
+              "allEvents": 83,
+              "filled": 70,
+              "stopN": 17,
+              "stopPct": 24.29,
+              "tpN": 53,
+              "tpPct": 75.71,
+              "avgNetReservedPct": 0.289,
+              "netReservedPerEventPct": 0.244,
+              "netReservedSum": 20.226
+            },
+            "late": {
+              "allEvents": 52,
+              "filled": 44,
+              "stopN": 4,
+              "stopPct": 9.09,
+              "tpN": 32,
+              "tpPct": 72.73,
+              "avgNetReservedPct": 0.209,
+              "netReservedPerEventPct": 0.177,
+              "netReservedSum": 9.216
+            }
+          },
+          "july": {
+            "allEvents": 24,
+            "filled": 24,
+            "stopN": 13,
+            "stopPct": 54.17,
+            "tpN": 11,
+            "tpPct": 45.83,
+            "avgNetReservedPct": -3.883,
+            "netReservedPerEventPct": -3.883,
+            "netReservedSum": -93.182
+          },
+          "julySkipped": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          }
+        },
+        "indexPosition60ge35": {
+          "description": "TWII 60D position >=35%",
+          "accepted": {
+            "allEvents": 241,
+            "filled": 190,
+            "stopN": 28,
+            "stopPct": 14.74,
+            "tpN": 148,
+            "tpPct": 77.89,
+            "avgNetReservedPct": 0.534,
+            "netReservedPerEventPct": 0.421,
+            "netReservedSum": 101.55
+          },
+          "rejected": {
+            "allEvents": 1,
+            "filled": 1,
+            "stopN": 0,
+            "stopPct": 0.0,
+            "tpN": 1,
+            "tpPct": 100.0,
+            "avgNetReservedPct": 5.665,
+            "netReservedPerEventPct": 5.665,
+            "netReservedSum": 5.665
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 1,
+          "fractionTPsForgone": 0.67,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 107,
+              "filled": 77,
+              "stopN": 7,
+              "stopPct": 9.09,
+              "tpN": 64,
+              "tpPct": 83.12,
+              "avgNetReservedPct": 1.01,
+              "netReservedPerEventPct": 0.727,
+              "netReservedSum": 77.773
+            },
+            "middle": {
+              "allEvents": 82,
+              "filled": 69,
+              "stopN": 17,
+              "stopPct": 24.64,
+              "tpN": 52,
+              "tpPct": 75.36,
+              "avgNetReservedPct": 0.211,
+              "netReservedPerEventPct": 0.178,
+              "netReservedSum": 14.561
+            },
+            "late": {
+              "allEvents": 52,
+              "filled": 44,
+              "stopN": 4,
+              "stopPct": 9.09,
+              "tpN": 32,
+              "tpPct": 72.73,
+              "avgNetReservedPct": 0.209,
+              "netReservedPerEventPct": 0.177,
+              "netReservedSum": 9.216
+            }
+          },
+          "july": {
+            "allEvents": 23,
+            "filled": 23,
+            "stopN": 13,
+            "stopPct": 56.52,
+            "tpN": 10,
+            "tpPct": 43.48,
+            "avgNetReservedPct": -4.298,
+            "netReservedPerEventPct": -4.298,
+            "netReservedSum": -98.847
+          },
+          "julySkipped": {
+            "allEvents": 1,
+            "filled": 1,
+            "stopN": 0,
+            "stopPct": 0.0,
+            "tpN": 1,
+            "tpPct": 100.0,
+            "avgNetReservedPct": 5.665,
+            "netReservedPerEventPct": 5.665,
+            "netReservedSum": 5.665
+          }
+        },
+        "indexPosition60ge50": {
+          "description": "TWII 60D position >=50%",
+          "accepted": {
+            "allEvents": 233,
+            "filled": 183,
+            "stopN": 26,
+            "stopPct": 14.21,
+            "tpN": 143,
+            "tpPct": 78.14,
+            "avgNetReservedPct": 0.607,
+            "netReservedPerEventPct": 0.477,
+            "netReservedSum": 111.1
+          },
+          "rejected": {
+            "allEvents": 9,
+            "filled": 8,
+            "stopN": 2,
+            "stopPct": 25.0,
+            "tpN": 6,
+            "tpPct": 75.0,
+            "avgNetReservedPct": -0.486,
+            "netReservedPerEventPct": -0.432,
+            "netReservedSum": -3.885
+          },
+          "fractionStopsAvoided": 7.14,
+          "profitTakingSignalsLost": 6,
+          "fractionTPsForgone": 4.03,
+          "fisherTwoSidedP": 0.33222,
+          "slices": {
+            "early": {
+              "allEvents": 104,
+              "filled": 75,
+              "stopN": 7,
+              "stopPct": 9.33,
+              "tpN": 62,
+              "tpPct": 82.67,
+              "avgNetReservedPct": 0.995,
+              "netReservedPerEventPct": 0.718,
+              "netReservedSum": 74.639
+            },
+            "middle": {
+              "allEvents": 79,
+              "filled": 66,
+              "stopN": 16,
+              "stopPct": 24.24,
+              "tpN": 50,
+              "tpPct": 75.76,
+              "avgNetReservedPct": 0.2,
+              "netReservedPerEventPct": 0.167,
+              "netReservedSum": 13.231
+            },
+            "late": {
+              "allEvents": 50,
+              "filled": 42,
+              "stopN": 3,
+              "stopPct": 7.14,
+              "tpN": 31,
+              "tpPct": 73.81,
+              "avgNetReservedPct": 0.553,
+              "netReservedPerEventPct": 0.465,
+              "netReservedSum": 23.23
+            }
+          },
+          "july": {
+            "allEvents": 20,
+            "filled": 20,
+            "stopN": 12,
+            "stopPct": 60.0,
+            "tpN": 8,
+            "tpPct": 40.0,
+            "avgNetReservedPct": -5.009,
+            "netReservedPerEventPct": -5.009,
+            "netReservedSum": -100.177
+          },
+          "julySkipped": {
+            "allEvents": 4,
+            "filled": 4,
+            "stopN": 1,
+            "stopPct": 25.0,
+            "tpN": 3,
+            "tpPct": 75.0,
+            "avgNetReservedPct": 1.749,
+            "netReservedPerEventPct": 1.749,
+            "netReservedSum": 6.995
+          }
+        },
+        "indexPosition60ge65": {
+          "description": "TWII 60D position >=65%",
+          "accepted": {
+            "allEvents": 210,
+            "filled": 164,
+            "stopN": 25,
+            "stopPct": 15.24,
+            "tpN": 126,
+            "tpPct": 76.83,
+            "avgNetReservedPct": 0.491,
+            "netReservedPerEventPct": 0.383,
+            "netReservedSum": 80.443
+          },
+          "rejected": {
+            "allEvents": 32,
+            "filled": 27,
+            "stopN": 3,
+            "stopPct": 11.11,
+            "tpN": 23,
+            "tpPct": 85.19,
+            "avgNetReservedPct": 0.992,
+            "netReservedPerEventPct": 0.837,
+            "netReservedSum": 26.772
+          },
+          "fractionStopsAvoided": 10.71,
+          "profitTakingSignalsLost": 23,
+          "fractionTPsForgone": 15.44,
+          "fisherTwoSidedP": 0.77171,
+          "slices": {
+            "early": {
+              "allEvents": 98,
+              "filled": 71,
+              "stopN": 7,
+              "stopPct": 9.86,
+              "tpN": 58,
+              "tpPct": 81.69,
+              "avgNetReservedPct": 0.948,
+              "netReservedPerEventPct": 0.687,
+              "netReservedSum": 67.293
+            },
+            "middle": {
+              "allEvents": 76,
+              "filled": 63,
+              "stopN": 15,
+              "stopPct": 23.81,
+              "tpN": 48,
+              "tpPct": 76.19,
+              "avgNetReservedPct": 0.271,
+              "netReservedPerEventPct": 0.225,
+              "netReservedSum": 17.082
+            },
+            "late": {
+              "allEvents": 36,
+              "filled": 30,
+              "stopN": 3,
+              "stopPct": 10.0,
+              "tpN": 20,
+              "tpPct": 66.67,
+              "avgNetReservedPct": -0.131,
+              "netReservedPerEventPct": -0.109,
+              "netReservedSum": -3.932
+            }
+          },
+          "july": {
+            "allEvents": 17,
+            "filled": 17,
+            "stopN": 11,
+            "stopPct": 64.71,
+            "tpN": 6,
+            "tpPct": 35.29,
+            "avgNetReservedPct": -5.666,
+            "netReservedPerEventPct": -5.666,
+            "netReservedSum": -96.326
+          },
+          "julySkipped": {
+            "allEvents": 7,
+            "filled": 7,
+            "stopN": 2,
+            "stopPct": 28.57,
+            "tpN": 5,
+            "tpPct": 71.43,
+            "avgNetReservedPct": 0.449,
+            "netReservedPerEventPct": 0.449,
+            "netReservedSum": 3.144
+          }
+        },
+        "indexPosition120ge35": {
+          "description": "TWII 120D position >=35%",
+          "accepted": {
+            "allEvents": 242,
+            "filled": 191,
+            "stopN": 28,
+            "stopPct": 14.66,
+            "tpN": 149,
+            "tpPct": 78.01,
+            "avgNetReservedPct": 0.561,
+            "netReservedPerEventPct": 0.443,
+            "netReservedSum": 107.215
+          },
+          "rejected": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 0,
+          "fractionTPsForgone": 0.0,
+          "fisherTwoSidedP": null,
+          "slices": {
+            "early": {
+              "allEvents": 107,
+              "filled": 77,
+              "stopN": 7,
+              "stopPct": 9.09,
+              "tpN": 64,
+              "tpPct": 83.12,
+              "avgNetReservedPct": 1.01,
+              "netReservedPerEventPct": 0.727,
+              "netReservedSum": 77.773
+            },
+            "middle": {
+              "allEvents": 83,
+              "filled": 70,
+              "stopN": 17,
+              "stopPct": 24.29,
+              "tpN": 53,
+              "tpPct": 75.71,
+              "avgNetReservedPct": 0.289,
+              "netReservedPerEventPct": 0.244,
+              "netReservedSum": 20.226
+            },
+            "late": {
+              "allEvents": 52,
+              "filled": 44,
+              "stopN": 4,
+              "stopPct": 9.09,
+              "tpN": 32,
+              "tpPct": 72.73,
+              "avgNetReservedPct": 0.209,
+              "netReservedPerEventPct": 0.177,
+              "netReservedSum": 9.216
+            }
+          },
+          "july": {
+            "allEvents": 24,
+            "filled": 24,
+            "stopN": 13,
+            "stopPct": 54.17,
+            "tpN": 11,
+            "tpPct": 45.83,
+            "avgNetReservedPct": -3.883,
+            "netReservedPerEventPct": -3.883,
+            "netReservedSum": -93.182
+          },
+          "julySkipped": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          }
+        },
+        "indexPosition120ge50": {
+          "description": "TWII 120D position >=50%",
+          "accepted": {
+            "allEvents": 242,
+            "filled": 191,
+            "stopN": 28,
+            "stopPct": 14.66,
+            "tpN": 149,
+            "tpPct": 78.01,
+            "avgNetReservedPct": 0.561,
+            "netReservedPerEventPct": 0.443,
+            "netReservedSum": 107.215
+          },
+          "rejected": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 0,
+          "fractionTPsForgone": 0.0,
+          "fisherTwoSidedP": null,
+          "slices": {
+            "early": {
+              "allEvents": 107,
+              "filled": 77,
+              "stopN": 7,
+              "stopPct": 9.09,
+              "tpN": 64,
+              "tpPct": 83.12,
+              "avgNetReservedPct": 1.01,
+              "netReservedPerEventPct": 0.727,
+              "netReservedSum": 77.773
+            },
+            "middle": {
+              "allEvents": 83,
+              "filled": 70,
+              "stopN": 17,
+              "stopPct": 24.29,
+              "tpN": 53,
+              "tpPct": 75.71,
+              "avgNetReservedPct": 0.289,
+              "netReservedPerEventPct": 0.244,
+              "netReservedSum": 20.226
+            },
+            "late": {
+              "allEvents": 52,
+              "filled": 44,
+              "stopN": 4,
+              "stopPct": 9.09,
+              "tpN": 32,
+              "tpPct": 72.73,
+              "avgNetReservedPct": 0.209,
+              "netReservedPerEventPct": 0.177,
+              "netReservedSum": 9.216
+            }
+          },
+          "july": {
+            "allEvents": 24,
+            "filled": 24,
+            "stopN": 13,
+            "stopPct": 54.17,
+            "tpN": 11,
+            "tpPct": 45.83,
+            "avgNetReservedPct": -3.883,
+            "netReservedPerEventPct": -3.883,
+            "netReservedSum": -93.182
+          },
+          "julySkipped": {
+            "allEvents": 0,
+            "filled": 0,
+            "stopN": 0,
+            "stopPct": null,
+            "tpN": 0,
+            "tpPct": null,
+            "avgNetReservedPct": null,
+            "netReservedPerEventPct": null,
+            "netReservedSum": 0
+          }
+        },
+        "indexPosition120ge65": {
+          "description": "TWII 120D position >=65%",
+          "accepted": {
+            "allEvents": 238,
+            "filled": 188,
+            "stopN": 28,
+            "stopPct": 14.89,
+            "tpN": 146,
+            "tpPct": 77.66,
+            "avgNetReservedPct": 0.523,
+            "netReservedPerEventPct": 0.414,
+            "netReservedSum": 98.416
+          },
+          "rejected": {
+            "allEvents": 4,
+            "filled": 3,
+            "stopN": 0,
+            "stopPct": 0.0,
+            "tpN": 3,
+            "tpPct": 100.0,
+            "avgNetReservedPct": 2.933,
+            "netReservedPerEventPct": 2.2,
+            "netReservedSum": 8.799
+          },
+          "fractionStopsAvoided": 0.0,
+          "profitTakingSignalsLost": 3,
+          "fractionTPsForgone": 2.01,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 104,
+              "filled": 75,
+              "stopN": 7,
+              "stopPct": 9.33,
+              "tpN": 62,
+              "tpPct": 82.67,
+              "avgNetReservedPct": 0.995,
+              "netReservedPerEventPct": 0.718,
+              "netReservedSum": 74.639
+            },
+            "middle": {
+              "allEvents": 82,
+              "filled": 69,
+              "stopN": 17,
+              "stopPct": 24.64,
+              "tpN": 52,
+              "tpPct": 75.36,
+              "avgNetReservedPct": 0.211,
+              "netReservedPerEventPct": 0.178,
+              "netReservedSum": 14.561
+            },
+            "late": {
+              "allEvents": 52,
+              "filled": 44,
+              "stopN": 4,
+              "stopPct": 9.09,
+              "tpN": 32,
+              "tpPct": 72.73,
+              "avgNetReservedPct": 0.209,
+              "netReservedPerEventPct": 0.177,
+              "netReservedSum": 9.216
+            }
+          },
+          "july": {
+            "allEvents": 23,
+            "filled": 23,
+            "stopN": 13,
+            "stopPct": 56.52,
+            "tpN": 10,
+            "tpPct": 43.48,
+            "avgNetReservedPct": -4.298,
+            "netReservedPerEventPct": -4.298,
+            "netReservedSum": -98.847
+          },
+          "julySkipped": {
+            "allEvents": 1,
+            "filled": 1,
+            "stopN": 0,
+            "stopPct": 0.0,
+            "tpN": 1,
+            "tpPct": 100.0,
+            "avgNetReservedPct": 5.665,
+            "netReservedPerEventPct": 5.665,
+            "netReservedSum": 5.665
+          }
+        },
+        "indexPos60ge35AboveMA20": {
+          "description": "TWII pos60 >=35 and close>=MA20",
+          "accepted": {
+            "allEvents": 186,
+            "filled": 147,
+            "stopN": 14,
+            "stopPct": 9.52,
+            "tpN": 120,
+            "tpPct": 81.63,
+            "avgNetReservedPct": 1.166,
+            "netReservedPerEventPct": 0.922,
+            "netReservedSum": 171.419
+          },
+          "rejected": {
+            "allEvents": 56,
+            "filled": 44,
+            "stopN": 14,
+            "stopPct": 31.82,
+            "tpN": 29,
+            "tpPct": 65.91,
+            "avgNetReservedPct": -1.459,
+            "netReservedPerEventPct": -1.147,
+            "netReservedSum": -64.204
+          },
+          "fractionStopsAvoided": 50.0,
+          "profitTakingSignalsLost": 29,
+          "fractionTPsForgone": 19.46,
+          "fisherTwoSidedP": 0.00097,
+          "slices": {
+            "early": {
+              "allEvents": 87,
+              "filled": 63,
+              "stopN": 7,
+              "stopPct": 11.11,
+              "tpN": 50,
+              "tpPct": 79.37,
+              "avgNetReservedPct": 0.622,
+              "netReservedPerEventPct": 0.45,
+              "netReservedSum": 39.19
+            },
+            "middle": {
+              "allEvents": 53,
+              "filled": 44,
+              "stopN": 4,
+              "stopPct": 9.09,
+              "tpN": 40,
+              "tpPct": 90.91,
+              "avgNetReservedPct": 2.319,
+              "netReservedPerEventPct": 1.925,
+              "netReservedSum": 102.049
+            },
+            "late": {
+              "allEvents": 46,
+              "filled": 40,
+              "stopN": 3,
+              "stopPct": 7.5,
+              "tpN": 30,
+              "tpPct": 75.0,
+              "avgNetReservedPct": 0.754,
+              "netReservedPerEventPct": 0.656,
+              "netReservedSum": 30.18
+            }
+          },
+          "july": {
+            "allEvents": 3,
+            "filled": 3,
+            "stopN": 1,
+            "stopPct": 33.33,
+            "tpN": 2,
+            "tpPct": 66.67,
+            "avgNetReservedPct": -2.851,
+            "netReservedPerEventPct": -2.851,
+            "netReservedSum": -8.552
+          },
+          "julySkipped": {
+            "allEvents": 21,
+            "filled": 21,
+            "stopN": 12,
+            "stopPct": 57.14,
+            "tpN": 9,
+            "tpPct": 42.86,
+            "avgNetReservedPct": -4.03,
+            "netReservedPerEventPct": -4.03,
+            "netReservedSum": -84.63
+          }
+        },
+        "indexPos60ge35AboveMA60": {
+          "description": "TWII pos60 >=35 and close>=MA60",
+          "accepted": {
+            "allEvents": 224,
+            "filled": 175,
+            "stopN": 25,
+            "stopPct": 14.29,
+            "tpN": 136,
+            "tpPct": 77.71,
+            "avgNetReservedPct": 0.6,
+            "netReservedPerEventPct": 0.469,
+            "netReservedSum": 104.958
+          },
+          "rejected": {
+            "allEvents": 18,
+            "filled": 16,
+            "stopN": 3,
+            "stopPct": 18.75,
+            "tpN": 13,
+            "tpPct": 81.25,
+            "avgNetReservedPct": 0.141,
+            "netReservedPerEventPct": 0.125,
+            "netReservedSum": 2.257
+          },
+          "fractionStopsAvoided": 10.71,
+          "profitTakingSignalsLost": 13,
+          "fractionTPsForgone": 8.72,
+          "fisherTwoSidedP": 0.70966,
+          "slices": {
+            "early": {
+              "allEvents": 104,
+              "filled": 75,
+              "stopN": 7,
+              "stopPct": 9.33,
+              "tpN": 62,
+              "tpPct": 82.67,
+              "avgNetReservedPct": 0.995,
+              "netReservedPerEventPct": 0.718,
+              "netReservedSum": 74.639
+            },
+            "middle": {
+              "allEvents": 76,
+              "filled": 63,
+              "stopN": 15,
+              "stopPct": 23.81,
+              "tpN": 48,
+              "tpPct": 76.19,
+              "avgNetReservedPct": 0.271,
+              "netReservedPerEventPct": 0.225,
+              "netReservedSum": 17.082
+            },
+            "late": {
+              "allEvents": 44,
+              "filled": 37,
+              "stopN": 3,
+              "stopPct": 8.11,
+              "tpN": 26,
+              "tpPct": 70.27,
+              "avgNetReservedPct": 0.358,
+              "netReservedPerEventPct": 0.301,
+              "netReservedSum": 13.237
+            }
+          },
+          "july": {
+            "allEvents": 17,
+            "filled": 17,
+            "stopN": 11,
+            "stopPct": 64.71,
+            "tpN": 6,
+            "tpPct": 35.29,
+            "avgNetReservedPct": -5.666,
+            "netReservedPerEventPct": -5.666,
+            "netReservedSum": -96.326
+          },
+          "julySkipped": {
+            "allEvents": 7,
+            "filled": 7,
+            "stopN": 2,
+            "stopPct": 28.57,
+            "tpN": 5,
+            "tpPct": 71.43,
+            "avgNetReservedPct": 0.449,
+            "netReservedPerEventPct": 0.449,
+            "netReservedSum": 3.144
+          }
+        },
+        "indexPos60ge50MA20up": {
+          "description": "TWII pos60 >=50 and MA20 slope >=0",
+          "accepted": {
+            "allEvents": 209,
+            "filled": 164,
+            "stopN": 22,
+            "stopPct": 13.41,
+            "tpN": 129,
+            "tpPct": 78.66,
+            "avgNetReservedPct": 0.694,
+            "netReservedPerEventPct": 0.544,
+            "netReservedSum": 113.773
+          },
+          "rejected": {
+            "allEvents": 33,
+            "filled": 27,
+            "stopN": 6,
+            "stopPct": 22.22,
+            "tpN": 20,
+            "tpPct": 74.07,
+            "avgNetReservedPct": -0.243,
+            "netReservedPerEventPct": -0.199,
+            "netReservedSum": -6.558
+          },
+          "fractionStopsAvoided": 21.43,
+          "profitTakingSignalsLost": 20,
+          "fractionTPsForgone": 13.42,
+          "fisherTwoSidedP": 0.24319,
+          "slices": {
+            "early": {
+              "allEvents": 95,
+              "filled": 69,
+              "stopN": 6,
+              "stopPct": 8.7,
+              "tpN": 57,
+              "tpPct": 82.61,
+              "avgNetReservedPct": 1.128,
+              "netReservedPerEventPct": 0.819,
+              "netReservedSum": 77.8
+            },
+            "middle": {
+              "allEvents": 74,
+              "filled": 61,
+              "stopN": 13,
+              "stopPct": 21.31,
+              "tpN": 48,
+              "tpPct": 78.69,
+              "avgNetReservedPct": 0.536,
+              "netReservedPerEventPct": 0.442,
+              "netReservedSum": 32.715
+            },
+            "late": {
+              "allEvents": 40,
+              "filled": 34,
+              "stopN": 3,
+              "stopPct": 8.82,
+              "tpN": 24,
+              "tpPct": 70.59,
+              "avgNetReservedPct": 0.096,
+              "netReservedPerEventPct": 0.081,
+              "netReservedSum": 3.258
+            }
+          },
+          "july": {
+            "allEvents": 15,
+            "filled": 15,
+            "stopN": 9,
+            "stopPct": 60.0,
+            "tpN": 6,
+            "tpPct": 40.0,
+            "avgNetReservedPct": -5.38,
+            "netReservedPerEventPct": -5.38,
+            "netReservedSum": -80.693
+          },
+          "julySkipped": {
+            "allEvents": 9,
+            "filled": 9,
+            "stopN": 4,
+            "stopPct": 44.44,
+            "tpN": 5,
+            "tpPct": 55.56,
+            "avgNetReservedPct": -1.388,
+            "netReservedPerEventPct": -1.388,
+            "netReservedSum": -12.489
+          }
+        },
+        "indexAboveMA20": {
+          "description": "TWII signal-day close >=20D MA",
+          "accepted": {
+            "allEvents": 186,
+            "filled": 147,
+            "stopN": 14,
+            "stopPct": 9.52,
+            "tpN": 120,
+            "tpPct": 81.63,
+            "avgNetReservedPct": 1.166,
+            "netReservedPerEventPct": 0.922,
+            "netReservedSum": 171.419
+          },
+          "rejected": {
+            "allEvents": 56,
+            "filled": 44,
+            "stopN": 14,
+            "stopPct": 31.82,
+            "tpN": 29,
+            "tpPct": 65.91,
+            "avgNetReservedPct": -1.459,
+            "netReservedPerEventPct": -1.147,
+            "netReservedSum": -64.204
+          },
+          "fractionStopsAvoided": 50.0,
+          "profitTakingSignalsLost": 29,
+          "fractionTPsForgone": 19.46,
+          "fisherTwoSidedP": 0.00097,
+          "slices": {
+            "early": {
+              "allEvents": 87,
+              "filled": 63,
+              "stopN": 7,
+              "stopPct": 11.11,
+              "tpN": 50,
+              "tpPct": 79.37,
+              "avgNetReservedPct": 0.622,
+              "netReservedPerEventPct": 0.45,
+              "netReservedSum": 39.19
+            },
+            "middle": {
+              "allEvents": 53,
+              "filled": 44,
+              "stopN": 4,
+              "stopPct": 9.09,
+              "tpN": 40,
+              "tpPct": 90.91,
+              "avgNetReservedPct": 2.319,
+              "netReservedPerEventPct": 1.925,
+              "netReservedSum": 102.049
+            },
+            "late": {
+              "allEvents": 46,
+              "filled": 40,
+              "stopN": 3,
+              "stopPct": 7.5,
+              "tpN": 30,
+              "tpPct": 75.0,
+              "avgNetReservedPct": 0.754,
+              "netReservedPerEventPct": 0.656,
+              "netReservedSum": 30.18
+            }
+          },
+          "july": {
+            "allEvents": 3,
+            "filled": 3,
+            "stopN": 1,
+            "stopPct": 33.33,
+            "tpN": 2,
+            "tpPct": 66.67,
+            "avgNetReservedPct": -2.851,
+            "netReservedPerEventPct": -2.851,
+            "netReservedSum": -8.552
+          },
+          "julySkipped": {
+            "allEvents": 21,
+            "filled": 21,
+            "stopN": 12,
+            "stopPct": 57.14,
+            "tpN": 9,
+            "tpPct": 42.86,
+            "avgNetReservedPct": -4.03,
+            "netReservedPerEventPct": -4.03,
+            "netReservedSum": -84.63
+          }
+        },
+        "indexAboveMA60": {
+          "description": "TWII signal-day close >=60D MA",
+          "accepted": {
+            "allEvents": 224,
+            "filled": 175,
+            "stopN": 25,
+            "stopPct": 14.29,
+            "tpN": 136,
+            "tpPct": 77.71,
+            "avgNetReservedPct": 0.6,
+            "netReservedPerEventPct": 0.469,
+            "netReservedSum": 104.958
+          },
+          "rejected": {
+            "allEvents": 18,
+            "filled": 16,
+            "stopN": 3,
+            "stopPct": 18.75,
+            "tpN": 13,
+            "tpPct": 81.25,
+            "avgNetReservedPct": 0.141,
+            "netReservedPerEventPct": 0.125,
+            "netReservedSum": 2.257
+          },
+          "fractionStopsAvoided": 10.71,
+          "profitTakingSignalsLost": 13,
+          "fractionTPsForgone": 8.72,
+          "fisherTwoSidedP": 0.70966,
+          "slices": {
+            "early": {
+              "allEvents": 104,
+              "filled": 75,
+              "stopN": 7,
+              "stopPct": 9.33,
+              "tpN": 62,
+              "tpPct": 82.67,
+              "avgNetReservedPct": 0.995,
+              "netReservedPerEventPct": 0.718,
+              "netReservedSum": 74.639
+            },
+            "middle": {
+              "allEvents": 76,
+              "filled": 63,
+              "stopN": 15,
+              "stopPct": 23.81,
+              "tpN": 48,
+              "tpPct": 76.19,
+              "avgNetReservedPct": 0.271,
+              "netReservedPerEventPct": 0.225,
+              "netReservedSum": 17.082
+            },
+            "late": {
+              "allEvents": 44,
+              "filled": 37,
+              "stopN": 3,
+              "stopPct": 8.11,
+              "tpN": 26,
+              "tpPct": 70.27,
+              "avgNetReservedPct": 0.358,
+              "netReservedPerEventPct": 0.301,
+              "netReservedSum": 13.237
+            }
+          },
+          "july": {
+            "allEvents": 17,
+            "filled": 17,
+            "stopN": 11,
+            "stopPct": 64.71,
+            "tpN": 6,
+            "tpPct": 35.29,
+            "avgNetReservedPct": -5.666,
+            "netReservedPerEventPct": -5.666,
+            "netReservedSum": -96.326
+          },
+          "julySkipped": {
+            "allEvents": 7,
+            "filled": 7,
+            "stopN": 2,
+            "stopPct": 28.57,
+            "tpN": 5,
+            "tpPct": 71.43,
+            "avgNetReservedPct": 0.449,
+            "netReservedPerEventPct": 0.449,
+            "netReservedSum": 3.144
+          }
+        },
+        "indexMA20up": {
+          "description": "TWII 20D MA slope over 5 sessions >=0",
+          "accepted": {
+            "allEvents": 209,
+            "filled": 164,
+            "stopN": 22,
+            "stopPct": 13.41,
+            "tpN": 129,
+            "tpPct": 78.66,
+            "avgNetReservedPct": 0.694,
+            "netReservedPerEventPct": 0.544,
+            "netReservedSum": 113.773
+          },
+          "rejected": {
+            "allEvents": 33,
+            "filled": 27,
+            "stopN": 6,
+            "stopPct": 22.22,
+            "tpN": 20,
+            "tpPct": 74.07,
+            "avgNetReservedPct": -0.243,
+            "netReservedPerEventPct": -0.199,
+            "netReservedSum": -6.558
+          },
+          "fractionStopsAvoided": 21.43,
+          "profitTakingSignalsLost": 20,
+          "fractionTPsForgone": 13.42,
+          "fisherTwoSidedP": 0.24319,
+          "slices": {
+            "early": {
+              "allEvents": 95,
+              "filled": 69,
+              "stopN": 6,
+              "stopPct": 8.7,
+              "tpN": 57,
+              "tpPct": 82.61,
+              "avgNetReservedPct": 1.128,
+              "netReservedPerEventPct": 0.819,
+              "netReservedSum": 77.8
+            },
+            "middle": {
+              "allEvents": 74,
+              "filled": 61,
+              "stopN": 13,
+              "stopPct": 21.31,
+              "tpN": 48,
+              "tpPct": 78.69,
+              "avgNetReservedPct": 0.536,
+              "netReservedPerEventPct": 0.442,
+              "netReservedSum": 32.715
+            },
+            "late": {
+              "allEvents": 40,
+              "filled": 34,
+              "stopN": 3,
+              "stopPct": 8.82,
+              "tpN": 24,
+              "tpPct": 70.59,
+              "avgNetReservedPct": 0.096,
+              "netReservedPerEventPct": 0.081,
+              "netReservedSum": 3.258
+            }
+          },
+          "july": {
+            "allEvents": 15,
+            "filled": 15,
+            "stopN": 9,
+            "stopPct": 60.0,
+            "tpN": 6,
+            "tpPct": 40.0,
+            "avgNetReservedPct": -5.38,
+            "netReservedPerEventPct": -5.38,
+            "netReservedSum": -80.693
+          },
+          "julySkipped": {
+            "allEvents": 9,
+            "filled": 9,
+            "stopN": 4,
+            "stopPct": 44.44,
+            "tpN": 5,
+            "tpPct": 55.56,
+            "avgNetReservedPct": -1.388,
+            "netReservedPerEventPct": -1.388,
+            "netReservedSum": -12.489
+          }
+        },
+        "indexNotDown2Pct5D": {
+          "description": "TWII 5D return >=-2%",
+          "accepted": {
+            "allEvents": 192,
+            "filled": 154,
+            "stopN": 21,
+            "stopPct": 13.64,
+            "tpN": 120,
+            "tpPct": 77.92,
+            "avgNetReservedPct": 0.596,
+            "netReservedPerEventPct": 0.478,
+            "netReservedSum": 91.855
+          },
+          "rejected": {
+            "allEvents": 50,
+            "filled": 37,
+            "stopN": 7,
+            "stopPct": 18.92,
+            "tpN": 29,
+            "tpPct": 78.38,
+            "avgNetReservedPct": 0.415,
+            "netReservedPerEventPct": 0.307,
+            "netReservedSum": 15.36
+          },
+          "fractionStopsAvoided": 25.0,
+          "profitTakingSignalsLost": 29,
+          "fractionTPsForgone": 19.46,
+          "fisherTwoSidedP": 0.43975,
+          "slices": {
+            "early": {
+              "allEvents": 91,
+              "filled": 65,
+              "stopN": 7,
+              "stopPct": 10.77,
+              "tpN": 52,
+              "tpPct": 80.0,
+              "avgNetReservedPct": 0.553,
+              "netReservedPerEventPct": 0.395,
+              "netReservedSum": 35.961
+            },
+            "middle": {
+              "allEvents": 56,
+              "filled": 50,
+              "stopN": 10,
+              "stopPct": 20.0,
+              "tpN": 40,
+              "tpPct": 80.0,
+              "avgNetReservedPct": 0.92,
+              "netReservedPerEventPct": 0.821,
+              "netReservedSum": 45.996
+            },
+            "late": {
+              "allEvents": 45,
+              "filled": 39,
+              "stopN": 4,
+              "stopPct": 10.26,
+              "tpN": 28,
+              "tpPct": 71.79,
+              "avgNetReservedPct": 0.254,
+              "netReservedPerEventPct": 0.22,
+              "netReservedSum": 9.898
+            }
+          },
+          "july": {
+            "allEvents": 12,
+            "filled": 12,
+            "stopN": 7,
+            "stopPct": 58.33,
+            "tpN": 5,
+            "tpPct": 41.67,
+            "avgNetReservedPct": -4.702,
+            "netReservedPerEventPct": -4.702,
+            "netReservedSum": -56.43
+          },
+          "julySkipped": {
+            "allEvents": 12,
+            "filled": 12,
+            "stopN": 6,
+            "stopPct": 50.0,
+            "tpN": 6,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -3.063,
+            "netReservedPerEventPct": -3.063,
+            "netReservedSum": -36.752
+          }
+        },
+        "indexNotDown4Pct10D": {
+          "description": "TWII 10D return >=-4%",
+          "accepted": {
+            "allEvents": 230,
+            "filled": 182,
+            "stopN": 27,
+            "stopPct": 14.84,
+            "tpN": 141,
+            "tpPct": 77.47,
+            "avgNetReservedPct": 0.488,
+            "netReservedPerEventPct": 0.386,
+            "netReservedSum": 88.874
+          },
+          "rejected": {
+            "allEvents": 12,
+            "filled": 9,
+            "stopN": 1,
+            "stopPct": 11.11,
+            "tpN": 8,
+            "tpPct": 88.89,
+            "avgNetReservedPct": 2.038,
+            "netReservedPerEventPct": 1.528,
+            "netReservedSum": 18.341
+          },
+          "fractionStopsAvoided": 3.57,
+          "profitTakingSignalsLost": 8,
+          "fractionTPsForgone": 5.37,
+          "fisherTwoSidedP": 1.0,
+          "slices": {
+            "early": {
+              "allEvents": 99,
+              "filled": 72,
+              "stopN": 7,
+              "stopPct": 9.72,
+              "tpN": 59,
+              "tpPct": 81.94,
+              "avgNetReservedPct": 0.923,
+              "netReservedPerEventPct": 0.671,
+              "netReservedSum": 66.427
+            },
+            "middle": {
+              "allEvents": 79,
+              "filled": 66,
+              "stopN": 16,
+              "stopPct": 24.24,
+              "tpN": 50,
+              "tpPct": 75.76,
+              "avgNetReservedPct": 0.2,
+              "netReservedPerEventPct": 0.167,
+              "netReservedSum": 13.231
+            },
+            "late": {
+              "allEvents": 52,
+              "filled": 44,
+              "stopN": 4,
+              "stopPct": 9.09,
+              "tpN": 32,
+              "tpPct": 72.73,
+              "avgNetReservedPct": 0.209,
+              "netReservedPerEventPct": 0.177,
+              "netReservedSum": 9.216
+            }
+          },
+          "july": {
+            "allEvents": 20,
+            "filled": 20,
+            "stopN": 12,
+            "stopPct": 60.0,
+            "tpN": 8,
+            "tpPct": 40.0,
+            "avgNetReservedPct": -5.009,
+            "netReservedPerEventPct": -5.009,
+            "netReservedSum": -100.177
+          },
+          "julySkipped": {
+            "allEvents": 4,
+            "filled": 4,
+            "stopN": 1,
+            "stopPct": 25.0,
+            "tpN": 3,
+            "tpPct": 75.0,
+            "avgNetReservedPct": 1.749,
+            "netReservedPerEventPct": 1.749,
+            "netReservedSum": 6.995
+          }
+        },
+        "indexNotDown5Days": {
+          "description": "TWII close >=5D ago",
+          "accepted": {
+            "allEvents": 159,
+            "filled": 125,
+            "stopN": 16,
+            "stopPct": 12.8,
+            "tpN": 98,
+            "tpPct": 78.4,
+            "avgNetReservedPct": 0.676,
+            "netReservedPerEventPct": 0.531,
+            "netReservedSum": 84.501
+          },
+          "rejected": {
+            "allEvents": 83,
+            "filled": 66,
+            "stopN": 12,
+            "stopPct": 18.18,
+            "tpN": 51,
+            "tpPct": 77.27,
+            "avgNetReservedPct": 0.344,
+            "netReservedPerEventPct": 0.274,
+            "netReservedSum": 22.714
+          },
+          "fractionStopsAvoided": 42.86,
+          "profitTakingSignalsLost": 51,
+          "fractionTPsForgone": 34.23,
+          "fisherTwoSidedP": 0.38993,
+          "slices": {
+            "early": {
+              "allEvents": 75,
+              "filled": 52,
+              "stopN": 7,
+              "stopPct": 13.46,
+              "tpN": 39,
+              "tpPct": 75.0,
+              "avgNetReservedPct": -0.001,
+              "netReservedPerEventPct": -0.001,
+              "netReservedSum": -0.051
+            },
+            "middle": {
+              "allEvents": 47,
+              "filled": 41,
+              "stopN": 5,
+              "stopPct": 12.2,
+              "tpN": 36,
+              "tpPct": 87.8,
+              "avgNetReservedPct": 1.955,
+              "netReservedPerEventPct": 1.706,
+              "netReservedSum": 80.165
+            },
+            "late": {
+              "allEvents": 37,
+              "filled": 32,
+              "stopN": 4,
+              "stopPct": 12.5,
+              "tpN": 23,
+              "tpPct": 71.88,
+              "avgNetReservedPct": 0.137,
+              "netReservedPerEventPct": 0.119,
+              "netReservedSum": 4.387
+            }
+          },
+          "july": {
+            "allEvents": 6,
+            "filled": 6,
+            "stopN": 2,
+            "stopPct": 33.33,
+            "tpN": 4,
+            "tpPct": 66.67,
+            "avgNetReservedPct": -2.067,
+            "netReservedPerEventPct": -2.067,
+            "netReservedSum": -12.403
+          },
+          "julySkipped": {
+            "allEvents": 18,
+            "filled": 18,
+            "stopN": 11,
+            "stopPct": 61.11,
+            "tpN": 7,
+            "tpPct": 38.89,
+            "avgNetReservedPct": -4.488,
+            "netReservedPerEventPct": -4.488,
+            "netReservedSum": -80.779
+          }
+        },
+        "rank1_indexAbove20": {
+          "description": "Rank1 and TWII >= MA20",
+          "accepted": {
+            "allEvents": 39,
+            "filled": 27,
+            "stopN": 3,
+            "stopPct": 11.11,
+            "tpN": 23,
+            "tpPct": 85.19,
+            "avgNetReservedPct": 1.265,
+            "netReservedPerEventPct": 0.876,
+            "netReservedSum": 34.147
+          },
+          "rejected": {
+            "allEvents": 203,
+            "filled": 164,
+            "stopN": 25,
+            "stopPct": 15.24,
+            "tpN": 126,
+            "tpPct": 76.83,
+            "avgNetReservedPct": 0.446,
+            "netReservedPerEventPct": 0.36,
+            "netReservedSum": 73.068
+          },
+          "fractionStopsAvoided": 89.29,
+          "profitTakingSignalsLost": 126,
+          "fractionTPsForgone": 84.56,
+          "fisherTwoSidedP": 0.77171,
+          "slices": {
+            "early": {
+              "allEvents": 19,
+              "filled": 11,
+              "stopN": 1,
+              "stopPct": 9.09,
+              "tpN": 10,
+              "tpPct": 90.91,
+              "avgNetReservedPct": 1.6,
+              "netReservedPerEventPct": 0.926,
+              "netReservedSum": 17.602
+            },
+            "middle": {
+              "allEvents": 11,
+              "filled": 9,
+              "stopN": 1,
+              "stopPct": 11.11,
+              "tpN": 8,
+              "tpPct": 88.89,
+              "avgNetReservedPct": 1.505,
+              "netReservedPerEventPct": 1.231,
+              "netReservedSum": 13.541
+            },
+            "late": {
+              "allEvents": 9,
+              "filled": 7,
+              "stopN": 1,
+              "stopPct": 14.29,
+              "tpN": 5,
+              "tpPct": 71.43,
+              "avgNetReservedPct": 0.429,
+              "netReservedPerEventPct": 0.334,
+              "netReservedSum": 3.004
+            }
+          },
+          "july": {
+            "allEvents": 1,
+            "filled": 1,
+            "stopN": 1,
+            "stopPct": 100.0,
+            "tpN": 0,
+            "tpPct": 0.0,
+            "avgNetReservedPct": -11.686,
+            "netReservedPerEventPct": -11.686,
+            "netReservedSum": -11.686
+          },
+          "julySkipped": {
+            "allEvents": 23,
+            "filled": 23,
+            "stopN": 12,
+            "stopPct": 52.17,
+            "tpN": 11,
+            "tpPct": 47.83,
+            "avgNetReservedPct": -3.543,
+            "netReservedPerEventPct": -3.543,
+            "netReservedSum": -81.496
+          }
+        },
+        "rank12_indexAbove20": {
+          "description": "Rank <=2 and TWII >=MA20",
+          "accepted": {
+            "allEvents": 103,
+            "filled": 79,
+            "stopN": 8,
+            "stopPct": 10.13,
+            "tpN": 67,
+            "tpPct": 84.81,
+            "avgNetReservedPct": 1.374,
+            "netReservedPerEventPct": 1.054,
+            "netReservedSum": 108.546
+          },
+          "rejected": {
+            "allEvents": 139,
+            "filled": 112,
+            "stopN": 20,
+            "stopPct": 17.86,
+            "tpN": 82,
+            "tpPct": 73.21,
+            "avgNetReservedPct": -0.012,
+            "netReservedPerEventPct": -0.01,
+            "netReservedSum": -1.331
+          },
+          "fractionStopsAvoided": 71.43,
+          "profitTakingSignalsLost": 82,
+          "fractionTPsForgone": 55.03,
+          "fisherTwoSidedP": 0.15162,
+          "slices": {
+            "early": {
+              "allEvents": 47,
+              "filled": 32,
+              "stopN": 3,
+              "stopPct": 9.38,
+              "tpN": 27,
+              "tpPct": 84.38,
+              "avgNetReservedPct": 0.974,
+              "netReservedPerEventPct": 0.663,
+              "netReservedSum": 31.178
+            },
+            "middle": {
+              "allEvents": 30,
+              "filled": 25,
+              "stopN": 2,
+              "stopPct": 8.0,
+              "tpN": 23,
+              "tpPct": 92.0,
+              "avgNetReservedPct": 2.447,
+              "netReservedPerEventPct": 2.039,
+              "netReservedSum": 61.179
+            },
+            "late": {
+              "allEvents": 26,
+              "filled": 22,
+              "stopN": 3,
+              "stopPct": 13.64,
+              "tpN": 17,
+              "tpPct": 77.27,
+              "avgNetReservedPct": 0.736,
+              "netReservedPerEventPct": 0.623,
+              "netReservedSum": 16.189
+            }
+          },
+          "july": {
+            "allEvents": 2,
+            "filled": 2,
+            "stopN": 1,
+            "stopPct": 50.0,
+            "tpN": 1,
+            "tpPct": 50.0,
+            "avgNetReservedPct": -5.059,
+            "netReservedPerEventPct": -5.059,
+            "netReservedSum": -10.119
+          },
+          "julySkipped": {
+            "allEvents": 22,
+            "filled": 22,
+            "stopN": 12,
+            "stopPct": 54.55,
+            "tpN": 10,
+            "tpPct": 45.45,
+            "avgNetReservedPct": -3.776,
+            "netReservedPerEventPct": -3.776,
+            "netReservedSum": -83.063
+          }
+        },
+        "rank12_indexUp": {
+          "description": "Rank <=2 and TWII MA20 slope >=0",
+          "accepted": {
+            "allEvents": 115,
+            "filled": 88,
+            "stopN": 12,
+            "stopPct": 13.64,
+            "tpN": 73,
+            "tpPct": 82.95,
+            "avgNetReservedPct": 0.991,
+            "netReservedPerEventPct": 0.758,
+            "netReservedSum": 87.227
+          },
+          "rejected": {
+            "allEvents": 127,
+            "filled": 103,
+            "stopN": 16,
+            "stopPct": 15.53,
+            "tpN": 76,
+            "tpPct": 73.79,
+            "avgNetReservedPct": 0.194,
+            "netReservedPerEventPct": 0.157,
+            "netReservedSum": 19.988
+          },
+          "fractionStopsAvoided": 57.14,
+          "profitTakingSignalsLost": 76,
+          "fractionTPsForgone": 51.01,
+          "fisherTwoSidedP": 0.83798,
+          "slices": {
+            "early": {
+              "allEvents": 50,
+              "filled": 34,
+              "stopN": 2,
+              "stopPct": 5.88,
+              "tpN": 30,
+              "tpPct": 88.24,
+              "avgNetReservedPct": 1.7,
+              "netReservedPerEventPct": 1.156,
+              "netReservedSum": 57.813
+            },
+            "middle": {
+              "allEvents": 42,
+              "filled": 34,
+              "stopN": 7,
+              "stopPct": 20.59,
+              "tpN": 27,
+              "tpPct": 79.41,
+              "avgNetReservedPct": 0.433,
+              "netReservedPerEventPct": 0.351,
+              "netReservedSum": 14.723
+            },
+            "late": {
+              "allEvents": 23,
+              "filled": 20,
+              "stopN": 3,
+              "stopPct": 15.0,
+              "tpN": 16,
+              "tpPct": 80.0,
+              "avgNetReservedPct": 0.735,
+              "netReservedPerEventPct": 0.639,
+              "netReservedSum": 14.691
+            }
+          },
+          "july": {
+            "allEvents": 9,
+            "filled": 9,
+            "stopN": 6,
+            "stopPct": 66.67,
+            "tpN": 3,
+            "tpPct": 33.33,
+            "avgNetReservedPct": -6.808,
+            "netReservedPerEventPct": -6.808,
+            "netReservedSum": -61.276
+          },
+          "julySkipped": {
+            "allEvents": 15,
+            "filled": 15,
+            "stopN": 7,
+            "stopPct": 46.67,
+            "tpN": 8,
+            "tpPct": 53.33,
+            "avgNetReservedPct": -2.127,
+            "netReservedPerEventPct": -2.127,
+            "netReservedSum": -31.906
+          }
+        }
+      },
+      "stopTrades": [
+        {
+          "date": "2026-01-27",
+          "code": "5347",
+          "name": "世界",
+          "rank": 3,
+          "signalScore": 98.38,
+          "signalBreakoutPct": 2.9,
+          "buyLots": 3,
+          "start": "2026-01-29",
+          "exit": "2026-02-04",
+          "reason": "stop",
+          "netReservedPct": -11.686,
+          "signalTWII": {
+            "close": 32317.92,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 1.76,
+            "position60": 104.5,
+            "position120": 102.9
+          }
+        },
+        {
+          "date": "2026-01-28",
+          "code": "7792",
+          "name": "安葆",
+          "rank": 3,
+          "signalScore": 98.46,
+          "signalBreakoutPct": 4.5,
+          "buyLots": 3,
+          "start": "2026-01-29",
+          "exit": "2026-02-05",
+          "reason": "stop",
+          "netReservedPct": -11.686,
+          "signalTWII": {
+            "close": 32803.82,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 4.98,
+            "position60": 108.3,
+            "position120": 105.5
+          }
+        },
+        {
+          "date": "2026-02-26",
+          "code": "3576",
+          "name": "聯合再生",
+          "rank": 1,
+          "signalScore": 98.52,
+          "signalBreakoutPct": 9.95,
+          "buyLots": 1,
+          "start": "2026-03-05",
+          "exit": "2026-03-10",
+          "reason": "stop",
+          "netReservedPct": -3.895,
+          "signalTWII": {
+            "close": 35414.49,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 7.08,
+            "position60": 100.0,
+            "position120": 100.0
+          }
+        },
+        {
+          "date": "2026-02-26",
+          "code": "8046",
+          "name": "南電",
+          "rank": 2,
+          "signalScore": 98.39,
+          "signalBreakoutPct": 0.36,
+          "buyLots": 2,
+          "start": "2026-03-03",
+          "exit": "2026-03-09",
+          "reason": "stop_gap",
+          "netReservedPct": -8.044,
+          "signalTWII": {
+            "close": 35414.49,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 7.08,
+            "position60": 100.0,
+            "position120": 100.0
+          }
+        },
+        {
+          "date": "2026-03-02",
+          "code": "6442",
+          "name": "光聖",
+          "rank": 3,
+          "signalScore": 98.41,
+          "signalBreakoutPct": 4.2,
+          "buyLots": 3,
+          "start": "2026-03-04",
+          "exit": "2026-03-09",
+          "reason": "stop_gap",
+          "netReservedPct": -13.077,
+          "signalTWII": {
+            "close": 35095.09,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 4.43,
+            "position60": 96.4,
+            "position120": 97.2
+          }
+        },
+        {
+          "date": "2026-04-07",
+          "code": "1309",
+          "name": "台達化",
+          "rank": 2,
+          "signalScore": 98.56,
+          "signalBreakoutPct": -0.93,
+          "buyLots": 3,
+          "start": "2026-04-09",
+          "exit": "2026-04-17",
+          "reason": "stop",
+          "netReservedPct": -11.686,
+          "signalTWII": {
+            "close": 33229.82,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 0.35,
+            "position60": 67.4,
+            "position120": 77.2
+          }
+        },
+        {
+          "date": "2026-04-20",
+          "code": "7772",
+          "name": "耀穎",
+          "rank": 3,
+          "signalScore": 98.18,
+          "signalBreakoutPct": 77.38,
+          "buyLots": 1,
+          "start": "2026-04-23",
+          "exit": "2026-04-23",
+          "reason": "stop",
+          "netReservedPct": -3.895,
+          "signalTWII": {
+            "close": 36958.8,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 4.23,
+            "position60": 97.4,
+            "position120": 98.4
+          }
+        },
+        {
+          "date": "2026-05-07",
+          "code": "1785",
+          "name": "光洋科",
+          "rank": 2,
+          "signalScore": 98.39,
+          "signalBreakoutPct": 2.78,
+          "buyLots": 3,
+          "start": "2026-05-08",
+          "exit": "2026-05-20",
+          "reason": "stop",
+          "netReservedPct": -11.686,
+          "signalTWII": {
+            "close": 41933.78,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 6.69,
+            "position60": 108.4,
+            "position120": 105.4
+          }
+        },
+        {
+          "date": "2026-05-28",
+          "code": "5425",
+          "name": "台半",
+          "rank": 3,
+          "signalScore": 97.19,
+          "signalBreakoutPct": 3.62,
+          "buyLots": 3,
+          "start": "2026-06-01",
+          "exit": "2026-06-09",
+          "reason": "stop",
+          "netReservedPct": -11.686,
+          "signalTWII": {
+            "close": 43636.44,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 5.48,
+            "position60": 95.1,
+            "position120": 96.5
+          }
+        },
+        {
+          "date": "2026-06-17",
+          "code": "8043",
+          "name": "蜜望實",
+          "rank": 3,
+          "signalScore": 98.46,
+          "signalBreakoutPct": -1.12,
+          "buyLots": 1,
+          "start": "2026-06-23",
+          "exit": "2026-06-29",
+          "reason": "stop",
+          "netReservedPct": -3.895,
+          "signalTWII": {
+            "close": 45877.39,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 6.13,
+            "position60": 96.1,
+            "position120": 96.9
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "code": "4542",
+          "name": "科嶠",
+          "rank": 3,
+          "signalScore": 95.96,
+          "signalBreakoutPct": -0.73,
+          "buyLots": 3,
+          "start": "2026-07-06",
+          "exit": "2026-07-09",
+          "reason": "stop",
+          "netReservedPct": -11.686,
+          "signalTWII": {
+            "close": 44999.9,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -5.74,
+            "position60": 82.9,
+            "position120": 85.9
+          }
+        },
+        {
+          "date": "2026-07-02",
+          "code": "5328",
+          "name": "華容",
+          "rank": 1,
+          "signalScore": 98.62,
+          "signalBreakoutPct": 4.73,
+          "buyLots": 3,
+          "start": "2026-07-07",
+          "exit": "2026-07-14",
+          "reason": "stop",
+          "netReservedPct": -11.686,
+          "signalTWII": {
+            "close": 46744.16,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 1.06,
+            "position60": 93.1,
+            "position120": 94.8
+          }
+        },
+        {
+          "date": "2026-07-07",
+          "code": "6525",
+          "name": "捷敏-KY",
+          "rank": 2,
+          "signalScore": 96.74,
+          "signalBreakoutPct": 9.95,
+          "buyLots": 3,
+          "start": "2026-07-09",
+          "exit": "2026-07-20",
+          "reason": "stop",
+          "netReservedPct": -11.686,
+          "signalTWII": {
+            "close": 45479.11,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -1.4,
+            "position60": 81.6,
+            "position120": 87.7
+          }
+        },
+        {
+          "date": "2026-07-08",
+          "code": "8261",
+          "name": "富鼎",
+          "rank": 1,
+          "signalScore": 96.67,
+          "signalBreakoutPct": -8.54,
+          "buyLots": 3,
+          "start": "2026-07-09",
+          "exit": "2026-07-17",
+          "reason": "stop_gap",
+          "netReservedPct": -14.028,
+          "signalTWII": {
+            "close": 45734.41,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -2.73,
+            "position60": 83.7,
+            "position120": 88.6
+          }
+        },
+        {
+          "date": "2026-07-08",
+          "code": "2061",
+          "name": "風青",
+          "rank": 3,
+          "signalScore": 96.53,
+          "signalBreakoutPct": 2.09,
+          "buyLots": 3,
+          "start": "2026-07-09",
+          "exit": "2026-07-17",
+          "reason": "stop_gap",
+          "netReservedPct": -12.034,
+          "signalTWII": {
+            "close": 45734.41,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -2.73,
+            "position60": 83.7,
+            "position120": 88.6
+          }
+        },
+        {
+          "date": "2026-07-09",
+          "code": "6182",
+          "name": "合晶",
+          "rank": 1,
+          "signalScore": 98.67,
+          "signalBreakoutPct": -0.86,
+          "buyLots": 2,
+          "start": "2026-07-15",
+          "exit": "2026-07-20",
+          "reason": "stop_gap",
+          "netReservedPct": -9.541,
+          "signalTWII": {
+            "close": 45354.61,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -2.97,
+            "position60": 79.1,
+            "position120": 86.3
+          }
+        },
+        {
+          "date": "2026-07-09",
+          "code": "3026",
+          "name": "禾伸堂",
+          "rank": 2,
+          "signalScore": 97.45,
+          "signalBreakoutPct": -1.47,
+          "buyLots": 3,
+          "start": "2026-07-13",
+          "exit": "2026-07-15",
+          "reason": "stop",
+          "netReservedPct": -11.686,
+          "signalTWII": {
+            "close": 45354.61,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -2.97,
+            "position60": 79.1,
+            "position120": 86.3
+          }
+        },
+        {
+          "date": "2026-07-09",
+          "code": "6488",
+          "name": "環球晶",
+          "rank": 3,
+          "signalScore": 96.91,
+          "signalBreakoutPct": -2.17,
+          "buyLots": 2,
+          "start": "2026-07-16",
+          "exit": "2026-07-24",
+          "reason": "stop_gap",
+          "netReservedPct": -9.502,
+          "signalTWII": {
+            "close": 45354.61,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -2.97,
+            "position60": 79.1,
+            "position120": 86.3
+          }
+        },
+        {
+          "date": "2026-07-16",
+          "code": "6907",
+          "name": "雅特力-KY",
+          "rank": 2,
+          "signalScore": 97.17,
+          "signalBreakoutPct": 2.8,
+          "buyLots": 3,
+          "start": "2026-07-20",
+          "exit": "2026-07-29",
+          "reason": "stop_gap",
+          "netReservedPct": -12.813,
+          "signalTWII": {
+            "close": 45624.98,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -0.24,
+            "position60": 80.4,
+            "position120": 87.7
+          }
+        },
+        {
+          "date": "2026-07-16",
+          "code": "7610",
+          "name": "聯友金屬-創",
+          "rank": 3,
+          "signalScore": 95.83,
+          "signalBreakoutPct": 0.58,
+          "buyLots": 2,
+          "start": "2026-07-17",
+          "exit": "2026-07-21",
+          "reason": "stop",
+          "netReservedPct": -7.791,
+          "signalTWII": {
+            "close": 45624.98,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -0.24,
+            "position60": 80.4,
+            "position120": 87.7
+          }
+        },
+        {
+          "date": "2026-07-20",
+          "code": "8039",
+          "name": "台虹",
+          "rank": 2,
+          "signalScore": 93.44,
+          "signalBreakoutPct": -3.98,
+          "buyLots": 1,
+          "start": "2026-07-27",
+          "exit": "2026-07-29",
+          "reason": "stop_gap",
+          "netReservedPct": -5.314,
+          "signalTWII": {
+            "close": 42449.7,
+            "aboveMA20": false,
+            "aboveMA60": false,
+            "ret5": -6.46,
+            "position60": 47.2,
+            "position120": 68.7
+          }
+        },
+        {
+          "date": "2026-07-23",
+          "code": "3374",
+          "name": "精材",
+          "rank": 2,
+          "signalScore": 96.13,
+          "signalBreakoutPct": -3.59,
+          "buyLots": 3,
+          "start": "2026-07-24",
+          "exit": "2026-07-28",
+          "reason": "stop_gap",
+          "netReservedPct": -11.738,
+          "signalTWII": {
+            "close": 44850.81,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -1.7,
+            "position60": 67.2,
+            "position120": 82.5
+          }
+        },
+        {
+          "date": "2026-07-23",
+          "code": "1810",
+          "name": "和成",
+          "rank": 3,
+          "signalScore": 94.89,
+          "signalBreakoutPct": -9.96,
+          "buyLots": 1,
+          "start": "2026-07-24",
+          "exit": "2026-07-29",
+          "reason": "stop",
+          "netReservedPct": -3.895,
+          "signalTWII": {
+            "close": 44850.81,
+            "aboveMA20": false,
+            "aboveMA60": true,
+            "ret5": -1.7,
+            "position60": 67.2,
+            "position120": 82.5
+          }
+        },
+        {
+          "date": "2026-07-24",
+          "code": "4541",
+          "name": "晟田",
+          "rank": 2,
+          "signalScore": 94.8,
+          "signalBreakoutPct": -12.5,
+          "buyLots": 3,
+          "start": "2026-07-27",
+          "exit": "2026-07-30",
+          "reason": "stop",
+          "netReservedPct": -11.686,
+          "signalTWII": {
+            "close": 43654.84,
+            "aboveMA20": false,
+            "aboveMA60": false,
+            "ret5": 2.3,
+            "position60": 53.6,
+            "position120": 75.2
+          }
+        },
+        {
+          "date": "2026-08-04",
+          "code": "7734",
+          "name": "印能科技",
+          "rank": 2,
+          "signalScore": 95.47,
+          "signalBreakoutPct": -0.14,
+          "buyLots": 4,
+          "start": "2026-08-06",
+          "exit": "2026-08-19",
+          "reason": "stop",
+          "netReservedPct": -15.581,
+          "signalTWII": {
+            "close": 43360.66,
+            "aboveMA20": false,
+            "aboveMA60": false,
+            "ret5": 4.22,
+            "position60": 43.9,
+            "position120": 72.8
+          }
+        },
+        {
+          "date": "2026-08-27",
+          "code": "3081",
+          "name": "聯亞",
+          "rank": 1,
+          "signalScore": 99.43,
+          "signalBreakoutPct": 3.53,
+          "buyLots": 3,
+          "start": "2026-09-02",
+          "exit": "2026-09-14",
+          "reason": "stop",
+          "netReservedPct": -11.686,
+          "signalTWII": {
+            "close": 45975.22,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 2.32,
+            "position60": 77.4,
+            "position120": 89.0
+          }
+        },
+        {
+          "date": "2026-08-31",
+          "code": "3008",
+          "name": "大立光",
+          "rank": 2,
+          "signalScore": 98.52,
+          "signalBreakoutPct": 5.23,
+          "buyLots": 2,
+          "start": "2026-09-03",
+          "exit": "2026-09-14",
+          "reason": "stop",
+          "netReservedPct": -7.791,
+          "signalTWII": {
+            "close": 46128.47,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 3.05,
+            "position60": 79.3,
+            "position120": 89.9
+          }
+        },
+        {
+          "date": "2026-09-04",
+          "code": "7711",
+          "name": "永擎",
+          "rank": 2,
+          "signalScore": 97.85,
+          "signalBreakoutPct": 1.12,
+          "buyLots": 1,
+          "start": "2026-09-08",
+          "exit": "2026-09-14",
+          "reason": "stop_gap",
+          "netReservedPct": -5.576,
+          "signalTWII": {
+            "close": 46551.13,
+            "aboveMA20": true,
+            "aboveMA60": true,
+            "ret5": 0.47,
+            "position60": 84.8,
+            "position120": 92.6
+          }
+        }
+      ]
+    }
+  }
+}

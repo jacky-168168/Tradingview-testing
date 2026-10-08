@@ -8,6 +8,7 @@ const names={A:"A 原始多因子",D:"D 技術強勢",F:"F 固定大盤",F2:"F2 
 const archiveLinks={
  g:'<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37833390271">G 原始完整逐筆資料及執行紀錄 ↗</a>',
  h:'<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37801819940">H5 五段加碼原始執行紀錄 ↗</a>',
+ risk:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_strict_stop_diagnostic_2026.json">大盤位階 × 停損原始研究 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37839334095">GitHub 實際研究執行紀錄 ↗</a>',
  legacy:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/h1_2026.json">H1 歷史 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/h2_2026.json">H2 歷史 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/blob/research/h-v5-limit-pullback-2026/tw-stock-dashboard/H_2026_research_consolidated_H2_H5.md">H2～H5 原始研究報告 ↗</a>'};
 const e=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const n=(v,d=2)=>v==null||!Number.isFinite(Number(v))?"—":Number(v).toFixed(d);
@@ -16,7 +17,7 @@ const clr=v=>v==null?"":Number(v)>=0?"research-positive":"research-negative";
 const perf=v=>'<span class="'+clr(v)+'">'+pct(v,3)+'</span>';
 const type=x=>x==="ma"?"B 均線觸價":"A 固定下跌";
 const full=x=>names[x]||x;
-let main=null,h5=null,g=null,loading=null,current=null,activeArchive="g",modelTrades=null,tradeIdentity="",run=0,tradePage=0;
+let main=null,h5=null,g=null,risk=null,loading=null,current=null,activeArchive="g",modelTrades=null,tradeIdentity="",run=0,tradePage=0;
 async function get(path){const u=path+"?v=20261009a",r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("資料 HTTP "+r.status+"："+path);return r.json();}
 function visible(){by("legacyView").style.display="none";by("gView").style.display="none";root.style.display="block";document.querySelectorAll("#modelTabs button").forEach(b=>b.classList.toggle("on",b.id==="RESEARCH"));if(main)render();else load();}
 function close(){root.style.display="none";}
@@ -32,8 +33,8 @@ async function load(){
    const sel=by("researchModel");
    sel.innerHTML='<option value="all">全部 '+Object.keys(main.allModelStatistics).length+' 種模型</option>'+Object.keys(main.allModelStatistics).map(z=>'<option value="'+e(z)+'">'+e(full(z))+'</option>').join("");
    by("researchMeta").textContent=main.period.start+" ～ "+main.period.end+"｜"+Object.keys(main.allModelStatistics).length+" 個模型 × 2 種進場 × 3 週期｜資料產出 "+(main.generatedAt||"—");
-   const [gResult,hResult]=await Promise.allSettled([get(rootpath+"g_ladder_vs_ma_2026.json"),get(rootpath+"h5_ladder_2026.json")]);
-   g=gResult.status==="fulfilled"?gResult.value:null;h5=hResult.status==="fulfilled"?hResult.value:null;
+   const [gResult,hResult,riskResult]=await Promise.allSettled([get(rootpath+"g_ladder_vs_ma_2026.json"),get(rootpath+"h5_ladder_2026.json"),get(rootpath+"g_strict_stop_diagnostic_2026.json")]);
+   g=gResult.status==="fulfilled"?gResult.value:null;h5=hResult.status==="fulfilled"?hResult.value:null;risk=riskResult.status==="fulfilled"?riskResult.value:null;
    by("researchWarnings").textContent=(main.warnings||[]).slice(0,4).join(" ｜ ");
    render();
   }catch(err){by("researchMeta").textContent="載入失敗："+err.message;by("researchRankRows").innerHTML='<tr><td colspan="12">研究資料未發佈或網路有問題。請稍後重新整理。</td></tr>'}
@@ -92,7 +93,7 @@ by("researchRankRows").addEventListener("click",ev=>{
 });
 for(const id of ["researchHold","researchMethod","researchModel","researchSort","researchMinFills"])
  by(id).addEventListener("change",render);
-by("researchRefresh").addEventListener("click",()=>{main=null;h5=null;g=null;current=null;loading=null;load();});
+by("researchRefresh").addEventListener("click",()=>{main=null;h5=null;g=null;risk=null;current=null;loading=null;load();});
 function tradeRows(){
  if(!modelTrades||!current)return;
  const q=by("researchTradeQuery").value.trim().toLowerCase();
@@ -135,6 +136,14 @@ function archive(which){
   head.innerHTML="<tr><th>期限</th><th>首筆折價</th><th>開倉</th><th>+7%達標</th><th>停損率</th><th>已投入資金淨報酬</th><th>預留資金淨報酬</th></tr>";
   note.textContent="H5 的固定突破選股不變，測試首筆限價-2%、-2.5%、-3%，之後4筆每下跌首筆成交價2%加碼。此研究的首筆委託僅下一交易日有效，與上方17模型5日等待版不同，不可直接同比。";
   tbody.innerHTML=h5?.results?Object.entries(h5.results).flatMap(([h,discount])=>Object.entries(discount).map(([off,s])=>'<tr><td>'+e(h)+'D</td><td>-'+e(off)+'%</td><td>'+n(s.filled,0)+'</td><td>'+pct(s.targetHitPct)+'</td><td>'+pct(s.stopHitPct)+'</td><td>'+perf(s.avgNetOnDeployedPct)+'</td><td>'+perf(s.avgNetOnFiveTrancheBudgetPct)+'</td></tr>')).join(""):'<tr><td colspan="7">研究檔案未載入</td></tr>';
+ }else if(which==="risk"){
+  head.innerHTML="<tr><th>進場法</th><th>訊號當日大盤條件</th><th>成交</th><th>+7% 停利</th><th>-15% 停損</th><th>避免停損</th><th>錯過停利</th><th>預留資金淨%</th><th>7月成交</th><th>7月停損</th></tr>";
+  note.textContent="G_STRICT 10D 固定向下／均線加碼，用「選股訊號日已完成的加權指數日K」判斷大盤位階。只從已完成歷史交易中剔除不符條件的訊號；未重選候補股票、未模擬同股票後續掛單或共享帳戶資金。2026年樣本內探索，不是因果證明。";
+  const gates=[["All","不看大盤"],["indexAboveMA20","加權指數收在MA20以上"],["indexAboveMA60","加權指數收在MA60以上"],["indexPosition60ge50","60日區間位階≥50"],["indexPosition120ge50","120日區間位階≥50"],["indexFavorable","MA20以上＋MA20向上＋60日位階≥50"],["indexNotDown2Pct5D","加權指數5日跌幅不超過2%"]];
+  tbody.innerHTML=risk?.modes?["ladder","ma"].flatMap(mode=>gates.map(([key,label])=>{
+    const a=risk.modes[mode]?.filters?.[key];if(!a)return "";
+    const z=a.accepted,j=a.july;return '<tr><td>'+type(mode)+'</td><td>'+e(label)+'</td><td>'+n(z.filled,0)+'</td><td>'+pct(z.tpPct)+'</td><td>'+pct(z.stopPct)+'</td><td>'+pct(a.fractionStopsAvoided)+'</td><td>'+n(a.profitTakingSignalsLost,0)+'筆</td><td>'+perf(z.avgNetReservedPct)+'</td><td>'+n(j?.filled,0)+'</td><td>'+n(j?.stopN,0)+'筆</td></tr>';
+  })).join(""):'<tr><td colspan="10">大盤位階研究檔案未載入，請重新載入或檢查 GitHub Pages JSON。</td></tr>';
  }else{
   head.innerHTML="<tr><th>版本</th><th>方法</th><th>成交</th><th>+7%停利率</th><th>每筆平均淨報酬</th><th>備註</th></tr>";
   note.textContent="原始 H1～H5：5日內 +7% 毛停利；H1 停損 -4%，H2～H5 停損 -3.5%；不可直接和新版五段加碼、-15% 停損的命中率比較。";
