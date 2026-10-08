@@ -97,19 +97,19 @@ def published_data_date():
     return max(dates) if dates else ""
 
 def previous_f2_state(market_date):
-    """Read the previous trading day's persisted F2 state for live hysteresis."""
+    """Rebuild/persist the prior F2 hysteresis state from available daily snapshots."""
+    state=False
     try:
-        p=DATA_DIR/"daily"/"index.json"
-        rows=json.loads(p.read_text(encoding="utf-8")) if p.exists() else []
-        dates=sorted([str((x or {}).get("date") or "") for x in rows if str((x or {}).get("date") or "")<market_date],reverse=True)
-        for d in dates[:5]:
+        p=DATA_DIR/"daily"/"index.json";rows=json.loads(p.read_text(encoding="utf-8")) if p.exists() else []
+        dates=sorted([str((x or {}).get("date") or "") for x in rows if str((x or {}).get("date") or "")<market_date])[-60:]
+        for d in dates:
             q=DATA_DIR/"daily"/f"{d}.json"
             if not q.exists():continue
             old=json.loads(q.read_text(encoding="utf-8"));rr=old.get("risk") or {};g=rr.get("f2Gate") or {}
-            if "stateOn" in g:return bool(g.get("stateOn"))
-            return bool(f2_gate(rr,False,RISK_ON,55).get("stateOn"))
+            if "stateOn" in g:state=bool(g.get("stateOn"))
+            else:state=bool(f2_gate(rr,state,RISK_ON,55).get("stateOn"))
     except Exception:pass
-    return False
+    return state
 
 def main():
     now=datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None);start=now-timedelta(days=LOOKBACK_CALENDAR_DAYS)
