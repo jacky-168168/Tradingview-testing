@@ -76,5 +76,11 @@ class TestLiveG(unittest.TestCase):
         self.assertIn('id="tabG"',text)
         self.assertIn('id="gNote"',text)
         self.assertIn('x.gPast10',text)
+        self.assertIn('id="stockTable" class="compact"',text)
+        self.assertIn('id="layoutToggle"',text)
+        self.assertIn('TABLE_COMPACT=true',text)
+        self.assertIn('function applyTableMode(){',text)
+        self.assertIn('left:32px',text)
+        self.assertIn('gCols=new Set([0,1,3,4,6,7,8,9,10,13,15,16,17,18,19,20,21])',text)
 
 if __name__=="__main__":unittest.main()
