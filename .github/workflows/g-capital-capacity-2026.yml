@@ -1,0 +1,83 @@
+name: G 2026 Capital Capacity and MA20 Robustness
+on:
+  push:
+    branches: [research/g-2026-capital-capacity-and-ma20]
+    paths:
+      - 'tw-stock-dashboard/src/research_g_capacity_2026.py'
+      - '.github/workflows/g-capital-capacity-2026.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore daily stock market history
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: g-capacity-2026-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            g-strict-market-gate-${{ runner.os }}-
+            g-execution-cache-${{ runner.os }}-
+            selector-exec-cache-${{ runner.os }}-
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install Python dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Compile research program
+        run: python -m py_compile tw-stock-dashboard/src/research_g_capacity_2026.py
+      - name: Run 2026 historical paper portfolio
+        working-directory: tw-stock-dashboard
+        run: python src/research_g_capacity_2026.py
+      - name: Validate cash and selection parity
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("docs/data/research/g_capital_2026")
+          a=json.loads((p/"summary.json").read_text())
+          curves=json.loads((p/"equity_curves.json").read_text())
+          assert set(a["statistics"])=={"G_STRICT","G_DOUBLE_PERSIST"}
+          assert a["controlParity"]["G_STRICT"]["ladder"]["filled"]==201
+          assert a["controlParity"]["G_STRICT"]["ma"]["filled"]==191
+          assert a["controlParity"]["G_DOUBLE_PERSIST"]["ladder"]["filled"]==171
+          assert a["controlParity"]["G_DOUBLE_PERSIST"]["ma"]["filled"]==158
+          cases=0
+          for name,methods in a["statistics"].items():
+            for mode,gates in methods.items():
+              assert set(gates)=={"baseline","signal_ma20","wait_ma20"}
+              for gate,slots_map in gates.items():
+                assert set(slots_map)=={"3","5","10"}
+                for n,s in slots_map.items():
+                  cases+=1
+                  assert s["maxConcurrentReservations"]<=int(n),(name,mode,gate,n)
+                  assert s["filled"]<=s["admitted"]
+                  assert s["stopN"]<=s["filled"]
+                  assert len(curves["daily"][name][mode][gate][n])>175
+                  assert s["totalReturnPct"]>-100,(name,mode,gate,n,s)
+          assert cases==36
+          print("PASS: 36 cash-constrained G 2026 portfolio cases; four archived baseline-parity checks; no leverage by slots")
+          PY
+      - name: Upload complete experiment artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: 2026-g-capacity-vs-ma20
+          path: tw-stock-dashboard/docs/data/research/g_capital_2026/*.json
+          retention-days: 30
+      - name: Preserve 2026 study on separate research branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/g_capital_2026/
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive 2026 capital-constrained G selector and MA20 study"
+            git push origin HEAD:research/g-2026-capital-capacity-and-ma20
+          fi
