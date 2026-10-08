@@ -1,0 +1,48 @@
+name: H3 Walkforward 7 Percent 2026 Independent Search
+on:
+  push:
+    branches: [research/h-v3-walkforward-2026]
+    paths:
+      - '.github/workflows/tw-stock-h-v3.yml'
+      - 'tw-stock-dashboard/src/backtest_h_v3.py'
+      - 'tw-stock-dashboard/tests/test_h_v3.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  h3-search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore market cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Test independent H3 signal and execution
+        working-directory: tw-stock-dashboard
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m compileall -q src/backtest_h_v3.py tests/test_h_v3.py
+          python -m unittest discover -s tests -p test_h_v3.py -v
+      - name: Backtest + train/validation H3 sweep + one holdout
+        working-directory: tw-stock-dashboard
+        run: python src/backtest_h_v3.py
+      - name: Save unmodified research outputs
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: H3_2026_walkforward_7pct_results
+          path: tw-stock-dashboard/docs/data/backtest_h_v3/*.json
+          retention-days: 30
