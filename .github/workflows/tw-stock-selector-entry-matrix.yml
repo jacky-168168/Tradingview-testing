@@ -1,0 +1,57 @@
+name: 2026 Selection x Entry Matrix Research
+on:
+  push:
+    branches: [research/selection-entry-matrix-2026]
+    paths:
+      - '.github/workflows/tw-stock-selector-entry-matrix.yml'
+      - 'tw-stock-dashboard/src/backtest_selector_entry_matrix.py'
+      - 'tw-stock-dashboard/tests/test_selector_entry_matrix.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  matrix-comparison:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore existing historic daily OHLC cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: model-entry-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Python dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Load original frozen H5 selected Top3 (NO reoptimization)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p tw-stock-dashboard/docs/data/research_input
+          gh run download 37801819940 -R jacky-168168/Tradingview-testing -n h5-ladder-2026-five-entries -D tw-stock-dashboard/docs/data/research_input
+          test -s tw-stock-dashboard/docs/data/research_input/H5_ladder_2026_top3.json
+      - name: Verify sources and identical execution constraints
+        working-directory: tw-stock-dashboard
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m compileall -q src/backtest_selector_entry_matrix.py tests/test_selector_entry_matrix.py
+          python -m unittest discover -s tests -p test_selector_entry_matrix.py -v
+          python -m unittest discover -s tests -p test_g_exec_comparison.py -v
+      - name: Backtest original selectors under both buy schemes
+        working-directory: tw-stock-dashboard
+        run: python src/backtest_selector_entry_matrix.py
+      - name: Save detail & full pre-specified grid
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tw-stock-2026-selector-entry-matrix
+          path: tw-stock-dashboard/docs/data/research_selector_matrix/*.json
+          retention-days: 30
