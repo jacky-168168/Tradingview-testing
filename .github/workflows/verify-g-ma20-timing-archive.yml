@@ -1,0 +1,47 @@
+name: Verify G_STRICT MA20 Timing Archive
+on:
+  push:
+    branches: [feature/g-strict-ma20-timing-archive-2026]
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/docs/backtest.html'
+      - 'tw-stock-dashboard/docs/backtest-research.js'
+      - 'tw-stock-dashboard/docs/data/research/model_execution_2026/g_strict_ma20_entry*.json'
+      - '.github/workflows/verify-g-ma20-timing-archive.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JavaScript parse
+        run: node --check tw-stock-dashboard/docs/backtest-research.js
+      - name: Validate archive UI and per-stock data
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('tw-stock-dashboard/docs')
+          base=root/'data/research/model_execution_2026'
+          a=json.loads((base/'g_strict_ma20_entry_2026.json').read_text())
+          d=json.loads((base/'g_strict_ma20_entry_trades_2026.json').read_text())
+          assert a['model']=='G_STRICT'
+          gates={'baseline','signal_ma20','wait_ma20','wait_ma20_twoday','wait_ma20_rising'}
+          for mode,expected in (('ladder',(201,28)),('ma',(191,28))):
+              scenarios=a['statistics']['10'][mode]
+              assert set(scenarios)==gates
+              base_s=scenarios['baseline']
+              assert (base_s['filled'],base_s['stopN'])==expected, (mode,base_s)
+              for key in gates:
+                  rows=d['10'][mode][key]
+                  assert len(rows)==scenarios[key]['signalEvents'],(mode,key,len(rows),scenarios[key])
+                  assert sum(r['status']=='filled' for r in rows)==scenarios[key]['filled']
+          html=(root/'backtest.html').read_text()
+          js=(root/'backtest-research.js').read_text()
+          for x in ('data-archive="g"','data-archive="h"','data-archive="risk"','data-archive="legacy"','data-archive="timing"','id="researchTimingTradeRows"','id="researchTradeRows"'):
+              assert x in html,x
+          for x in ('g_strict_ma20_entry_2026.json','g_strict_ma20_entry_trades_2026.json','timingRenderTrades','researchTimingTradeNext'):
+              assert x in js,x
+          print('PASS G_STRICT baseline replay, 10 timing mode archives, 10 trade histories, archive legacy/UI integrity')
+          PY
