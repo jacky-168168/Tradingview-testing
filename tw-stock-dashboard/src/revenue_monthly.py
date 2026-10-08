@@ -70,7 +70,7 @@ def fetch_mops_monthly(start,end,cache_dir,delay=0.4,minimum_companies=450):
     while m<=0:y-=1;m+=12
     from_month=date(y,m,1)
     # No need for reports whose conservative availability is later than the end date.
-    end_y,end_m=end.year,end.month-1 if end.day<11 else end.month
+    end_y,end_m=end.year,end.month-2 if end.day<11 else end.month-1
     if end_m<=0:end_y-=1;end_m=12
     to_month=date(end_y,end_m,1)
     rows={};coverage=[];errors=[]
