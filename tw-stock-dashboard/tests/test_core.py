@@ -85,6 +85,12 @@ class CoreTests(unittest.TestCase):
         x=risk.f2_gate({"score":54,"activeState":"⚪ Normal"},True);self.assertFalse(x["allowed"]);self.assertFalse(x["stateOn"])
         x=risk.f2_gate({"score":40,"activeState":"🟢 Strong Bottom Reversal"},False);self.assertTrue(x["allowed"]);self.assertTrue(x["exception"]);self.assertFalse(x["stateOn"])
         x=risk.f2_gate({"score":80,"activeState":"🟠 Top Reversal Attempt"},True);self.assertFalse(x["allowed"]);self.assertTrue(x["topVeto"]);self.assertFalse(x["stateOn"])
+    def test_f2_gate_hysteresis_and_veto(self):
+        x=risk.f2_gate({"score":60,"activeState":"⚪ Normal"},False,60,55);self.assertTrue(x["allowed"]);self.assertTrue(x["stateOn"]);self.assertEqual(x["reason"],"RISK_ON_ENTRY")
+        x=risk.f2_gate({"score":57,"activeState":"⚪ Normal"},True,60,55);self.assertTrue(x["allowed"]);self.assertEqual(x["reason"],"HYSTERESIS_HOLD")
+        x=risk.f2_gate({"score":54,"activeState":"⚪ Normal"},True,60,55);self.assertFalse(x["allowed"]);self.assertFalse(x["stateOn"])
+        x=risk.f2_gate({"score":80,"activeState":"🔴 Strong Top Reversal","topState":"🔴 Strong Top Reversal"},True,60,55);self.assertFalse(x["allowed"]);self.assertTrue(x["topVeto"]);self.assertFalse(x["stateOn"])
+        x=risk.f2_gate({"score":35,"activeState":"🟢 Strong Bottom Reversal","bottomState":"🟢 Strong Bottom Reversal"},False,60,55);self.assertTrue(x["allowed"]);self.assertTrue(x["exception"]);self.assertFalse(x["stateOn"])
     def test_historical_risk_no_network(self):
         x=risk.build_historical(self.frame(80),breadth_value=60,foreign_value=10)
         self.assertGreaterEqual(x["score"],0);self.assertLessEqual(x["score"],100);self.assertIn("activeState",x)
