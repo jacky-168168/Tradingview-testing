@@ -132,3 +132,15 @@ def f_gate(risk,risk_on=60):
     if score>=risk_on:return {"allowed":True,"reason":"RISK_ON","exception":False}
     if strong_bottom:return {"allowed":True,"reason":"STRONG_BOTTOM_REVERSAL","exception":True}
     return {"allowed":False,"reason":"MARKET_BLOCK","exception":False}
+
+def f2_gate(risk,was_on=False,entry=60,hold=55):
+    """Dynamic market gate: 60 entry / 55 hold, Strong Bottom exception, Top reversal veto."""
+    r=risk or {};score=float(r.get("score",0) or 0);active=str(r.get("activeState") or "");top=str(r.get("topState") or "")
+    strong_bottom=active=="🟢 Strong Bottom Reversal" or str(r.get("bottomState") or "")=="🟢 Strong Bottom Reversal"
+    top_veto=active in ("🔴 Strong Top Reversal","🟠 Top Reversal Attempt") or top in ("🔴 Strong Top Reversal","🟠 Top Reversal Attempt")
+    # Strong Bottom 是單日例外，不主動把 hysteresis 狀態翻成 ON；真正 regime ON 仍需 >= entry。
+    if strong_bottom:return {"allowed":True,"reason":"STRONG_BOTTOM_REVERSAL","exception":True,"stateOn":bool(was_on),"topVeto":False}
+    if top_veto:return {"allowed":False,"reason":"TOP_REVERSAL_VETO","exception":False,"stateOn":False,"topVeto":True}
+    if was_on and score>=hold:return {"allowed":True,"reason":"HYSTERESIS_HOLD","exception":False,"stateOn":True,"topVeto":False}
+    if score>=entry:return {"allowed":True,"reason":"RISK_ON_ENTRY","exception":False,"stateOn":True,"topVeto":False}
+    return {"allowed":False,"reason":"MARKET_BLOCK","exception":False,"stateOn":False,"topVeto":False}
