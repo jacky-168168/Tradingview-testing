@@ -18,6 +18,10 @@ jobs:
           cache: pip
           cache-dependency-path: tw-stock-dashboard/requirements.txt
       - run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Test password-gate JavaScript and all HTML routes
+        run: |
+          node --check tw-stock-dashboard/docs/site-access.js
+          node tw-stock-dashboard/tests/test_site_access.cjs
       - name: Compile Python
         working-directory: tw-stock-dashboard
         run: python -m compileall -q src tests
