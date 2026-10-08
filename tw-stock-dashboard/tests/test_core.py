@@ -12,6 +12,7 @@ from pipeline import _normalize_company,published_data_date,previous_f2_state
 from industry_chain import looks_mojibake,parse as parse_chain
 import risk,yahoo_cache
 from backtest import _portfolio_stats,_has_unadjusted_scale_jump,effective_backtest_end
+from bubbles import classify as bubble_classify
 
 class CoreTests(unittest.TestCase):
     def frame(self,n=100):
@@ -81,6 +82,11 @@ class CoreTests(unittest.TestCase):
             (daily/"2026-10-02.json").write_text(json.dumps({"risk":{"score":57,"activeState":"⚪ Normal"}}),encoding="utf-8")
             with patch.object(pipeline,"DATA_DIR",root):
                 self.assertTrue(previous_f2_state("2026-10-03"))
+    def test_bubble_quadrants(self):
+        self.assertEqual(bubble_classify(1,1),"漲潮")
+        self.assertEqual(bubble_classify(1,-1),"輪動")
+        self.assertEqual(bubble_classify(-1,1),"觀望")
+        self.assertEqual(bubble_classify(-1,-1),"退潮")
     def test_published_date_never_regresses(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);latest=root/"latest.json";daily=root/"daily";daily.mkdir()
