@@ -11,7 +11,7 @@ import pipeline
 from pipeline import _normalize_company,published_data_date
 from industry_chain import looks_mojibake,parse as parse_chain
 import risk,yahoo_cache
-from backtest import _portfolio_stats
+from backtest import _portfolio_stats,_has_unadjusted_scale_jump
 
 class CoreTests(unittest.TestCase):
     def frame(self,n=100):
@@ -59,6 +59,9 @@ class CoreTests(unittest.TestCase):
         d=self.frame(40);start=datetime(2026,1,5);end=datetime(2026,2,5)
         self.assertTrue(yahoo_cache._needs_adj_backfill(d,start,end))
         d["adjclose"]=d["close"];self.assertFalse(yahoo_cache._needs_adj_backfill(d,start,end))
+    def test_scale_jump_guard_even_with_adjclose(self):
+        d=self.frame(6);d["close"]=[100,101,102,5,5.2,5.4];d["open"]=d["close"];d["high"]=d["close"]*1.01;d["low"]=d["close"]*.99;d["adjclose"]=d["close"]
+        self.assertTrue(_has_unadjusted_scale_jump(d,d.iloc[0]["date"],d.iloc[-1]["date"]))
     def test_portfolio_stats_cost_aware(self):
         dates=pd.date_range("2026-01-01",periods=12).strftime("%Y-%m-%d").tolist();idx=pd.DataFrame({"date":dates});pos={d:i for i,d in enumerate(dates)}
         px=pd.DataFrame({"date":dates,"open":[100+i for i in range(12)],"high":[101+i for i in range(12)],"low":[99+i for i in range(12)],"close":[101+i for i in range(12)],"adjclose":[101+i for i in range(12)],"volume":[1_000_000]*12}).set_index("date",drop=False)
