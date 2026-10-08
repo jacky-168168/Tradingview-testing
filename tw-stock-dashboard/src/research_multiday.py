@@ -49,7 +49,7 @@ def build():
         out={**s,"name":info["name"],"market":info["market"],"anchorDate":anchor,"anchorPolicy":"last completed exchange session before post date"}
         out["D"]=candle_record(*last_d,s,True)
         for n in (3,18):
-            bars=aggregate_bars(daily,market_dates,n)
+            bars=aggregate_bars(daily[daily.date.astype(str)<=anchor],market_dates,n)
             cp,cc=latest_pair(bars,anchor,True)
             fp,fc=latest_pair(bars,anchor,False)
             out[f"{n}DConfirmed"]=candle_record(cp,cc,s,True)
