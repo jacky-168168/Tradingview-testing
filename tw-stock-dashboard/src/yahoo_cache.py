@@ -19,10 +19,11 @@ def _fetch(symbol,start,end,retries=3):
             r=requests.get(YAHOO_CHART.format(symbol=symbol),params={"period1":p1,"period2":p2,"interval":"1d","events":"history","includeAdjustedClose":"true"},headers=UA,timeout=REQUEST_TIMEOUT);r.raise_for_status()
             z=((r.json().get("chart") or {}).get("result") or [None])[0]
             if not z:return pd.DataFrame()
-            ts=z.get("timestamp") or [];q=((z.get("indicators") or {}).get("quote") or [{}])[0];rows=[]
+            ts=z.get("timestamp") or [];ind=z.get("indicators") or {};q=(ind.get("quote") or [{}])[0];adj=(ind.get("adjclose") or [{}])[0].get("adjclose") or [];rows=[]
             for i,t in enumerate(ts):
                 vals={k:(q.get(k) or [None]*len(ts))[i] if i<len(q.get(k) or []) else None for k in ["open","high","low","close","volume"]}
                 if any(vals[k] is None for k in vals):continue
+                vals["adjclose"]=adj[i] if i<len(adj) and adj[i] is not None else vals["close"]
                 rows.append({"date":datetime.fromtimestamp(t,timezone.utc).date().isoformat(),**vals})
             return pd.DataFrame(rows)
         except Exception as e:err=e;time.sleep(1.5*(n+1))
