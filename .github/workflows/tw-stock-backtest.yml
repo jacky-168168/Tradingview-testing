@@ -21,10 +21,6 @@ on:
         description: '自訂結束日 YYYY-MM-DD（自訂日期可填；留空=今天）'
         required: false
         default: ''
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/tw-stock-backtest.yml'
 permissions:
   contents: write
   pages: write
@@ -56,8 +52,7 @@ jobs:
         id: range
         shell: bash
         run: |
-          PERIOD="${{ inputs.period || '' }}"
-          if [ -z "$PERIOD" ]; then PERIOD="今年以來"; fi
+          PERIOD="${{ inputs.period || '最近30天' }}"
           START="${{ inputs.start_date || '' }}"
           END="${{ inputs.end_date || '' }}"
           if [ -z "$END" ]; then END="$(TZ=Asia/Taipei date +%F)"; fi
