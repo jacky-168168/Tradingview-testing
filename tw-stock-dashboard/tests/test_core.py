@@ -10,7 +10,8 @@ from institution import parse_twse
 import pipeline
 from pipeline import _normalize_company,published_data_date
 from industry_chain import looks_mojibake,parse as parse_chain
-import risk,yahoo_cache\nfrom backtest import _portfolio_stats
+import risk,yahoo_cache
+from backtest import _portfolio_stats
 
 class CoreTests(unittest.TestCase):
     def frame(self,n=100):
