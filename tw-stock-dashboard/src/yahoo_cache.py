@@ -35,14 +35,24 @@ def load_cached(symbol):
     try:return pd.read_parquet(p).sort_values("date").drop_duplicates("date",keep="last")
     except:return pd.DataFrame()
 
+def _needs_adj_backfill(df,start,end):
+    if df is None or df.empty:return False
+    q=df[(df["date"].astype(str)>=start.date().isoformat())&(df["date"].astype(str)<=end.date().isoformat())]
+    if q.empty:return False
+    if "adjclose" not in q.columns:return True
+    return float(pd.to_numeric(q["adjclose"],errors="coerce").notna().mean())<0.98
+
 def update_symbol(symbol,start,end):
     HISTORY_DIR.mkdir(parents=True,exist_ok=True);old=load_cached(symbol);parts=[old] if not old.empty else []
     try:
         if old.empty:parts.append(_fetch(symbol,start,end))
         else:
             first=pd.to_datetime(old.date).min().date();last=pd.to_datetime(old.date).max().date()
-            if start.date()<first:parts.append(_fetch(symbol,start,datetime.combine(first-timedelta(days=1),datetime.min.time())))
-            if end.date()>last:parts.append(_fetch(symbol,datetime.combine(last+timedelta(days=1),datetime.min.time()),end))
+            # 舊版 Parquet 沒有 adjclose 時，只補抓本次所需區間一次；後續回測直接命中快取。
+            if _needs_adj_backfill(old,start,end):parts.append(_fetch(symbol,start,end))
+            else:
+                if start.date()<first:parts.append(_fetch(symbol,start,datetime.combine(first-timedelta(days=1),datetime.min.time())))
+                if end.date()>last:parts.append(_fetch(symbol,datetime.combine(last+timedelta(days=1),datetime.min.time()),end))
         good=[p for p in parts if p is not None and not p.empty];merged=pd.concat(good,ignore_index=True) if good else pd.DataFrame()
         if not merged.empty:
             merged=merged.drop_duplicates("date",keep="last").sort_values("date").reset_index(drop=True);merged.to_parquet(HISTORY_DIR/f"{symbol}.parquet",index=False)
