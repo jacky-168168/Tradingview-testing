@@ -18,7 +18,7 @@ ROOT=Path(__file__).resolve().parents[1]
 def stats(vals):
     xs=[float(v) for v in vals if v is not None and np.isfinite(v)]
     return {"n":len(xs),"avg":round(float(np.mean(xs)),2) if xs else None,"median":round(float(np.median(xs)),2) if xs else None,"win":round(sum(x>0 for x in xs)/len(xs)*100,1) if xs else None,"avgWin":round(float(np.mean([x for x in xs if x>0])),2) if any(x>0 for x in xs) else None,"avgLoss":round(float(np.mean([x for x in xs if x<0])),2) if any(x<0 for x in xs) else None}
-def load_signals(filename,model_name):
+def load_signals(filename,model_name,company_market):
     d=json.loads((DATA_DIR/filename).read_text(encoding="utf-8"))
     m=d.get("models",{})
     if isinstance(m,list):m={x["id"]:x for x in m}
@@ -27,7 +27,9 @@ def load_signals(filename,model_name):
     for row in m[model_name].get("signals",[]):
         day=str(row.get("signalDate") or "")
         if START<=day<=END and 1<=int(row.get("rank") or 999)<=TOP:
-            result[day].append({"code":str(row["code"]),"market":row["market"],"name":row["name"],"rank":int(row["rank"])})
+            market=row.get("market") or company_market.get(str(row["code"]))
+            if market not in ("上市","上櫃"):continue
+            result[day].append({"code":str(row["code"]),"market":market,"name":row["name"],"rank":int(row["rank"])})
     for day in result:result[day]=sorted(result[day],key=lambda x:x["rank"])
     return result
 def build_h(hist,stocks,market20,signal_dates):
@@ -120,8 +122,9 @@ def run():
     rel=(close/close.shift(20)-1)*100;market20=dict(zip(dates,rel))
     market20={d:float(v) for d,v in market20.items() if np.isfinite(v)}
     hs,hinfo=build_h(hist,stocks,market20,signal_dates)
-    d=load_signals("backtest/2026-01-01_2026-10-08.json","D")
-    g=load_signals("backtest_g/g_persistence_2026.json","G_DOUBLE_PERSIST")
+    by_code={str(x["code"]):x["market"] for x in all_u}
+    d=load_signals("backtest/2026-01-01_2026-10-08.json","D",by_code)
+    g=load_signals("backtest_g/g_persistence_2026.json","G_DOUBLE_PERSIST",by_code)
     pxmap={sym:df.sort_values("date").drop_duplicates("date",keep="last").set_index("date",drop=False) for sym,df in hist.items() if df is not None and not df.empty}
     signals={"H":hs,"D":d,"G":g};summary={};trades=[]
     for h in HORIZONS:
