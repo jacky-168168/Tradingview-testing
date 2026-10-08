@@ -1,0 +1,82 @@
+name: TW Stock F2 OOS Batch
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/.f2-oos-batch'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: tw-stock-dashboard
+  cancel-in-progress: false
+jobs:
+  oos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore market cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Run frozen F2 out-of-sample years
+        working-directory: tw-stock-dashboard
+        run: |
+          set -e
+          python src/backtest.py --start 2023-01-01 --end 2023-12-31
+          python src/backtest.py --start 2024-01-01 --end 2024-12-31
+          python src/backtest.py --start 2025-01-01 --end 2025-12-31
+      - name: Build frozen OOS summary and restore 2026 latest
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("docs/data/backtest")
+          years=[2023,2024,2025]
+          out={"modelVersion":"PY-BT4-F2-DYNAMIC-GATE","frozenRules":"F2 60 entry / 55 hold + Strong Bottom single-day exception + top-reversal/extreme-overbought veto","years":{}}
+          for y in years:
+              f=p/f"{y}-01-01_{y}-12-31.json"
+              d=json.loads(f.read_text(encoding="utf-8"))
+              mods={m["id"]:m for m in d["models"]}
+              def compact(mid):
+                  m=mods[mid]
+                  return {"portfolio":{h:m["portfolio"][h] for h in ["d5","d10"]},
+                          "top3Avail":{h:next(x for x in m["summary"] if x["group"]=="Top3可用等權")[h] for h in ["d5","d10"]}}
+              out["years"][str(y)]={"signalDays":d["signalDays"],"historyErrors":d["historyErrors"],"institutionErrors":d["institutionErrors"],"gate":d["marketGateStats"],"D":compact("D"),"F":compact("F"),"F2":compact("F2")}
+          (p/"oos-f2-2023-2025.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
+          base=p/"2026-01-01_2026-10-08.json"
+          if base.exists():(p/"latest.json").write_text(base.read_text(encoding="utf-8"),encoding="utf-8")
+          PY
+      - name: Commit OOS results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/backtest/*.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Add frozen F2 OOS backtests 2023-2025"
+            ok=0
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*10)); continue; }
+              if git push origin HEAD:main; then ok=1; break; fi
+              sleep $((i*10))
+            done
+            [ "$ok" -eq 1 ] || exit 1
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - uses: actions/deploy-pages@v4
