@@ -32,7 +32,7 @@ def build(universe,histories,index_df,market_date,playback_days=20):
     need=max(40,playback_days+20);dates=dates[-need:]
     if len(dates)<20:raise RuntimeError("bubble chart requires at least 20 trading days")
     listed=[x for x in universe if x.get("market")=="上市" and str(x.get("code","")).isdigit() and len(str(x.get("code","")))==4]
-    missing=[(x["code"],x["market"]) for x in listed if to_symbol(x["code"],x["market"]) not in histories]
+    missing=[(x["code"],x["market"]) for x in listed if to_symbol(x["code"],x["market"]) not in histories or histories.get(to_symbol(x["code"],x["market"])) is None or histories.get(to_symbol(x["code"],x["market"])).empty]
     extra={}
     if missing:
         s=datetime.fromisoformat(dates[0])-timedelta(days=7);e=datetime.fromisoformat(dates[-1])+timedelta(days=2)
@@ -43,6 +43,9 @@ def build(universe,histories,index_df,market_date,playback_days=20):
         if df is None or df.empty:df=extra.get(sym)
         hmap[s["code"]]=_history_index(df)
     inst,inst_errors=fetch_many(dates)
+    # 盤中或官方資料尚未完成時，不把缺資料的交易日當成 0；只使用法人資料完整日。
+    dates=[d for d in dates if d not in inst_errors and bool(inst.get(d))]
+    if len(dates)<20:raise RuntimeError("bubble chart requires at least 20 complete institution trading days")
     day_sector={d:{} for d in dates};day_stock={d:{} for d in dates};names={x["code"]:x.get("name",x["code"]) for x in listed};industries={x["code"]:x.get("industry") or "未分類" for x in listed}
     for d in dates:
         iday=inst.get(d,{})
