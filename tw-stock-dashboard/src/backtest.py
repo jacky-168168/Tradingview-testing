@@ -141,7 +141,7 @@ def rankings(universe,market_universe,hist,index_df,inst,inst_errors,start,end):
             if pd.isna(rr.get("ret20")) or pd.isna(rr.get("ma20")) or pd.isna(rr.get("ema50")):continue
             m=metrics(rr)
             if m["close"]<MIN_PRICE:continue
-            rs=m["ret20"]-market20;turn=m["close"]*m["volume"]/100_000_000;base={"code":s["code"],"name":s["name"],"market":s["market"],"close":m["close"],"ret5":m["ret5"],"ret20":m["ret20"],"rs20":rs,"rvol":m["rvol"],"rvol10":m["rvol10"],"mom10Pct":m["mom10Pct"],"volD":m["volD"],"breakoutPct":m["breakoutPct"],"closePosition":m["closePosition"],"turnoverB":turn,"institutionAvailable":inst_ok}
+            rs=m["ret20"]-market20;turn=m["close"]*m["volume"]/100_000_000;base={"code":s["code"],"name":s["name"],"market":s["market"],"close":m["close"],"ret5":m["ret5"],"ret20":m["ret20"],"rs20":rs,"rvol":m["rvol"],"rvol10":m["rvol10"],"mom10Pct":m["mom10Pct"],"volD":m["volD"],"breakoutPct":m["breakoutPct"],"ma20Slope":m["ma20Slope"],"closePosition":m["closePosition"],"turnoverB":turn,"institutionAvailable":inst_ok}
             ii=iday.get(f'{s["market"]}_{s["code"]}',{}) if inst_ok else {}
             if turn*100>=MIN_TURNOVER_M:
                 z=score_a(m,rs,ii);rows["A"].append({**base,**z,"baseScore":z["total"],"model":"A","sarBonus":0})
@@ -167,6 +167,23 @@ def rankings(universe,market_universe,hist,index_df,inst,inst_errors,start,end):
         if n%10==0 or n==len(signals):print(f"rank {n}/{len(signals)} {d} risk={rrisk.get('score')} F={gate['reason']} F2={gate2['reason']} D={len(rows['D'])}",flush=True)
     return signals,idx,pos,ranks,cand,prices,regimes
 
+def factor_analysis(sig):
+    factors=[("rs20","RS20"),("rvol","RVOL"),("ret5Signal","5D"),("ret20Signal","20D"),("dist20High","距20日高"),("ma20Slope","MA20斜率")]
+    out={}
+    for h in H:
+        hh={}
+        for key,label in factors:
+            rows=[x for x in sig if x.get(key) is not None and x.get(f"ret{h}") is not None and np.isfinite(num(x.get(key),np.nan)) and np.isfinite(num(x.get(f"ret{h}"),np.nan))]
+            if len(rows)<8:continue
+            xv=np.array([num(x[key]) for x in rows],dtype=float);yv=np.array([num(x[f"ret{h}"]) for x in rows],dtype=float)
+            xr=pd.Series(xv).rank(method="average").to_numpy();yr=pd.Series(yv).rank(method="average").to_numpy()
+            pear=float(np.corrcoef(xv,yv)[0,1]) if np.std(xv)>0 and np.std(yv)>0 else 0.0
+            spear=float(np.corrcoef(xr,yr)[0,1]) if np.std(xr)>0 and np.std(yr)>0 else 0.0
+            win=xv[yv>0];loss=xv[yv<=0];order=np.argsort(xv);q=max(1,len(order)//4);lo=order[:q];hi=order[-q:]
+            hh[label]={"n":len(rows),"pearson":round(pear,3),"spearman":round(spear,3),"winnerAvg":round(float(np.mean(win)),2) if len(win) else None,"loserAvg":round(float(np.mean(loss)),2) if len(loss) else None,"lowQuartileRet":round(float(np.mean(yv[lo])),2),"lowQuartileWin":round(float(np.mean(yv[lo]>0)*100),1),"highQuartileRet":round(float(np.mean(yv[hi])),2),"highQuartileWin":round(float(np.mean(yv[hi]>0)*100),1)}
+        out[f"d{h}"]=hh
+    return out
+
 def evaluate(signals,idx,pos,ranks,cand,prices,regimes):
     models={};edgein={}
     for model in ["A","D","F","F2"]:
@@ -179,7 +196,7 @@ def evaluate(signals,idx,pos,ranks,cand,prices,regimes):
                 sym=to_symbol(p["code"],p["market"]);px=prices.get(sym);bo=None;buyrow=None
                 if px is not None and buydate in px.index:
                     q=px.loc[buydate];q=q.iloc[-1] if isinstance(q,pd.DataFrame) else q;buyrow=q;bo=_adj_price(q,"open")
-                rec={"model":model,"signalDate":d,"rank":p["rank"],"code":p["code"],"name":p["name"],"market":p["market"],"score":round(p["total"],2),"buyDate":buydate,"buyOpen":round(bo,4) if bo else None,"ret5Signal":round(p["ret5"],2),"ret20Signal":round(p["ret20"],2),"breakoutPct":round(p["breakoutPct"],2),"rvol":round(p["rvol"],2),"rvol10":round(p["rvol10"],2),"mom10Pct":round(p["mom10Pct"],2),"volD":round(p["volD"],2),"marketRiskScore":rg.get("score"),"marketState":rg.get("state"),"reversalState":rg.get("activeState"),"fReason":p.get("f2Reason") or p.get("fReason")}
+                rec={"model":model,"signalDate":d,"rank":p["rank"],"code":p["code"],"name":p["name"],"market":p["market"],"score":round(p["total"],2),"buyDate":buydate,"buyOpen":round(bo,4) if bo else None,"ret5Signal":round(p["ret5"],2),"ret20Signal":round(p["ret20"],2),"rs20":round(p["rs20"],2),"breakoutPct":round(p["breakoutPct"],2),"dist20High":round(p["breakoutPct"],2),"ma20Slope":round(p["ma20Slope"],2),"rvol":round(p["rvol"],2),"rvol10":round(p["rvol10"],2),"mom10Pct":round(p["mom10Pct"],2),"volD":round(p["volD"],2),"marketRiskScore":rg.get("score"),"marketState":rg.get("state"),"reversalState":rg.get("activeState"),"fReason":p.get("f2Reason") or p.get("fReason")}
                 for h in H:
                     target=sip+h;r=None
                     if bo and target<len(idx):
@@ -197,7 +214,7 @@ def evaluate(signals,idx,pos,ranks,cand,prices,regimes):
         summary+=[{"group":"Top3可用等權",**{f"d{h}":stat(avail[h]) for h in H}},{"group":"Top3固定三槽",**{f"d{h}":stat(fixed[h]) for h in H}}]
         cc=list(cand[model].values());cs={"avg":round(float(np.mean(cc)),1) if cc else 0,"min":min(cc) if cc else 0,"max":max(cc) if cc else 0,"days3":sum(x>=3 for x in cc),"totalDays":len(cc)}
         name={"A":"原始版","D":"技術強勢","F":"D＋固定大盤濾網","F2":"D＋動態大盤濾網"}[model]
-        portfolio={f"d{h}":_portfolio_stats(signals,idx,pos,ranks,prices,model,h) for h in H};models[model]={"id":model,"name":name,"summary":summary,"candidateStats":cs,"signals":sig,"portfolio":portfolio};edgein[model]=dated
+        portfolio={f"d{h}":_portfolio_stats(signals,idx,pos,ranks,prices,model,h) for h in H};models[model]={"id":model,"name":name,"summary":summary,"candidateStats":cs,"signals":sig,"portfolio":portfolio,"factorAnalysis":factor_analysis(sig)};edgein[model]=dated
     return [models["A"],models["D"],models["F"],models["F2"]],build_edge(edgein)
 
 def run(start,end):
