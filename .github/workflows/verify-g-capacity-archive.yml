@@ -1,0 +1,59 @@
+name: Verify 2026 G Capacity Archive
+on:
+  push:
+    branches: [feature/g-2026-capacity-archive-ui]
+  pull_request:
+    paths:
+      - '.github/workflows/verify-g-capacity-archive.yml'
+      - 'tw-stock-dashboard/docs/backtest.html'
+      - 'tw-stock-dashboard/docs/backtest-research.js'
+      - 'tw-stock-dashboard/docs/data/research/model_execution_2026/g_capital_2026*.json'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate browser script syntax
+        run: node --check tw-stock-dashboard/docs/backtest-research.js
+      - name: Check frozen 2026 results and archive integrity
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,math
+          root=Path("tw-stock-dashboard/docs")
+          data=root/"data/research/model_execution_2026"
+          s=json.loads((data/"g_capital_2026_summary.json").read_text())
+          curves=json.loads((data/"g_capital_2026_equity_curves.json").read_text())
+          assert s["period"]=={"start":"2026-01-01","end":"2026-10-07"}
+          assert s["common"]["startingCapitalNTD"]==1_000_000
+          expected={"G_STRICT":{"ladder":(201,28),"ma":(191,28)},
+                    "G_DOUBLE_PERSIST":{"ladder":(171,32),"ma":(158,28)}}
+          checked=0
+          for model,modes in s["statistics"].items():
+            for mode,gates in modes.items():
+              expected_f,expected_s=expected[model][mode]
+              assert (s["controlParity"][model][mode]["filled"],s["controlParity"][model][mode]["stopN"])==(expected_f,expected_s)
+              assert set(gates)=={"baseline","signal_ma20","wait_ma20"}
+              for gate,by_slots in gates.items():
+                for k,z in by_slots.items():
+                  checked+=1
+                  assert k in ("3","5","10")
+                  assert z["maxConcurrentReservations"]<=int(k)
+                  assert z["filled"]<=z["admitted"]
+                  assert -100<z["totalReturnPct"]<10000
+                  d=curves["daily"][model][mode][gate][k]
+                  assert len(d)>175
+                  assert math.isclose((d[-1]["equity"]/1_000_000-1)*100,z["totalReturnPct"],abs_tol=0.001)
+          assert checked==36,checked
+          html=(root/"backtest.html").read_text()
+          js=(root/"backtest-research.js").read_text()
+          for k in ("g","h","risk","legacy","timing","capacity"):
+            assert 'data-archive="'+k+'"' in html,k
+          for k in ('id="researchCapacityCurve"','id="researchCapacityMonths"','id="researchTimingTradeRows"'):
+            assert k in html,k
+          for k in ("g_capital_2026_summary.json","g_capital_2026_equity_curves.json","selectCapacity","archive(activeArchive)"):
+            assert k in js,k
+          print("PASS: archived 36 portfolio simulations, G model baseline parity, preserved UI tabs, and equity accounting")
+          PY
