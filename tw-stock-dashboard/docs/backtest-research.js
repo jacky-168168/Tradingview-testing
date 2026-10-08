@@ -10,6 +10,7 @@ const archiveLinks={
  h:'<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37801819940">H5 五段加碼原始執行紀錄 ↗</a>',
  risk:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_strict_stop_diagnostic_2026.json">大盤位階 × 停損原始研究 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37839334095">GitHub 實際研究執行紀錄 ↗</a>',
  timing:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_strict_ma20_entry_2026.json">下載 G_STRICT MA20 進場比較 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_strict_ma20_entry_trades_2026.json">下載全部逐筆交易 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37848392034">成功回測 GitHub Actions ↗</a>',
+ capacity:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_capital_2026_summary.json">全部 36 組 2026 資金限制回測 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_capital_2026_equity_curves.json">下載每日資金曲線 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37850943950">原始 GitHub 研究執行紀錄 ↗</a>',
  legacy:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/h1_2026.json">H1 歷史 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/h2_2026.json">H2 歷史 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/blob/research/h-v5-limit-pullback-2026/tw-stock-dashboard/H_2026_research_consolidated_H2_H5.md">H2～H5 原始研究報告 ↗</a>'};
 const e=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const n=(v,d=2)=>v==null||!Number.isFinite(Number(v))?"—":Number(v).toFixed(d);
@@ -18,8 +19,8 @@ const clr=v=>v==null?"":Number(v)>=0?"research-positive":"research-negative";
 const perf=v=>'<span class="'+clr(v)+'">'+pct(v,3)+'</span>';
 const type=x=>x==="ma"?"B 均線觸價":"A 固定下跌";
 const full=x=>names[x]||x;
-let main=null,h5=null,g=null,risk=null,timing=null,timingTrades=null,timingMode="",timingGate="",timingPage=0,loading=null,current=null,activeArchive="g",modelTrades=null,tradeIdentity="",run=0,tradePage=0;
-async function get(path){const u=path+"?v=20261009b",r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("資料 HTTP "+r.status+"："+path);return r.json();}
+let main=null,h5=null,g=null,risk=null,timing=null,timingTrades=null,timingMode="",timingGate="",timingPage=0,capacity=null,capacityCurves=null,capacitySelected=null,capacityToken=0,loading=null,current=null,activeArchive="g",modelTrades=null,tradeIdentity="",run=0,tradePage=0;
+async function get(path){const u=path+"?v=20261009c",r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("資料 HTTP "+r.status+"："+path);return r.json();}
 function visible(){by("legacyView").style.display="none";by("gView").style.display="none";root.style.display="block";document.querySelectorAll("#modelTabs button").forEach(b=>b.classList.toggle("on",b.id==="RESEARCH"));if(main)render();else load();}
 function close(){root.style.display="none";}
 for(const id of ["G","D","F","F2","A"])by(id)?.addEventListener("click",close);
@@ -34,8 +35,8 @@ async function load(){
    const sel=by("researchModel");
    sel.innerHTML='<option value="all">全部 '+Object.keys(main.allModelStatistics).length+' 種模型</option>'+Object.keys(main.allModelStatistics).map(z=>'<option value="'+e(z)+'">'+e(full(z))+'</option>').join("");
    by("researchMeta").textContent=main.period.start+" ～ "+main.period.end+"｜"+Object.keys(main.allModelStatistics).length+" 個模型 × 2 種進場 × 3 週期｜資料產出 "+(main.generatedAt||"—");
-   const [gResult,hResult,riskResult,timingResult]=await Promise.allSettled([get(rootpath+"g_ladder_vs_ma_2026.json"),get(rootpath+"h5_ladder_2026.json"),get(rootpath+"g_strict_stop_diagnostic_2026.json"),get(rootpath+"g_strict_ma20_entry_2026.json")]);
-   g=gResult.status==="fulfilled"?gResult.value:null;h5=hResult.status==="fulfilled"?hResult.value:null;risk=riskResult.status==="fulfilled"?riskResult.value:null;timing=timingResult.status==="fulfilled"?timingResult.value:null;
+   const [gResult,hResult,riskResult,timingResult,capacityResult]=await Promise.allSettled([get(rootpath+"g_ladder_vs_ma_2026.json"),get(rootpath+"h5_ladder_2026.json"),get(rootpath+"g_strict_stop_diagnostic_2026.json"),get(rootpath+"g_strict_ma20_entry_2026.json"),get(rootpath+"g_capital_2026_summary.json")]);
+   g=gResult.status==="fulfilled"?gResult.value:null;h5=hResult.status==="fulfilled"?hResult.value:null;risk=riskResult.status==="fulfilled"?riskResult.value:null;timing=timingResult.status==="fulfilled"?timingResult.value:null;capacity=capacityResult.status==="fulfilled"?capacityResult.value:null;
    by("researchWarnings").textContent=(main.warnings||[]).slice(0,4).join(" ｜ ");
    render();
   }catch(err){by("researchMeta").textContent="載入失敗："+err.message;by("researchRankRows").innerHTML='<tr><td colspan="12">研究資料未發佈或網路有問題。請稍後重新整理。</td></tr>'}
@@ -94,7 +95,7 @@ by("researchRankRows").addEventListener("click",ev=>{
 });
 for(const id of ["researchHold","researchMethod","researchModel","researchSort","researchMinFills"])
  by(id).addEventListener("change",render);
-by("researchRefresh").addEventListener("click",()=>{main=null;h5=null;g=null;risk=null;timing=null;timingTrades=null;timingMode="";timingGate="";current=null;loading=null;load();});
+by("researchRefresh").addEventListener("click",()=>{main=null;h5=null;g=null;risk=null;timing=null;timingTrades=null;timingMode="";timingGate="";capacity=null;capacityCurves=null;capacitySelected=null;current=null;loading=null;load();});
 function tradeRows(){
  if(!modelTrades||!current)return;
  const q=by("researchTradeQuery").value.trim().toLowerCase();
@@ -130,6 +131,7 @@ function archive(which){
  const head=by("researchArchiveHead"),tbody=by("researchArchiveRows"),note=by("researchArchiveNote");
  by("researchArchiveLinks").innerHTML=archiveLinks[which]||"";
  by("researchTimingTradeSection").style.display=which==="timing"?"block":"none";
+ by("researchCapacityDetail").style.display=which==="capacity"?"block":"none";
  if(which==="g"){
   head.innerHTML="<tr><th>期限</th><th>進場方式</th><th>開倉</th><th>+7%達標</th><th>停損率</th><th>預留資金淨報酬</th></tr>";
   note.textContent="先前 G_DOUBLE_PERSIST Top3 兩種加碼法對照；與17模型比較的一致範圍，但獨立執行的歷史歸檔。";
@@ -138,7 +140,15 @@ function archive(which){
   head.innerHTML="<tr><th>期限</th><th>首筆折價</th><th>開倉</th><th>+7%達標</th><th>停損率</th><th>已投入資金淨報酬</th><th>預留資金淨報酬</th></tr>";
   note.textContent="H5 的固定突破選股不變，測試首筆限價-2%、-2.5%、-3%，之後4筆每下跌首筆成交價2%加碼。此研究的首筆委託僅下一交易日有效，與上方17模型5日等待版不同，不可直接同比。";
   tbody.innerHTML=h5?.results?Object.entries(h5.results).flatMap(([h,discount])=>Object.entries(discount).map(([off,s])=>'<tr><td>'+e(h)+'D</td><td>-'+e(off)+'%</td><td>'+n(s.filled,0)+'</td><td>'+pct(s.targetHitPct)+'</td><td>'+pct(s.stopHitPct)+'</td><td>'+perf(s.avgNetOnDeployedPct)+'</td><td>'+perf(s.avgNetOnFiveTrancheBudgetPct)+'</td></tr>')).join(""):'<tr><td colspan="7">研究檔案未載入</td></tr>';
- }else if(which==="timing"){
+ }else if(which==="capacity"){
+  head.innerHTML="<tr><th>模型</th><th>加碼方式</th><th>大盤進場條件</th><th>同時預留</th><th>已成交</th><th>資金不足跳過</th><th>停損率</th><th>帳戶累積淨%</th><th>最大回撤</th><th>7月淨%</th><th>最多連續虧損</th></tr>";
+  note.textContent="2026/1～10/7｜100萬模擬現金帳戶、無槓桿。等待中的買單也會預留一組名額，滿額時不允許新股票入場。同股不可重複持有。資金曲線每日依市價重估已成交股票，扣模擬手續費、稅及滑價。非券商級成交、非樣本外結果。點選資料列查看逐月績效及每日權益曲線。";
+  const gatelabel={baseline:"不看大盤",signal_ma20:"訊號日站上MA20",wait_ma20:"最多5日等站回MA20"};
+  tbody.innerHTML=capacity?.statistics?["G_STRICT","G_DOUBLE_PERSIST"].flatMap(sel=>["ladder","ma"].flatMap(mode=>["baseline","signal_ma20","wait_ma20"].flatMap(gate=>["3","5","10"].map(slots=>{
+   const z=capacity.statistics[sel]?.[mode]?.[gate]?.[slots];if(!z)return "";
+   return '<tr data-cap-selector="'+e(sel)+'" data-cap-mode="'+e(mode)+'" data-cap-gate="'+e(gate)+'" data-cap-slots="'+e(slots)+'" style="cursor:pointer"><td>'+e(sel)+'</td><td>'+type(mode)+'</td><td>'+e(gatelabel[gate])+'</td><td>'+e(slots)+'</td><td>'+n(z.filled,0)+'</td><td>'+n(z.skipped?.capacity,0)+'</td><td>'+pct(z.stopPct)+'</td><td>'+perf(z.totalReturnPct)+'</td><td>'+perf(z.maxDrawdownPct)+'</td><td>'+perf(z.julyReturnPct)+'</td><td>'+n(z.maxConsecutiveLosses,0)+'</td></tr>';
+  })))).join(""):'<tr><td colspan="11">完整資金限制研究尚未載入，請查詢原始 JSON。</td></tr>';
+  }else if(which==="timing"){
   head.innerHTML="<tr><th>進場方式</th><th>大盤 MA20 首筆限制</th><th>已成交</th><th>+7% 停利率</th><th>-15% 停損率</th><th>淨勝率</th><th>預留資金淨報酬</th><th>PF</th><th>平均等待日</th></tr>";
   note.textContent="G_STRICT 2026 Top3｜10D｜+7%停利、-15%停損。各方案重新模擬同股票重複入選、等待下單、交易成本與出場。僅用交易前已收盤大盤日K，仍非獨立樣本外驗證；非完整資金曲線。點選任一列可翻閱全部逐筆事件。";
   const gates=[["baseline","不設大盤條件"],["signal_ma20","訊號日大盤收在MA20上"],["wait_ma20","5日內等待大盤站回MA20"],["wait_ma20_twoday","等待連續2日站上MA20"],["wait_ma20_rising","等待站回MA20且MA20向上"]];
@@ -186,5 +196,35 @@ by("researchArchiveRows").addEventListener("click",ev=>{
 by("researchTimingTradeSearch").addEventListener("input",()=>{timingPage=0;timingRenderTrades();});
 by("researchTimingTradePrev").addEventListener("click",()=>{timingPage=Math.max(0,timingPage-1);timingRenderTrades();});
 by("researchTimingTradeNext").addEventListener("click",()=>{timingPage++;timingRenderTrades();});
+const capGateLabel={baseline:"不看大盤",signal_ma20:"訊號日大盤高於MA20",wait_ma20:"等待大盤重回MA20"};
+async function selectCapacity(selector,mode,gate,slots){
+  const token=++capacityToken;
+  capacitySelected={selector,mode,gate,slots};
+  const stats=capacity?.statistics?.[selector]?.[mode]?.[gate]?.[slots];
+  if(!stats)return;
+  by("researchCapacityTitle").textContent=selector+"｜"+type(mode)+"｜"+capGateLabel[gate]+"｜最多 "+slots+" 組";
+  by("researchCapacityStats").innerHTML=[
+   ["最終累積淨報酬",pct(stats.totalReturnPct)],
+   ["最大回撤",pct(stats.maxDrawdownPct)],
+   ["已成交",n(stats.filled,0)+" 筆"],
+   ["最高同時資金預留",n(stats.maxConcurrentReservations,0)+" 組"]]
+   .map(([k,v])=>'<div><span class="muted">'+e(k)+'</span><strong>'+e(v)+'</strong></div>').join("");
+  by("researchCapacityMonths").innerHTML=Object.entries(stats.monthlyReturnsPct||{}).map(([m,p])=>'<tr><td>'+e(m)+'</td><td>'+perf(p)+'</td></tr>').join("");
+  by("researchCapacityStatus").textContent="正在讀取逐日現金權益資料…";
+  try{
+    if(!capacityCurves)capacityCurves=await get(rootpath+"g_capital_2026_equity_curves.json");
+    if(token!==capacityToken)return;
+    const curve=capacityCurves.daily?.[selector]?.[mode]?.[gate]?.[slots]||[];
+    if(curve.length<2)throw Error("此策略無每日曲線");
+    const w=760,h=170,pad=15,ys=curve.map(p=>Number(p.equity)),lo=Math.min(...ys),hi=Math.max(...ys),range=Math.max(1,hi-lo);
+    const pts=curve.map((p,i)=>(pad+(w-2*pad)*i/(curve.length-1)).toFixed(2)+","+(pad+(h-2*pad)*(hi-Number(p.equity))/range).toFixed(2)).join(" ");
+    by("researchCapacityCurve").innerHTML='<div class="muted">每日權益曲線｜最低 '+e(n(lo,0))+' 元 / 最高 '+e(n(hi,0))+' 元（2026/1～10）</div><svg role="img" aria-label="每日現金權益曲線" viewBox="0 0 '+w+' '+h+'" style="width:100%;height:auto;min-width:350px;margin-top:6px"><line x1="0" y1="'+(h-10)+'" x2="'+w+'" y2="'+(h-10)+'" stroke="#94a3b8" stroke-width="1"/><polyline points="'+pts+'" fill="none" stroke="#2563eb" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>';
+    by("researchCapacityStatus").textContent=curve.length+" 個交易日";
+  }catch(err){if(token!==capacityToken)return;by("researchCapacityStatus").textContent="無法顯示每日曲線："+err.message;by("researchCapacityCurve").innerHTML="";}
+}
+by("researchArchiveRows").addEventListener("click",ev=>{
+ const row=ev.target.closest("tr[data-cap-selector]");if(!row)return;
+ selectCapacity(row.dataset.capSelector,row.dataset.capMode,row.dataset.capGate,row.dataset.capSlots);
+});
 document.querySelectorAll("[data-archive]").forEach(b=>b.addEventListener("click",()=>archive(b.dataset.archive)));
 })();
