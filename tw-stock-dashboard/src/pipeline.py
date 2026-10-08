@@ -122,36 +122,42 @@ def main():
     histories,errors=update_many([(x["code"],x["market"]) for x in eligible],start,now)
     risk=build_risk(idx,RISK_ON,RISK_STRONG,RISK_OFF);mkt20=float(risk.get("ret20",0) or 0)
     _,inst,insterr=fetch_day(market_date);names={f'{x["market"]}_{x["code"]}':x["name"] for x in universe}
-    a=[];d=[]
+    a=[];d_strict=[];d_backup=[]
     for s in eligible:
         h=histories.get(to_symbol(s["code"],s["market"]));m=calc_metrics(h.tail(75)) if h is not None and len(h)>=60 else None
         if not m or m["close"]<MIN_PRICE:continue
         rs20=m["ret20"]-mkt20;turnover_b=m["close"]*m["volume"]/100_000_000;ii=inst.get(f'{s["market"]}_{s["code"]}',{})
         base={**s,"close":m["close"],"dayRet":m["dayRet"],"ret5":m["ret5"],"ret20":m["ret20"],"marketRet20":mkt20,"rs20":rs20,"rvol":m["rvol"],"rvol10":m["rvol10"],"mom10Pct":m["mom10Pct"],"volD":m["volD"],"atrPct":m["atrPct"],"breakoutPct":m["breakoutPct"],"ma20Slope":m["ma20Slope"],"turnoverB":turnover_b,
               "foreignToday":round(float(ii.get("foreign",0) or 0)/1000,1),"trustToday":round(float(ii.get("trust",0) or 0)/1000,1)}
-        if turnover_b*100>=MIN_TURNOVER_M:
+        liquid=turnover_b*100>=MIN_TURNOVER_M
+        if liquid:
             z=score_a(m,rs20,ii);a.append({**base,**z,"baseScore":z["total"],"model":"A","sarBonus":0,"sarText":"讀取中"})
-        if d_pass(m):
-            z=score_d(m,rs20,ii);d.append({**base,**z,"baseScore":z["total"],"model":"D","sarBonus":0,"sarText":"讀取中"})
-    a.sort(key=_base_sort_a);d.sort(key=sort_key)
-    candidate_counts={"A":len(a),"D":len(d)}
-    apply_sar(a,market_date,min(len(a),max(TOP_N*2,SAR_CANDIDATES)));apply_sar(d,market_date,min(len(d),max(TOP_N*2,SAR_CANDIDATES)))
-    for x in a+d:x["signal"]=_risk_signal(x,risk)
-    a=sorted(a,key=_final_sort_a)[:TOP_N];d=sorted(d,key=_final_sort_d)[:TOP_N]
+        strict=d_pass(m);z=score_d(m,rs20,ii);row={**base,**z,"baseScore":z["total"],"model":"D","sarBonus":0,"sarText":"讀取中","strictPass":strict,"candidateTier":"正式" if strict else "候補"}
+        if strict:d_strict.append(row)
+        elif liquid:d_backup.append(row)
+    a.sort(key=_base_sort_a);d_strict.sort(key=sort_key);d_backup.sort(key=sort_key)
+    strict_d_count=len(d_strict);d_all=d_strict+d_backup
+    candidate_counts={"A":len(a),"D":len(d_all)};strict_candidate_counts={"D":strict_d_count}
+    apply_sar(a,market_date,min(len(a),max(TOP_N*2,SAR_CANDIDATES)));apply_sar(d_all,market_date,min(len(d_all),max(TOP_N*2,SAR_CANDIDATES)))
+    for x in a:x["signal"]=_risk_signal(x,risk)
+    for x in d_all:x["signal"]=_risk_signal(x,risk) if x.get("strictPass") else "🟡 D候補"
+    a=sorted(a,key=_final_sort_a)[:TOP_N]
+    # 正式頁固定保留 20 檔：嚴格 D 通過者永遠排前面，不足 20 才由高分高流動性的次級候選補足。
+    d=(sorted(d_strict,key=_final_sort_d)+sorted(d_backup,key=_final_sort_d))[:TOP_N]
     enrich_chain(a);enrich_chain(d)
     gate=f_gate(risk,RISK_ON);prev_f2_on=previous_f2_state(market_date);gate2=f2_gate(risk,prev_f2_on,RISK_ON,55)
     # 正式選股頁是候選清單，不是實際下單：D/F/F2 一律保留最多 TOP_N(20)；只有回測才限制進場 Top3。
     fsrc=d if gate["allowed"] else []
-    f=[{**x,"model":"F","marketGate":gate["reason"],"signal":"🟣 F強反轉例外" if gate["exception"] else "🟢 F Risk ON"} for x in fsrc]
+    f=[{**x,"model":"F","marketGate":gate["reason"],"signal":("🟣 F強反轉例外" if gate["exception"] else "🟢 F Risk ON") if x.get("strictPass") else "🟡 F候補"} for x in fsrc]
     f2src=d if gate2["allowed"] else []
     f2sig="🟣 F2 強反轉例外" if gate2["exception"] else "⛔ F2 Top Veto" if gate2["topVeto"] else "🟢 F2 維持ON" if gate2["reason"]=="HYSTERESIS_HOLD" else "🟢 F2 Risk ON"
-    f2=[{**x,"model":"F2","marketGate":gate2["reason"],"signal":f2sig} for x in f2src]
-    candidate_counts["F"]=len(f);candidate_counts["F2"]=len(f2)
+    f2=[{**x,"model":"F2","marketGate":gate2["reason"],"signal":f2sig if x.get("strictPass") else "🟡 F2候補"} for x in f2src]
+    candidate_counts["F"]=len(f);candidate_counts["F2"]=len(f2);strict_candidate_counts["F"]=sum(bool(x.get("strictPass")) for x in f);strict_candidate_counts["F2"]=sum(bool(x.get("strictPass")) for x in f2)
     flow=institution_flow(inst,names);heat=topic_heat(market_date)
     payload={"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"benchmarkRet20":round(mkt20,4),"universeCount":len(eligible),
              "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d,"F":f,"F2":f2},"risk":{**risk,"fGate":gate,"f2Gate":gate2},
              "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86／上櫃暫為0","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
-             "candidateCounts":candidate_counts,"phase":"github-python-v7-f2","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。","正式選股 D/F/F2 顯示最多 Top20；Top20 是候選清單，不代表全部進場。回測才固定模擬 Rank1~3。"]}
+             "candidateCounts":candidate_counts,"strictCandidateCounts":strict_candidate_counts,"phase":"github-python-v7-f2","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。","正式選股 D/F/F2 固定保留 Top20 候選：嚴格通過 D 的股票優先，不足 20 才用高分且流動性合格的候補補齊；候補會明確標示。回測實際進場仍只使用嚴格通過 D 的 Rank1~3。"]}
     DATA_DIR.mkdir(parents=True,exist_ok=True);body=json.dumps(payload,ensure_ascii=False,indent=2);LATEST_JSON.write_text(body,encoding="utf-8")
     daily=DATA_DIR/"daily";daily.mkdir(parents=True,exist_ok=True);(daily/f"{market_date}.json").write_text(body,encoding="utf-8")
     ip=daily/"index.json"
