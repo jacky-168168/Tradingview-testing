@@ -1,0 +1,50 @@
+name: H4 Independent ML Turnover 2025 to 2026
+on:
+  push:
+    branches: [research/h-v4-ml-turnover-2026]
+    paths:
+      - '.github/workflows/tw-stock-h-v4.yml'
+      - 'tw-stock-dashboard/src/backtest_h_v4.py'
+      - 'tw-stock-dashboard/tests/test_h_v4.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  h4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore stock cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install
+        run: |
+          pip install -r tw-stock-dashboard/requirements.txt
+          pip install scikit-learn==1.7.2
+      - name: Unit tests
+        working-directory: tw-stock-dashboard
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m compileall -q src/backtest_h_v3.py src/backtest_h_v4.py
+          python -m unittest discover -s tests -p test_h_v4.py -v
+      - name: Train H4 2025, validate 2026
+        working-directory: tw-stock-dashboard
+        run: python src/backtest_h_v4.py
+      - name: Archive H4 results
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: H4_ML_2025_training_2026_validation
+          path: tw-stock-dashboard/docs/data/backtest_h_v4/*.json
+          retention-days: 30
