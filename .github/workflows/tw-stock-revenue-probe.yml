@@ -1,0 +1,22 @@
+name: MOPS Historical Revenue Connectivity Probe
+on:
+  push:
+    branches:
+      - research/e-revenue-mom-yoy-one-year
+    paths:
+      - '.github/workflows/tw-stock-revenue-probe.yml'
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Check old MOPS historical CSV/HTML
+        run: |
+          for url in \
+            https://mopsov.twse.com.tw/nas/t21/sii/t21sc03_114_9_0.html \
+            https://mopsov.twse.com.tw/nas/t21/otc/t21sc03_114_9_0.html \
+            https://mops.twse.com.tw/nas/t21/sii/t21sc03_114_9_0.html; do
+            echo "$url"
+            curl -L --silent --show-error --connect-timeout 6 --max-time 12 -o /tmp/response.html -w 'status=%{http_code} bytes=%{size_download} elapsed=%{time_total}\n' "$url" || true
+            head -c 100 /tmp/response.html | strings | head -n 2 || true
+          done
