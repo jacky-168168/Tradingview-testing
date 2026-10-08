@@ -8,7 +8,7 @@ const names={A:"A 原始多因子",D:"D 技術強勢",F:"F 固定大盤",F2:"F2 
 const archiveLinks={
  g:'<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37833390271">G 原始完整逐筆資料及執行紀錄 ↗</a>',
  h:'<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37801819940">H5 五段加碼原始執行紀錄 ↗</a>',
- legacy:'<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/blob/research/h-v5-limit-pullback-2026/tw-stock-dashboard/H_2026_research_consolidated_H2_H5.md">H2～H5 原始研究報告 ↗</a>'};
+ legacy:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/h1_2026.json">H1 歷史 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/h2_2026.json">H2 歷史 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/blob/research/h-v5-limit-pullback-2026/tw-stock-dashboard/H_2026_research_consolidated_H2_H5.md">H2～H5 原始研究報告 ↗</a>'};
 const e=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const n=(v,d=2)=>v==null||!Number.isFinite(Number(v))?"—":Number(v).toFixed(d);
 const pct=(v,d=2)=>v==null?"—":n(v,d)+"%";
@@ -16,7 +16,7 @@ const clr=v=>v==null?"":Number(v)>=0?"research-positive":"research-negative";
 const perf=v=>'<span class="'+clr(v)+'">'+pct(v,3)+'</span>';
 const type=x=>x==="ma"?"B 均線觸價":"A 固定下跌";
 const full=x=>names[x]||x;
-let main=null,h5=null,g=null,loading=null,current=null,activeArchive="g",modelTrades=null,tradeIdentity="",run=0;
+let main=null,h5=null,g=null,loading=null,current=null,activeArchive="g",modelTrades=null,tradeIdentity="",run=0,tradePage=0;
 async function get(path){const u=path+"?v=20261009a",r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("資料 HTTP "+r.status+"："+path);return r.json();}
 function visible(){by("legacyView").style.display="none";by("gView").style.display="none";root.style.display="block";document.querySelectorAll("#modelTabs button").forEach(b=>b.classList.toggle("on",b.id==="RESEARCH"));if(main)render();else load();}
 function close(){root.style.display="none";}
@@ -69,13 +69,14 @@ function render(){
   const s=x.st,k=[x.name,x.h,x.m].join("|"),active=current&&[current.name,current.h,current.m].join("|")===k;
   return '<tr data-model="'+e(x.name)+'" data-h="'+e(x.h)+'" data-mode="'+e(x.m)+'"'+(active?' class="chosen"':'')+'><td><b>'+e(full(x.name))+'</b></td><td>'+type(x.m)+'</td><td>'+e(x.h)+'D</td><td>'+n(s.signalEvents,0)+'</td><td>'+n(s.filled,0)+'</td><td><b>'+pct(s.takeProfitPct)+'</b></td><td>'+pct(s.stopPct)+'</td><td>'+perf(s.avgNetOnDeployedPct)+'</td><td>'+perf(s.avgNetOnReservedPct)+'</td><td>'+n(s.profitFactor,2)+'</td><td>'+n(s.avgTranches,2)+'</td><td>'+n(s.timeSlices?.late?.filled,0)+'</td></tr>';
  }).join("")||'<tr><td colspan="12">此篩選沒有足夠樣本；可將最低成交筆數調低。</td></tr>';
- if(!current||!a.some(x=>x.name===current.name&&x.h===current.h&&x.m===current.m)){current=a[0]||null;modelTrades=null;tradeIdentity="";by("researchTradeRows").innerHTML='<tr><td colspan="9">選定一列，再按「載入逐筆交易」</td></tr>'}
+ if(!current||!a.some(x=>x.name===current.name&&x.h===current.h&&x.m===current.m)){current=a[0]||null;modelTrades=null;tradeIdentity="";tradePage=0;by("researchTradeRows").innerHTML='<tr><td colspan="9">選定一列，再按「載入逐筆交易」</td></tr>'}
  if(current)detail();else{by("researchSelectedTitle").textContent="沒有符合條件的模型";by("researchSlices").innerHTML="";}
  archive(activeArchive);
 }
 function detail(){
  const {name,h,m,st}=current;
  by("researchSelectedTitle").textContent=full(name)+" × "+type(m)+" × "+h+"D";
+ by("researchTradeFullJson").href=rootpath+"trades/"+encodeURIComponent(name)+".json";
  by("researchSelectedSummary").textContent="實際開倉 "+st.filled+" 筆｜未成交 "+st.unfilled+"｜排除重複訊號 "+st.duplicateSuppressed+"｜停利 "+st.takeProfitN+" 筆｜停損 "+st.stopN+" 筆｜淨勝率 "+pct(st.netWinPct)+"｜預留資金平均淨報酬 "+pct(st.avgNetOnReservedPct,3)+"｜平均加碼 "+n(st.avgTranches,2)+" 次";
  const captions={early:"1–4月",middle:"5–7月",late:"8–10月"};
  by("researchSlices").innerHTML=Object.entries(st.timeSlices||{}).map(([key,v])=>'<tr><td>'+captions[key]+'</td><td>'+n(v.filled,0)+'</td><td>'+pct(v.tpPct)+'</td><td>'+perf(v.avgNetReservedPct)+'</td><td>'+n(v.signals,0)+'</td></tr>').join("");
@@ -96,8 +97,8 @@ function tradeRows(){
  if(!modelTrades||!current)return;
  const q=by("researchTradeQuery").value.trim().toLowerCase();
  const all=(modelTrades[current.h]?.[current.m]||[]).filter(x=>String((x.code||"")+" "+(x.name||"")).toLowerCase().includes(q));
- const rows=all.slice().sort((x,y)=>String(y.date||"").localeCompare(String(x.date||""))||x.rank-y.rank).slice(0,300);
- by("researchTradeCount").textContent=all.length+" 筆事件（最多顯示300筆，含未成交）";
+ const pages=Math.max(1,Math.ceil(all.length/100));tradePage=Math.max(0,Math.min(tradePage,pages-1));const rows=all.slice().sort((x,y)=>String(y.date||"").localeCompare(String(x.date||""))||x.rank-y.rank).slice(tradePage*100,(tradePage+1)*100);
+ by("researchTradeCount").textContent=all.length+" 筆事件（含未成交）｜第 "+(tradePage+1)+" / "+pages+" 頁";by("researchTradePrev").disabled=tradePage===0;by("researchTradeNext").disabled=tradePage>=pages-1;
  by("researchTradeRows").innerHTML=rows.map(x=>'<tr><td>'+e(x.date)+'</td><td><b>'+e(x.code)+" "+e(x.name)+'</b></td><td>'+n(x.rank,0)+'</td><td>'+e(x.firstEntryDate||"未成交")+'</td><td>'+e(x.exitDate||"—")+'</td><td>'+n(x.tranches,0)+'</td><td>'+e(x.reason||x.status)+'</td><td>'+perf(x.netOnDeployedPct)+'</td><td>'+perf(x.netOnReservedPct)+'</td></tr>').join("")||'<tr><td colspan="9">找不到相符的交易</td></tr>';
 }
 by("researchTradesLoad").addEventListener("click",async()=>{
@@ -105,11 +106,14 @@ by("researchTradesLoad").addEventListener("click",async()=>{
  try{
   const d=await get(rootpath+"trades/"+encodeURIComponent(model)+".json");
   if(token!==run)return;
-  modelTrades=d;tradeIdentity=model;tradeRows();
+  modelTrades=d;tradeIdentity=model;tradePage=0;tradeRows();
  }catch(err){by("researchTradeCount").textContent="載入失敗："+err.message}
 });
-by("researchTradeQuery").addEventListener("input",tradeRows);
+by("researchTradeQuery").addEventListener("input",()=>{tradePage=0;tradeRows()});
+by("researchTradePrev").addEventListener("click",()=>{tradePage=Math.max(0,tradePage-1);tradeRows()});
+by("researchTradeNext").addEventListener("click",()=>{tradePage++;tradeRows()});
 const hLegacy=[
+ ["H1", "高週轉原版（5D -4%停損）", "475", "34.50", "-0.750", "2026全年，非樣本外"],
  ["H2", "高週轉＋盤整突破", "47", "21.28", "-1.466", "2026年全年，5D"],
  ["H3", "7種價量型態驗證", "2", "50.00", "1.054", "後段僅2筆，不足"],
  ["H4", "ML價量模型", "204", "27.45", "-1.246", "2026後段驗證"],
@@ -133,7 +137,7 @@ function archive(which){
   tbody.innerHTML=h5?.results?Object.entries(h5.results).flatMap(([h,discount])=>Object.entries(discount).map(([off,s])=>'<tr><td>'+e(h)+'D</td><td>-'+e(off)+'%</td><td>'+n(s.filled,0)+'</td><td>'+pct(s.targetHitPct)+'</td><td>'+pct(s.stopHitPct)+'</td><td>'+perf(s.avgNetOnDeployedPct)+'</td><td>'+perf(s.avgNetOnFiveTrancheBudgetPct)+'</td></tr>')).join(""):'<tr><td colspan="7">研究檔案未載入</td></tr>';
  }else{
   head.innerHTML="<tr><th>版本</th><th>方法</th><th>成交</th><th>+7%停利率</th><th>每筆平均淨報酬</th><th>備註</th></tr>";
-  note.textContent="這是原始 H2～H5 的舊交易規則：5日內 +7% 停利、-3.5% 停損；不可直接和新版五段加碼、-15% 停損的命中率比較。";
+  note.textContent="原始 H1～H5：5日內 +7% 毛停利；H1 停損 -4%，H2～H5 停損 -3.5%；不可直接和新版五段加碼、-15% 停損的命中率比較。";
   tbody.innerHTML=hLegacy.map(x=>'<tr>'+x.map((v,i)=>'<td>'+((i===3||i===4)?e(v)+"%":e(v))+'</td>').join("")+'</tr>').join("");
  }
 }
