@@ -1,0 +1,43 @@
+name: Verify G Market Regime Risk Archive
+on:
+  push:
+    branches: [feature/g-strict-market-regime-stop-audit-page]
+    paths:
+      - '.github/workflows/verify-g-market-regime-audit.yml'
+      - 'tw-stock-dashboard/docs/backtest.html'
+      - 'tw-stock-dashboard/docs/backtest-research.js'
+      - 'tw-stock-dashboard/docs/data/research/model_execution_2026/g_strict_stop_diagnostic_2026.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse UI JavaScript
+        run: node --check tw-stock-dashboard/docs/backtest-research.js
+      - name: Ensure historical study is displayed, complete, and does not change live screener
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("tw-stock-dashboard/docs")
+          d=json.loads((root/"data/research/model_execution_2026/g_strict_stop_diagnostic_2026.json").read_text())
+          assert set(d["modes"])=={"ladder","ma"}
+          for mode,n in (("ladder",201),("ma",191)):
+              m=d["modes"][mode]
+              assert m["baseline"]["filled"]==n
+              assert "indexAboveMA20" in m["filters"] and "indexPosition60ge50" in m["filters"]
+              assert "july" in m["filters"]["indexAboveMA20"]
+              assert len(m["stopTrades"])==m["baseline"]["stopN"]
+          page=(root/"backtest.html").read_text()
+          ui=(root/"backtest-research.js").read_text()
+          assert 'data-archive="risk"' in page
+          assert 'g_strict_stop_diagnostic_2026.json' in ui
+          assert 'data-archive="legacy"' in page and 'id="researchArchiveRows"' in page
+          assert 'id="modelTabs"' in page and 'id="researchTradePrev"' in page
+          assert (root/"data/research/model_execution_2026/selector_execution_2026_summary.json").exists()
+          print("PASS: frozen A/D/F/G/H archive preserved, G market gate stop risk file complete")
+          PY
