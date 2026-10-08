@@ -1,0 +1,79 @@
+name: Publish Research Backtest Archive
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/backtest-research-archive-ui]
+    paths:
+      - '.github/workflows/publish-research-backtest-archive.yml'
+permissions:
+  contents: write
+  actions: read
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Collect successful research runs and preserve complete JSON
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          BASE=tw-stock-dashboard/docs/data/research_archive
+          mkdir -p "$BASE" /tmp/research-matrix /tmp/research-h5 /tmp/research-g
+          gh run download 37834881764 -R jacky-168168/Tradingview-testing -n tw-stock-2026-selector-entry-matrix -D /tmp/research-matrix
+          gh run download 37801819940 -R jacky-168168/Tradingview-testing -n h5-ladder-2026-five-entries -D /tmp/research-h5
+          gh run download 37833390271 -R jacky-168168/Tradingview-testing -n g-top3-ladder-vs-ma-2026 -D /tmp/research-g
+          cp /tmp/research-matrix/selection_x_entry_matrix_2026.json "$BASE/selection_matrix_2026.json"
+          cp /tmp/research-matrix/selection_x_entry_trades_2026.json "$BASE/selection_matrix_trades_2026.json"
+          cp /tmp/research-h5/H5_ladder_2026_summary.json "$BASE/h5_five_tranches_2026.json"
+          cp /tmp/research-h5/H5_ladder_2026_5D_trades.json "$BASE/h5_five_tranches_5d_trades.json"
+          cp /tmp/research-h5/H5_ladder_2026_top3.json "$BASE/h5_original_top3_2026.json"
+          cp /tmp/research-g/G_2026_ladder_vs_ma_summary.json "$BASE/g_two_entries_2026.json"
+          cp /tmp/research-g/G_2026_ladder_vs_ma_trades.json "$BASE/g_two_entries_trades_2026.json"
+          git fetch --no-tags origin research/h-v5-limit-pullback-2026
+          git show origin/research/h-v5-limit-pullback-2026:tw-stock-dashboard/docs/data/backtest_h_v2/H2_2026_verified_summary.json > "$BASE/h2_2026.json"
+          git show origin/research/h-v5-limit-pullback-2026:tw-stock-dashboard/docs/data/backtest_h/H_2026_summary.json > "$BASE/h1_2026.json"
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path("tw-stock-dashboard/docs/data/research_archive")
+          expected={"selection_matrix_2026.json":["results","scoreboard10DExploratory"],
+                    "selection_matrix_trades_2026.json":[],
+                    "h5_five_tranches_2026.json":["results"],
+                    "h5_five_tranches_5d_trades.json":[],
+                    "h5_original_top3_2026.json":[],
+                    "g_two_entries_2026.json":["statistics"],
+                    "g_two_entries_trades_2026.json":[],
+                    "h2_2026.json":["summary"],
+                    "h1_2026.json":[]}
+          for f,keys in expected.items():
+              data=json.loads((p/f).read_text(encoding="utf-8"))
+              for key in keys:assert key in data,(f,key)
+              print("ARCHIVED",f,(p/f).stat().st_size)
+          main=json.loads((p/"selection_matrix_2026.json").read_text(encoding="utf-8"))
+          assert len(main["results"])==11 and len(main["scoreboard10DExploratory"])==22
+          assert sum(len(v) for v in main["results"].values())==33
+          manifest={"version":1,"period":main["period"],"models":11,"methods":["ladder","ma"],"horizons":[5,10,20],
+            "comparisonCells":66,"status":"回顧性研究；非獨立樣本外驗證；未模擬共同資金帳戶",
+            "files":{"matrix":"selection_matrix_2026.json","matrixTrades":"selection_matrix_trades_2026.json",
+            "h5":"h5_five_tranches_2026.json","h5Trades":"h5_five_tranches_5d_trades.json",
+            "h5Stocks":"h5_original_top3_2026.json","gCompare":"g_two_entries_2026.json",
+            "gCompareTrades":"g_two_entries_trades_2026.json","h2":"h2_2026.json","h1":"h1_2026.json"},
+            "sources":{"matrix":"https://github.com/jacky-168168/Tradingview-testing/actions/runs/37834881764",
+              "h5":"https://github.com/jacky-168168/Tradingview-testing/actions/runs/37801819940",
+              "gCompare":"https://github.com/jacky-168168/Tradingview-testing/actions/runs/37833390271"},
+            "researchBranches":["research/selection-entry-matrix-2026","research/g-top3-ladder-vs-ma-2026","research/h5-ladder-five-orders-2026"]}
+          (p/"index.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          PY
+      - name: Commit permanent Pages data archive
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research_archive/
+          if ! git diff --cached --quiet; then
+            git commit -m "archive: preserve all selector x entry backtests plus historical G/H studies for Pages"
+            git push origin HEAD:feature/backtest-research-archive-ui
+          fi
