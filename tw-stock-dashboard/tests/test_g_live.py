@@ -42,7 +42,7 @@ class TestLiveG(unittest.TestCase):
             self.assertEqual(pockets[0],{})
             self.assertEqual(pockets[1],{"1000":{"rank":1,"score":96.}})
     def test_live_selection_prior_pocket_bonus_separate_from_baseline(self):
-        dates=self.calendar(54);day=dates[-1]
+        dates=self.calendar(72);day=dates[-1]
         symbols=[{"code":x,"market":"上市","name":x,"industry":"其他","capitalB":20} for x in ("1000","1001","1002")]
         history={f'{s["code"]}.TW':self.history(dates) for s in symbols}
         # Histories, absolute score and capital are identical: persistent 1001
@@ -60,13 +60,13 @@ class TestLiveG(unittest.TestCase):
         self.assertTrue(all(x["gBreak3"] and x["gBreak18"] for x in top))
         self.assertEqual(len({x["code"] for x in top}),3)
     def test_no_double_break_means_empty_not_d_substitution(self):
-        dates=self.calendar(54);s={"code":"1000","market":"上市","name":"test","capitalB":20}
+        dates=self.calendar(72);s={"code":"1000","market":"上市","name":"test","capitalB":20}
         with patch("g_live.g_eligible",return_value=True),patch("g_live.latest_structure",return_value={"break3":True,"break18":False}):
             top,baseline,meta=select([s],{"1000.TW":self.history(dates)},dates,dates[-1],known_metrics={"1000.TW":self.metrics()})
         self.assertEqual(top,[]);self.assertEqual(baseline,[])
         self.assertEqual(meta["doubleBreakCandidates"],0)
     def test_missing_current_stock_candles_not_stale_pocket(self):
-        days=self.calendar(54);s={"code":"1000","market":"上市","name":"test","capitalB":20}
+        days=self.calendar(72);s={"code":"1000","market":"上市","name":"test","capitalB":20}
         with self.assertRaisesRegex(RuntimeError,"no valid same-day"):
             select([s],{"1000.TW":self.history(days[:-1])},days,days[-1])
     def test_index_defaults_to_real_g_daily_data(self):
