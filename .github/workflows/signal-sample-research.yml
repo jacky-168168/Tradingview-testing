@@ -1,0 +1,41 @@
+name: Signal Sample Research
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/.signal-sample-trigger'
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore market cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Analyze samples
+        working-directory: tw-stock-dashboard
+        run: python src/research_signal_samples.py
+      - name: Commit research
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/*
+          if ! git diff --cached --quiet; then
+            git commit -m "Analyze shared breakout signal samples"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
