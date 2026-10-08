@@ -1,0 +1,71 @@
+name: Publish 2026 Research Archive
+on:
+  push:
+    branches: [feature/2026-backtest-research-library]
+    paths:
+      - '.github/workflows/tw-stock-publish-research-archive.yml'
+      - 'tw-stock-dashboard/scripts/publish_research_archive.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish-site-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: true
+      - name: Download completed selector × execution research
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/selectors-2026
+          gh run download 37834827237 --repo "${{ github.repository }}" --name "model-selection-vs-ladder-ma-2026" --dir /tmp/selectors-2026
+          ls -lh /tmp/selectors-2026
+      - name: Validate and publish full 17×2×3 study
+        run: |
+          python tw-stock-dashboard/scripts/publish_research_archive.py --artifact /tmp/selectors-2026 --dest tw-stock-dashboard/docs/data/research/model_execution_2026
+      - name: Publish earlier H and G research to the same backtest page
+        run: |
+          git fetch --no-tags --depth=1 origin 'refs/heads/research/h5-ladder-five-orders-2026:refs/remotes/origin/research/h5-ladder-five-orders-2026'
+          git fetch --no-tags --depth=1 origin 'refs/heads/research/g-top3-ladder-vs-ma-2026:refs/remotes/origin/research/g-top3-ladder-vs-ma-2026'
+          TARGET=tw-stock-dashboard/docs/data/research/model_execution_2026
+          git show 'origin/research/h5-ladder-five-orders-2026:tw-stock-dashboard/docs/data/backtest_h_ladder/H5_ladder_2026_verified_summary.json' > "$TARGET/h5_ladder_2026.json"
+          git show 'origin/research/g-top3-ladder-vs-ma-2026:tw-stock-dashboard/docs/data/backtest_g_exec/G_2026_verified_summary.json' > "$TARGET/g_ladder_vs_ma_2026.json"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("tw-stock-dashboard/docs/data/research/model_execution_2026")
+          h=json.loads((p/"h5_ladder_2026.json").read_text())
+          g=json.loads((p/"g_ladder_vs_ma_2026.json").read_text())
+          assert h["results"]["10"]["2.5"]["targetHitPct"]==74.76
+          assert g["statistics"]["10"]["ladder"]["takeProfitPct"]==73.68
+          print("ARCHIVES_VALIDATED G/H research")
+          PY
+      - name: Validate static site and JS syntax
+        run: |
+          node --check tw-stock-dashboard/docs/backtest-research.js
+          python - <<'PY'
+          from pathlib import Path
+          page=Path("tw-stock-dashboard/docs/backtest.html").read_text()
+          script=Path("tw-stock-dashboard/docs/backtest-research.js").read_text()
+          for element in ("RESEARCH","executionResearchView","researchRankRows","researchTradesLoad","researchArchiveRows"):
+              assert ('id="'+element+'"') in page,element
+          assert page.count('id="RESEARCH"')==1
+          assert 'backtest-research.js' in page and 'backtest-g-panel.js' in page
+          assert 'selector_execution_2026_summary.json' in script
+          assert Path("tw-stock-dashboard/docs/data/research/model_execution_2026/trades/G_STRICT.json").exists()
+          print("STATIC_RESEARCH_UI_VALIDATED")
+          PY
+      - name: Commit verified static research data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/model_execution_2026/
+          if git diff --cached --quiet; then echo "No research data changed"; else
+            git commit -m "data: archive verified 17-model 2026 backtests and G/H comparisons for public backtest tab"
+            git push origin HEAD:feature/2026-backtest-research-library
+          fi
