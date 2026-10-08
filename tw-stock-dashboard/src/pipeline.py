@@ -152,7 +152,7 @@ def main():
     # daily snapshots (missing snapshots are empty; never fetch future lists).
     year_market_days=[str(x) for x in idx.date.astype(str) if str(x).startswith(market_date[:4]) and str(x)<=market_date]
     old_g_pockets,g_pocket_found=load_g_prior_pockets(DATA_DIR,year_market_days,market_date)
-    g,g_pocket_baseline,g_selection=select_live_g(universe,histories,year_market_days,market_date,inst,old_g_pockets,known_g_metrics)
+    g,g_pocket_baseline,g_selection=select_live_g(universe,histories,year_market_days,market_date,inst,old_g_pockets,known_g_metrics,market_ret20=mkt20)
     g_selection["pocketSnapshotsFound"]=g_pocket_found
     g_selection["pocketWarmup"]=g_pocket_found<min(10,max(0,len(year_market_days)-1))
     enrich_chain(g)
