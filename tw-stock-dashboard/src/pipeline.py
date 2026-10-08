@@ -7,7 +7,7 @@ from config import *
 from yahoo_cache import update_many,update_symbol,to_symbol
 from scoring import calc_metrics,score_a,score_d,d_pass,sort_key
 from institution import fetch_day
-from risk import build as build_risk
+from risk import build as build_risk,f_gate
 from sar import apply as apply_sar
 from industry_chain import enrich as enrich_chain
 from panels import institution_flow,topic_heat
@@ -124,18 +124,21 @@ def main():
     for x in a+d:x["signal"]=_risk_signal(x,risk)
     a=sorted(a,key=_final_sort_a)[:TOP_N];d=sorted(d,key=_final_sort_d)[:TOP_N]
     enrich_chain(a);enrich_chain(d)
+    gate=f_gate(risk,RISK_ON);fsrc=(d[:3] if gate["exception"] else d) if gate["allowed"] else []
+    f=[{**x,"model":"F","marketGate":gate["reason"],"signal":"🟣 F強反轉例外" if gate["exception"] else "🟢 F Risk ON"} for x in fsrc]
+    candidate_counts["F"]=len(f)
     flow=institution_flow(inst,names);heat=topic_heat(market_date)
     payload={"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"benchmarkRet20":round(mkt20,4),"universeCount":len(eligible),
-             "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d},"risk":risk,
+             "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d,"F":f},"risk":{**risk,"fGate":gate},
              "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86／上櫃暫為0","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
-             "candidateCounts":candidate_counts,"phase":"github-python-v5","notes":["Phase 5：A/D、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。"]}
+             "candidateCounts":candidate_counts,"phase":"github-python-v6-f","notes":["F = D 技術強勢 + 大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。"]}
     DATA_DIR.mkdir(parents=True,exist_ok=True);body=json.dumps(payload,ensure_ascii=False,indent=2);LATEST_JSON.write_text(body,encoding="utf-8")
     daily=DATA_DIR/"daily";daily.mkdir(parents=True,exist_ok=True);(daily/f"{market_date}.json").write_text(body,encoding="utf-8")
     ip=daily/"index.json"
     try:di=json.loads(ip.read_text(encoding="utf-8")) if ip.exists() else []
     except:di=[]
-    item={"date":market_date,"generatedAt":payload["generatedAt"],"riskScore":risk.get("score"),"riskState":risk.get("state"),"aCount":len(a),"dCount":len(d)}
+    item={"date":market_date,"generatedAt":payload["generatedAt"],"riskScore":risk.get("score"),"riskState":risk.get("state"),"aCount":len(a),"dCount":len(d),"fCount":len(f)}
     di=[x for x in di if x.get("date")!=market_date];di.insert(0,item);di.sort(key=lambda x:x.get("date",""),reverse=True)
     ip.write_text(json.dumps(di[:750],ensure_ascii=False,indent=2),encoding="utf-8")
-    print(json.dumps({"generatedAt":payload["generatedAt"],"dataDate":market_date,"universeCount":len(eligible),"A":len(a),"D":len(d),"risk":risk.get("score"),"historyErrors":len(errors),"institutionError":insterr},ensure_ascii=False))
+    print(json.dumps({"generatedAt":payload["generatedAt"],"dataDate":market_date,"universeCount":len(eligible),"A":len(a),"D":len(d),"F":len(f),"risk":risk.get("score"),"historyErrors":len(errors),"institutionError":insterr},ensure_ascii=False))
 if __name__=="__main__":main()

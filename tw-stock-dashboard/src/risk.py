@@ -104,3 +104,31 @@ def build(index_df,risk_on=60,risk_strong=75,risk_off=45):
     s=min(100,s);state="🟢 Strong Risk ON" if s>=risk_strong else "🟢 Risk ON" if s>=risk_on else "🟡 Neutral" if s>=risk_off else "🔴 Risk OFF"
     rv=reversal(idx,{"ret5":r5,"ret20":r20,"ma20":ma20,"breadth":br,"foreign":foreign,"dayRet":dr})
     return {"date":str(latest.date),"index":round(float(latest.close),2),"ma5":round(ma5,2),"ma20":round(ma20,2),"ret5":round(r5,2),"ret20":round(r20,2),"trend":"多" if latest.close>ma20 else "空","up":up,"down":down,"breadth":round(br,1),"foreign":round(foreign,1),"score":s,"state":state,"dayRet":round(dr,2),**rv}
+
+
+def build_historical(index_df,breadth_value=50.0,foreign_value=0.0,risk_on=60,risk_strong=75,risk_off=45):
+    """Dashboard-compatible historical regime without live network calls."""
+    idx=index_df.copy().sort_values("date").reset_index(drop=True)
+    if len(idx)<25:return {"state":"尚未分析","score":0}
+    for col in ["close","high","low","volume"]:idx[col]=pd.to_numeric(idx[col],errors="coerce")
+    closes=idx.close.tolist();latest=idx.iloc[-1];prev=idx.iloc[-2];ma5=float(np.mean(closes[-5:]));ma20=float(np.mean(closes[-20:]));old=float(np.mean(closes[-25:-5]))
+    r5=(float(latest.close)/closes[-6]-1)*100;r20=(float(latest.close)/closes[-21]-1)*100;dr=(float(latest.close)/float(prev.close)-1)*100;br=float(breadth_value);foreign=float(foreign_value)
+    s=0
+    if latest.close>ma20:s+=15
+    if ma5>ma20:s+=10
+    if ma20>old:s+=5
+    s+=20 if br>=55 else 12 if br>=50 else 5 if br>=45 else 0
+    s+=15 if foreign>0 else 6 if foreign>-50 else 0
+    s+=15 if r5>2 else 10 if r5>0 else 4 if r5>-2 else 0
+    s+=10 if r20>5 else 6 if r20>0 else 2 if r20>-5 else 0
+    if latest.close>prev.close:s+=10
+    s=min(100,s);state="🟢 Strong Risk ON" if s>=risk_strong else "🟢 Risk ON" if s>=risk_on else "🟡 Neutral" if s>=risk_off else "🔴 Risk OFF"
+    rv=reversal(idx,{"ret5":r5,"ret20":r20,"ma20":ma20,"breadth":br,"foreign":foreign,"dayRet":dr})
+    return {"date":str(latest.date),"index":round(float(latest.close),2),"ma5":round(ma5,2),"ma20":round(ma20,2),"ret5":round(r5,2),"ret20":round(r20,2),"trend":"多" if latest.close>ma20 else "空","breadth":round(br,1),"foreign":round(foreign,1),"score":s,"state":state,"dayRet":round(dr,2),**rv}
+
+def f_gate(risk,risk_on=60):
+    score=float((risk or {}).get("score",0) or 0)
+    strong_bottom=(risk or {}).get("bottomState")=="🟢 Strong Bottom Reversal" or (risk or {}).get("activeState")=="🟢 Strong Bottom Reversal"
+    if score>=risk_on:return {"allowed":True,"reason":"RISK_ON","exception":False}
+    if strong_bottom:return {"allowed":True,"reason":"STRONG_BOTTOM_REVERSAL","exception":True}
+    return {"allowed":False,"reason":"MARKET_BLOCK","exception":False}
