@@ -41,12 +41,13 @@ def _has_unadjusted_scale_jump(px,start_date,end_date):
     if px is None or px.empty:return False
     q=px[(px["date"].astype(str)>=start_date)&(px["date"].astype(str)<=end_date)].copy()
     if len(q)<2:return False
-    # 若全段已有 adjusted close，就由 adjustment factor 處理；否則擋掉明顯非一般漲跌停可造成的價格尺度跳變。
-    if "adjclose" in q.columns and q["adjclose"].notna().all():return False
-    c=pd.to_numeric(q["close"],errors="coerce").dropna()
-    if len(c)<2:return False
-    ratio=c/c.shift(1)
-    return bool(((ratio<0.55)|(ratio>1.80)).fillna(False).any())
+    # 即使 Yahoo 有 adjclose 仍檢查調整後序列；模型需足夠歷史，不應出現單日 30% 以上尺度跳變。
+    if "adjclose" in q.columns and pd.to_numeric(q["adjclose"],errors="coerce").notna().mean()>=.8:
+        s=pd.to_numeric(q["adjclose"],errors="coerce").dropna()
+    else:s=pd.to_numeric(q["close"],errors="coerce").dropna()
+    if len(s)<2:return False
+    ratio=s/s.shift(1)
+    return bool(((ratio<0.70)|(ratio>1.50)).fillna(False).any())
 
 def _historical_sar_bonus(px,date):
     if px is None or px.empty:return 0
