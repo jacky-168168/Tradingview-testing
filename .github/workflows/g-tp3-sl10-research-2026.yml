@@ -1,0 +1,80 @@
+name: G 2026 Take-Profit 3 Stop-Loss 10 Research
+on:
+  push:
+    branches: [research/g-tp3-sl10-capacity-2026]
+    paths:
+      - 'tw-stock-dashboard/src/research_g_tp_sl_2026.py'
+      - '.github/workflows/g-tp3-sl10-research-2026.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore historical market cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tp-sl-3-10-g-2026-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            g-capacity-2026-${{ runner.os }}-
+            g-strict-market-gate-${{ runner.os }}-
+            g-execution-cache-${{ runner.os }}-
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Compile and run exit sensitivity study
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_g_tp_sl_2026.py
+          python src/research_g_tp_sl_2026.py
+      - name: Verify same 7/15 results and three TP/SL variants
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path("docs/data/research/g_tp_sl_2026/summary.json").read_text())
+          b=json.loads(Path("docs/data/research/g_tp_sl_2026/equity_curves.json").read_text())
+          assert a["archived7_15Checks"]["cashPortfolioParityN"]==36
+          assert set(a["exitRules"])=={"tp7_sl15","tp3_sl10","tp5_sl10"}
+          assert a["sourceModels"]=={"G_STRICT":541,"G_DOUBLE_PERSIST":490}
+          n=0
+          for name,modes in a["statistics"].items():
+            for mode,gates in modes.items():
+              assert set(gates)=={"baseline","signal_ma20","wait_ma20"}
+              for gate,rules in gates.items():
+                for rule,by_slots in rules.items():
+                  assert set(by_slots)=={"3","5","10"}
+                  for key,s in by_slots.items():
+                    n+=1
+                    assert s["maxConcurrentReservations"]<=int(key)
+                    assert s["filled"]<=s["admitted"]
+                    assert s["tpN"]+s["stopN"]<=s["filled"]
+                    assert len(b["daily"][name][mode][gate][rule][key])>=150
+          assert n==108,n
+          print("PASS 108 cash-constrained scenarios / 36 historical baseline parity")
+          PY
+      - name: Upload study archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: tp-3-sl-10-vs-tp7-sl15-2026
+          path: tw-stock-dashboard/docs/data/research/g_tp_sl_2026/*.json
+          retention-days: 30
+      - name: Commit independent frozen research outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/g_tp_sl_2026/
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive 2026 TP3 SL10 vs baseline 108 cash-limit backtests"
+            git push origin HEAD:research/g-tp3-sl10-capacity-2026
+          fi
