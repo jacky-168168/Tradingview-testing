@@ -18,7 +18,7 @@ class TestGExecutionCompare(unittest.TestCase):
         self.assertTrue(r["tp"])
         self.assertEqual(r["exitDate"],"2026-02-002")
     def test_ma_no_candle_touch_no_buy(self):
-        x=self.df([(110,113,108,112)]*12)
+        x=self.df([(160,162,158,160)]*12)
         r=execution(x,90,100,5,"ma")
         self.assertEqual(r["status"],"unfilled")
     def test_ladder_first_limit_persists_across_three_sessions(self):
@@ -48,7 +48,7 @@ class TestGExecutionCompare(unittest.TestCase):
         x.loc["2026-01-090","weak"]=True
         self.assertEqual(execution(x,90,100,5,"ma")["status"],"weak_cancel")
     def test_previous_day_ma_only(self):
-        x=self.df([(109,111,108,110)]*10)
+        x=self.df([(160,162,158,160)]*10)
         r=execution(x,90,100,5,"ma")
         self.assertEqual(r["status"],"unfilled")
 if __name__=="__main__":unittest.main()
