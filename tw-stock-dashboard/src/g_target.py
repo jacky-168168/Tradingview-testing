@@ -37,4 +37,4 @@ def fit(groups,lambda_reg=.11):
     w=np.clip(solved.x,-8,8)
     return w,{"trainPosts":sum(len(idx) for _,idx in mats),"groups":len(mats),"optimized":bool(solved.success),"objective":round(float(solved.fun),5)}
 def score(row,w):
-    return round(float(np.clip(50+8*features(row)@w,0,100)),3)
+    return round(float(np.clip(50.0+3.0*float(features(row)@w),0,100)),6)
