@@ -83,3 +83,12 @@ GitHub → Actions → **TW Stock Backtest** → Run workflow → 輸入開始 /
 - 提供 G_TARGET_FULL20 僅供**樣本內擬合診斷**，絕不可把已參與訓練的20/20命中當成樣本外預測成功。
 - 結果：`docs/data/backtest_g/target_2026.json`，隨`.github/workflows/g-2026.yml`在同一次 GitHub Action 重跑。保留1D/3D/5D/10D/20D、Top3績效、訓練/留出命中、G_BASE同日名次對照與每筆失誤。
 - 2026全年回測屬**回顧性研究**，因模型權重來自2026年8～9月，不能把2026年初的績效宣稱為真正可在當時運行的前瞻績效；訓練截止後才有少量真正的時間樣本外資料。
+
+## G 2026 3D／18D 紅吞與突破假說
+- 研究頁：`docs/g-candles.html`；原始 G_BASE/G_TARGET 保留，沒有直接覆蓋。
+- **真正 3D、18D**：依 TradingView 多日週期從每年一月第一個交易日重新計算，每3/18個交易日 OHLC 合併成一根 K；不是每日滑動視窗的3/18根日K。
+- **發訊時點**：20筆全部只用發文前最後一個已結束的日K；形成中的3D/18D可觀察方向，但不算已確認紅吞。
+- **紅吞**：前一根跌K、後一根漲K，後一根的實體從開盤到收盤完整吞過前一根實體，與純粹收紅不同。另列穿透前根完整高低範圍的「全幅吞噬」供診斷。
+- 個別研究：`src/research_multiday.py`，輸出`docs/data/research/g_multiday_2026.json`與CSV；同日強勢候選對照：`src/research_multiday_controls.py`，輸出`docs/data/research/g_multiday_controls_2026.json`。
+- 年度比較：`src/backtest_candle.py`比較G_BROAD純強勢、G_CANDLE型態加分、G_TRIGGER前高突破或紅吞觸發，輸出`docs/data/backtest_g/g_candle_2026.json`，2026日K收盤選股後下一交易日開盤模擬進場，1/3/5/10/20D。
+- 基於僅20筆已知訊號設計的參數都屬回顧性探索；市場對照組並非與發訊者的非發訊決策完全一致，尚需未來新發文訊號作時間上真正未見資料驗證。沒有複製作者的指定突破價格與停損算法。
