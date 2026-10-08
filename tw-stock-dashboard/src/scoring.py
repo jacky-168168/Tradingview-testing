@@ -53,6 +53,7 @@ def precompute_features(df,ema_window=120):
     x["rvol"]=v/v.shift(1).rolling(20).mean();x["rvol10"]=v/v.shift(1).rolling(10).mean();x["mom10Pct"]=c.pct_change(10)*100
     x["ema20"]=rolling_gas_ema(c,20,ema_window);x["ema50"]=rolling_gas_ema(c,50,ema_window)
     prev_window=max(20,ema_window-5);x["ema20Slope5"]=(x.ema20/rolling_gas_ema(c,20,prev_window).shift(5)-1)*100
+    x["range20Pct"]=(x.high.rolling(20).max()-x.low.rolling(20).min())/x.low.rolling(20).min().replace(0,np.nan)*100
     x["prevHigh20"]=x.high.shift(1).rolling(20).max();x["breakoutPct"]=(c/x.prevHigh20-1)*100
     x["atrPct"]=tr.rolling(14).mean()/c*100;x["volD"]=tr/x.low.abs()*100
     rng=x.high-x.low;x["closePosition"]=np.where(rng>0,(c-x.low)/rng*100,50.0)
