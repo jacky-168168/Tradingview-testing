@@ -30,7 +30,7 @@ def current_bull(df,market_dates,asof,n):
     q=df[(df.date.astype(str)>=first)&(df.date.astype(str)<=asof)]
     if q.empty:return False
     return bool(float(q.close.iloc[-1])>float(q.open.iloc[0]))
-def flags(df,market_dates,asof):
+def flags(df,market_dates,asof,bars3,bars18):
     q=df[df.date.astype(str)<=asof]
     if q.empty or asof not in set(q.date.astype(str)):return None
     daily=q.iloc[-2:]
@@ -39,7 +39,7 @@ def flags(df,market_dates,asof):
     out={"bullD":cd["nowBull"],"bodyD":cd["bodyEngulf"]}
     close=float(q.close.iloc[-1])
     for n in (3,18):
-        a=aggregate_bars(df,market_dates,n)
+        a=bars3 if n==3 else bars18
         p,c=latest_pair(a,asof,True)
         cs=candle_test(p,c) if p and c else None
         out[f"bull{n}Confirmed"]=bool(cs and cs["nowBull"])
@@ -47,7 +47,8 @@ def flags(df,market_dates,asof):
         out[f"body{n}Recent3"]=recent_engulfs(a,asof,3)
         out[f"bull{n}Now"]=current_bull(q,market_dates,asof,n)
         out[f"half{n}"]=bool(cs and cs["halfRecover"])
-        out[f"closeAbove{n}DHigh"]=bool(c and close>float(c["high"]))
+        reference=p if c and c["date"]==asof else c
+        out[f"closeAbove{n}DHigh"]=bool(reference and close>float(reference["high"]))
         if n==18:out["trend18"]=bool(p and c and c["close"]>p["close"])
     return out
 def score(x):
@@ -75,7 +76,7 @@ def run():
         if px is None or len(px)<45:continue
         q=px[px.date.astype(str).str.startswith("2026-")].sort_values("date").drop_duplicates("date",keep="last").reset_index(drop=True)
         if len(q)<45:continue
-        bycode[c]=q
+        bycode[c]={"df":q,"bars3":aggregate_bars(q,market_dates,3),"bars18":aggregate_bars(q,market_dates,18)}
     samples={d:set() for d in rows}
     for s in data["samples"]:
         samples.setdefault(s["anchor"],set()).add(s["code"])
@@ -83,9 +84,9 @@ def run():
     for n,(date,cands) in enumerate(sorted(rows.items()),1):
         ranked=[]
         for x in cands:
-            px=bycode.get(x[0])
-            if px is None:continue
-            f=flags(px,market_dates,date)
+            obj=bycode.get(x[0])
+            if obj is None:continue
+            f=flags(obj["df"],market_dates,date,obj["bars3"],obj["bars18"])
             if f is None:continue
             ranked.append({"date":date,"code":x[0],"target":x[0] in samples.get(date,set()),"baseline":score(x),"hypothesis":score_hypothesis(x,f),"features":f})
         sorted_base=sorted(ranked,key=lambda z:(-z["baseline"],z["code"]))
