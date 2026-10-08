@@ -160,5 +160,31 @@ function archive(which){
   tbody.innerHTML=hLegacy.map(x=>'<tr>'+x.map((v,i)=>'<td>'+((i===3||i===4)?e(v)+"%":e(v))+'</td>').join("")+'</tr>').join("");
  }
 }
+async function selectTimingTrades(mode,gate){
+ timingMode=mode;timingGate=gate;timingPage=0;
+ by("researchTimingTradeTitle").textContent="G_STRICT "+type(mode)+"｜"+gate;
+ by("researchTimingTradeCount").textContent="逐筆 JSON 讀取中…";
+ try{
+  if(!timingTrades)timingTrades=await get(rootpath+"g_strict_ma20_entry_trades_2026.json");
+  timingRenderTrades();
+ }catch(err){by("researchTimingTradeCount").textContent="載入失敗："+err.message;}
+}
+function timingRenderTrades(){
+ if(!timingTrades||!timingMode||!timingGate)return;
+ const q=by("researchTimingTradeSearch").value.trim().toLowerCase();
+ const all=(timingTrades["10"]?.[timingMode]?.[timingGate]||[]).filter(x=>String((x.code||"")+" "+(x.name||"")).toLowerCase().includes(q));
+ const pages=Math.max(1,Math.ceil(all.length/100));timingPage=Math.max(0,Math.min(pages-1,timingPage));
+ const rows=all.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(timingPage*100,(timingPage+1)*100);
+ by("researchTimingTradeCount").textContent=all.length+" 筆事件｜第 "+(timingPage+1)+"/"+pages+" 頁";
+ by("researchTimingTradePrev").disabled=timingPage===0;by("researchTimingTradeNext").disabled=timingPage>=pages-1;
+ by("researchTimingTradeRows").innerHTML=rows.map(x=>'<tr><td>'+e(x.date)+'</td><td>'+e(x.code)+' '+e(x.name||"")+'</td><td>'+n(x.rank,0)+'</td><td>'+e(x.status)+'</td><td>'+e(x.firstEntryDate||"—")+'</td><td>'+e(x.exitDate||"—")+'</td><td>'+n(x.tranches,0)+'</td><td>'+e(x.reason||"—")+'</td><td>'+perf(x.netOnDeployedPct)+'</td><td>'+perf(x.netOnReservedPct)+'</td></tr>').join("")||'<tr><td colspan="10">沒有符合條件的紀錄</td></tr>';
+}
+by("researchArchiveRows").addEventListener("click",ev=>{
+ const tr=ev.target.closest("tr[data-market-mode]");if(!tr)return;
+ selectTimingTrades(tr.dataset.marketMode,tr.dataset.marketGate);
+});
+by("researchTimingTradeSearch").addEventListener("input",()=>{timingPage=0;timingRenderTrades();});
+by("researchTimingTradePrev").addEventListener("click",()=>{timingPage=Math.max(0,timingPage-1);timingRenderTrades();});
+by("researchTimingTradeNext").addEventListener("click",()=>{timingPage++;timingRenderTrades();});
 document.querySelectorAll("[data-archive]").forEach(b=>b.addEventListener("click",()=>archive(b.dataset.archive)));
 })();
