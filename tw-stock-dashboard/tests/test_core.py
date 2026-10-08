@@ -39,9 +39,9 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(institution_score({"foreign":1,"trust":1,"dealer":1}),10);self.assertEqual(institution_score({"foreign":1,"trust":0,"dealer":0}),5);self.assertEqual(institution_score({"foreign":0,"trust":1,"dealer":0}),7)
     def test_edge_all_horizons(self):
         m={}
-        for mid in ["A","D"]:m[mid]={h:[{"date":str(i),"ret":(1.5 if i%4 else -1.0)+(0.2 if mid=="D" else 0)} for i in range(1,121)] for h in [1,3,5,10,20]}
+        for mid in ["A","D","F"]:m[mid]={h:[{"date":str(i),"ret":(1.5 if i%4 else -1.0)+(0.2 if mid in ("D","F") else 0)} for i in range(1,121)] for h in [1,3,5,10,20]}
         x=build(m)
-        for mid in ["A","D"]:
+        for mid in ["A","D","F"]:
             for h in [1,3,5,10,20]:
                 z=x["models"][mid][f"d{h}"];self.assertGreater(z["n"],0);self.assertIn(z["verdict"],{"gambling","insufficient","luck_suspected","fragile_edge","statistical_edge"})
     def test_sar_uptrend(self):
@@ -61,6 +61,13 @@ class CoreTests(unittest.TestCase):
             (daily/"index.json").write_text(json.dumps([{"date":"2026-10-07"},{"date":"2026-10-05"}]),encoding="utf-8")
             with patch.object(pipeline,"LATEST_JSON",latest),patch.object(pipeline,"DATA_DIR",root):
                 self.assertEqual(published_data_date(),"2026-10-07")
+    def test_f_gate_rules(self):
+        self.assertTrue(risk.f_gate({"score":60,"bottomState":"⚪ Bottom Watch"})["allowed"])
+        x=risk.f_gate({"score":30,"bottomState":"🟢 Strong Bottom Reversal"});self.assertTrue(x["allowed"]);self.assertTrue(x["exception"])
+        self.assertFalse(risk.f_gate({"score":59,"bottomState":"🟣 Extreme Oversold"})["allowed"])
+    def test_historical_risk_no_network(self):
+        x=risk.build_historical(self.frame(80),breadth_value=60,foreign_value=10)
+        self.assertGreaterEqual(x["score"],0);self.assertLessEqual(x["score"],100);self.assertIn("activeState",x)
     @patch("risk.breadth",return_value=(650,350))
     @patch("risk.foreign_market_net",return_value=25.0)
     def test_risk_build(self,_f,_b):
