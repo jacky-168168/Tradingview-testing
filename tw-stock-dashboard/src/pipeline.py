@@ -11,6 +11,7 @@ from risk import build as build_risk,f_gate,f2_gate
 from sar import apply as apply_sar
 from industry_chain import enrich as enrich_chain
 from panels import institution_flow,topic_heat
+from g_live import select as select_live_g,prior_pockets as load_g_prior_pockets
 
 HEADERS={"User-Agent":"Mozilla/5.0 tw-stock-dashboard/3.0","Accept":"application/json"}
 
@@ -112,19 +113,20 @@ def previous_f2_state(market_date):
     return state
 
 def main():
-    now=datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None);start=now-timedelta(days=LOOKBACK_CALENDAR_DAYS)
+    now=datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None);start=min(now-timedelta(days=LOOKBACK_CALENDAR_DAYS),datetime(now.year,1,1)-timedelta(days=90))
     _,idx,idxerr=update_symbol(BENCHMARK,start,now)
     if idxerr or idx is None or len(idx)<25:raise RuntimeError(f"benchmark unavailable: {idxerr}")
     market_date=str(idx.iloc[-1]["date"]);published=published_data_date()
     if published and market_date<published:
         print(json.dumps({"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"publishedDate":published,"skipped":"stale-market-date"},ensure_ascii=False));return
     universe=load_universe();eligible=[x for x in universe if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
-    histories,errors=update_many([(x["code"],x["market"]) for x in eligible],start,now)
+    histories,errors=update_many([(x["code"],x["market"]) for x in universe],start,now)
     risk=build_risk(idx,RISK_ON,RISK_STRONG,RISK_OFF);mkt20=float(risk.get("ret20",0) or 0)
     _,inst,insterr=fetch_day(market_date);names={f'{x["market"]}_{x["code"]}':x["name"] for x in universe}
-    a=[];d_strict=[];d_backup=[]
+    a=[];d_strict=[];d_backup=[];known_g_metrics={}
     for s in eligible:
         h=histories.get(to_symbol(s["code"],s["market"]));m=calc_metrics(h.tail(75)) if h is not None and len(h)>=60 else None
+        if m and h is not None and str(h.date.iloc[-1])[:10]==market_date:known_g_metrics[to_symbol(s["code"],s["market"])]=m
         if not m or m["close"]<MIN_PRICE:continue
         rs20=m["ret20"]-mkt20;turnover_b=m["close"]*m["volume"]/100_000_000;ii=inst.get(f'{s["market"]}_{s["code"]}',{})
         base={**s,"close":m["close"],"dayRet":m["dayRet"],"ret5":m["ret5"],"ret20":m["ret20"],"marketRet20":mkt20,"rs20":rs20,"rvol":m["rvol"],"rvol10":m["rvol10"],"mom10Pct":m["mom10Pct"],"volD":m["volD"],"atrPct":m["atrPct"],"breakoutPct":m["breakoutPct"],"ma20Slope":m["ma20Slope"],"turnoverB":turnover_b,
@@ -145,6 +147,16 @@ def main():
     # 正式頁固定保留 20 檔：嚴格 D 通過者永遠排前面，不足 20 才由高分高流動性的次級候選補足。
     d=(sorted(d_strict,key=_final_sort_d)+sorted(d_backup,key=_final_sort_d))[:TOP_N]
     enrich_chain(a);enrich_chain(d)
+    # G uses an independent ALL-market 2026 cross section, unlike capital-capped A/D/F.
+    # 3D/18D structures must be confirmed. Prior G pockets come only from older
+    # daily snapshots (missing snapshots are empty; never fetch future lists).
+    year_market_days=[str(x) for x in idx.date.astype(str) if str(x).startswith(market_date[:4]) and str(x)<=market_date]
+    old_g_pockets,g_pocket_found=load_g_prior_pockets(DATA_DIR,year_market_days,market_date)
+    g,g_pocket_baseline,g_selection=select_live_g(universe,histories,year_market_days,market_date,inst,old_g_pockets,known_g_metrics,market_ret20=mkt20)
+    g_selection["pocketSnapshotsFound"]=g_pocket_found
+    g_selection["pocketWarmup"]=g_pocket_found<min(10,max(0,len(year_market_days)-1))
+    enrich_chain(g)
+    apply_sar(g,market_date,min(len(g),TOP_N))
     gate=f_gate(risk,RISK_ON);prev_f2_on=previous_f2_state(market_date);gate2=f2_gate(risk,prev_f2_on,RISK_ON,55)
     # 正式選股頁是候選清單，不是實際下單：D/F/F2 一律保留最多 TOP_N(20)；只有回測才限制進場 Top3。
     fsrc=d if gate["allowed"] else []
@@ -152,19 +164,20 @@ def main():
     f2src=d if gate2["allowed"] else []
     f2sig="🟣 F2 強反轉例外" if gate2["exception"] else "⛔ F2 Top Veto" if gate2["topVeto"] else "🟢 F2 維持ON" if gate2["reason"]=="HYSTERESIS_HOLD" else "🟢 F2 Risk ON"
     f2=[{**x,"model":"F2","marketGate":gate2["reason"],"signal":f2sig if x.get("strictPass") else "🟡 F2候補"} for x in f2src]
-    candidate_counts["F"]=len(f);candidate_counts["F2"]=len(f2);strict_candidate_counts["F"]=sum(bool(x.get("strictPass")) for x in f);strict_candidate_counts["F2"]=sum(bool(x.get("strictPass")) for x in f2)
+    candidate_counts["F"]=len(f);candidate_counts["F2"]=len(f2);candidate_counts["G"]=g_selection["doubleBreakCandidates"]
+    strict_candidate_counts["F"]=sum(bool(x.get("strictPass")) for x in f);strict_candidate_counts["F2"]=sum(bool(x.get("strictPass")) for x in f2);strict_candidate_counts["G"]=len(g)
     flow=institution_flow(inst,names);heat=topic_heat(market_date)
     payload={"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"benchmarkRet20":round(mkt20,4),"universeCount":len(eligible),
-             "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d,"F":f,"F2":f2},"risk":{**risk,"fGate":gate,"f2Gate":gate2},
+             "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d,"F":f,"F2":f2,"G":g},"gSelection":g_selection,"gPocketBaseline":g_pocket_baseline,"risk":{**risk,"fGate":gate,"f2Gate":gate2},
              "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86／上櫃暫為0","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
-             "candidateCounts":candidate_counts,"strictCandidateCounts":strict_candidate_counts,"phase":"github-python-v7-f2","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。","正式選股 D/F/F2 固定保留 Top20 候選：嚴格通過 D 的股票優先，不足 20 才用高分且流動性合格的候補補齊；候補會明確標示。回測實際進場仍只使用嚴格通過 D 的 Rank1~3。"]}
+             "candidateCounts":candidate_counts,"strictCandidateCounts":strict_candidate_counts,"phase":"github-python-v8-g-default","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。","正式選股 D/F/F2 固定保留 Top20 候選：嚴格通過 D 的股票優先，不足 20 才用高分且流動性合格的候補補齊；候補會明確標示。回測實際進場仍只使用嚴格通過 D 的 Rank1~3。","G 預設模型：G_DOUBLE_PERSIST，先使用全市場強勢候選，再要求 3D/18D 前一完整 K 棒高點雙突破，最後按過去10交易日的原 G 雙突破 Top20 入選紀錄加分。首次上線歷史資料未滿10天時仍正常選股但不填補假歷史。","G 今日選股只根據完整更新的日 K 資料，盤中只更新選中股票的最新價格，不會把回測歷史 Top20 偽裝成今日選股。"]}
     DATA_DIR.mkdir(parents=True,exist_ok=True);body=json.dumps(payload,ensure_ascii=False,indent=2);LATEST_JSON.write_text(body,encoding="utf-8")
     daily=DATA_DIR/"daily";daily.mkdir(parents=True,exist_ok=True);(daily/f"{market_date}.json").write_text(body,encoding="utf-8")
     ip=daily/"index.json"
     try:di=json.loads(ip.read_text(encoding="utf-8")) if ip.exists() else []
     except:di=[]
-    item={"date":market_date,"generatedAt":payload["generatedAt"],"riskScore":risk.get("score"),"riskState":risk.get("state"),"aCount":len(a),"dCount":len(d),"fCount":len(f),"f2Count":len(f2)}
+    item={"date":market_date,"generatedAt":payload["generatedAt"],"riskScore":risk.get("score"),"riskState":risk.get("state"),"aCount":len(a),"dCount":len(d),"fCount":len(f),"f2Count":len(f2),"gCount":len(g),"gPocketHistory":g_pocket_found}
     di=[x for x in di if x.get("date")!=market_date];di.insert(0,item);di.sort(key=lambda x:x.get("date",""),reverse=True)
     ip.write_text(json.dumps(di[:750],ensure_ascii=False,indent=2),encoding="utf-8")
-    print(json.dumps({"generatedAt":payload["generatedAt"],"dataDate":market_date,"universeCount":len(eligible),"A":len(a),"D":len(d),"F":len(f),"F2":len(f2),"risk":risk.get("score"),"f2Gate":gate2.get("reason"),"historyErrors":len(errors),"institutionError":insterr},ensure_ascii=False))
+    print(json.dumps({"generatedAt":payload["generatedAt"],"dataDate":market_date,"universeCount":len(eligible),"A":len(a),"D":len(d),"F":len(f),"F2":len(f2),"G":len(g),"gHistoryDays":g_pocket_found,"risk":risk.get("score"),"f2Gate":gate2.get("reason"),"historyErrors":len(errors),"institutionError":insterr},ensure_ascii=False))
 if __name__=="__main__":main()
