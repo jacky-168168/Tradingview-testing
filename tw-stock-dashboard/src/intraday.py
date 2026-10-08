@@ -26,11 +26,11 @@ def main():
         from pipeline import main as full_main
         full_main()
     d=json.loads(LATEST_JSON.read_text(encoding="utf-8"))
-    if not any((d.get("models") or {}).get(m) for m in ["A","D","F"]):
+    if not any((d.get("models") or {}).get(m) for m in ["A","D","F","F2"]):
         from pipeline import main as full_main
         full_main();d=json.loads(LATEST_JSON.read_text(encoding="utf-8"))
     rows=[]
-    for model in ["A","D","F"]:rows.extend((d.get("models") or {}).get(model) or [])
+    for model in ["A","D","F","F2"]:rows.extend((d.get("models") or {}).get(model) or [])
     uniq={(x.get("code"),x.get("market")) for x in rows if x.get("code") and x.get("market")}
     prices={}
     with ThreadPoolExecutor(max_workers=8) as ex:

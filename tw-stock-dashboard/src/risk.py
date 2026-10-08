@@ -132,3 +132,19 @@ def f_gate(risk,risk_on=60):
     if score>=risk_on:return {"allowed":True,"reason":"RISK_ON","exception":False}
     if strong_bottom:return {"allowed":True,"reason":"STRONG_BOTTOM_REVERSAL","exception":True}
     return {"allowed":False,"reason":"MARKET_BLOCK","exception":False}
+
+def f2_gate(risk,was_on=False,entry=60,hold=55):
+    """Dynamic market gate: 60 entry / 55 hold, Strong Bottom exception, confirmed-top and extreme-overbought veto."""
+    r=risk or {};score=float(r.get("score",0) or 0);active=str(r.get("activeState") or "");top=str(r.get("topState") or "")
+    strong_bottom=active=="🟢 Strong Bottom Reversal" or str(r.get("bottomState") or "")=="🟢 Strong Bottom Reversal"
+    hard_top=active in ("🔴 Strong Top Reversal","🟠 Top Reversal Attempt") or top in ("🔴 Strong Top Reversal","🟠 Top Reversal Attempt")
+    extreme_ob=active=="🔴 Extreme Overbought" or top=="🔴 Extreme Overbought"
+    # Strong Bottom 只放行當日，不把 regime 狀態強制翻成 ON。
+    if strong_bottom:return {"allowed":True,"reason":"STRONG_BOTTOM_REVERSAL","exception":True,"stateOn":bool(was_on),"topVeto":False}
+    # 已確認頂部反轉時直接關閉 hysteresis，下一次必須重新 >=60 才能開啟。
+    if hard_top:return {"allowed":False,"reason":"TOP_REVERSAL_VETO","exception":False,"stateOn":False,"topVeto":True}
+    # 極端過熱禁止新倉，但保留原 regime 狀態；過熱解除後若仍 >=55 可恢復。
+    if extreme_ob:return {"allowed":False,"reason":"EXTREME_OVERBOUGHT_VETO","exception":False,"stateOn":bool(was_on or score>=entry),"topVeto":True}
+    if was_on and score>=hold:return {"allowed":True,"reason":"HYSTERESIS_HOLD","exception":False,"stateOn":True,"topVeto":False}
+    if score>=entry:return {"allowed":True,"reason":"RISK_ON_ENTRY","exception":False,"stateOn":True,"topVeto":False}
+    return {"allowed":False,"reason":"MARKET_BLOCK","exception":False,"stateOn":False,"topVeto":False}
