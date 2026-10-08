@@ -40,16 +40,16 @@ function renderRisk(){var r=DATA&&DATA.risk||{};riskScore.textContent=Number.isF
 function panelRow(x){return '<div class="row"><span><b>'+esc(x.code)+" "+esc(x.name)+'</b></span><span>'+N(x.lots,0)+' 張</span></div>'}
 function renderPanels(){var p=DATA&&DATA.panels||{},f=p.institutionFlow||{buy:[],sell:[]};buyRows.innerHTML=(f.buy||[]).map(panelRow).join("")||'<div class="sub">--</div>';sellRows.innerHTML=(f.sell||[]).map(panelRow).join("")||'<div class="sub">--</div>';instSource.textContent=p.institutionSource||"";var hs=p.topicHeat||[];themeRows.innerHTML=hs.length?hs.map(function(x){return '<div class="row"><span><b>'+esc(x.theme)+'</b></span><span class="'+C(x.avgRet)+'">'+(Number(x.avgRet)>=0?"+":"")+N(x.avgRet)+'%</span></div>'}).join(""):'<div class="sub">--</div>';themeSource.textContent=p.topicSource||""}
 function applyTableMode(){
-var isG=MODEL==="G",gCols=new Set([0,1,3,4,6,7,8,9,10,13,15,16,17,18,19,20,21]),normalCols=new Set([0,1,3,4,5,6,9,11,12,13,14,15,16,17]);
+var isG=MODEL==="G",gCols=new Set([0,1,3,4,6,7,9,10,13,14,15,17,18,19,20,21]),gHiddenCols=new Set([8,16]),normalCols=new Set([0,1,3,4,5,6,9,11,12,13,14,15,16,17]);
 stockTable.classList.toggle("compact",TABLE_COMPACT);layoutToggle.textContent=TABLE_COMPACT?"▤ 完整欄位":"▥ 精簡欄位";layoutToggle.setAttribute("aria-pressed",TABLE_COMPACT?"true":"false");
-var heads=Array.from(stockTable.querySelectorAll("thead th"));
-heads.forEach(function(h,i){var isExtra=i>=5&&i<=8,eff=!isG&&i>8?i-4:i,hide=(!isG&&isExtra)||(TABLE_COMPACT&&!(isG?gCols:normalCols).has(eff));h.style.display=hide?"none":""});
+var heads=Array.from(stockTable.querySelectorAll("thead th"));heads[13].textContent=isG?"外資買賣超":"外資買超";heads[14].textContent=isG?"投信買賣超":"投信買超";
+heads.forEach(function(h,i){var isExtra=i>=5&&i<=8,eff=!isG&&i>8?i-4:i,hide=(isG&&gHiddenCols.has(i))||(!isG&&isExtra)||(TABLE_COMPACT&&!(isG?gCols:normalCols).has(eff));h.style.display=hide?"none":""});
 tb.querySelectorAll("tr").forEach(function(tr){
  var cells=Array.from(tr.cells);
- if(cells.length===1&&cells[0].hasAttribute("colspan")){cells[0].colSpan=TABLE_COMPACT?(isG?gCols.size:normalCols.size):(isG?22:18);return}
- cells.forEach(function(cell,i){cell.style.display=TABLE_COMPACT&&!(isG?gCols:normalCols).has(i)?"none":""})
+ if(cells.length===1&&cells[0].hasAttribute("colspan")){cells[0].colSpan=TABLE_COMPACT?(isG?gCols.size:normalCols.size):(isG?20:18);return}
+ cells.forEach(function(cell,i){cell.style.display=(isG&&gHiddenCols.has(i))||(TABLE_COMPACT&&!(isG?gCols:normalCols).has(i))?"none":""})
 });
-tableHint.textContent=TABLE_COMPACT?"精簡模式：保留分數、突破、SAR、現價、資金、RS20、RVOL、5D／20D、趨勢與訊號；按「完整欄位」查看全部。":"完整模式：已顯示所有欄位，表格可向右捲動；左側 Rank／股票名稱固定。";
+tableHint.textContent=isG?(TABLE_COMPACT?"G 精簡模式：保留分數、持續度、SAR、現價、外資／投信買賣超、RS20、5D／20D、趨勢與訊號；按「完整欄位」查看其他資料。":"G 完整模式：3D／18D 和 RVOL 欄位仍不顯示（選股資料及判斷保留）；可向右捲動。"):(TABLE_COMPACT?"精簡模式：保留分數、SAR、現價、資金、RS20、RVOL、5D／20D、趨勢與訊號；按「完整欄位」查看全部。":"完整模式：已顯示所有欄位，表格可向右捲動；左側 Rank／股票名稱固定。");
 }
 function renderTable(){
 var xs=DATA&&DATA.models&&DATA.models[MODEL]||[],isG=MODEL==="G",gs=DATA&&DATA.gSelection||null;
@@ -63,7 +63,7 @@ count.textContent=xs.length+" 檔｜雙突破候選 "+(candidates==null?"—":ca
 gNote.style.display="block";
 gNote.textContent=gs?"G：最新完整日K "+gs.dataDate+"｜3D＋18D 前高雙突破｜前10日原版 G Top20 持續度加分（最高7分）｜可用歷史 "+(gs.pocketSnapshotsFound||0)+"/10"+(gs.pocketWarmup?"｜持續度建檔中":"")+"｜盤中僅更新現價，不當成 BOTTOM／TOP 觸發":"⚠ 尚未產生每日 G 訊號，請按「GitHub 更新」執行 full 完整更新；不會把舊的 2026 回測清單冒充今日名單。";
 }else{count.textContent=MODEL==="A"?xs.length+" 檔":xs.length+" 檔｜嚴格 "+strict+" 檔";gNote.style.display="none"}
-if(!xs.length){tb.innerHTML='<tr><td colspan="'+(isG?22:18)+'" style="text-align:center;padding:40px">'+(isG?(gs?"此交易日沒有通過 G 雙突破的股票，屬正常空訊號；不會改用回測舊清單。":"⚠ G 每日資料尚未更新，請執行 GitHub 完整更新。"):"尚無資料")+'</td></tr>';applyTableMode();return}
+if(!xs.length){tb.innerHTML='<tr><td colspan="'+(isG?20:18)+'" style="text-align:center;padding:40px">'+(isG?(gs?"此交易日沒有通過 G 雙突破的股票，屬正常空訊號；不會改用回測舊清單。":"⚠ G 每日資料尚未更新，請執行 GitHub 完整更新。"):"尚無資料")+'</td></tr>';applyTableMode();return}
 tb.innerHTML=xs.map(function(x,i){
 var cp=x.currentPrice!=null?N(x.currentPrice):N(x.close),chg=x.currentPct!=null?' <span class="'+C(x.currentPct)+'">('+(Number(x.currentPct)>=0?"+":"")+N(x.currentPct)+'%)</span>':"";
 var extra=isG?'<td>'+N(x.gScore)+'</td><td title="加分 +'+N(x.gExtra)+'"><b>'+N((x.persistence||{}).strength,1)+'</b> <span class="sub">+'+N(x.gExtra)+'</span></td><td>'+(x.gPast10==null?"—":x.gPast10)+'/10 <span class="sub">連'+(x.gStreak||0)+'天</span></td><td><b>'+(x.gBreak3?"✓":"—")+' 3D / '+(x.gBreak18?"✓":"—")+' 18D</b></td>':"";
