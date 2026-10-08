@@ -54,7 +54,7 @@ def trade(open_arr,high_arr,low_arr,close_arr,factor,indices,signal_close,cap=2.
         net=(price*(1-SLIP)*(1-FEE_OUT)/(entry*(1+FEE_IN))-1)*100
         return (1,kind=="tp",kind=="stop",round(net,4),kind)
     return (2,False,False,None,"unknown")
-def features(df,capital,marketdates,marketpos):
+def features(df,capital,marketdates,marketpos,sample_start=START,sample_end=END):
     x=df.sort_values("date").drop_duplicates("date",keep="last").reset_index(drop=True).copy()
     if len(x)<160:return None
     for c in ("open","high","low","close","volume"):x[c]=pd.to_numeric(x[c],errors="coerce")
@@ -97,7 +97,7 @@ def features(df,capital,marketdates,marketpos):
         "low":l,
         "f":f
     })
-    basic=data[(data.date>=START)&(data.date<=END)&(data.c>=12)&(data.tradedM>=65)&(data.turn>=0.7)&(data.vrel>=0.7)]
+    basic=data[(data.date>=sample_start)&(data.date<=sample_end)&(data.c>=12)&(data.tradedM>=65)&(data.turn>=0.7)&(data.vrel>=0.7)]
     if basic.empty:return []
     dates=x.date.astype(str).tolist();stockpos={d:i for i,d in enumerate(dates)}
     opens=o.to_numpy();highs=h.to_numpy();lows=l.to_numpy();closes=c.to_numpy();fac=f.to_numpy()
@@ -106,7 +106,7 @@ def features(df,capital,marketdates,marketpos):
          "day","priorDay","range8","vcon","pos","body","aboveEma","emaSlope","aboveMa60","atr","tradedM")
     for row in basic.itertuples(index=False):
         date=row.date;mi=marketpos.get(date)
-        if mi is None or mi+H>=len(marketdates) or marketdates[mi+H]>END:continue
+        if mi is None or mi+H>=len(marketdates) or marketdates[mi+H]>sample_end:continue
         future=marketdates[mi+1:mi+H+1]
         indices=[stockpos.get(t) for t in future]
         if any(z is None for z in indices):continue
