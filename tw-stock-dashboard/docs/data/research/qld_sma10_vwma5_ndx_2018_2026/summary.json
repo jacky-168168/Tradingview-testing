@@ -1,0 +1,507 @@
+{
+  "version": "US_QDL_QLD_SMA10_VWMA5_NDX_2018_2026_V1",
+  "generatedAtTaipei": "2026-10-09T12:54:26+08:00",
+  "security": {
+    "ticker": "QLD",
+    "product": "ProShares Ultra QQQ",
+    "objective": "Nasdaq-100 INDEX DAILY 2x exposure, not 2x buyhold across multi-day holding"
+  },
+  "window": [
+    "2018-01-02",
+    "2026-10-07"
+  ],
+  "marketSessions": 2203,
+  "method": {
+    "startingCapitalTWD": 1000000,
+    "startFX_USDTWD": 29.773001,
+    "lastFX_USDTWD": 31.848301,
+    "startingCashUSD": 33587.4778,
+    "afterInitialConversion": "USD cash only throughout; exchange back to TWD at last-day reference",
+    "brokerFeeEachSidePct": 0.14250000000000002,
+    "slippageEachSidePct": 0.1,
+    "sellTaiwanEtfTaxPct": 0,
+    "enterExit": "Use completed close to decide; trade QLD NEXT trading session opening, one stock at a time, no shorting/margin. Reinvest 100% of available net cash.",
+    "dividends": "Yahoo adjusted OHLC approximates gross dividend reinvestment (not after tax); dividend withholding not deducted",
+    "riskOff": "Hold 100% USD cash until reentry; interest 0",
+    "paramFrozen": "SMA10 and VWMA5 use same 3 consecutive closes below MA -2% to SELL, 1 close above MA +1% to BUY",
+    "indexSMA10": "^NDX Nasdaq-100 index close -> SMA10 risk signal (analogous ^TWII for 00675L), but QLD trade fills",
+    "ownQLD": "QLD ETF split/dividend-adjusted price used for own-SMA10 and own-VWMA5, real ETF daily shares volume for VWMA"
+  },
+  "dataQuality": {
+    "QLD": {
+      "ticker": "QLD",
+      "startDate": "2018-01-02",
+      "endDate": "2026-10-07",
+      "nSessions": 2203,
+      "rawVolumePositiveDaysPct": 100.0,
+      "missingVolumeDates": [],
+      "adjustFactorMin": 0.984912,
+      "adjustFactorMax": 1.0,
+      "closeCurrency": "USD",
+      "volumeCurrency": "shares",
+      "startUSDperTWD": 0.033587
+    },
+    "Nasdaq100IndexMissingDates": [],
+    "QQQReferenceParity": {
+      "priorStudyQQQBuyholdTWD": 444.202,
+      "priorStudyQQQSMA10TWD": 253.305
+    }
+  },
+  "results": [
+    {
+      "id": "BUY_HOLD",
+      "ticker": "QLD",
+      "entryDate": "2018-01-02",
+      "lastDate": "2026-10-07",
+      "sessions": 2203,
+      "initialCapitalTWD": 1000000,
+      "initialCapitalUSD": 33587.4778,
+      "endCapitalUSD": 367260.86,
+      "endCapitalTWD": 11696634.39,
+      "netReturnUSD": 993.446,
+      "netReturnTWD": 1069.663,
+      "maxDDUSD": -63.681,
+      "maxDDTWD": -59.873,
+      "riskOffSells": 0,
+      "riskOnReentries": 0,
+      "riskOffSessions": 0,
+      "tradingOrders": 2,
+      "yearsContinuous": {
+        "2018": {
+          "lastDate": "2018-12-31",
+          "endAccountUSD": 30345.93,
+          "endAccountTWD": 927159.18,
+          "USDAnnualReturnPct": -9.651,
+          "TWDAnnualReturnPct": -7.284
+        },
+        "2019": {
+          "lastDate": "2019-12-31",
+          "endAccountUSD": 55128.79,
+          "endAccountTWD": 1657943.2,
+          "USDAnnualReturnPct": 81.668,
+          "TWDAnnualReturnPct": 78.82
+        },
+        "2020": {
+          "lastDate": "2020-12-31",
+          "endAccountUSD": 104128.4,
+          "endAccountTWD": 2922884.16,
+          "USDAnnualReturnPct": 88.882,
+          "TWDAnnualReturnPct": 76.296
+        },
+        "2021": {
+          "lastDate": "2021-12-31",
+          "endAccountUSD": 161050.31,
+          "endAccountTWD": 4454442.36,
+          "USDAnnualReturnPct": 54.665,
+          "TWDAnnualReturnPct": 52.399
+        },
+        "2022": {
+          "lastDate": "2022-12-30",
+          "endAccountUSD": 63583.79,
+          "endAccountTWD": 1950757.0,
+          "USDAnnualReturnPct": -60.519,
+          "TWDAnnualReturnPct": -56.206
+        },
+        "2023": {
+          "lastDate": "2023-12-29",
+          "endAccountUSD": 138425.86,
+          "endAccountTWD": 4249397.04,
+          "USDAnnualReturnPct": 117.706,
+          "TWDAnnualReturnPct": 117.833
+        },
+        "2024": {
+          "lastDate": "2024-12-31",
+          "endAccountUSD": 197688.89,
+          "endAccountTWD": 6476287.7,
+          "USDAnnualReturnPct": 42.812,
+          "TWDAnnualReturnPct": 52.405
+        },
+        "2025": {
+          "lastDate": "2025-12-31",
+          "endAccountUSD": 257700.29,
+          "endAccountTWD": 8051485.0,
+          "USDAnnualReturnPct": 30.356,
+          "TWDAnnualReturnPct": 24.323
+        },
+        "2026": {
+          "lastDate": "2026-10-07",
+          "endAccountUSD": 367260.86,
+          "endAccountTWD": 11696634.39,
+          "USDAnnualReturnPct": 42.515,
+          "TWDAnnualReturnPct": 45.273
+        }
+      },
+      "blockedInvalidVWMA": 0
+    },
+    {
+      "id": "SMA10_2out_1in_c3",
+      "ticker": "QLD",
+      "entryDate": "2018-01-02",
+      "lastDate": "2026-10-07",
+      "sessions": 2203,
+      "initialCapitalTWD": 1000000,
+      "initialCapitalUSD": 33587.4778,
+      "endCapitalUSD": 319716.94,
+      "endCapitalTWD": 10182441.32,
+      "netReturnUSD": 851.893,
+      "netReturnTWD": 918.244,
+      "maxDDUSD": -65.506,
+      "maxDDTWD": -62.088,
+      "riskOffSells": 54,
+      "riskOnReentries": 54,
+      "riskOffSessions": 461,
+      "tradingOrders": 110,
+      "yearsContinuous": {
+        "2018": {
+          "lastDate": "2018-12-31",
+          "endAccountUSD": 32771.03,
+          "endAccountTWD": 1001253.26,
+          "USDAnnualReturnPct": -2.431,
+          "TWDAnnualReturnPct": 0.125
+        },
+        "2019": {
+          "lastDate": "2019-12-31",
+          "endAccountUSD": 61793.71,
+          "endAccountTWD": 1858384.0,
+          "USDAnnualReturnPct": 88.562,
+          "TWDAnnualReturnPct": 85.606
+        },
+        "2020": {
+          "lastDate": "2020-12-31",
+          "endAccountUSD": 160523.85,
+          "endAccountTWD": 4505904.42,
+          "USDAnnualReturnPct": 159.774,
+          "TWDAnnualReturnPct": 142.464
+        },
+        "2021": {
+          "lastDate": "2021-12-31",
+          "endAccountUSD": 240997.28,
+          "endAccountTWD": 6665671.7,
+          "USDAnnualReturnPct": 50.132,
+          "TWDAnnualReturnPct": 47.932
+        },
+        "2022": {
+          "lastDate": "2022-12-30",
+          "endAccountUSD": 95569.3,
+          "endAccountTWD": 2932075.63,
+          "USDAnnualReturnPct": -60.344,
+          "TWDAnnualReturnPct": -56.012
+        },
+        "2023": {
+          "lastDate": "2023-12-29",
+          "endAccountUSD": 182668.46,
+          "endAccountTWD": 5607556.38,
+          "USDAnnualReturnPct": 91.137,
+          "TWDAnnualReturnPct": 91.249
+        },
+        "2024": {
+          "lastDate": "2024-12-31",
+          "endAccountUSD": 211740.61,
+          "endAccountTWD": 6936622.03,
+          "USDAnnualReturnPct": 15.915,
+          "TWDAnnualReturnPct": 23.701
+        },
+        "2025": {
+          "lastDate": "2025-12-31",
+          "endAccountUSD": 275807.63,
+          "endAccountTWD": 8617223.5,
+          "USDAnnualReturnPct": 30.257,
+          "TWDAnnualReturnPct": 24.228
+        },
+        "2026": {
+          "lastDate": "2026-10-07",
+          "endAccountUSD": 319716.94,
+          "endAccountTWD": 10182441.32,
+          "USDAnnualReturnPct": 15.92,
+          "TWDAnnualReturnPct": 18.164
+        }
+      },
+      "blockedInvalidVWMA": 0
+    },
+    {
+      "id": "VWMA5_2out_1in_c3",
+      "ticker": "QLD",
+      "entryDate": "2018-01-02",
+      "lastDate": "2026-10-07",
+      "sessions": 2203,
+      "initialCapitalTWD": 1000000,
+      "initialCapitalUSD": 33587.4778,
+      "endCapitalUSD": 173854.73,
+      "endCapitalTWD": 5536977.76,
+      "netReturnUSD": 417.618,
+      "netReturnTWD": 453.698,
+      "maxDDUSD": -74.946,
+      "maxDDTWD": -72.349,
+      "riskOffSells": 57,
+      "riskOnReentries": 57,
+      "riskOffSessions": 230,
+      "tradingOrders": 116,
+      "yearsContinuous": {
+        "2018": {
+          "lastDate": "2018-12-31",
+          "endAccountUSD": 31925.56,
+          "endAccountTWD": 975421.62,
+          "USDAnnualReturnPct": -4.948,
+          "TWDAnnualReturnPct": -2.458
+        },
+        "2019": {
+          "lastDate": "2019-12-31",
+          "endAccountUSD": 54589.83,
+          "endAccountTWD": 1641734.51,
+          "USDAnnualReturnPct": 70.991,
+          "TWDAnnualReturnPct": 68.31
+        },
+        "2020": {
+          "lastDate": "2020-12-31",
+          "endAccountUSD": 120697.36,
+          "endAccountTWD": 3387974.86,
+          "USDAnnualReturnPct": 121.099,
+          "TWDAnnualReturnPct": 106.366
+        },
+        "2021": {
+          "lastDate": "2021-12-31",
+          "endAccountUSD": 153949.01,
+          "endAccountTWD": 4258029.63,
+          "USDAnnualReturnPct": 27.55,
+          "TWDAnnualReturnPct": 25.681
+        },
+        "2022": {
+          "lastDate": "2022-12-30",
+          "endAccountUSD": 44971.19,
+          "endAccountTWD": 1379720.58,
+          "USDAnnualReturnPct": -70.788,
+          "TWDAnnualReturnPct": -67.597
+        },
+        "2023": {
+          "lastDate": "2023-12-29",
+          "endAccountUSD": 90413.83,
+          "endAccountTWD": 2775523.75,
+          "USDAnnualReturnPct": 101.048,
+          "TWDAnnualReturnPct": 101.166
+        },
+        "2024": {
+          "lastDate": "2024-12-31",
+          "endAccountUSD": 128077.17,
+          "endAccountTWD": 4195807.87,
+          "USDAnnualReturnPct": 41.657,
+          "TWDAnnualReturnPct": 51.172
+        },
+        "2025": {
+          "lastDate": "2025-12-31",
+          "endAccountUSD": 153420.78,
+          "endAccountTWD": 4793417.61,
+          "USDAnnualReturnPct": 19.788,
+          "TWDAnnualReturnPct": 14.243
+        },
+        "2026": {
+          "lastDate": "2026-10-07",
+          "endAccountUSD": 173854.73,
+          "endAccountTWD": 5536977.76,
+          "USDAnnualReturnPct": 13.319,
+          "TWDAnnualReturnPct": 15.512
+        }
+      },
+      "blockedInvalidVWMA": 0
+    },
+    {
+      "id": "VWMA5_1out_2in_c3",
+      "ticker": "QLD",
+      "entryDate": "2018-01-02",
+      "lastDate": "2026-10-07",
+      "sessions": 2203,
+      "initialCapitalTWD": 1000000,
+      "initialCapitalUSD": 33587.4778,
+      "endCapitalUSD": 112410.45,
+      "endCapitalTWD": 3580081.84,
+      "netReturnUSD": 234.68,
+      "netReturnTWD": 258.008,
+      "maxDDUSD": -74.476,
+      "maxDDTWD": -71.947,
+      "riskOffSells": 76,
+      "riskOnReentries": 76,
+      "riskOffSessions": 389,
+      "tradingOrders": 154,
+      "yearsContinuous": {
+        "2018": {
+          "lastDate": "2018-12-31",
+          "endAccountUSD": 31984.37,
+          "endAccountTWD": 977218.44,
+          "USDAnnualReturnPct": -4.773,
+          "TWDAnnualReturnPct": -2.278
+        },
+        "2019": {
+          "lastDate": "2019-12-31",
+          "endAccountUSD": 57582.08,
+          "endAccountTWD": 1731723.44,
+          "USDAnnualReturnPct": 80.032,
+          "TWDAnnualReturnPct": 77.209
+        },
+        "2020": {
+          "lastDate": "2020-12-31",
+          "endAccountUSD": 101087.99,
+          "endAccountTWD": 2837539.85,
+          "USDAnnualReturnPct": 75.555,
+          "TWDAnnualReturnPct": 63.856
+        },
+        "2021": {
+          "lastDate": "2021-12-31",
+          "endAccountUSD": 134730.05,
+          "endAccountTWD": 3726458.16,
+          "USDAnnualReturnPct": 33.28,
+          "TWDAnnualReturnPct": 31.327
+        },
+        "2022": {
+          "lastDate": "2022-12-30",
+          "endAccountUSD": 38031.74,
+          "endAccountTWD": 1166817.57,
+          "USDAnnualReturnPct": -71.772,
+          "TWDAnnualReturnPct": -68.688
+        },
+        "2023": {
+          "lastDate": "2023-12-29",
+          "endAccountUSD": 73463.31,
+          "endAccountTWD": 2255176.69,
+          "USDAnnualReturnPct": 93.163,
+          "TWDAnnualReturnPct": 93.276
+        },
+        "2024": {
+          "lastDate": "2024-12-31",
+          "endAccountUSD": 85499.57,
+          "endAccountTWD": 2800965.77,
+          "USDAnnualReturnPct": 16.384,
+          "TWDAnnualReturnPct": 24.202
+        },
+        "2025": {
+          "lastDate": "2025-12-31",
+          "endAccountUSD": 104241.56,
+          "endAccountTWD": 3256881.69,
+          "USDAnnualReturnPct": 21.921,
+          "TWDAnnualReturnPct": 16.277
+        },
+        "2026": {
+          "lastDate": "2026-10-07",
+          "endAccountUSD": 112410.45,
+          "endAccountTWD": 3580081.84,
+          "USDAnnualReturnPct": 7.837,
+          "TWDAnnualReturnPct": 9.924
+        }
+      },
+      "blockedInvalidVWMA": 0
+    },
+    {
+      "id": "NDX_SMA10_2out_1in_c3",
+      "ticker": "QLD",
+      "entryDate": "2018-01-02",
+      "lastDate": "2026-10-07",
+      "sessions": 2203,
+      "initialCapitalTWD": 1000000,
+      "initialCapitalUSD": 33587.4778,
+      "endCapitalUSD": 280172.47,
+      "endCapitalTWD": 8923017.14,
+      "netReturnUSD": 734.158,
+      "netReturnTWD": 792.302,
+      "maxDDUSD": -64.758,
+      "maxDDTWD": -61.266,
+      "riskOffSells": 32,
+      "riskOnReentries": 32,
+      "riskOffSessions": 282,
+      "tradingOrders": 66,
+      "yearsContinuous": {
+        "2018": {
+          "lastDate": "2018-12-31",
+          "endAccountUSD": 33249.99,
+          "endAccountTWD": 1015886.93,
+          "USDAnnualReturnPct": -1.005,
+          "TWDAnnualReturnPct": 1.589
+        },
+        "2019": {
+          "lastDate": "2019-12-31",
+          "endAccountUSD": 59939.97,
+          "endAccountTWD": 1802634.62,
+          "USDAnnualReturnPct": 80.271,
+          "TWDAnnualReturnPct": 77.444
+        },
+        "2020": {
+          "lastDate": "2020-12-31",
+          "endAccountUSD": 162411.78,
+          "endAccountTWD": 4558898.62,
+          "USDAnnualReturnPct": 170.957,
+          "TWDAnnualReturnPct": 152.902
+        },
+        "2021": {
+          "lastDate": "2021-12-31",
+          "endAccountUSD": 213760.19,
+          "endAccountTWD": 5912329.17,
+          "USDAnnualReturnPct": 31.616,
+          "TWDAnnualReturnPct": 29.688
+        },
+        "2022": {
+          "lastDate": "2022-12-30",
+          "endAccountUSD": 78708.98,
+          "endAccountTWD": 2414799.34,
+          "USDAnnualReturnPct": -63.179,
+          "TWDAnnualReturnPct": -59.157
+        },
+        "2023": {
+          "lastDate": "2023-12-29",
+          "endAccountUSD": 147812.81,
+          "endAccountTWD": 4537557.63,
+          "USDAnnualReturnPct": 87.797,
+          "TWDAnnualReturnPct": 87.906
+        },
+        "2024": {
+          "lastDate": "2024-12-31",
+          "endAccountUSD": 191673.72,
+          "endAccountTWD": 6279230.75,
+          "USDAnnualReturnPct": 29.673,
+          "TWDAnnualReturnPct": 38.383
+        },
+        "2025": {
+          "lastDate": "2025-12-31",
+          "endAccountUSD": 262114.04,
+          "endAccountTWD": 8189386.44,
+          "USDAnnualReturnPct": 36.75,
+          "TWDAnnualReturnPct": 30.42
+        },
+        "2026": {
+          "lastDate": "2026-10-07",
+          "endAccountUSD": 280172.47,
+          "endAccountTWD": 8923017.14,
+          "USDAnnualReturnPct": 6.89,
+          "TWDAnnualReturnPct": 8.958
+        }
+      }
+    }
+  ],
+  "samePeriodTW00675LReference": {
+    "ticker": "00675L.TW",
+    "market": "Taiwan",
+    "fromPreviousVerifiedSamePeriodStudy": {
+      "buyHold": {
+        "netReturnTWD": 2464.173,
+        "endCapitalTWD": 25641733.91,
+        "maxDDTWD": -55.244
+      },
+      "indexSMA10": {
+        "netReturnTWD": 4110.755,
+        "endCapitalTWD": 42107551.24,
+        "maxDDTWD": -35.378
+      },
+      "indexVWMA5": {
+        "netReturnTWD": 2371.981,
+        "endCapitalTWD": 24719808.33,
+        "maxDDTWD": -56.141
+      }
+    },
+    "provenance": "research/00675l-vwma5-vs-sma10-2018-2026/summmary.json on same GitHub repo"
+  },
+  "warnings": [
+    "This ETF uses DAILY 2x leverage. Cumulative performance of QLD is path-dependent and NOT necessarily QQQ's long-term growth times two.",
+    "US leveraged ETF distributions and historical splits are incorporated via Yahoo adjusted prices; index data must align to NYSE trading days.",
+    "No Taiwan US-investor dividend withholding or conversion spread, US regulatory SEC/FINRA transaction costs, individual taxes, FX transfer or financing costs.",
+    "Performance assumes next-open execution with specified slippage; severe Nasdaq gaps and large-account market impact can deviate.",
+    "QLD own-price-based signals do NOT correspond exactly to earlier index-based 00675L signals; ^NDX SMA10 included for a like-style comparison.",
+    "Historical parameter choice follows previous 00675L experiments, not an independent QLD-specific selection; a retrospective study does not imply future edge."
+  ],
+  "elapsedSec": 1.2
+}
