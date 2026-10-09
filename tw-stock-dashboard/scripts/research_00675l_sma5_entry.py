@@ -25,17 +25,17 @@ CASES=[
  ("SMA5_2CONF","台指站上SMA5連續2日買回",5,0.,2,False),
  ("SMA5_CROSS","台指從下向上穿越SMA5買回",5,0.,1,True)
 ]
-def run(a,dates,entry_ma,entry_buffer=0.,entry_days=1,cross=False,begin=BEGIN,end=END,details=False):
+def run(a,dates,entry_ma,entry_buffer=0.,entry_days=1,cross=False,begin=BEGIN,end=END,details=False,exit_n=10):
     xs=np.flatnonzero((dates>=begin)&(dates<=end))
     if len(xs)<40:raise ValueError("Too few trading sessions")
-    sma10=ma_array(a["twii"],None,"SMA",10)
+    exit_ma=ma_array(a["twii"],None,"SMA",exit_n)
     idx=a["twii"];etf=a["close"];cash=float(CAPITAL);shares=0;holding=False;last_sell=-9999;orders=[];equity=[];cashdays=0
     buy_factor=(1+SLIP)*(1+BROKER);sell_factor=(1-SLIP)*(1-BROKER-ETF_SELL_TAX)
     for pos,i in enumerate(xs):
         date=str(dates[i]);o=float(a["open"][i]);cl=float(etf[i]);j=i-1
         if pos==0:want=True
         elif holding:
-            trend_exit=trailing_ok(idx,sma10,j,3,.02,False)
+            trend_exit=trailing_ok(idx,exit_ma,j,3,.02,False)
             panic=j>=1 and idx[j]/idx[j-1]-1<=-.04
             want=not(trend_exit or panic)
             if not want:reason="panic_index" if panic else "risk_off"
@@ -92,12 +92,14 @@ def main():
     assert old_m["endTWD"]==control["endNTD"],"Archived control changed"
     periods={"training_2018_2023":("2018-01-02","2023-12-31"),"validation_2024_2025":("2024-01-01","2025-12-31"),
              "audit_2026":("2026-01-01",END)}
-    studies=[("SMA10_BASE","原版｜台指SMA10＋1%買回",10,.01,1,False)]+CASES
+    studies=[("SMA10_BASE","原版｜台指SMA10＋1%買回",10,.01,1,False)]+CASES+[("SMA5_EXIT","台指SMA5買回＋SMA5跌2%連3日出場＋急跌4%保護",5,0.,1,False,5)]
     models=[];summary={}
-    for id,title,n,buf,days,cross in studies:
+    for spec in studies:
+        id,title,n,buf,days,cross=spec[:6]
+        exit_n=spec[6] if len(spec)>6 else 10
         entry_ma=ma_array(a["twii"],None,"SMA",n)
-        z=run(a,dates,entry_ma,buf,days,cross,details=True)
-        stats={p:publicstats(run(a,dates,entry_ma,buf,days,cross,beg,end)) for p,(beg,end) in periods.items()}
+        z=run(a,dates,entry_ma,buf,days,cross,details=True,exit_n=exit_n)
+        stats={p:publicstats(run(a,dates,entry_ma,buf,days,cross,beg,end,exit_n=exit_n)) for p,(beg,end) in periods.items()}
         if id=="SMA10_BASE":assert z["orders"]==control["orders"]
         path="curves/"+STUDY+"__"+id+".json"
         payload={"study":STUDY,"id":id,"currency":"TWD","columns":["date","equity"],"points":z["points"],
@@ -107,8 +109,8 @@ def main():
              "endTWD":z["endNTD"],"returnPct":z["returnPct"],"mddPct":z["mddPct"],
              "sells":z["riskOffSells"],"rebuys":z["riskOnReentries"],"cashDays":z["riskOffSessions"],
              "sessions":z["sessions"],"annual":z["annual"],"curve":path,"curveCurrency":"TWD",
-             "notes":f"賣出完全不變：台指低於SMA10之98%連3日或單日跌4%；買回：站上SMA{n}之{100*buf:g}%"+("，只接受從下向上突破" if cross else f"，連續{days}日")+"；期初2018/1/2開盤強制建倉。固定手續費/稅/滑價。",
-             "splitResults":stats,"entryMA":n,"entryBufferPct":round(100*buf,2),"entryConfirmDays":days,"crossOnly":cross}
+             "notes":f"賣出：台指低於SMA{exit_n}之98%連3日或單日跌4%；買回：站上SMA{n}之{100*buf:g}%"+("，只接受從下向上突破" if cross else f"，連續{days}日")+"；期初2018/1/2開盤強制建倉。固定手續費/稅/滑價。",
+             "splitResults":stats,"entryMA":n,"exitMA":exit_n,"entryBufferPct":round(100*buf,2),"entryConfirmDays":days,"crossOnly":cross}
         models.append(record);summary[id]={"continuous":publicstats(z),"segments":stats}
         print("CASE_"+id,json.dumps({"total":z["returnPct"],"endingTWD":z["endNTD"],"mdd":z["mddPct"],"sells":z["riskOffSells"],"train":stats["training_2018_2023"]["returnPct"],"valid":stats["validation_2024_2025"]["returnPct"],"audit":stats["audit_2026"]["returnPct"]},ensure_ascii=False),flush=True)
     meta={"version":"00675L_SMA5_REENTRY_V1","generatedAtUTC":datetime.now(timezone.utc).isoformat(),
@@ -127,7 +129,7 @@ def main():
     (OUT/"summary.json").write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding="utf-8")
     repo="https://github.com/jacky-168168/Tradingview-testing"
     desc={"id":STUDY,"title":"00675L｜SMA5 買回 vs SMA10 原版｜2018～2026",
-       "description":"保持原版SMA10出場及台指單日跌4%保護，只把空手後買回改為台指站上SMA5；同時測試0.5%/1%緩衝、連2日確認與真正黃金交叉。原版完全保留。",
+       "description":"原版SMA10對照、5組SMA5買回且SMA10出場，以及新增SMA5買回且SMA5跌2%連3日出場；全系列維持台指單日跌4%急跌保護。",
        "period":[BEGIN,END],"sessions":2128,"models":models,
        "warnings":meta["warnings"][:4],"dataQuality":"2018～2026 共2,128個交易日，原版逐日淨值與逐筆訂單完全一致。SMA5定義為指數收盤高於自身5日簡單均線；不是ETF自身均線。",
        "sourceBranch":"main",
@@ -138,6 +140,8 @@ def main():
     ix["studyOrder"]=[s for s in ix.get("studyOrder",[]) if s!=STUDY]+[STUDY]
     ix["generatedAtUTC"]=meta["generatedAtUTC"]
     index_path.write_text(json.dumps(ix,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
-    assert len(models)==6 and all((DATA/m["curve"]).exists() for m in models)
+    assert len(models)==7 and all((DATA/m["curve"]).exists() for m in models)
+    assert next(m for m in models if m["id"]=="SMA5_EXIT")["entryMA"]==next(m for m in models if m["id"]=="SMA5_EXIT")["exitMA"]==5
+    assert next(m for m in models if m["id"]=="SMA5_ABOVE")["exitMA"]==10
     print("SMA5_ENTRY_RESULT",json.dumps({"study":STUDY,"models":len(models),"period":[BEGIN,END],"sma5":summary["SMA5_ABOVE"],"base":summary["SMA10_BASE"]},ensure_ascii=False),flush=True)
 if __name__=="__main__":main()
