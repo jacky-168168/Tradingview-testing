@@ -54,10 +54,26 @@ def normalized(etf):
     a=a[a.volume>0].copy().reset_index(drop=True)
     assert not ((a.date>="2026-03-25")&(a.date<="2026-03-30")).any()
     assert (a.date==SPLIT_LAST).any() and (a.date==SPLIT_RESUME).any()
-    # Protect equity accounting from fictitious 95.5% crash or duplicate split adjustment.
+    # Yahoo sometimes has the first 2014 segment on pre-2026 units while 2015+ is adjusted.
+    # Fund began near NT$20 in 2014 and did NOT actually split during 2015.
+    # Permit only an exactly identified 22x source artifact at 2015-01-05, not any general gap.
     gaps=a.close.pct_change().abs()
+    artifacts=[]
     severe=a.loc[gaps>.52,["date","close"]]
-    if len(severe):raise RuntimeError("Uncorrected corporate-action or abnormal >52% ETF gap: "+severe.to_json(orient="records"))
+    if len(severe)==1 and str(severe.iloc[0].date)=="2015-01-05":
+        p=int(severe.index[0]);before=float(a.iloc[p-1].close);after=float(a.iloc[p].close)
+        jump=after/before
+        print("EARLY_SOURCE_ARTIFACT",json.dumps({"date":"2015-01-05","before":before,"after":after,"jump":jump}),flush=True)
+        if not (0.025<jump<0.065 and before>10 and after<2):
+            raise RuntimeError(f"Unexpected 2015 provider discontinuity, cannot safely repair: {jump}")
+        a.loc[a.date<"2015-01-05",["open","high","low","close"]]=a.loc[a.date<"2015-01-05",["open","high","low","close"]]/22.
+        artifacts.append({"date":"2015-01-05","reason":"Yahoo earliest 2014 prices weren't back-adjusted by the 2026 22-for-1 split",
+                          "applied":"divide all pre-2015-01-05 OHLC by 22","originalJump":jump})
+        gaps=a.close.pct_change().abs()
+        severe=a.loc[gaps>.52,["date","close"]]
+    if len(severe):
+        raise RuntimeError("Uncorrected corporate-action or abnormal >52% ETF gap: "+severe.to_json(orient="records"))
+
     q={"ratio":22,"lastPreSplitTradingDate":SPLIT_LAST,"firstPostSplitTradingDate":SPLIT_RESUME,
        "officialOldLastClose":443.15,"officialSplitAdjustedPreClose":round(443.15/22,5),
        "YahooRawPre":round(rawpre,5),"YahooRawPost":round(rawpost,5),
@@ -66,6 +82,7 @@ def normalized(etf):
        "adjustmentMethod":adjustment,"zeroVolumeQuoteRowsDropped":[str(x) for x in removed.date],
        "haltedQuotesRemoved":[str(x) for x in halted.date],
        "adjustedEtfDailyReturnsAbove52Pct":int((gaps>.52).sum()),
+       "additionalProviderScalingFixes":artifacts,
        "firstTradingSession":str(a.date.iloc[0]),"lastTradingSession":str(a.date.iloc[-1])}
     print("SPLIT_AUDIT",json.dumps(q,ensure_ascii=False),flush=True)
     return a,q
