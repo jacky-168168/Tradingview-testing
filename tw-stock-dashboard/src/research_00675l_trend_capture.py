@@ -8,7 +8,60 @@ import json,math,time,itertools
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import numpy as np,pandas as pd
-from research_00675l_swing_grid import data_prepare,update_symbol,SYMBOL,INDEX,BROKER,ETF_SELL_TAX,SLIP,CAPITAL,DATA_DIR
+from yahoo_cache import update_symbol
+from config import DATA_DIR
+SYMBOL="00675L.TW";INDEX="^TWII";BROKER=.001425;ETF_SELL_TAX=.001;SLIP=.001;CAPITAL=1_000_000;TEST_END="2026-10-08"
+def rsi(s,n):
+    delta=s.diff();g=delta.clip(lower=0).ewm(alpha=1/n,adjust=False,min_periods=n).mean()
+    l=(-delta.clip(upper=0)).ewm(alpha=1/n,adjust=False,min_periods=n).mean()
+    rs=g/l.replace(0,np.nan)
+    return (100-100/(1+rs)).fillna(100)
+def data_prepare(etf,idx):
+    a=etf.copy();b=idx.copy()
+    for frame in [a,b]:
+        frame["date"]=frame["date"].astype(str)
+        for key in ("open","high","low","close","adjclose","volume"):
+            frame[key]=pd.to_numeric(frame[key],errors="coerce")
+        frame.dropna(subset=["open","high","low","close"],inplace=True)
+        frame.sort_values("date",inplace=True)
+        frame.drop_duplicates("date",keep="last",inplace=True)
+    if len(a)<500:raise RuntimeError("00675L history too short: "+str(len(a)))
+    ratios=(a["adjclose"]/a["close"]).replace([np.inf,-np.inf],np.nan)
+    # Yahoo normalized close generally already includes split ratio. A factor in adjclose is used consistently
+    # across all OHLC so indicator and executable prices always share one corporate-action basis.
+    a["factor"]=ratios.fillna(1.0)
+    if ((a["factor"]<=0)|(a["factor"]>100)|(a["factor"]<.01)).any():raise RuntimeError("Unusable adjustment factor")
+    for key in ("open","high","low","close"):a[key]=a[key]*a["factor"]
+    an=a[["date","open","high","low","close","volume","factor"]]
+    bn=b[["date","close"]].rename(columns={"close":"twii"})
+    d=an.merge(bn,on="date",how="inner").sort_values("date").reset_index(drop=True)
+    d=d[d.date<=TEST_END].reset_index(drop=True)
+    if d.empty or d.iloc[-1]["date"]<"2026-09-30":raise RuntimeError("2026 data insufficient, last="+(str(d.iloc[-1]["date"]) if len(d) else "none"))
+    if len(d[d.date.between("2024-01-01","2025-12-31")])<450:raise RuntimeError("2024-25 training history incomplete")
+    if len(d[d.date.between(TEST_START,TEST_END)])<170:raise RuntimeError("2026 OOS history incomplete")
+    d["ema10"]=d.close.ewm(span=10,adjust=False,min_periods=10).mean()
+    for n in [5,10,20,60,120]:
+        d[f"sma{n}"]=d.close.rolling(n,min_periods=n).mean()
+        if n in (20,60):d[f"twii_ma{n}"]=d.twii.rolling(n,min_periods=n).mean()
+    d["rsi2"]=rsi(d.close,2);d["rsi5"]=rsi(d.close,5);d["rsi14"]=rsi(d.close,14)
+    d["high20"]=d.high.shift(1).rolling(20).max()
+    d["high40"]=d.high.shift(1).rolling(40).max()
+    d["d2"]=d.close.pct_change(2)
+    std=d.close.rolling(20).std()
+    d["band15"]=d.sma20-1.5*std;d["band20"]=d.sma20-2.0*std
+    d["sma20_up"]=d.sma20>d.sma20.shift(5)
+    d["twii_above20"]=d.twii>d.twii_ma20
+    d["twii_above60"]=d.twii>d.twii_ma60
+    changes=(d.close/d.close.shift(1)-1).dropna()
+    if (changes.abs()>.60).any():raise RuntimeError("Corporate action / uncorrected 60% price jump detected")
+    d["d3"]=d.close.pct_change(3)
+    d["ema20"]=d.close.ewm(span=20,adjust=False,min_periods=20).mean()
+    d["ema40"]=d.close.ewm(span=40,adjust=False,min_periods=40).mean()
+    d["atr14"]=pd.concat([d.high-d.low,(d.high-d.close.shift()).abs(),(d.low-d.close.shift()).abs()],axis=1).max(axis=1).ewm(alpha=1/14,adjust=False,min_periods=14).mean()
+    d["high60"]=d.high.shift(1).rolling(60).max()
+    d["sma10_up"]=d.sma10>d.sma10.shift(5)
+    return d
+
 START="2024-01-01";DEVELOP_END="2025-12-31";TEST_START="2026-01-01";TEST_END="2026-10-08"
 OUT=DATA_DIR/"research/etf_00675l_trend_capture_2024_2026"
 def prepare():
