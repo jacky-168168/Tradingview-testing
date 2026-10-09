@@ -11,6 +11,7 @@ const archiveLinks={
  risk:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_strict_stop_diagnostic_2026.json">大盤位階 × 停損原始研究 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37839334095">GitHub 實際研究執行紀錄 ↗</a>',
  timing:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_strict_ma20_entry_2026.json">下載 G_STRICT MA20 進場比較 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_strict_ma20_entry_trades_2026.json">下載全部逐筆交易 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37848392034">成功回測 GitHub Actions ↗</a>',
  reinvest:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/00675l_reinvestment_summary.json">00675L 三種資金配置統計 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/00675l_reinvestment_trades_equity.json">完整逐筆交易與現金權益曲線 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37865188346">研究與驗證執行紀錄 ↗</a>',
+ extended00675:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/00675l_extended_2020_2026_summary.json">2020～2026 完整資金與年度風險統計 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/00675l_extended_2020_2026_daily_equity.json">全部逐日現金曲線與交易紀錄 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37870828816">GitHub 2020～2026 驗算紀錄 ↗</a>',
  trend00675:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/00675l_regime_capture_summary.json">1091組趨勢輪動研究 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/00675l_regime_capture_stress.json">滑價與延後成交壓測 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/00675l_trend_capture_summary.json">925組交叉驗算 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37867769770">驗證流程 ↗</a>',
  tp:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_tp_sl_2026_summary.json">108組停利／停損研究統計 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_tp_sl_2026_equity_curves.json">108組逐日帳戶權益曲線 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37856646898">回測及驗證執行紀錄 ↗</a>',
  capacity:'<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_capital_2026_summary.json">全部 36 組 2026 資金限制回測 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="./data/research/model_execution_2026/g_capital_2026_equity_curves.json">下載每日資金曲線 JSON ↗</a>　<a class="research-link" target="_blank" rel="noopener" href="https://github.com/jacky-168168/Tradingview-testing/actions/runs/37850943950">原始 GitHub 研究執行紀錄 ↗</a>',
@@ -22,8 +23,8 @@ const clr=v=>v==null?"":Number(v)>=0?"research-positive":"research-negative";
 const perf=v=>'<span class="'+clr(v)+'">'+pct(v,3)+'</span>';
 const type=x=>x==="ma"?"B 均線觸價":"A 固定下跌";
 const full=x=>names[x]||x;
-let main=null,h5=null,g=null,risk=null,timing=null,timingTrades=null,timingMode="",timingGate="",timingPage=0,capacity=null,capacityCurves=null,capacitySelected=null,capacityToken=0,tpSensi=null,tpCurves=null,tpToken=0,reinvest=null,reinvestTrades=null,reinvestToken=0,regime00675=null,regime00675Stress=null,regime00675Cross=null,regime00675Equity=null,regime00675Token=0,loading=null,current=null,activeArchive="g",modelTrades=null,tradeIdentity="",run=0,tradePage=0;
-async function get(path){const u=path+"?v=20261009f",r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("資料 HTTP "+r.status+"："+path);return r.json();}
+let main=null,h5=null,g=null,risk=null,timing=null,timingTrades=null,timingMode="",timingGate="",timingPage=0,capacity=null,capacityCurves=null,capacitySelected=null,capacityToken=0,tpSensi=null,tpCurves=null,tpToken=0,reinvest=null,reinvestTrades=null,reinvestToken=0,regime00675=null,regime00675Stress=null,regime00675Cross=null,regime00675Equity=null,regime00675Token=0,extended00675=null,extended00675Equity=null,extended00675Token=0,loading=null,current=null,activeArchive="g",modelTrades=null,tradeIdentity="",run=0,tradePage=0;
+async function get(path){const u=path+"?v=20261009g",r=await fetch(u,{cache:"no-cache"});if(!r.ok)throw Error("資料 HTTP "+r.status+"："+path);return r.json();}
 function visible(){by("legacyView").style.display="none";by("gView").style.display="none";root.style.display="block";document.querySelectorAll("#modelTabs button").forEach(b=>b.classList.toggle("on",b.id==="RESEARCH"));if(main)render();else load();}
 function close(){root.style.display="none";}
 for(const id of ["G","D","F","F2","A"])by(id)?.addEventListener("click",close);
@@ -38,8 +39,8 @@ async function load(){
    const sel=by("researchModel");
    sel.innerHTML='<option value="all">全部 '+Object.keys(main.allModelStatistics).length+' 種模型</option>'+Object.keys(main.allModelStatistics).map(z=>'<option value="'+e(z)+'">'+e(full(z))+'</option>').join("");
    by("researchMeta").textContent=main.period.start+" ～ "+main.period.end+"｜"+Object.keys(main.allModelStatistics).length+" 個模型 × 2 種進場 × 3 週期｜資料產出 "+(main.generatedAt||"—");
-   const [gResult,hResult,riskResult,timingResult,capacityResult,tpSensiResult,reinvestResult,regimeResult,regimeStressResult,regimeCrossResult]=await Promise.allSettled([get(rootpath+"g_ladder_vs_ma_2026.json"),get(rootpath+"h5_ladder_2026.json"),get(rootpath+"g_strict_stop_diagnostic_2026.json"),get(rootpath+"g_strict_ma20_entry_2026.json"),get(rootpath+"g_capital_2026_summary.json"),get(rootpath+"g_tp_sl_2026_summary.json"),get(rootpath+"00675l_reinvestment_summary.json"),get(rootpath+"00675l_regime_capture_summary.json"),get(rootpath+"00675l_regime_capture_stress.json"),get(rootpath+"00675l_trend_capture_summary.json")]);
-   g=gResult.status==="fulfilled"?gResult.value:null;h5=hResult.status==="fulfilled"?hResult.value:null;risk=riskResult.status==="fulfilled"?riskResult.value:null;timing=timingResult.status==="fulfilled"?timingResult.value:null;capacity=capacityResult.status==="fulfilled"?capacityResult.value:null;tpSensi=tpSensiResult.status==="fulfilled"?tpSensiResult.value:null;reinvest=reinvestResult.status==="fulfilled"?reinvestResult.value:null;regime00675=regimeResult.status==="fulfilled"?regimeResult.value:null;regime00675Stress=regimeStressResult.status==="fulfilled"?regimeStressResult.value:null;regime00675Cross=regimeCrossResult.status==="fulfilled"?regimeCrossResult.value:null;
+   const [gResult,hResult,riskResult,timingResult,capacityResult,tpSensiResult,reinvestResult,regimeResult,regimeStressResult,regimeCrossResult,extendedResult]=await Promise.allSettled([get(rootpath+"g_ladder_vs_ma_2026.json"),get(rootpath+"h5_ladder_2026.json"),get(rootpath+"g_strict_stop_diagnostic_2026.json"),get(rootpath+"g_strict_ma20_entry_2026.json"),get(rootpath+"g_capital_2026_summary.json"),get(rootpath+"g_tp_sl_2026_summary.json"),get(rootpath+"00675l_reinvestment_summary.json"),get(rootpath+"00675l_regime_capture_summary.json"),get(rootpath+"00675l_regime_capture_stress.json"),get(rootpath+"00675l_trend_capture_summary.json"),get(rootpath+"00675l_extended_2020_2026_summary.json")]);
+   g=gResult.status==="fulfilled"?gResult.value:null;h5=hResult.status==="fulfilled"?hResult.value:null;risk=riskResult.status==="fulfilled"?riskResult.value:null;timing=timingResult.status==="fulfilled"?timingResult.value:null;capacity=capacityResult.status==="fulfilled"?capacityResult.value:null;tpSensi=tpSensiResult.status==="fulfilled"?tpSensiResult.value:null;reinvest=reinvestResult.status==="fulfilled"?reinvestResult.value:null;regime00675=regimeResult.status==="fulfilled"?regimeResult.value:null;regime00675Stress=regimeStressResult.status==="fulfilled"?regimeStressResult.value:null;regime00675Cross=regimeCrossResult.status==="fulfilled"?regimeCrossResult.value:null;extended00675=extendedResult.status==="fulfilled"?extendedResult.value:null;
    by("researchWarnings").textContent=(main.warnings||[]).slice(0,4).join(" ｜ ");
    render();
   }catch(err){by("researchMeta").textContent="載入失敗："+err.message;by("researchRankRows").innerHTML='<tr><td colspan="12">研究資料未發佈或網路有問題。請稍後重新整理。</td></tr>'}
@@ -134,8 +135,8 @@ function archive(which){
  const head=by("researchArchiveHead"),tbody=by("researchArchiveRows"),note=by("researchArchiveNote");
  by("researchArchiveLinks").innerHTML=archiveLinks[which]||"";
  by("researchTimingTradeSection").style.display=which==="timing"?"block":"none";
- by("researchCapacityDetail").style.display=(which==="capacity"||which==="tp"||which==="reinvest"||which==="trend00675")?"block":"none";
- if(which==="tp"||which==="reinvest"||which==="trend00675"){by("researchCapacityTitle").textContent="請點選表格中的策略查看逐月報酬與每日資金曲線";by("researchCapacityStats").innerHTML="";by("researchCapacityStatus").textContent="";by("researchCapacityCurve").innerHTML="";by("researchCapacityMonths").innerHTML="";}
+ by("researchCapacityDetail").style.display=(which==="capacity"||which==="tp"||which==="reinvest"||which==="trend00675"||which==="extended00675")?"block":"none";
+ if(which==="tp"||which==="reinvest"||which==="trend00675"||which==="extended00675"){by("researchCapacityTitle").textContent="請點選表格中的策略查看逐月報酬與每日資金曲線";by("researchCapacityStats").innerHTML="";by("researchCapacityStatus").textContent="";by("researchCapacityCurve").innerHTML="";by("researchCapacityMonths").innerHTML="";}
  if(which==="g"){
   head.innerHTML="<tr><th>期限</th><th>進場方式</th><th>開倉</th><th>+7%達標</th><th>停損率</th><th>預留資金淨報酬</th></tr>";
   note.textContent="先前 G_DOUBLE_PERSIST Top3 兩種加碼法對照；與17模型比較的一致範圍，但獨立執行的歷史歸檔。";
@@ -144,7 +145,27 @@ function archive(which){
   head.innerHTML="<tr><th>期限</th><th>首筆折價</th><th>開倉</th><th>+7%達標</th><th>停損率</th><th>已投入資金淨報酬</th><th>預留資金淨報酬</th></tr>";
   note.textContent="H5 的固定突破選股不變，測試首筆限價-2%、-2.5%、-3%，之後4筆每下跌首筆成交價2%加碼。此研究的首筆委託僅下一交易日有效，與上方17模型5日等待版不同，不可直接同比。";
   tbody.innerHTML=h5?.results?Object.entries(h5.results).flatMap(([h,discount])=>Object.entries(discount).map(([off,s])=>'<tr><td>'+e(h)+'D</td><td>-'+e(off)+'%</td><td>'+n(s.filled,0)+'</td><td>'+pct(s.targetHitPct)+'</td><td>'+pct(s.stopHitPct)+'</td><td>'+perf(s.avgNetOnDeployedPct)+'</td><td>'+perf(s.avgNetOnFiveTrancheBudgetPct)+'</td></tr>')).join(""):'<tr><td colspan="7">研究檔案未載入</td></tr>';
- }else if(which==="trend00675"){
+ }else if(which==="extended00675"){
+  head.innerHTML="<tr><th>00675L 資金策略</th><th>2020</th><th>2022</th><th>2026</th><th>全期淨報酬</th><th>期末資產</th><th>最大回撤</th><th>賣出／買回</th></tr>";
+  note.textContent="2020/1/2～2026/10/7，1642個交易日｜起始100萬元，獲利全數複投，不跨年重置。固定之前2024～26研究參數；這次新增2020疫情、2022空頭行情，未利用2020～23重新挑門檻。每筆使用隔日開盤模擬成交，費稅、ETF賣稅、雙向滑價皆計入。SMA10是簡單移動平均，EMA10為另外列出的實驗版本，並不相同。按歷史回報排序只為便於對照，不代表未來建議排名。點選一列查看完整每日現金曲線與逐月報酬。";
+  const label={
+   "BUY_HOLD":"全程買進持有",
+   "SMA_twii_10_O0.02_R0.01_C3_W0.0":"台指 SMA10（連3天跌破2%，站回+1%）",
+   "MA_twii_10_O0.02_R0.01_C3_W0.0":"台指 EMA10（探索版）",
+   "MA_close_10_O0.04_R0.02_C3_W0.0":"00675L EMA10（探索版）",
+   "SMA_close_10_O0.04_R0.02_C3_W0.0":"00675L SMA10（連3天跌破4%）",
+   "TRAIL_20_0.16_RE10_W0.0":"20日高點回撤16%，EMA10買回",
+   "CRASH_3_0.1_RE10_Gtwii_below60_W0.0":"急跌10%＋台指偏弱",
+   "MA_twii_20_O0.03_R0.0_C1_W0.0":"台指 EMA20 跌破3%",
+   "CRASH_3_0.1_RE10_Gall_W0.0":"無大盤濾網急跌10%",
+   "DUAL_twii_120_20_RE10_W0.5":"台指雙均線減碼一半",
+   "EMA10_TWII20_TP10_SL7":"短波段 EMA10，固定10%停利"};
+  const raw=extended00675?[extended00675.baseline,...extended00675.comparison].sort((a,b)=>b.continuous.returnPct-a.continuous.returnPct):[];
+  tbody.innerHTML=raw.length?raw.map(z=>{
+    const c=z.continuous,y=z.compoundedCalendarYears;
+    return '<tr style="cursor:pointer" data-extended00675="'+e(z.id)+'"><td>'+e(label[z.id]||z.id)+'</td><td>'+perf(y["2020"].calendarReturnPct)+'</td><td>'+perf(y["2022"].calendarReturnPct)+'</td><td>'+perf(y["2026"].calendarReturnPct)+'</td><td>'+perf(c.returnPct)+'</td><td>'+e(n(c.endNTD/10000,2))+'萬</td><td>'+perf(c.mddPct)+'</td><td>'+e(c.riskOffSells==null?"短線 "+(c.trades||0)+" 筆":c.riskOffSells+"／"+c.riskOnReentries)+'</td></tr>';
+  }).join(""):'<tr><td colspan="8">2020～2026 研究尚未載入，請檢查資料 JSON。</td></tr>';
+  }else if(which==="trend00675"){
   head.innerHTML="<tr><th>00675L 交易方法</th><th>2024 淨報酬</th><th>2025 淨報酬</th><th>2026 淨報酬</th><th>連續 2024～26</th><th>最後資產</th><th>最大回撤</th><th>完整賣出／買回</th><th>風險空手交易日</th></tr>";
   note.textContent="2024～2026/10/7，100萬元起始、獲利100%複投、ETF買賣費稅與雙邊滑價。先依2024～25年選候選，再評估2026年；但2026行情先前已多次被研究，不是全新獨立驗證。1091組參數中選出實際多次完整出場與重新買回的7種，對照長抱。表格按完整歷史報酬排序僅供閱讀，不能把它當未來績效排名。點選策略可查看每日資金曲線與月報酬。";
   const label={
@@ -367,6 +388,42 @@ by("researchArchiveRows").addEventListener("click",ev=>{
  const row=ev.target.closest("tr[data-trend00675]");if(!row)return;
  if(row.dataset.trend00675==="BUY_HOLD"){by("researchCapacityTitle").textContent="00675L 2024～2026 買進持有：100萬→592.54萬、+492.54%、最大回撤-55.24%；未設每日資金曲線。";by("researchCapacityCurve").innerHTML="";by("researchCapacityMonths").innerHTML="";by("researchCapacityStats").innerHTML="";by("researchCapacityStatus").textContent="請點選來回操作策略查看逐日曲線。";return;}
  select00675Trend(row.dataset.trend00675);
+});
+async function selectExtended00675(id){
+ const token=++extended00675Token;
+ const model=[extended00675?.baseline,...(extended00675?.comparison||[])].find(x=>x?.id===id);
+ if(!model)return;
+ const c=model.continuous,yr=model.compoundedCalendarYears;
+ by("researchCapacityTitle").textContent="00675L｜2020～2026 不重置本金｜"+id;
+ const vals=[["最後總資產",n(c.endNTD/10000,2)+"萬元"],
+   ["全期淨報酬",pct(c.returnPct)],["最大回撤",pct(c.mddPct)],
+   ["2020年度",pct(yr["2020"].calendarReturnPct)],["2022年度",pct(yr["2022"].calendarReturnPct)],
+   ["2026年度",pct(yr["2026"].calendarReturnPct)],
+   ["風險出場",c.riskOffSells==null?c.trades+"筆短線":c.riskOffSells+"次"]];
+ const stress=extended00675?.stress;
+ const slip=stress?.slippageEachSide?.["0.005"]?.[id];
+ if(slip)vals.push(["買賣各0.5%滑價",pct(slip.returnPct)]);
+ const lag=stress?.additionalDecisionSessionLag?.["1"]?.[id];
+ if(lag)vals.push(["延後1交易日執行",pct(lag.returnPct)]);
+ by("researchCapacityStats").innerHTML=vals.map(([key,value])=>'<div><span class="muted">'+e(key)+'</span><strong>'+e(value)+'</strong></div>').join("");
+ by("researchCapacityStatus").textContent="載入完整 1642 日資金曲線及交易紀錄…";
+ try{
+  if(!extended00675Equity)extended00675Equity=await get(rootpath+"00675l_extended_2020_2026_daily_equity.json");
+  if(token!==extended00675Token||activeArchive!=="extended00675")return;
+  const m=extended00675Equity.cases?.[id],points=m?.dailyAccountEquity||[];
+  if(points.length<2)throw Error("缺少完整每日資金曲線");
+  const w=760,h=180,p=16,vs=points.map(z=>Number(z.equity));
+  const lo=Math.min(...vs),hi=Math.max(...vs),spread=Math.max(1,hi-lo);
+  const poly=points.map((z,i)=>(p+(w-2*p)*i/(points.length-1)).toFixed(2)+","+(p+(h-2*p)*(hi-Number(z.equity))/spread).toFixed(2)).join(" ");
+  by("researchCapacityCurve").innerHTML='<div class="muted">每日帳戶權益｜低 '+e(n(lo,0))+'元／高 '+e(n(hi,0))+'元</div><svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="00675L 2020年至2026年真實日線資金回測" style="width:100%;height:auto;min-width:350px;margin-top:6px"><line x1="0" y1="'+(h-10)+'" x2="'+w+'" y2="'+(h-10)+'" stroke="#94a3b8"/><polyline points="'+poly+'" fill="none" stroke="#2563eb" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>';
+  const months={};for(const z of points)months[z.date.slice(0,7)]=Number(z.equity);
+  let prev=1000000;
+  by("researchCapacityMonths").innerHTML=Object.entries(months).map(([month,now])=>{const ret=100*(now/prev-1);prev=now;return '<tr><td>'+e(month)+'</td><td>'+perf(ret)+'</td></tr>';}).join("");
+  by("researchCapacityStatus").textContent=points.length+"個交易日，完整訂單 "+(m.transactions||[]).length+" 筆。";
+ }catch(err){if(token!==extended00675Token||activeArchive!=="extended00675")return;by("researchCapacityStatus").textContent="完整資金曲線載入失敗："+err.message;by("researchCapacityCurve").innerHTML="";}
+}
+by("researchArchiveRows").addEventListener("click",ev=>{
+ const row=ev.target.closest("tr[data-extended00675]");if(row)selectExtended00675(row.dataset.extended00675);
 });
 document.querySelectorAll("[data-archive]").forEach(b=>b.addEventListener("click",()=>archive(b.dataset.archive)));
 })();
