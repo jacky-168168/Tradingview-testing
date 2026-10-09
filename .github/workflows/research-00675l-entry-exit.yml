@@ -6,6 +6,8 @@ on:
     paths:
       - '.github/workflows/research-00675l-entry-exit.yml'
       - 'tw-stock-dashboard/scripts/research_00675l_exit_entry_v2.py'
+      - 'tw-stock-dashboard/docs/etf-research.js'
+      - 'tw-stock-dashboard/docs/backtest.html'
 permissions:
   contents: write
   pages: write
@@ -89,6 +91,7 @@ jobs:
           git add tw-stock-dashboard/docs/data/research/etf_history/index.json tw-stock-dashboard/docs/data/research/etf_history/00675l_risk_v2 tw-stock-dashboard/docs/data/research/etf_history/curves/00675_risk_v2__*.json
           if ! git diff --cached --quiet; then
             git commit -m "data: publish 00675L 2018–2026 entry exit risk comparison, 270 parameter audits"
+            git pull --rebase origin main
             git push origin HEAD:main
           fi
   deploy:
