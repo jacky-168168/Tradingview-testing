@@ -18,7 +18,7 @@ OUT=DATA_DIR/"research/qld_sma10_vwma5_ndx_2018_2026"
 TWD=1_000_000.
 def convert(ticker,label,raw,spots,fx_start,first_usd):
     daily=raw["dailyAccountEquity"];orders=raw["orders"];last=float(spots[-1])
-    spot_by_day={z["date"]:float(k) for z,k in zip(ticker.date,spots)}
+    spot_by_day={str(date):float(spot) for date,spot in zip(ticker.date,spots)}
     twd=[float(r["equity"])*spot_by_day[r["date"]] for r in daily]
     peaks=np.maximum.accumulate(np.r_[TWD,twd])[1:]
     mdd_twd=round(float(100*np.min(np.array(twd)/peaks-1)),3)
