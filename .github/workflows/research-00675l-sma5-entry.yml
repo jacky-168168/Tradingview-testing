@@ -50,13 +50,17 @@ jobs:
           index=json.loads((d/"index.json").read_text())
           s=next(x for x in index["studies"] if x["id"]=="00675_sma5_entry")
           old=next(x for x in index["studies"] if x["id"]=="00675_risk_v2")
-          assert len(s["models"])==6 and len({m["id"] for m in s["models"]})==6
+          assert len(s["models"])==7 and len({m["id"] for m in s["models"]})==7
           assert len(old["models"])==22
           baseline=next(m for m in s["models"] if m["id"]=="SMA10_BASE")
           original=next(m for m in old["models"] if m["id"]=="IDX_DROP_4")
           assert (baseline["endTWD"],baseline["mddPct"],baseline["sells"])==(original["endTWD"],original["mddPct"],original["sells"])
           p=json.loads((d/"00675l_sma5_entry/summary.json").read_text())
           assert p["exactControlParity"] and p["samples"]==2128
+          new=next(m for m in s["models"] if m["id"]=="SMA5_EXIT")
+          old5=next(m for m in s["models"] if m["id"]=="SMA5_ABOVE")
+          assert new["entryMA"]==5 and new["exitMA"]==5
+          assert old5["entryMA"]==5 and old5["exitMA"]==10
           for m in s["models"]:
             curve=json.loads((d/m["curve"]).read_text())
             assert len(curve["points"])==2128
@@ -64,7 +68,7 @@ jobs:
             assert abs(curve["points"][-1][1]-m["endTWD"])<.02
             assert len(m["annual"])==9
             assert len(m["splitResults"])==3
-          print("PASS SMA5 reentry: 6 variants, 2128 daily points, exact control parity")
+          print("PASS SMA5 entry: 7 variants including SMA5 exit, 2128 daily points, exact control parity")
           PY
       - uses: actions/upload-artifact@v4
         with:
