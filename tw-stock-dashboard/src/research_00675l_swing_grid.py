@@ -1,4 +1,5 @@
 """00675L daily causal walk-forward research: 2024-25 exploration, 2026 held-out audit.
+2026-10-08 completed close is now published; rerun the frozen rank without tuning 2026.
 Never pick parameters using 2026. Strict signal on completed close, next trading OPEN execution.
 Research only; does not alter deployed G scanner or Bottom/Top Pine indicator.
 """
