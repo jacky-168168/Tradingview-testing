@@ -1,0 +1,267 @@
+{
+  "version": "00675L_SMA5_REENTRY_V1",
+  "generatedAtUTC": "2026-10-09T15:25:28.194253+00:00",
+  "ticker": "00675L.TW",
+  "signal": "^TWII",
+  "period": [
+    "2018-01-02",
+    "2026-10-07"
+  ],
+  "capitalNTD": 1000000,
+  "samples": 2128,
+  "sharedSellRule": "3 consecutive TWII closes < own SMA10*0.98 OR TWII daily close-to-close return <= -4%",
+  "reentryInterpretation": "When FLAT, prior completed TWII close > prior same-day SMA5, no +1% buffer. Not a crossover-only requirement.",
+  "fills": "The day after signal at ETF open, including gap. Full available cash with integer shares; no margin.",
+  "initialPosition": "On 2018-01-02 open, force buy exactly as historical original, irrespective of entry indicator.",
+  "feeRateEachSide": 0.001425,
+  "etfSellTax": 0.001,
+  "slippageEachSide": 0.001,
+  "exactControlParity": true,
+  "models": {
+    "SMA10_BASE": {
+      "continuous": {
+        "returnPct": 4194.082,
+        "endNTD": 42940824.72,
+        "mddPct": -30.792,
+        "riskOffSells": 21,
+        "riskOnReentries": 21,
+        "riskOffSessions": 249
+      },
+      "segments": {
+        "training_2018_2023": {
+          "returnPct": 477.627,
+          "endNTD": 5776267.05,
+          "mddPct": -30.552,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 183
+        },
+        "validation_2024_2025": {
+          "returnPct": 188.137,
+          "endNTD": 2881373.18,
+          "mddPct": -30.792,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 46
+        },
+        "audit_2026": {
+          "returnPct": 152.515,
+          "endNTD": 2525145.67,
+          "mddPct": -23.419,
+          "riskOffSells": 2,
+          "riskOnReentries": 2,
+          "riskOffSessions": 20
+        }
+      }
+    },
+    "SMA5_ABOVE": {
+      "continuous": {
+        "returnPct": 1969.191,
+        "endNTD": 20691912.21,
+        "mddPct": -51.142,
+        "riskOffSells": 32,
+        "riskOnReentries": 32,
+        "riskOffSessions": 113
+      },
+      "segments": {
+        "training_2018_2023": {
+          "returnPct": 283.545,
+          "endNTD": 3835451.21,
+          "mddPct": -51.142,
+          "riskOffSells": 22,
+          "riskOnReentries": 22,
+          "riskOffSessions": 76
+        },
+        "validation_2024_2025": {
+          "returnPct": 139.307,
+          "endNTD": 2393072.54,
+          "mddPct": -45.666,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 27
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10
+        }
+      }
+    },
+    "SMA5_05": {
+      "continuous": {
+        "returnPct": 2127.554,
+        "endNTD": 22275543.06,
+        "mddPct": -52.803,
+        "riskOffSells": 29,
+        "riskOnReentries": 29,
+        "riskOffSessions": 141
+      },
+      "segments": {
+        "training_2018_2023": {
+          "returnPct": 309.782,
+          "endNTD": 4097823.36,
+          "mddPct": -52.803,
+          "riskOffSells": 19,
+          "riskOnReentries": 19,
+          "riskOffSessions": 102
+        },
+        "validation_2024_2025": {
+          "returnPct": 141.088,
+          "endNTD": 2410883.7,
+          "mddPct": -45.262,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 28
+        },
+        "audit_2026": {
+          "returnPct": 120.689,
+          "endNTD": 2206888.56,
+          "mddPct": -34.187,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 11
+        }
+      }
+    },
+    "SMA5_1": {
+      "continuous": {
+        "returnPct": 2390.383,
+        "endNTD": 24903833.16,
+        "mddPct": -48.021,
+        "riskOffSells": 26,
+        "riskOnReentries": 26,
+        "riskOffSessions": 185
+      },
+      "segments": {
+        "training_2018_2023": {
+          "returnPct": 382.442,
+          "endNTD": 4824423.12,
+          "mddPct": -38.294,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 143
+        },
+        "validation_2024_2025": {
+          "returnPct": 128.94,
+          "endNTD": 2289396.33,
+          "mddPct": -48.02,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 31
+        },
+        "audit_2026": {
+          "returnPct": 120.689,
+          "endNTD": 2206888.56,
+          "mddPct": -34.187,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 11
+        }
+      }
+    },
+    "SMA5_2CONF": {
+      "continuous": {
+        "returnPct": 2895.456,
+        "endNTD": 29954558.28,
+        "mddPct": -46.093,
+        "riskOffSells": 27,
+        "riskOnReentries": 27,
+        "riskOffSessions": 158
+      },
+      "segments": {
+        "training_2018_2023": {
+          "returnPct": 356.847,
+          "endNTD": 4568472.3,
+          "mddPct": -46.093,
+          "riskOffSells": 19,
+          "riskOnReentries": 19,
+          "riskOffSessions": 113
+        },
+        "validation_2024_2025": {
+          "returnPct": 176.477,
+          "endNTD": 2764771.26,
+          "mddPct": -36.139,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 32
+        },
+        "audit_2026": {
+          "returnPct": 132.114,
+          "endNTD": 2321143.86,
+          "mddPct": -33.874,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 13
+        }
+      }
+    },
+    "SMA5_CROSS": {
+      "continuous": {
+        "returnPct": 1885.331,
+        "endNTD": 19853306.31,
+        "mddPct": -51.142,
+        "riskOffSells": 32,
+        "riskOnReentries": 32,
+        "riskOffSessions": 126
+      },
+      "segments": {
+        "training_2018_2023": {
+          "returnPct": 283.545,
+          "endNTD": 3835451.21,
+          "mddPct": -51.142,
+          "riskOffSells": 22,
+          "riskOnReentries": 22,
+          "riskOffSessions": 76
+        },
+        "validation_2024_2025": {
+          "returnPct": 129.604,
+          "endNTD": 2296036.63,
+          "mddPct": -47.868,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 40
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10
+        }
+      }
+    }
+  },
+  "dataQuality": {
+    "firstHistoricalDate": "2017-01-03",
+    "lastDate": "2026-10-07",
+    "totalTradingDays": 2128,
+    "indexVolumeValidDays": 2120,
+    "indexVolumeValidPct": 99.6241,
+    "indexVolumeMissingDates": [
+      "2019-12-04",
+      "2019-12-05",
+      "2019-12-09",
+      "2019-12-10",
+      "2019-12-18",
+      "2022-02-07",
+      "2024-01-15",
+      "2025-01-21"
+    ],
+    "indexVolumeUnique": 2079,
+    "etfPriceAdjFactorRange": [
+      1.0,
+      1.0
+    ]
+  },
+  "warnings": [
+    "2018–2026 has been analyzed in earlier studies; 2026 is NOT a pristine holdout.",
+    "SMA5 variants are exploratory: if their results are inspected to choose a winner, consider the selection hindsight-biased.",
+    "Historical adjusted Yahoo prices can differ from TradingView corporate-action price policy.",
+    "Fast re-entry can increase round trips; report turnover and risk in addition to return.",
+    "Independent split tests reset to NT$1m at the segment start, while annual rows are continuous compounding."
+  ]
+}
