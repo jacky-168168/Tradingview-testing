@@ -1,0 +1,75 @@
+name: TX Futures Day Night Dashboard
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/futures_night.py'
+      - '.github/workflows/txf-night-dashboard.yml'
+  schedule:
+    - cron: '35 7 * * 1-5'
+    - cron: '40 21 * * 1-5'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: txf-night-snapshot
+  cancel-in-progress: false
+jobs:
+  fetch-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Validate official TX day and night matching logic
+        shell: bash
+        run: |
+          PYTHONPATH=tw-stock-dashboard/src python - <<'PY'
+          from futures_night import parse
+          sample=[{"Date":"20261008","Contract":"TX","ContractMonth(Week)":"202610","Last":"49000","Volume":"2000","TradingSession":"一般"},{"Date":"20261008","Contract":"TX","ContractMonth(Week)":"202610","Last":"48510","Volume":"400","TradingSession":"盤後"},{"Date":"20261008","Contract":"TX","ContractMonth(Week)":"202611","Last":"50000","Volume":"30","TradingSession":"盤後"}]
+          z=parse(sample)
+          assert z["quality"]=="paired-day-night" and z["nightVsDayPoints"]==-490 and z["nightVsDayPct"]==-1
+          solo=parse(sample[:1]);assert solo["quality"]=="single-session" and solo["nightVsDayPct"] is None
+          print("PASS dates, near-month, incomplete session protection and no fabricated night prices")
+          PY
+      - name: Fetch official TAIFEX completed sessions
+        working-directory: tw-stock-dashboard
+        run: PYTHONPATH=src python src/futures_night.py
+      - name: Archive dated TX futures snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/futures/latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: official TX futures day and afterhours market preview"
+            for n in 1 2 3 4; do
+              git pull --rebase origin main && git push origin HEAD:main && break
+              git rebase --abort || true
+              if [ "$n" = 4 ]; then exit 1; fi
+              sleep 5
+            done
+          fi
+  deploy:
+    needs: fetch-and-publish
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - name: Deploy market dashboard with TX futures
+        id: deployment
+        uses: actions/deploy-pages@v4
