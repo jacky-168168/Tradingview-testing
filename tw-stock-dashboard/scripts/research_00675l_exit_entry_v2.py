@@ -233,7 +233,7 @@ def emit():
        +(f"與舊存檔累積報酬差 {source_delta:+.3f} 個百分點（資料來源更新）。" if abs(source_delta)>.01 else "原版累積報酬與舊存檔一致。"),
       "sourceBranch":"main","sourceSummary":url+"summary.json",
       "sourceExecution":"https://github.com/jacky-168168/Tradingview-testing/actions/runs/"+os.environ.get("GITHUB_RUN_ID",""),
-      "extraSource":url+"grid.json"}
+      "extraSource":url+"grid.json","trainingGrid":"00675l_risk_v2/grid.json"}
     archive["studies"]=[v for v in archive["studies"] if v["id"]!=STUDY]+[study]
     archive["studyOrder"]=[v for v in archive.get("studyOrder",[]) if v!=STUDY]+[STUDY]
     archive["generatedAtUTC"]=detail["generatedAtUTC"]
