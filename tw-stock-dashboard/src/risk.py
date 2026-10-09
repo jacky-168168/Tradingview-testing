@@ -7,25 +7,49 @@ def _num(v):
     try:return float(str(v).replace(",","").strip() or 0)
     except:return 0.0
 
-def breadth():
-    try:
-        r=requests.get("https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL",headers=UA,timeout=25);r.raise_for_status();up=down=0
-        for o in r.json():
-            code=str(o.get("Code") or o.get("證券代號") or "").strip()
-            if len(code)!=4 or not code.isdigit():continue
-            ch=_num(o.get("Change") if o.get("Change") is not None else o.get("漲跌價差"))
-            if ch>0:up+=1
-            elif ch<0:down+=1
-        return up,down
-    except Exception:return 0,0
+def _report(trade_date,path,params):
+    """Never mix today's floating latest API data with an older Yahoo ^TWII bar."""
+    if not isinstance(trade_date,str) or len(trade_date)!=10 or trade_date[4]!="-" or trade_date[7]!="-":
+        raise ValueError("Explicit ISO trading date required for Risk Score")
+    requested=trade_date.replace("-","")
+    r=requests.get("https://www.twse.com.tw/rwd/zh/"+path,params={"response":"json",**params},headers=UA,timeout=25)
+    r.raise_for_status();data=r.json()
+    if data.get("stat")!="OK":raise RuntimeError("TWSE report not ready for "+trade_date+": "+str(data.get("stat")))
+    # The report must belong to requested session. No implicit 'latest' fallback.
+    reported=str(data.get("date") or "")
+    if reported:
+        compact=reported.replace("/","").replace("-","").replace(" ","")
+        roc=str(int(trade_date[:4])-1911)+trade_date[5:7]+trade_date[8:10]
+        if requested not in compact and roc not in compact and trade_date not in reported:
+            raise RuntimeError("TWSE report date mismatch: "+reported+" != "+trade_date)
+    return data
 
-def foreign_market_net():
-    try:
-        r=requests.get("https://www.twse.com.tw/rwd/zh/fund/BFI82U?response=json",headers=UA,timeout=25);r.raise_for_status();j=r.json()
-        for row in j.get("data") or []:
-            if "外資" in str(row[0] if row else ""):return _num(row[-1])/100_000_000
-    except Exception:pass
-    return 0.0
+def breadth(trade_date):
+    """TWSE MI_INDEX per-date 股票 column, excluding ETF and warrants."""
+    j=_report(trade_date,"afterTrading/MI_INDEX",{"date":trade_date.replace("-",""),"type":"ALLBUT0999"})
+    for tab in j.get("tables") or []:
+        if "漲跌證券數合計" not in str(tab.get("title") or ""):continue
+        fields=[str(x) for x in tab.get("fields") or []]
+        if "股票" not in fields:continue
+        col=fields.index("股票");up=down=None
+        for row in tab.get("data") or []:
+            label=str(row[0]) if row else ""
+            if len(row)<=col:continue
+            # E.g. "425(14)" counts 425 advancing stocks including 14 limit-up.
+            value=str(row[col]).split("(",1)[0].replace(",","").strip()
+            if label.startswith("上漲"):up=int(value)
+            elif label.startswith("下跌"):down=int(value)
+        if up is not None and down is not None and up+down>=400:return up,down
+    raise RuntimeError("Missing date-specific TWSE stock breadth for "+trade_date)
+
+def foreign_market_net(trade_date):
+    """Date-pinned daily TWSE institutional flow; never take an unlabelled latest quote."""
+    d=trade_date.replace("-","")
+    j=_report(trade_date,"fund/BFI82U",{"dayDate":d,"type":"day"})
+    for row in j.get("data") or []:
+        if row and "外資" in str(row[0]) and "外資自營商" not in str(row[0]):
+            return _num(row[-1])/100_000_000
+    raise RuntimeError("Missing date-specific TWSE foreign net for "+trade_date)
 
 def reversal(idx,ctx):
     closes=idx.close.astype(float).tolist();latest=idx.iloc[-1];prev=idx.iloc[-2];ma20=ctx["ma20"];dist=(float(latest.close)/ma20-1)*100 if ma20 else 0
@@ -91,7 +115,7 @@ def build(index_df,risk_on=60,risk_strong=75,risk_off=45):
     if len(idx)<25:return {"state":"尚未分析","score":0}
     for c in ["close","high","low","volume"]:idx[c]=pd.to_numeric(idx[c],errors="coerce")
     closes=idx.close.tolist();latest=idx.iloc[-1];prev=idx.iloc[-2];ma5=float(np.mean(closes[-5:]));ma20=float(np.mean(closes[-20:]));old=float(np.mean(closes[-25:-5]))
-    r5=(float(latest.close)/closes[-6]-1)*100;r20=(float(latest.close)/closes[-21]-1)*100;dr=(float(latest.close)/float(prev.close)-1)*100;up,down=breadth();br=up/(up+down)*100 if up+down else 50;foreign=foreign_market_net()
+    r5=(float(latest.close)/closes[-6]-1)*100;r20=(float(latest.close)/closes[-21]-1)*100;dr=(float(latest.close)/float(prev.close)-1)*100;trade_date=str(latest.date);up,down=breadth(trade_date);br=up/(up+down)*100;foreign=foreign_market_net(trade_date)
     s=0
     if latest.close>ma20:s+=15
     if ma5>ma20:s+=10
