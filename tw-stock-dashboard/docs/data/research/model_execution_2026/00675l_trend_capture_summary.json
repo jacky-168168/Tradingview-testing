@@ -1,0 +1,1800 @@
+{
+  "version": "00675L_TREND_CAPTURE_ROTATION_V1",
+  "generatedAt": "2026-10-09T09:04:12+08:00",
+  "ticker": "00675L.TW",
+  "start": "2024-01-01",
+  "requestedEnd": "2026-10-08",
+  "actualEnd": "2026-10-07",
+  "model": {
+    "initialCapitalNTD": 1000000,
+    "brokerFeeEachSidePct": 0.14250000000000002,
+    "etfSellTaxPct": 0.1,
+    "slippageEachSidePct": 0.1,
+    "priceData": "00675L and TAIEX daily Yahoo historical OHLC, with adjusted OHLC corporate action factor",
+    "orders": "Completed close signal, NEXT session open trade (no clairvoyance); liquidation mark-to-market at daily close after conservative exit costs.",
+    "capital": "Whole-unit cash ETF, all profits automatically reinvested when regime changes; no financing or futures hedging.",
+    "riskOff": "Target exposure 0/25/50/75/90% when risk-off. 100% ETF exposure during risk-on. No daily automatic rebalancing if regime stays same.",
+    "train": "2024-25 ONLY; rank by cash equity return +0.9*improved drawdown -0.8*trade orders, plus per-family choices",
+    "verification": "2026 selected finalists evaluated without selecting extra settings from 2026 outcomes."
+  },
+  "nCases": 925,
+  "trainingPeriod": {
+    "start": "2024-01-01",
+    "end": "2025-12-31",
+    "sessions": 485
+  },
+  "testPeriod": {
+    "start": "2026-01-01",
+    "end": "2026-10-07"
+  },
+  "benchmark": {
+    "training": {
+      "start": "2024-01-02",
+      "end": "2025-12-31",
+      "endingNTD": 2331313.14,
+      "returnPct": 133.131,
+      "maxDrawdownPct": -55.244,
+      "tradeOrders": 1,
+      "regimeSwitches": 0,
+      "heldSessions": 484,
+      "totalSessions": 485,
+      "exposureDaysPct": 99.79,
+      "yearly": {
+        "2024": {
+          "startNTD": 1000000,
+          "endNTD": 1549894.54,
+          "returnPct": 54.989
+        },
+        "2025": {
+          "startNTD": 1549894.54,
+          "endNTD": 2331313.14,
+          "returnPct": 50.418
+        }
+      }
+    },
+    "2026": {
+      "start": "2026-01-02",
+      "end": "2026-10-07",
+      "endingNTD": 2508364.78,
+      "returnPct": 150.836,
+      "maxDrawdownPct": -33.446,
+      "tradeOrders": 1,
+      "regimeSwitches": 0,
+      "heldSessions": 183,
+      "totalSessions": 184,
+      "exposureDaysPct": 99.46,
+      "yearly": {
+        "2026": {
+          "startNTD": 1000000,
+          "endNTD": 2508364.78,
+          "returnPct": 150.836
+        }
+      }
+    },
+    "continuous": {
+      "start": "2024-01-02",
+      "end": "2026-10-07",
+      "endingNTD": 5925353.02,
+      "returnPct": 492.535,
+      "maxDrawdownPct": -55.244,
+      "tradeOrders": 1,
+      "regimeSwitches": 0,
+      "heldSessions": 668,
+      "totalSessions": 669,
+      "exposureDaysPct": 99.85,
+      "yearly": {
+        "2024": {
+          "startNTD": 1000000,
+          "endNTD": 1549894.54,
+          "returnPct": 54.989
+        },
+        "2025": {
+          "startNTD": 1549894.54,
+          "endNTD": 2331313.14,
+          "returnPct": 50.418
+        },
+        "2026": {
+          "startNTD": 2331313.14,
+          "endNTD": 5925353.02,
+          "returnPct": 154.164
+        }
+      }
+    }
+  },
+  "freezeList": [
+    {
+      "id": "DD20_T16_OFF0_ema10",
+      "selection": "best_train_balance"
+    },
+    {
+      "id": "MA_etf_10_F10_B4_OFF0_C3",
+      "selection": "best_train_balance"
+    },
+    {
+      "id": "MA_twii_10_F10_B2_OFF0_C3",
+      "selection": "best_train_balance"
+    },
+    {
+      "id": "DD20_T16_OFF0_both",
+      "selection": "best_train_balance"
+    },
+    {
+      "id": "DUAL_E10_I60_OFF0_C3_both",
+      "selection": "family_dual"
+    },
+    {
+      "id": "DUAL_E10_I60_OFF25_C3_both",
+      "selection": "family_dual"
+    },
+    {
+      "id": "MOM_twii10_L-0.02_OFF25_ma20",
+      "selection": "family_momentum"
+    },
+    {
+      "id": "MOM_twii10_L-0.02_OFF0_ma20",
+      "selection": "family_momentum"
+    },
+    {
+      "id": "CORE_ETF10_IDX60_OFF90",
+      "selection": "family_core"
+    },
+    {
+      "id": "CORE_ETF10_IDX60_OFF75",
+      "selection": "family_core"
+    },
+    {
+      "id": "DD20_T16_OFF25_ema10",
+      "selection": "core_satellite_0.25"
+    },
+    {
+      "id": "MA_etf_10_F10_B4_OFF50_C3",
+      "selection": "core_satellite_0.5"
+    },
+    {
+      "id": "MA_etf_10_F10_B4_OFF75_C3",
+      "selection": "core_satellite_0.75"
+    }
+  ],
+  "familyCounts": {
+    "core": 12,
+    "drawdown": 192,
+    "dual": 96,
+    "hold": 1,
+    "ma": 432,
+    "momentum": 192
+  },
+  "selectedCases": [
+    {
+      "id": "BUY_HOLD",
+      "params": {
+        "id": "BUY_HOLD",
+        "family": "hold",
+        "off": 1.0
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2331313.14,
+        "returnPct": 133.131,
+        "maxDrawdownPct": -55.244,
+        "tradeOrders": 1,
+        "regimeSwitches": 0,
+        "heldSessions": 484,
+        "totalSessions": 485,
+        "exposureDaysPct": 99.79,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1549894.54,
+            "returnPct": 54.989
+          },
+          "2025": {
+            "startNTD": 1549894.54,
+            "endNTD": 2331313.14,
+            "returnPct": 50.418
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2508364.78,
+        "returnPct": 150.836,
+        "maxDrawdownPct": -33.446,
+        "tradeOrders": 1,
+        "regimeSwitches": 0,
+        "heldSessions": 183,
+        "totalSessions": 184,
+        "exposureDaysPct": 99.46,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2508364.78,
+            "returnPct": 150.836
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 5925353.02,
+        "returnPct": 492.535,
+        "maxDrawdownPct": -55.244,
+        "tradeOrders": 1,
+        "regimeSwitches": 0,
+        "heldSessions": 668,
+        "totalSessions": 669,
+        "exposureDaysPct": 99.85,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1549894.54,
+            "returnPct": 54.989
+          },
+          "2025": {
+            "startNTD": 1549894.54,
+            "endNTD": 2331313.14,
+            "returnPct": 50.418
+          },
+          "2026": {
+            "startNTD": 2331313.14,
+            "endNTD": 5925353.02,
+            "returnPct": 154.164
+          }
+        }
+      },
+      "holdReturnCapturePct": 100.0,
+      "maxDDImprovementVsHoldPP": 0.0
+    },
+    {
+      "id": "DD20_T16_OFF0_ema10",
+      "params": {
+        "id": "DD20_T16_OFF0_ema10",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.16,
+        "off": 0,
+        "reentry": "ema10"
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2864961.0,
+        "returnPct": 186.496,
+        "maxDrawdownPct": -29.263,
+        "tradeOrders": 13,
+        "regimeSwitches": 12,
+        "heldSessions": 454,
+        "totalSessions": 485,
+        "exposureDaysPct": 93.61,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1640925.1,
+            "returnPct": 64.093
+          },
+          "2025": {
+            "startNTD": 1640925.1,
+            "endNTD": 2864961.0,
+            "returnPct": 74.594
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2212304.61,
+        "returnPct": 121.23,
+        "maxDrawdownPct": -27.068,
+        "tradeOrders": 9,
+        "regimeSwitches": 8,
+        "heldSessions": 167,
+        "totalSessions": 184,
+        "exposureDaysPct": 90.76,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2212304.61,
+            "returnPct": 121.23
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 6421962.4,
+        "returnPct": 542.196,
+        "maxDrawdownPct": -29.263,
+        "tradeOrders": 21,
+        "regimeSwitches": 20,
+        "heldSessions": 622,
+        "totalSessions": 669,
+        "exposureDaysPct": 92.97,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1640925.1,
+            "returnPct": 64.093
+          },
+          "2025": {
+            "startNTD": 1640925.1,
+            "endNTD": 2864961.0,
+            "returnPct": 74.594
+          },
+          "2026": {
+            "startNTD": 2864961.0,
+            "endNTD": 6421962.4,
+            "returnPct": 124.155
+          }
+        }
+      },
+      "holdReturnCapturePct": 110.08,
+      "maxDDImprovementVsHoldPP": 25.981
+    },
+    {
+      "id": "MA_etf_10_F10_B4_OFF0_C3",
+      "params": {
+        "id": "MA_etf_10_F10_B4_OFF0_C3",
+        "family": "ma",
+        "source": "etf",
+        "ma": 10,
+        "fast": 10,
+        "buffer": 0.04,
+        "off": 0,
+        "confirm": 3
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2827505.64,
+        "returnPct": 182.751,
+        "maxDrawdownPct": -32.086,
+        "tradeOrders": 9,
+        "regimeSwitches": 8,
+        "heldSessions": 436,
+        "totalSessions": 485,
+        "exposureDaysPct": 89.9,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1359168.28,
+            "returnPct": 35.917
+          },
+          "2025": {
+            "startNTD": 1359168.28,
+            "endNTD": 2827505.64,
+            "returnPct": 108.032
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2364160.72,
+        "returnPct": 136.416,
+        "maxDrawdownPct": -32.464,
+        "tradeOrders": 5,
+        "regimeSwitches": 4,
+        "heldSessions": 168,
+        "totalSessions": 184,
+        "exposureDaysPct": 91.3,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2364160.72,
+            "returnPct": 136.416
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 6773029.85,
+        "returnPct": 577.303,
+        "maxDrawdownPct": -32.465,
+        "tradeOrders": 13,
+        "regimeSwitches": 12,
+        "heldSessions": 605,
+        "totalSessions": 669,
+        "exposureDaysPct": 90.43,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1359168.28,
+            "returnPct": 35.917
+          },
+          "2025": {
+            "startNTD": 1359168.28,
+            "endNTD": 2827505.64,
+            "returnPct": 108.032
+          },
+          "2026": {
+            "startNTD": 2827505.64,
+            "endNTD": 6773029.85,
+            "returnPct": 139.541
+          }
+        }
+      },
+      "holdReturnCapturePct": 117.21,
+      "maxDDImprovementVsHoldPP": 22.779
+    },
+    {
+      "id": "MA_twii_10_F10_B2_OFF0_C3",
+      "params": {
+        "id": "MA_twii_10_F10_B2_OFF0_C3",
+        "family": "ma",
+        "source": "twii",
+        "ma": 10,
+        "fast": 10,
+        "buffer": 0.02,
+        "off": 0,
+        "confirm": 3
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2771220.75,
+        "returnPct": 177.122,
+        "maxDrawdownPct": -33.437,
+        "tradeOrders": 9,
+        "regimeSwitches": 8,
+        "heldSessions": 440,
+        "totalSessions": 485,
+        "exposureDaysPct": 90.72,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1379197.79,
+            "returnPct": 37.92
+          },
+          "2025": {
+            "startNTD": 1379197.79,
+            "endNTD": 2771220.75,
+            "returnPct": 100.93
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2495124.97,
+        "returnPct": 149.512,
+        "maxDrawdownPct": -33.446,
+        "tradeOrders": 3,
+        "regimeSwitches": 2,
+        "heldSessions": 181,
+        "totalSessions": 184,
+        "exposureDaysPct": 98.37,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2495124.97,
+            "returnPct": 149.512
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 7006117.23,
+        "returnPct": 600.612,
+        "maxDrawdownPct": -33.448,
+        "tradeOrders": 11,
+        "regimeSwitches": 10,
+        "heldSessions": 622,
+        "totalSessions": 669,
+        "exposureDaysPct": 92.97,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1379197.79,
+            "returnPct": 37.92
+          },
+          "2025": {
+            "startNTD": 1379197.79,
+            "endNTD": 2771220.75,
+            "returnPct": 100.93
+          },
+          "2026": {
+            "startNTD": 2771220.75,
+            "endNTD": 7006117.23,
+            "returnPct": 152.817
+          }
+        }
+      },
+      "holdReturnCapturePct": 121.94,
+      "maxDDImprovementVsHoldPP": 21.796
+    },
+    {
+      "id": "DD20_T16_OFF0_both",
+      "params": {
+        "id": "DD20_T16_OFF0_both",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.16,
+        "off": 0,
+        "reentry": "both"
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2704566.17,
+        "returnPct": 170.457,
+        "maxDrawdownPct": -30.513,
+        "tradeOrders": 7,
+        "regimeSwitches": 6,
+        "heldSessions": 451,
+        "totalSessions": 485,
+        "exposureDaysPct": 92.99,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1590017.71,
+            "returnPct": 59.002
+          },
+          "2025": {
+            "startNTD": 1590017.71,
+            "endNTD": 2704566.17,
+            "returnPct": 70.097
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2177943.46,
+        "returnPct": 117.794,
+        "maxDrawdownPct": -23.42,
+        "tradeOrders": 7,
+        "regimeSwitches": 6,
+        "heldSessions": 159,
+        "totalSessions": 184,
+        "exposureDaysPct": 86.41,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2177943.46,
+            "returnPct": 117.794
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 5968248.73,
+        "returnPct": 496.825,
+        "maxDrawdownPct": -30.513,
+        "tradeOrders": 13,
+        "regimeSwitches": 12,
+        "heldSessions": 611,
+        "totalSessions": 669,
+        "exposureDaysPct": 91.33,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1590017.71,
+            "returnPct": 59.002
+          },
+          "2025": {
+            "startNTD": 1590017.71,
+            "endNTD": 2704566.17,
+            "returnPct": 70.097
+          },
+          "2026": {
+            "startNTD": 2704566.17,
+            "endNTD": 5968248.73,
+            "returnPct": 120.673
+          }
+        }
+      },
+      "holdReturnCapturePct": 100.87,
+      "maxDDImprovementVsHoldPP": 24.731
+    },
+    {
+      "id": "DUAL_E10_I60_OFF0_C3_both",
+      "params": {
+        "id": "DUAL_E10_I60_OFF0_C3_both",
+        "family": "dual",
+        "etf_ma": 10,
+        "index_ma": 60,
+        "off": 0,
+        "confirm": 3,
+        "entry": "both"
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2725519.78,
+        "returnPct": 172.552,
+        "maxDrawdownPct": -31.398,
+        "tradeOrders": 11,
+        "regimeSwitches": 10,
+        "heldSessions": 422,
+        "totalSessions": 485,
+        "exposureDaysPct": 87.01,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1380876.59,
+            "returnPct": 38.088
+          },
+          "2025": {
+            "startNTD": 1380876.59,
+            "endNTD": 2725519.78,
+            "returnPct": 97.376
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2259516.15,
+        "returnPct": 125.952,
+        "maxDrawdownPct": -27.828,
+        "tradeOrders": 3,
+        "regimeSwitches": 2,
+        "heldSessions": 177,
+        "totalSessions": 184,
+        "exposureDaysPct": 96.2,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2259516.15,
+            "returnPct": 125.952
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 6240047.37,
+        "returnPct": 524.005,
+        "maxDrawdownPct": -31.398,
+        "tradeOrders": 13,
+        "regimeSwitches": 12,
+        "heldSessions": 600,
+        "totalSessions": 669,
+        "exposureDaysPct": 89.69,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1380876.59,
+            "returnPct": 38.088
+          },
+          "2025": {
+            "startNTD": 1380876.59,
+            "endNTD": 2725519.78,
+            "returnPct": 97.376
+          },
+          "2026": {
+            "startNTD": 2725519.78,
+            "endNTD": 6240047.37,
+            "returnPct": 128.949
+          }
+        }
+      },
+      "holdReturnCapturePct": 106.39,
+      "maxDDImprovementVsHoldPP": 23.846
+    },
+    {
+      "id": "DUAL_E10_I60_OFF25_C3_both",
+      "params": {
+        "id": "DUAL_E10_I60_OFF25_C3_both",
+        "family": "dual",
+        "etf_ma": 10,
+        "index_ma": 60,
+        "off": 0.25,
+        "confirm": 3,
+        "entry": "both"
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2646310.01,
+        "returnPct": 164.631,
+        "maxDrawdownPct": -35.543,
+        "tradeOrders": 11,
+        "regimeSwitches": 10,
+        "heldSessions": 484,
+        "totalSessions": 485,
+        "exposureDaysPct": 99.79,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1422164.37,
+            "returnPct": 42.216
+          },
+          "2025": {
+            "startNTD": 1422164.37,
+            "endNTD": 2646310.01,
+            "returnPct": 86.076
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2321394.67,
+        "returnPct": 132.139,
+        "maxDrawdownPct": -29.192,
+        "tradeOrders": 3,
+        "regimeSwitches": 2,
+        "heldSessions": 183,
+        "totalSessions": 184,
+        "exposureDaysPct": 99.46,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2321394.67,
+            "returnPct": 132.139
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 6223982.02,
+        "returnPct": 522.398,
+        "maxDrawdownPct": -35.543,
+        "tradeOrders": 13,
+        "regimeSwitches": 12,
+        "heldSessions": 668,
+        "totalSessions": 669,
+        "exposureDaysPct": 99.85,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1422164.37,
+            "returnPct": 42.216
+          },
+          "2025": {
+            "startNTD": 1422164.37,
+            "endNTD": 2646310.01,
+            "returnPct": 86.076
+          },
+          "2026": {
+            "startNTD": 2646310.01,
+            "endNTD": 6223982.02,
+            "returnPct": 135.195
+          }
+        }
+      },
+      "holdReturnCapturePct": 106.06,
+      "maxDDImprovementVsHoldPP": 19.701
+    },
+    {
+      "id": "MOM_twii10_L-0.02_OFF25_ma20",
+      "params": {
+        "id": "MOM_twii10_L-0.02_OFF25_ma20",
+        "family": "momentum",
+        "source": "twii",
+        "lookback": 10,
+        "limit": -0.02,
+        "off": 0.25,
+        "reentry": "ma20"
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2289823.97,
+        "returnPct": 128.982,
+        "maxDrawdownPct": -36.112,
+        "tradeOrders": 23,
+        "regimeSwitches": 22,
+        "heldSessions": 484,
+        "totalSessions": 485,
+        "exposureDaysPct": 99.79,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1287191.6,
+            "returnPct": 28.719
+          },
+          "2025": {
+            "startNTD": 1287191.6,
+            "endNTD": 2289823.97,
+            "returnPct": 77.893
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 1973221.61,
+        "returnPct": 97.322,
+        "maxDrawdownPct": -26.969,
+        "tradeOrders": 15,
+        "regimeSwitches": 14,
+        "heldSessions": 183,
+        "totalSessions": 184,
+        "exposureDaysPct": 99.46,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 1973221.61,
+            "returnPct": 97.322
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 4577395.92,
+        "returnPct": 357.74,
+        "maxDrawdownPct": -36.112,
+        "tradeOrders": 37,
+        "regimeSwitches": 36,
+        "heldSessions": 668,
+        "totalSessions": 669,
+        "exposureDaysPct": 99.85,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1287191.6,
+            "returnPct": 28.719
+          },
+          "2025": {
+            "startNTD": 1287191.6,
+            "endNTD": 2289823.97,
+            "returnPct": 77.893
+          },
+          "2026": {
+            "startNTD": 2289823.97,
+            "endNTD": 4577395.92,
+            "returnPct": 99.902
+          }
+        }
+      },
+      "holdReturnCapturePct": 72.63,
+      "maxDDImprovementVsHoldPP": 19.132
+    },
+    {
+      "id": "MOM_twii10_L-0.02_OFF0_ma20",
+      "params": {
+        "id": "MOM_twii10_L-0.02_OFF0_ma20",
+        "family": "momentum",
+        "source": "twii",
+        "lookback": 10,
+        "limit": -0.02,
+        "off": 0,
+        "reentry": "ma20"
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2242423.64,
+        "returnPct": 124.242,
+        "maxDrawdownPct": -32.267,
+        "tradeOrders": 23,
+        "regimeSwitches": 22,
+        "heldSessions": 385,
+        "totalSessions": 485,
+        "exposureDaysPct": 79.38,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1206717.35,
+            "returnPct": 20.672
+          },
+          "2025": {
+            "startNTD": 1206717.35,
+            "endNTD": 2242423.64,
+            "returnPct": 85.828
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 1805912.33,
+        "returnPct": 80.591,
+        "maxDrawdownPct": -28.887,
+        "tradeOrders": 15,
+        "regimeSwitches": 14,
+        "heldSessions": 148,
+        "totalSessions": 184,
+        "exposureDaysPct": 80.43,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 1805912.33,
+            "returnPct": 80.591
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 4103417.67,
+        "returnPct": 310.342,
+        "maxDrawdownPct": -32.267,
+        "tradeOrders": 37,
+        "regimeSwitches": 36,
+        "heldSessions": 534,
+        "totalSessions": 669,
+        "exposureDaysPct": 79.82,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1206717.35,
+            "returnPct": 20.672
+          },
+          "2025": {
+            "startNTD": 1206717.35,
+            "endNTD": 2242423.64,
+            "returnPct": 85.828
+          },
+          "2026": {
+            "startNTD": 2242423.64,
+            "endNTD": 4103417.67,
+            "returnPct": 82.99
+          }
+        }
+      },
+      "holdReturnCapturePct": 63.01,
+      "maxDDImprovementVsHoldPP": 22.977
+    },
+    {
+      "id": "CORE_ETF10_IDX60_OFF90",
+      "params": {
+        "id": "CORE_ETF10_IDX60_OFF90",
+        "family": "core",
+        "etf_ma": 10,
+        "index_ma": 60,
+        "off": 0.9,
+        "confirm": 2,
+        "entry": "either"
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2296519.67,
+        "returnPct": 129.652,
+        "maxDrawdownPct": -53.948,
+        "tradeOrders": 21,
+        "regimeSwitches": 20,
+        "heldSessions": 484,
+        "totalSessions": 485,
+        "exposureDaysPct": 99.79,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1523635.91,
+            "returnPct": 52.364
+          },
+          "2025": {
+            "startNTD": 1523635.91,
+            "endNTD": 2296519.67,
+            "returnPct": 50.726
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2509964.0,
+        "returnPct": 150.996,
+        "maxDrawdownPct": -32.331,
+        "tradeOrders": 3,
+        "regimeSwitches": 2,
+        "heldSessions": 183,
+        "totalSessions": 184,
+        "exposureDaysPct": 99.46,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2509964.0,
+            "returnPct": 150.996
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 5834748.27,
+        "returnPct": 483.475,
+        "maxDrawdownPct": -53.948,
+        "tradeOrders": 23,
+        "regimeSwitches": 22,
+        "heldSessions": 668,
+        "totalSessions": 669,
+        "exposureDaysPct": 99.85,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1523635.91,
+            "returnPct": 52.364
+          },
+          "2025": {
+            "startNTD": 1523635.91,
+            "endNTD": 2296519.67,
+            "returnPct": 50.726
+          },
+          "2026": {
+            "startNTD": 2296519.67,
+            "endNTD": 5834748.27,
+            "returnPct": 154.069
+          }
+        }
+      },
+      "holdReturnCapturePct": 98.16,
+      "maxDDImprovementVsHoldPP": 1.296
+    },
+    {
+      "id": "CORE_ETF10_IDX60_OFF75",
+      "params": {
+        "id": "CORE_ETF10_IDX60_OFF75",
+        "family": "core",
+        "etf_ma": 10,
+        "index_ma": 60,
+        "off": 0.75,
+        "confirm": 2,
+        "entry": "either"
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2246388.48,
+        "returnPct": 124.639,
+        "maxDrawdownPct": -52.291,
+        "tradeOrders": 21,
+        "regimeSwitches": 20,
+        "heldSessions": 484,
+        "totalSessions": 485,
+        "exposureDaysPct": 99.79,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1485940.54,
+            "returnPct": 48.594
+          },
+          "2025": {
+            "startNTD": 1485940.54,
+            "endNTD": 2246388.48,
+            "returnPct": 51.176
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2514479.32,
+        "returnPct": 151.448,
+        "maxDrawdownPct": -30.658,
+        "tradeOrders": 3,
+        "regimeSwitches": 2,
+        "heldSessions": 183,
+        "totalSessions": 184,
+        "exposureDaysPct": 99.46,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2514479.32,
+            "returnPct": 151.448
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 5718688.77,
+        "returnPct": 471.869,
+        "maxDrawdownPct": -52.291,
+        "tradeOrders": 23,
+        "regimeSwitches": 22,
+        "heldSessions": 668,
+        "totalSessions": 669,
+        "exposureDaysPct": 99.85,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1485940.54,
+            "returnPct": 48.594
+          },
+          "2025": {
+            "startNTD": 1485940.54,
+            "endNTD": 2246388.48,
+            "returnPct": 51.176
+          },
+          "2026": {
+            "startNTD": 2246388.48,
+            "endNTD": 5718688.77,
+            "returnPct": 154.573
+          }
+        }
+      },
+      "holdReturnCapturePct": 95.8,
+      "maxDDImprovementVsHoldPP": 2.953
+    },
+    {
+      "id": "DD20_T16_OFF25_ema10",
+      "params": {
+        "id": "DD20_T16_OFF25_ema10",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.16,
+        "off": 0.25,
+        "reentry": "ema10"
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2729357.39,
+        "returnPct": 172.936,
+        "maxDrawdownPct": -34.424,
+        "tradeOrders": 13,
+        "regimeSwitches": 12,
+        "heldSessions": 484,
+        "totalSessions": 485,
+        "exposureDaysPct": 99.79,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1618429.97,
+            "returnPct": 61.843
+          },
+          "2025": {
+            "startNTD": 1618429.97,
+            "endNTD": 2729357.39,
+            "returnPct": 68.642
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2283668.9,
+        "returnPct": 128.367,
+        "maxDrawdownPct": -25.618,
+        "tradeOrders": 9,
+        "regimeSwitches": 8,
+        "heldSessions": 183,
+        "totalSessions": 184,
+        "exposureDaysPct": 99.46,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2283668.9,
+            "returnPct": 128.367
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 6315094.24,
+        "returnPct": 531.509,
+        "maxDrawdownPct": -34.424,
+        "tradeOrders": 21,
+        "regimeSwitches": 20,
+        "heldSessions": 668,
+        "totalSessions": 669,
+        "exposureDaysPct": 99.85,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1618429.97,
+            "returnPct": 61.843
+          },
+          "2025": {
+            "startNTD": 1618429.97,
+            "endNTD": 2729357.39,
+            "returnPct": 68.642
+          },
+          "2026": {
+            "startNTD": 2729357.39,
+            "endNTD": 6315094.24,
+            "returnPct": 131.377
+          }
+        }
+      },
+      "holdReturnCapturePct": 107.91,
+      "maxDDImprovementVsHoldPP": 20.82
+    },
+    {
+      "id": "MA_etf_10_F10_B4_OFF50_C3",
+      "params": {
+        "id": "MA_etf_10_F10_B4_OFF50_C3",
+        "family": "ma",
+        "source": "etf",
+        "ma": 10,
+        "fast": 10,
+        "buffer": 0.04,
+        "off": 0.5,
+        "confirm": 3
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2603786.91,
+        "returnPct": 160.379,
+        "maxDrawdownPct": -41.117,
+        "tradeOrders": 9,
+        "regimeSwitches": 8,
+        "heldSessions": 484,
+        "totalSessions": 485,
+        "exposureDaysPct": 99.79,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1453457.52,
+            "returnPct": 45.346
+          },
+          "2025": {
+            "startNTD": 1453457.52,
+            "endNTD": 2603786.91,
+            "returnPct": 79.144
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2443341.39,
+        "returnPct": 144.334,
+        "maxDrawdownPct": -26.823,
+        "tradeOrders": 5,
+        "regimeSwitches": 4,
+        "heldSessions": 183,
+        "totalSessions": 184,
+        "exposureDaysPct": 99.46,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2443341.39,
+            "returnPct": 144.334
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 6445764.79,
+        "returnPct": 544.576,
+        "maxDrawdownPct": -41.117,
+        "tradeOrders": 13,
+        "regimeSwitches": 12,
+        "heldSessions": 668,
+        "totalSessions": 669,
+        "exposureDaysPct": 99.85,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1453457.52,
+            "returnPct": 45.346
+          },
+          "2025": {
+            "startNTD": 1453457.52,
+            "endNTD": 2603786.91,
+            "returnPct": 79.144
+          },
+          "2026": {
+            "startNTD": 2603786.91,
+            "endNTD": 6445764.79,
+            "returnPct": 147.553
+          }
+        }
+      },
+      "holdReturnCapturePct": 110.57,
+      "maxDDImprovementVsHoldPP": 14.127
+    },
+    {
+      "id": "MA_etf_10_F10_B4_OFF75_C3",
+      "params": {
+        "id": "MA_etf_10_F10_B4_OFF75_C3",
+        "family": "ma",
+        "source": "etf",
+        "ma": 10,
+        "fast": 10,
+        "buffer": 0.04,
+        "off": 0.75,
+        "confirm": 3
+      },
+      "train": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "endingNTD": 2472580.51,
+        "returnPct": 147.258,
+        "maxDrawdownPct": -48.024,
+        "tradeOrders": 9,
+        "regimeSwitches": 8,
+        "heldSessions": 484,
+        "totalSessions": 485,
+        "exposureDaysPct": 99.79,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1501293.32,
+            "returnPct": 50.129
+          },
+          "2025": {
+            "startNTD": 1501293.32,
+            "endNTD": 2472580.51,
+            "returnPct": 64.697
+          }
+        }
+      },
+      "oos2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 2476275.28,
+        "returnPct": 147.628,
+        "maxDrawdownPct": -28.953,
+        "tradeOrders": 5,
+        "regimeSwitches": 4,
+        "heldSessions": 183,
+        "totalSessions": 184,
+        "exposureDaysPct": 99.46,
+        "yearly": {
+          "2026": {
+            "startNTD": 1000000,
+            "endNTD": 2476275.28,
+            "returnPct": 147.628
+          }
+        }
+      },
+      "continuous2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "endingNTD": 6203147.98,
+        "returnPct": 520.315,
+        "maxDrawdownPct": -48.024,
+        "tradeOrders": 13,
+        "regimeSwitches": 12,
+        "heldSessions": 668,
+        "totalSessions": 669,
+        "exposureDaysPct": 99.85,
+        "yearly": {
+          "2024": {
+            "startNTD": 1000000,
+            "endNTD": 1501293.32,
+            "returnPct": 50.129
+          },
+          "2025": {
+            "startNTD": 1501293.32,
+            "endNTD": 2472580.51,
+            "returnPct": 64.697
+          },
+          "2026": {
+            "startNTD": 2472580.51,
+            "endNTD": 6203147.98,
+            "returnPct": 150.877
+          }
+        }
+      },
+      "holdReturnCapturePct": 105.64,
+      "maxDDImprovementVsHoldPP": 7.22
+    }
+  ],
+  "trainTop25": [
+    {
+      "id": "DD20_T16_OFF0_ema10",
+      "params": {
+        "id": "DD20_T16_OFF0_ema10",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.16,
+        "off": 0,
+        "reentry": "ema10"
+      },
+      "captureTrainPct": 140.085,
+      "ddImprovementTrainPP": 25.981,
+      "scoreTrain": 199.479,
+      "trainReturnPct": 186.496,
+      "trainDrawdownPct": -29.263
+    },
+    {
+      "id": "MA_etf_10_F10_B4_OFF0_C3",
+      "params": {
+        "id": "MA_etf_10_F10_B4_OFF0_C3",
+        "family": "ma",
+        "source": "etf",
+        "ma": 10,
+        "fast": 10,
+        "buffer": 0.04,
+        "off": 0,
+        "confirm": 3
+      },
+      "captureTrainPct": 137.272,
+      "ddImprovementTrainPP": 23.158,
+      "scoreTrain": 196.393,
+      "trainReturnPct": 182.751,
+      "trainDrawdownPct": -32.086
+    },
+    {
+      "id": "MA_twii_10_F10_B2_OFF0_C3",
+      "params": {
+        "id": "MA_twii_10_F10_B2_OFF0_C3",
+        "family": "ma",
+        "source": "twii",
+        "ma": 10,
+        "fast": 10,
+        "buffer": 0.02,
+        "off": 0,
+        "confirm": 3
+      },
+      "captureTrainPct": 133.043,
+      "ddImprovementTrainPP": 21.807,
+      "scoreTrain": 189.548,
+      "trainReturnPct": 177.122,
+      "trainDrawdownPct": -33.437
+    },
+    {
+      "id": "DD20_T16_OFF0_both",
+      "params": {
+        "id": "DD20_T16_OFF0_both",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.16,
+        "off": 0,
+        "reentry": "both"
+      },
+      "captureTrainPct": 128.037,
+      "ddImprovementTrainPP": 24.731,
+      "scoreTrain": 187.115,
+      "trainReturnPct": 170.457,
+      "trainDrawdownPct": -30.513
+    },
+    {
+      "id": "DD20_T16_OFF0_index20",
+      "params": {
+        "id": "DD20_T16_OFF0_index20",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.16,
+        "off": 0,
+        "reentry": "index20"
+      },
+      "captureTrainPct": 128.037,
+      "ddImprovementTrainPP": 24.731,
+      "scoreTrain": 187.115,
+      "trainReturnPct": 170.457,
+      "trainDrawdownPct": -30.513
+    },
+    {
+      "id": "DUAL_E10_I60_OFF0_C3_both",
+      "params": {
+        "id": "DUAL_E10_I60_OFF0_C3_both",
+        "family": "dual",
+        "etf_ma": 10,
+        "index_ma": 60,
+        "off": 0,
+        "confirm": 3,
+        "entry": "both"
+      },
+      "captureTrainPct": 129.611,
+      "ddImprovementTrainPP": 23.846,
+      "scoreTrain": 185.213,
+      "trainReturnPct": 172.552,
+      "trainDrawdownPct": -31.398
+    },
+    {
+      "id": "MA_etf_10_F10_B4_OFF25_C3",
+      "params": {
+        "id": "MA_etf_10_F10_B4_OFF25_C3",
+        "family": "ma",
+        "source": "etf",
+        "ma": 10,
+        "fast": 10,
+        "buffer": 0.04,
+        "off": 0.25,
+        "confirm": 3
+      },
+      "captureTrainPct": 129.35,
+      "ddImprovementTrainPP": 19.625,
+      "scoreTrain": 182.668,
+      "trainReturnPct": 172.205,
+      "trainDrawdownPct": -35.619
+    },
+    {
+      "id": "MA_twii_20_F10_B4_OFF0_C1",
+      "params": {
+        "id": "MA_twii_20_F10_B4_OFF0_C1",
+        "family": "ma",
+        "source": "twii",
+        "ma": 20,
+        "fast": 10,
+        "buffer": 0.04,
+        "off": 0,
+        "confirm": 1
+      },
+      "captureTrainPct": 122.708,
+      "ddImprovementTrainPP": 29.954,
+      "scoreTrain": 181.521,
+      "trainReturnPct": 163.362,
+      "trainDrawdownPct": -25.29
+    },
+    {
+      "id": "DD20_T16_OFF25_ema10",
+      "params": {
+        "id": "DD20_T16_OFF25_ema10",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.16,
+        "off": 0.25,
+        "reentry": "ema10"
+      },
+      "captureTrainPct": 129.899,
+      "ddImprovementTrainPP": 20.82,
+      "scoreTrain": 181.274,
+      "trainReturnPct": 172.936,
+      "trainDrawdownPct": -34.424
+    },
+    {
+      "id": "MA_twii_10_F10_B2_OFF25_C3",
+      "params": {
+        "id": "MA_twii_10_F10_B2_OFF25_C3",
+        "family": "ma",
+        "source": "twii",
+        "ma": 10,
+        "fast": 10,
+        "buffer": 0.02,
+        "off": 0.25,
+        "confirm": 3
+      },
+      "captureTrainPct": 125.932,
+      "ddImprovementTrainPP": 18.55,
+      "scoreTrain": 177.15,
+      "trainReturnPct": 167.655,
+      "trainDrawdownPct": -36.694
+    },
+    {
+      "id": "DD40_T16_OFF0_ema10",
+      "params": {
+        "id": "DD40_T16_OFF0_ema10",
+        "family": "drawdown",
+        "window": 40,
+        "threshold": 0.16,
+        "off": 0,
+        "reentry": "ema10"
+      },
+      "captureTrainPct": 131.489,
+      "ddImprovementTrainPP": 29.032,
+      "scoreTrain": 174.782,
+      "trainReturnPct": 175.053,
+      "trainDrawdownPct": -26.212
+    },
+    {
+      "id": "DUAL_E10_I60_OFF25_C3_both",
+      "params": {
+        "id": "DUAL_E10_I60_OFF25_C3_both",
+        "family": "dual",
+        "etf_ma": 10,
+        "index_ma": 60,
+        "off": 0.25,
+        "confirm": 3,
+        "entry": "both"
+      },
+      "captureTrainPct": 123.661,
+      "ddImprovementTrainPP": 19.701,
+      "scoreTrain": 173.562,
+      "trainReturnPct": 164.631,
+      "trainDrawdownPct": -35.543
+    },
+    {
+      "id": "DD20_T16_OFF25_both",
+      "params": {
+        "id": "DD20_T16_OFF25_both",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.16,
+        "off": 0.25,
+        "reentry": "both"
+      },
+      "captureTrainPct": 120.975,
+      "ddImprovementTrainPP": 19.261,
+      "scoreTrain": 172.79,
+      "trainReturnPct": 161.055,
+      "trainDrawdownPct": -35.983
+    },
+    {
+      "id": "DD20_T16_OFF25_index20",
+      "params": {
+        "id": "DD20_T16_OFF25_index20",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.16,
+        "off": 0.25,
+        "reentry": "index20"
+      },
+      "captureTrainPct": 120.975,
+      "ddImprovementTrainPP": 19.261,
+      "scoreTrain": 172.79,
+      "trainReturnPct": 161.055,
+      "trainDrawdownPct": -35.983
+    },
+    {
+      "id": "DD20_T12_OFF0_both",
+      "params": {
+        "id": "DD20_T12_OFF0_both",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.12,
+        "off": 0,
+        "reentry": "both"
+      },
+      "captureTrainPct": 116.586,
+      "ddImprovementTrainPP": 30.758,
+      "scoreTrain": 170.894,
+      "trainReturnPct": 155.212,
+      "trainDrawdownPct": -24.486
+    },
+    {
+      "id": "DD20_T12_OFF0_index20",
+      "params": {
+        "id": "DD20_T12_OFF0_index20",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.12,
+        "off": 0,
+        "reentry": "index20"
+      },
+      "captureTrainPct": 116.586,
+      "ddImprovementTrainPP": 30.758,
+      "scoreTrain": 170.894,
+      "trainReturnPct": 155.212,
+      "trainDrawdownPct": -24.486
+    },
+    {
+      "id": "MA_twii_20_F10_B4_OFF25_C1",
+      "params": {
+        "id": "MA_twii_20_F10_B4_OFF25_C1",
+        "family": "ma",
+        "source": "twii",
+        "ma": 20,
+        "fast": 10,
+        "buffer": 0.04,
+        "off": 0.25,
+        "confirm": 1
+      },
+      "captureTrainPct": 118.255,
+      "ddImprovementTrainPP": 23.087,
+      "scoreTrain": 169.412,
+      "trainReturnPct": 157.434,
+      "trainDrawdownPct": -32.157
+    },
+    {
+      "id": "DUAL_E10_I60_OFF0_C3_either",
+      "params": {
+        "id": "DUAL_E10_I60_OFF0_C3_either",
+        "family": "dual",
+        "etf_ma": 10,
+        "index_ma": 60,
+        "off": 0,
+        "confirm": 3,
+        "entry": "either"
+      },
+      "captureTrainPct": 121.748,
+      "ddImprovementTrainPP": 18.399,
+      "scoreTrain": 168.243,
+      "trainReturnPct": 162.084,
+      "trainDrawdownPct": -36.845
+    },
+    {
+      "id": "MA_etf_10_F10_B4_OFF50_C3",
+      "params": {
+        "id": "MA_etf_10_F10_B4_OFF50_C3",
+        "family": "ma",
+        "source": "etf",
+        "ma": 10,
+        "fast": 10,
+        "buffer": 0.04,
+        "off": 0.5,
+        "confirm": 3
+      },
+      "captureTrainPct": 120.467,
+      "ddImprovementTrainPP": 14.127,
+      "scoreTrain": 165.893,
+      "trainReturnPct": 160.379,
+      "trainDrawdownPct": -41.117
+    },
+    {
+      "id": "DD40_T16_OFF0_index20",
+      "params": {
+        "id": "DD40_T16_OFF0_index20",
+        "family": "drawdown",
+        "window": 40,
+        "threshold": 0.16,
+        "off": 0,
+        "reentry": "index20"
+      },
+      "captureTrainPct": 123.23,
+      "ddImprovementTrainPP": 27.132,
+      "scoreTrain": 165.276,
+      "trainReturnPct": 164.057,
+      "trainDrawdownPct": -28.112
+    },
+    {
+      "id": "MA_twii_10_F10_B2_OFF50_C3",
+      "params": {
+        "id": "MA_twii_10_F10_B2_OFF50_C3",
+        "family": "ma",
+        "source": "twii",
+        "ma": 10,
+        "fast": 10,
+        "buffer": 0.02,
+        "off": 0.5,
+        "confirm": 3
+      },
+      "captureTrainPct": 118.019,
+      "ddImprovementTrainPP": 14.563,
+      "scoreTrain": 163.027,
+      "trainReturnPct": 157.12,
+      "trainDrawdownPct": -40.681
+    },
+    {
+      "id": "DD20_T12_OFF25_both",
+      "params": {
+        "id": "DD20_T12_OFF25_both",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.12,
+        "off": 0.25,
+        "reentry": "both"
+      },
+      "captureTrainPct": 113.598,
+      "ddImprovementTrainPP": 24.891,
+      "scoreTrain": 161.636,
+      "trainReturnPct": 151.234,
+      "trainDrawdownPct": -30.353
+    },
+    {
+      "id": "DD20_T12_OFF25_index20",
+      "params": {
+        "id": "DD20_T12_OFF25_index20",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.12,
+        "off": 0.25,
+        "reentry": "index20"
+      },
+      "captureTrainPct": 113.598,
+      "ddImprovementTrainPP": 24.891,
+      "scoreTrain": 161.636,
+      "trainReturnPct": 151.234,
+      "trainDrawdownPct": -30.353
+    },
+    {
+      "id": "DD20_T16_OFF50_ema10",
+      "params": {
+        "id": "DD20_T16_OFF50_ema10",
+        "family": "drawdown",
+        "window": 20,
+        "threshold": 0.16,
+        "off": 0.5,
+        "reentry": "ema10"
+      },
+      "captureTrainPct": 119.79,
+      "ddImprovementTrainPP": 13.718,
+      "scoreTrain": 161.424,
+      "trainReturnPct": 159.478,
+      "trainDrawdownPct": -41.526
+    },
+    {
+      "id": "DD40_T16_OFF0_both",
+      "params": {
+        "id": "DD40_T16_OFF0_both",
+        "family": "drawdown",
+        "window": 40,
+        "threshold": 0.16,
+        "off": 0,
+        "reentry": "both"
+      },
+      "captureTrainPct": 119.032,
+      "ddImprovementTrainPP": 27.132,
+      "scoreTrain": 161.288,
+      "trainReturnPct": 158.469,
+      "trainDrawdownPct": -28.112
+    }
+  ],
+  "warnings": [
+    "2026 is NOT an untouched researcher-level holdout because multiple previous experiments already examined that period.",
+    "Strategy searches of hundreds of related thresholds increase multiple-testing bias. Selection criteria only used 2024-25 outputs.",
+    "Single daily OHLC cannot test true 2-minute Bottom/Top signals or exact intra-bar fill sequencing.",
+    "Daily 2x ETF compounding and market gap risk can produce losses far beyond the perceived stop or signal level.",
+    "Full compounding causes growing notional exposure; no margin and no external contributions.",
+    "Partial exposure portfolio cash isn't earning bank interest; conservative broad simulation not broker execution confirmation.",
+    "Intraday commissions, discount broker rates and dividend corporate actions could change realized results."
+  ],
+  "elapsedSeconds": 38.4
+}
