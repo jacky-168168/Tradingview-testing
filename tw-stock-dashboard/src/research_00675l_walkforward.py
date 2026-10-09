@@ -223,7 +223,13 @@ def main():
     sorted_train=sorted([x for x in training if x["eligible"]],key=lambda x:(-x["score"],-x["train"]["trades"],x["id"]))
     if not sorted_train:raise RuntimeError("No eligible candidate matched precommitted thresholds")
     # Only THEN inspect 2026, never select based on test outcomes.
-    selected=sorted_train[:5];fixed=["BUY_HOLD","TREND_twii60_SL10","TREND_etf20_SL10"]
+    # One train-best representative for EACH fundamentally different signal family.
+    # This is set entirely from 2024-25 data, before independent 2026 inspection.
+    family_best={}
+    for candidate in sorted_train:
+        family_best.setdefault(candidate["params"]["family"],candidate)
+    selected=sorted(family_best.values(),key=lambda x:(-x["score"],x["id"]))
+    fixed=["BUY_HOLD","TREND_twii60_SL10","TREND_etf20_SL10"]
     ids=list(dict.fromkeys(fixed+[x["id"] for x in selected]))
     byid={x["id"]:x for x in training}
     verification=[]
@@ -261,12 +267,12 @@ def main():
                    "gap":"open price if crossed exit stop/target","sameBar":"stop may hit day of first entry but cannot hit take-profit day of entry",
                    "capital":"all available cash each trade; one position max; no financing",
                    "trainSelection":"2024+2025 total net% -0.8*absolute maxDD% +0.25*min(2024 return, 2025 return); trade N>=8 and each year >=2",
-                   "oos":"top five TRAIN scores and 3 precommitted baselines only; 2026 never used for choice"},
+                   "oos":"best 2024-25 training score within each different entry family + 3 precommitted baselines; no choice based on 2026"},
        "candidateCount":len(configs),"eligibleCount":len(sorted_train),
        "trainContext":snapshot(d),
        "trainTop10":[{"id":x["id"],"params":x["params"],"train":x["train"],"y2024":x["y2024"],"y2025":x["y2025"],
                       "score":x["score"]} for x in sorted_train[:10]],
-       "selectedTrainingWinner":winner,
+       "selectedTrainingWinner":winner,"familyBestInTrain":[{"family":x["params"]["family"],"id":x["id"],"trainScore":x["score"]} for x in selected],
        "holdTrain":hold_train,"validation":[{k:v for k,v in z.items() if k not in ("events","equity")} for z in verification],
        "warnings":[
          "2026 was held out for this specific parameter ranking, but strategy family design was still informed by general historical ETF behavior; further forward validation is necessary.",
