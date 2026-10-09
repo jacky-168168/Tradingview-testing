@@ -1,0 +1,75 @@
+name: PLTR 2020-2026 Full-Compound Strategy Research
+on:
+  push:
+    branches: [research/pltr-2020-2026-rotation-comparison]
+    paths:
+      - 'tw-stock-dashboard/src/research_pltr_2020_2026.py'
+      - '.github/workflows/pltr-research-2020-2026.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Run all PLTR IPO-to-2026 price/FX and train/test strategy audits
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_pltr_2020_2026.py
+          python -u src/research_pltr_2020_2026.py
+      - name: Verify no pre-IPO fictional stock history, exact money, and all daily curves
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import math,json
+          from pathlib import Path
+          root=Path("docs/data/research/pltr_2020_2026")
+          j=json.loads((root/"summary.json").read_text())
+          z=json.loads((root/"daily_equity_orders.json").read_text())
+          train=json.loads((root/"training_grid.json").read_text())
+          assert j["period"]==["2020-09-30","2026-10-08"]
+          assert j["unsupportedYears"]==["2018","2019"]
+          assert j["totalSessions"]>=1470
+          assert j["quality"]["IPOFirstBar"]=="2020-09-30"
+          assert j["assumptions"]["startingCapitalTWD"]==1000000
+          assert len(train["results"])==j["strategyResearch"]["qualifyingTrainingModels"]
+          assert j["strategyResearch"]["gridSize"]==2400
+          assert len(j["models"])>=15
+          assert len(j["models"])==len(z["cases"])
+          assert all(set(m["years"])==set(str(i) for i in range(2020,2027)) for m in j["models"])
+          for m in j["models"]:
+            f=m["full"];detail=z["cases"][m["id"]];p=detail["equity"];o=detail["orders"]
+            assert len(p)==j["totalSessions"]
+            assert p[0]["date"]=="2020-09-30" and p[-1]["date"]=="2026-10-08"
+            assert m["full"]["sells"]==m["full"]["rebuys"]
+            assert math.isclose(p[-1]["accountUSD"],f["endUSD"],abs_tol=.05)
+            assert math.isclose(p[-1]["accountTWD"],f["endTWD"],abs_tol=.05)
+            assert 0<len(o)<1000
+            assert math.isclose(f["endUSD"]*j["quality"]["usdTwdLast"],f["endTWD"],abs_tol=1)
+            assert all(date>= "2020-09-30" for date in (p[0]["date"],p[-1]["date"]))
+          assert set(j["executionSlippageStress"])=={"0.001","0.003","0.005","0.01"}
+          print("PASS: PLTR IPO 2020-09-30 through 2026-10-08, USD/TWD price accounting, non-lookahead, all daily order/equity rows, MA candidates training-only and slippage stress")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PLTR-2020-2026-backtest-full-reinvestment
+          path: tw-stock-dashboard/docs/data/research/pltr_2020_2026/*.json
+          retention-days: 90
+      - name: Archive verified PLTR backtest to research branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/pltr_2020_2026
+          if ! git diff --cached --quiet; then
+            git commit -m "research: publish PLTR IPO-to-2026 long-term strategy backtest and full USD/TWD NAV"
+            git push origin HEAD:research/pltr-2020-2026-rotation-comparison
+          fi
