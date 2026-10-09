@@ -8,6 +8,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  pages: write
+  id-token: write
 concurrency:
   group: 00675l-crisis-reserve
   cancel-in-progress: false
@@ -88,3 +90,20 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
+  deploy:
+    needs: research-and-publish
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - name: Deploy 00675L crisis research site
+        id: deployment
+        uses: actions/deploy-pages@v4
