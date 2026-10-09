@@ -22,7 +22,7 @@
 <div class="futures-grid"><div class="metric"><div class="metric-label">台指期日盤收盤</div><div id="txfDay" class="metric-value">--</div></div><div class="metric"><div class="metric-label">台指期夜盤收盤</div><div id="txfNight" class="metric-value">--</div></div><div class="metric"><div class="metric-label">夜盤相對日盤變化</div><div id="txfChange" class="metric-value">--</div></div><div class="metric"><div class="metric-label">近月合約／資料日期</div><div id="txfContract" class="metric-value" style="font-size:16px">--</div></div></div>
 <div id="nextEntry" class="txf-entry">📋 讀取隔日進場觀察中…</div><div class="txf-note">⚠ 夜盤僅供隔日風險參考，尚未回測成正式買進策略；F／F2仍使用加權現貨 Risk Score，不會因夜盤單獨轉為可進場。</div>
 <div class="etf-quicklinks"><a href="https://www.tradingview.com/chart/?symbol=TAIFEX%3ATXF1%21" target="_blank" rel="noopener noreferrer">📈 查看台指期日夜盤連續走勢 ↗</a><a href="https://mis.taifex.com.tw/futures/" target="_blank" rel="noopener noreferrer">🏛 期交所即時行情 ↗</a></div>
-<details class="txf-details"><summary>展開原本的加權現貨 MA／法人指標</summary><div class="market-grid"><div class="metric"><div class="metric-label">加權指數</div><div id="idx" class="metric-value">--</div></div><div class="metric"><div class="metric-label">MA5</div><div id="ma5" class="metric-value">--</div></div><div class="metric"><div class="metric-label">MA20</div><div id="ma20" class="metric-value">--</div></div><div class="metric"><div class="metric-label">5D</div><div id="r5" class="metric-value">--</div></div><div class="metric"><div class="metric-label">20D</div><div id="r20" class="metric-value">--</div></div><div class="metric"><div class="metric-label">Breadth</div><div id="breadth" class="metric-value">--</div></div><div class="metric"><div class="metric-label">外資</div><div id="foreign" class="metric-value">--</div></div><div class="metric"><div class="metric-label">20日趨勢</div><div id="trend" class="metric-value">--</div></div></div></details></div>
+<details class="txf-details" id="txfLiveChart"><summary>📊 展開台指期日夜盤動態走勢（TradingView）</summary><div id="txfWidgetShell" style="height:310px;width:100%;max-width:100%;margin-top:12px"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div></div><div class="txf-note">TradingView行情可能延遲，依其交易所資料權限為準；圖形僅供參考。</div></details><details class="txf-details"><summary>展開原本的加權現貨 MA／法人指標</summary><div class="market-grid"><div class="metric"><div class="metric-label">加權指數</div><div id="idx" class="metric-value">--</div></div><div class="metric"><div class="metric-label">MA5</div><div id="ma5" class="metric-value">--</div></div><div class="metric"><div class="metric-label">MA20</div><div id="ma20" class="metric-value">--</div></div><div class="metric"><div class="metric-label">5D</div><div id="r5" class="metric-value">--</div></div><div class="metric"><div class="metric-label">20D</div><div id="r20" class="metric-value">--</div></div><div class="metric"><div class="metric-label">Breadth</div><div id="breadth" class="metric-value">--</div></div><div class="metric"><div class="metric-label">外資</div><div id="foreign" class="metric-value">--</div></div><div class="metric"><div class="metric-label">20日趨勢</div><div id="trend" class="metric-value">--</div></div></div></details></div>
 </div>
 <div id="riskWarning" class="warning">⚠ 目前市場不是 Risk ON，排行榜建議以觀察為主。</div>
 <div id="staleWarning" class="warning stale">⚠ 完整市場資料已超過 20 小時未更新，請檢查 GitHub Actions。</div>
@@ -64,7 +64,7 @@ async function loadFutures(){
   const res=await fetch("./data/futures/latest.json?v="+Date.now(),{cache:"no-store"});
   if(!res.ok)throw Error("期交所夜盤資料尚未建立");
   const d=await res.json();
-  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(d.asOfDate)||!/^(20\\d{4})$/.test(d.contract))throw Error("日期或合約欄位不完整");
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d.asOfDate)||!/^(20\d{4})$/.test(d.contract))throw Error("日期或合約欄位不完整");
   FUTURES=d;txfDay.textContent=futDisplay(d.day?.close);txfNight.textContent=futDisplay(d.night?.close);
   const pct=d.nightVsDayPct,pts=d.nightVsDayPoints;
   txfChange.textContent=typeof pct==="number"?(pts>=0?"+":"")+futDisplay(pts,0)+" ("+(pct>=0?"+":"")+futDisplay(pct,2)+"%)":"尚無夜盤";
@@ -117,6 +117,16 @@ return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+tvStockLink(x)+'</td><t
 }
 function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);meta.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),isStale=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5);staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent="⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
 async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();renderPanels();renderTable();renderMeta();await loadFutures()}catch(e){meta.textContent="載入失敗："+e.message;tb.innerHTML='<tr><td colspan="18" style="text-align:center;padding:40px;color:#dc2626">資料載入失敗</td></tr>'}finally{loading.classList.remove("show")}}
+document.getElementById("txfLiveChart").addEventListener("toggle",function(){
+ if(!this.open||this.dataset.loaded==="1")return;
+ this.dataset.loaded="1";
+ const sh=document.getElementById("txfWidgetShell");
+ const script=document.createElement("script");
+ script.type="text/javascript";script.async=true;
+ script.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+ script.textContent=JSON.stringify({autosize:true,symbol:"TAIFEX:TXF1!",interval:"15",timezone:"Asia/Taipei",theme:"light",locale:"zh_TW",style:"1",hide_side_toolbar:true,hide_top_toolbar:false,allow_symbol_change:false,save_image:false,withdateranges:false});
+ sh.appendChild(script);
+});
 layoutToggle.onclick=function(){TABLE_COMPACT=!TABLE_COMPACT;applyTableMode()};tabG.onclick=function(){MODEL="G";renderTable()};tabD.onclick=function(){MODEL="D";renderTable()};tabF.onclick=function(){MODEL="F";renderTable()};tabF2.onclick=function(){MODEL="F2";renderTable()};tabA.onclick=function(){MODEL="A";renderTable()};reload.onclick=load;load();setInterval(load,90000);
 </script>
 </body></html>
