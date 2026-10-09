@@ -10,7 +10,7 @@ const cls=x=>Number(x)>=0?"etf-green":"etf-red";
 const p=x=>'<span class="'+cls(x)+'">'+num(x,2)+'%</span>';
 const twd=x=>num(Number(x)/10000,2)+" 萬";
 let index=null,study=null,selected=null,filter="",grid=null,gridPage=0,loadPromise=null,curveRequest=0,curves={};
-async function json(path){const res=await fetch(path+"?v=20261009riskv2",{cache:"no-cache"});if(!res.ok)throw Error("HTTP "+res.status+"："+path);return await res.json();}
+async function json(path){const res=await fetch(path+"?v=20261009sma5exit7",{cache:"no-cache"});if(!res.ok)throw Error("HTTP "+res.status+"："+path);return await res.json();}
 function show(){
   ["legacyView","gView","executionResearchView"].forEach(id=>{const e=by(id);if(e)e.style.display="none";});
   root.style.display="block";
