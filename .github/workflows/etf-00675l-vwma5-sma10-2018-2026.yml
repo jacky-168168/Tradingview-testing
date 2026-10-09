@@ -1,0 +1,78 @@
+name: 00675L VWMA5 versus SMA10 2018-2026
+on:
+  push:
+    branches: [research/00675l-vwma5-vs-sma10-2018-2026]
+    paths:
+      - 'tw-stock-dashboard/src/research_00675l_vwma5_sma10_2018_2026.py'
+      - '.github/workflows/etf-00675l-vwma5-sma10-2018-2026.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: 00675l-vwma-sma-2018-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            00675l-ma-neighbors-${{ runner.os }}-
+            00675l-ma-comparison-${{ runner.os }}-
+            00675l-2020-2026-${{ runner.os }}-
+      - name: Install Python requirements
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Compare ETF VWMA5 and SMA10 over 2018 to October 2026
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_00675l_vwma5_sma10_2018_2026.py
+          python -u src/research_00675l_vwma5_sma10_2018_2026.py
+      - name: Audit shared 2018-2026 horizon and the existing 2020 backtest parity
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import json,math
+          from pathlib import Path
+          root=Path("docs/data/research/etf_00675l_vwma5_sma10_2018_2026")
+          r=json.loads((root/"summary.json").read_text())
+          e=json.loads((root/"trades_and_equity.json").read_text())
+          assert r["symbol"]=="00675L.TW" and r["index"]=="^TWII"
+          assert r["referenceParity"]=={"SMA10_2020_2026_pct":3312.334,"BUYHOLD_2020_2026_pct":1653.043}
+          assert len(r["cases"])==4
+          assert r["historyNotional"]["startCapitalNTD"]==1000000
+          assert r["quality"]["totalTradingDays"]>2000
+          days=set()
+          for z in r["cases"]:
+            v=z["continuous2018_2026"]
+            days.add((v["start"],v["end"],v["sessions"]))
+            assert v["start"]<="2018-01-04" and v["end"]=="2026-10-07"
+            assert v["endNTD"]>0 and math.isfinite(v["returnPct"])
+            assert z["calendarYearsContinuous"].keys()>=set(str(i) for i in range(2018,2027))
+            d=e["cases"][z["id"]]["dailyEquity"]
+            assert len(d)==v["sessions"] and math.isclose(d[-1]["equity"],v["endNTD"],abs_tol=.05)
+          assert len(days)==1,days
+          sma=next(z for z in r["cases"] if z["id"]=="SMA10_index_original_2_1")
+          assert sma["independentPeriodChecks"]["2020_2023"]["returnPct"]==383.017
+          assert sma["independentPeriodChecks"]["2024_2026"]["returnPct"]==600.612
+          print("PASS: 2018-2026 identical dates, daily compounding, SMA10 historic parity, index-volume VWMA guard")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 00675l-vwma5-vs-sma10-2018-2026
+          path: tw-stock-dashboard/docs/data/research/etf_00675l_vwma5_sma10_2018_2026/*.json
+      - name: Archive validated results on research branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_00675l_vwma5_sma10_2018_2026
+          if ! git diff --cached --quiet; then
+            git commit -m "research: freeze same-period VWMA5 vs SMA10 2018-2026 result"
+            git push origin HEAD:research/00675l-vwma5-vs-sma10-2018-2026
+          fi
