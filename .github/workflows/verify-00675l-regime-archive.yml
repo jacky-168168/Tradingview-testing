@@ -1,0 +1,49 @@
+name: Verify 00675L Regime Rotation Archive
+on:
+  push:
+    branches: [feature/00675l-regime-vs-buyhold-archive]
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/docs/backtest.html'
+      - 'tw-stock-dashboard/docs/backtest-research.js'
+      - 'tw-stock-dashboard/docs/data/research/model_execution_2026/00675l_regime_capture_*.json'
+      - '.github/workflows/verify-00675l-regime-archive.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse browser UI JavaScript
+        run: node --check tw-stock-dashboard/docs/backtest-research.js
+      - name: Validate 1091 strategy simulation archive and UI
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,math
+          p=Path("tw-stock-dashboard/docs/data/research/model_execution_2026")
+          s=json.loads((p/"00675l_regime_capture_summary.json").read_text())
+          e=json.loads((p/"00675l_regime_capture_equity.json").read_text())
+          z=json.loads((p/"00675l_regime_capture_stress.json").read_text())
+          other=json.loads((p/"00675l_trend_capture_summary.json").read_text())
+          assert s["ticker"]=="00675L.TW" and s["universe"]["total"]>=1000
+          assert s["baseline"]["continuous"]["returnPct"]==492.535
+          assert s["baseline"]["2026"]["returnPct"]==150.836
+          assert other["nCases"]>=900 and other["benchmark"]["continuous"]["returnPct"]==492.535
+          assert z["originalCandidateReturnPct"]==647.592
+          assert len(s["frozenComparisons"])==len(e["models"])>=5
+          for r in s["frozenComparisons"]:
+            assert r["train"]["riskOffSells"]>=2
+            assert r["2024"]["riskOffSells"]>=1 and r["2025"]["riskOffSells"]>=1
+            x=next(m for m in e["models"] if m["id"]==r["id"])
+            assert len(x["equity"])==r["continuous"]["sessions"]
+            assert math.isclose(x["equity"][-1]["equity"],r["continuous"]["endNTD"],abs_tol=.01)
+          html=Path("tw-stock-dashboard/docs/backtest.html").read_text()
+          script=Path("tw-stock-dashboard/docs/backtest-research.js").read_text()
+          for tab in ("g","h","risk","timing","capacity","tp","reinvest","trend00675"):
+            assert 'data-archive="'+tab+'"' in html,tab
+          for term in ("00675l_regime_capture_summary.json","00675l_regime_capture_equity.json","00675l_regime_capture_stress.json","00675l_trend_capture_summary.json","select00675Trend","selectReinvestment","selectTPSensitivity"):
+            assert term in script,term
+          print("PASS: benchmark parity, true sell/buy-back, full 669-day NAV, original seven tabs, 1091+925 experiments")
+          PY
