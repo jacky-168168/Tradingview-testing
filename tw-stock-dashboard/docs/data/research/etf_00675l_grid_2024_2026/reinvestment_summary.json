@@ -1,0 +1,346 @@
+{
+  "version": "00675L_PROFIT_REINVESTMENT_2024_2026_V1",
+  "generatedAt": "2026-10-09T08:31:32+08:00",
+  "ticker": "00675L.TW",
+  "security": "富邦臺灣加權正2",
+  "startingCapitalNTD": 1000000,
+  "frozenStrategy": {
+    "id": "RECLAIM_EMA10_twii20_TP0.1_SL0.07_H20",
+    "family": "swing_reclaim",
+    "length": 10,
+    "gate": "twii20",
+    "tp": 0.1,
+    "sl": 0.07,
+    "hold": 20
+  },
+  "dataEnd": "2026-10-07",
+  "executableDates": {
+    "train": "2024-2025",
+    "test": "2026-01-01 to 2026-10-08",
+    "continuation": "2024-01-01 to 2026-10-08"
+  },
+  "capitalAllocation": {
+    "fixed_100m": "Each new trade invests up to original NT$1,000,000; net gains retained as idle account cash. After losses, invests only available cash. No margin.",
+    "half_profit_reinvest": "Each trade invests up to NT$1,000,000 plus 50% of total account equity already above original NT$1,000,000.",
+    "all_profit_reinvest": "Each trade invests all available cash including cumulative net gains; losses reduce next position size. This is the SAME as previous 00675L study.",
+    "firstTrade": "All modes initially invest as much of original NT$1,000,000 as integer ETF units and fee budget allow.",
+    "idleCash": "Idle profits remain counted in total account equity, no bank interest; 100% full reinvest has no intentional cash reserve.",
+    "wholeShares": true,
+    "oneOpenETFPosition": true,
+    "noBorrowing": true
+  },
+  "tradeRules": {
+    "entry": "Price closes above EMA10 after previous close at or below EMA10, TWII index last closed above MA20; buy next opening",
+    "exit": "Gross TP +10% or SL -7%; indicator exit next opening; max 20 trading days",
+    "fees": {
+      "perSideBrokerPct": 0.14250000000000002,
+      "sellETFTaxPct": 0.1,
+      "perSideSlippagePct": 0.1
+    },
+    "noSameDayPositiveTarget": true
+  },
+  "comparison": {
+    "fixed_100m": {
+      "fractionOfAccumulatedProfitsReinvested": 0.0,
+      "byPeriod": {
+        "2024": {
+          "start": "2024-01-02",
+          "end": "2024-12-31",
+          "returnPct": 13.738,
+          "maxDrawdownPct": -10.725,
+          "trades": 6,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 2.29,
+          "profitFactor": 2.544,
+          "avgHoldingDays": 9.33,
+          "investedDays": 50,
+          "sessions": 242,
+          "endingEquityNTD": 1137384.62,
+          "totalRealizedProfitNTD": 137384.62,
+          "maxSingleTradeCostNTD": 999999.43,
+          "yearlyReturns": null
+        },
+        "2025": {
+          "start": "2025-01-02",
+          "end": "2025-12-31",
+          "returnPct": 34.527,
+          "maxDrawdownPct": -11.765,
+          "trades": 13,
+          "winPct": 53.85,
+          "avgNetPerTradePct": 2.735,
+          "profitFactor": 2.989,
+          "avgHoldingDays": 6.92,
+          "investedDays": 77,
+          "sessions": 243,
+          "endingEquityNTD": 1345274.91,
+          "totalRealizedProfitNTD": 345274.91,
+          "maxSingleTradeCostNTD": 999991.76,
+          "yearlyReturns": null
+        },
+        "2026": {
+          "start": "2026-01-02",
+          "end": "2026-10-07",
+          "returnPct": 54.554,
+          "maxDrawdownPct": -8.406,
+          "trades": 11,
+          "winPct": 72.73,
+          "avgNetPerTradePct": 4.96,
+          "profitFactor": 4.39,
+          "avgHoldingDays": 5.0,
+          "investedDays": 44,
+          "sessions": 184,
+          "endingEquityNTD": 1545536.59,
+          "totalRealizedProfitNTD": 545536.58,
+          "maxSingleTradeCostNTD": 999957.2,
+          "yearlyReturns": null
+        },
+        "continuous_2024_2026": {
+          "start": "2024-01-02",
+          "end": "2026-10-07",
+          "returnPct": 109.287,
+          "maxDrawdownPct": -21.062,
+          "trades": 30,
+          "winPct": 60.0,
+          "avgNetPerTradePct": 3.643,
+          "profitFactor": 3.502,
+          "avgHoldingDays": 6.8,
+          "investedDays": 174,
+          "sessions": 669,
+          "endingEquityNTD": 2092867.28,
+          "totalRealizedProfitNTD": 1092867.26,
+          "maxSingleTradeCostNTD": 999999.43,
+          "yearlyReturns": {
+            "2024": {
+              "startCapitalNTD": 1000000,
+              "endCapitalNTD": 1137384.62,
+              "netGainNTD": 137384.62,
+              "yearReturnPct": 13.738,
+              "lastDate": "2024-12-31"
+            },
+            "2025": {
+              "startCapitalNTD": 1137384.62,
+              "endCapitalNTD": 1482707.28,
+              "netGainNTD": 345322.66,
+              "yearReturnPct": 30.361,
+              "lastDate": "2025-12-31"
+            },
+            "2026": {
+              "startCapitalNTD": 1482707.28,
+              "endCapitalNTD": 2092867.28,
+              "netGainNTD": 610160.0,
+              "yearReturnPct": 41.152,
+              "lastDate": "2026-10-07"
+            }
+          }
+        }
+      }
+    },
+    "half_profit_reinvest": {
+      "fractionOfAccumulatedProfitsReinvested": 0.5,
+      "byPeriod": {
+        "2024": {
+          "start": "2024-01-02",
+          "end": "2024-12-31",
+          "returnPct": 13.613,
+          "maxDrawdownPct": -11.695,
+          "trades": 6,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 2.29,
+          "profitFactor": 2.39,
+          "avgHoldingDays": 9.33,
+          "investedDays": 50,
+          "sessions": 242,
+          "endingEquityNTD": 1136129.62,
+          "totalRealizedProfitNTD": 136129.61,
+          "maxSingleTradeCostNTD": 1117021.69,
+          "yearlyReturns": null
+        },
+        "2025": {
+          "start": "2025-01-02",
+          "end": "2025-12-31",
+          "returnPct": 36.643,
+          "maxDrawdownPct": -11.765,
+          "trades": 13,
+          "winPct": 53.85,
+          "avgNetPerTradePct": 2.735,
+          "profitFactor": 2.983,
+          "avgHoldingDays": 6.92,
+          "investedDays": 77,
+          "sessions": 243,
+          "endingEquityNTD": 1366425.85,
+          "totalRealizedProfitNTD": 366425.86,
+          "maxSingleTradeCostNTD": 1192019.34,
+          "yearlyReturns": null
+        },
+        "2026": {
+          "start": "2026-01-02",
+          "end": "2026-10-07",
+          "returnPct": 60.311,
+          "maxDrawdownPct": -8.819,
+          "trades": 11,
+          "winPct": 72.73,
+          "avgNetPerTradePct": 4.96,
+          "profitFactor": 4.389,
+          "avgHoldingDays": 5.0,
+          "investedDays": 44,
+          "sessions": 184,
+          "endingEquityNTD": 1603107.64,
+          "totalRealizedProfitNTD": 603107.63,
+          "maxSingleTradeCostNTD": 1234459.82,
+          "yearlyReturns": null
+        },
+        "continuous_2024_2026": {
+          "start": "2024-01-02",
+          "end": "2026-10-07",
+          "returnPct": 138.452,
+          "maxDrawdownPct": -22.426,
+          "trades": 30,
+          "winPct": 60.0,
+          "avgNetPerTradePct": 3.643,
+          "profitFactor": 3.571,
+          "avgHoldingDays": 6.8,
+          "investedDays": 174,
+          "sessions": 669,
+          "endingEquityNTD": 2384515.93,
+          "totalRealizedProfitNTD": 1384515.91,
+          "maxSingleTradeCostNTD": 1605026.31,
+          "yearlyReturns": {
+            "2024": {
+              "startCapitalNTD": 1000000,
+              "endCapitalNTD": 1136129.62,
+              "netGainNTD": 136129.62,
+              "yearReturnPct": 13.613,
+              "lastDate": "2024-12-31"
+            },
+            "2025": {
+              "startCapitalNTD": 1136129.62,
+              "endCapitalNTD": 1520795.55,
+              "netGainNTD": 384665.93,
+              "yearReturnPct": 33.858,
+              "lastDate": "2025-12-31"
+            },
+            "2026": {
+              "startCapitalNTD": 1520795.55,
+              "endCapitalNTD": 2384515.93,
+              "netGainNTD": 863720.38,
+              "yearReturnPct": 56.794,
+              "lastDate": "2026-10-07"
+            }
+          }
+        }
+      }
+    },
+    "all_profit_reinvest": {
+      "fractionOfAccumulatedProfitsReinvested": 1.0,
+      "byPeriod": {
+        "2024": {
+          "start": "2024-01-02",
+          "end": "2024-12-31",
+          "returnPct": 13.463,
+          "maxDrawdownPct": -12.691,
+          "trades": 6,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 2.29,
+          "profitFactor": 2.255,
+          "avgHoldingDays": 9.33,
+          "investedDays": 50,
+          "sessions": 242,
+          "endingEquityNTD": 1134626.64,
+          "totalRealizedProfitNTD": 134626.64,
+          "maxSingleTradeCostNTD": 1241812.65,
+          "yearlyReturns": null
+        },
+        "2025": {
+          "start": "2025-01-02",
+          "end": "2025-12-31",
+          "returnPct": 38.831,
+          "maxDrawdownPct": -11.765,
+          "trades": 13,
+          "winPct": 53.85,
+          "avgNetPerTradePct": 2.735,
+          "profitFactor": 2.967,
+          "avgHoldingDays": 6.92,
+          "investedDays": 77,
+          "sessions": 243,
+          "endingEquityNTD": 1388310.2,
+          "totalRealizedProfitNTD": 388310.21,
+          "maxSingleTradeCostNTD": 1410501.19,
+          "yearlyReturns": null
+        },
+        "2026": {
+          "start": "2026-01-02",
+          "end": "2026-10-07",
+          "returnPct": 66.445,
+          "maxDrawdownPct": -9.231,
+          "trades": 11,
+          "winPct": 72.73,
+          "avgNetPerTradePct": 4.96,
+          "profitFactor": 4.387,
+          "avgHoldingDays": 5.0,
+          "investedDays": 44,
+          "sessions": 184,
+          "endingEquityNTD": 1664452.2,
+          "totalRealizedProfitNTD": 664452.17,
+          "maxSingleTradeCostNTD": 1501202.39,
+          "yearlyReturns": null
+        },
+        "continuous_2024_2026": {
+          "start": "2024-01-02",
+          "end": "2026-10-07",
+          "returnPct": 175.477,
+          "maxDrawdownPct": -23.766,
+          "trades": 30,
+          "winPct": 60.0,
+          "avgNetPerTradePct": 3.643,
+          "profitFactor": 3.637,
+          "avgHoldingDays": 6.8,
+          "investedDays": 174,
+          "sessions": 669,
+          "endingEquityNTD": 2754767.11,
+          "totalRealizedProfitNTD": 1754767.11,
+          "maxSingleTradeCostNTD": 2484591.17,
+          "yearlyReturns": {
+            "2024": {
+              "startCapitalNTD": 1000000,
+              "endCapitalNTD": 1134626.64,
+              "netGainNTD": 134626.64,
+              "yearReturnPct": 13.463,
+              "lastDate": "2024-12-31"
+            },
+            "2025": {
+              "startCapitalNTD": 1134626.64,
+              "endCapitalNTD": 1558780.66,
+              "netGainNTD": 424154.02,
+              "yearReturnPct": 37.383,
+              "lastDate": "2025-12-31"
+            },
+            "2026": {
+              "startCapitalNTD": 1558780.66,
+              "endCapitalNTD": 2754767.11,
+              "netGainNTD": 1195986.45,
+              "yearReturnPct": 76.726,
+              "lastDate": "2026-10-07"
+            }
+          }
+        }
+      }
+    }
+  },
+  "keyDeltas": {
+    "2026_fullMinusFixedReturnPercentagePoints": 11.891,
+    "2026_fullMinusFixedEndingEquityNTD": 118915.61,
+    "continuous_fullMinusFixedReturnPercentagePoints": 66.19,
+    "continuous_fullMinusFixedEndingEquityNTD": 661899.83
+  },
+  "warnings": [
+    "The original +66.445% 2026 ETF result already used 100% full-cash profit reinvestment.",
+    "All sizing comparisons use exactly the SAME fixed entry/exit rule chosen earlier, not reoptimized after checking 2026.",
+    "2024-2026 continuous means PROFITS and LOSSES carry through year boundaries; isolated yearly 2024, 2025, 2026 runs each independently START with NT$1,000,000.",
+    "Market daily OHLC and adjusted pricing cannot verify real intraday fill or 2-minute Bottom/Top alerts.",
+    "Compounding raises exposure after gains and reduces it after losses; performance is path dependent and this ETF resets its benchmark leverage daily.",
+    "ETF order-book slippage can exceed 0.1% each side. No margin, minimum broker charge, or intraday liquidity impact modeled.",
+    "Original model research has repeatedly examined 2026 so do not treat these historical results as untouched out-of-sample proof.",
+    "Annualized figures should NOT be inferred by summing independent yearly backtests."
+  ],
+  "elapsedSeconds": 1.3
+}
