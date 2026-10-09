@@ -183,8 +183,9 @@ def simulate(d,a,c,begin,end,full=False):
             if mode:in_days+=1
             else:cash_days+=1
             target=1.0 if mode else c["off"]
-            # Rebalance only when the desired regime changes, never rebalance every price bar.
-            if h==1 or mode!=previous_mode:rebalance(px,target,date)
+            # Rebalance ONLY on actual regime switches; no artificial sell on second day.
+            # An unchanged all-in holding must exactly match the historical buy-and-hold baseline.
+            if mode!=previous_mode:rebalance(px,target,date)
         previous_mode=mode
         close=float(a["close"][i])
         equity=cash+q*close*(1-SLIP)*(1-BROKER-ETF_SELL_TAX)
