@@ -1,0 +1,64 @@
+name: Publish TXF 2min 5min ERH Archived Results to GitHub Pages
+on:
+  push:
+    branches: [feature/txf-erh-intraday-backtest-site]
+    paths:
+      - '.github/workflows/publish-txf-erh-2m-5m.yml'
+      - 'tw-stock-dashboard/scripts/publish_txf_erh_intraday_site.py'
+      - 'tw-stock-dashboard/docs/backtest.html'
+      - 'tw-stock-dashboard/docs/txf-backtest.html'
+      - 'tw-stock-dashboard/docs/txf-erh-backtest.js'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Load validated fixed-rule TXF research branch
+        run: git fetch --no-tags origin +refs/heads/research/txf-extreme-reversal-trend70-2m-vs-5m:refs/remotes/origin/research/txf-extreme-reversal-trend70-2m-vs-5m
+      - name: Build minimal permanent per-strategy daily archive
+        run: python -u tw-stock-dashboard/scripts/publish_txf_erh_intraday_site.py
+      - name: Test all 2m/5m models and page bindings, preserve ETF systems
+        run: |
+          set -eu
+          node --check tw-stock-dashboard/docs/txf-erh-backtest.js
+          node --check tw-stock-dashboard/docs/etf-research.js
+          python - <<'PY'
+          import json,math
+          from pathlib import Path
+          root=Path('tw-stock-dashboard/docs')
+          data=root/'data/research/txf_extreme_reversal_2m_5m_2025_2026'
+          summary=json.loads((data/'summary.json').read_text())
+          assert len(summary['results'])==36 and len(summary['websiteModels'])==12
+          assert len(list((data/'cases').glob('*.json')))==12
+          assert summary['data']['end']=='2026-08-31'
+          assert all(math.isclose(x['netPnlTWD']+1000000,x['endingEquityTWD'],abs_tol=.05) for x in summary['results'])
+          for c in summary['websiteModels']:
+            case=json.loads((data/c['file']).read_text())
+            assert case['period']==['2025-01-02','2026-08-31']
+            assert len(case['simulatedTrades'])==c['trades']
+            assert 200<len(case['dailyEquityTWD'])<500
+            assert case['dailyEquityTWD'][0][0][:4]=='2025'
+            assert case['dailyEquityTWD'][-1][0]<='2026-08-31'
+          assert (root/'data/research/etf_history/index.json').exists()
+          assert 'txf-backtest.html' in (root/'backtest.html').read_text()
+          assert all(x in (root/'backtest.html').read_text() for x in ['id="G"','id="D"','id="ETF_HISTORY"'])
+          print('PASS: TXF 2m/5m website archive includes exact 36 historical summaries, 12 unique full model transaction lists and 2025-26 daily equity without modifying old 66 ETF/PLTR results')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TXF-ERH-Trend70-2m-5m-Permanent-Archive
+          path: tw-stock-dashboard/docs/data/research/txf_extreme_reversal_2m_5m_2025_2026/
+          retention-days: 90
+      - name: Commit verified archive for GitHub Pages merge
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/txf_extreme_reversal_2m_5m_2025_2026/
+          if ! git diff --cached --quiet; then
+            git commit -m "data: archive verified TXF 2m 5m Trend70 day-session backtest and equity curves"
+            git push origin HEAD:feature/txf-erh-intraday-backtest-site
+          fi
