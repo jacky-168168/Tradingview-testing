@@ -1,0 +1,82 @@
+name: 00675L 2020-2026 SMA EMA WMA VWMA Research
+on:
+  push:
+    branches: [research/00675l-ma-family-2020-2026]
+    paths:
+      - 'tw-stock-dashboard/src/research_00675l_ma_family_2020_2026.py'
+      - '.github/workflows/etf-00675l-ma-family-2020-2026.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  grid:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore historical ETF and TWII volumes
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: 00675l-ma-comparison-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            00675l-2020-2026-${{ runner.os }}-
+            00675l-near-bh-${{ runner.os }}-
+            00675l-trend-capture-${{ runner.os }}-
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Test all 2020-2026 daily MA strategies, freeze ranking on 2020-23
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_00675l_ma_family_2020_2026.py
+          python -u src/research_00675l_ma_family_2020_2026.py
+      - name: Verify exact unchanged historical account baselines and train/test isolation
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,math
+          p=Path("docs/data/research/etf_00675l_ma_family_2020_2026")
+          r=json.loads((p/"summary.json").read_text())
+          t=json.loads((p/"all_training_results.json").read_text())
+          e=json.loads((p/"finalist_trades_daily_equity.json").read_text())
+          assert r["symbol"]=="00675L.TW" and r["sessions2020_2026"]==1642
+          assert r["baseline"]["buyHold2020_2026"]["returnPct"]==1653.043
+          assert r["baseline"]["SMA10Previous2020_2026"]["returnPct"]==3312.334
+          assert r["baseline"]["SMA10Previous2024_2026"]["returnPct"]==600.612
+          assert len(t["results"])==r["nTrainModels"] and r["nTrainModels"]>=2000
+          assert len(r["fixedParameterComparison"])>=6 and r["nFrozenFinalists"]>=10
+          assert len(r["finalists"])==r["nFrozenFinalists"]
+          for z in r["finalists"]:
+            eq=e["candidates"][z["id"]]["equity"]
+            assert len(eq)==1642 and eq[-1]["date"]=="2026-10-07"
+            assert math.isclose(eq[-1]["equity"],z["continuous2020_2026"]["endNTD"],abs_tol=.05)
+            assert z["continuous2020_2026"]["riskOffSells"]>=1
+          for v in r["fixedParameterComparison"]:
+            c=next(x for x in r["finalists"] if x["id"]==v["id"])
+            assert c["continuous2020_2026"]==v["continuous2020_2026"]
+          assert r["feeAssumptions"]["allProfitsReinvested"]
+          assert set(r["robustness"]["slippageEachSide"])=={"0.001","0.003","0.005","0.01"}
+          assert set(r["robustness"]["extraSignalDaysDelayed"])=={"0","1","2"}
+          print("PASS: exact 2020-26 historical parity, 2024-26 SMA10 parity, all 1642 daily accounts, multiple MA families and fee stress")
+          PY
+      - name: Upload complete reproducible outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: 00675l-sma-ema-wma-vwma-2020-2026
+          path: tw-stock-dashboard/docs/data/research/etf_00675l_ma_family_2020_2026/*
+          retention-days: 30
+      - name: Archive 2020-2026 MA research to isolated branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_00675l_ma_family_2020_2026
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive all 00675L 2020-2026 MA-family training and holdout audits"
+            git push origin HEAD:research/00675l-ma-family-2020-2026
+          fi
