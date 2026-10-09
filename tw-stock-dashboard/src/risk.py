@@ -1,5 +1,5 @@
 from __future__ import annotations
-import math,requests
+import math,re,requests
 import numpy as np,pandas as pd
 UA={"User-Agent":"Mozilla/5.0 tw-stock-dashboard/3.0","Accept":"application/json"}
 
@@ -18,7 +18,7 @@ def _report(trade_date,path,params):
     # The report must belong to requested session. No implicit 'latest' fallback.
     reported=str(data.get("date") or "")
     if reported:
-        compact=reported.replace("/","").replace("-","").replace(" ","")
+        compact=re.sub(r"[^0-9]","",reported)
         roc=str(int(trade_date[:4])-1911)+trade_date[5:7]+trade_date[8:10]
         if requested not in compact and roc not in compact and trade_date not in reported:
             raise RuntimeError("TWSE report date mismatch: "+reported+" != "+trade_date)
