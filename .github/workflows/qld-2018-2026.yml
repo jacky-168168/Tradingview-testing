@@ -1,0 +1,76 @@
+name: QLD Daily 2x 2018-2026 SMA10 VWMA5 Backtest
+on:
+  push:
+    branches: [research/qld-sma10-vwma5-2018-2026]
+    paths:
+      - 'tw-stock-dashboard/src/research_qld_2018_2026.py'
+      - '.github/workflows/qld-2018-2026.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: qld-2018-2026-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            qqq-vt-2018-2026-${{ runner.os }}-
+            00675l-vwma-sma-2018-${{ runner.os }}-
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Backtest QLD 2018-2026 with identical US ETF fees and FX
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_qld_2018_2026.py
+          python -u src/research_qld_2018_2026.py
+      - name: Verify QLD results and full equity/account integrity
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, math
+          p=Path("docs/data/research/qld_sma10_vwma5_2018_2026")
+          s=json.loads((p/"summary.json").read_text())
+          traces=json.loads((p/"transactions_equity.json").read_text())
+          assert s["window"]==["2018-01-01","2026-10-07"]
+          assert set(s["assets"])=={"QLD"}
+          assert len(s["results"])==4
+          assert s["account"]["startingCapitalTWD"]==1e6
+          assert s["account"]["fullProfitsReinvested"] and s["account"]["US_ETF_sellTaxPct"]==0
+          assert s["assets"]["QLD"]["rawVolumePositiveDaysPct"]>99.9
+          spans={(r["entryDate"],r["lastDate"],r["sessions"]) for r in s["results"]}
+          assert len(spans)==1 and all(x[0]=="2018-01-02" and x[1]=="2026-10-07" and x[2]>2100 for x in spans)
+          assert {r["strategy"] for r in s["results"]}=={"BUY_HOLD","SMA10_2out_1in_c3","VWMA5_2out_1in_c3","VWMA5_1out_2in_c3"}
+          for r in s["results"]:
+              eq=traces["traces"]["QLD"][r["strategy"]]["equityUSD"]
+              assert len(eq)==r["sessions"],r["strategy"]
+              assert set(r["yearlyContinuous"])=={str(y) for y in range(2018,2027)}
+              assert math.isclose(eq[-1]["equity"],r["finalUSD"],abs_tol=.05),r["strategy"]
+              assert math.isclose(r["finalUSD"]*s["assets"]["QLD"]["lastFX"],r["finalTWD"],abs_tol=1.0),r["strategy"]
+              assert r["riskOffSells"]==r["riskOnReentries"],r["strategy"]
+              assert r["maxDDUSD"]<=0 and r["maxDDTWD"]<=0
+          print("PASS: all 4 QLD daily 2x ETF simulations, USD->TWD, 2018-2026 cash compounding & taxes")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qld-2018-2026-sma10-vwma5-buyhold
+          path: tw-stock-dashboard/docs/data/research/qld_sma10_vwma5_2018_2026/*.json
+      - name: Archive verified data to isolated research branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/qld_sma10_vwma5_2018_2026/
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive 2018-2026 QLD daily 2x cash-account SMA10 VWMA5 results"
+            git push origin HEAD:research/qld-sma10-vwma5-2018-2026
+          fi
