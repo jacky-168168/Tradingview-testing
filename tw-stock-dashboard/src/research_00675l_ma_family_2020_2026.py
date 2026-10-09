@@ -89,7 +89,7 @@ def main():
     d,a,dates=data()
     sessions=int(((dates>=FULL[0])&(dates<=FULL[1])).sum())
     if dates[0]>"2019-03-01":raise RuntimeError("Insufficient 2019 warmup before 2020")
-    print("MA_DATA_READY "+json.dumps({"first":dates[0],"last":dates[-1],"sessions":sessions},flush=True))
+    print("MA_DATA_READY "+json.dumps({"first":dates[0],"last":dates[-1],"sessions":sessions}),flush=True)
     available={}
     for key,source in (("twii","taiwan_index"),("close","etf")):
         available[key]=metrics[source]["validVolumeDaysPct"]>99 and metrics[source]["distinctNonzeroVolumes"]>100
