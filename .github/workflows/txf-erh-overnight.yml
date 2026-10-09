@@ -1,0 +1,62 @@
+name: TXF ERH Trend70 Overnight TOP Carry Backtest
+on:
+  push:
+    branches: [research/txf-extreme-reversal-trend70-2m-vs-5m]
+    paths:
+      - 'tw-stock-dashboard/src/research_txf_erh_overnight.py'
+      - '.github/workflows/txf-erh-overnight.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  overnight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Run TXF Trend70 overnight 2m and 5m historical studies
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_txf_erh_overnight.py
+          python -u src/research_txf_erh_overnight.py
+      - name: Audit full overnight outputs and cost assumptions
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import json,math
+          from pathlib import Path
+          p=Path('docs/data/research/txf_erh_overnight_2025_2026')
+          s=json.loads((p/'summary.json').read_text())
+          d=json.loads((p/'trades_and_equity.json').read_text())
+          assert s['cost']['exitAtDaySessionClose'] is False
+          assert len(s['results'])==18 and len(d['cases'])==18
+          assert {r['timeframeMin'] for r in s['results']}=={2,5}
+          assert {r['mode'] for r in s['results']}=={'overnight_daytop','overnight_top','overnight_atr2'}
+          assert all(math.isfinite(r['netPnlTWD']) for r in s['results'])
+          for r in s['results']:
+            k=f"{r['timeframeMin']}m_{r['mode']}_{r['segment'][0][:4]}_{r['segment'][1][:4]}"
+            assert len(d['cases'][k]['trades'])==r['trades']
+            assert d['cases'][k]['equity']
+          print('PASS: 18 overnight variants, complete trades/curves, mark-to-market, original baseline preserved')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TXF-ERH-Trend70-Overnight-TOP-2025-26
+          path: tw-stock-dashboard/docs/data/research/txf_erh_overnight_2025_2026/*.json
+          retention-days: 90
+      - name: Archive overnight study on research branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/txf_erh_overnight_2025_2026
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive TXF Trend70 overnight TOP and ATR2 backtest"
+            git push origin HEAD:research/txf-extreme-reversal-trend70-2m-vs-5m
+          fi
