@@ -50,8 +50,9 @@ def fxseries(raw,daystrings):
     f=f.dropna().sort_values("date").drop_duplicates("date",keep="last")
     f=f[(f.close>15)&(f.close<50)]
     if f.empty:raise RuntimeError("USD/TWD Yahoo TWD=X unavailable")
-    df=pd.DataFrame({"date":list(daystrings)})
-    df=pd.merge_asof(df.sort_values("date"),f.rename(columns={"close":"usdTwd"}),on="date",direction="backward")
+    df=pd.DataFrame({"date":pd.to_datetime(list(daystrings))})
+    f["date"]=pd.to_datetime(f["date"])
+    df=pd.merge_asof(df.sort_values("date"),f.rename(columns={"close":"usdTwd"}).sort_values("date"),on="date",direction="backward")
     if df.usdTwd.isna().any():raise RuntimeError("Missing USD/TWD spot values on ETF dates")
     if float(df.usdTwd.min())<20 or float(df.usdTwd.max())>45:raise RuntimeError("Invalid FX range")
     return df.usdTwd.to_numpy(float)
