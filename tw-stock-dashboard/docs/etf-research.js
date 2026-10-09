@@ -10,7 +10,7 @@ const cls=x=>Number(x)>=0?"etf-green":"etf-red";
 const p=x=>'<span class="'+cls(x)+'">'+num(x,2)+'%</span>';
 const twd=x=>num(Number(x)/10000,2)+" 萬";
 let index=null,study=null,selected=null,filter="",grid=null,gridPage=0,loadPromise=null,curveRequest=0,curves={};
-async function json(path){const res=await fetch(path+"?v=20261009etf1",{cache:"no-cache"});if(!res.ok)throw Error("HTTP "+res.status+"："+path);return await res.json();}
+async function json(path){const res=await fetch(path+"?v=20261009riskv2",{cache:"no-cache"});if(!res.ok)throw Error("HTTP "+res.status+"："+path);return await res.json();}
 function show(){
   ["legacyView","gView","executionResearchView"].forEach(id=>{const e=by(id);if(e)e.style.display="none";});
   root.style.display="block";
@@ -18,6 +18,7 @@ function show(){
   if(index)renderStudy();else load();
 }
 tab.addEventListener("click",show);
+if(new URLSearchParams(window.location.search).has("study"))show();
 ["G","D","F2","F","A","RESEARCH"].forEach(id=>by(id)?.addEventListener("click",()=>{root.style.display="none";}));
 async function load(){
   if(loadPromise)return loadPromise;
@@ -27,7 +28,7 @@ async function load(){
       index=await json(rootPath+"index.json");
       if(!index.studies?.length)throw Error("ETF 研究資料尚未建置");
       by("etfStudy").innerHTML=index.studies.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title)+'</option>').join("");
-      by("etfStudy").value=study?.id||"00675_2018";
+      by("etfStudy").value=study?.id||new URLSearchParams(window.location.search).get("study")||"00675_2018";
       by("etfStatus").textContent=index.studies.length+" 組研究存檔，"+index.studies.reduce((a,s)=>a+s.models.length,0)+" 組已驗證策略；每份回測都保留年度報酬和逐日曲線。";
       by("etfAssumptions").textContent=index.assumptions+" "+index.currencyPolicy+" 此為歷史模擬，不代表未來可實現報酬。";
       by("etfAllocation").textContent=index.allocationBacktestStatus;
