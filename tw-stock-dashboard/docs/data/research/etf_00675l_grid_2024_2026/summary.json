@@ -1,0 +1,3840 @@
+{
+  "version": "00675L_EXTENDED_SWING_GRID_2024_2026_V1",
+  "generatedAt": "2026-10-09T08:24:14+08:00",
+  "ticker": "00675L.TW",
+  "name": "富邦臺灣加權正2",
+  "dataStart": "2023-05-02",
+  "dataEnd": "2026-10-07",
+  "periods": {
+    "development": "2024-01-01 .. 2024-12-31",
+    "stabilityCheck": "2025-01-01 .. 2025-12-31",
+    "frozenValidation": "2026-01-01 .. 2026-10-08 (actually available through dataEnd)"
+  },
+  "universe": {
+    "total": 739,
+    "eligible": 504,
+    "familyBreakdown": {
+      "buy_hold": {
+        "tested": 1,
+        "eligible": 0,
+        "trainPositiveBoth": 0,
+        "trainScorePositive": 0
+      },
+      "trend": {
+        "tested": 8,
+        "eligible": 8,
+        "trainPositiveBoth": 6,
+        "trainScorePositive": 6
+      },
+      "pullback": {
+        "tested": 36,
+        "eligible": 30,
+        "trainPositiveBoth": 0,
+        "trainScorePositive": 0
+      },
+      "shock": {
+        "tested": 24,
+        "eligible": 18,
+        "trainPositiveBoth": 1,
+        "trainScorePositive": 0
+      },
+      "breakout": {
+        "tested": 8,
+        "eligible": 8,
+        "trainPositiveBoth": 8,
+        "trainScorePositive": 8
+      },
+      "band": {
+        "tested": 4,
+        "eligible": 0,
+        "trainPositiveBoth": 0,
+        "trainScorePositive": 0
+      },
+      "dip": {
+        "tested": 4,
+        "eligible": 2,
+        "trainPositiveBoth": 0,
+        "trainScorePositive": 0
+      },
+      "swing_rsi": {
+        "tested": 180,
+        "eligible": 108,
+        "trainPositiveBoth": 14,
+        "trainScorePositive": 8
+      },
+      "swing_dip": {
+        "tested": 180,
+        "eligible": 84,
+        "trainPositiveBoth": 12,
+        "trainScorePositive": 4
+      },
+      "swing_band": {
+        "tested": 72,
+        "eligible": 24,
+        "trainPositiveBoth": 0,
+        "trainScorePositive": 0
+      },
+      "swing_reclaim": {
+        "tested": 72,
+        "eligible": 72,
+        "trainPositiveBoth": 18,
+        "trainScorePositive": 8
+      },
+      "swing_trend": {
+        "tested": 48,
+        "eligible": 48,
+        "trainPositiveBoth": 24,
+        "trainScorePositive": 16
+      },
+      "swing_breakout": {
+        "tested": 48,
+        "eligible": 48,
+        "trainPositiveBoth": 48,
+        "trainScorePositive": 46
+      },
+      "swing_atr": {
+        "tested": 54,
+        "eligible": 54,
+        "trainPositiveBoth": 36,
+        "trainScorePositive": 30
+      }
+    }
+  },
+  "procedure": {
+    "rankingOnlyUses": "calendar years 2024 and 2025; 2026 outcomes read only for frozen selected candidates",
+    "minTradesEachYear": 3,
+    "rankingFormula": "0.35*(2024%+2025%) + 0.30*min(2024%,2025%) - 0.70*max(abs(2024 max DD), abs(2025 max DD))",
+    "selection": "precommitted five baselines plus top two variants by 2024/25 train score in each signal family",
+    "position": "All-in cash, integer units, one long position at time",
+    "signals": "completed session T only; trade next OPEN",
+    "exits": "stop before intrabar take profit; if open gaps past target, exit OPEN; no profitable same-day exit after entry",
+    "costs": {
+      "buyBrokerPct": 0.14250000000000002,
+      "sellBrokerPct": 0.14250000000000002,
+      "sellTaxPct": 0.1,
+      "slippagePerSidePct": 0.1
+    },
+    "cashNTD": 1000000
+  },
+  "trainBest": {
+    "id": "BREAKOUT_40_TRAIL12_SL10",
+    "family": "breakout",
+    "score": 46.0003,
+    "2024": {
+      "returnPct": 67.044,
+      "maxDrawdownPct": -6.16,
+      "trades": 3,
+      "winPct": 66.67,
+      "avgNetPerTradePct": 19.524,
+      "profitFactor": 589.92,
+      "avgHoldingDays": 33.67,
+      "investedDays": 98,
+      "sessions": 242
+    },
+    "2025": {
+      "returnPct": 44.243,
+      "maxDrawdownPct": -8.89,
+      "trades": 5,
+      "winPct": 60.0,
+      "avgNetPerTradePct": 8.327,
+      "profitFactor": 6.501,
+      "avgHoldingDays": 19.6,
+      "investedDays": 93,
+      "sessions": 243
+    },
+    "params": {
+      "id": "BREAKOUT_40_TRAIL12_SL10",
+      "family": "breakout",
+      "lookback": 40,
+      "sl": 0.1,
+      "trail": 0.12,
+      "hold": 45
+    }
+  },
+  "familyWinners": {
+    "breakout": [
+      {
+        "id": "BREAKOUT_40_TRAIL12_SL10",
+        "score": 46.0003,
+        "2024": {
+          "returnPct": 67.044,
+          "maxDrawdownPct": -6.16,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 19.524,
+          "profitFactor": 589.92,
+          "avgHoldingDays": 33.67,
+          "investedDays": 98,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 44.243,
+          "maxDrawdownPct": -8.89,
+          "trades": 5,
+          "winPct": 60.0,
+          "avgNetPerTradePct": 8.327,
+          "profitFactor": 6.501,
+          "avgHoldingDays": 19.6,
+          "investedDays": 93,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "BREAKOUT_40_TRAIL12_SL15",
+        "score": 46.0003,
+        "2024": {
+          "returnPct": 67.044,
+          "maxDrawdownPct": -6.16,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 19.524,
+          "profitFactor": 589.92,
+          "avgHoldingDays": 33.67,
+          "investedDays": 98,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 44.243,
+          "maxDrawdownPct": -8.89,
+          "trades": 5,
+          "winPct": 60.0,
+          "avgNetPerTradePct": 8.327,
+          "profitFactor": 6.501,
+          "avgHoldingDays": 19.6,
+          "investedDays": 93,
+          "sessions": 243
+        }
+      }
+    ],
+    "swing_breakout": [
+      {
+        "id": "BO_60_twii20_TP0.15_SL0.08_TR0.1",
+        "score": 25.8483,
+        "2024": {
+          "returnPct": 34.28,
+          "maxDrawdownPct": -9.644,
+          "trades": 6,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 5.468,
+          "profitFactor": 2.905,
+          "avgHoldingDays": 14.67,
+          "investedDays": 82,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 31.694,
+          "maxDrawdownPct": -9.292,
+          "trades": 7,
+          "winPct": 57.14,
+          "avgNetPerTradePct": 4.292,
+          "profitFactor": 4.186,
+          "avgHoldingDays": 10.14,
+          "investedDays": 64,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "BO_60_twii20_TP0.15_SL0.12_TR0.1",
+        "score": 25.8483,
+        "2024": {
+          "returnPct": 34.28,
+          "maxDrawdownPct": -9.644,
+          "trades": 6,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 5.468,
+          "profitFactor": 2.905,
+          "avgHoldingDays": 14.67,
+          "investedDays": 82,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 31.694,
+          "maxDrawdownPct": -9.292,
+          "trades": 7,
+          "winPct": 57.14,
+          "avgNetPerTradePct": 4.292,
+          "profitFactor": 4.186,
+          "avgHoldingDays": 10.14,
+          "investedDays": 64,
+          "sessions": 243
+        }
+      }
+    ],
+    "swing_trend": [
+      {
+        "id": "TREND_etf20_TP0_SL0.08_TR0",
+        "score": 23.7911,
+        "2024": {
+          "returnPct": 43.839,
+          "maxDrawdownPct": -17.114,
+          "trades": 8,
+          "winPct": 37.5,
+          "avgNetPerTradePct": 5.757,
+          "profitFactor": 2.163,
+          "avgHoldingDays": 19.5,
+          "investedDays": 148,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 33.393,
+          "maxDrawdownPct": -18.94,
+          "trades": 15,
+          "winPct": 33.33,
+          "avgNetPerTradePct": 2.356,
+          "profitFactor": 2.039,
+          "avgHoldingDays": 11.2,
+          "investedDays": 153,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "TREND_etf20_TP0_SL0.08_TR0.12",
+        "score": 23.7911,
+        "2024": {
+          "returnPct": 43.839,
+          "maxDrawdownPct": -17.114,
+          "trades": 8,
+          "winPct": 37.5,
+          "avgNetPerTradePct": 5.757,
+          "profitFactor": 2.163,
+          "avgHoldingDays": 19.5,
+          "investedDays": 148,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 33.393,
+          "maxDrawdownPct": -18.94,
+          "trades": 15,
+          "winPct": 33.33,
+          "avgNetPerTradePct": 2.356,
+          "profitFactor": 2.039,
+          "avgHoldingDays": 11.2,
+          "investedDays": 153,
+          "sessions": 243
+        }
+      }
+    ],
+    "trend": [
+      {
+        "id": "TREND_twii20_SL15",
+        "score": 21.134,
+        "2024": {
+          "returnPct": 33.714,
+          "maxDrawdownPct": -22.612,
+          "trades": 10,
+          "winPct": 40.0,
+          "avgNetPerTradePct": 3.393,
+          "profitFactor": 2.134,
+          "avgHoldingDays": 17.8,
+          "investedDays": 168,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 42.995,
+          "maxDrawdownPct": -18.127,
+          "trades": 15,
+          "winPct": 46.67,
+          "avgNetPerTradePct": 2.796,
+          "profitFactor": 2.57,
+          "avgHoldingDays": 12.27,
+          "investedDays": 169,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "TREND_twii20_SL10",
+        "score": 17.3411,
+        "2024": {
+          "returnPct": 30.12,
+          "maxDrawdownPct": -24.693,
+          "trades": 10,
+          "winPct": 40.0,
+          "avgNetPerTradePct": 3.151,
+          "profitFactor": 1.908,
+          "avgHoldingDays": 17.7,
+          "investedDays": 167,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 42.995,
+          "maxDrawdownPct": -18.127,
+          "trades": 15,
+          "winPct": 46.67,
+          "avgNetPerTradePct": 2.796,
+          "profitFactor": 2.57,
+          "avgHoldingDays": 12.27,
+          "investedDays": 169,
+          "sessions": 243
+        }
+      }
+    ],
+    "swing_reclaim": [
+      {
+        "id": "RECLAIM_EMA10_twii20_TP0.1_SL0.07_H20",
+        "score": 13.4581,
+        "2024": {
+          "returnPct": 13.463,
+          "maxDrawdownPct": -12.691,
+          "trades": 6,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 2.29,
+          "profitFactor": 2.255,
+          "avgHoldingDays": 9.33,
+          "investedDays": 50,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 38.831,
+          "maxDrawdownPct": -11.765,
+          "trades": 13,
+          "winPct": 53.85,
+          "avgNetPerTradePct": 2.735,
+          "profitFactor": 2.967,
+          "avgHoldingDays": 6.92,
+          "investedDays": 77,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "RECLAIM_EMA10_twii20_TP0.1_SL0.1_H20",
+        "score": 13.4581,
+        "2024": {
+          "returnPct": 13.463,
+          "maxDrawdownPct": -12.691,
+          "trades": 6,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 2.29,
+          "profitFactor": 2.255,
+          "avgHoldingDays": 9.33,
+          "investedDays": 50,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 38.831,
+          "maxDrawdownPct": -11.765,
+          "trades": 13,
+          "winPct": 53.85,
+          "avgNetPerTradePct": 2.735,
+          "profitFactor": 2.967,
+          "avgHoldingDays": 6.92,
+          "investedDays": 77,
+          "sessions": 243
+        }
+      }
+    ],
+    "swing_atr": [
+      {
+        "id": "ATR_twii20_STOP1.5_TR3_TP0",
+        "score": 12.8448,
+        "2024": {
+          "returnPct": 3.197,
+          "maxDrawdownPct": -12.579,
+          "trades": 5,
+          "winPct": 40.0,
+          "avgNetPerTradePct": 0.751,
+          "profitFactor": 1.338,
+          "avgHoldingDays": 9.0,
+          "investedDays": 40,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 55.92,
+          "maxDrawdownPct": -9.27,
+          "trades": 8,
+          "winPct": 62.5,
+          "avgNetPerTradePct": 6.06,
+          "profitFactor": 6.814,
+          "avgHoldingDays": 11.75,
+          "investedDays": 86,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "ATR_twii20_STOP1.5_TR3_TP0.1",
+        "score": 8.6639,
+        "2024": {
+          "returnPct": 3.921,
+          "maxDrawdownPct": -12.463,
+          "trades": 5,
+          "winPct": 40.0,
+          "avgNetPerTradePct": 0.905,
+          "profitFactor": 1.411,
+          "avgHoldingDays": 8.0,
+          "investedDays": 35,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 42.398,
+          "maxDrawdownPct": -6.124,
+          "trades": 9,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 4.142,
+          "profitFactor": 5.826,
+          "avgHoldingDays": 6.78,
+          "investedDays": 52,
+          "sessions": 243
+        }
+      }
+    ],
+    "swing_dip": [
+      {
+        "id": "DIP2_-0.03_twii20_TP0.08_SL0.07_H10",
+        "score": 12.8,
+        "2024": {
+          "returnPct": 14.901,
+          "maxDrawdownPct": -8.838,
+          "trades": 4,
+          "winPct": 75.0,
+          "avgNetPerTradePct": 3.745,
+          "profitFactor": 2.731,
+          "avgHoldingDays": 7.25,
+          "investedDays": 25,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 26.574,
+          "maxDrawdownPct": -7.792,
+          "trades": 5,
+          "winPct": 80.0,
+          "avgNetPerTradePct": 5.025,
+          "profitFactor": 3.608,
+          "avgHoldingDays": 6.4,
+          "investedDays": 27,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "DIP2_-0.03_twii20_TP0.08_SL0.1_H10",
+        "score": 7.4028,
+        "2024": {
+          "returnPct": 11.194,
+          "maxDrawdownPct": -11.779,
+          "trades": 4,
+          "winPct": 75.0,
+          "avgNetPerTradePct": 2.999,
+          "profitFactor": 1.929,
+          "avgHoldingDays": 7.5,
+          "investedDays": 26,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 23.92,
+          "maxDrawdownPct": -9.725,
+          "trades": 5,
+          "winPct": 80.0,
+          "avgNetPerTradePct": 4.637,
+          "profitFactor": 2.862,
+          "avgHoldingDays": 6.6,
+          "investedDays": 28,
+          "sessions": 243
+        }
+      }
+    ],
+    "swing_rsi": [
+      {
+        "id": "RSI2_20_twii60_TP0.08_SL0.1_H10",
+        "score": 7.1373,
+        "2024": {
+          "returnPct": 9.545,
+          "maxDrawdownPct": -11.266,
+          "trades": 11,
+          "winPct": 63.64,
+          "avgNetPerTradePct": 1.071,
+          "profitFactor": 1.315,
+          "avgHoldingDays": 7.82,
+          "investedDays": 75,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 40.372,
+          "maxDrawdownPct": -18.853,
+          "trades": 11,
+          "winPct": 72.73,
+          "avgNetPerTradePct": 3.288,
+          "profitFactor": 3.2,
+          "avgHoldingDays": 8.27,
+          "investedDays": 80,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "RSI2_20_twii20_TP0.03_SL0.1_H10",
+        "score": 5.3996,
+        "2024": {
+          "returnPct": 15.362,
+          "maxDrawdownPct": -12.698,
+          "trades": 9,
+          "winPct": 88.89,
+          "avgNetPerTradePct": 1.708,
+          "profitFactor": 2.339,
+          "avgHoldingDays": 4.89,
+          "investedDays": 35,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 13.71,
+          "maxDrawdownPct": -6.231,
+          "trades": 5,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 2.603,
+          "profitFactor": null,
+          "avgHoldingDays": 4.0,
+          "investedDays": 15,
+          "sessions": 243
+        }
+      }
+    ],
+    "shock": [
+      {
+        "id": "RSI2_SHOCK_all_5_TP3_SL12",
+        "score": -7.2857,
+        "2024": {
+          "returnPct": 1.725,
+          "maxDrawdownPct": -11.035,
+          "trades": 7,
+          "winPct": 57.14,
+          "avgNetPerTradePct": 0.271,
+          "profitFactor": 1.254,
+          "avgHoldingDays": 5.57,
+          "investedDays": 32,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 6.726,
+          "maxDrawdownPct": -15.373,
+          "trades": 5,
+          "winPct": 80.0,
+          "avgNetPerTradePct": 1.441,
+          "profitFactor": 1.81,
+          "avgHoldingDays": 3.2,
+          "investedDays": 11,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "RSI2_SHOCK_twii60_15_TP8_SL12",
+        "score": -22.8138,
+        "2024": {
+          "returnPct": -14.593,
+          "maxDrawdownPct": -19.425,
+          "trades": 8,
+          "winPct": 25.0,
+          "avgNetPerTradePct": -1.885,
+          "profitFactor": 0.284,
+          "avgHoldingDays": 6.25,
+          "investedDays": 42,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 0.769,
+          "maxDrawdownPct": -13.055,
+          "trades": 10,
+          "winPct": 70.0,
+          "avgNetPerTradePct": 0.177,
+          "profitFactor": 1.041,
+          "avgHoldingDays": 4.7,
+          "investedDays": 37,
+          "sessions": 243
+        }
+      }
+    ],
+    "swing_band": [
+      {
+        "id": "BB20_all_TP0.03_SL0.1_H5",
+        "score": -8.0905,
+        "2024": {
+          "returnPct": -3.657,
+          "maxDrawdownPct": -10.694,
+          "trades": 5,
+          "winPct": 60.0,
+          "avgNetPerTradePct": -0.636,
+          "profitFactor": 0.703,
+          "avgHoldingDays": 3.4,
+          "investedDays": 12,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 6.668,
+          "maxDrawdownPct": -11.496,
+          "trades": 7,
+          "winPct": 85.71,
+          "avgNetPerTradePct": 1.043,
+          "profitFactor": 1.573,
+          "avgHoldingDays": 2.43,
+          "investedDays": 10,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "BB20_all_TP0.03_SL0.07_H10",
+        "score": -13.6049,
+        "2024": {
+          "returnPct": -6.747,
+          "maxDrawdownPct": -18.282,
+          "trades": 5,
+          "winPct": 60.0,
+          "avgNetPerTradePct": -1.255,
+          "profitFactor": 0.557,
+          "avgHoldingDays": 3.4,
+          "investedDays": 12,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 10.223,
+          "maxDrawdownPct": -8.546,
+          "trades": 7,
+          "winPct": 85.71,
+          "avgNetPerTradePct": 1.47,
+          "profitFactor": 2.23,
+          "avgHoldingDays": 2.43,
+          "investedDays": 10,
+          "sessions": 243
+        }
+      }
+    ],
+    "pullback": [
+      {
+        "id": "RSI2_PULL_twii20_20_TP3_SL10",
+        "score": -12.6689,
+        "2024": {
+          "returnPct": -9.604,
+          "maxDrawdownPct": -13.027,
+          "trades": 6,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -1.565,
+          "profitFactor": 0.355,
+          "avgHoldingDays": 5.17,
+          "investedDays": 25,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 7.693,
+          "maxDrawdownPct": 0.0,
+          "trades": 3,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 2.501,
+          "profitFactor": null,
+          "avgHoldingDays": 2.0,
+          "investedDays": 3,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "RSI2_PULL_twii20_20_TP5_SL10",
+        "score": -14.8836,
+        "2024": {
+          "returnPct": -8.795,
+          "maxDrawdownPct": -13.469,
+          "trades": 6,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -1.411,
+          "profitFactor": 0.417,
+          "avgHoldingDays": 5.5,
+          "investedDays": 27,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": 0.747,
+          "maxDrawdownPct": -8.446,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 0.342,
+          "profitFactor": 1.123,
+          "avgHoldingDays": 5.67,
+          "investedDays": 14,
+          "sessions": 243
+        }
+      }
+    ],
+    "dip": [
+      {
+        "id": "2DAY_DIVE_3_TP3",
+        "score": -19.5193,
+        "2024": {
+          "returnPct": -10.314,
+          "maxDrawdownPct": -16.069,
+          "trades": 8,
+          "winPct": 37.5,
+          "avgNetPerTradePct": -1.276,
+          "profitFactor": 0.311,
+          "avgHoldingDays": 5.12,
+          "investedDays": 33,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": -4.477,
+          "maxDrawdownPct": -14.582,
+          "trades": 8,
+          "winPct": 62.5,
+          "avgNetPerTradePct": -0.465,
+          "profitFactor": 0.694,
+          "avgHoldingDays": 4.25,
+          "investedDays": 26,
+          "sessions": 243
+        }
+      },
+      {
+        "id": "2DAY_DIVE_3_TP5",
+        "score": -20.6844,
+        "2024": {
+          "returnPct": -11.981,
+          "maxDrawdownPct": -16.092,
+          "trades": 8,
+          "winPct": 37.5,
+          "avgNetPerTradePct": -1.514,
+          "profitFactor": 0.2,
+          "avgHoldingDays": 5.25,
+          "investedDays": 34,
+          "sessions": 242
+        },
+        "2025": {
+          "returnPct": -4.664,
+          "maxDrawdownPct": -14.749,
+          "trades": 8,
+          "winPct": 62.5,
+          "avgNetPerTradePct": -0.49,
+          "profitFactor": 0.681,
+          "avgHoldingDays": 4.38,
+          "investedDays": 27,
+          "sessions": 243
+        }
+      }
+    ]
+  },
+  "trainTop30": [
+    {
+      "id": "BREAKOUT_40_TRAIL12_SL10",
+      "family": "breakout",
+      "score": 46.0003,
+      "2024": {
+        "returnPct": 67.044,
+        "maxDrawdownPct": -6.16,
+        "trades": 3,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 19.524,
+        "profitFactor": 589.92,
+        "avgHoldingDays": 33.67,
+        "investedDays": 98,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 44.243,
+        "maxDrawdownPct": -8.89,
+        "trades": 5,
+        "winPct": 60.0,
+        "avgNetPerTradePct": 8.327,
+        "profitFactor": 6.501,
+        "avgHoldingDays": 19.6,
+        "investedDays": 93,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BREAKOUT_40_TRAIL12_SL15",
+      "family": "breakout",
+      "score": 46.0003,
+      "2024": {
+        "returnPct": 67.044,
+        "maxDrawdownPct": -6.16,
+        "trades": 3,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 19.524,
+        "profitFactor": 589.92,
+        "avgHoldingDays": 33.67,
+        "investedDays": 98,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 44.243,
+        "maxDrawdownPct": -8.89,
+        "trades": 5,
+        "winPct": 60.0,
+        "avgNetPerTradePct": 8.327,
+        "profitFactor": 6.501,
+        "avgHoldingDays": 19.6,
+        "investedDays": 93,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BREAKOUT_40_TRAIL8_SL10",
+      "family": "breakout",
+      "score": 46.0003,
+      "2024": {
+        "returnPct": 67.044,
+        "maxDrawdownPct": -6.16,
+        "trades": 3,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 19.524,
+        "profitFactor": 589.92,
+        "avgHoldingDays": 33.67,
+        "investedDays": 98,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 44.243,
+        "maxDrawdownPct": -8.89,
+        "trades": 5,
+        "winPct": 60.0,
+        "avgNetPerTradePct": 8.327,
+        "profitFactor": 6.501,
+        "avgHoldingDays": 19.6,
+        "investedDays": 93,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BREAKOUT_40_TRAIL8_SL15",
+      "family": "breakout",
+      "score": 46.0003,
+      "2024": {
+        "returnPct": 67.044,
+        "maxDrawdownPct": -6.16,
+        "trades": 3,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 19.524,
+        "profitFactor": 589.92,
+        "avgHoldingDays": 33.67,
+        "investedDays": 98,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 44.243,
+        "maxDrawdownPct": -8.89,
+        "trades": 5,
+        "winPct": 60.0,
+        "avgNetPerTradePct": 8.327,
+        "profitFactor": 6.501,
+        "avgHoldingDays": 19.6,
+        "investedDays": 93,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_60_twii20_TP0.15_SL0.08_TR0.1",
+      "family": "swing_breakout",
+      "score": 25.8483,
+      "2024": {
+        "returnPct": 34.28,
+        "maxDrawdownPct": -9.644,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 5.468,
+        "profitFactor": 2.905,
+        "avgHoldingDays": 14.67,
+        "investedDays": 82,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 31.694,
+        "maxDrawdownPct": -9.292,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 4.292,
+        "profitFactor": 4.186,
+        "avgHoldingDays": 10.14,
+        "investedDays": 64,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_60_twii20_TP0.15_SL0.12_TR0.1",
+      "family": "swing_breakout",
+      "score": 25.8483,
+      "2024": {
+        "returnPct": 34.28,
+        "maxDrawdownPct": -9.644,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 5.468,
+        "profitFactor": 2.905,
+        "avgHoldingDays": 14.67,
+        "investedDays": 82,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 31.694,
+        "maxDrawdownPct": -9.292,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 4.292,
+        "profitFactor": 4.186,
+        "avgHoldingDays": 10.14,
+        "investedDays": 64,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_60_twii60_TP0.15_SL0.08_TR0.1",
+      "family": "swing_breakout",
+      "score": 25.8483,
+      "2024": {
+        "returnPct": 34.28,
+        "maxDrawdownPct": -9.644,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 5.468,
+        "profitFactor": 2.905,
+        "avgHoldingDays": 14.67,
+        "investedDays": 82,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 31.694,
+        "maxDrawdownPct": -9.292,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 4.292,
+        "profitFactor": 4.186,
+        "avgHoldingDays": 10.14,
+        "investedDays": 64,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_60_twii60_TP0.15_SL0.12_TR0.1",
+      "family": "swing_breakout",
+      "score": 25.8483,
+      "2024": {
+        "returnPct": 34.28,
+        "maxDrawdownPct": -9.644,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 5.468,
+        "profitFactor": 2.905,
+        "avgHoldingDays": 14.67,
+        "investedDays": 82,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 31.694,
+        "maxDrawdownPct": -9.292,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 4.292,
+        "profitFactor": 4.186,
+        "avgHoldingDays": 10.14,
+        "investedDays": 64,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "TREND_etf20_TP0_SL0.08_TR0",
+      "family": "swing_trend",
+      "score": 23.7911,
+      "2024": {
+        "returnPct": 43.839,
+        "maxDrawdownPct": -17.114,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": 5.757,
+        "profitFactor": 2.163,
+        "avgHoldingDays": 19.5,
+        "investedDays": 148,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 33.393,
+        "maxDrawdownPct": -18.94,
+        "trades": 15,
+        "winPct": 33.33,
+        "avgNetPerTradePct": 2.356,
+        "profitFactor": 2.039,
+        "avgHoldingDays": 11.2,
+        "investedDays": 153,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "TREND_etf20_TP0_SL0.08_TR0.12",
+      "family": "swing_trend",
+      "score": 23.7911,
+      "2024": {
+        "returnPct": 43.839,
+        "maxDrawdownPct": -17.114,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": 5.757,
+        "profitFactor": 2.163,
+        "avgHoldingDays": 19.5,
+        "investedDays": 148,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 33.393,
+        "maxDrawdownPct": -18.94,
+        "trades": 15,
+        "winPct": 33.33,
+        "avgNetPerTradePct": 2.356,
+        "profitFactor": 2.039,
+        "avgHoldingDays": 11.2,
+        "investedDays": 153,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "TREND_etf20_TP0_SL0.12_TR0.12",
+      "family": "swing_trend",
+      "score": 23.7911,
+      "2024": {
+        "returnPct": 43.839,
+        "maxDrawdownPct": -17.114,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": 5.757,
+        "profitFactor": 2.163,
+        "avgHoldingDays": 19.5,
+        "investedDays": 148,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 33.393,
+        "maxDrawdownPct": -18.94,
+        "trades": 15,
+        "winPct": 33.33,
+        "avgNetPerTradePct": 2.356,
+        "profitFactor": 2.039,
+        "avgHoldingDays": 11.2,
+        "investedDays": 153,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "TREND_etf20_TP0_SL0.12_TR0",
+      "family": "swing_trend",
+      "score": 23.7837,
+      "2024": {
+        "returnPct": 43.818,
+        "maxDrawdownPct": -17.126,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": 5.755,
+        "profitFactor": 2.162,
+        "avgHoldingDays": 19.5,
+        "investedDays": 148,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 33.393,
+        "maxDrawdownPct": -18.94,
+        "trades": 15,
+        "winPct": 33.33,
+        "avgNetPerTradePct": 2.356,
+        "profitFactor": 2.039,
+        "avgHoldingDays": 11.2,
+        "investedDays": 153,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_60_twii20_TP0_SL0.08_TR0.1",
+      "family": "swing_breakout",
+      "score": 23.3,
+      "2024": {
+        "returnPct": 34.177,
+        "maxDrawdownPct": -9.644,
+        "trades": 4,
+        "winPct": 75.0,
+        "avgNetPerTradePct": 7.947,
+        "profitFactor": 86.541,
+        "avgHoldingDays": 21.5,
+        "investedDays": 82,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 27.829,
+        "maxDrawdownPct": -8.89,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 4.307,
+        "profitFactor": 8.953,
+        "avgHoldingDays": 12.67,
+        "investedDays": 70,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_60_twii20_TP0_SL0.12_TR0.1",
+      "family": "swing_breakout",
+      "score": 23.3,
+      "2024": {
+        "returnPct": 34.177,
+        "maxDrawdownPct": -9.644,
+        "trades": 4,
+        "winPct": 75.0,
+        "avgNetPerTradePct": 7.947,
+        "profitFactor": 86.541,
+        "avgHoldingDays": 21.5,
+        "investedDays": 82,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 27.829,
+        "maxDrawdownPct": -8.89,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 4.307,
+        "profitFactor": 8.953,
+        "avgHoldingDays": 12.67,
+        "investedDays": 70,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_60_twii60_TP0_SL0.08_TR0.1",
+      "family": "swing_breakout",
+      "score": 23.3,
+      "2024": {
+        "returnPct": 34.177,
+        "maxDrawdownPct": -9.644,
+        "trades": 4,
+        "winPct": 75.0,
+        "avgNetPerTradePct": 7.947,
+        "profitFactor": 86.541,
+        "avgHoldingDays": 21.5,
+        "investedDays": 82,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 27.829,
+        "maxDrawdownPct": -8.89,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 4.307,
+        "profitFactor": 8.953,
+        "avgHoldingDays": 12.67,
+        "investedDays": 70,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_60_twii60_TP0_SL0.12_TR0.1",
+      "family": "swing_breakout",
+      "score": 23.3,
+      "2024": {
+        "returnPct": 34.177,
+        "maxDrawdownPct": -9.644,
+        "trades": 4,
+        "winPct": 75.0,
+        "avgNetPerTradePct": 7.947,
+        "profitFactor": 86.541,
+        "avgHoldingDays": 21.5,
+        "investedDays": 82,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 27.829,
+        "maxDrawdownPct": -8.89,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 4.307,
+        "profitFactor": 8.953,
+        "avgHoldingDays": 12.67,
+        "investedDays": 70,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BREAKOUT_20_TRAIL12_SL10",
+      "family": "breakout",
+      "score": 22.8702,
+      "2024": {
+        "returnPct": 65.585,
+        "maxDrawdownPct": -10.853,
+        "trades": 3,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 19.233,
+        "profitFactor": 42.691,
+        "avgHoldingDays": 37.33,
+        "investedDays": 109,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 18.07,
+        "maxDrawdownPct": -16.9,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": 2.788,
+        "profitFactor": 1.646,
+        "avgHoldingDays": 15.25,
+        "investedDays": 114,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BREAKOUT_20_TRAIL12_SL15",
+      "family": "breakout",
+      "score": 22.8702,
+      "2024": {
+        "returnPct": 65.585,
+        "maxDrawdownPct": -10.853,
+        "trades": 3,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 19.233,
+        "profitFactor": 42.691,
+        "avgHoldingDays": 37.33,
+        "investedDays": 109,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 18.07,
+        "maxDrawdownPct": -16.9,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": 2.788,
+        "profitFactor": 1.646,
+        "avgHoldingDays": 15.25,
+        "investedDays": 114,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_40_twii20_TP0.15_SL0.08_TR0.1",
+      "family": "swing_breakout",
+      "score": 22.2495,
+      "2024": {
+        "returnPct": 37.787,
+        "maxDrawdownPct": -9.644,
+        "trades": 7,
+        "winPct": 71.43,
+        "avgNetPerTradePct": 5.06,
+        "profitFactor": 3.1,
+        "avgHoldingDays": 13.71,
+        "investedDays": 89,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 24.269,
+        "maxDrawdownPct": -9.292,
+        "trades": 8,
+        "winPct": 50.0,
+        "avgNetPerTradePct": 3.055,
+        "profitFactor": 2.615,
+        "avgHoldingDays": 10.5,
+        "investedDays": 76,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_40_twii20_TP0.15_SL0.12_TR0.1",
+      "family": "swing_breakout",
+      "score": 22.2495,
+      "2024": {
+        "returnPct": 37.787,
+        "maxDrawdownPct": -9.644,
+        "trades": 7,
+        "winPct": 71.43,
+        "avgNetPerTradePct": 5.06,
+        "profitFactor": 3.1,
+        "avgHoldingDays": 13.71,
+        "investedDays": 89,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 24.269,
+        "maxDrawdownPct": -9.292,
+        "trades": 8,
+        "winPct": 50.0,
+        "avgNetPerTradePct": 3.055,
+        "profitFactor": 2.615,
+        "avgHoldingDays": 10.5,
+        "investedDays": 76,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_40_twii60_TP0.15_SL0.08_TR0.1",
+      "family": "swing_breakout",
+      "score": 22.2495,
+      "2024": {
+        "returnPct": 37.787,
+        "maxDrawdownPct": -9.644,
+        "trades": 7,
+        "winPct": 71.43,
+        "avgNetPerTradePct": 5.06,
+        "profitFactor": 3.1,
+        "avgHoldingDays": 13.71,
+        "investedDays": 89,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 24.269,
+        "maxDrawdownPct": -9.292,
+        "trades": 8,
+        "winPct": 50.0,
+        "avgNetPerTradePct": 3.055,
+        "profitFactor": 2.615,
+        "avgHoldingDays": 10.5,
+        "investedDays": 76,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_40_twii60_TP0.15_SL0.12_TR0.1",
+      "family": "swing_breakout",
+      "score": 22.2495,
+      "2024": {
+        "returnPct": 37.787,
+        "maxDrawdownPct": -9.644,
+        "trades": 7,
+        "winPct": 71.43,
+        "avgNetPerTradePct": 5.06,
+        "profitFactor": 3.1,
+        "avgHoldingDays": 13.71,
+        "investedDays": 89,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 24.269,
+        "maxDrawdownPct": -9.292,
+        "trades": 8,
+        "winPct": 50.0,
+        "avgNetPerTradePct": 3.055,
+        "profitFactor": 2.615,
+        "avgHoldingDays": 10.5,
+        "investedDays": 76,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "TREND_twii20_SL15",
+      "family": "trend",
+      "score": 21.134,
+      "2024": {
+        "returnPct": 33.714,
+        "maxDrawdownPct": -22.612,
+        "trades": 10,
+        "winPct": 40.0,
+        "avgNetPerTradePct": 3.393,
+        "profitFactor": 2.134,
+        "avgHoldingDays": 17.8,
+        "investedDays": 168,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 42.995,
+        "maxDrawdownPct": -18.127,
+        "trades": 15,
+        "winPct": 46.67,
+        "avgNetPerTradePct": 2.796,
+        "profitFactor": 2.57,
+        "avgHoldingDays": 12.27,
+        "investedDays": 169,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "TREND_twii20_TP0_SL0.08_TR0",
+      "family": "swing_trend",
+      "score": 20.508,
+      "2024": {
+        "returnPct": 34.991,
+        "maxDrawdownPct": -24.692,
+        "trades": 10,
+        "winPct": 40.0,
+        "avgNetPerTradePct": 3.618,
+        "profitFactor": 2.017,
+        "avgHoldingDays": 16.9,
+        "investedDays": 159,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 42.995,
+        "maxDrawdownPct": -18.127,
+        "trades": 15,
+        "winPct": 46.67,
+        "avgNetPerTradePct": 2.796,
+        "profitFactor": 2.57,
+        "avgHoldingDays": 12.27,
+        "investedDays": 169,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "TREND_twii20_TP0_SL0.08_TR0.12",
+      "family": "swing_trend",
+      "score": 20.508,
+      "2024": {
+        "returnPct": 34.991,
+        "maxDrawdownPct": -24.692,
+        "trades": 10,
+        "winPct": 40.0,
+        "avgNetPerTradePct": 3.618,
+        "profitFactor": 2.017,
+        "avgHoldingDays": 16.9,
+        "investedDays": 159,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 42.995,
+        "maxDrawdownPct": -18.127,
+        "trades": 15,
+        "winPct": 46.67,
+        "avgNetPerTradePct": 2.796,
+        "profitFactor": 2.57,
+        "avgHoldingDays": 12.27,
+        "investedDays": 169,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "TREND_twii20_TP0_SL0.12_TR0.12",
+      "family": "swing_trend",
+      "score": 20.508,
+      "2024": {
+        "returnPct": 34.991,
+        "maxDrawdownPct": -24.692,
+        "trades": 10,
+        "winPct": 40.0,
+        "avgNetPerTradePct": 3.618,
+        "profitFactor": 2.017,
+        "avgHoldingDays": 16.9,
+        "investedDays": 159,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 42.995,
+        "maxDrawdownPct": -18.127,
+        "trades": 15,
+        "winPct": 46.67,
+        "avgNetPerTradePct": 2.796,
+        "profitFactor": 2.57,
+        "avgHoldingDays": 12.27,
+        "investedDays": 169,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "TREND_twii20_TP0_SL0.12_TR0",
+      "family": "swing_trend",
+      "score": 20.486,
+      "2024": {
+        "returnPct": 34.97,
+        "maxDrawdownPct": -24.704,
+        "trades": 10,
+        "winPct": 40.0,
+        "avgNetPerTradePct": 3.616,
+        "profitFactor": 2.016,
+        "avgHoldingDays": 16.9,
+        "investedDays": 159,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 42.995,
+        "maxDrawdownPct": -18.127,
+        "trades": 15,
+        "winPct": 46.67,
+        "avgNetPerTradePct": 2.796,
+        "profitFactor": 2.57,
+        "avgHoldingDays": 12.27,
+        "investedDays": 169,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_60_twii20_TP0.15_SL0.08_TR0.06",
+      "family": "swing_breakout",
+      "score": 20.2805,
+      "2024": {
+        "returnPct": 25.45,
+        "maxDrawdownPct": -9.75,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 4.154,
+        "profitFactor": 2.988,
+        "avgHoldingDays": 13.33,
+        "investedDays": 74,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 30.672,
+        "maxDrawdownPct": -9.996,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 4.187,
+        "profitFactor": 3.852,
+        "avgHoldingDays": 10.0,
+        "investedDays": 63,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_60_twii20_TP0.15_SL0.12_TR0.06",
+      "family": "swing_breakout",
+      "score": 20.2805,
+      "2024": {
+        "returnPct": 25.45,
+        "maxDrawdownPct": -9.75,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 4.154,
+        "profitFactor": 2.988,
+        "avgHoldingDays": 13.33,
+        "investedDays": 74,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 30.672,
+        "maxDrawdownPct": -9.996,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 4.187,
+        "profitFactor": 3.852,
+        "avgHoldingDays": 10.0,
+        "investedDays": 63,
+        "sessions": 243
+      }
+    },
+    {
+      "id": "BO_60_twii60_TP0.15_SL0.08_TR0.06",
+      "family": "swing_breakout",
+      "score": 20.2805,
+      "2024": {
+        "returnPct": 25.45,
+        "maxDrawdownPct": -9.75,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 4.154,
+        "profitFactor": 2.988,
+        "avgHoldingDays": 13.33,
+        "investedDays": 74,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 30.672,
+        "maxDrawdownPct": -9.996,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 4.187,
+        "profitFactor": 3.852,
+        "avgHoldingDays": 10.0,
+        "investedDays": 63,
+        "sessions": 243
+      }
+    }
+  ],
+  "validation": [
+    {
+      "id": "BUY_HOLD",
+      "family": "buy_hold",
+      "params": {
+        "id": "BUY_HOLD",
+        "family": "buy_hold"
+      },
+      "2024": {
+        "returnPct": 54.989,
+        "maxDrawdownPct": -36.444,
+        "trades": 1,
+        "winPct": 100.0,
+        "avgNetPerTradePct": 54.989,
+        "profitFactor": null,
+        "avgHoldingDays": 242.0,
+        "investedDays": 241,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 51.112,
+        "maxDrawdownPct": -50.267,
+        "trades": 1,
+        "winPct": 100.0,
+        "avgNetPerTradePct": 51.117,
+        "profitFactor": null,
+        "avgHoldingDays": 243.0,
+        "investedDays": 242,
+        "sessions": 243
+      },
+      "trainScore": null,
+      "2026": {
+        "returnPct": 150.836,
+        "maxDrawdownPct": -33.446,
+        "trades": 1,
+        "winPct": 100.0,
+        "avgNetPerTradePct": 150.853,
+        "profitFactor": null,
+        "avgHoldingDays": 184.0,
+        "investedDays": 183,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 14.826,
+          "maxDrawdownPct": -21.216,
+          "trades": 1,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 14.827,
+          "profitFactor": null,
+          "avgHoldingDays": 55.0,
+          "investedDays": 54,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 87.577,
+          "maxDrawdownPct": -15.592,
+          "trades": 1,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 87.58,
+          "profitFactor": null,
+          "avgHoldingDays": 61.0,
+          "investedDays": 60,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": -3.546,
+          "maxDrawdownPct": -31.646,
+          "trades": 1,
+          "winPct": 0.0,
+          "avgNetPerTradePct": -3.546,
+          "profitFactor": 0.0,
+          "avgHoldingDays": 63.0,
+          "investedDays": 62,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "TREND_twii60_SL10",
+      "family": "trend",
+      "params": {
+        "id": "TREND_twii60_SL10",
+        "family": "trend",
+        "source": "twii",
+        "n": 60,
+        "sl": 0.1
+      },
+      "2024": {
+        "returnPct": 20.039,
+        "maxDrawdownPct": -34.799,
+        "trades": 6,
+        "winPct": 16.67,
+        "avgNetPerTradePct": 5.18,
+        "profitFactor": 1.555,
+        "avgHoldingDays": 31.33,
+        "investedDays": 182,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 47.214,
+        "maxDrawdownPct": -22.097,
+        "trades": 5,
+        "winPct": 40.0,
+        "avgNetPerTradePct": 10.226,
+        "profitFactor": 4.073,
+        "avgHoldingDays": 37.2,
+        "investedDays": 181,
+        "sessions": 243
+      },
+      "trainScore": 5.191,
+      "2026": {
+        "returnPct": 70.724,
+        "maxDrawdownPct": -28.115,
+        "trades": 6,
+        "winPct": 50.0,
+        "avgNetPerTradePct": 11.0,
+        "profitFactor": 5.797,
+        "avgHoldingDays": 20.0,
+        "investedDays": 114,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 0.0,
+          "maxDrawdownPct": 0.0,
+          "trades": 0,
+          "winPct": null,
+          "avgNetPerTradePct": 0,
+          "profitFactor": null,
+          "avgHoldingDays": null,
+          "investedDays": 0,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 81.648,
+          "maxDrawdownPct": -15.591,
+          "trades": 1,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 81.655,
+          "profitFactor": null,
+          "avgHoldingDays": 60.0,
+          "investedDays": 59,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 4.786,
+          "maxDrawdownPct": -7.947,
+          "trades": 5,
+          "winPct": 40.0,
+          "avgNetPerTradePct": 1.165,
+          "profitFactor": 1.494,
+          "avgHoldingDays": 8.4,
+          "investedDays": 37,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "TREND_etf20_SL10",
+      "family": "trend",
+      "params": {
+        "id": "TREND_etf20_SL10",
+        "family": "trend",
+        "source": "etf",
+        "n": 20,
+        "sl": 0.1
+      },
+      "2024": {
+        "returnPct": 41.285,
+        "maxDrawdownPct": -18.428,
+        "trades": 6,
+        "winPct": 33.33,
+        "avgNetPerTradePct": 6.715,
+        "profitFactor": 3.603,
+        "avgHoldingDays": 22.33,
+        "investedDays": 128,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 23.825,
+        "maxDrawdownPct": -19.516,
+        "trades": 14,
+        "winPct": 28.57,
+        "avgNetPerTradePct": 2.005,
+        "profitFactor": 1.764,
+        "avgHoldingDays": 11.07,
+        "investedDays": 141,
+        "sessions": 243
+      },
+      "trainScore": 16.2748,
+      "2026": {
+        "returnPct": 22.434,
+        "maxDrawdownPct": -27.76,
+        "trades": 11,
+        "winPct": 45.45,
+        "avgNetPerTradePct": 2.389,
+        "profitFactor": 1.618,
+        "avgHoldingDays": 10.64,
+        "investedDays": 106,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -11.048,
+          "maxDrawdownPct": -23.5,
+          "trades": 4,
+          "winPct": 25.0,
+          "avgNetPerTradePct": -2.728,
+          "profitFactor": 0.302,
+          "avgHoldingDays": 4.0,
+          "investedDays": 12,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 26.243,
+          "maxDrawdownPct": -22.019,
+          "trades": 4,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 6.852,
+          "profitFactor": 3.015,
+          "avgHoldingDays": 13.5,
+          "investedDays": 50,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 1.761,
+          "maxDrawdownPct": -8.709,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 0.78,
+          "profitFactor": 1.222,
+          "avgHoldingDays": 14.0,
+          "investedDays": 39,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "BREAKOUT_40_TRAIL12_SL10",
+      "family": "breakout",
+      "params": {
+        "id": "BREAKOUT_40_TRAIL12_SL10",
+        "family": "breakout",
+        "lookback": 40,
+        "sl": 0.1,
+        "trail": 0.12,
+        "hold": 45
+      },
+      "2024": {
+        "returnPct": 67.044,
+        "maxDrawdownPct": -6.16,
+        "trades": 3,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 19.524,
+        "profitFactor": 589.92,
+        "avgHoldingDays": 33.67,
+        "investedDays": 98,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 44.243,
+        "maxDrawdownPct": -8.89,
+        "trades": 5,
+        "winPct": 60.0,
+        "avgNetPerTradePct": 8.327,
+        "profitFactor": 6.501,
+        "avgHoldingDays": 19.6,
+        "investedDays": 93,
+        "sessions": 243
+      },
+      "trainScore": 46.0003,
+      "2026": {
+        "returnPct": 13.389,
+        "maxDrawdownPct": -35.044,
+        "trades": 7,
+        "winPct": 42.86,
+        "avgNetPerTradePct": 2.512,
+        "profitFactor": 1.376,
+        "avgHoldingDays": 12.57,
+        "investedDays": 81,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 22.224,
+          "maxDrawdownPct": -12.0,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 11.237,
+          "profitFactor": 18.109,
+          "avgHoldingDays": 17.5,
+          "investedDays": 33,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": -4.089,
+          "maxDrawdownPct": -26.362,
+          "trades": 3,
+          "winPct": 33.33,
+          "avgNetPerTradePct": -0.658,
+          "profitFactor": 0.803,
+          "avgHoldingDays": 12.33,
+          "investedDays": 34,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": -9.715,
+          "maxDrawdownPct": -11.788,
+          "trades": 2,
+          "winPct": 0.0,
+          "avgNetPerTradePct": -4.946,
+          "profitFactor": 0.0,
+          "avgHoldingDays": 5.5,
+          "investedDays": 9,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "2DAY_DIVE_3_TP3",
+      "family": "dip",
+      "params": {
+        "id": "2DAY_DIVE_3_TP3",
+        "family": "dip",
+        "dip": -0.03,
+        "tp": 0.03,
+        "sl": 0.1,
+        "hold": 10
+      },
+      "2024": {
+        "returnPct": -10.314,
+        "maxDrawdownPct": -16.069,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": -1.276,
+        "profitFactor": 0.311,
+        "avgHoldingDays": 5.12,
+        "investedDays": 33,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": -4.477,
+        "maxDrawdownPct": -14.582,
+        "trades": 8,
+        "winPct": 62.5,
+        "avgNetPerTradePct": -0.465,
+        "profitFactor": 0.694,
+        "avgHoldingDays": 4.25,
+        "investedDays": 26,
+        "sessions": 243
+      },
+      "trainScore": -19.5193,
+      "2026": {
+        "returnPct": 17.225,
+        "maxDrawdownPct": -15.171,
+        "trades": 13,
+        "winPct": 84.62,
+        "avgNetPerTradePct": 1.32,
+        "profitFactor": 1.868,
+        "avgHoldingDays": 2.69,
+        "investedDays": 22,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 16.394,
+          "maxDrawdownPct": -4.92,
+          "trades": 6,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 2.565,
+          "profitFactor": null,
+          "avgHoldingDays": 2.17,
+          "investedDays": 7,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 6.471,
+          "maxDrawdownPct": -5.29,
+          "trades": 4,
+          "winPct": 75.0,
+          "avgNetPerTradePct": 1.668,
+          "profitFactor": 2.088,
+          "avgHoldingDays": 2.25,
+          "investedDays": 5,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": -5.41,
+          "maxDrawdownPct": -10.435,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": -1.633,
+          "profitFactor": 0.482,
+          "avgHoldingDays": 4.33,
+          "investedDays": 10,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "BREAKOUT_40_TRAIL12_SL15",
+      "family": "breakout",
+      "params": {
+        "id": "BREAKOUT_40_TRAIL12_SL15",
+        "family": "breakout",
+        "lookback": 40,
+        "sl": 0.15,
+        "trail": 0.12,
+        "hold": 45
+      },
+      "2024": {
+        "returnPct": 67.044,
+        "maxDrawdownPct": -6.16,
+        "trades": 3,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 19.524,
+        "profitFactor": 589.92,
+        "avgHoldingDays": 33.67,
+        "investedDays": 98,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 44.243,
+        "maxDrawdownPct": -8.89,
+        "trades": 5,
+        "winPct": 60.0,
+        "avgNetPerTradePct": 8.327,
+        "profitFactor": 6.501,
+        "avgHoldingDays": 19.6,
+        "investedDays": 93,
+        "sessions": 243
+      },
+      "trainScore": 46.0003,
+      "2026": {
+        "returnPct": 10.869,
+        "maxDrawdownPct": -36.488,
+        "trades": 7,
+        "winPct": 42.86,
+        "avgNetPerTradePct": 2.228,
+        "profitFactor": 1.286,
+        "avgHoldingDays": 12.86,
+        "investedDays": 83,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 22.224,
+          "maxDrawdownPct": -12.0,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 11.237,
+          "profitFactor": 18.109,
+          "avgHoldingDays": 17.5,
+          "investedDays": 33,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": -6.22,
+          "maxDrawdownPct": -27.998,
+          "trades": 3,
+          "winPct": 33.33,
+          "avgNetPerTradePct": -1.321,
+          "profitFactor": 0.729,
+          "avgHoldingDays": 13.0,
+          "investedDays": 36,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": -9.715,
+          "maxDrawdownPct": -11.788,
+          "trades": 2,
+          "winPct": 0.0,
+          "avgNetPerTradePct": -4.946,
+          "profitFactor": 0.0,
+          "avgHoldingDays": 5.5,
+          "investedDays": 9,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "BO_60_twii20_TP0.15_SL0.08_TR0.1",
+      "family": "swing_breakout",
+      "params": {
+        "id": "BO_60_twii20_TP0.15_SL0.08_TR0.1",
+        "family": "swing_breakout",
+        "length": 60,
+        "gate": "twii20",
+        "sl": 0.08,
+        "tp": 0.15,
+        "trail": 0.1,
+        "hold": 30
+      },
+      "2024": {
+        "returnPct": 34.28,
+        "maxDrawdownPct": -9.644,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 5.468,
+        "profitFactor": 2.905,
+        "avgHoldingDays": 14.67,
+        "investedDays": 82,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 31.694,
+        "maxDrawdownPct": -9.292,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 4.292,
+        "profitFactor": 4.186,
+        "avgHoldingDays": 10.14,
+        "investedDays": 64,
+        "sessions": 243
+      },
+      "trainScore": 25.8483,
+      "2026": {
+        "returnPct": 15.814,
+        "maxDrawdownPct": -25.408,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": 2.269,
+        "profitFactor": 1.588,
+        "avgHoldingDays": 8.0,
+        "investedDays": 56,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 20.048,
+          "maxDrawdownPct": -11.137,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 6.466,
+          "profitFactor": 205.725,
+          "avgHoldingDays": 10.33,
+          "investedDays": 28,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": -2.642,
+          "maxDrawdownPct": -24.724,
+          "trades": 4,
+          "winPct": 25.0,
+          "avgNetPerTradePct": -0.085,
+          "profitFactor": 0.877,
+          "avgHoldingDays": 7.75,
+          "investedDays": 27,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 0.0,
+          "maxDrawdownPct": 0.0,
+          "trades": 0,
+          "winPct": null,
+          "avgNetPerTradePct": 0,
+          "profitFactor": null,
+          "avgHoldingDays": null,
+          "investedDays": 0,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "BO_60_twii20_TP0.15_SL0.12_TR0.1",
+      "family": "swing_breakout",
+      "params": {
+        "id": "BO_60_twii20_TP0.15_SL0.12_TR0.1",
+        "family": "swing_breakout",
+        "length": 60,
+        "gate": "twii20",
+        "sl": 0.12,
+        "tp": 0.15,
+        "trail": 0.1,
+        "hold": 30
+      },
+      "2024": {
+        "returnPct": 34.28,
+        "maxDrawdownPct": -9.644,
+        "trades": 6,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 5.468,
+        "profitFactor": 2.905,
+        "avgHoldingDays": 14.67,
+        "investedDays": 82,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 31.694,
+        "maxDrawdownPct": -9.292,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 4.292,
+        "profitFactor": 4.186,
+        "avgHoldingDays": 10.14,
+        "investedDays": 64,
+        "sessions": 243
+      },
+      "trainScore": 25.8483,
+      "2026": {
+        "returnPct": 13.297,
+        "maxDrawdownPct": -27.03,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": 2.02,
+        "profitFactor": 1.452,
+        "avgHoldingDays": 8.0,
+        "investedDays": 56,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 20.048,
+          "maxDrawdownPct": -11.137,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 6.466,
+          "profitFactor": 205.725,
+          "avgHoldingDays": 10.33,
+          "investedDays": 28,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": -4.759,
+          "maxDrawdownPct": -26.361,
+          "trades": 4,
+          "winPct": 25.0,
+          "avgNetPerTradePct": -0.583,
+          "profitFactor": 0.798,
+          "avgHoldingDays": 7.75,
+          "investedDays": 27,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 0.0,
+          "maxDrawdownPct": 0.0,
+          "trades": 0,
+          "winPct": null,
+          "avgNetPerTradePct": 0,
+          "profitFactor": null,
+          "avgHoldingDays": null,
+          "investedDays": 0,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "TREND_etf20_TP0_SL0.08_TR0",
+      "family": "swing_trend",
+      "params": {
+        "id": "TREND_etf20_TP0_SL0.08_TR0",
+        "family": "swing_trend",
+        "source": "etf",
+        "length": 20,
+        "gate": "all",
+        "tp": 0,
+        "sl": 0.08,
+        "trail": 0,
+        "hold": 45
+      },
+      "2024": {
+        "returnPct": 43.839,
+        "maxDrawdownPct": -17.114,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": 5.757,
+        "profitFactor": 2.163,
+        "avgHoldingDays": 19.5,
+        "investedDays": 148,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 33.393,
+        "maxDrawdownPct": -18.94,
+        "trades": 15,
+        "winPct": 33.33,
+        "avgNetPerTradePct": 2.356,
+        "profitFactor": 2.039,
+        "avgHoldingDays": 11.2,
+        "investedDays": 153,
+        "sessions": 243
+      },
+      "trainScore": 23.7911,
+      "2026": {
+        "returnPct": 22.169,
+        "maxDrawdownPct": -27.553,
+        "trades": 11,
+        "winPct": 45.45,
+        "avgNetPerTradePct": 2.37,
+        "profitFactor": 1.605,
+        "avgHoldingDays": 10.55,
+        "investedDays": 105,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -10.744,
+          "maxDrawdownPct": -23.238,
+          "trades": 4,
+          "winPct": 25.0,
+          "avgNetPerTradePct": -2.652,
+          "profitFactor": 0.308,
+          "avgHoldingDays": 4.0,
+          "investedDays": 12,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 26.243,
+          "maxDrawdownPct": -22.019,
+          "trades": 4,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 6.852,
+          "profitFactor": 3.015,
+          "avgHoldingDays": 13.5,
+          "investedDays": 50,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 1.194,
+          "maxDrawdownPct": -8.445,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 0.609,
+          "profitFactor": 1.141,
+          "avgHoldingDays": 13.67,
+          "investedDays": 38,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "TREND_etf20_TP0_SL0.08_TR0.12",
+      "family": "swing_trend",
+      "params": {
+        "id": "TREND_etf20_TP0_SL0.08_TR0.12",
+        "family": "swing_trend",
+        "source": "etf",
+        "length": 20,
+        "gate": "all",
+        "tp": 0,
+        "sl": 0.08,
+        "trail": 0.12,
+        "hold": 45
+      },
+      "2024": {
+        "returnPct": 43.839,
+        "maxDrawdownPct": -17.114,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": 5.757,
+        "profitFactor": 2.163,
+        "avgHoldingDays": 19.5,
+        "investedDays": 148,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 33.393,
+        "maxDrawdownPct": -18.94,
+        "trades": 15,
+        "winPct": 33.33,
+        "avgNetPerTradePct": 2.356,
+        "profitFactor": 2.039,
+        "avgHoldingDays": 11.2,
+        "investedDays": 153,
+        "sessions": 243
+      },
+      "trainScore": 23.7911,
+      "2026": {
+        "returnPct": 13.819,
+        "maxDrawdownPct": -30.291,
+        "trades": 11,
+        "winPct": 45.45,
+        "avgNetPerTradePct": 1.685,
+        "profitFactor": 1.428,
+        "avgHoldingDays": 10.27,
+        "investedDays": 102,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -13.573,
+          "maxDrawdownPct": -25.671,
+          "trades": 4,
+          "winPct": 25.0,
+          "avgNetPerTradePct": -3.483,
+          "profitFactor": 0.097,
+          "avgHoldingDays": 3.75,
+          "investedDays": 11,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 21.468,
+          "maxDrawdownPct": -23.863,
+          "trades": 4,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 5.797,
+          "profitFactor": 3.213,
+          "avgHoldingDays": 13.0,
+          "investedDays": 48,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 1.194,
+          "maxDrawdownPct": -8.445,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 0.609,
+          "profitFactor": 1.141,
+          "avgHoldingDays": 13.67,
+          "investedDays": 38,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "TREND_twii20_SL15",
+      "family": "trend",
+      "params": {
+        "id": "TREND_twii20_SL15",
+        "family": "trend",
+        "source": "twii",
+        "n": 20,
+        "sl": 0.15
+      },
+      "2024": {
+        "returnPct": 33.714,
+        "maxDrawdownPct": -22.612,
+        "trades": 10,
+        "winPct": 40.0,
+        "avgNetPerTradePct": 3.393,
+        "profitFactor": 2.134,
+        "avgHoldingDays": 17.8,
+        "investedDays": 168,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 42.995,
+        "maxDrawdownPct": -18.127,
+        "trades": 15,
+        "winPct": 46.67,
+        "avgNetPerTradePct": 2.796,
+        "profitFactor": 2.57,
+        "avgHoldingDays": 12.27,
+        "investedDays": 169,
+        "sessions": 243
+      },
+      "trainScore": 21.134,
+      "2026": {
+        "returnPct": 31.728,
+        "maxDrawdownPct": -26.736,
+        "trades": 9,
+        "winPct": 44.44,
+        "avgNetPerTradePct": 3.714,
+        "profitFactor": 2.333,
+        "avgHoldingDays": 12.33,
+        "investedDays": 102,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -8.028,
+          "maxDrawdownPct": -9.81,
+          "trades": 3,
+          "winPct": 0.0,
+          "avgNetPerTradePct": -2.738,
+          "profitFactor": 0.0,
+          "avgHoldingDays": 3.0,
+          "investedDays": 6,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 31.368,
+          "maxDrawdownPct": -20.912,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 10.619,
+          "profitFactor": 5.658,
+          "avgHoldingDays": 18.33,
+          "investedDays": 52,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 1.761,
+          "maxDrawdownPct": -8.709,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 0.78,
+          "profitFactor": 1.222,
+          "avgHoldingDays": 14.0,
+          "investedDays": 39,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "TREND_twii20_SL10",
+      "family": "trend",
+      "params": {
+        "id": "TREND_twii20_SL10",
+        "family": "trend",
+        "source": "twii",
+        "n": 20,
+        "sl": 0.1
+      },
+      "2024": {
+        "returnPct": 30.12,
+        "maxDrawdownPct": -24.693,
+        "trades": 10,
+        "winPct": 40.0,
+        "avgNetPerTradePct": 3.151,
+        "profitFactor": 1.908,
+        "avgHoldingDays": 17.7,
+        "investedDays": 167,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 42.995,
+        "maxDrawdownPct": -18.127,
+        "trades": 15,
+        "winPct": 46.67,
+        "avgNetPerTradePct": 2.796,
+        "profitFactor": 2.57,
+        "avgHoldingDays": 12.27,
+        "investedDays": 169,
+        "sessions": 243
+      },
+      "trainScore": 17.3411,
+      "2026": {
+        "returnPct": 21.967,
+        "maxDrawdownPct": -26.737,
+        "trades": 9,
+        "winPct": 44.44,
+        "avgNetPerTradePct": 2.918,
+        "profitFactor": 1.746,
+        "avgHoldingDays": 12.22,
+        "investedDays": 101,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -14.842,
+          "maxDrawdownPct": -16.257,
+          "trades": 3,
+          "winPct": 0.0,
+          "avgNetPerTradePct": -5.127,
+          "profitFactor": 0.0,
+          "avgHoldingDays": 2.67,
+          "investedDays": 5,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 31.368,
+          "maxDrawdownPct": -20.912,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 10.619,
+          "profitFactor": 5.658,
+          "avgHoldingDays": 18.33,
+          "investedDays": 52,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 1.761,
+          "maxDrawdownPct": -8.709,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 0.78,
+          "profitFactor": 1.222,
+          "avgHoldingDays": 14.0,
+          "investedDays": 39,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "RECLAIM_EMA10_twii20_TP0.1_SL0.07_H20",
+      "family": "swing_reclaim",
+      "params": {
+        "id": "RECLAIM_EMA10_twii20_TP0.1_SL0.07_H20",
+        "family": "swing_reclaim",
+        "length": 10,
+        "gate": "twii20",
+        "tp": 0.1,
+        "sl": 0.07,
+        "hold": 20
+      },
+      "2024": {
+        "returnPct": 13.463,
+        "maxDrawdownPct": -12.691,
+        "trades": 6,
+        "winPct": 50.0,
+        "avgNetPerTradePct": 2.29,
+        "profitFactor": 2.255,
+        "avgHoldingDays": 9.33,
+        "investedDays": 50,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 38.831,
+        "maxDrawdownPct": -11.765,
+        "trades": 13,
+        "winPct": 53.85,
+        "avgNetPerTradePct": 2.735,
+        "profitFactor": 2.967,
+        "avgHoldingDays": 6.92,
+        "investedDays": 77,
+        "sessions": 243
+      },
+      "trainScore": 13.4581,
+      "2026": {
+        "returnPct": 66.445,
+        "maxDrawdownPct": -9.231,
+        "trades": 11,
+        "winPct": 72.73,
+        "avgNetPerTradePct": 4.96,
+        "profitFactor": 4.387,
+        "avgHoldingDays": 5.0,
+        "investedDays": 44,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 3.203,
+          "maxDrawdownPct": -9.231,
+          "trades": 4,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 0.953,
+          "profitFactor": 1.336,
+          "avgHoldingDays": 3.25,
+          "investedDays": 9,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 31.172,
+          "maxDrawdownPct": -1.02,
+          "trades": 3,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 9.468,
+          "profitFactor": null,
+          "avgHoldingDays": 3.67,
+          "investedDays": 8,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 15.721,
+          "maxDrawdownPct": -7.453,
+          "trades": 4,
+          "winPct": 75.0,
+          "avgNetPerTradePct": 3.958,
+          "profitFactor": 3.109,
+          "avgHoldingDays": 7.0,
+          "investedDays": 24,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "RECLAIM_EMA10_twii20_TP0.1_SL0.1_H20",
+      "family": "swing_reclaim",
+      "params": {
+        "id": "RECLAIM_EMA10_twii20_TP0.1_SL0.1_H20",
+        "family": "swing_reclaim",
+        "length": 10,
+        "gate": "twii20",
+        "tp": 0.1,
+        "sl": 0.1,
+        "hold": 20
+      },
+      "2024": {
+        "returnPct": 13.463,
+        "maxDrawdownPct": -12.691,
+        "trades": 6,
+        "winPct": 50.0,
+        "avgNetPerTradePct": 2.29,
+        "profitFactor": 2.255,
+        "avgHoldingDays": 9.33,
+        "investedDays": 50,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 38.831,
+        "maxDrawdownPct": -11.765,
+        "trades": 13,
+        "winPct": 53.85,
+        "avgNetPerTradePct": 2.735,
+        "profitFactor": 2.967,
+        "avgHoldingDays": 6.92,
+        "investedDays": 77,
+        "sessions": 243
+      },
+      "trainScore": 13.4581,
+      "2026": {
+        "returnPct": 65.584,
+        "maxDrawdownPct": -9.231,
+        "trades": 11,
+        "winPct": 72.73,
+        "avgNetPerTradePct": 4.917,
+        "profitFactor": 4.236,
+        "avgHoldingDays": 5.27,
+        "investedDays": 47,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 3.203,
+          "maxDrawdownPct": -9.231,
+          "trades": 4,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 0.953,
+          "profitFactor": 1.336,
+          "avgHoldingDays": 3.25,
+          "investedDays": 9,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 31.172,
+          "maxDrawdownPct": -1.02,
+          "trades": 3,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 9.468,
+          "profitFactor": null,
+          "avgHoldingDays": 3.67,
+          "investedDays": 8,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 15.122,
+          "maxDrawdownPct": -8.709,
+          "trades": 4,
+          "winPct": 75.0,
+          "avgNetPerTradePct": 3.838,
+          "profitFactor": 2.906,
+          "avgHoldingDays": 7.75,
+          "investedDays": 27,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "ATR_twii20_STOP1.5_TR3_TP0",
+      "family": "swing_atr",
+      "params": {
+        "id": "ATR_twii20_STOP1.5_TR3_TP0",
+        "family": "swing_atr",
+        "gate": "twii20",
+        "atr_stop_mult": 1.5,
+        "atr_trail_mult": 3,
+        "sl": 0.12,
+        "tp": 0,
+        "hold": 25
+      },
+      "2024": {
+        "returnPct": 3.197,
+        "maxDrawdownPct": -12.579,
+        "trades": 5,
+        "winPct": 40.0,
+        "avgNetPerTradePct": 0.751,
+        "profitFactor": 1.338,
+        "avgHoldingDays": 9.0,
+        "investedDays": 40,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 55.92,
+        "maxDrawdownPct": -9.27,
+        "trades": 8,
+        "winPct": 62.5,
+        "avgNetPerTradePct": 6.06,
+        "profitFactor": 6.814,
+        "avgHoldingDays": 11.75,
+        "investedDays": 86,
+        "sessions": 243
+      },
+      "trainScore": 12.8448,
+      "2026": {
+        "returnPct": -9.805,
+        "maxDrawdownPct": -30.117,
+        "trades": 9,
+        "winPct": 44.44,
+        "avgNetPerTradePct": -0.984,
+        "profitFactor": 0.598,
+        "avgHoldingDays": 7.67,
+        "investedDays": 60,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -10.55,
+          "maxDrawdownPct": -19.338,
+          "trades": 4,
+          "winPct": 25.0,
+          "avgNetPerTradePct": -2.705,
+          "profitFactor": 0.181,
+          "avgHoldingDays": 4.25,
+          "investedDays": 13,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": -3.723,
+          "maxDrawdownPct": -22.07,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -1.821,
+          "profitFactor": 0.297,
+          "avgHoldingDays": 10.0,
+          "investedDays": 18,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": -2.245,
+          "maxDrawdownPct": -10.331,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": -0.614,
+          "profitFactor": 0.713,
+          "avgHoldingDays": 9.0,
+          "investedDays": 24,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "ATR_twii20_STOP1.5_TR3_TP0.1",
+      "family": "swing_atr",
+      "params": {
+        "id": "ATR_twii20_STOP1.5_TR3_TP0.1",
+        "family": "swing_atr",
+        "gate": "twii20",
+        "atr_stop_mult": 1.5,
+        "atr_trail_mult": 3,
+        "sl": 0.12,
+        "tp": 0.1,
+        "hold": 25
+      },
+      "2024": {
+        "returnPct": 3.921,
+        "maxDrawdownPct": -12.463,
+        "trades": 5,
+        "winPct": 40.0,
+        "avgNetPerTradePct": 0.905,
+        "profitFactor": 1.411,
+        "avgHoldingDays": 8.0,
+        "investedDays": 35,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 42.398,
+        "maxDrawdownPct": -6.124,
+        "trades": 9,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 4.142,
+        "profitFactor": 5.826,
+        "avgHoldingDays": 6.78,
+        "investedDays": 52,
+        "sessions": 243
+      },
+      "trainScore": 8.6639,
+      "2026": {
+        "returnPct": 28.11,
+        "maxDrawdownPct": -10.33,
+        "trades": 9,
+        "winPct": 55.56,
+        "avgNetPerTradePct": 3.071,
+        "profitFactor": 2.254,
+        "avgHoldingDays": 4.67,
+        "investedDays": 33,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -4.425,
+          "maxDrawdownPct": -9.231,
+          "trades": 4,
+          "winPct": 25.0,
+          "avgNetPerTradePct": -0.95,
+          "profitFactor": 0.671,
+          "avgHoldingDays": 3.0,
+          "investedDays": 8,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 19.829,
+          "maxDrawdownPct": -1.02,
+          "trades": 2,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 9.468,
+          "profitFactor": null,
+          "avgHoldingDays": 3.0,
+          "investedDays": 4,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 5.286,
+          "maxDrawdownPct": -10.331,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 1.997,
+          "profitFactor": 1.676,
+          "avgHoldingDays": 7.0,
+          "investedDays": 18,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "DIP2_-0.03_twii20_TP0.08_SL0.07_H10",
+      "family": "swing_dip",
+      "params": {
+        "id": "DIP2_-0.03_twii20_TP0.08_SL0.07_H10",
+        "family": "swing_dip",
+        "days": 2,
+        "threshold": -0.03,
+        "gate": "twii20",
+        "tp": 0.08,
+        "sl": 0.07,
+        "hold": 10
+      },
+      "2024": {
+        "returnPct": 14.901,
+        "maxDrawdownPct": -8.838,
+        "trades": 4,
+        "winPct": 75.0,
+        "avgNetPerTradePct": 3.745,
+        "profitFactor": 2.731,
+        "avgHoldingDays": 7.25,
+        "investedDays": 25,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 26.574,
+        "maxDrawdownPct": -7.792,
+        "trades": 5,
+        "winPct": 80.0,
+        "avgNetPerTradePct": 5.025,
+        "profitFactor": 3.608,
+        "avgHoldingDays": 6.4,
+        "investedDays": 27,
+        "sessions": 243
+      },
+      "trainScore": 12.8,
+      "2026": {
+        "returnPct": 14.153,
+        "maxDrawdownPct": -14.703,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 2.253,
+        "profitFactor": 1.636,
+        "avgHoldingDays": 5.71,
+        "investedDays": 33,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -3.515,
+          "maxDrawdownPct": -11.149,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -1.279,
+          "profitFactor": 0.71,
+          "avgHoldingDays": 6.0,
+          "investedDays": 10,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 11.512,
+          "maxDrawdownPct": -7.449,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 4.044,
+          "profitFactor": 2.283,
+          "avgHoldingDays": 3.0,
+          "investedDays": 6,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 6.098,
+          "maxDrawdownPct": -7.949,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 3.097,
+          "profitFactor": 5.423,
+          "avgHoldingDays": 9.5,
+          "investedDays": 17,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "DIP2_-0.03_twii20_TP0.08_SL0.1_H10",
+      "family": "swing_dip",
+      "params": {
+        "id": "DIP2_-0.03_twii20_TP0.08_SL0.1_H10",
+        "family": "swing_dip",
+        "days": 2,
+        "threshold": -0.03,
+        "gate": "twii20",
+        "tp": 0.08,
+        "sl": 0.1,
+        "hold": 10
+      },
+      "2024": {
+        "returnPct": 11.194,
+        "maxDrawdownPct": -11.779,
+        "trades": 4,
+        "winPct": 75.0,
+        "avgNetPerTradePct": 2.999,
+        "profitFactor": 1.929,
+        "avgHoldingDays": 7.5,
+        "investedDays": 26,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 23.92,
+        "maxDrawdownPct": -9.725,
+        "trades": 5,
+        "winPct": 80.0,
+        "avgNetPerTradePct": 4.637,
+        "profitFactor": 2.862,
+        "avgHoldingDays": 6.6,
+        "investedDays": 28,
+        "sessions": 243
+      },
+      "trainScore": 7.4028,
+      "2026": {
+        "returnPct": 10.471,
+        "maxDrawdownPct": -14.703,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 1.826,
+        "profitFactor": 1.408,
+        "avgHoldingDays": 5.71,
+        "investedDays": 33,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -3.515,
+          "maxDrawdownPct": -11.149,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -1.279,
+          "profitFactor": 0.71,
+          "avgHoldingDays": 6.0,
+          "investedDays": 10,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 7.916,
+          "maxDrawdownPct": -10.434,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 3.049,
+          "profitFactor": 1.63,
+          "avgHoldingDays": 3.0,
+          "investedDays": 6,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 6.098,
+          "maxDrawdownPct": -7.949,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": 3.097,
+          "profitFactor": 5.423,
+          "avgHoldingDays": 9.5,
+          "investedDays": 17,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "RSI2_20_twii60_TP0.08_SL0.1_H10",
+      "family": "swing_rsi",
+      "params": {
+        "id": "RSI2_20_twii60_TP0.08_SL0.1_H10",
+        "family": "swing_rsi",
+        "rsi_n": 2,
+        "threshold": 20,
+        "gate": "twii60",
+        "tp": 0.08,
+        "sl": 0.1,
+        "hold": 10,
+        "exit_rsi": 80
+      },
+      "2024": {
+        "returnPct": 9.545,
+        "maxDrawdownPct": -11.266,
+        "trades": 11,
+        "winPct": 63.64,
+        "avgNetPerTradePct": 1.071,
+        "profitFactor": 1.315,
+        "avgHoldingDays": 7.82,
+        "investedDays": 75,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 40.372,
+        "maxDrawdownPct": -18.853,
+        "trades": 11,
+        "winPct": 72.73,
+        "avgNetPerTradePct": 3.288,
+        "profitFactor": 3.2,
+        "avgHoldingDays": 8.27,
+        "investedDays": 80,
+        "sessions": 243
+      },
+      "trainScore": 7.1373,
+      "2026": {
+        "returnPct": 18.071,
+        "maxDrawdownPct": -13.343,
+        "trades": 10,
+        "winPct": 70.0,
+        "avgNetPerTradePct": 2.032,
+        "profitFactor": 1.51,
+        "avgHoldingDays": 5.6,
+        "investedDays": 46,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -5.828,
+          "maxDrawdownPct": -13.343,
+          "trades": 4,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -1.111,
+          "profitFactor": 0.715,
+          "avgHoldingDays": 6.0,
+          "investedDays": 20,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 3.459,
+          "maxDrawdownPct": -10.434,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 1.506,
+          "profitFactor": 1.332,
+          "avgHoldingDays": 3.0,
+          "investedDays": 6,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 3.458,
+          "maxDrawdownPct": -10.435,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 1.506,
+          "profitFactor": 1.331,
+          "avgHoldingDays": 6.33,
+          "investedDays": 16,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "RSI2_20_twii20_TP0.03_SL0.1_H10",
+      "family": "swing_rsi",
+      "params": {
+        "id": "RSI2_20_twii20_TP0.03_SL0.1_H10",
+        "family": "swing_rsi",
+        "rsi_n": 2,
+        "threshold": 20,
+        "gate": "twii20",
+        "tp": 0.03,
+        "sl": 0.1,
+        "hold": 10,
+        "exit_rsi": 80
+      },
+      "2024": {
+        "returnPct": 15.362,
+        "maxDrawdownPct": -12.698,
+        "trades": 9,
+        "winPct": 88.89,
+        "avgNetPerTradePct": 1.708,
+        "profitFactor": 2.339,
+        "avgHoldingDays": 4.89,
+        "investedDays": 35,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 13.71,
+        "maxDrawdownPct": -6.231,
+        "trades": 5,
+        "winPct": 100.0,
+        "avgNetPerTradePct": 2.603,
+        "profitFactor": null,
+        "avgHoldingDays": 4.0,
+        "investedDays": 15,
+        "sessions": 243
+      },
+      "trainScore": 5.3996,
+      "2026": {
+        "returnPct": 5.854,
+        "maxDrawdownPct": -10.435,
+        "trades": 6,
+        "winPct": 83.33,
+        "avgNetPerTradePct": 1.098,
+        "profitFactor": 1.53,
+        "avgHoldingDays": 3.67,
+        "investedDays": 16,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 5.945,
+          "maxDrawdownPct": -4.92,
+          "trades": 2,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 2.93,
+          "profitFactor": null,
+          "avgHoldingDays": 4.0,
+          "investedDays": 6,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": -5.458,
+          "maxDrawdownPct": -10.434,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -2.44,
+          "profitFactor": 0.477,
+          "avgHoldingDays": 3.5,
+          "investedDays": 5,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 5.683,
+          "maxDrawdownPct": -1.098,
+          "trades": 2,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 2.803,
+          "profitFactor": null,
+          "avgHoldingDays": 3.5,
+          "investedDays": 5,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "RSI2_SHOCK_all_5_TP3_SL12",
+      "family": "shock",
+      "params": {
+        "id": "RSI2_SHOCK_all_5_TP3_SL12",
+        "family": "shock",
+        "gate": "all",
+        "rsi": 5,
+        "tp": 0.03,
+        "sl": 0.12,
+        "hold": 7
+      },
+      "2024": {
+        "returnPct": 1.725,
+        "maxDrawdownPct": -11.035,
+        "trades": 7,
+        "winPct": 57.14,
+        "avgNetPerTradePct": 0.271,
+        "profitFactor": 1.254,
+        "avgHoldingDays": 5.57,
+        "investedDays": 32,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 6.726,
+        "maxDrawdownPct": -15.373,
+        "trades": 5,
+        "winPct": 80.0,
+        "avgNetPerTradePct": 1.441,
+        "profitFactor": 1.81,
+        "avgHoldingDays": 3.2,
+        "investedDays": 11,
+        "sessions": 243
+      },
+      "trainScore": -7.2857,
+      "2026": {
+        "returnPct": -10.877,
+        "maxDrawdownPct": -23.294,
+        "trades": 5,
+        "winPct": 60.0,
+        "avgNetPerTradePct": -2.045,
+        "profitFactor": 0.419,
+        "avgHoldingDays": 2.8,
+        "investedDays": 9,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -13.126,
+          "maxDrawdownPct": -13.126,
+          "trades": 1,
+          "winPct": 0.0,
+          "avgNetPerTradePct": -13.126,
+          "profitFactor": 0.0,
+          "avgHoldingDays": 3.0,
+          "investedDays": 2,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 2.82,
+          "maxDrawdownPct": -1.66,
+          "trades": 1,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 2.82,
+          "profitFactor": null,
+          "avgHoldingDays": 2.0,
+          "investedDays": 1,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": -0.225,
+          "maxDrawdownPct": -14.999,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": 0.027,
+          "profitFactor": 0.964,
+          "avgHoldingDays": 3.0,
+          "investedDays": 6,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "RSI2_SHOCK_twii60_15_TP8_SL12",
+      "family": "shock",
+      "params": {
+        "id": "RSI2_SHOCK_twii60_15_TP8_SL12",
+        "family": "shock",
+        "gate": "twii60",
+        "rsi": 15,
+        "tp": 0.08,
+        "sl": 0.12,
+        "hold": 7
+      },
+      "2024": {
+        "returnPct": -14.593,
+        "maxDrawdownPct": -19.425,
+        "trades": 8,
+        "winPct": 25.0,
+        "avgNetPerTradePct": -1.885,
+        "profitFactor": 0.284,
+        "avgHoldingDays": 6.25,
+        "investedDays": 42,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 0.769,
+        "maxDrawdownPct": -13.055,
+        "trades": 10,
+        "winPct": 70.0,
+        "avgNetPerTradePct": 0.177,
+        "profitFactor": 1.041,
+        "avgHoldingDays": 4.7,
+        "investedDays": 37,
+        "sessions": 243
+      },
+      "trainScore": -22.8138,
+      "2026": {
+        "returnPct": 20.43,
+        "maxDrawdownPct": -15.27,
+        "trades": 10,
+        "winPct": 80.0,
+        "avgNetPerTradePct": 2.12,
+        "profitFactor": 1.84,
+        "avgHoldingDays": 4.2,
+        "investedDays": 32,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -7.807,
+          "maxDrawdownPct": -15.27,
+          "trades": 5,
+          "winPct": 60.0,
+          "avgNetPerTradePct": -1.404,
+          "profitFactor": 0.516,
+          "avgHoldingDays": 3.2,
+          "investedDays": 11,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 21.778,
+          "maxDrawdownPct": -6.382,
+          "trades": 3,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 6.795,
+          "profitFactor": null,
+          "avgHoldingDays": 4.0,
+          "investedDays": 9,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": -2.9,
+          "maxDrawdownPct": -8.683,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -1.176,
+          "profitFactor": 0.666,
+          "avgHoldingDays": 6.0,
+          "investedDays": 10,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "BB20_all_TP0.03_SL0.1_H5",
+      "family": "swing_band",
+      "params": {
+        "id": "BB20_all_TP0.03_SL0.1_H5",
+        "family": "swing_band",
+        "band": 20,
+        "gate": "all",
+        "tp": 0.03,
+        "sl": 0.1,
+        "hold": 5
+      },
+      "2024": {
+        "returnPct": -3.657,
+        "maxDrawdownPct": -10.694,
+        "trades": 5,
+        "winPct": 60.0,
+        "avgNetPerTradePct": -0.636,
+        "profitFactor": 0.703,
+        "avgHoldingDays": 3.4,
+        "investedDays": 12,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 6.668,
+        "maxDrawdownPct": -11.496,
+        "trades": 7,
+        "winPct": 85.71,
+        "avgNetPerTradePct": 1.043,
+        "profitFactor": 1.573,
+        "avgHoldingDays": 2.43,
+        "investedDays": 10,
+        "sessions": 243
+      },
+      "trainScore": -8.0905,
+      "2026": {
+        "returnPct": -5.752,
+        "maxDrawdownPct": -10.433,
+        "trades": 3,
+        "winPct": 66.67,
+        "avgNetPerTradePct": -1.759,
+        "profitFactor": 0.476,
+        "avgHoldingDays": 1.67,
+        "investedDays": 2,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 0.0,
+          "maxDrawdownPct": 0.0,
+          "trades": 0,
+          "winPct": null,
+          "avgNetPerTradePct": 0,
+          "profitFactor": null,
+          "avgHoldingDays": null,
+          "investedDays": 0,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 2.659,
+          "maxDrawdownPct": 0.0,
+          "trades": 1,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 2.659,
+          "profitFactor": null,
+          "avgHoldingDays": 2.0,
+          "investedDays": 1,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": -8.194,
+          "maxDrawdownPct": -10.435,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -3.968,
+          "profitFactor": 0.234,
+          "avgHoldingDays": 1.5,
+          "investedDays": 1,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "BB20_all_TP0.03_SL0.07_H10",
+      "family": "swing_band",
+      "params": {
+        "id": "BB20_all_TP0.03_SL0.07_H10",
+        "family": "swing_band",
+        "band": 20,
+        "gate": "all",
+        "tp": 0.03,
+        "sl": 0.07,
+        "hold": 10
+      },
+      "2024": {
+        "returnPct": -6.747,
+        "maxDrawdownPct": -18.282,
+        "trades": 5,
+        "winPct": 60.0,
+        "avgNetPerTradePct": -1.255,
+        "profitFactor": 0.557,
+        "avgHoldingDays": 3.4,
+        "investedDays": 12,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 10.223,
+        "maxDrawdownPct": -8.546,
+        "trades": 7,
+        "winPct": 85.71,
+        "avgNetPerTradePct": 1.47,
+        "profitFactor": 2.23,
+        "avgHoldingDays": 2.43,
+        "investedDays": 10,
+        "sessions": 243
+      },
+      "trainScore": -13.6049,
+      "2026": {
+        "returnPct": -2.611,
+        "maxDrawdownPct": -7.449,
+        "trades": 3,
+        "winPct": 66.67,
+        "avgNetPerTradePct": -0.763,
+        "profitFactor": 0.667,
+        "avgHoldingDays": 1.67,
+        "investedDays": 2,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 0.0,
+          "maxDrawdownPct": 0.0,
+          "trades": 0,
+          "winPct": null,
+          "avgNetPerTradePct": 0,
+          "profitFactor": null,
+          "avgHoldingDays": null,
+          "investedDays": 0,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 2.659,
+          "maxDrawdownPct": 0.0,
+          "trades": 1,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 2.659,
+          "profitFactor": null,
+          "avgHoldingDays": 2.0,
+          "investedDays": 1,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": -5.134,
+          "maxDrawdownPct": -7.449,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -2.474,
+          "profitFactor": 0.328,
+          "avgHoldingDays": 1.5,
+          "investedDays": 1,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "RSI2_PULL_twii20_20_TP3_SL10",
+      "family": "pullback",
+      "params": {
+        "id": "RSI2_PULL_twii20_20_TP3_SL10",
+        "family": "pullback",
+        "gate": "twii20",
+        "rsi": 20,
+        "tp": 0.03,
+        "sl": 0.1,
+        "hold": 10
+      },
+      "2024": {
+        "returnPct": -9.604,
+        "maxDrawdownPct": -13.027,
+        "trades": 6,
+        "winPct": 50.0,
+        "avgNetPerTradePct": -1.565,
+        "profitFactor": 0.355,
+        "avgHoldingDays": 5.17,
+        "investedDays": 25,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 7.693,
+        "maxDrawdownPct": 0.0,
+        "trades": 3,
+        "winPct": 100.0,
+        "avgNetPerTradePct": 2.501,
+        "profitFactor": null,
+        "avgHoldingDays": 2.0,
+        "investedDays": 3,
+        "sessions": 243
+      },
+      "trainScore": -12.6689,
+      "2026": {
+        "returnPct": 3.271,
+        "maxDrawdownPct": -10.435,
+        "trades": 5,
+        "winPct": 80.0,
+        "avgNetPerTradePct": 0.817,
+        "profitFactor": 1.296,
+        "avgHoldingDays": 3.8,
+        "investedDays": 14,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 5.945,
+          "maxDrawdownPct": -4.92,
+          "trades": 2,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 2.93,
+          "profitFactor": null,
+          "avgHoldingDays": 4.0,
+          "investedDays": 6,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": -5.458,
+          "maxDrawdownPct": -10.434,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -2.44,
+          "profitFactor": 0.477,
+          "avgHoldingDays": 3.5,
+          "investedDays": 5,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 3.105,
+          "maxDrawdownPct": -1.098,
+          "trades": 1,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 3.105,
+          "profitFactor": null,
+          "avgHoldingDays": 4.0,
+          "investedDays": 3,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "RSI2_PULL_twii20_20_TP5_SL10",
+      "family": "pullback",
+      "params": {
+        "id": "RSI2_PULL_twii20_20_TP5_SL10",
+        "family": "pullback",
+        "gate": "twii20",
+        "rsi": 20,
+        "tp": 0.05,
+        "sl": 0.1,
+        "hold": 10
+      },
+      "2024": {
+        "returnPct": -8.795,
+        "maxDrawdownPct": -13.469,
+        "trades": 6,
+        "winPct": 50.0,
+        "avgNetPerTradePct": -1.411,
+        "profitFactor": 0.417,
+        "avgHoldingDays": 5.5,
+        "investedDays": 27,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": 0.747,
+        "maxDrawdownPct": -8.446,
+        "trades": 3,
+        "winPct": 66.67,
+        "avgNetPerTradePct": 0.342,
+        "profitFactor": 1.123,
+        "avgHoldingDays": 5.67,
+        "investedDays": 14,
+        "sessions": 243
+      },
+      "trainScore": -14.8836,
+      "2026": {
+        "returnPct": -9.278,
+        "maxDrawdownPct": -20.419,
+        "trades": 5,
+        "winPct": 60.0,
+        "avgNetPerTradePct": -1.636,
+        "profitFactor": 0.56,
+        "avgHoldingDays": 4.2,
+        "investedDays": 16,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": -8.165,
+          "maxDrawdownPct": -11.149,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -3.896,
+          "profitFactor": 0.292,
+          "avgHoldingDays": 5.0,
+          "investedDays": 8,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": -5.458,
+          "maxDrawdownPct": -10.434,
+          "trades": 2,
+          "winPct": 50.0,
+          "avgNetPerTradePct": -2.44,
+          "profitFactor": 0.477,
+          "avgHoldingDays": 3.5,
+          "investedDays": 5,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": 4.491,
+          "maxDrawdownPct": -1.098,
+          "trades": 1,
+          "winPct": 100.0,
+          "avgNetPerTradePct": 4.492,
+          "profitFactor": null,
+          "avgHoldingDays": 4.0,
+          "investedDays": 3,
+          "sessions": 63
+        }
+      }
+    },
+    {
+      "id": "2DAY_DIVE_3_TP5",
+      "family": "dip",
+      "params": {
+        "id": "2DAY_DIVE_3_TP5",
+        "family": "dip",
+        "dip": -0.03,
+        "tp": 0.05,
+        "sl": 0.1,
+        "hold": 10
+      },
+      "2024": {
+        "returnPct": -11.981,
+        "maxDrawdownPct": -16.092,
+        "trades": 8,
+        "winPct": 37.5,
+        "avgNetPerTradePct": -1.514,
+        "profitFactor": 0.2,
+        "avgHoldingDays": 5.25,
+        "investedDays": 34,
+        "sessions": 242
+      },
+      "2025": {
+        "returnPct": -4.664,
+        "maxDrawdownPct": -14.749,
+        "trades": 8,
+        "winPct": 62.5,
+        "avgNetPerTradePct": -0.49,
+        "profitFactor": 0.681,
+        "avgHoldingDays": 4.38,
+        "investedDays": 27,
+        "sessions": 243
+      },
+      "trainScore": -20.6844,
+      "2026": {
+        "returnPct": 8.394,
+        "maxDrawdownPct": -15.171,
+        "trades": 13,
+        "winPct": 76.92,
+        "avgNetPerTradePct": 0.79,
+        "profitFactor": 1.285,
+        "avgHoldingDays": 3.15,
+        "investedDays": 28,
+        "sessions": 184
+      },
+      "2026Regimes": {
+        "26Q1": {
+          "returnPct": 3.074,
+          "maxDrawdownPct": -13.463,
+          "trades": 6,
+          "winPct": 83.33,
+          "avgNetPerTradePct": 0.669,
+          "profitFactor": 1.271,
+          "avgHoldingDays": 2.83,
+          "investedDays": 11,
+          "sessions": 55
+        },
+        "26Q2": {
+          "returnPct": 9.698,
+          "maxDrawdownPct": -5.289,
+          "trades": 4,
+          "winPct": 75.0,
+          "avgNetPerTradePct": 2.442,
+          "profitFactor": 2.583,
+          "avgHoldingDays": 2.75,
+          "investedDays": 7,
+          "sessions": 61
+        },
+        "26Q3": {
+          "returnPct": -4.138,
+          "maxDrawdownPct": -10.435,
+          "trades": 3,
+          "winPct": 66.67,
+          "avgNetPerTradePct": -1.171,
+          "profitFactor": 0.603,
+          "avgHoldingDays": 4.33,
+          "investedDays": 10,
+          "sessions": 63
+        }
+      }
+    }
+  ],
+  "warnings": [
+    "Repeated research of 2026 by prior experiments means it is NOT truly pristine researcher-level holdout, even though this script never ranks on 2026.",
+    "Hundreds of related parameter combinations have multiple-testing / data-snooping bias, despite robust 2024/25 scoring.",
+    "ETF daily 2x reset creates compounding and drawdown risk; BUY_HOLD may outperform swing traders in trending markets.",
+    "Daily OHLC is insufficient to test a 2-minute Bottom/Top signal. Intraday stop-profit order uses conservative assumptions.",
+    "The whole-account paper strategy assumes full capital invested in one ETF position at a time; no partial fills, margin or intraday funding constraints.",
+    "Adjustment factors use Yahoo daily data, not broker fill confirmations. Commission minimum, ETF premium-discount and financing omitted.",
+    "Selecting winners based on 2026 rankings after inspecting test results would invalidate any independence claims.",
+    "Backtested risk and performance do not guarantee future outcomes."
+  ],
+  "elapsedSeconds": 84.1
+}
