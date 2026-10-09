@@ -1,6 +1,6 @@
 {
-  "version": "00675L_SMA5_REENTRY_V1",
-  "generatedAtUTC": "2026-10-09T15:25:28.194253+00:00",
+  "version": "00675L_SMA5_ENTRY_EXIT_V2",
+  "generatedAtUTC": "2026-10-09T15:27:46.858575+00:00",
   "ticker": "00675L.TW",
   "signal": "^TWII",
   "period": [
@@ -9,8 +9,8 @@
   ],
   "capitalNTD": 1000000,
   "samples": 2128,
-  "sharedSellRule": "3 consecutive TWII closes < own SMA10*0.98 OR TWII daily close-to-close return <= -4%",
-  "reentryInterpretation": "When FLAT, prior completed TWII close > prior same-day SMA5, no +1% buffer. Not a crossover-only requirement.",
+  "sharedSellRule": "All models: TWII daily drop >= 4% as panic exit; except SMA5_EXIT, 3-close trend exit is TWII < SMA10*0.98, while SMA5_EXIT uses TWII < SMA5*0.98",
+  "reentryInterpretation": "SMA5_ABOVE and SMA5_EXIT: while FLAT, previous completed TWII close > same-day SMA5 with zero buffer and no crossover requirement. Other models test SMA5 buffers, 2-day confirmation or crosses.",
   "fills": "The day after signal at ETF open, including gap. Full available cash with integer shares; no margin.",
   "initialPosition": "On 2018-01-02 open, force buy exactly as historical original, irrespective of entry indicator.",
   "feeRateEachSide": 0.001425,
@@ -233,6 +233,42 @@
           "riskOffSessions": 10
         }
       }
+    },
+    "SMA5_EXIT": {
+      "continuous": {
+        "returnPct": 2537.454,
+        "endNTD": 26374541.59,
+        "mddPct": -49.491,
+        "riskOffSells": 13,
+        "riskOnReentries": 13,
+        "riskOffSessions": 60
+      },
+      "segments": {
+        "training_2018_2023": {
+          "returnPct": 362.613,
+          "endNTD": 4626125.19,
+          "mddPct": -49.491,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 34
+        },
+        "validation_2024_2025": {
+          "returnPct": 152.893,
+          "endNTD": 2528931.21,
+          "mddPct": -42.917,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 16
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10
+        }
+      }
     }
   },
   "dataQuality": {
@@ -259,7 +295,7 @@
   },
   "warnings": [
     "2018–2026 has been analyzed in earlier studies; 2026 is NOT a pristine holdout.",
-    "SMA5 variants are exploratory: if their results are inspected to choose a winner, consider the selection hindsight-biased.",
+    "SMA5 entry and exit variants are exploratory; using their already observed results to choose a winner is hindsight-biased.",
     "Historical adjusted Yahoo prices can differ from TradingView corporate-action price policy.",
     "Fast re-entry can increase round trips; report turnover and risk in addition to return.",
     "Independent split tests reset to NT$1m at the segment start, while annual rows are continuous compounding."
