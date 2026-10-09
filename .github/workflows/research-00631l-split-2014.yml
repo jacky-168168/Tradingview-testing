@@ -1,0 +1,114 @@
+name: 00631L Split-Safe 2014-2026 Backtest
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/research-00631l-split-2014.yml'
+      - 'tw-stock-dashboard/scripts/research_00631l_split_2014_2026.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: 00631l-split-backtest-2014
+  cancel-in-progress: false
+jobs:
+  research-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Load original 00675L comparison cost assumptions
+        shell: bash
+        run: |
+          set -euo pipefail
+          b='research/00675l-vwma5-vs-sma10-2018-2026'
+          git fetch --no-tags origin "+refs/heads/$b:refs/remotes/origin/$b"
+          mkdir -p /tmp/legacy_src
+          for file in research_00675l_swing_grid research_00675l_near_hold_switch research_00675l_ma_family_2020_2026 research_00675l_vwma5_sma10_2018_2026; do
+            git show "origin/$b:tw-stock-dashboard/src/$file.py" > "/tmp/legacy_src/$file.py"
+          done
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Check official March 2026 split then run full 2014-2026 and matched 2018-2026
+        env:
+          PYTHONPATH: /tmp/legacy_src:${{ github.workspace }}/tw-stock-dashboard/src
+        run: python -u tw-stock-dashboard/scripts/research_00631l_split_2014_2026.py
+      - name: Assert stock split is not a 95% loss and website models are valid
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=Path("tw-stock-dashboard/docs/data/research/etf_history")
+          ix=json.loads((d/"index.json").read_text())
+          st=next(x for x in ix["studies"] if x["id"]=="00631_split_v1")
+          report=json.loads((d/"00631l_full_split_v1/summary.json").read_text())
+          split=report["splitQuality"]
+          assert split["ratio"]==22
+          assert split["lastPreSplitTradingDate"]=="2026-03-24"
+          assert split["firstPostSplitTradingDate"]=="2026-03-31"
+          assert abs(split["usedAdjustedPreClose"]-443.15/22)<3
+          assert abs(split["usedAdjustedPostClose"]-19.26)<3
+          assert abs(split["postPreAdjustedPct"])<15
+          assert split["adjustedEtfDailyReturnsAbove52Pct"]==0
+          assert all(not ("2026-03-25"<=x<="2026-03-30") for x in split["zeroVolumeQuoteRowsDropped"] if x not in split["haltedQuotesRemoved"])
+          assert len(st["models"])==18 and len(report["comparison2018"])==9
+          for model in st["models"]:
+            path=d/model["curve"]
+            p=json.loads(path.read_text())
+            assert len(p["points"])==model["sessions"]
+            assert p["points"][-1][0]=="2026-10-07"
+            assert p["points"][-1][1]==model["endTWD"]
+            assert "2026-03-25" not in [x[0] for x in p["points"]]
+            assert "2026-03-26" not in [x[0] for x in p["points"]]
+            assert "2026-03-27" not in [x[0] for x in p["points"]]
+            assert "2026-03-30" not in [x[0] for x in p["points"]]
+          assert st["sessions"]>2700
+          print("PASS 22:1 split-safe: 18 models, 9 comparisons, actual traded-only dates")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 00631L-2014-2026-SplitSafe-00675L-Comparison
+          path: |
+            tw-stock-dashboard/docs/data/research/etf_history/index.json
+            tw-stock-dashboard/docs/data/research/etf_history/00631l_full_split_v1/
+            tw-stock-dashboard/docs/data/research/etf_history/curves/00631_split_v1__*.json
+          retention-days: 90
+      - name: Commit archived summary, comparisons and complete curves
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_history/index.json tw-stock-dashboard/docs/data/research/etf_history/00631l_full_split_v1 tw-stock-dashboard/docs/data/research/etf_history/curves/00631_split_v1__*.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: archive split-safe 00631L 2014-26 vs 00675L 2018-26 comparisons"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+  deploy:
+    needs: research-and-publish
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - name: Deploy split-safe 00631L history into research index
+        id: deployment
+        uses: actions/deploy-pages@v4
