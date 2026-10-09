@@ -1,0 +1,37 @@
+/* Only the historical ETF archive: never style A/D/F/G strategy screens. */
+#etfHistoryView .etf-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+#etfHistoryView h2{margin:0;font-size:21px}
+#etfHistoryView h3{margin:0 0 9px;font-size:16px}
+#etfHistoryView .etf-intro{max-width:950px;line-height:1.8}
+#etfHistoryView .etf-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0}
+#etfHistoryView select,#etfHistoryView input{font-size:13px;min-width:145px}
+#etfHistoryView button{cursor:pointer}
+#etfHistoryView button:disabled{cursor:not-allowed;opacity:.4}
+#etfHistoryView .etf-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:12px 0}
+#etfHistoryView .etf-stat{background:#f8fafc;border:1px solid #e2e8f0;padding:12px;border-radius:11px;min-width:0}
+#etfHistoryView .etf-stat span{color:#64748b;font-size:12px;display:block;margin-bottom:5px}
+#etfHistoryView .etf-stat strong{font-size:20px;font-weight:850;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#etfHistoryView .etf-note{background:#f8fafc;border-left:3px solid #94a3b8;padding:10px 13px;line-height:1.7;font-size:12px;color:#475569;margin-top:10px}
+#etfHistoryView .etf-table-scroll{overflow:auto;max-height:525px;border:1px solid #e5e7eb;border-radius:10px}
+#etfHistoryView table{font-size:12px;min-width:850px;white-space:nowrap}
+#etfHistoryView th{position:sticky;top:0;background:#f8fafc;z-index:1}
+#etfHistoryView tbody tr[data-etf-model]{cursor:pointer}
+#etfHistoryView tbody tr[data-etf-model]:hover{background:#f1f5f9}
+#etfHistoryView tbody tr.etf-active{background:#dbeafe}
+#etfHistoryView .etf-grid-table{max-height:320px}
+#etfHistoryView .etf-green{color:#047857;font-weight:800}
+#etfHistoryView .etf-red{color:#b91c1c;font-weight:800}
+#etfHistoryView .etf-links{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;line-height:1.8}
+#etfHistoryView .etf-links a{color:#2563eb;text-decoration:none;font-weight:700}
+#etfHistoryView .etf-links a:hover{text-decoration:underline}
+#etfHistoryView .etf-curve{width:100%;height:auto;min-width:330px;max-height:270px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px}
+#etfHistoryView .etf-detail-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:14px}
+#etfHistoryView .etf-chart-wrap{min-width:0;overflow:auto}
+#etfHistoryView .etf-grid-search{min-width:240px}
+#etfHistoryView .etf-status{min-height:16px;color:#475569;font-size:12px}
+#etfHistoryView .etf-empty{padding:18px;color:#64748b}
+#etfHistoryView .etf-trades-table{min-width:700px}
+#etfHistoryView .etf-kicker{font-size:12px;color:#64748b}
+#etfHistoryView .etf-warning{color:#92400e}
+@media(max-width:900px){#etfHistoryView .etf-detail-grid{grid-template-columns:1fr}#etfHistoryView .etf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#etfHistoryView .etf-stat strong{font-size:17px}}
+@media(max-width:500px){#etfHistoryView .etf-toolbar{align-items:stretch}#etfHistoryView .etf-toolbar label{width:100%}#etfHistoryView select,#etfHistoryView input{max-width:100%;width:100%}}
