@@ -1,0 +1,80 @@
+name: QLD +2x Nasdaq ETF 2018-2026 SMA VWMA Benchmark
+on:
+  push:
+    branches: [research/qld-sma-vwma-2018-2026]
+    paths:
+      - 'tw-stock-dashboard/src/research_qld_2018_2026.py'
+      - '.github/workflows/etf-qld-2018-2026.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: qld-2018-2026-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            qqq-vt-2018-2026-${{ runner.os }}-
+            00675l-vwma-sma-2018-${{ runner.os }}-
+      - name: Install financial research packages
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Execute historical 2018-2026 QLD buy-hold and trend switching
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_qld_2018_2026.py
+          python -u src/research_qld_2018_2026.py
+      - name: Verify comparable QLD vs QQQ and NDX 2203 daily portfolio values
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import json,math
+          from pathlib import Path
+          p=Path("docs/data/research/qld_sma_vwma_2018_2026")
+          x=json.loads((p/"summary.json").read_text())
+          d=json.loads((p/"trades_daily_equity.json").read_text())["QLD"]
+          assert x["ticker"]=="QLD" and x["account"]["startTWD"]==1000000
+          assert len(x["qlDResults"])==4
+          assert len(x["benchmarkSignalQLDResults"])==3
+          assert len(x["qqqVerification"])==4
+          assert x["qqqVerification"][0]["netReturnTWD"]==444.202
+          assert x["qqqVerification"][1]["netReturnUSD"]==230.283
+          assert x["qqqVerification"][2]["netReturnUSD"]==265.786
+          same=set()
+          for z in x["qlDResults"]:
+            same.add((z["entryDate"],z["lastDate"],z["sessions"]))
+            curve=d["ownSignals"][z["strategy"]]["equityUSD"]
+            assert len(curve)==z["sessions"]==2203
+            assert math.isclose(curve[-1]["equity"],z["finalUSD"],abs_tol=.05)
+            assert math.isclose(z["finalUSD"]*x["account"]["lastUSD_TWD"],z["finalTWD"],abs_tol=1)
+            assert set(z["yearlyContinuous"])=={str(i) for i in range(2018,2027)}
+          for z in x["benchmarkSignalQLDResults"]:
+            same.add((z["entryDate"],z["lastDate"],z["sessions"]))
+            curve=d["underlyingSignals"][z["strategy"]]["equityUSD"]
+            assert len(curve)==z["sessions"]==2203
+            assert math.isclose(curve[-1]["equity"],z["finalUSD"],abs_tol=.05)
+          assert len(same)==1 and list(same)[0][0]=="2018-01-02" and list(same)[0][1]=="2026-10-07"
+          print("PASS QLD: 7 strategies, 2203 sessions each, 2018-26 fully compounded 1m TWD account, QQQ exact old-study parity")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qld-nasdaq-2x-2018-2026-sma10-vwma5
+          path: tw-stock-dashboard/docs/data/research/qld_sma_vwma_2018_2026/*.json
+      - name: Archive reproducible QLD results on isolated branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/qld_sma_vwma_2018_2026/
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive QLD 2018-26 fully compounded daily ETF trend backtest"
+            git push origin HEAD:research/qld-sma-vwma-2018-2026
+          fi
