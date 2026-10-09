@@ -148,13 +148,13 @@ function archive(which){
   head.innerHTML="<tr><th>00675L 交易方法</th><th>2024 淨報酬</th><th>2025 淨報酬</th><th>2026 淨報酬</th><th>連續 2024～26</th><th>最後資產</th><th>最大回撤</th><th>完整賣出／買回</th><th>風險空手交易日</th></tr>";
   note.textContent="2024～2026/10/7，100萬元起始、獲利100%複投、ETF買賣費稅與雙邊滑價。先依2024～25年選候選，再評估2026年；但2026行情先前已多次被研究，不是全新獨立驗證。1091組參數中選出實際多次完整出場與重新買回的7種，對照長抱。表格按完整歷史報酬排序僅供閱讀，不能把它當未來績效排名。點選策略可查看每日資金曲線與月報酬。";
   const label={
-   CRASH_3_0.1_RE10_Gtwii_below60_W0.0:"急跌10%＋大盤偏弱；站回EMA10",
-   CRASH_5_0.1_RE10_Gtwii_below60_W0.0:"5日急跌風控；站回EMA10",
-   MA_twii_20_O0.03_R0.0_C1_W0.0:"台指跌破MA20達3%；站回MA20",
-   TRAIL_20_0.16_RE10_W0.0:"20日高點回撤16%；站回EMA10",
-   CRASH_3_0.1_RE10_Gall_W0.0:"急跌10%出場，無大盤濾網",
-   DUAL_twii_120_20_RE10_W0.5:"台指雙均線，減碼一半",
-   CRASH_5_0.06_RE20_Gall_W0.0:"急跌6%出場；站回EMA20"
+   "CRASH_3_0.1_RE10_Gtwii_below60_W0.0":"急跌10%＋大盤偏弱；站回EMA10",
+   "CRASH_5_0.1_RE10_Gtwii_below60_W0.0":"5日急跌風控；站回EMA10",
+   "MA_twii_20_O0.03_R0.0_C1_W0.0":"台指跌破MA20達3%；站回MA20",
+   "TRAIL_20_0.16_RE10_W0.0":"20日高點回撤16%；站回EMA10",
+   "CRASH_3_0.1_RE10_Gall_W0.0":"急跌10%出場，無大盤濾網",
+   "DUAL_twii_120_20_RE10_W0.5":"台指雙均線，減碼一半",
+   "CRASH_5_0.06_RE20_Gall_W0.0":"急跌6%出場；站回EMA20"
   };
   const baseline=regime00675?.baseline;
   const bh=baseline?[{id:"BUY_HOLD",continuous:baseline.continuous,2024:baseline["2024"],2025:baseline["2025"],2026:baseline["2026"]}]:[];
