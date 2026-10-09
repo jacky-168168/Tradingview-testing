@@ -1,0 +1,67 @@
+name: 00675L Continuous Hold vs Reinvest
+on:
+  push:
+    branches: [research/00675l-buyhold-vs-compound-2024-2026]
+    paths:
+      - 'tw-stock-dashboard/src/research_00675l_buyhold_compare.py'
+      - '.github/workflows/etf-00675l-hold-compare.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore historical market prices
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: 00675l-holdcompare-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            00675l-reinvest-${{ runner.os }}-
+            00675l-swing-grid-${{ runner.os }}-
+            00675l-walk-${{ runner.os }}-
+      - name: Install Python dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Compare continuous 2024-2026 hold and EMA10 reinvest
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_00675l_buyhold_compare.py
+          python src/research_00675l_buyhold_compare.py
+      - name: Validate continuous comparison
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("docs/data/research/etf_00675l_grid_2024_2026/buyhold_vs_compound_continuous.json")
+          x=json.loads(p.read_text())
+          assert x["ticker"]=="00675L.TW"
+          assert x["ema10Compound"]["returnPct"]==175.477
+          assert x["buyHold2026"]["returnPct"]==150.836
+          assert x["buyHold"]["trades"]==1
+          assert x["buyHold"]["endingNTD"]>0
+          assert x["ema10Compound"]["endingNTD"]==2754767.11
+          print("PASS 2026 buy/hold parity and frozen continuous swing, exact hold through 2026")
+          PY
+      - name: Upload verified comparison
+        uses: actions/upload-artifact@v4
+        with:
+          name: etf-00675l-buyhold-versus-full-reinvest-2024-2026
+          path: tw-stock-dashboard/docs/data/research/etf_00675l_grid_2024_2026/buyhold_vs_compound_continuous.json
+      - name: Archive results in isolated research branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_00675l_grid_2024_2026/buyhold_vs_compound_continuous.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive 00675L 2024-26 exact buy-and-hold vs compounding"
+            git push origin HEAD:research/00675l-buyhold-vs-compound-2024-2026
+          fi
