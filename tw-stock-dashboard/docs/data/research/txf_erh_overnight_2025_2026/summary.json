@@ -1,0 +1,729 @@
+{
+  "version": "TXF_ERH_TREND70_OVERNIGHT_V1",
+  "generated": "2026-10-09T20:27:20+08:00",
+  "sourcePineSha256": "bf45b473792d1dc656bf8b050f211eef33ce7e64f485c321b98dfa546bf1e3a3",
+  "researchPeriod": [
+    "2025-01-02",
+    "2026-08-31"
+  ],
+  "dataSource": "public third-party TXFR1 unadjusted continuous one-minute OHLC",
+  "cost": {
+    "contract": "TXF one large Taiwan index futures contract",
+    "pointValueTWD": 200,
+    "brokerFeeTWDPerSide": 60,
+    "simulatedSlippagePointsEachSide": 1.0,
+    "futuresTransactionTaxNotionalPerSide": 2e-05,
+    "initialEquityTWD": 1000000,
+    "position": "fixed one TXF lot maximum, no compounding contract lots",
+    "exitAtDaySessionClose": false,
+    "marginCallsModeled": false
+  },
+  "rules": {
+    "entries": "2m/5m previous-completed daily Trend>70 plus Bottom; original 3 intraday windows only",
+    "overnight_daytop": "Hold across day/night; TOP only in the original three day windows",
+    "overnight_top": "Hold across day/night; TOP emitted in both day and night sessions; no other stop",
+    "overnight_atr2": "overnight_top plus protective initial SL 2*ATR14 in all sessions",
+    "fill": "Signal at bar close, execute next valid bar open with 1-point per-side slippage.",
+    "endOfTest": "No liquidation unless TOP or SL; any final position marked with estimated exit fee (unrealized).",
+    "position": "one long TXF lot; no pyramiding; no compounding; no enforced margins"
+  },
+  "diagnostics": [
+    {
+      "timeframeMin": 2,
+      "originalStrongBottoms": 73,
+      "nightTopStrongBottoms": 73,
+      "originalTops": 234,
+      "expandedTops": 1120,
+      "nightTops": 548,
+      "nightBars": 168090
+    },
+    {
+      "timeframeMin": 5,
+      "originalStrongBottoms": 36,
+      "nightTopStrongBottoms": 36,
+      "originalTops": 130,
+      "expandedTops": 465,
+      "nightTops": 223,
+      "nightBars": 66960
+    }
+  ],
+  "evaluationWarnings": [
+    "NOT bit-exact TradingView Pine; day+night data are externally sourced one-minute bars.",
+    "Enabling TOP at night changes shared 8-bar signal cooldown; daytime Bottom signal counts may change.",
+    "Unadjusted continuous contract rolls can create unrealistically large apparent gains/losses across expiry.",
+    "Model does not identify expiry contract-month switches, apply rollover transaction costs, or force-roll physical contracts.",
+    "Open positions at sample end are marked to market, not treated as closed TOP trades.",
+    "When ATR stop is gapped through, uses next open with 1-point slippage, not favorable stop price.",
+    "No margin-call or gap execution-depth model. Returns can be unreliable at high futures leverage.",
+    "Small numbers of completed Trend70 trades cannot establish a stable edge."
+  ],
+  "results": [
+    {
+      "timeframeMin": 2,
+      "mode": "overnight_daytop",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "trades": 40,
+      "wins": 25,
+      "winRatePct": 62.5,
+      "profitFactor": 1.289,
+      "avgNetTWD": 10831.4,
+      "netPnlTWD": 501170.44,
+      "endingEquityTWD": 1501170.44,
+      "returnPct": 50.117,
+      "maxDrawdownPct": -55.909,
+      "nightExits": 0,
+      "overnightHeldTrades": 33,
+      "stopExits": 0,
+      "maxHoldHours": 526.33,
+      "openPosition": {
+        "isOpen": true,
+        "entry": "2026-08-31 09:16:00",
+        "entryPrice": 45524.0,
+        "unrealizedNetAfterEstExitCostTWD": 68156.54
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 19,
+          "realizedTradesNetTWD": -71048.86,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 928951.15
+        },
+        "2026": {
+          "closedTrades": 21,
+          "realizedTradesNetTWD": 504304.84,
+          "firstObservedEquityTWD": 928951.15,
+          "lastObservedEquityTWD": 1501170.44
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "overnight_daytop",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "trades": 19,
+      "wins": 10,
+      "winRatePct": 52.63,
+      "profitFactor": 0.848,
+      "avgNetTWD": -3739.41,
+      "netPnlTWD": -71048.85,
+      "endingEquityTWD": 928951.15,
+      "returnPct": -7.105,
+      "maxDrawdownPct": -36.997,
+      "nightExits": 0,
+      "overnightHeldTrades": 17,
+      "stopExits": 0,
+      "maxHoldHours": 526.33,
+      "openPosition": {
+        "isOpen": false,
+        "entry": null,
+        "entryPrice": null,
+        "unrealizedNetAfterEstExitCostTWD": 0
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 19,
+          "realizedTradesNetTWD": -71048.86,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 928951.15
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "overnight_daytop",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "trades": 21,
+      "wins": 15,
+      "winRatePct": 71.43,
+      "profitFactor": 1.489,
+      "avgNetTWD": 24014.52,
+      "netPnlTWD": 572219.29,
+      "endingEquityTWD": 1572219.29,
+      "returnPct": 57.222,
+      "maxDrawdownPct": -54.164,
+      "nightExits": 0,
+      "overnightHeldTrades": 16,
+      "stopExits": 0,
+      "maxHoldHours": 169.8,
+      "openPosition": {
+        "isOpen": true,
+        "entry": "2026-08-31 09:16:00",
+        "entryPrice": 45524.0,
+        "unrealizedNetAfterEstExitCostTWD": 68156.54
+      },
+      "annual": {
+        "2026": {
+          "closedTrades": 21,
+          "realizedTradesNetTWD": 504304.84,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 1572219.29
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "overnight_top",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "trades": 55,
+      "wins": 37,
+      "winRatePct": 67.27,
+      "profitFactor": 1.234,
+      "avgNetTWD": 5428.94,
+      "netPnlTWD": 298591.95,
+      "endingEquityTWD": 1298591.95,
+      "returnPct": 29.859,
+      "maxDrawdownPct": -57.023,
+      "nightExits": 25,
+      "overnightHeldTrades": 20,
+      "stopExits": 0,
+      "maxHoldHours": 97.57,
+      "openPosition": {
+        "isOpen": false,
+        "entry": null,
+        "entryPrice": null,
+        "unrealizedNetAfterEstExitCostTWD": 0
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 23,
+          "realizedTradesNetTWD": 79075.23,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 1079075.22
+        },
+        "2026": {
+          "closedTrades": 32,
+          "realizedTradesNetTWD": 219516.72,
+          "firstObservedEquityTWD": 1079075.22,
+          "lastObservedEquityTWD": 1298591.95
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "overnight_top",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "trades": 23,
+      "wins": 13,
+      "winRatePct": 56.52,
+      "profitFactor": 1.292,
+      "avgNetTWD": 3438.05,
+      "netPnlTWD": 79075.22,
+      "endingEquityTWD": 1079075.22,
+      "returnPct": 7.908,
+      "maxDrawdownPct": -22.087,
+      "nightExits": 12,
+      "overnightHeldTrades": 9,
+      "stopExits": 0,
+      "maxHoldHours": 78.03,
+      "openPosition": {
+        "isOpen": false,
+        "entry": null,
+        "entryPrice": null,
+        "unrealizedNetAfterEstExitCostTWD": 0
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 23,
+          "realizedTradesNetTWD": 79075.23,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 1079075.22
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "overnight_top",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "trades": 32,
+      "wins": 24,
+      "winRatePct": 75.0,
+      "profitFactor": 1.219,
+      "avgNetTWD": 6859.9,
+      "netPnlTWD": 219516.72,
+      "endingEquityTWD": 1219516.72,
+      "returnPct": 21.952,
+      "maxDrawdownPct": -59.533,
+      "nightExits": 13,
+      "overnightHeldTrades": 11,
+      "stopExits": 0,
+      "maxHoldHours": 97.57,
+      "openPosition": {
+        "isOpen": false,
+        "entry": null,
+        "entryPrice": null,
+        "unrealizedNetAfterEstExitCostTWD": 0
+      },
+      "annual": {
+        "2026": {
+          "closedTrades": 32,
+          "realizedTradesNetTWD": 219516.72,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 1219516.72
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "overnight_atr2",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "trades": 70,
+      "wins": 14,
+      "winRatePct": 20.0,
+      "profitFactor": 0.619,
+      "avgNetTWD": -5924.87,
+      "netPnlTWD": -414740.62,
+      "endingEquityTWD": 585259.38,
+      "returnPct": -41.474,
+      "maxDrawdownPct": -58.627,
+      "nightExits": 13,
+      "overnightHeldTrades": 3,
+      "stopExits": 56,
+      "maxHoldHours": 71.7,
+      "openPosition": {
+        "isOpen": false,
+        "entry": null,
+        "entryPrice": null,
+        "unrealizedNetAfterEstExitCostTWD": 0
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 30,
+          "realizedTradesNetTWD": 9323.37,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 1009323.37
+        },
+        "2026": {
+          "closedTrades": 40,
+          "realizedTradesNetTWD": -424064.01,
+          "firstObservedEquityTWD": 1009323.37,
+          "lastObservedEquityTWD": 585259.38
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "overnight_atr2",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "trades": 30,
+      "wins": 5,
+      "winRatePct": 16.67,
+      "profitFactor": 1.04,
+      "avgNetTWD": 310.78,
+      "netPnlTWD": 9323.37,
+      "endingEquityTWD": 1009323.37,
+      "returnPct": 0.932,
+      "maxDrawdownPct": -14.052,
+      "nightExits": 3,
+      "overnightHeldTrades": 3,
+      "stopExits": 25,
+      "maxHoldHours": 71.7,
+      "openPosition": {
+        "isOpen": false,
+        "entry": null,
+        "entryPrice": null,
+        "unrealizedNetAfterEstExitCostTWD": 0
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 30,
+          "realizedTradesNetTWD": 9323.37,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 1009323.37
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "overnight_atr2",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "trades": 40,
+      "wins": 9,
+      "winRatePct": 22.5,
+      "profitFactor": 0.502,
+      "avgNetTWD": -10601.6,
+      "netPnlTWD": -424064.0,
+      "endingEquityTWD": 575936.0,
+      "returnPct": -42.406,
+      "maxDrawdownPct": -59.089,
+      "nightExits": 10,
+      "overnightHeldTrades": 0,
+      "stopExits": 31,
+      "maxHoldHours": 11.2,
+      "openPosition": {
+        "isOpen": false,
+        "entry": null,
+        "entryPrice": null,
+        "unrealizedNetAfterEstExitCostTWD": 0
+      },
+      "annual": {
+        "2026": {
+          "closedTrades": 40,
+          "realizedTradesNetTWD": -424064.01,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 575936.0
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "overnight_daytop",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "trades": 21,
+      "wins": 13,
+      "winRatePct": 61.9,
+      "profitFactor": 1.089,
+      "avgNetTWD": 4367.91,
+      "netPnlTWD": 112239.66,
+      "endingEquityTWD": 1112239.66,
+      "returnPct": 11.224,
+      "maxDrawdownPct": -54.803,
+      "nightExits": 0,
+      "overnightHeldTrades": 20,
+      "stopExits": 0,
+      "maxHoldHours": 313.33,
+      "openPosition": {
+        "isOpen": true,
+        "entry": "2026-08-31 09:05:00",
+        "entryPrice": 45761.0,
+        "unrealizedNetAfterEstExitCostTWD": 20756.54
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 11,
+          "realizedTradesNetTWD": 137407.9,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 1137407.88
+        },
+        "2026": {
+          "closedTrades": 10,
+          "realizedTradesNetTWD": -45681.71,
+          "firstObservedEquityTWD": 1137407.88,
+          "lastObservedEquityTWD": 1112239.66
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "overnight_daytop",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "trades": 11,
+      "wins": 6,
+      "winRatePct": 54.55,
+      "profitFactor": 1.555,
+      "avgNetTWD": 12491.63,
+      "netPnlTWD": 137407.88,
+      "endingEquityTWD": 1137407.88,
+      "returnPct": 13.741,
+      "maxDrawdownPct": -22.614,
+      "nightExits": 0,
+      "overnightHeldTrades": 11,
+      "stopExits": 0,
+      "maxHoldHours": 264.17,
+      "openPosition": {
+        "isOpen": false,
+        "entry": null,
+        "entryPrice": null,
+        "unrealizedNetAfterEstExitCostTWD": 0
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 11,
+          "realizedTradesNetTWD": 137407.9,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 1137407.88
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "overnight_daytop",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "trades": 10,
+      "wins": 7,
+      "winRatePct": 70.0,
+      "profitFactor": 0.942,
+      "avgNetTWD": -4568.17,
+      "netPnlTWD": -25168.22,
+      "endingEquityTWD": 974831.78,
+      "returnPct": -2.517,
+      "maxDrawdownPct": -58.669,
+      "nightExits": 0,
+      "overnightHeldTrades": 9,
+      "stopExits": 0,
+      "maxHoldHours": 313.33,
+      "openPosition": {
+        "isOpen": true,
+        "entry": "2026-08-31 09:05:00",
+        "entryPrice": 45761.0,
+        "unrealizedNetAfterEstExitCostTWD": 20756.54
+      },
+      "annual": {
+        "2026": {
+          "closedTrades": 10,
+          "realizedTradesNetTWD": -45681.71,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 974831.78
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "overnight_top",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "trades": 25,
+      "wins": 14,
+      "winRatePct": 56.0,
+      "profitFactor": 0.552,
+      "avgNetTWD": -22111.89,
+      "netPnlTWD": -532283.63,
+      "endingEquityTWD": 467716.37,
+      "returnPct": -53.228,
+      "maxDrawdownPct": -77.584,
+      "nightExits": 15,
+      "overnightHeldTrades": 18,
+      "stopExits": 0,
+      "maxHoldHours": 160.75,
+      "openPosition": {
+        "isOpen": true,
+        "entry": "2026-08-31 09:05:00",
+        "entryPrice": 45761.0,
+        "unrealizedNetAfterEstExitCostTWD": 20756.54
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 13,
+          "realizedTradesNetTWD": -57784.98,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 942215.03
+        },
+        "2026": {
+          "closedTrades": 12,
+          "realizedTradesNetTWD": -495012.18,
+          "firstObservedEquityTWD": 942215.03,
+          "lastObservedEquityTWD": 467716.37
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "overnight_top",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "trades": 13,
+      "wins": 7,
+      "winRatePct": 53.85,
+      "profitFactor": 0.77,
+      "avgNetTWD": -4445.0,
+      "netPnlTWD": -57784.97,
+      "endingEquityTWD": 942215.03,
+      "returnPct": -5.778,
+      "maxDrawdownPct": -24.411,
+      "nightExits": 8,
+      "overnightHeldTrades": 10,
+      "stopExits": 0,
+      "maxHoldHours": 143.75,
+      "openPosition": {
+        "isOpen": false,
+        "entry": null,
+        "entryPrice": null,
+        "unrealizedNetAfterEstExitCostTWD": 0
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 13,
+          "realizedTradesNetTWD": -57784.98,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 942215.03
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "overnight_top",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "trades": 12,
+      "wins": 7,
+      "winRatePct": 58.33,
+      "profitFactor": 0.497,
+      "avgNetTWD": -41251.02,
+      "netPnlTWD": -474498.66,
+      "endingEquityTWD": 525501.34,
+      "returnPct": -47.45,
+      "maxDrawdownPct": -74.484,
+      "nightExits": 7,
+      "overnightHeldTrades": 8,
+      "stopExits": 0,
+      "maxHoldHours": 160.75,
+      "openPosition": {
+        "isOpen": true,
+        "entry": "2026-08-31 09:05:00",
+        "entryPrice": 45761.0,
+        "unrealizedNetAfterEstExitCostTWD": 20756.54
+      },
+      "annual": {
+        "2026": {
+          "closedTrades": 12,
+          "realizedTradesNetTWD": -495012.18,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 525501.34
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "overnight_atr2",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "trades": 33,
+      "wins": 6,
+      "winRatePct": 18.18,
+      "profitFactor": 0.708,
+      "avgNetTWD": -5198.62,
+      "netPnlTWD": -87239.66,
+      "endingEquityTWD": 912760.34,
+      "returnPct": -8.724,
+      "maxDrawdownPct": -26.302,
+      "nightExits": 8,
+      "overnightHeldTrades": 2,
+      "stopExits": 27,
+      "maxHoldHours": 70.33,
+      "openPosition": {
+        "isOpen": true,
+        "entry": "2026-08-31 10:40:00",
+        "entryPrice": 45442.0,
+        "unrealizedNetAfterEstExitCostTWD": 84556.54
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 17,
+          "realizedTradesNetTWD": -77248.06,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 922751.96
+        },
+        "2026": {
+          "closedTrades": 16,
+          "realizedTradesNetTWD": -94306.4,
+          "firstObservedEquityTWD": 922751.96,
+          "lastObservedEquityTWD": 912760.34
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "overnight_atr2",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "trades": 17,
+      "wins": 2,
+      "winRatePct": 11.76,
+      "profitFactor": 0.603,
+      "avgNetTWD": -4544.0,
+      "netPnlTWD": -77248.04,
+      "endingEquityTWD": 922751.96,
+      "returnPct": -7.725,
+      "maxDrawdownPct": -9.672,
+      "nightExits": 4,
+      "overnightHeldTrades": 1,
+      "stopExits": 15,
+      "maxHoldHours": 70.33,
+      "openPosition": {
+        "isOpen": false,
+        "entry": null,
+        "entryPrice": null,
+        "unrealizedNetAfterEstExitCostTWD": 0
+      },
+      "annual": {
+        "2025": {
+          "closedTrades": 17,
+          "realizedTradesNetTWD": -77248.06,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 922751.96
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "overnight_atr2",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "trades": 16,
+      "wins": 4,
+      "winRatePct": 25.0,
+      "profitFactor": 0.76,
+      "avgNetTWD": -5894.15,
+      "netPnlTWD": -9991.61,
+      "endingEquityTWD": 990008.39,
+      "returnPct": -0.999,
+      "maxDrawdownPct": -24.611,
+      "nightExits": 4,
+      "overnightHeldTrades": 1,
+      "stopExits": 12,
+      "maxHoldHours": 22.33,
+      "openPosition": {
+        "isOpen": true,
+        "entry": "2026-08-31 10:40:00",
+        "entryPrice": 45442.0,
+        "unrealizedNetAfterEstExitCostTWD": 84556.54
+      },
+      "annual": {
+        "2026": {
+          "closedTrades": 16,
+          "realizedTradesNetTWD": -94306.4,
+          "firstObservedEquityTWD": 1000000.0,
+          "lastObservedEquityTWD": 990008.39
+        }
+      }
+    }
+  ],
+  "durationSeconds": 17.0
+}
