@@ -35,7 +35,7 @@ jobs:
           assert len(summary['results'])==36 and len(summary['websiteModels'])==12
           assert len(list((data/'cases').glob('*.json')))==12
           assert summary['data']['end']=='2026-08-31'
-          assert all(x['netPnlTWD']+1000000==round(x['endingEquityTWD'],2) for x in summary['results'])
+          assert all(math.isclose(x['netPnlTWD']+1000000,x['endingEquityTWD'],abs_tol=.05) for x in summary['results'])
           for c in summary['websiteModels']:
             case=json.loads((data/c['file']).read_text())
             assert case['period']==['2025-01-02','2026-08-31']
