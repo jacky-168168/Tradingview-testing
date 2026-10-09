@@ -1,0 +1,35 @@
+name: Verify Date-Locked TWSE Risk Inputs
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-risk-date.yml'
+      - 'tw-stock-dashboard/src/risk.py'
+      - 'tw-stock-dashboard/tests/test_market_risk_date.py'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas requests
+      - name: Mock regression tests (date mismatch, holiday, historical reporting)
+        run: python -m unittest discover -s tw-stock-dashboard/tests -p test_market_risk_date.py -v
+      - name: Live official as-of 2026-10-08 TWSE score source check
+        working-directory: tw-stock-dashboard
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from risk import breadth,foreign_market_net
+          date="2026-10-08"
+          u,d=breadth(date);f=foreign_market_net(date)
+          assert 300<u<800 and 300<d<900,(u,d)
+          assert -2000<f<2000,f
+          print(f"PASS as-of={date} up={u} down={d} foreignNetNTD100M={f:.3f}")
+          print("PASS frozen dates cannot silently mix refreshed latest breadth/foreign figures.")
+          PY
