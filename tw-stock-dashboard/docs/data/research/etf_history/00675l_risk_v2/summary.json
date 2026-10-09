@@ -1,0 +1,957 @@
+{
+  "version": "00675L_EXIT_ENTRY_EXPERIMENT_2018_2026_V2",
+  "generatedAtUTC": "2026-10-09T15:09:18.452135+00:00",
+  "instrument": "00675L.TW",
+  "signal": "^TWII",
+  "range": [
+    "2018-01-02",
+    "2026-10-07"
+  ],
+  "capital": 1000000,
+  "method": "Completed previous close signals; next session open fills. 100% available cash invested; no borrowing; integer ETF units; ETF adjusted OHLC and index from Yahoo.",
+  "costs": {
+    "brokerEachSide": 0.001425,
+    "sellTax": 0.001,
+    "slippageEachSide": 0.001
+  },
+  "legacy": {
+    "originalArchivedReturnPct": 4110.755,
+    "refetchedReturnPct": 4110.755,
+    "deltaPctPoints": 0.0,
+    "exactAlgorithmParity": true
+  },
+  "dataQuality": {
+    "firstHistoricalDate": "2017-01-03",
+    "lastDate": "2026-10-07",
+    "totalTradingDays": 2128,
+    "indexVolumeValidDays": 2120,
+    "indexVolumeValidPct": 99.6241,
+    "indexVolumeMissingDates": [
+      "2019-12-04",
+      "2019-12-05",
+      "2019-12-09",
+      "2019-12-10",
+      "2019-12-18",
+      "2022-02-07",
+      "2024-01-15",
+      "2025-01-21"
+    ],
+    "indexVolumeUnique": 2079,
+    "etfPriceAdjFactorRange": [
+      1.0,
+      1.0
+    ]
+  },
+  "variants": {
+    "BASE": {
+      "continuous": {
+        "returnPct": 4110.755,
+        "endNTD": 42107551.24,
+        "mddPct": -35.378,
+        "riskOffSells": 20,
+        "riskOnReentries": 20,
+        "riskOffSessions": 222
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 496.033,
+          "endNTD": 5960331.48,
+          "mddPct": -35.378,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 176
+        },
+        "validation_2024_2025": {
+          "returnPct": 177.122,
+          "endNTD": 2771220.75,
+          "mddPct": -33.437,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 44
+        },
+        "audit_2026": {
+          "returnPct": 149.512,
+          "endNTD": 2495124.97,
+          "mddPct": -33.446,
+          "riskOffSells": 1,
+          "riskOnReentries": 1,
+          "riskOffSessions": 2
+        }
+      }
+    },
+    "EXIT_2": {
+      "continuous": {
+        "returnPct": 3040.967,
+        "endNTD": 31409667.71,
+        "mddPct": -28.225,
+        "riskOffSells": 32,
+        "riskOnReentries": 32,
+        "riskOffSessions": 333
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 420.522,
+          "endNTD": 5205218.22,
+          "mddPct": -28.225,
+          "riskOffSells": 21,
+          "riskOnReentries": 21,
+          "riskOffSessions": 247
+        },
+        "validation_2024_2025": {
+          "returnPct": 208.104,
+          "endNTD": 3081037.82,
+          "mddPct": -22.749,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 57
+        },
+        "audit_2026": {
+          "returnPct": 91.687,
+          "endNTD": 1916870.26,
+          "mddPct": -25.564,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 29
+        }
+      }
+    },
+    "EXIT_1": {
+      "continuous": {
+        "returnPct": 1763.09,
+        "endNTD": 18630895.48,
+        "mddPct": -38.586,
+        "riskOffSells": 47,
+        "riskOnReentries": 47,
+        "riskOffSessions": 527
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 361.849,
+          "endNTD": 4618493.32,
+          "mddPct": -30.247,
+          "riskOffSells": 30,
+          "riskOnReentries": 30,
+          "riskOffSessions": 381
+        },
+        "validation_2024_2025": {
+          "returnPct": 120.324,
+          "endNTD": 2203243.45,
+          "mddPct": -38.586,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 100
+        },
+        "audit_2026": {
+          "returnPct": 79.204,
+          "endNTD": 1792044.08,
+          "mddPct": -22.786,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 46
+        }
+      }
+    },
+    "ENTRY_2": {
+      "continuous": {
+        "returnPct": 3498.507,
+        "endNTD": 35985074.85,
+        "mddPct": -35.462,
+        "riskOffSells": 19,
+        "riskOnReentries": 19,
+        "riskOffSessions": 260
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 466.79,
+          "endNTD": 5667901.32,
+          "mddPct": -35.462,
+          "riskOffSells": 14,
+          "riskOnReentries": 14,
+          "riskOffSessions": 201
+        },
+        "validation_2024_2025": {
+          "returnPct": 169.238,
+          "endNTD": 2692378.78,
+          "mddPct": -28.623,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 56
+        },
+        "audit_2026": {
+          "returnPct": 130.799,
+          "endNTD": 2307988.14,
+          "mddPct": -33.446,
+          "riskOffSells": 1,
+          "riskOnReentries": 1,
+          "riskOffSessions": 3
+        }
+      }
+    },
+    "ENTRY_3": {
+      "continuous": {
+        "returnPct": 3068.43,
+        "endNTD": 31684301.84,
+        "mddPct": -38.69,
+        "riskOffSells": 19,
+        "riskOnReentries": 19,
+        "riskOffSessions": 291
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 403.178,
+          "endNTD": 5031776.06,
+          "mddPct": -38.69,
+          "riskOffSells": 14,
+          "riskOnReentries": 14,
+          "riskOffSessions": 227
+        },
+        "validation_2024_2025": {
+          "returnPct": 161.138,
+          "endNTD": 2611375.61,
+          "mddPct": -28.168,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 60
+        },
+        "audit_2026": {
+          "returnPct": 136.011,
+          "endNTD": 2360106.77,
+          "mddPct": -33.446,
+          "riskOffSells": 1,
+          "riskOnReentries": 1,
+          "riskOffSessions": 4
+        }
+      }
+    },
+    "IDX_DROP_2": {
+      "continuous": {
+        "returnPct": 3150.426,
+        "endNTD": 32504263.91,
+        "mddPct": -38.819,
+        "riskOffSells": 37,
+        "riskOnReentries": 37,
+        "riskOffSessions": 420
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 456.215,
+          "endNTD": 5562149.02,
+          "mddPct": -28.96,
+          "riskOffSells": 22,
+          "riskOnReentries": 22,
+          "riskOffSessions": 279
+        },
+        "validation_2024_2025": {
+          "returnPct": 130.085,
+          "endNTD": 2300851.8,
+          "mddPct": -38.819,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 94
+        },
+        "audit_2026": {
+          "returnPct": 148.58,
+          "endNTD": 2485804.49,
+          "mddPct": -20.984,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 47
+        }
+      }
+    },
+    "IDX_DROP_3": {
+      "continuous": {
+        "returnPct": 3014.559,
+        "endNTD": 31145594.62,
+        "mddPct": -33.55,
+        "riskOffSells": 27,
+        "riskOnReentries": 27,
+        "riskOffSessions": 294
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 466.138,
+          "endNTD": 5661379.32,
+          "mddPct": -32.187,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 212
+        },
+        "validation_2024_2025": {
+          "returnPct": 147.885,
+          "endNTD": 2478853.41,
+          "mddPct": -33.55,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 54
+        },
+        "audit_2026": {
+          "returnPct": 117.217,
+          "endNTD": 2172167.05,
+          "mddPct": -30.827,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 28
+        }
+      }
+    },
+    "IDX_DROP_4": {
+      "continuous": {
+        "returnPct": 4194.082,
+        "endNTD": 42940824.72,
+        "mddPct": -30.792,
+        "riskOffSells": 21,
+        "riskOnReentries": 21,
+        "riskOffSessions": 249
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 477.627,
+          "endNTD": 5776267.05,
+          "mddPct": -30.552,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 183
+        },
+        "validation_2024_2025": {
+          "returnPct": 188.137,
+          "endNTD": 2881373.18,
+          "mddPct": -30.792,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 46
+        },
+        "audit_2026": {
+          "returnPct": 152.515,
+          "endNTD": 2525145.67,
+          "mddPct": -23.419,
+          "riskOffSells": 2,
+          "riskOnReentries": 2,
+          "riskOffSessions": 20
+        }
+      }
+    },
+    "ETF_DROP_5": {
+      "continuous": {
+        "returnPct": 2522.836,
+        "endNTD": 26228360.33,
+        "mddPct": -37.962,
+        "riskOffSells": 34,
+        "riskOnReentries": 34,
+        "riskOffSessions": 360
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 448.421,
+          "endNTD": 5484210.55,
+          "mddPct": -30.552,
+          "riskOffSells": 20,
+          "riskOnReentries": 20,
+          "riskOffSessions": 240
+        },
+        "validation_2024_2025": {
+          "returnPct": 131.434,
+          "endNTD": 2314337.72,
+          "mddPct": -37.961,
+          "riskOffSells": 9,
+          "riskOnReentries": 9,
+          "riskOffSessions": 83
+        },
+        "audit_2026": {
+          "returnPct": 102.261,
+          "endNTD": 2022613.57,
+          "mddPct": -30.825,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 37
+        }
+      }
+    },
+    "IDX_2D_DROP_4": {
+      "continuous": {
+        "returnPct": 4033.173,
+        "endNTD": 41331728.41,
+        "mddPct": -32.187,
+        "riskOffSells": 23,
+        "riskOnReentries": 23,
+        "riskOffSessions": 266
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 518.882,
+          "endNTD": 6188815.84,
+          "mddPct": -32.187,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 186
+        },
+        "validation_2024_2025": {
+          "returnPct": 209.289,
+          "endNTD": 3092888.41,
+          "mddPct": -26.687,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 52
+        },
+        "audit_2026": {
+          "returnPct": 111.349,
+          "endNTD": 2113493.91,
+          "mddPct": -26.793,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 28
+        }
+      }
+    },
+    "IDX_DROP3_ENTRY2": {
+      "continuous": {
+        "returnPct": 3277.315,
+        "endNTD": 33773151.11,
+        "mddPct": -34.397,
+        "riskOffSells": 25,
+        "riskOnReentries": 25,
+        "riskOffSessions": 347
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 447.864,
+          "endNTD": 5478637.05,
+          "mddPct": -34.397,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 237
+        },
+        "validation_2024_2025": {
+          "returnPct": 140.069,
+          "endNTD": 2400693.76,
+          "mddPct": -28.781,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 68
+        },
+        "audit_2026": {
+          "returnPct": 151.324,
+          "endNTD": 2513244.86,
+          "mddPct": -19.979,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 42
+        }
+      }
+    },
+    "EXIT2_ENTRY2": {
+      "continuous": {
+        "returnPct": 2990.207,
+        "endNTD": 30902073.67,
+        "mddPct": -27.914,
+        "riskOffSells": 29,
+        "riskOnReentries": 29,
+        "riskOffSessions": 406
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 383.921,
+          "endNTD": 4839205.76,
+          "mddPct": -27.914,
+          "riskOffSells": 19,
+          "riskOnReentries": 19,
+          "riskOffSessions": 290
+        },
+        "validation_2024_2025": {
+          "returnPct": 198.539,
+          "endNTD": 2985392.37,
+          "mddPct": -22.006,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 70
+        },
+        "audit_2026": {
+          "returnPct": 109.349,
+          "endNTD": 2093494.02,
+          "mddPct": -19.962,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 46
+        }
+      }
+    },
+    "EXIT2_PANIC3": {
+      "continuous": {
+        "returnPct": 2644.777,
+        "endNTD": 27447769.37,
+        "mddPct": -30.828,
+        "riskOffSells": 35,
+        "riskOnReentries": 35,
+        "riskOffSessions": 376
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 396.947,
+          "endNTD": 4969470.34,
+          "mddPct": -27.998,
+          "riskOffSells": 23,
+          "riskOnReentries": 23,
+          "riskOffSessions": 276
+        },
+        "validation_2024_2025": {
+          "returnPct": 193.728,
+          "endNTD": 2937277.5,
+          "mddPct": -24.976,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 62
+        },
+        "audit_2026": {
+          "returnPct": 84.05,
+          "endNTD": 1840497.81,
+          "mddPct": -30.826,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 38
+        }
+      }
+    },
+    "EXIT2_PANIC3_ENTRY2": {
+      "continuous": {
+        "returnPct": 2619.862,
+        "endNTD": 27198617.56,
+        "mddPct": -25.273,
+        "riskOffSells": 32,
+        "riskOnReentries": 32,
+        "riskOffSessions": 450
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 366.314,
+          "endNTD": 4663143.86,
+          "mddPct": -25.273,
+          "riskOffSells": 21,
+          "riskOnReentries": 21,
+          "riskOffSessions": 320
+        },
+        "validation_2024_2025": {
+          "returnPct": 184.459,
+          "endNTD": 2844592.93,
+          "mddPct": -21.421,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 76
+        },
+        "audit_2026": {
+          "returnPct": 100.686,
+          "endNTD": 2006855.24,
+          "mddPct": -16.903,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 54
+        }
+      }
+    },
+    "PANIC3_ENTRY2_CD2": {
+      "continuous": {
+        "returnPct": 3277.315,
+        "endNTD": 33773151.11,
+        "mddPct": -34.397,
+        "riskOffSells": 25,
+        "riskOnReentries": 25,
+        "riskOffSessions": 347
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 447.864,
+          "endNTD": 5478637.05,
+          "mddPct": -34.397,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 237
+        },
+        "validation_2024_2025": {
+          "returnPct": 140.069,
+          "endNTD": 2400693.76,
+          "mddPct": -28.781,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 68
+        },
+        "audit_2026": {
+          "returnPct": 151.324,
+          "endNTD": 2513244.86,
+          "mddPct": -19.979,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 42
+        }
+      }
+    },
+    "PANIC3_ENTRY2_CD5": {
+      "continuous": {
+        "returnPct": 3659.758,
+        "endNTD": 37597581.87,
+        "mddPct": -34.397,
+        "riskOffSells": 24,
+        "riskOnReentries": 24,
+        "riskOffSessions": 370
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 447.864,
+          "endNTD": 5478637.05,
+          "mddPct": -34.397,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 237
+        },
+        "validation_2024_2025": {
+          "returnPct": 167.254,
+          "endNTD": 2672535.26,
+          "mddPct": -25.82,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 91
+        },
+        "audit_2026": {
+          "returnPct": 151.324,
+          "endNTD": 2513244.86,
+          "mddPct": -19.979,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 42
+        }
+      }
+    },
+    "EXIT2_PANIC3_ENTRY2_CD2": {
+      "continuous": {
+        "returnPct": 2619.862,
+        "endNTD": 27198617.56,
+        "mddPct": -25.273,
+        "riskOffSells": 32,
+        "riskOnReentries": 32,
+        "riskOffSessions": 450
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 366.314,
+          "endNTD": 4663143.86,
+          "mddPct": -25.273,
+          "riskOffSells": 21,
+          "riskOnReentries": 21,
+          "riskOffSessions": 320
+        },
+        "validation_2024_2025": {
+          "returnPct": 184.459,
+          "endNTD": 2844592.93,
+          "mddPct": -21.421,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 76
+        },
+        "audit_2026": {
+          "returnPct": 100.686,
+          "endNTD": 2006855.24,
+          "mddPct": -16.903,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 54
+        }
+      }
+    },
+    "INITIAL_FILTER": {
+      "continuous": {
+        "returnPct": 4110.755,
+        "endNTD": 42107551.24,
+        "mddPct": -35.378,
+        "riskOffSells": 20,
+        "riskOnReentries": 20,
+        "riskOffSessions": 222
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 496.033,
+          "endNTD": 5960331.48,
+          "mddPct": -35.378,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 176
+        },
+        "validation_2024_2025": {
+          "returnPct": 177.122,
+          "endNTD": 2771220.75,
+          "mddPct": -33.437,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 44
+        },
+        "audit_2026": {
+          "returnPct": 149.512,
+          "endNTD": 2495124.97,
+          "mddPct": -33.446,
+          "riskOffSells": 1,
+          "riskOnReentries": 1,
+          "riskOffSessions": 2
+        }
+      }
+    },
+    "INITIAL_FILTER_RISK": {
+      "continuous": {
+        "returnPct": 2563.579,
+        "endNTD": 26635793.21,
+        "mddPct": -25.273,
+        "riskOffSells": 32,
+        "riskOnReentries": 32,
+        "riskOffSessions": 451
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 356.666,
+          "endNTD": 4566659.64,
+          "mddPct": -25.273,
+          "riskOffSells": 21,
+          "riskOnReentries": 21,
+          "riskOffSessions": 321
+        },
+        "validation_2024_2025": {
+          "returnPct": 184.459,
+          "endNTD": 2844592.93,
+          "mddPct": -21.421,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 76
+        },
+        "audit_2026": {
+          "returnPct": 100.686,
+          "endNTD": 2006855.24,
+          "mddPct": -16.903,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 54
+        }
+      }
+    },
+    "G_10_2_1_3_0": {
+      "continuous": {
+        "returnPct": 4110.755,
+        "endNTD": 42107551.24,
+        "mddPct": -35.378,
+        "riskOffSells": 20,
+        "riskOnReentries": 20,
+        "riskOffSessions": 222
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 496.033,
+          "endNTD": 5960331.48,
+          "mddPct": -35.378,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 176
+        },
+        "validation_2024_2025": {
+          "returnPct": 177.122,
+          "endNTD": 2771220.75,
+          "mddPct": -33.437,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 44
+        },
+        "audit_2026": {
+          "returnPct": 149.512,
+          "endNTD": 2495124.97,
+          "mddPct": -33.446,
+          "riskOffSells": 1,
+          "riskOnReentries": 1,
+          "riskOffSessions": 2
+        }
+      }
+    },
+    "G_10_2_1_3_3": {
+      "continuous": {
+        "returnPct": 3014.559,
+        "endNTD": 31145594.62,
+        "mddPct": -33.55,
+        "riskOffSells": 27,
+        "riskOnReentries": 27,
+        "riskOffSessions": 294
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 466.138,
+          "endNTD": 5661379.32,
+          "mddPct": -32.187,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 212
+        },
+        "validation_2024_2025": {
+          "returnPct": 147.885,
+          "endNTD": 2478853.41,
+          "mddPct": -33.55,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 54
+        },
+        "audit_2026": {
+          "returnPct": 117.217,
+          "endNTD": 2172167.05,
+          "mddPct": -30.827,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 28
+        }
+      }
+    },
+    "G_10_3_2_3_0": {
+      "continuous": {
+        "returnPct": 2824.425,
+        "endNTD": 29244249.8,
+        "mddPct": -54.24,
+        "riskOffSells": 10,
+        "riskOnReentries": 10,
+        "riskOffSessions": 150
+      },
+      "splits": {
+        "training_2018_2023": {
+          "returnPct": 465.593,
+          "endNTD": 5655928.86,
+          "mddPct": -39.519,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 123
+        },
+        "validation_2024_2025": {
+          "returnPct": 114.425,
+          "endNTD": 2144249.61,
+          "mddPct": -54.239,
+          "riskOffSells": 2,
+          "riskOnReentries": 2,
+          "riskOffSessions": 23
+        },
+        "audit_2026": {
+          "returnPct": 136.011,
+          "endNTD": 2360106.77,
+          "mddPct": -33.446,
+          "riskOffSells": 1,
+          "riskOnReentries": 1,
+          "riskOffSessions": 4
+        }
+      }
+    }
+  },
+  "parameterGrid": {
+    "count": 270,
+    "top3Training": [
+      {
+        "id": "G_10_2_1_3_0",
+        "n": 10,
+        "exitPct": 2.0,
+        "entryPct": 1.0,
+        "exitDays": 3,
+        "panicPct": 0.0,
+        "train": {
+          "returnPct": 496.033,
+          "endNTD": 5960331.48,
+          "mddPct": -35.378,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 176
+        },
+        "trainScore": 473.844,
+        "validation2024_2025": {
+          "returnPct": 177.122,
+          "endNTD": 2771220.75,
+          "mddPct": -33.437,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 44
+        },
+        "audit2026": {
+          "returnPct": 149.512,
+          "endNTD": 2495124.97,
+          "mddPct": -33.446,
+          "riskOffSells": 1,
+          "riskOnReentries": 1,
+          "riskOffSessions": 2
+        }
+      },
+      {
+        "id": "G_10_2_1_3_3",
+        "n": 10,
+        "exitPct": 2.0,
+        "entryPct": 1.0,
+        "exitDays": 3,
+        "panicPct": 3.0,
+        "train": {
+          "returnPct": 466.138,
+          "endNTD": 5661379.32,
+          "mddPct": -32.187,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 212
+        },
+        "trainScore": 444.944,
+        "validation2024_2025": {
+          "returnPct": 147.885,
+          "endNTD": 2478853.41,
+          "mddPct": -33.55,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 54
+        },
+        "audit2026": {
+          "returnPct": 117.217,
+          "endNTD": 2172167.05,
+          "mddPct": -30.827,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 28
+        }
+      },
+      {
+        "id": "G_10_3_2_3_0",
+        "n": 10,
+        "exitPct": 3.0,
+        "entryPct": 2.0,
+        "exitDays": 3,
+        "panicPct": 0.0,
+        "train": {
+          "returnPct": 465.593,
+          "endNTD": 5655928.86,
+          "mddPct": -39.519,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 123
+        },
+        "trainScore": 443.733,
+        "validation2024_2025": {
+          "returnPct": 114.425,
+          "endNTD": 2144249.61,
+          "mddPct": -54.239,
+          "riskOffSells": 2,
+          "riskOnReentries": 2,
+          "riskOffSessions": 23
+        },
+        "audit2026": {
+          "returnPct": 136.011,
+          "endNTD": 2360106.77,
+          "mddPct": -33.446,
+          "riskOffSells": 1,
+          "riskOnReentries": 1,
+          "riskOffSessions": 4
+        }
+      }
+    ],
+    "distribution": {
+      "trainPositive": 270,
+      "validationPositive": 270,
+      "auditPositive": 270,
+      "positiveTrainValidation": 270,
+      "n": 270
+    }
+  },
+  "limitations": [
+    "Data can be retroactively adjusted by provider, creating differences from frozen archive.",
+    "2026 was already accessed in previous research: NOT an untouched out-of-sample.",
+    "Stop signals are end-of-day only. A single-session ETF gap can still cause huge losses.",
+    "Grid results have multiple-testing risk. Report training, validation, 2026 separately.",
+    "Daily leveraged ETF has path-dependent returns; backtest is not a guaranteed forecast."
+  ]
+}
