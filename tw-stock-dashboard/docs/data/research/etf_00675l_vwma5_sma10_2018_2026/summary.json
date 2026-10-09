@@ -1,0 +1,678 @@
+{
+  "version": "00675L_VWMA5_VS_SMA10_2018_2026_V1",
+  "generatedAt": "2026-10-09T10:09:51+08:00",
+  "symbol": "00675L.TW",
+  "index": "^TWII",
+  "period": "2018-01-02 to 2026-10-07",
+  "quality": {
+    "firstHistoricalDate": "2017-01-03",
+    "lastDate": "2026-10-07",
+    "totalTradingDays": 2128,
+    "indexVolumeValidDays": 2120,
+    "indexVolumeValidPct": 99.6241,
+    "indexVolumeMissingDates": [
+      "2019-12-04",
+      "2019-12-05",
+      "2019-12-09",
+      "2019-12-10",
+      "2019-12-18",
+      "2022-02-07",
+      "2024-01-15",
+      "2025-01-21"
+    ],
+    "indexVolumeUnique": 2079,
+    "etfPriceAdjFactorRange": [
+      1.0,
+      1.0
+    ]
+  },
+  "historyNotional": {
+    "startCapitalNTD": 1000000,
+    "profitReinvestment": "100% of current available cash on every risk-on reentry",
+    "margin": false,
+    "brokerFeeEachSidePct": 0.1425,
+    "sellEtfTaxPct": 0.1,
+    "slippageEachSidePct": 0.1,
+    "cashInterestRatePct": 0,
+    "tradeTime": "signals on prior completed daily close; actual model execution on next trading open",
+    "marking": "end of entire test hypothetically liquidated at last close with tax/fees/slippage",
+    "vwmaVolume": "Yahoo Finance ^TWII daily raw volume, not 00675L ETF traded volume",
+    "missingVWMAHandling": "do not trade on unavailable VWMA signal; keep previous position, do not interpolate source volume"
+  },
+  "method": "Primary fair control changes only moving-average type AND the stated lookback (VWMA5 versus SMA10); both use 2% break / 1% regain and 3-day exit confirmation. Optional VWMA5 1%/2% listed separately, pre-specified.",
+  "referenceParity": {
+    "SMA10_2020_2026_pct": 3312.334,
+    "BUYHOLD_2020_2026_pct": 1653.043
+  },
+  "cases": [
+    {
+      "id": "BUY_HOLD",
+      "indexUsed": "^TWII",
+      "maType": "hold",
+      "length": null,
+      "exitBufferPct": 0,
+      "reentryBufferPct": 0,
+      "consecutiveClosesForExit": 0,
+      "continuous2018_2026": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "returnPct": 2464.173,
+        "endNTD": 25641733.91,
+        "mddPct": -55.244,
+        "riskOffSells": 0,
+        "riskOnReentries": 0,
+        "riskOffSessions": 0,
+        "investedSessions": 2128,
+        "sessions": 2128,
+        "switchEvents": 0
+      },
+      "calendarYearsContinuous": {
+        "2018": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 877245.86,
+          "annualNetReturnPct": -12.275
+        },
+        "2019": {
+          "openingNTD": 877245.86,
+          "closingNTD": 1445739.69,
+          "annualNetReturnPct": 64.804
+        },
+        "2020": {
+          "openingNTD": 1445739.69,
+          "closingNTD": 2422400.84,
+          "annualNetReturnPct": 67.554
+        },
+        "2021": {
+          "openingNTD": 2422400.84,
+          "closingNTD": 3997660.88,
+          "annualNetReturnPct": 65.029
+        },
+        "2022": {
+          "openingNTD": 3997660.88,
+          "closingNTD": 2612832.36,
+          "annualNetReturnPct": -34.641
+        },
+        "2023": {
+          "openingNTD": 2612832.36,
+          "closingNTD": 4291709.47,
+          "annualNetReturnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 4291709.47,
+          "closingNTD": 6707108.46,
+          "annualNetReturnPct": 56.281
+        },
+        "2025": {
+          "openingNTD": 6707108.46,
+          "closingNTD": 10088666.89,
+          "annualNetReturnPct": 50.418
+        },
+        "2026": {
+          "openingNTD": 10088666.89,
+          "closingNTD": 25641733.91,
+          "annualNetReturnPct": 154.164
+        }
+      },
+      "independentPeriodChecks": {
+        "2018_2019": {
+          "start": "2018-01-02",
+          "end": "2019-12-31",
+          "returnPct": 44.574,
+          "endNTD": 1445739.69,
+          "mddPct": -27.941,
+          "riskOffSells": 0,
+          "riskOnReentries": 0,
+          "riskOffSessions": 0,
+          "investedSessions": 486,
+          "sessions": 486,
+          "switchEvents": 0
+        },
+        "2020_2023": {
+          "start": "2020-01-02",
+          "end": "2023-12-29",
+          "returnPct": 193.412,
+          "endNTD": 2934118.13,
+          "mddPct": -51.767,
+          "riskOffSells": 0,
+          "riskOnReentries": 0,
+          "riskOffSessions": 0,
+          "investedSessions": 973,
+          "sessions": 973,
+          "switchEvents": 0
+        },
+        "2024_2026": {
+          "start": "2024-01-02",
+          "end": "2026-10-07",
+          "returnPct": 492.535,
+          "endNTD": 5925353.02,
+          "mddPct": -55.244,
+          "riskOffSells": 0,
+          "riskOnReentries": 0,
+          "riskOffSessions": 0,
+          "investedSessions": 669,
+          "sessions": 669,
+          "switchEvents": 0
+        },
+        "2026": {
+          "start": "2026-01-02",
+          "end": "2026-10-07",
+          "returnPct": 150.836,
+          "endNTD": 2508364.78,
+          "mddPct": -33.446,
+          "riskOffSells": 0,
+          "riskOnReentries": 0,
+          "riskOffSessions": 0,
+          "investedSessions": 184,
+          "sessions": 184,
+          "switchEvents": 0
+        }
+      },
+      "invalidSignalDaysBlocked": 0,
+      "sellDates": [],
+      "rebuyDates": []
+    },
+    {
+      "id": "SMA10_index_original_2_1",
+      "indexUsed": "^TWII",
+      "maType": "SMA",
+      "length": 10,
+      "exitBufferPct": 2.0,
+      "reentryBufferPct": 1.0,
+      "consecutiveClosesForExit": 3,
+      "continuous2018_2026": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "returnPct": 4110.755,
+        "endNTD": 42107551.24,
+        "mddPct": -35.378,
+        "riskOffSells": 20,
+        "riskOnReentries": 20,
+        "riskOffSessions": 222,
+        "investedSessions": 1906,
+        "sessions": 2128,
+        "switchEvents": 40
+      },
+      "calendarYearsContinuous": {
+        "2018": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 763090.62,
+          "annualNetReturnPct": -23.691
+        },
+        "2019": {
+          "openingNTD": 763090.62,
+          "closingNTD": 1219681.4,
+          "annualNetReturnPct": 59.834
+        },
+        "2020": {
+          "openingNTD": 1219681.4,
+          "closingNTD": 2892007.55,
+          "annualNetReturnPct": 137.112
+        },
+        "2021": {
+          "openingNTD": 2892007.55,
+          "closingNTD": 3944153.76,
+          "annualNetReturnPct": 36.381
+        },
+        "2022": {
+          "openingNTD": 3944153.76,
+          "closingNTD": 3628706.42,
+          "annualNetReturnPct": -7.998
+        },
+        "2023": {
+          "openingNTD": 3628706.42,
+          "closingNTD": 5960331.48,
+          "annualNetReturnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 5960331.48,
+          "closingNTD": 8288943.46,
+          "annualNetReturnPct": 39.068
+        },
+        "2025": {
+          "openingNTD": 8288943.46,
+          "closingNTD": 16655245.04,
+          "annualNetReturnPct": 100.933
+        },
+        "2026": {
+          "openingNTD": 16655245.04,
+          "closingNTD": 42107551.24,
+          "annualNetReturnPct": 152.819
+        }
+      },
+      "independentPeriodChecks": {
+        "2018_2019": {
+          "start": "2018-01-02",
+          "end": "2019-12-31",
+          "returnPct": 21.968,
+          "endNTD": 1219681.4,
+          "mddPct": -35.378,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 57,
+          "investedSessions": 429,
+          "sessions": 486,
+          "switchEvents": 10
+        },
+        "2020_2023": {
+          "start": "2020-01-02",
+          "end": "2023-12-29",
+          "returnPct": 383.017,
+          "endNTD": 4830174.14,
+          "mddPct": -31.562,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 119,
+          "investedSessions": 854,
+          "sessions": 973,
+          "switchEvents": 20
+        },
+        "2024_2026": {
+          "start": "2024-01-02",
+          "end": "2026-10-07",
+          "returnPct": 600.612,
+          "endNTD": 7006117.23,
+          "mddPct": -33.448,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 46,
+          "investedSessions": 623,
+          "sessions": 669,
+          "switchEvents": 10
+        },
+        "2026": {
+          "start": "2026-01-02",
+          "end": "2026-10-07",
+          "returnPct": 149.512,
+          "endNTD": 2495124.97,
+          "mddPct": -33.446,
+          "riskOffSells": 1,
+          "riskOnReentries": 1,
+          "riskOffSessions": 2,
+          "investedSessions": 182,
+          "sessions": 184,
+          "switchEvents": 2
+        }
+      },
+      "invalidSignalDaysBlocked": 0,
+      "sellDates": [
+        "2018-02-09",
+        "2018-04-27",
+        "2018-10-11",
+        "2019-05-16",
+        "2019-08-07",
+        "2020-02-04",
+        "2020-03-03",
+        "2021-05-14",
+        "2021-08-18",
+        "2021-10-06",
+        "2022-03-10",
+        "2022-04-28",
+        "2022-06-16",
+        "2022-09-06",
+        "2022-10-14",
+        "2024-04-24",
+        "2024-07-26",
+        "2024-09-09",
+        "2025-03-12",
+        "2026-07-31"
+      ],
+      "rebuyDates": [
+        "2018-02-26",
+        "2018-05-09",
+        "2018-11-02",
+        "2019-06-03",
+        "2019-09-02",
+        "2020-02-13",
+        "2020-03-26",
+        "2021-05-24",
+        "2021-08-26",
+        "2021-10-18",
+        "2022-03-18",
+        "2022-05-19",
+        "2022-07-15",
+        "2022-10-07",
+        "2022-11-02",
+        "2024-04-30",
+        "2024-08-13",
+        "2024-09-16",
+        "2025-04-16",
+        "2026-08-04"
+      ],
+      "vsSMA10": {
+        "returnPctPointDiff": 0.0,
+        "endingAssetNTDDiff": 0.0
+      }
+    },
+    {
+      "id": "VWMA5_index_equal_2_1",
+      "indexUsed": "^TWII",
+      "maType": "VWMA",
+      "length": 5,
+      "exitBufferPct": 2.0,
+      "reentryBufferPct": 1.0,
+      "consecutiveClosesForExit": 3,
+      "continuous2018_2026": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "returnPct": 2371.981,
+        "endNTD": 24719808.33,
+        "mddPct": -56.141,
+        "riskOffSells": 7,
+        "riskOnReentries": 7,
+        "riskOffSessions": 28,
+        "investedSessions": 2100,
+        "sessions": 2128,
+        "switchEvents": 14
+      },
+      "calendarYearsContinuous": {
+        "2018": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 877245.86,
+          "annualNetReturnPct": -12.275
+        },
+        "2019": {
+          "openingNTD": 877245.86,
+          "closingNTD": 1445739.69,
+          "annualNetReturnPct": 64.804
+        },
+        "2020": {
+          "openingNTD": 1445739.69,
+          "closingNTD": 2348613.59,
+          "annualNetReturnPct": 62.451
+        },
+        "2021": {
+          "openingNTD": 2348613.59,
+          "closingNTD": 3756272.68,
+          "annualNetReturnPct": 59.936
+        },
+        "2022": {
+          "openingNTD": 3756272.68,
+          "closingNTD": 2484667.39,
+          "annualNetReturnPct": -33.853
+        },
+        "2023": {
+          "openingNTD": 2484667.39,
+          "closingNTD": 4081192.25,
+          "annualNetReturnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 4081192.25,
+          "closingNTD": 6250305.71,
+          "annualNetReturnPct": 53.149
+        },
+        "2025": {
+          "openingNTD": 6250305.71,
+          "closingNTD": 9904179.24,
+          "annualNetReturnPct": 58.459
+        },
+        "2026": {
+          "openingNTD": 9904179.24,
+          "closingNTD": 24719808.33,
+          "annualNetReturnPct": 149.59
+        }
+      },
+      "independentPeriodChecks": {
+        "2018_2019": {
+          "start": "2018-01-02",
+          "end": "2019-12-31",
+          "returnPct": 44.574,
+          "endNTD": 1445739.69,
+          "mddPct": -27.941,
+          "riskOffSells": 0,
+          "riskOnReentries": 0,
+          "riskOffSessions": 0,
+          "investedSessions": 486,
+          "sessions": 486,
+          "switchEvents": 0
+        },
+        "2020_2023": {
+          "start": "2020-01-02",
+          "end": "2023-12-29",
+          "returnPct": 179.024,
+          "endNTD": 2790242.6,
+          "mddPct": -49.256,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 25,
+          "investedSessions": 948,
+          "sessions": 973,
+          "switchEvents": 8
+        },
+        "2024_2026": {
+          "start": "2024-01-02",
+          "end": "2026-10-07",
+          "returnPct": 500.69,
+          "endNTD": 6006902.52,
+          "mddPct": -56.14,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 3,
+          "investedSessions": 666,
+          "sessions": 669,
+          "switchEvents": 6
+        },
+        "2026": {
+          "start": "2026-01-02",
+          "end": "2026-10-07",
+          "returnPct": 146.32,
+          "endNTD": 2463202.04,
+          "mddPct": -33.446,
+          "riskOffSells": 1,
+          "riskOnReentries": 1,
+          "riskOffSessions": 1,
+          "investedSessions": 183,
+          "sessions": 184,
+          "switchEvents": 2
+        }
+      },
+      "invalidSignalDaysBlocked": 29,
+      "sellDates": [
+        "2020-03-17",
+        "2021-05-14",
+        "2022-07-05",
+        "2022-10-14",
+        "2024-08-07",
+        "2025-04-10",
+        "2026-07-31"
+      ],
+      "rebuyDates": [
+        "2020-03-25",
+        "2021-05-19",
+        "2022-07-11",
+        "2022-11-01",
+        "2024-08-08",
+        "2025-04-11",
+        "2026-08-03"
+      ],
+      "vsSMA10": {
+        "returnPctPointDiff": -1738.774,
+        "endingAssetNTDDiff": -17387742.91
+      }
+    },
+    {
+      "id": "VWMA5_index_alternative_1_2",
+      "indexUsed": "^TWII",
+      "maType": "VWMA",
+      "length": 5,
+      "exitBufferPct": 1.0,
+      "reentryBufferPct": 2.0,
+      "consecutiveClosesForExit": 3,
+      "continuous2018_2026": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "returnPct": 2101.705,
+        "endNTD": 22017049.75,
+        "mddPct": -36.393,
+        "riskOffSells": 22,
+        "riskOnReentries": 22,
+        "riskOffSessions": 1039,
+        "investedSessions": 1089,
+        "sessions": 2128,
+        "switchEvents": 44
+      },
+      "calendarYearsContinuous": {
+        "2018": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 946036.61,
+          "annualNetReturnPct": -5.396
+        },
+        "2019": {
+          "openingNTD": 946036.61,
+          "closingNTD": 946036.61,
+          "annualNetReturnPct": 0.0
+        },
+        "2020": {
+          "openingNTD": 946036.61,
+          "closingNTD": 1991367.76,
+          "annualNetReturnPct": 110.496
+        },
+        "2021": {
+          "openingNTD": 1991367.76,
+          "closingNTD": 2406970.63,
+          "annualNetReturnPct": 20.87
+        },
+        "2022": {
+          "openingNTD": 2406970.63,
+          "closingNTD": 2728782.45,
+          "annualNetReturnPct": 13.37
+        },
+        "2023": {
+          "openingNTD": 2728782.45,
+          "closingNTD": 3616247.6,
+          "annualNetReturnPct": 32.522
+        },
+        "2024": {
+          "openingNTD": 3616247.6,
+          "closingNTD": 6054328.97,
+          "annualNetReturnPct": 67.42
+        },
+        "2025": {
+          "openingNTD": 6054328.97,
+          "closingNTD": 14604867.43,
+          "annualNetReturnPct": 141.23
+        },
+        "2026": {
+          "openingNTD": 14604867.43,
+          "closingNTD": 22017049.75,
+          "annualNetReturnPct": 50.751
+        }
+      },
+      "independentPeriodChecks": {
+        "2018_2019": {
+          "start": "2018-01-02",
+          "end": "2019-12-31",
+          "returnPct": -5.396,
+          "endNTD": 946036.61,
+          "mddPct": -15.098,
+          "riskOffSells": 2,
+          "riskOnReentries": 1,
+          "riskOffSessions": 431,
+          "investedSessions": 55,
+          "sessions": 486,
+          "switchEvents": 3
+        },
+        "2020_2023": {
+          "start": "2020-01-02",
+          "end": "2023-12-29",
+          "returnPct": 273.437,
+          "endNTD": 3734371.5,
+          "mddPct": -27.336,
+          "riskOffSells": 11,
+          "riskOnReentries": 10,
+          "riskOffSessions": 444,
+          "investedSessions": 529,
+          "sessions": 973,
+          "switchEvents": 21
+        },
+        "2024_2026": {
+          "start": "2024-01-02",
+          "end": "2026-10-07",
+          "returnPct": 504.372,
+          "endNTD": 6043718.89,
+          "mddPct": -36.393,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 133,
+          "investedSessions": 536,
+          "sessions": 669,
+          "switchEvents": 20
+        },
+        "2026": {
+          "start": "2026-01-02",
+          "end": "2026-10-07",
+          "returnPct": 48.788,
+          "endNTD": 1487875.29,
+          "mddPct": -36.39,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 28,
+          "investedSessions": 156,
+          "sessions": 184,
+          "switchEvents": 14
+        }
+      },
+      "invalidSignalDaysBlocked": 29,
+      "sellDates": [
+        "2018-02-08",
+        "2018-12-11",
+        "2020-09-25",
+        "2021-01-29",
+        "2021-05-06",
+        "2021-08-18",
+        "2021-10-06",
+        "2022-06-16",
+        "2022-09-06",
+        "2022-10-14",
+        "2022-12-09",
+        "2023-07-11",
+        "2024-07-23",
+        "2024-10-07",
+        "2025-01-14",
+        "2026-03-06",
+        "2026-05-20",
+        "2026-06-10",
+        "2026-06-29",
+        "2026-07-13",
+        "2026-07-30",
+        "2026-09-16"
+      ],
+      "rebuyDates": [
+        "2018-11-01",
+        "2020-03-25",
+        "2020-11-17",
+        "2021-02-18",
+        "2021-05-19",
+        "2021-08-26",
+        "2022-05-19",
+        "2022-07-19",
+        "2022-10-07",
+        "2022-11-10",
+        "2023-01-10",
+        "2024-01-23",
+        "2024-08-12",
+        "2024-12-04",
+        "2025-04-11",
+        "2026-03-12",
+        "2026-05-25",
+        "2026-06-16",
+        "2026-07-02",
+        "2026-07-23",
+        "2026-08-03",
+        "2026-09-22"
+      ],
+      "vsSMA10": {
+        "returnPctPointDiff": -2009.05,
+        "endingAssetNTDDiff": -20090501.49
+      }
+    }
+  ],
+  "seconds": 0.5,
+  "warnings": [
+    "A VWMA using ^TWII volume is only as reliable as Yahoo's ^TWII daily market-volume reporting, especially across market-data schema changes.",
+    "Historical Yahoo adjusted OHLC and unadjusted trading volumes do not guarantee a perfectly investable VWMA.",
+    "2026 and 2020-2023 already examined during prior strategy research: do not claim untouched out-of-sample.",
+    "Market gaps, leveraged ETF volatility drag, commissions and real fill liquidity can cause realized deviations.",
+    "Comparison at fixed buffers changes BOTH MA type and lookback by user request (VWMA5 vs SMA10); thus any performance gap cannot be attributed to MA weighting formula alone.",
+    "The 2%/1% alternative is illustrative and pre-defined, not selected by 2018-2026 highest return."
+  ]
+}
