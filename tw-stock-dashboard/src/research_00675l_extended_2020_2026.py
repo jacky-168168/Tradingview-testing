@@ -23,7 +23,9 @@ FROZEN_IDS=[
  "CRASH_3_0.1_RE10_Gall_W0.0",
  "DUAL_twii_120_20_RE10_W0.5",
  "MA_twii_10_O0.02_R0.01_C3_W0.0",
- "MA_close_10_O0.04_R0.02_C3_W0.0"
+ "MA_close_10_O0.04_R0.02_C3_W0.0",
+ "SMA_twii_10_O0.02_R0.01_C3_W0.0",
+ "SMA_close_10_O0.04_R0.02_C3_W0.0"
 ]
 OUT=DATA_DIR/"research/etf_00675l_extended_2020_2026"
 WINDOWS={"2020_2023":("2020-01-01","2023-12-31"),
@@ -59,6 +61,14 @@ def assert_no_lookahead_orders(events,dates):
     days=set(dates)
     assert all(z["date"] in days for z in events)
     assert all(events[i]["date"]<=events[i+1]["date"] for i in range(len(events)-1))
+def bars_for(a,c):
+    # Preserve the exact precommitted 925-grid short MA variant: ROLLING SMA10,
+    # not EMA10. Map the MA10 data channel ONLY for this strategy, no shared mutation.
+    if c.get("maType")=="sma":
+        src=c["src"];override=dict(a)
+        override[f"{src}_ema10"]=a[f"{src}_sma10"]
+        return override
+    return a
 def run():
     begin=time.monotonic()
     # Entire 2019 price history is fetched to fully warm-up EMA200 before Jan 2020.
@@ -84,7 +94,11 @@ def run():
       {"id":"MA_twii_10_O0.02_R0.01_C3_W0.0","family":"ma_hysteresis",
        "src":"twii","n":10,"out":.02,"rein":.01,"confirm":3,"riskOffWeight":0},
       {"id":"MA_close_10_O0.04_R0.02_C3_W0.0","family":"ma_hysteresis",
-       "src":"close","n":10,"out":.04,"rein":.02,"confirm":3,"riskOffWeight":0}]:
+       "src":"close","n":10,"out":.04,"rein":.02,"confirm":3,"riskOffWeight":0},
+      {"id":"SMA_twii_10_O0.02_R0.01_C3_W0.0","family":"ma_hysteresis",
+       "src":"twii","n":10,"out":.02,"rein":.01,"confirm":3,"riskOffWeight":0,"maType":"sma"},
+      {"id":"SMA_close_10_O0.04_R0.02_C3_W0.0","family":"ma_hysteresis",
+       "src":"close","n":10,"out":.04,"rein":.02,"confirm":3,"riskOffWeight":0,"maType":"sma"}]:
         other[c["id"]]=c
     rules=[]
     for key in FROZEN_IDS:
@@ -95,9 +109,10 @@ def run():
     reports=[];traces={}
     for conf in rules:
         name=conf["id"]
-        entire=bt(a,dates,conf,PERIOD_START,PERIOD_END,detailed=True)
+        aa=bars_for(a,conf)
+        entire=bt(aa,dates,conf,PERIOD_START,PERIOD_END,detailed=True)
         assert_no_lookahead_orders(entire["orders"],win)
-        sub={p:lite(bt(a,dates,conf,start,end)) for p,(start,end) in WINDOWS.items()}
+        sub={p:lite(bt(aa,dates,conf,start,end)) for p,(start,end) in WINDOWS.items()}
         y=yearly_from_equity(entire["equity"])
         dd=drawdown_segments(entire["equity"])
         rep={"id":name,"family":conf["family"],"parametersFrozen":conf,
@@ -145,7 +160,7 @@ def run():
           "maxDD":ema_cont["maxDrawdownPct"],"trades":ema_cont["trades"]},ensure_ascii=False),flush=True)
     # Out-of-period 2020-23 comparison is descriptive ONLY. No new parameter search.
     # Include only previously frozen 3 primary strategies in execution robustness stress.
-    watch=["CRASH_3_0.1_RE10_Gtwii_below60_W0.0","MA_twii_20_O0.03_R0.0_C1_W0.0","TRAIL_20_0.16_RE10_W0.0"]
+    watch=["CRASH_3_0.1_RE10_Gtwii_below60_W0.0","MA_twii_20_O0.03_R0.0_C1_W0.0","TRAIL_20_0.16_RE10_W0.0","SMA_twii_10_O0.02_R0.01_C3_W0.0","MA_twii_10_O0.02_R0.01_C3_W0.0"]
     byid={c["id"]:c for c in rules}
     stress={}
     for slip in (.001,.003,.005,.01):
@@ -153,7 +168,7 @@ def run():
         delay_runner.SLIP=slip
         stress[str(slip)]={}
         for key in watch+["BUY_HOLD"]:
-            case=bt(a,dates,byid[key],PERIOD_START,PERIOD_END)
+            case=bt(bars_for(a,byid[key]),dates,byid[key],PERIOD_START,PERIOD_END)
             stress[str(slip)][key]=lite(case)
         print("EXTENDED_SLIPPAGE "+json.dumps({"slippageEachSidePct":slip*100,
            "crash":stress[str(slip)][watch[0]]["returnPct"],"ma":stress[str(slip)][watch[1]]["returnPct"],
@@ -164,7 +179,7 @@ def run():
     for n in (0,1,2):
         lag[str(n)]={}
         for key in watch:
-            x=bt_lag(a,dates,byid[key],PERIOD_START,PERIOD_END,lag=n)
+            x=bt_lag(bars_for(a,byid[key]),dates,byid[key],PERIOD_START,PERIOD_END,lag=n)
             lag[str(n)][key]=lite(x)
         print("EXTENDED_EXECUTION_LAG "+json.dumps({"delaySessions":n,
            "crash":lag[str(n)][watch[0]]["returnPct"],"ma":lag[str(n)][watch[1]]["returnPct"]}),flush=True)
@@ -176,7 +191,7 @@ def run():
         "generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),
         "ticker":SYMBOL,"security":"富邦臺灣加權正2","requestedPeriod":"2020-01-01 through 2026-10-07",
         "actualLastTradingDate":win[-1],"prewarmFirstDate":dates[0],
-        "researchPolicy":"All 8 exit and buyback rules frozen BEFORE 2020-2023 data retrieved. No 2020-2023 parameter optimization.",
+        "researchPolicy":"Eight exit-and-buyback variants initially fixed before 2020-2023 data first fetched; later added two SMA10 variants preserving prior independent 925-case SMA10 rules. No parameter or signal threshold was optimized on 2020-2023 outcomes. EMA10 variants exploratory, not identical to old SMA10 strategy.",
         "model":{"initialCapitalNTD":CAPITAL,"position":"100% cash all-in in risk-on regime; full cash no debt; reinvest cumulative profit; 0% or 50% ETF when rule says risk off",
             "brokerEachSidePct":BROKER*100,"sellTaxPct":ETF_SELL_TAX*100,"slippagePerSidePct":SLIP*100,
             "decision":"Use only previous daily close and indicator; execute next trading-day open; no intraday perfect lows/highs.",
@@ -187,7 +202,7 @@ def run():
         "original2024to2026Consistency":matched,
         "fullDetailsByModel":{z["id"]:{k:z[k] for k in ("id","family","parametersFrozen","continuous","compoundedCalendarYears","annualMaxDrawdownWithinYear","independentWindowRuns","firstBuyDate","lastTradeDate","totalOrderEvents","signalExitDates","rebuyDates","vsHold")} for z in reports},
         "stress":{"slippageEachSide":stress,"additionalDecisionSessionLag":lag},
-        "warnings":["A successful 2020-2023 retrospective is not a guarantee of future real-money performance.",
+        "warnings":["The two EMA10 buffer variants are supplemental exploratory models and are NOT the same as the prior 925-grid rolling SMA10 cases; compare the SMA10 variants separately.","A successful 2020-2023 retrospective is not a guarantee of future real-money performance.",
           "Parameters chosen based on previously observed 2024-2026 market may still have selection bias.",
           "2020 COVID and 2022 bear are valuable additional regimes but were only checked after the prior parameter freeze.",
           "Do not sum independently reset calendar-year backtest results: use the year-by-year equity progression from continuous run.",
