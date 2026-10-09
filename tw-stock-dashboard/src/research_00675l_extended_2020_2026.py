@@ -22,8 +22,8 @@ FROZEN_IDS=[
  "TRAIL_20_0.16_RE10_W0.0",
  "CRASH_3_0.1_RE10_Gall_W0.0",
  "DUAL_twii_120_20_RE10_W0.5",
- "MA_twii_10_O0.02_R0.0_C3_W0.0",
- "MA_close_10_O0.04_R0.0_C3_W0.0"
+ "MA_twii_10_O0.02_R0.01_C3_W0.0",
+ "MA_close_10_O0.04_R0.02_C3_W0.0"
 ]
 OUT=DATA_DIR/"research/etf_00675l_extended_2020_2026"
 WINDOWS={"2020_2023":("2020-01-01","2023-12-31"),
@@ -78,6 +78,14 @@ def run():
     original=json.loads((OUTPUT/"summary.json").read_text(encoding="utf-8"))
     known={z["id"]:z["params"] for z in original["frozenComparisons"]}
     other={v["id"]:v for v in universe()}
+    # Two MA10 rules were frozen in the OTHER independent trend-capture project,
+    # whose recovery gate requires source close > MA10*(1+buffer/2).
+    for c in [
+      {"id":"MA_twii_10_O0.02_R0.01_C3_W0.0","family":"ma_hysteresis",
+       "src":"twii","n":10,"out":.02,"rein":.01,"confirm":3,"riskOffWeight":0},
+      {"id":"MA_close_10_O0.04_R0.02_C3_W0.0","family":"ma_hysteresis",
+       "src":"close","n":10,"out":.04,"rein":.02,"confirm":3,"riskOffWeight":0}]:
+        other[c["id"]]=c
     rules=[]
     for key in FROZEN_IDS:
         if key=="BUY_HOLD":rules.append(other[key])
