@@ -1,0 +1,73 @@
+name: Publish PLTR 2020-2026 to Permanent ETF Research Site
+on:
+  push:
+    branches: [feature/pltr-archive-2020-2026]
+    paths:
+      - '.github/workflows/publish-pltr-history.yml'
+      - 'tw-stock-dashboard/scripts/import_pltr_archive.py'
+      - 'tw-stock-dashboard/docs/backtest.html'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch frozen successfully tested PLTR research
+        run: git fetch --no-tags origin +refs/heads/research/pltr-2020-2026-rotation-comparison:refs/remotes/origin/research/pltr-2020-2026-rotation-comparison
+      - name: Import actual PLTR accounts and full daily curves into existing archive index
+        run: python -u tw-stock-dashboard/scripts/import_pltr_archive.py
+      - name: Verify PLTR data and immutable earlier ETF studies
+        run: |
+          node --check tw-stock-dashboard/docs/etf-research.js
+          node --check tw-stock-dashboard/docs/backtest-research.js
+          python - <<'PY'
+          import json,math
+          from pathlib import Path
+          root=Path("tw-stock-dashboard/docs")
+          db=root/"data/research/etf_history"
+          x=json.loads((db/"index.json").read_text())
+          original=["00675_2018","ma_family","qqq_vt","qld"]
+          assert [s["id"] for s in x["studies"]]==original+["pltr"]
+          assert [len(s["models"]) for s in x["studies"]]==[4,25,8,6,23]
+          h=(root/"backtest.html").read_text()
+          assert 'id="ETF_HISTORY"' in h and "PLTR 個股" in h
+          assert all('id="'+m+'"' in h for m in ["G","D","F2","F","A","RESEARCH"])
+          assert (db/"grid.json").exists()
+          pltr=x["studies"][-1]
+          assert pltr["period"]==["2020-09-30","2026-10-08"]
+          assert pltr["sessions"]==1513
+          for s in x["studies"]:
+            for m in s["models"]:
+              raw=json.loads((db/m["curve"]).read_text())
+              assert len(raw["points"])==m["sessions"]==s["sessions"]
+              assert raw["points"][0][0]==s["period"][0]
+              assert raw["points"][-1][0]==s["period"][-1]
+              assert math.isfinite(m["returnPct"])
+              assert m["annual"][0]["year"]==s["period"][0][:4]
+              assert m["annual"][-1]["year"]==s["period"][1][:4]
+          for id,ret in [("BUY_HOLD",2078.847),("SMA10_D2_U1_C3",436.846),
+             ("VWMA5_D2_U1_C3",80.420),("WMA200_D10_U0_C3",4153.868)]:
+             m=next(z for z in pltr["models"] if z["id"]==id)
+             assert m["returnPct"]==ret
+          assert len(list((db/"curves").glob("pltr__*.json")))==23
+          print("PASS PLTR: preserved 43 old studies and all 43 older curves, added 23 real PLTR curves/annual returns/same-account orders; 66 verified models total")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PLTR-2020-2026-23-Permanent-Strategy-Pages-Archive
+          path: |
+            tw-stock-dashboard/docs/data/research/etf_history/index.json
+            tw-stock-dashboard/docs/data/research/etf_history/curves/pltr__*.json
+          retention-days: 90
+      - name: Archive immutable finished PLTR record
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_history/
+          if ! git diff --cached --quiet; then
+            git commit -m "data: archive PLTR 2020 IPO to 2026 close, 23 causal compound-account strategies"
+            git push origin HEAD:feature/pltr-archive-2020-2026
+          fi
