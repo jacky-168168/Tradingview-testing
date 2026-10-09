@@ -1,0 +1,77 @@
+name: QQQ VT 2018-2026 SMA10 and VWMA5 Cash Compounding
+on:
+  push:
+    branches: [research/qqq-vt-sma10-vwma5-2018-2026]
+    paths:
+      - 'tw-stock-dashboard/src/research_qqq_vt_2018_2026.py'
+      - '.github/workflows/qqq-vt-2018-2026.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: qqq-vt-2018-2026-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            00675l-vwma-sma-2018-${{ runner.os }}-
+            00675l-ma-comparison-${{ runner.os }}-
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Run 2018-2026 two ETF signals plus continuous portfolio FX
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_qqq_vt_2018_2026.py
+          python -u src/research_qqq_vt_2018_2026.py
+      - name: Validate same date horizon, same starting capital, calendar years and full equity integrity
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, math
+          root=Path("docs/data/research/qqq_vt_sma10_vwma5_2018_2026")
+          s=json.loads((root/"summary.json").read_text())
+          t=json.loads((root/"transactions_equity.json").read_text())
+          assert s["account"]["startingCapitalTWD"]==1_000_000
+          assert len(s["results"])==8
+          assert set(s["assets"])=={"QQQ","VT"}
+          for ticker in ("QQQ","VT"):
+            group=[x for x in s["results"] if x["ticker"]==ticker]
+            assert len(group)==4
+            assert set(x["strategy"] for x in group)=={"BUY_HOLD","SMA10_2out_1in_c3","VWMA5_2out_1in_c3","VWMA5_1out_2in_c3"}
+            spans={(x["entryDate"],x["lastDate"],x["sessions"]) for x in group}
+            assert len(spans)==1,spans
+            assert group[0]["entryDate"]=="2018-01-02"
+            assert group[0]["lastDate"]=="2026-10-07"
+            assert all(set(x["yearlyContinuous"])==set(str(i) for i in range(2018,2027)) for x in group)
+            for g in group:
+              eq=t["traces"][ticker][g["strategy"]]["equityUSD"]
+              assert len(eq)==g["sessions"]
+              assert math.isclose(eq[-1]["equity"],g["finalUSD"],abs_tol=.05)
+              assert math.isclose(g["finalUSD"]*s["assets"][ticker]["lastFX"],g["finalTWD"],abs_tol=1)
+              assert g["riskOffSells"]==g["riskOnReentries"]
+          print("PASS: QQQ and VT 2018-26 exact shared dates, 1m TWD converted into USD, 8 models, 9 calendar year account records")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qqq-vt-2018-2026-usd-twd-sma10-vwma5
+          path: tw-stock-dashboard/docs/data/research/qqq_vt_sma10_vwma5_2018_2026/*.json
+      - name: Archive independent research to branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/qqq_vt_sma10_vwma5_2018_2026
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive verified 2018-2026 QQQ VT SMA10 VWMA5 account results"
+            git push origin HEAD:research/qqq-vt-sma10-vwma5-2018-2026
+          fi
