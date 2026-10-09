@@ -1,0 +1,90 @@
+name: 00675L Crisis Scale-In Study 2018-2026
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/research-00675l-crash-entry.yml'
+      - 'tw-stock-dashboard/scripts/research_00675l_crash_entry.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: 00675l-crisis-reserve
+  cancel-in-progress: false
+jobs:
+  research-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Fetch verified legacy backtest engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          b='research/00675l-vwma5-vs-sma10-2018-2026'
+          git fetch --no-tags origin "+refs/heads/$b:refs/remotes/origin/$b"
+          mkdir -p /tmp/legacy_src
+          for file in research_00675l_swing_grid research_00675l_near_hold_switch research_00675l_ma_family_2020_2026 research_00675l_vwma5_sma10_2018_2026; do
+            git show "origin/$b:tw-stock-dashboard/src/$file.py" > "/tmp/legacy_src/$file.py"
+          done
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Run 2018-2026 00675L full-path simulations and 3 crisis event studies
+        env:
+          PYTHONPATH: /tmp/legacy_src:${{ github.workspace }}/tw-stock-dashboard/src
+        run: python -u tw-stock-dashboard/scripts/research_00675l_crash_entry.py
+      - name: Check historical parity, event fills, summaries and index
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=Path("tw-stock-dashboard/docs/data/research/etf_history")
+          ix=json.loads((d/"index.json").read_text())
+          study=next(s for s in ix["studies"] if s["id"]=="00675_crash_entry")
+          assert len(study["models"])==3 and study["sessions"]==2128
+          old=next(s for s in ix["studies"] if s["id"]=="00675_risk_v2")
+          base=next(m for m in old["models"] if m["id"]=="IDX_DROP_4")
+          same=next(m for m in study["models"] if m["id"]=="BASE")
+          assert (base["endTWD"],base["returnPct"],base["mddPct"])==(same["endTWD"],same["returnPct"],same["mddPct"])
+          for m in study["models"]:
+            p=json.loads((d/m["curve"]).read_text())
+            assert len(p["points"])==2128 and p["points"][0][0]=="2018-01-02" and p["points"][-1][0]=="2026-10-07"
+            assert abs(p["points"][-1][1]-m["endTWD"])<.02
+          ep=json.loads((d/"00675l_crash_entry/events.json").read_text())
+          assert len(ep["episodes"])==3
+          for event in ep["episodes"].values():
+            assert len(event["modes"])==7
+            for strategy in event["modes"].values():
+              assert strategy["points"] and 0<=strategy["numBuys"]<=4
+              for order in strategy["orders"]:
+                assert order[0]>=event["window"][0] and order[0]<=event["window"][1]
+          print("PASS parity, 3 full curves, 3 event panels x 7 entries and no extra cash")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 00675L-COVID-Tariff-Iran-Crash-ScaleIn-Backtest
+          path: |
+            tw-stock-dashboard/docs/data/research/etf_history/index.json
+            tw-stock-dashboard/docs/data/research/etf_history/00675l_crash_entry/
+            tw-stock-dashboard/docs/data/research/etf_history/curves/00675_crash_entry__*.json
+          retention-days: 90
+      - name: Publish crisis study and updated backtest index to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_history/index.json tw-stock-dashboard/docs/data/research/etf_history/00675l_crash_entry tw-stock-dashboard/docs/data/research/etf_history/curves/00675_crash_entry__*.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: 00675L COVID tariff Iran crisis-entry and reserve strategy comparison"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
