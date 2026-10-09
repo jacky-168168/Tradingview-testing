@@ -1,0 +1,5821 @@
+{
+  "version": "00675L_MA_FAMILY_2020_2026_V1",
+  "generatedAt": "2026-10-09T10:00:25+08:00",
+  "symbol": "00675L.TW",
+  "index": "^TWII",
+  "firstWarmupDate": "2019-01-02",
+  "lastDate": "2026-10-07",
+  "sessions2020_2026": 1642,
+  "volumeCoverage": {
+    "etf": {
+      "validVolumeDaysPct": 100.0,
+      "distinctNonzeroVolumes": 1543,
+      "minNonzeroVolume": 23000.0,
+      "maxNonzeroVolume": 45917639.0
+    },
+    "taiwan_index": {
+      "validVolumeDaysPct": 99.817,
+      "distinctNonzeroVolumes": 1613,
+      "minNonzeroVolume": 136500.0,
+      "maxNonzeroVolume": 14999500.0
+    }
+  },
+  "vwmaAllowed": {
+    "twii": true,
+    "close": true
+  },
+  "missingVWMA": {},
+  "feeAssumptions": {
+    "capitalNTD": 1000000,
+    "brokerPctEachSide": 0.1425,
+    "etfTaxPctOnSell": 0.1,
+    "slippagePctEachSide": 0.1,
+    "allProfitsReinvested": true,
+    "integerETFUnits": true,
+    "margin": false,
+    "orders": "Completed daily close crossover thresholds; NEXT session opening price; first open buys entire cash account."
+  },
+  "experiment": {
+    "families": [
+      "SMA",
+      "EMA",
+      "WMA",
+      "VWMA"
+    ],
+    "signalSources": {
+      "twii": "^TWII index close, Yahoo index total daily volume for VWMA",
+      "close": "00675L adjusted close and ETF daily traded volume for VWMA"
+    },
+    "windows": [
+      5,
+      8,
+      10,
+      12,
+      15,
+      20,
+      30,
+      40,
+      60
+    ],
+    "sellBuffersPct": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "rebuyBuffersPct": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "confirmDays": [
+      1,
+      2,
+      3
+    ],
+    "fixedComparison": "n=10, sell gap=2%, buy gap=1%, 3 consecutive closes",
+    "rankingTrainingOnly": "2020-2023; score netReturnPct minus 0.55*abs(maxDDPct) minus 1*numberRiskSells",
+    "selection": "Top two train score and top one train raw return per each source×MA family + fixed-comparison, no 2024-2026 returns used to select",
+    "validation": "2024-2025 audit, followed by already researcher-exposed 2026; displayed independent and continuous account periods",
+    "preExisting2024_2026BaseCheck": "Original SMA10 fixed rule +600.612% in 2024-2026, and +3312.334% 2020-2026",
+    "allMAResultsNotOptimized": "fixed 10d comparison shows direct effect of replacing mean formula, not searching best params"
+  },
+  "nTrainModels": 4320,
+  "nFrozenFinalists": 24,
+  "baseline": {
+    "buyHold2020_2026": {
+      "start": "2020-01-02",
+      "end": "2026-10-07",
+      "returnPct": 1653.043,
+      "endNTD": 17530433.17,
+      "mddPct": -55.244,
+      "riskOffSells": 0,
+      "riskOnReentries": 0,
+      "riskOffSessions": 0,
+      "investedSessions": 1642,
+      "sessions": 1642,
+      "switchEvents": 0
+    },
+    "buyHoldCompoundedYears": {
+      "2020": {
+        "openingNTD": 1000000.0,
+        "closingNTD": 1656132.82,
+        "returnPct": 65.613
+      },
+      "2021": {
+        "openingNTD": 1656132.82,
+        "closingNTD": 2733086.7,
+        "returnPct": 65.028
+      },
+      "2022": {
+        "openingNTD": 2733086.7,
+        "closingNTD": 1786324.64,
+        "returnPct": -34.641
+      },
+      "2023": {
+        "openingNTD": 1786324.64,
+        "closingNTD": 2934118.13,
+        "returnPct": 64.254
+      },
+      "2024": {
+        "openingNTD": 2934118.13,
+        "closingNTD": 4585447.61,
+        "returnPct": 56.28
+      },
+      "2025": {
+        "openingNTD": 4585447.61,
+        "closingNTD": 6897308.76,
+        "returnPct": 50.417
+      },
+      "2026": {
+        "openingNTD": 6897308.76,
+        "closingNTD": 17530433.17,
+        "returnPct": 154.163
+      }
+    },
+    "SMA10Previous2020_2026": {
+      "start": "2020-01-02",
+      "end": "2026-10-07",
+      "returnPct": 3312.334,
+      "endNTD": 34123343.53,
+      "mddPct": -33.448,
+      "riskOffSells": 15,
+      "riskOnReentries": 15,
+      "riskOffSessions": 165,
+      "investedSessions": 1477,
+      "sessions": 1642,
+      "switchEvents": 30
+    },
+    "SMA10Previous2024_2026": {
+      "start": "2024-01-02",
+      "end": "2026-10-07",
+      "returnPct": 600.612,
+      "endNTD": 7006117.23,
+      "mddPct": -33.448,
+      "riskOffSells": 5,
+      "riskOnReentries": 5,
+      "riskOffSessions": 46,
+      "investedSessions": 623,
+      "sessions": 669,
+      "switchEvents": 10
+    }
+  },
+  "fixedParameterComparison": [
+    {
+      "id": "SMA_twii_N10_OUT2_RE1_C3",
+      "cfg": {
+        "id": "SMA_twii_N10_OUT2_RE1_C3",
+        "family": "ma_hysteresis",
+        "src": "twii",
+        "n": 10,
+        "out": 0.02,
+        "rein": 0.01,
+        "confirm": 3,
+        "riskOffWeight": 0.0,
+        "maType": "SMA"
+      },
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 383.017,
+        "endNTD": 4830174.14,
+        "mddPct": -31.562,
+        "riskOffSells": 10,
+        "riskOnReentries": 10,
+        "riskOffSessions": 119,
+        "investedSessions": 854,
+        "sessions": 973,
+        "switchEvents": 20
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 177.122,
+        "endNTD": 2771220.75,
+        "mddPct": -33.437,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 44,
+        "investedSessions": 441,
+        "sessions": 485,
+        "switchEvents": 8
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 149.512,
+        "endNTD": 2495124.97,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 2,
+        "investedSessions": 182,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 3312.334,
+        "endNTD": 34123343.53,
+        "mddPct": -33.448,
+        "riskOffSells": 15,
+        "riskOnReentries": 15,
+        "riskOffSessions": 165,
+        "investedSessions": 1477,
+        "sessions": 1642,
+        "switchEvents": 30
+      }
+    },
+    {
+      "id": "SMA_close_N10_OUT2_RE1_C3",
+      "cfg": {
+        "id": "SMA_close_N10_OUT2_RE1_C3",
+        "family": "ma_hysteresis",
+        "src": "close",
+        "n": 10,
+        "out": 0.02,
+        "rein": 0.01,
+        "confirm": 3,
+        "riskOffWeight": 0.0,
+        "maType": "SMA"
+      },
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 201.265,
+        "endNTD": 3012646.0,
+        "mddPct": -41.923,
+        "riskOffSells": 25,
+        "riskOnReentries": 25,
+        "riskOffSessions": 198,
+        "investedSessions": 775,
+        "sessions": 973,
+        "switchEvents": 50
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 125.325,
+        "endNTD": 2253249.75,
+        "mddPct": -40.187,
+        "riskOffSells": 12,
+        "riskOnReentries": 12,
+        "riskOffSessions": 70,
+        "investedSessions": 415,
+        "sessions": 485,
+        "switchEvents": 24
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 76.716,
+        "endNTD": 1767160.46,
+        "mddPct": -32.464,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 31,
+        "investedSessions": 153,
+        "sessions": 184,
+        "switchEvents": 10
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 1125.577,
+        "endNTD": 12255767.38,
+        "mddPct": -41.923,
+        "riskOffSells": 42,
+        "riskOnReentries": 42,
+        "riskOffSessions": 299,
+        "investedSessions": 1343,
+        "sessions": 1642,
+        "switchEvents": 84
+      }
+    },
+    {
+      "id": "EMA_twii_N10_OUT2_RE1_C3",
+      "cfg": {
+        "id": "EMA_twii_N10_OUT2_RE1_C3",
+        "family": "ma_hysteresis",
+        "src": "twii",
+        "n": 10,
+        "out": 0.02,
+        "rein": 0.01,
+        "confirm": 3,
+        "riskOffWeight": 0.0,
+        "maType": "EMA"
+      },
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 341.695,
+        "endNTD": 4416948.49,
+        "mddPct": -37.887,
+        "riskOffSells": 7,
+        "riskOnReentries": 7,
+        "riskOffSessions": 110,
+        "investedSessions": 863,
+        "sessions": 973,
+        "switchEvents": 14
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 196.336,
+        "endNTD": 2963357.3,
+        "mddPct": -29.608,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 23,
+        "investedSessions": 462,
+        "sessions": 485,
+        "switchEvents": 4
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 146.32,
+        "endNTD": 2463202.04,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 1,
+        "investedSessions": 183,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 3194.108,
+        "endNTD": 32941080.26,
+        "mddPct": -37.887,
+        "riskOffSells": 10,
+        "riskOnReentries": 10,
+        "riskOffSessions": 134,
+        "investedSessions": 1508,
+        "sessions": 1642,
+        "switchEvents": 20
+      }
+    },
+    {
+      "id": "EMA_close_N10_OUT2_RE1_C3",
+      "cfg": {
+        "id": "EMA_close_N10_OUT2_RE1_C3",
+        "family": "ma_hysteresis",
+        "src": "close",
+        "n": 10,
+        "out": 0.02,
+        "rein": 0.01,
+        "confirm": 3,
+        "riskOffWeight": 0.0,
+        "maType": "EMA"
+      },
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 172.064,
+        "endNTD": 2720639.21,
+        "mddPct": -46.837,
+        "riskOffSells": 20,
+        "riskOnReentries": 20,
+        "riskOffSessions": 155,
+        "investedSessions": 818,
+        "sessions": 973,
+        "switchEvents": 40
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 139.572,
+        "endNTD": 2395719.11,
+        "mddPct": -31.137,
+        "riskOffSells": 8,
+        "riskOnReentries": 8,
+        "riskOffSessions": 78,
+        "investedSessions": 407,
+        "sessions": 485,
+        "switchEvents": 16
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 195.477,
+        "endNTD": 2954774.32,
+        "mddPct": -21.216,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 15,
+        "investedSessions": 169,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 1867.709,
+        "endNTD": 19677085.36,
+        "mddPct": -46.837,
+        "riskOffSells": 29,
+        "riskOnReentries": 29,
+        "riskOffSessions": 248,
+        "investedSessions": 1394,
+        "sessions": 1642,
+        "switchEvents": 58
+      }
+    },
+    {
+      "id": "WMA_twii_N10_OUT2_RE1_C3",
+      "cfg": {
+        "id": "WMA_twii_N10_OUT2_RE1_C3",
+        "family": "ma_hysteresis",
+        "src": "twii",
+        "n": 10,
+        "out": 0.02,
+        "rein": 0.01,
+        "confirm": 3,
+        "riskOffWeight": 0.0,
+        "maType": "WMA"
+      },
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 282.358,
+        "endNTD": 3823579.42,
+        "mddPct": -45.101,
+        "riskOffSells": 7,
+        "riskOnReentries": 7,
+        "riskOffSessions": 66,
+        "investedSessions": 907,
+        "sessions": 973,
+        "switchEvents": 14
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 98.321,
+        "endNTD": 1983211.75,
+        "mddPct": -59.135,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 7,
+        "investedSessions": 478,
+        "sessions": 485,
+        "switchEvents": 4
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 146.32,
+        "endNTD": 2463202.04,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 1,
+        "investedSessions": 183,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 1808.385,
+        "endNTD": 19083847.73,
+        "mddPct": -59.136,
+        "riskOffSells": 10,
+        "riskOnReentries": 10,
+        "riskOffSessions": 74,
+        "investedSessions": 1568,
+        "sessions": 1642,
+        "switchEvents": 20
+      }
+    },
+    {
+      "id": "WMA_close_N10_OUT2_RE1_C3",
+      "cfg": {
+        "id": "WMA_close_N10_OUT2_RE1_C3",
+        "family": "ma_hysteresis",
+        "src": "close",
+        "n": 10,
+        "out": 0.02,
+        "rein": 0.01,
+        "confirm": 3,
+        "riskOffWeight": 0.0,
+        "maType": "WMA"
+      },
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 87.57,
+        "endNTD": 1875704.94,
+        "mddPct": -55.312,
+        "riskOffSells": 26,
+        "riskOnReentries": 26,
+        "riskOffSessions": 127,
+        "investedSessions": 846,
+        "sessions": 973,
+        "switchEvents": 52
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 110.589,
+        "endNTD": 2105886.33,
+        "mddPct": -49.714,
+        "riskOffSells": 12,
+        "riskOnReentries": 12,
+        "riskOffSessions": 50,
+        "investedSessions": 435,
+        "sessions": 485,
+        "switchEvents": 24
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 82.256,
+        "endNTD": 1822558.19,
+        "mddPct": -31.743,
+        "riskOffSells": 6,
+        "riskOnReentries": 6,
+        "riskOffSessions": 21,
+        "investedSessions": 163,
+        "sessions": 184,
+        "switchEvents": 12
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 635.534,
+        "endNTD": 7355342.05,
+        "mddPct": -55.312,
+        "riskOffSells": 44,
+        "riskOnReentries": 44,
+        "riskOffSessions": 198,
+        "investedSessions": 1444,
+        "sessions": 1642,
+        "switchEvents": 88
+      }
+    },
+    {
+      "id": "VWMA_twii_N10_OUT2_RE1_C3",
+      "cfg": {
+        "id": "VWMA_twii_N10_OUT2_RE1_C3",
+        "family": "ma_hysteresis",
+        "src": "twii",
+        "n": 10,
+        "out": 0.02,
+        "rein": 0.01,
+        "confirm": 3,
+        "riskOffWeight": 0.0,
+        "maType": "VWMA"
+      },
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 323.687,
+        "endNTD": 4236873.5,
+        "mddPct": -31.562,
+        "riskOffSells": 11,
+        "riskOnReentries": 11,
+        "riskOffSessions": 120,
+        "investedSessions": 853,
+        "sessions": 973,
+        "switchEvents": 22
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 177.122,
+        "endNTD": 2771220.75,
+        "mddPct": -33.437,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 44,
+        "investedSessions": 441,
+        "sessions": 485,
+        "switchEvents": 8
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 134.133,
+        "endNTD": 2341334.94,
+        "mddPct": -33.448,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 7,
+        "investedSessions": 177,
+        "sessions": 184,
+        "switchEvents": 4
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 2708.707,
+        "endNTD": 28087074.02,
+        "mddPct": -33.448,
+        "riskOffSells": 17,
+        "riskOnReentries": 17,
+        "riskOffSessions": 171,
+        "investedSessions": 1471,
+        "sessions": 1642,
+        "switchEvents": 34
+      }
+    },
+    {
+      "id": "VWMA_close_N10_OUT2_RE1_C3",
+      "cfg": {
+        "id": "VWMA_close_N10_OUT2_RE1_C3",
+        "family": "ma_hysteresis",
+        "src": "close",
+        "n": 10,
+        "out": 0.02,
+        "rein": 0.01,
+        "confirm": 3,
+        "riskOffWeight": 0.0,
+        "maType": "VWMA"
+      },
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 143.912,
+        "endNTD": 2439117.02,
+        "mddPct": -42.754,
+        "riskOffSells": 25,
+        "riskOnReentries": 25,
+        "riskOffSessions": 155,
+        "investedSessions": 818,
+        "sessions": 973,
+        "switchEvents": 50
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 134.377,
+        "endNTD": 2343773.82,
+        "mddPct": -40.785,
+        "riskOffSells": 11,
+        "riskOnReentries": 11,
+        "riskOffSessions": 57,
+        "investedSessions": 428,
+        "sessions": 485,
+        "switchEvents": 22
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 93.512,
+        "endNTD": 1935116.93,
+        "mddPct": -29.683,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 19,
+        "investedSessions": 165,
+        "sessions": 184,
+        "switchEvents": 10
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 1030.306,
+        "endNTD": 11303063.43,
+        "mddPct": -42.754,
+        "riskOffSells": 41,
+        "riskOnReentries": 41,
+        "riskOffSessions": 231,
+        "investedSessions": 1411,
+        "sessions": 1642,
+        "switchEvents": 82
+      }
+    }
+  ],
+  "freezeList": [
+    {
+      "id": "SMA_twii_N10_OUT3_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 391.033,
+      "trainReturnPct": 409.304
+    },
+    {
+      "id": "SMA_twii_N5_OUT2_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 381.116,
+      "trainReturnPct": 395.118
+    },
+    {
+      "id": "SMA_twii_N10_OUT3_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 391.033,
+      "trainReturnPct": 409.304
+    },
+    {
+      "id": "SMA_close_N8_OUT3_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 332.778,
+      "trainReturnPct": 368.238
+    },
+    {
+      "id": "SMA_close_N15_OUT4_RE1_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 312.738,
+      "trainReturnPct": 342.251
+    },
+    {
+      "id": "SMA_close_N8_OUT3_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 332.778,
+      "trainReturnPct": 368.238
+    },
+    {
+      "id": "EMA_twii_N5_OUT1_RE2_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 482.365,
+      "trainReturnPct": 493.42
+    },
+    {
+      "id": "EMA_twii_N5_OUT1_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 458.977,
+      "trainReturnPct": 469.032
+    },
+    {
+      "id": "EMA_twii_N5_OUT1_RE2_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 482.365,
+      "trainReturnPct": 493.42
+    },
+    {
+      "id": "EMA_close_N8_OUT3_RE2_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 383.462,
+      "trainReturnPct": 411.001
+    },
+    {
+      "id": "EMA_close_N5_OUT3_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 323.122,
+      "trainReturnPct": 347.452
+    },
+    {
+      "id": "EMA_close_N8_OUT3_RE2_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 383.462,
+      "trainReturnPct": 411.001
+    },
+    {
+      "id": "WMA_twii_N5_OUT1_RE2_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 424.499,
+      "trainReturnPct": 447.72
+    },
+    {
+      "id": "WMA_twii_N8_OUT2_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 381.116,
+      "trainReturnPct": 395.118
+    },
+    {
+      "id": "WMA_twii_N5_OUT1_RE2_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 424.499,
+      "trainReturnPct": 447.72
+    },
+    {
+      "id": "WMA_close_N15_OUT4_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 360.888,
+      "trainReturnPct": 385.218
+    },
+    {
+      "id": "WMA_close_N12_OUT4_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 358.296,
+      "trainReturnPct": 381.669
+    },
+    {
+      "id": "WMA_close_N15_OUT4_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 360.888,
+      "trainReturnPct": 385.218
+    },
+    {
+      "id": "VWMA_twii_N12_OUT3_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 346.578,
+      "trainReturnPct": 371.093
+    },
+    {
+      "id": "VWMA_twii_N10_OUT4_RE3_C1",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 323.397,
+      "trainReturnPct": 343.284
+    },
+    {
+      "id": "VWMA_twii_N12_OUT3_RE3_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 346.578,
+      "trainReturnPct": 371.093
+    },
+    {
+      "id": "VWMA_close_N15_OUT4_RE1_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 311.688,
+      "trainReturnPct": 337.525
+    },
+    {
+      "id": "VWMA_close_N12_OUT4_RE2_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 311.053,
+      "trainReturnPct": 334.95
+    },
+    {
+      "id": "VWMA_close_N15_OUT4_RE1_C3",
+      "reason": "2020_23_risk_score",
+      "score2020_23": 311.688,
+      "trainReturnPct": 337.525
+    }
+  ],
+  "finalists": [
+    {
+      "id": "EMA_close_N10_OUT2_RE1_C3",
+      "maType": "EMA",
+      "signalSource": "close",
+      "window": 10,
+      "sellBufferPct": 2.0,
+      "rebuyBufferPct": 1.0,
+      "confirmationDays": 3,
+      "selection": "apples_to_apples",
+      "score2020_23": 126.304,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 172.064,
+        "endNTD": 2720639.21,
+        "mddPct": -46.837,
+        "riskOffSells": 20,
+        "riskOnReentries": 20,
+        "riskOffSessions": 155,
+        "investedSessions": 818,
+        "sessions": 973,
+        "switchEvents": 40
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 139.572,
+        "endNTD": 2395719.11,
+        "mddPct": -31.137,
+        "riskOffSells": 8,
+        "riskOnReentries": 8,
+        "riskOffSessions": 78,
+        "investedSessions": 407,
+        "sessions": 485,
+        "switchEvents": 16
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 195.477,
+        "endNTD": 2954774.32,
+        "mddPct": -21.216,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 15,
+        "investedSessions": 169,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 617.263,
+        "endNTD": 7172626.08,
+        "mddPct": -31.137,
+        "riskOffSells": 9,
+        "riskOnReentries": 9,
+        "riskOffSessions": 93,
+        "investedSessions": 576,
+        "sessions": 669,
+        "switchEvents": 18
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 1867.709,
+        "endNTD": 19677085.36,
+        "mddPct": -46.837,
+        "riskOffSells": 29,
+        "riskOnReentries": 29,
+        "riskOffSessions": 248,
+        "investedSessions": 1394,
+        "sessions": 1642,
+        "switchEvents": 58
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2134690.78,
+          "returnPct": 113.469
+        },
+        "2021": {
+          "openingNTD": 2134690.78,
+          "closingNTD": 2546525.45,
+          "returnPct": 19.292
+        },
+        "2022": {
+          "openingNTD": 2546525.45,
+          "closingNTD": 1971514.37,
+          "returnPct": -22.58
+        },
+        "2023": {
+          "openingNTD": 1971514.37,
+          "closingNTD": 2720639.21,
+          "returnPct": 37.997
+        },
+        "2024": {
+          "openingNTD": 2720639.21,
+          "closingNTD": 3740455.24,
+          "returnPct": 37.484
+        },
+        "2025": {
+          "openingNTD": 3740455.24,
+          "closingNTD": 6572240.16,
+          "returnPct": 75.707
+        },
+        "2026": {
+          "openingNTD": 6572240.16,
+          "closingNTD": 19677085.36,
+          "returnPct": 199.397
+        }
+      }
+    },
+    {
+      "id": "EMA_close_N5_OUT3_RE3_C3",
+      "maType": "EMA",
+      "signalSource": "close",
+      "window": 5,
+      "sellBufferPct": 3.0,
+      "rebuyBufferPct": 3.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 323.122,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 347.452,
+        "endNTD": 4474523.34,
+        "mddPct": -38.781,
+        "riskOffSells": 3,
+        "riskOnReentries": 3,
+        "riskOffSessions": 134,
+        "investedSessions": 839,
+        "sessions": 973,
+        "switchEvents": 6
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 87.581,
+        "endNTD": 1875810.51,
+        "mddPct": -59.968,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 16,
+        "investedSessions": 469,
+        "sessions": 485,
+        "switchEvents": 4
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 146.32,
+        "endNTD": 2463202.04,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 1,
+        "investedSessions": 183,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 368.182,
+        "endNTD": 4681818.89,
+        "mddPct": -59.968,
+        "riskOffSells": 3,
+        "riskOnReentries": 3,
+        "riskOffSessions": 17,
+        "investedSessions": 652,
+        "sessions": 669,
+        "switchEvents": 6
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 2012.293,
+        "endNTD": 21122934.5,
+        "mddPct": -59.97,
+        "riskOffSells": 6,
+        "riskOnReentries": 6,
+        "riskOffSessions": 151,
+        "investedSessions": 1491,
+        "sessions": 1642,
+        "switchEvents": 12
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2540024.24,
+          "returnPct": 154.002
+        },
+        "2021": {
+          "openingNTD": 2540024.24,
+          "closingNTD": 3763726.49,
+          "returnPct": 48.177
+        },
+        "2022": {
+          "openingNTD": 3763726.49,
+          "closingNTD": 2724143.63,
+          "returnPct": -27.621
+        },
+        "2023": {
+          "openingNTD": 2724143.63,
+          "closingNTD": 4474523.34,
+          "returnPct": 64.254
+        },
+        "2024": {
+          "openingNTD": 4474523.34,
+          "closingNTD": 6254429.62,
+          "returnPct": 39.779
+        },
+        "2025": {
+          "openingNTD": 6254429.62,
+          "closingNTD": 8463093.5,
+          "returnPct": 35.314
+        },
+        "2026": {
+          "openingNTD": 8463093.5,
+          "closingNTD": 21122934.5,
+          "returnPct": 149.589
+        }
+      }
+    },
+    {
+      "id": "EMA_close_N8_OUT3_RE2_C3",
+      "maType": "EMA",
+      "signalSource": "close",
+      "window": 8,
+      "sellBufferPct": 3.0,
+      "rebuyBufferPct": 2.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 383.462,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 411.001,
+        "endNTD": 5110014.88,
+        "mddPct": -35.526,
+        "riskOffSells": 8,
+        "riskOnReentries": 8,
+        "riskOffSessions": 147,
+        "investedSessions": 826,
+        "sessions": 973,
+        "switchEvents": 16
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 189.876,
+        "endNTD": 2898764.09,
+        "mddPct": -26.247,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 45,
+        "investedSessions": 440,
+        "sessions": 485,
+        "switchEvents": 8
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 146.32,
+        "endNTD": 2463202.04,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 1,
+        "investedSessions": 183,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 623.496,
+        "endNTD": 7234964.45,
+        "mddPct": -33.448,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 46,
+        "investedSessions": 623,
+        "sessions": 669,
+        "switchEvents": 10
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 3627.982,
+        "endNTD": 37279819.31,
+        "mddPct": -35.526,
+        "riskOffSells": 13,
+        "riskOnReentries": 13,
+        "riskOffSessions": 193,
+        "investedSessions": 1449,
+        "sessions": 1642,
+        "switchEvents": 26
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2540024.24,
+          "returnPct": 154.002
+        },
+        "2021": {
+          "openingNTD": 2540024.24,
+          "closingNTD": 3263285.34,
+          "returnPct": 28.475
+        },
+        "2022": {
+          "openingNTD": 3263285.34,
+          "closingNTD": 3111025.05,
+          "returnPct": -4.666
+        },
+        "2023": {
+          "openingNTD": 3111025.05,
+          "closingNTD": 5110014.88,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 5110014.88,
+          "closingNTD": 7462375.39,
+          "returnPct": 46.034
+        },
+        "2025": {
+          "openingNTD": 7462375.39,
+          "closingNTD": 14936436.46,
+          "returnPct": 100.157
+        },
+        "2026": {
+          "openingNTD": 14936436.46,
+          "closingNTD": 37279819.31,
+          "returnPct": 149.59
+        }
+      }
+    },
+    {
+      "id": "EMA_twii_N10_OUT2_RE1_C3",
+      "maType": "EMA",
+      "signalSource": "twii",
+      "window": 10,
+      "sellBufferPct": 2.0,
+      "rebuyBufferPct": 1.0,
+      "confirmationDays": 3,
+      "selection": "apples_to_apples",
+      "score2020_23": 313.857,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 341.695,
+        "endNTD": 4416948.49,
+        "mddPct": -37.887,
+        "riskOffSells": 7,
+        "riskOnReentries": 7,
+        "riskOffSessions": 110,
+        "investedSessions": 863,
+        "sessions": 973,
+        "switchEvents": 14
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 196.336,
+        "endNTD": 2963357.3,
+        "mddPct": -29.608,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 23,
+        "investedSessions": 462,
+        "sessions": 485,
+        "switchEvents": 4
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 146.32,
+        "endNTD": 2463202.04,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 1,
+        "investedSessions": 183,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 639.615,
+        "endNTD": 7396149.64,
+        "mddPct": -33.448,
+        "riskOffSells": 3,
+        "riskOnReentries": 3,
+        "riskOffSessions": 24,
+        "investedSessions": 645,
+        "sessions": 669,
+        "switchEvents": 6
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 3194.108,
+        "endNTD": 32941080.26,
+        "mddPct": -37.887,
+        "riskOffSells": 10,
+        "riskOnReentries": 10,
+        "riskOffSessions": 134,
+        "investedSessions": 1508,
+        "sessions": 1642,
+        "switchEvents": 20
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2428066.58,
+          "returnPct": 142.807
+        },
+        "2021": {
+          "openingNTD": 2428066.58,
+          "closingNTD": 3431034.52,
+          "returnPct": 41.307
+        },
+        "2022": {
+          "openingNTD": 3431034.52,
+          "closingNTD": 2689080.63,
+          "returnPct": -21.625
+        },
+        "2023": {
+          "openingNTD": 2689080.63,
+          "closingNTD": 4416948.49,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 4416948.49,
+          "closingNTD": 7173780.23,
+          "returnPct": 62.415
+        },
+        "2025": {
+          "openingNTD": 7173780.23,
+          "closingNTD": 13198102.12,
+          "returnPct": 83.977
+        },
+        "2026": {
+          "openingNTD": 13198102.12,
+          "closingNTD": 32941080.26,
+          "returnPct": 149.59
+        }
+      }
+    },
+    {
+      "id": "EMA_twii_N5_OUT1_RE2_C3",
+      "maType": "EMA",
+      "signalSource": "twii",
+      "window": 5,
+      "sellBufferPct": 1.0,
+      "rebuyBufferPct": 2.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 482.365,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 493.42,
+        "endNTD": 5934198.74,
+        "mddPct": -14.645,
+        "riskOffSells": 3,
+        "riskOnReentries": 3,
+        "riskOffSessions": 401,
+        "investedSessions": 572,
+        "sessions": 973,
+        "switchEvents": 6
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 212.72,
+        "endNTD": 3127202.32,
+        "mddPct": -17.429,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 185,
+        "investedSessions": 300,
+        "sessions": 485,
+        "switchEvents": 2
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 105.267,
+        "endNTD": 2052666.75,
+        "mddPct": -33.446,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 13,
+        "investedSessions": 171,
+        "sessions": 184,
+        "switchEvents": 4
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 550.419,
+        "endNTD": 6504190.95,
+        "mddPct": -33.448,
+        "riskOffSells": 3,
+        "riskOnReentries": 3,
+        "riskOffSessions": 198,
+        "investedSessions": 471,
+        "sessions": 669,
+        "switchEvents": 6
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 3791.9,
+        "endNTD": 38919002.11,
+        "mddPct": -33.448,
+        "riskOffSells": 6,
+        "riskOnReentries": 6,
+        "riskOffSessions": 599,
+        "investedSessions": 1043,
+        "sessions": 1642,
+        "switchEvents": 12
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2540024.24,
+          "returnPct": 154.002
+        },
+        "2021": {
+          "openingNTD": 2540024.24,
+          "closingNTD": 3430498.33,
+          "returnPct": 35.058
+        },
+        "2022": {
+          "openingNTD": 3430498.33,
+          "closingNTD": 3612801.98,
+          "returnPct": 5.314
+        },
+        "2023": {
+          "openingNTD": 3612801.98,
+          "closingNTD": 5934198.74,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 5934198.74,
+          "closingNTD": 9424038.3,
+          "returnPct": 58.809
+        },
+        "2025": {
+          "openingNTD": 9424038.3,
+          "closingNTD": 18712120.95,
+          "returnPct": 98.557
+        },
+        "2026": {
+          "openingNTD": 18712120.95,
+          "closingNTD": 38919002.11,
+          "returnPct": 107.988
+        }
+      }
+    },
+    {
+      "id": "EMA_twii_N5_OUT1_RE3_C3",
+      "maType": "EMA",
+      "signalSource": "twii",
+      "window": 5,
+      "sellBufferPct": 1.0,
+      "rebuyBufferPct": 3.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 458.977,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 469.032,
+        "endNTD": 5690317.8,
+        "mddPct": -14.645,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 414,
+        "investedSessions": 559,
+        "sessions": 973,
+        "switchEvents": 4
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 57.497,
+        "endNTD": 1574971.04,
+        "mddPct": -15.644,
+        "riskOffSells": 1,
+        "riskOnReentries": 0,
+        "riskOffSessions": 352,
+        "investedSessions": 133,
+        "sessions": 485,
+        "switchEvents": 1
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 88.07,
+        "endNTD": 1880701.62,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 0,
+        "riskOffSessions": 47,
+        "investedSessions": 137,
+        "sessions": 184,
+        "switchEvents": 1
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 106.411,
+        "endNTD": 2064105.49,
+        "mddPct": -33.446,
+        "riskOffSells": 2,
+        "riskOnReentries": 1,
+        "riskOffSessions": 430,
+        "investedSessions": 239,
+        "sessions": 669,
+        "switchEvents": 3
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 1084.352,
+        "endNTD": 11843521.74,
+        "mddPct": -33.448,
+        "riskOffSells": 4,
+        "riskOnReentries": 3,
+        "riskOffSessions": 844,
+        "investedSessions": 798,
+        "sessions": 1642,
+        "switchEvents": 7
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2540024.24,
+          "returnPct": 154.002
+        },
+        "2021": {
+          "openingNTD": 2540024.24,
+          "closingNTD": 3430498.33,
+          "returnPct": 35.058
+        },
+        "2022": {
+          "openingNTD": 3430498.33,
+          "closingNTD": 3464321.57,
+          "returnPct": 0.986
+        },
+        "2023": {
+          "openingNTD": 3464321.57,
+          "closingNTD": 5690317.8,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 5690317.8,
+          "closingNTD": 9036738.32,
+          "returnPct": 58.809
+        },
+        "2025": {
+          "openingNTD": 9036738.32,
+          "closingNTD": 9036738.32,
+          "returnPct": 0.0
+        },
+        "2026": {
+          "openingNTD": 9036738.32,
+          "closingNTD": 11843521.74,
+          "returnPct": 31.06
+        }
+      }
+    },
+    {
+      "id": "SMA_close_N10_OUT2_RE1_C3",
+      "maType": "SMA",
+      "signalSource": "close",
+      "window": 10,
+      "sellBufferPct": 2.0,
+      "rebuyBufferPct": 1.0,
+      "confirmationDays": 3,
+      "selection": "apples_to_apples",
+      "score2020_23": 153.207,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 201.265,
+        "endNTD": 3012646.0,
+        "mddPct": -41.923,
+        "riskOffSells": 25,
+        "riskOnReentries": 25,
+        "riskOffSessions": 198,
+        "investedSessions": 775,
+        "sessions": 973,
+        "switchEvents": 50
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 125.325,
+        "endNTD": 2253249.75,
+        "mddPct": -40.187,
+        "riskOffSells": 12,
+        "riskOnReentries": 12,
+        "riskOffSessions": 70,
+        "investedSessions": 415,
+        "sessions": 485,
+        "switchEvents": 24
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 76.716,
+        "endNTD": 1767160.46,
+        "mddPct": -32.464,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 31,
+        "investedSessions": 153,
+        "sessions": 184,
+        "switchEvents": 10
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 303.446,
+        "endNTD": 4034461.19,
+        "mddPct": -40.187,
+        "riskOffSells": 17,
+        "riskOnReentries": 17,
+        "riskOffSessions": 101,
+        "investedSessions": 568,
+        "sessions": 669,
+        "switchEvents": 34
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 1125.577,
+        "endNTD": 12255767.38,
+        "mddPct": -41.923,
+        "riskOffSells": 42,
+        "riskOnReentries": 42,
+        "riskOffSessions": 299,
+        "investedSessions": 1343,
+        "sessions": 1642,
+        "switchEvents": 84
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2163857.35,
+          "returnPct": 116.386
+        },
+        "2021": {
+          "openingNTD": 2163857.35,
+          "closingNTD": 3106886.44,
+          "returnPct": 43.581
+        },
+        "2022": {
+          "openingNTD": 3106886.44,
+          "closingNTD": 2483695.11,
+          "returnPct": -20.058
+        },
+        "2023": {
+          "openingNTD": 2483695.11,
+          "closingNTD": 3012646.0,
+          "returnPct": 21.297
+        },
+        "2024": {
+          "openingNTD": 3012646.0,
+          "closingNTD": 3937648.9,
+          "returnPct": 30.704
+        },
+        "2025": {
+          "openingNTD": 3937648.9,
+          "closingNTD": 6844716.58,
+          "returnPct": 73.827
+        },
+        "2026": {
+          "openingNTD": 6844716.58,
+          "closingNTD": 12255767.38,
+          "returnPct": 79.054
+        }
+      }
+    },
+    {
+      "id": "SMA_close_N15_OUT4_RE1_C3",
+      "maType": "SMA",
+      "signalSource": "close",
+      "window": 15,
+      "sellBufferPct": 4.0,
+      "rebuyBufferPct": 1.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 312.738,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 342.251,
+        "endNTD": 4422514.14,
+        "mddPct": -35.479,
+        "riskOffSells": 10,
+        "riskOnReentries": 10,
+        "riskOffSessions": 147,
+        "investedSessions": 826,
+        "sessions": 973,
+        "switchEvents": 20
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 150.482,
+        "endNTD": 2504819.73,
+        "mddPct": -29.869,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 58,
+        "investedSessions": 427,
+        "sessions": 485,
+        "switchEvents": 10
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 172.058,
+        "endNTD": 2720579.0,
+        "mddPct": -21.216,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 16,
+        "investedSessions": 168,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 590.502,
+        "endNTD": 6905024.72,
+        "mddPct": -29.869,
+        "riskOffSells": 6,
+        "riskOnReentries": 6,
+        "riskOffSessions": 74,
+        "investedSessions": 595,
+        "sessions": 669,
+        "switchEvents": 12
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 2979.26,
+        "endNTD": 30792596.84,
+        "mddPct": -35.479,
+        "riskOffSells": 16,
+        "riskOnReentries": 16,
+        "riskOffSessions": 221,
+        "investedSessions": 1421,
+        "sessions": 1642,
+        "switchEvents": 32
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2364309.32,
+          "returnPct": 136.431
+        },
+        "2021": {
+          "openingNTD": 2364309.32,
+          "closingNTD": 3154924.11,
+          "returnPct": 33.44
+        },
+        "2022": {
+          "openingNTD": 3154924.11,
+          "closingNTD": 2746928.73,
+          "returnPct": -12.932
+        },
+        "2023": {
+          "openingNTD": 2746928.73,
+          "closingNTD": 4422514.14,
+          "returnPct": 60.999
+        },
+        "2024": {
+          "openingNTD": 4422514.14,
+          "closingNTD": 6047384.0,
+          "returnPct": 36.741
+        },
+        "2025": {
+          "openingNTD": 6047384.0,
+          "closingNTD": 11170046.52,
+          "returnPct": 84.709
+        },
+        "2026": {
+          "openingNTD": 11170046.52,
+          "closingNTD": 30792596.84,
+          "returnPct": 175.671
+        }
+      }
+    },
+    {
+      "id": "SMA_close_N8_OUT3_RE3_C3",
+      "maType": "SMA",
+      "signalSource": "close",
+      "window": 8,
+      "sellBufferPct": 3.0,
+      "rebuyBufferPct": 3.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 332.778,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 368.238,
+        "endNTD": 4682383.3,
+        "mddPct": -42.655,
+        "riskOffSells": 12,
+        "riskOnReentries": 12,
+        "riskOffSessions": 139,
+        "investedSessions": 834,
+        "sessions": 973,
+        "switchEvents": 24
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 148.324,
+        "endNTD": 2483243.26,
+        "mddPct": -36.067,
+        "riskOffSells": 7,
+        "riskOnReentries": 7,
+        "riskOffSessions": 56,
+        "investedSessions": 429,
+        "sessions": 485,
+        "switchEvents": 14
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 91.661,
+        "endNTD": 1916610.36,
+        "mddPct": -30.073,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 28,
+        "investedSessions": 156,
+        "sessions": 184,
+        "switchEvents": 8
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 382.236,
+        "endNTD": 4822361.27,
+        "mddPct": -36.067,
+        "riskOffSells": 11,
+        "riskOnReentries": 11,
+        "riskOffSessions": 84,
+        "investedSessions": 585,
+        "sessions": 669,
+        "switchEvents": 22
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 2176.837,
+        "endNTD": 22768366.77,
+        "mddPct": -42.655,
+        "riskOffSells": 23,
+        "riskOnReentries": 23,
+        "riskOffSessions": 223,
+        "investedSessions": 1419,
+        "sessions": 1642,
+        "switchEvents": 46
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2540024.24,
+          "returnPct": 154.002
+        },
+        "2021": {
+          "openingNTD": 2540024.24,
+          "closingNTD": 3620118.16,
+          "returnPct": 42.523
+        },
+        "2022": {
+          "openingNTD": 3620118.16,
+          "closingNTD": 2850678.95,
+          "returnPct": -21.255
+        },
+        "2023": {
+          "openingNTD": 2850678.95,
+          "closingNTD": 4682383.3,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 4682383.3,
+          "closingNTD": 6404184.86,
+          "returnPct": 36.772
+        },
+        "2025": {
+          "openingNTD": 6404184.86,
+          "closingNTD": 11724339.23,
+          "returnPct": 83.073
+        },
+        "2026": {
+          "openingNTD": 11724339.23,
+          "closingNTD": 22768366.77,
+          "returnPct": 94.197
+        }
+      }
+    },
+    {
+      "id": "SMA_twii_N10_OUT2_RE1_C3",
+      "maType": "SMA",
+      "signalSource": "twii",
+      "window": 10,
+      "sellBufferPct": 2.0,
+      "rebuyBufferPct": 1.0,
+      "confirmationDays": 3,
+      "selection": "apples_to_apples",
+      "score2020_23": 355.658,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 383.017,
+        "endNTD": 4830174.14,
+        "mddPct": -31.562,
+        "riskOffSells": 10,
+        "riskOnReentries": 10,
+        "riskOffSessions": 119,
+        "investedSessions": 854,
+        "sessions": 973,
+        "switchEvents": 20
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 177.122,
+        "endNTD": 2771220.75,
+        "mddPct": -33.437,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 44,
+        "investedSessions": 441,
+        "sessions": 485,
+        "switchEvents": 8
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 149.512,
+        "endNTD": 2495124.97,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 2,
+        "investedSessions": 182,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 600.612,
+        "endNTD": 7006117.23,
+        "mddPct": -33.448,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 46,
+        "investedSessions": 623,
+        "sessions": 669,
+        "switchEvents": 10
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 3312.334,
+        "endNTD": 34123343.53,
+        "mddPct": -33.448,
+        "riskOffSells": 15,
+        "riskOnReentries": 15,
+        "riskOffSessions": 165,
+        "investedSessions": 1477,
+        "sessions": 1642,
+        "switchEvents": 30
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2343653.26,
+          "returnPct": 134.365
+        },
+        "2021": {
+          "openingNTD": 2343653.26,
+          "closingNTD": 3196299.96,
+          "returnPct": 36.381
+        },
+        "2022": {
+          "openingNTD": 3196299.96,
+          "closingNTD": 2940660.71,
+          "returnPct": -7.998
+        },
+        "2023": {
+          "openingNTD": 2940660.71,
+          "closingNTD": 4830174.14,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 4830174.14,
+          "closingNTD": 6717242.21,
+          "returnPct": 39.068
+        },
+        "2025": {
+          "openingNTD": 6717242.21,
+          "closingNTD": 13497177.4,
+          "returnPct": 100.933
+        },
+        "2026": {
+          "openingNTD": 13497177.4,
+          "closingNTD": 34123343.53,
+          "returnPct": 152.818
+        }
+      }
+    },
+    {
+      "id": "SMA_twii_N10_OUT3_RE3_C3",
+      "maType": "SMA",
+      "signalSource": "twii",
+      "window": 10,
+      "sellBufferPct": 3.0,
+      "rebuyBufferPct": 3.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 391.033,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 409.304,
+        "endNTD": 5093041.08,
+        "mddPct": -25.947,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 201,
+        "investedSessions": 772,
+        "sessions": 973,
+        "switchEvents": 8
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 111.263,
+        "endNTD": 2112630.05,
+        "mddPct": -54.239,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 25,
+        "investedSessions": 460,
+        "sessions": 485,
+        "switchEvents": 4
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 136.011,
+        "endNTD": 2360106.77,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 4,
+        "investedSessions": 180,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 405.205,
+        "endNTD": 5052050.74,
+        "mddPct": -54.239,
+        "riskOffSells": 3,
+        "riskOnReentries": 3,
+        "riskOffSessions": 29,
+        "investedSessions": 640,
+        "sessions": 669,
+        "switchEvents": 6
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 2494.505,
+        "endNTD": 25945049.03,
+        "mddPct": -54.24,
+        "riskOffSells": 7,
+        "riskOnReentries": 7,
+        "riskOffSessions": 230,
+        "investedSessions": 1412,
+        "sessions": 1642,
+        "switchEvents": 14
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2428066.58,
+          "returnPct": 142.807
+        },
+        "2021": {
+          "openingNTD": 2428066.58,
+          "closingNTD": 3597822.47,
+          "returnPct": 48.176
+        },
+        "2022": {
+          "openingNTD": 3597822.47,
+          "closingNTD": 3100694.88,
+          "returnPct": -13.817
+        },
+        "2023": {
+          "openingNTD": 3100694.88,
+          "closingNTD": 5093041.08,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 5093041.08,
+          "closingNTD": 8138061.33,
+          "returnPct": 59.788
+        },
+        "2025": {
+          "openingNTD": 8138061.33,
+          "closingNTD": 10849379.65,
+          "returnPct": 33.317
+        },
+        "2026": {
+          "openingNTD": 10849379.65,
+          "closingNTD": 25945049.03,
+          "returnPct": 139.139
+        }
+      }
+    },
+    {
+      "id": "SMA_twii_N5_OUT2_RE3_C3",
+      "maType": "SMA",
+      "signalSource": "twii",
+      "window": 5,
+      "sellBufferPct": 2.0,
+      "rebuyBufferPct": 3.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 381.116,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 395.118,
+        "endNTD": 4951179.36,
+        "mddPct": -21.822,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 408,
+        "investedSessions": 565,
+        "sessions": 973,
+        "switchEvents": 4
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 93.658,
+        "endNTD": 1936584.1,
+        "mddPct": -59.135,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 5,
+        "investedSessions": 480,
+        "sessions": 485,
+        "switchEvents": 4
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 146.32,
+        "endNTD": 2463202.04,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 1,
+        "investedSessions": 183,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 383.343,
+        "endNTD": 4833428.66,
+        "mddPct": -59.135,
+        "riskOffSells": 3,
+        "riskOnReentries": 3,
+        "riskOffSessions": 6,
+        "investedSessions": 663,
+        "sessions": 669,
+        "switchEvents": 6
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 2313.123,
+        "endNTD": 24131227.24,
+        "mddPct": -59.136,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 414,
+        "investedSessions": 1228,
+        "sessions": 1642,
+        "switchEvents": 10
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2540024.24,
+          "returnPct": 154.002
+        },
+        "2021": {
+          "openingNTD": 2540024.24,
+          "closingNTD": 2984894.3,
+          "returnPct": 17.514
+        },
+        "2022": {
+          "openingNTD": 2984894.3,
+          "closingNTD": 3014324.14,
+          "returnPct": 0.986
+        },
+        "2023": {
+          "openingNTD": 3014324.14,
+          "closingNTD": 4951179.36,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 4951179.36,
+          "closingNTD": 7064885.11,
+          "returnPct": 42.691
+        },
+        "2025": {
+          "openingNTD": 7064885.11,
+          "closingNTD": 9668383.04,
+          "returnPct": 36.851
+        },
+        "2026": {
+          "openingNTD": 9668383.04,
+          "closingNTD": 24131227.24,
+          "returnPct": 149.589
+        }
+      }
+    },
+    {
+      "id": "VWMA_close_N10_OUT2_RE1_C3",
+      "maType": "VWMA",
+      "signalSource": "close",
+      "window": 10,
+      "sellBufferPct": 2.0,
+      "rebuyBufferPct": 1.0,
+      "confirmationDays": 3,
+      "selection": "apples_to_apples",
+      "score2020_23": 95.397,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 143.912,
+        "endNTD": 2439117.02,
+        "mddPct": -42.754,
+        "riskOffSells": 25,
+        "riskOnReentries": 25,
+        "riskOffSessions": 155,
+        "investedSessions": 818,
+        "sessions": 973,
+        "switchEvents": 50
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 134.377,
+        "endNTD": 2343773.82,
+        "mddPct": -40.785,
+        "riskOffSells": 11,
+        "riskOnReentries": 11,
+        "riskOffSessions": 57,
+        "investedSessions": 428,
+        "sessions": 485,
+        "switchEvents": 22
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 93.512,
+        "endNTD": 1935116.93,
+        "mddPct": -29.683,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 19,
+        "investedSessions": 165,
+        "sessions": 184,
+        "switchEvents": 10
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 359.569,
+        "endNTD": 4595692.44,
+        "mddPct": -40.785,
+        "riskOffSells": 16,
+        "riskOnReentries": 16,
+        "riskOffSessions": 76,
+        "investedSessions": 593,
+        "sessions": 669,
+        "switchEvents": 32
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 1030.306,
+        "endNTD": 11303063.43,
+        "mddPct": -42.754,
+        "riskOffSells": 41,
+        "riskOnReentries": 41,
+        "riskOffSessions": 231,
+        "investedSessions": 1411,
+        "sessions": 1642,
+        "switchEvents": 82
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 1922992.41,
+          "returnPct": 92.299
+        },
+        "2021": {
+          "openingNTD": 1922992.41,
+          "closingNTD": 2495239.99,
+          "returnPct": 29.758
+        },
+        "2022": {
+          "openingNTD": 2495239.99,
+          "closingNTD": 1843795.32,
+          "returnPct": -26.107
+        },
+        "2023": {
+          "openingNTD": 1843795.32,
+          "closingNTD": 2439117.02,
+          "returnPct": 32.288
+        },
+        "2024": {
+          "openingNTD": 2439117.02,
+          "closingNTD": 3574053.06,
+          "returnPct": 46.531
+        },
+        "2025": {
+          "openingNTD": 3574053.06,
+          "closingNTD": 5764448.37,
+          "returnPct": 61.286
+        },
+        "2026": {
+          "openingNTD": 5764448.37,
+          "closingNTD": 11303063.43,
+          "returnPct": 96.082
+        }
+      }
+    },
+    {
+      "id": "VWMA_close_N12_OUT4_RE2_C3",
+      "maType": "VWMA",
+      "signalSource": "close",
+      "window": 12,
+      "sellBufferPct": 4.0,
+      "rebuyBufferPct": 2.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 311.053,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 334.95,
+        "endNTD": 4349503.5,
+        "mddPct": -30.721,
+        "riskOffSells": 7,
+        "riskOnReentries": 7,
+        "riskOffSessions": 92,
+        "investedSessions": 881,
+        "sessions": 973,
+        "switchEvents": 14
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 228.558,
+        "endNTD": 3285582.86,
+        "mddPct": -25.838,
+        "riskOffSells": 3,
+        "riskOnReentries": 3,
+        "riskOffSessions": 35,
+        "investedSessions": 450,
+        "sessions": 485,
+        "switchEvents": 6
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 146.32,
+        "endNTD": 2463202.04,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 1,
+        "investedSessions": 183,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 720.047,
+        "endNTD": 8200468.48,
+        "mddPct": -33.448,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 36,
+        "investedSessions": 633,
+        "sessions": 669,
+        "switchEvents": 8
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 3496.509,
+        "endNTD": 35965094.07,
+        "mddPct": -33.448,
+        "riskOffSells": 11,
+        "riskOnReentries": 11,
+        "riskOffSessions": 128,
+        "investedSessions": 1514,
+        "sessions": 1642,
+        "switchEvents": 22
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2055930.69,
+          "returnPct": 105.593
+        },
+        "2021": {
+          "openingNTD": 2055930.69,
+          "closingNTD": 3083972.07,
+          "returnPct": 50.004
+        },
+        "2022": {
+          "openingNTD": 3083972.07,
+          "closingNTD": 2648018.95,
+          "returnPct": -14.136
+        },
+        "2023": {
+          "openingNTD": 2648018.95,
+          "closingNTD": 4349503.5,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 4349503.5,
+          "closingNTD": 6962354.23,
+          "returnPct": 60.072
+        },
+        "2025": {
+          "openingNTD": 6962354.23,
+          "closingNTD": 14409678.54,
+          "returnPct": 106.966
+        },
+        "2026": {
+          "openingNTD": 14409678.54,
+          "closingNTD": 35965094.07,
+          "returnPct": 149.59
+        }
+      }
+    },
+    {
+      "id": "VWMA_close_N15_OUT4_RE1_C3",
+      "maType": "VWMA",
+      "signalSource": "close",
+      "window": 15,
+      "sellBufferPct": 4.0,
+      "rebuyBufferPct": 1.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 311.688,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 337.525,
+        "endNTD": 4375251.23,
+        "mddPct": -28.794,
+        "riskOffSells": 10,
+        "riskOnReentries": 10,
+        "riskOffSessions": 132,
+        "investedSessions": 841,
+        "sessions": 973,
+        "switchEvents": 20
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 177.122,
+        "endNTD": 2771220.75,
+        "mddPct": -33.437,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 44,
+        "investedSessions": 441,
+        "sessions": 485,
+        "switchEvents": 8
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 175.792,
+        "endNTD": 2757922.78,
+        "mddPct": -24.436,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 8,
+        "investedSessions": 176,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 674.4,
+        "endNTD": 7744003.48,
+        "mddPct": -33.437,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 52,
+        "investedSessions": 617,
+        "sessions": 669,
+        "switchEvents": 10
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 3316.526,
+        "endNTD": 34165256.42,
+        "mddPct": -33.438,
+        "riskOffSells": 15,
+        "riskOnReentries": 15,
+        "riskOffSessions": 184,
+        "investedSessions": 1458,
+        "sessions": 1642,
+        "switchEvents": 30
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2142594.54,
+          "returnPct": 114.259
+        },
+        "2021": {
+          "openingNTD": 2142594.54,
+          "closingNTD": 3097831.33,
+          "returnPct": 44.583
+        },
+        "2022": {
+          "openingNTD": 3097831.33,
+          "closingNTD": 2971306.13,
+          "returnPct": -4.084
+        },
+        "2023": {
+          "openingNTD": 2971306.13,
+          "closingNTD": 4375251.23,
+          "returnPct": 47.25
+        },
+        "2024": {
+          "openingNTD": 4375251.23,
+          "closingNTD": 6084589.14,
+          "returnPct": 39.068
+        },
+        "2025": {
+          "openingNTD": 6084589.14,
+          "closingNTD": 12225972.25,
+          "returnPct": 100.933
+        },
+        "2026": {
+          "openingNTD": 12225972.25,
+          "closingNTD": 34165256.42,
+          "returnPct": 179.448
+        }
+      }
+    },
+    {
+      "id": "VWMA_twii_N10_OUT2_RE1_C3",
+      "maType": "VWMA",
+      "signalSource": "twii",
+      "window": 10,
+      "sellBufferPct": 2.0,
+      "rebuyBufferPct": 1.0,
+      "confirmationDays": 3,
+      "selection": "apples_to_apples",
+      "score2020_23": 295.328,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 323.687,
+        "endNTD": 4236873.5,
+        "mddPct": -31.562,
+        "riskOffSells": 11,
+        "riskOnReentries": 11,
+        "riskOffSessions": 120,
+        "investedSessions": 853,
+        "sessions": 973,
+        "switchEvents": 22
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 177.122,
+        "endNTD": 2771220.75,
+        "mddPct": -33.437,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 44,
+        "investedSessions": 441,
+        "sessions": 485,
+        "switchEvents": 8
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 134.133,
+        "endNTD": 2341334.94,
+        "mddPct": -33.448,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 7,
+        "investedSessions": 177,
+        "sessions": 184,
+        "switchEvents": 4
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 557.419,
+        "endNTD": 6574186.36,
+        "mddPct": -33.447,
+        "riskOffSells": 6,
+        "riskOnReentries": 6,
+        "riskOffSessions": 51,
+        "investedSessions": 618,
+        "sessions": 669,
+        "switchEvents": 12
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 2708.707,
+        "endNTD": 28087074.02,
+        "mddPct": -33.448,
+        "riskOffSells": 17,
+        "riskOnReentries": 17,
+        "riskOffSessions": 171,
+        "investedSessions": 1471,
+        "sessions": 1642,
+        "switchEvents": 34
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2097353.76,
+          "returnPct": 109.735
+        },
+        "2021": {
+          "openingNTD": 2097353.76,
+          "closingNTD": 2860393.51,
+          "returnPct": 36.381
+        },
+        "2022": {
+          "openingNTD": 2860393.51,
+          "closingNTD": 2631620.87,
+          "returnPct": -7.998
+        },
+        "2023": {
+          "openingNTD": 2631620.87,
+          "closingNTD": 4236873.5,
+          "returnPct": 60.999
+        },
+        "2024": {
+          "openingNTD": 4236873.5,
+          "closingNTD": 5892144.43,
+          "returnPct": 39.068
+        },
+        "2025": {
+          "openingNTD": 5892144.43,
+          "closingNTD": 11839263.11,
+          "returnPct": 100.933
+        },
+        "2026": {
+          "openingNTD": 11839263.11,
+          "closingNTD": 28087074.02,
+          "returnPct": 137.237
+        }
+      }
+    },
+    {
+      "id": "VWMA_twii_N10_OUT4_RE3_C1",
+      "maType": "VWMA",
+      "signalSource": "twii",
+      "window": 10,
+      "sellBufferPct": 4.0,
+      "rebuyBufferPct": 3.0,
+      "confirmationDays": 1,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 323.397,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 343.284,
+        "endNTD": 4432842.98,
+        "mddPct": -28.886,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 205,
+        "investedSessions": 768,
+        "sessions": 973,
+        "switchEvents": 8
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 90.51,
+        "endNTD": 1905100.76,
+        "mddPct": -37.465,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 84,
+        "investedSessions": 401,
+        "sessions": 485,
+        "switchEvents": 8
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 135.256,
+        "endNTD": 2352560.61,
+        "mddPct": -23.42,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 36,
+        "investedSessions": 148,
+        "sessions": 184,
+        "switchEvents": 4
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 354.114,
+        "endNTD": 4541138.93,
+        "mddPct": -37.465,
+        "riskOffSells": 6,
+        "riskOnReentries": 6,
+        "riskOffSessions": 120,
+        "investedSessions": 549,
+        "sessions": 669,
+        "switchEvents": 12
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 1929.826,
+        "endNTD": 20298256.04,
+        "mddPct": -37.465,
+        "riskOffSells": 10,
+        "riskOnReentries": 10,
+        "riskOffSessions": 325,
+        "investedSessions": 1317,
+        "sessions": 1642,
+        "switchEvents": 20
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2255581.65,
+          "returnPct": 125.558
+        },
+        "2021": {
+          "openingNTD": 2255581.65,
+          "closingNTD": 3260869.11,
+          "returnPct": 44.569
+        },
+        "2022": {
+          "openingNTD": 3260869.11,
+          "closingNTD": 2698761.66,
+          "returnPct": -17.238
+        },
+        "2023": {
+          "openingNTD": 2698761.66,
+          "closingNTD": 4432842.98,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 4432842.98,
+          "closingNTD": 4984404.93,
+          "returnPct": 12.443
+        },
+        "2025": {
+          "openingNTD": 4984404.93,
+          "closingNTD": 8515341.71,
+          "returnPct": 70.84
+        },
+        "2026": {
+          "openingNTD": 8515341.71,
+          "closingNTD": 20298256.04,
+          "returnPct": 138.373
+        }
+      }
+    },
+    {
+      "id": "VWMA_twii_N12_OUT3_RE3_C3",
+      "maType": "VWMA",
+      "signalSource": "twii",
+      "window": 12,
+      "sellBufferPct": 3.0,
+      "rebuyBufferPct": 3.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 346.578,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 371.093,
+        "endNTD": 4710929.16,
+        "mddPct": -35.482,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 156,
+        "investedSessions": 817,
+        "sessions": 973,
+        "switchEvents": 10
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 90.17,
+        "endNTD": 1901696.83,
+        "mddPct": -60.662,
+        "riskOffSells": 3,
+        "riskOnReentries": 3,
+        "riskOffSessions": 34,
+        "investedSessions": 451,
+        "sessions": 485,
+        "switchEvents": 6
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 136.011,
+        "endNTD": 2360106.77,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 4,
+        "investedSessions": 180,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 354.76,
+        "endNTD": 4547604.26,
+        "mddPct": -60.662,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 38,
+        "investedSessions": 631,
+        "sessions": 669,
+        "switchEvents": 8
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 2060.249,
+        "endNTD": 21602489.88,
+        "mddPct": -60.662,
+        "riskOffSells": 9,
+        "riskOnReentries": 9,
+        "riskOffSessions": 194,
+        "investedSessions": 1448,
+        "sessions": 1642,
+        "switchEvents": 18
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2532368.69,
+          "returnPct": 153.237
+        },
+        "2021": {
+          "openingNTD": 2532368.69,
+          "closingNTD": 3829794.79,
+          "returnPct": 51.234
+        },
+        "2022": {
+          "openingNTD": 3829794.79,
+          "closingNTD": 2868064.48,
+          "returnPct": -25.112
+        },
+        "2023": {
+          "openingNTD": 2868064.48,
+          "closingNTD": 4710929.16,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 4710929.16,
+          "closingNTD": 6470907.18,
+          "returnPct": 37.359
+        },
+        "2025": {
+          "openingNTD": 6470907.18,
+          "closingNTD": 9033492.16,
+          "returnPct": 39.602
+        },
+        "2026": {
+          "openingNTD": 9033492.16,
+          "closingNTD": 21602489.88,
+          "returnPct": 139.138
+        }
+      }
+    },
+    {
+      "id": "WMA_close_N10_OUT2_RE1_C3",
+      "maType": "WMA",
+      "signalSource": "close",
+      "window": 10,
+      "sellBufferPct": 2.0,
+      "rebuyBufferPct": 1.0,
+      "confirmationDays": 3,
+      "selection": "apples_to_apples",
+      "score2020_23": 31.148,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 87.57,
+        "endNTD": 1875704.94,
+        "mddPct": -55.312,
+        "riskOffSells": 26,
+        "riskOnReentries": 26,
+        "riskOffSessions": 127,
+        "investedSessions": 846,
+        "sessions": 973,
+        "switchEvents": 52
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 110.589,
+        "endNTD": 2105886.33,
+        "mddPct": -49.714,
+        "riskOffSells": 12,
+        "riskOnReentries": 12,
+        "riskOffSessions": 50,
+        "investedSessions": 435,
+        "sessions": 485,
+        "switchEvents": 24
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 82.256,
+        "endNTD": 1822558.19,
+        "mddPct": -31.743,
+        "riskOffSells": 6,
+        "riskOnReentries": 6,
+        "riskOffSessions": 21,
+        "investedSessions": 163,
+        "sessions": 184,
+        "switchEvents": 12
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 288.894,
+        "endNTD": 3888938.55,
+        "mddPct": -49.714,
+        "riskOffSells": 18,
+        "riskOnReentries": 18,
+        "riskOffSessions": 71,
+        "investedSessions": 598,
+        "sessions": 669,
+        "switchEvents": 36
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 635.534,
+        "endNTD": 7355342.05,
+        "mddPct": -55.312,
+        "riskOffSells": 44,
+        "riskOnReentries": 44,
+        "riskOffSessions": 198,
+        "investedSessions": 1444,
+        "sessions": 1642,
+        "switchEvents": 88
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 1882114.03,
+          "returnPct": 88.211
+        },
+        "2021": {
+          "openingNTD": 1882114.03,
+          "closingNTD": 2241482.04,
+          "returnPct": 19.094
+        },
+        "2022": {
+          "openingNTD": 2241482.04,
+          "closingNTD": 1419328.43,
+          "returnPct": -36.679
+        },
+        "2023": {
+          "openingNTD": 1419328.43,
+          "closingNTD": 1875704.94,
+          "returnPct": 32.154
+        },
+        "2024": {
+          "openingNTD": 1875704.94,
+          "closingNTD": 2302909.85,
+          "returnPct": 22.776
+        },
+        "2025": {
+          "openingNTD": 2302909.85,
+          "closingNTD": 3982904.9,
+          "returnPct": 72.951
+        },
+        "2026": {
+          "openingNTD": 3982904.9,
+          "closingNTD": 7355342.05,
+          "returnPct": 84.673
+        }
+      }
+    },
+    {
+      "id": "WMA_close_N12_OUT4_RE3_C3",
+      "maType": "WMA",
+      "signalSource": "close",
+      "window": 12,
+      "sellBufferPct": 4.0,
+      "rebuyBufferPct": 3.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 358.296,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 381.669,
+        "endNTD": 4816685.08,
+        "mddPct": -31.587,
+        "riskOffSells": 6,
+        "riskOnReentries": 6,
+        "riskOffSessions": 108,
+        "investedSessions": 865,
+        "sessions": 973,
+        "switchEvents": 12
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 164.96,
+        "endNTD": 2649602.03,
+        "mddPct": -33.026,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 33,
+        "investedSessions": 452,
+        "sessions": 485,
+        "switchEvents": 8
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 146.32,
+        "endNTD": 2463202.04,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 1,
+        "investedSessions": 183,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 561.307,
+        "endNTD": 6613067.24,
+        "mddPct": -33.448,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 34,
+        "investedSessions": 635,
+        "sessions": 669,
+        "switchEvents": 10
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 3111.948,
+        "endNTD": 32119483.93,
+        "mddPct": -33.448,
+        "riskOffSells": 11,
+        "riskOnReentries": 11,
+        "riskOffSessions": 142,
+        "investedSessions": 1500,
+        "sessions": 1642,
+        "switchEvents": 22
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2540024.24,
+          "returnPct": 154.002
+        },
+        "2021": {
+          "openingNTD": 2540024.24,
+          "closingNTD": 3621492.32,
+          "returnPct": 42.577
+        },
+        "2022": {
+          "openingNTD": 3621492.32,
+          "closingNTD": 2932453.08,
+          "returnPct": -19.026
+        },
+        "2023": {
+          "openingNTD": 2932453.08,
+          "closingNTD": 4816685.08,
+          "returnPct": 64.254
+        },
+        "2024": {
+          "openingNTD": 4816685.08,
+          "closingNTD": 6994800.41,
+          "returnPct": 45.22
+        },
+        "2025": {
+          "openingNTD": 6994800.41,
+          "closingNTD": 12868898.75,
+          "returnPct": 83.978
+        },
+        "2026": {
+          "openingNTD": 12868898.75,
+          "closingNTD": 32119483.93,
+          "returnPct": 149.59
+        }
+      }
+    },
+    {
+      "id": "WMA_close_N15_OUT4_RE3_C3",
+      "maType": "WMA",
+      "signalSource": "close",
+      "window": 15,
+      "sellBufferPct": 4.0,
+      "rebuyBufferPct": 3.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 360.888,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 385.218,
+        "endNTD": 4852182.62,
+        "mddPct": -31.509,
+        "riskOffSells": 7,
+        "riskOnReentries": 7,
+        "riskOffSessions": 152,
+        "investedSessions": 821,
+        "sessions": 973,
+        "switchEvents": 14
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 150.653,
+        "endNTD": 2506528.07,
+        "mddPct": -32.169,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 57,
+        "investedSessions": 428,
+        "sessions": 485,
+        "switchEvents": 8
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 164.239,
+        "endNTD": 2642391.51,
+        "mddPct": -24.436,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 11,
+        "investedSessions": 173,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 571.106,
+        "endNTD": 6711064.22,
+        "mddPct": -32.169,
+        "riskOffSells": 5,
+        "riskOnReentries": 5,
+        "riskOffSessions": 68,
+        "investedSessions": 601,
+        "sessions": 669,
+        "switchEvents": 10
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 3183.46,
+        "endNTD": 32834603.21,
+        "mddPct": -32.169,
+        "riskOffSells": 12,
+        "riskOnReentries": 12,
+        "riskOffSessions": 220,
+        "investedSessions": 1422,
+        "sessions": 1642,
+        "switchEvents": 24
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2428066.58,
+          "returnPct": 142.807
+        },
+        "2021": {
+          "openingNTD": 2428066.58,
+          "closingNTD": 3383434.88,
+          "returnPct": 39.347
+        },
+        "2022": {
+          "openingNTD": 3383434.88,
+          "closingNTD": 2954065.94,
+          "returnPct": -12.69
+        },
+        "2023": {
+          "openingNTD": 2954065.94,
+          "closingNTD": 4852182.62,
+          "returnPct": 64.254
+        },
+        "2024": {
+          "openingNTD": 4852182.62,
+          "closingNTD": 6321036.91,
+          "returnPct": 30.272
+        },
+        "2025": {
+          "openingNTD": 6321036.91,
+          "closingNTD": 12263364.39,
+          "returnPct": 94.009
+        },
+        "2026": {
+          "openingNTD": 12263364.39,
+          "closingNTD": 32834603.21,
+          "returnPct": 167.745
+        }
+      }
+    },
+    {
+      "id": "WMA_twii_N10_OUT2_RE1_C3",
+      "maType": "WMA",
+      "signalSource": "twii",
+      "window": 10,
+      "sellBufferPct": 2.0,
+      "rebuyBufferPct": 1.0,
+      "confirmationDays": 3,
+      "selection": "apples_to_apples",
+      "score2020_23": 250.552,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 282.358,
+        "endNTD": 3823579.42,
+        "mddPct": -45.101,
+        "riskOffSells": 7,
+        "riskOnReentries": 7,
+        "riskOffSessions": 66,
+        "investedSessions": 907,
+        "sessions": 973,
+        "switchEvents": 14
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 98.321,
+        "endNTD": 1983211.75,
+        "mddPct": -59.135,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 7,
+        "investedSessions": 478,
+        "sessions": 485,
+        "switchEvents": 4
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 146.32,
+        "endNTD": 2463202.04,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 1,
+        "investedSessions": 183,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 394.986,
+        "endNTD": 4949860.34,
+        "mddPct": -59.135,
+        "riskOffSells": 3,
+        "riskOnReentries": 3,
+        "riskOffSessions": 8,
+        "investedSessions": 661,
+        "sessions": 669,
+        "switchEvents": 6
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 1808.385,
+        "endNTD": 19083847.73,
+        "mddPct": -59.136,
+        "riskOffSells": 10,
+        "riskOnReentries": 10,
+        "riskOffSessions": 74,
+        "investedSessions": 1568,
+        "sessions": 1642,
+        "switchEvents": 20
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2097353.76,
+          "returnPct": 109.735
+        },
+        "2021": {
+          "openingNTD": 2097353.76,
+          "closingNTD": 3299048.56,
+          "returnPct": 57.296
+        },
+        "2022": {
+          "openingNTD": 3299048.56,
+          "closingNTD": 2327832.12,
+          "returnPct": -29.439
+        },
+        "2023": {
+          "openingNTD": 2327832.12,
+          "closingNTD": 3823579.42,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 3823579.42,
+          "closingNTD": 5455899.27,
+          "returnPct": 42.691
+        },
+        "2025": {
+          "openingNTD": 5455899.27,
+          "closingNTD": 7646074.6,
+          "returnPct": 40.143
+        },
+        "2026": {
+          "openingNTD": 7646074.6,
+          "closingNTD": 19083847.73,
+          "returnPct": 149.59
+        }
+      }
+    },
+    {
+      "id": "WMA_twii_N5_OUT1_RE2_C3",
+      "maType": "WMA",
+      "signalSource": "twii",
+      "window": 5,
+      "sellBufferPct": 1.0,
+      "rebuyBufferPct": 2.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 424.499,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 447.72,
+        "endNTD": 5477197.5,
+        "mddPct": -34.947,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 323,
+        "investedSessions": 650,
+        "sessions": 973,
+        "switchEvents": 8
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 273.105,
+        "endNTD": 3731052.45,
+        "mddPct": -19.199,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 107,
+        "investedSessions": 378,
+        "sessions": 485,
+        "switchEvents": 4
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 96.523,
+        "endNTD": 1965225.07,
+        "mddPct": -28.169,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 15,
+        "investedSessions": 169,
+        "sessions": 184,
+        "switchEvents": 4
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 642.95,
+        "endNTD": 7429499.22,
+        "mddPct": -28.17,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 122,
+        "investedSessions": 547,
+        "sessions": 669,
+        "switchEvents": 8
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 4003.175,
+        "endNTD": 41031753.86,
+        "mddPct": -34.947,
+        "riskOffSells": 8,
+        "riskOnReentries": 8,
+        "riskOffSessions": 445,
+        "investedSessions": 1197,
+        "sessions": 1642,
+        "switchEvents": 16
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2600980.59,
+          "returnPct": 160.098
+        },
+        "2021": {
+          "openingNTD": 2600980.59,
+          "closingNTD": 3807149.57,
+          "returnPct": 46.374
+        },
+        "2022": {
+          "openingNTD": 3807149.57,
+          "closingNTD": 3334581.13,
+          "returnPct": -12.413
+        },
+        "2023": {
+          "openingNTD": 3334581.13,
+          "closingNTD": 5477197.5,
+          "returnPct": 64.254
+        },
+        "2024": {
+          "openingNTD": 5477197.5,
+          "closingNTD": 9493246.08,
+          "returnPct": 73.323
+        },
+        "2025": {
+          "openingNTD": 9493246.08,
+          "closingNTD": 20605913.72,
+          "returnPct": 117.059
+        },
+        "2026": {
+          "openingNTD": 20605913.72,
+          "closingNTD": 41031753.86,
+          "returnPct": 99.126
+        }
+      }
+    },
+    {
+      "id": "WMA_twii_N8_OUT2_RE3_C3",
+      "maType": "WMA",
+      "signalSource": "twii",
+      "window": 8,
+      "sellBufferPct": 2.0,
+      "rebuyBufferPct": 3.0,
+      "confirmationDays": 3,
+      "selection": "2020_23_only_rank",
+      "score2020_23": 381.116,
+      "training2020_2023": {
+        "start": "2020-01-02",
+        "end": "2023-12-29",
+        "returnPct": 395.118,
+        "endNTD": 4951179.36,
+        "mddPct": -21.822,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 408,
+        "investedSessions": 565,
+        "sessions": 973,
+        "switchEvents": 4
+      },
+      "validation2024_2025": {
+        "start": "2024-01-02",
+        "end": "2025-12-31",
+        "returnPct": 185.35,
+        "endNTD": 2853497.76,
+        "mddPct": -36.444,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 164,
+        "investedSessions": 321,
+        "sessions": 485,
+        "switchEvents": 2
+      },
+      "audit2026": {
+        "start": "2026-01-02",
+        "end": "2026-10-07",
+        "returnPct": 136.011,
+        "endNTD": 2360106.77,
+        "mddPct": -33.446,
+        "riskOffSells": 1,
+        "riskOnReentries": 1,
+        "riskOffSessions": 4,
+        "investedSessions": 180,
+        "sessions": 184,
+        "switchEvents": 2
+      },
+      "independent2024_2026": {
+        "start": "2024-01-02",
+        "end": "2026-10-07",
+        "returnPct": 582.375,
+        "endNTD": 6823751.21,
+        "mddPct": -36.444,
+        "riskOffSells": 2,
+        "riskOnReentries": 2,
+        "riskOffSessions": 168,
+        "investedSessions": 501,
+        "sessions": 669,
+        "switchEvents": 4
+      },
+      "continuous2020_2026": {
+        "start": "2020-01-02",
+        "end": "2026-10-07",
+        "returnPct": 3306.758,
+        "endNTD": 34067576.21,
+        "mddPct": -36.444,
+        "riskOffSells": 4,
+        "riskOnReentries": 4,
+        "riskOffSessions": 576,
+        "investedSessions": 1066,
+        "sessions": 1642,
+        "switchEvents": 8
+      },
+      "compoundedYears": {
+        "2020": {
+          "openingNTD": 1000000.0,
+          "closingNTD": 2540024.24,
+          "returnPct": 154.002
+        },
+        "2021": {
+          "openingNTD": 2540024.24,
+          "closingNTD": 2984894.3,
+          "returnPct": 17.514
+        },
+        "2022": {
+          "openingNTD": 2984894.3,
+          "closingNTD": 3014324.14,
+          "returnPct": 0.986
+        },
+        "2023": {
+          "openingNTD": 3014324.14,
+          "closingNTD": 4951179.36,
+          "returnPct": 64.255
+        },
+        "2024": {
+          "openingNTD": 4951179.36,
+          "closingNTD": 6409070.77,
+          "returnPct": 29.445
+        },
+        "2025": {
+          "openingNTD": 6409070.77,
+          "closingNTD": 14245992.72,
+          "returnPct": 122.279
+        },
+        "2026": {
+          "openingNTD": 14245992.72,
+          "closingNTD": 34067576.21,
+          "returnPct": 139.138
+        }
+      }
+    }
+  ],
+  "robustness": {
+    "slippageEachSide": {
+      "0.001": {
+        "EMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1867.709,
+          "endNTD": 19677085.36,
+          "mddPct": -46.837,
+          "riskOffSells": 29,
+          "riskOnReentries": 29,
+          "riskOffSessions": 248,
+          "investedSessions": 1394,
+          "sessions": 1642,
+          "switchEvents": 58
+        },
+        "EMA_close_N5_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2012.293,
+          "endNTD": 21122934.5,
+          "mddPct": -59.97,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 151,
+          "investedSessions": 1491,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_close_N8_OUT3_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3627.982,
+          "endNTD": 37279819.31,
+          "mddPct": -35.526,
+          "riskOffSells": 13,
+          "riskOnReentries": 13,
+          "riskOffSessions": 193,
+          "investedSessions": 1449,
+          "sessions": 1642,
+          "switchEvents": 26
+        },
+        "EMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3194.108,
+          "endNTD": 32941080.26,
+          "mddPct": -37.887,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 134,
+          "investedSessions": 1508,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "EMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3791.9,
+          "endNTD": 38919002.11,
+          "mddPct": -33.448,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 599,
+          "investedSessions": 1043,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_twii_N5_OUT1_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1084.352,
+          "endNTD": 11843521.74,
+          "mddPct": -33.448,
+          "riskOffSells": 4,
+          "riskOnReentries": 3,
+          "riskOffSessions": 844,
+          "investedSessions": 798,
+          "sessions": 1642,
+          "switchEvents": 7
+        },
+        "SMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1125.577,
+          "endNTD": 12255767.38,
+          "mddPct": -41.923,
+          "riskOffSells": 42,
+          "riskOnReentries": 42,
+          "riskOffSessions": 299,
+          "investedSessions": 1343,
+          "sessions": 1642,
+          "switchEvents": 84
+        },
+        "SMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2979.26,
+          "endNTD": 30792596.84,
+          "mddPct": -35.479,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 221,
+          "investedSessions": 1421,
+          "sessions": 1642,
+          "switchEvents": 32
+        },
+        "SMA_close_N8_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2176.837,
+          "endNTD": 22768366.77,
+          "mddPct": -42.655,
+          "riskOffSells": 23,
+          "riskOnReentries": 23,
+          "riskOffSessions": 223,
+          "investedSessions": 1419,
+          "sessions": 1642,
+          "switchEvents": 46
+        },
+        "SMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3312.334,
+          "endNTD": 34123343.53,
+          "mddPct": -33.448,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 165,
+          "investedSessions": 1477,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "SMA_twii_N10_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2494.505,
+          "endNTD": 25945049.03,
+          "mddPct": -54.24,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 230,
+          "investedSessions": 1412,
+          "sessions": 1642,
+          "switchEvents": 14
+        },
+        "SMA_twii_N5_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2313.123,
+          "endNTD": 24131227.24,
+          "mddPct": -59.136,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 414,
+          "investedSessions": 1228,
+          "sessions": 1642,
+          "switchEvents": 10
+        },
+        "VWMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1030.306,
+          "endNTD": 11303063.43,
+          "mddPct": -42.754,
+          "riskOffSells": 41,
+          "riskOnReentries": 41,
+          "riskOffSessions": 231,
+          "investedSessions": 1411,
+          "sessions": 1642,
+          "switchEvents": 82
+        },
+        "VWMA_close_N12_OUT4_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3496.509,
+          "endNTD": 35965094.07,
+          "mddPct": -33.448,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 128,
+          "investedSessions": 1514,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "VWMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3316.526,
+          "endNTD": 34165256.42,
+          "mddPct": -33.438,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 184,
+          "investedSessions": 1458,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "VWMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2708.707,
+          "endNTD": 28087074.02,
+          "mddPct": -33.448,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 171,
+          "investedSessions": 1471,
+          "sessions": 1642,
+          "switchEvents": 34
+        },
+        "VWMA_twii_N10_OUT4_RE3_C1": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1929.826,
+          "endNTD": 20298256.04,
+          "mddPct": -37.465,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 325,
+          "investedSessions": 1317,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "VWMA_twii_N12_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2060.249,
+          "endNTD": 21602489.88,
+          "mddPct": -60.662,
+          "riskOffSells": 9,
+          "riskOnReentries": 9,
+          "riskOffSessions": 194,
+          "investedSessions": 1448,
+          "sessions": 1642,
+          "switchEvents": 18
+        },
+        "WMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 635.534,
+          "endNTD": 7355342.05,
+          "mddPct": -55.312,
+          "riskOffSells": 44,
+          "riskOnReentries": 44,
+          "riskOffSessions": 198,
+          "investedSessions": 1444,
+          "sessions": 1642,
+          "switchEvents": 88
+        },
+        "WMA_close_N12_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3111.948,
+          "endNTD": 32119483.93,
+          "mddPct": -33.448,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 142,
+          "investedSessions": 1500,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "WMA_close_N15_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3183.46,
+          "endNTD": 32834603.21,
+          "mddPct": -32.169,
+          "riskOffSells": 12,
+          "riskOnReentries": 12,
+          "riskOffSessions": 220,
+          "investedSessions": 1422,
+          "sessions": 1642,
+          "switchEvents": 24
+        },
+        "WMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1808.385,
+          "endNTD": 19083847.73,
+          "mddPct": -59.136,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 74,
+          "investedSessions": 1568,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "WMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 4003.175,
+          "endNTD": 41031753.86,
+          "mddPct": -34.947,
+          "riskOffSells": 8,
+          "riskOnReentries": 8,
+          "riskOffSessions": 445,
+          "investedSessions": 1197,
+          "sessions": 1642,
+          "switchEvents": 16
+        },
+        "WMA_twii_N8_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3306.758,
+          "endNTD": 34067576.21,
+          "mddPct": -36.444,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 576,
+          "investedSessions": 1066,
+          "sessions": 1642,
+          "switchEvents": 8
+        },
+        "BUY_HOLD": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1653.043,
+          "endNTD": 17530433.17,
+          "mddPct": -55.244,
+          "riskOffSells": 0,
+          "riskOnReentries": 0,
+          "riskOffSessions": 0,
+          "investedSessions": 1642,
+          "sessions": 1642,
+          "switchEvents": 0
+        }
+      },
+      "0.003": {
+        "EMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1645.182,
+          "endNTD": 17451819.47,
+          "mddPct": -49.126,
+          "riskOffSells": 29,
+          "riskOnReentries": 29,
+          "riskOffSessions": 248,
+          "investedSessions": 1394,
+          "sessions": 1642,
+          "switchEvents": 58
+        },
+        "EMA_close_N5_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1954.006,
+          "endNTD": 20540058.05,
+          "mddPct": -60.13,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 151,
+          "investedSessions": 1491,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_close_N8_OUT3_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3424.964,
+          "endNTD": 35249643.27,
+          "mddPct": -36.803,
+          "riskOffSells": 13,
+          "riskOnReentries": 13,
+          "riskOffSessions": 193,
+          "investedSessions": 1449,
+          "sessions": 1642,
+          "switchEvents": 26
+        },
+        "EMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3052.323,
+          "endNTD": 31523232.12,
+          "mddPct": -39.042,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 134,
+          "investedSessions": 1508,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "EMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3684.438,
+          "endNTD": 37844379.53,
+          "mddPct": -33.448,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 599,
+          "investedSessions": 1043,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_twii_N5_OUT1_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1065.554,
+          "endNTD": 11655539.88,
+          "mddPct": -33.447,
+          "riskOffSells": 4,
+          "riskOnReentries": 3,
+          "riskOffSessions": 844,
+          "investedSessions": 798,
+          "sessions": 1642,
+          "switchEvents": 7
+        },
+        "SMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 931.922,
+          "endNTD": 10319224.43,
+          "mddPct": -44.2,
+          "riskOffSells": 42,
+          "riskOnReentries": 42,
+          "riskOffSessions": 299,
+          "investedSessions": 1343,
+          "sessions": 1642,
+          "switchEvents": 84
+        },
+        "SMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2776.826,
+          "endNTD": 28768256.87,
+          "mddPct": -36.757,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 221,
+          "investedSessions": 1421,
+          "sessions": 1642,
+          "switchEvents": 32
+        },
+        "SMA_close_N8_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1968.422,
+          "endNTD": 20684217.48,
+          "mddPct": -44.461,
+          "riskOffSells": 23,
+          "riskOnReentries": 23,
+          "riskOffSessions": 223,
+          "investedSessions": 1419,
+          "sessions": 1642,
+          "switchEvents": 46
+        },
+        "SMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3100.782,
+          "endNTD": 32007817.96,
+          "mddPct": -34.232,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 165,
+          "investedSessions": 1477,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "SMA_twii_N10_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2412.785,
+          "endNTD": 25127853.91,
+          "mddPct": -54.422,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 230,
+          "investedSessions": 1412,
+          "sessions": 1642,
+          "switchEvents": 14
+        },
+        "SMA_twii_N5_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2255.916,
+          "endNTD": 23559157.35,
+          "mddPct": -59.299,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 414,
+          "investedSessions": 1228,
+          "sessions": 1642,
+          "switchEvents": 10
+        },
+        "VWMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 855.513,
+          "endNTD": 9555129.0,
+          "mddPct": -44.335,
+          "riskOffSells": 41,
+          "riskOnReentries": 41,
+          "riskOffSessions": 231,
+          "investedSessions": 1411,
+          "sessions": 1642,
+          "switchEvents": 82
+        },
+        "VWMA_close_N12_OUT4_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3327.906,
+          "endNTD": 34279064.0,
+          "mddPct": -33.448,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 128,
+          "investedSessions": 1514,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "VWMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3104.719,
+          "endNTD": 32047193.65,
+          "mddPct": -34.232,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 184,
+          "investedSessions": 1458,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "VWMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2513.586,
+          "endNTD": 26135856.9,
+          "mddPct": -34.232,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 171,
+          "investedSessions": 1471,
+          "sessions": 1642,
+          "switchEvents": 34
+        },
+        "VWMA_twii_N10_OUT4_RE3_C1": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1842.449,
+          "endNTD": 19424489.96,
+          "mddPct": -37.964,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 325,
+          "investedSessions": 1317,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "VWMA_twii_N12_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1975.559,
+          "endNTD": 20755591.81,
+          "mddPct": -60.976,
+          "riskOffSells": 9,
+          "riskOnReentries": 9,
+          "riskOffSessions": 194,
+          "investedSessions": 1448,
+          "sessions": 1642,
+          "switchEvents": 18
+        },
+        "WMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 514.373,
+          "endNTD": 6143733.21,
+          "mddPct": -57.745,
+          "riskOffSells": 44,
+          "riskOnReentries": 44,
+          "riskOffSessions": 198,
+          "investedSessions": 1444,
+          "sessions": 1642,
+          "switchEvents": 88
+        },
+        "WMA_close_N12_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2961.406,
+          "endNTD": 30614055.33,
+          "mddPct": -33.56,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 142,
+          "investedSessions": 1500,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "WMA_close_N15_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3017.112,
+          "endNTD": 31171115.51,
+          "mddPct": -32.979,
+          "riskOffSells": 12,
+          "riskOnReentries": 12,
+          "riskOffSessions": 220,
+          "investedSessions": 1422,
+          "sessions": 1642,
+          "switchEvents": 24
+        },
+        "WMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1726.199,
+          "endNTD": 18261993.24,
+          "mddPct": -59.299,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 74,
+          "investedSessions": 1568,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "WMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3858.12,
+          "endNTD": 39581195.39,
+          "mddPct": -35.206,
+          "riskOffSells": 8,
+          "riskOnReentries": 8,
+          "riskOffSessions": 445,
+          "investedSessions": 1197,
+          "sessions": 1642,
+          "switchEvents": 16
+        },
+        "WMA_twii_N8_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3239.321,
+          "endNTD": 33393210.37,
+          "mddPct": -36.444,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 576,
+          "investedSessions": 1066,
+          "sessions": 1642,
+          "switchEvents": 8
+        },
+        "BUY_HOLD": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1646.072,
+          "endNTD": 17460715.91,
+          "mddPct": -55.244,
+          "riskOffSells": 0,
+          "riskOnReentries": 0,
+          "riskOffSessions": 0,
+          "investedSessions": 1642,
+          "sessions": 1642,
+          "switchEvents": 0
+        }
+      },
+      "0.005": {
+        "EMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1447.813,
+          "endNTD": 15478131.61,
+          "mddPct": -51.316,
+          "riskOffSells": 29,
+          "riskOnReentries": 29,
+          "riskOffSessions": 248,
+          "investedSessions": 1394,
+          "sessions": 1642,
+          "switchEvents": 58
+        },
+        "EMA_close_N5_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1897.265,
+          "endNTD": 19972645.21,
+          "mddPct": -60.289,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 151,
+          "investedSessions": 1491,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_close_N8_OUT3_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3232.972,
+          "endNTD": 33329715.13,
+          "mddPct": -38.054,
+          "riskOffSells": 13,
+          "riskOnReentries": 13,
+          "riskOffSessions": 193,
+          "investedSessions": 1449,
+          "sessions": 1642,
+          "switchEvents": 26
+        },
+        "EMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2916.614,
+          "endNTD": 30166141.65,
+          "mddPct": -40.249,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 134,
+          "investedSessions": 1508,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "EMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3579.94,
+          "endNTD": 36799396.53,
+          "mddPct": -33.448,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 599,
+          "investedSessions": 1043,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_twii_N5_OUT1_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1047.045,
+          "endNTD": 11470447.26,
+          "mddPct": -33.448,
+          "riskOffSells": 4,
+          "riskOnReentries": 3,
+          "riskOffSessions": 844,
+          "investedSessions": 798,
+          "sessions": 1642,
+          "switchEvents": 7
+        },
+        "SMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 768.859,
+          "endNTD": 8688586.84,
+          "mddPct": -46.388,
+          "riskOffSells": 42,
+          "riskOnReentries": 42,
+          "riskOffSessions": 299,
+          "investedSessions": 1343,
+          "sessions": 1642,
+          "switchEvents": 84
+        },
+        "SMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2587.688,
+          "endNTD": 26876877.74,
+          "mddPct": -38.009,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 221,
+          "investedSessions": 1421,
+          "sessions": 1642,
+          "switchEvents": 32
+        },
+        "SMA_close_N8_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1779.068,
+          "endNTD": 18790676.85,
+          "mddPct": -46.21,
+          "riskOffSells": 23,
+          "riskOnReentries": 23,
+          "riskOffSessions": 223,
+          "investedSessions": 1419,
+          "sessions": 1642,
+          "switchEvents": 46
+        },
+        "SMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2902.351,
+          "endNTD": 30023510.83,
+          "mddPct": -35.016,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 165,
+          "investedSessions": 1477,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "SMA_twii_N10_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2333.665,
+          "endNTD": 24336646.3,
+          "mddPct": -54.604,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 230,
+          "investedSessions": 1412,
+          "sessions": 1642,
+          "switchEvents": 14
+        },
+        "SMA_twii_N5_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2200.056,
+          "endNTD": 23000557.02,
+          "mddPct": -59.461,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 414,
+          "investedSessions": 1228,
+          "sessions": 1642,
+          "switchEvents": 10
+        },
+        "VWMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 707.726,
+          "endNTD": 8077257.75,
+          "mddPct": -46.243,
+          "riskOffSells": 41,
+          "riskOnReentries": 41,
+          "riskOffSessions": 231,
+          "investedSessions": 1411,
+          "sessions": 1642,
+          "switchEvents": 82
+        },
+        "VWMA_close_N12_OUT4_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3167.276,
+          "endNTD": 32672756.58,
+          "mddPct": -33.448,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 128,
+          "investedSessions": 1514,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "VWMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2906.058,
+          "endNTD": 30060581.22,
+          "mddPct": -35.016,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 184,
+          "investedSessions": 1458,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "VWMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2332.013,
+          "endNTD": 24320133.9,
+          "mddPct": -35.016,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 171,
+          "investedSessions": 1471,
+          "sessions": 1642,
+          "switchEvents": 34
+        },
+        "VWMA_twii_N10_OUT4_RE3_C1": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1758.811,
+          "endNTD": 18588105.72,
+          "mddPct": -38.458,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 325,
+          "investedSessions": 1317,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "VWMA_twii_N12_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1894.177,
+          "endNTD": 19941773.69,
+          "mddPct": -61.287,
+          "riskOffSells": 9,
+          "riskOnReentries": 9,
+          "riskOffSessions": 194,
+          "investedSessions": 1448,
+          "sessions": 1642,
+          "switchEvents": 18
+        },
+        "WMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 413.159,
+          "endNTD": 5131585.64,
+          "mddPct": -60.046,
+          "riskOffSells": 44,
+          "riskOnReentries": 44,
+          "riskOffSessions": 198,
+          "investedSessions": 1444,
+          "sessions": 1642,
+          "switchEvents": 88
+        },
+        "WMA_close_N12_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2817.936,
+          "endNTD": 29179361.2,
+          "mddPct": -34.089,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 142,
+          "investedSessions": 1500,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "WMA_close_N15_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2859.165,
+          "endNTD": 29591654.02,
+          "mddPct": -33.778,
+          "riskOffSells": 12,
+          "riskOnReentries": 12,
+          "riskOffSessions": 220,
+          "investedSessions": 1422,
+          "sessions": 1642,
+          "switchEvents": 24
+        },
+        "WMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1647.59,
+          "endNTD": 17475897.67,
+          "mddPct": -59.461,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 74,
+          "investedSessions": 1568,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "WMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3718.135,
+          "endNTD": 38181348.92,
+          "mddPct": -35.465,
+          "riskOffSells": 8,
+          "riskOnReentries": 8,
+          "riskOffSessions": 445,
+          "investedSessions": 1197,
+          "sessions": 1642,
+          "switchEvents": 16
+        },
+        "WMA_twii_N8_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3173.176,
+          "endNTD": 32731761.86,
+          "mddPct": -36.444,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 576,
+          "investedSessions": 1066,
+          "sessions": 1642,
+          "switchEvents": 8
+        },
+        "BUY_HOLD": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1639.08,
+          "endNTD": 17390802.77,
+          "mddPct": -55.244,
+          "riskOffSells": 0,
+          "riskOnReentries": 0,
+          "riskOffSessions": 0,
+          "investedSessions": 1642,
+          "sessions": 1642,
+          "switchEvents": 0
+        }
+      },
+      "0.01": {
+        "EMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1046.653,
+          "endNTD": 11466525.27,
+          "mddPct": -56.387,
+          "riskOffSells": 29,
+          "riskOnReentries": 29,
+          "riskOffSessions": 248,
+          "investedSessions": 1394,
+          "sessions": 1642,
+          "switchEvents": 58
+        },
+        "EMA_close_N5_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1762.234,
+          "endNTD": 18622344.23,
+          "mddPct": -60.684,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 151,
+          "investedSessions": 1491,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_close_N8_OUT3_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2797.518,
+          "endNTD": 28975175.74,
+          "mddPct": -41.076,
+          "riskOffSells": 13,
+          "riskOnReentries": 13,
+          "riskOffSessions": 193,
+          "investedSessions": 1449,
+          "sessions": 1642,
+          "switchEvents": 26
+        },
+        "EMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2602.403,
+          "endNTD": 27024028.69,
+          "mddPct": -43.167,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 134,
+          "investedSessions": 1508,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "EMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3331.13,
+          "endNTD": 34311304.62,
+          "mddPct": -33.448,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 599,
+          "investedSessions": 1043,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_twii_N5_OUT1_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1002.066,
+          "endNTD": 11020662.53,
+          "mddPct": -33.448,
+          "riskOffSells": 4,
+          "riskOnReentries": 3,
+          "riskOffSessions": 844,
+          "investedSessions": 798,
+          "sessions": 1642,
+          "switchEvents": 7
+        },
+        "SMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 465.183,
+          "endNTD": 5651831.95,
+          "mddPct": -51.49,
+          "riskOffSells": 42,
+          "riskOnReentries": 42,
+          "riskOffSessions": 299,
+          "investedSessions": 1343,
+          "sessions": 1642,
+          "switchEvents": 84
+        },
+        "SMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2167.491,
+          "endNTD": 22674907.27,
+          "mddPct": -41.492,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 221,
+          "investedSessions": 1421,
+          "sessions": 1642,
+          "switchEvents": 32
+        },
+        "SMA_close_N8_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1378.111,
+          "endNTD": 14781112.44,
+          "mddPct": -50.346,
+          "riskOffSells": 23,
+          "riskOnReentries": 23,
+          "riskOffSessions": 223,
+          "investedSessions": 1419,
+          "sessions": 1642,
+          "switchEvents": 46
+        },
+        "SMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2458.403,
+          "endNTD": 25584030.96,
+          "mddPct": -39.018,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 165,
+          "investedSessions": 1477,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "SMA_twii_N10_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2146.526,
+          "endNTD": 22465260.35,
+          "mddPct": -55.056,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 230,
+          "investedSessions": 1412,
+          "sessions": 1642,
+          "switchEvents": 14
+        },
+        "SMA_twii_N5_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2066.091,
+          "endNTD": 21660913.78,
+          "mddPct": -59.865,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 414,
+          "investedSessions": 1228,
+          "sessions": 1642,
+          "switchEvents": 10
+        },
+        "VWMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 430.711,
+          "endNTD": 5307110.38,
+          "mddPct": -52.322,
+          "riskOffSells": 41,
+          "riskOnReentries": 41,
+          "riskOffSessions": 231,
+          "investedSessions": 1411,
+          "sessions": 1642,
+          "switchEvents": 82
+        },
+        "VWMA_close_N12_OUT4_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2797.796,
+          "endNTD": 28977959.58,
+          "mddPct": -35.534,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 128,
+          "investedSessions": 1514,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "VWMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2461.536,
+          "endNTD": 25615357.76,
+          "mddPct": -36.937,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 184,
+          "investedSessions": 1458,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "VWMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1931.365,
+          "endNTD": 20313649.75,
+          "mddPct": -39.018,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 171,
+          "investedSessions": 1471,
+          "sessions": 1642,
+          "switchEvents": 34
+        },
+        "VWMA_twii_N10_OUT4_RE3_C1": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1565.189,
+          "endNTD": 16651893.24,
+          "mddPct": -40.038,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 325,
+          "investedSessions": 1317,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "VWMA_twii_N12_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1704.373,
+          "endNTD": 18043732.36,
+          "mddPct": -62.054,
+          "riskOffSells": 9,
+          "riskOnReentries": 9,
+          "riskOffSessions": 194,
+          "investedSessions": 1448,
+          "sessions": 1642,
+          "switchEvents": 18
+        },
+        "WMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 227.194,
+          "endNTD": 3271936.82,
+          "mddPct": -65.266,
+          "riskOffSells": 44,
+          "riskOnReentries": 44,
+          "riskOffSessions": 198,
+          "investedSessions": 1444,
+          "sessions": 1642,
+          "switchEvents": 88
+        },
+        "WMA_close_N12_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2487.968,
+          "endNTD": 25879676.09,
+          "mddPct": -36.425,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 142,
+          "investedSessions": 1500,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "WMA_close_N15_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2498.427,
+          "endNTD": 25984273.15,
+          "mddPct": -36.267,
+          "riskOffSells": 12,
+          "riskOnReentries": 12,
+          "riskOffSessions": 220,
+          "investedSessions": 1422,
+          "sessions": 1642,
+          "switchEvents": 24
+        },
+        "WMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1465.556,
+          "endNTD": 15655555.28,
+          "mddPct": -59.865,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 74,
+          "investedSessions": 1568,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "WMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3389.499,
+          "endNTD": 34894994.46,
+          "mddPct": -36.107,
+          "riskOffSells": 8,
+          "riskOnReentries": 8,
+          "riskOffSessions": 445,
+          "investedSessions": 1197,
+          "sessions": 1642,
+          "switchEvents": 16
+        },
+        "WMA_twii_N8_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3013.52,
+          "endNTD": 31135199.91,
+          "mddPct": -36.739,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 576,
+          "investedSessions": 1066,
+          "sessions": 1642,
+          "switchEvents": 8
+        },
+        "BUY_HOLD": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1621.769,
+          "endNTD": 17217690.77,
+          "mddPct": -55.244,
+          "riskOffSells": 0,
+          "riskOnReentries": 0,
+          "riskOffSessions": 0,
+          "investedSessions": 1642,
+          "sessions": 1642,
+          "switchEvents": 0
+        }
+      }
+    },
+    "extraSignalDaysDelayed": {
+      "0": {
+        "EMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1867.709,
+          "endNTD": 19677085.36,
+          "mddPct": -46.837,
+          "riskOffSells": 29,
+          "riskOnReentries": 29,
+          "riskOffSessions": 248,
+          "investedSessions": 1394,
+          "sessions": 1642,
+          "switchEvents": 58
+        },
+        "EMA_close_N5_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2012.293,
+          "endNTD": 21122934.5,
+          "mddPct": -59.97,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 151,
+          "investedSessions": 1491,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_close_N8_OUT3_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3627.982,
+          "endNTD": 37279819.31,
+          "mddPct": -35.526,
+          "riskOffSells": 13,
+          "riskOnReentries": 13,
+          "riskOffSessions": 193,
+          "investedSessions": 1449,
+          "sessions": 1642,
+          "switchEvents": 26
+        },
+        "EMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3194.108,
+          "endNTD": 32941080.26,
+          "mddPct": -37.887,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 134,
+          "investedSessions": 1508,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "EMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3791.9,
+          "endNTD": 38919002.11,
+          "mddPct": -33.448,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 599,
+          "investedSessions": 1043,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_twii_N5_OUT1_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1084.352,
+          "endNTD": 11843521.74,
+          "mddPct": -33.448,
+          "riskOffSells": 4,
+          "riskOnReentries": 3,
+          "riskOffSessions": 844,
+          "investedSessions": 798,
+          "sessions": 1642,
+          "switchEvents": 7
+        },
+        "SMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1125.577,
+          "endNTD": 12255767.38,
+          "mddPct": -41.923,
+          "riskOffSells": 42,
+          "riskOnReentries": 42,
+          "riskOffSessions": 299,
+          "investedSessions": 1343,
+          "sessions": 1642,
+          "switchEvents": 84
+        },
+        "SMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2979.26,
+          "endNTD": 30792596.84,
+          "mddPct": -35.479,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 221,
+          "investedSessions": 1421,
+          "sessions": 1642,
+          "switchEvents": 32
+        },
+        "SMA_close_N8_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2176.837,
+          "endNTD": 22768366.77,
+          "mddPct": -42.655,
+          "riskOffSells": 23,
+          "riskOnReentries": 23,
+          "riskOffSessions": 223,
+          "investedSessions": 1419,
+          "sessions": 1642,
+          "switchEvents": 46
+        },
+        "SMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3312.334,
+          "endNTD": 34123343.53,
+          "mddPct": -33.448,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 165,
+          "investedSessions": 1477,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "SMA_twii_N10_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2494.505,
+          "endNTD": 25945049.03,
+          "mddPct": -54.24,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 230,
+          "investedSessions": 1412,
+          "sessions": 1642,
+          "switchEvents": 14
+        },
+        "SMA_twii_N5_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2313.123,
+          "endNTD": 24131227.24,
+          "mddPct": -59.136,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 414,
+          "investedSessions": 1228,
+          "sessions": 1642,
+          "switchEvents": 10
+        },
+        "VWMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1030.306,
+          "endNTD": 11303063.43,
+          "mddPct": -42.754,
+          "riskOffSells": 41,
+          "riskOnReentries": 41,
+          "riskOffSessions": 231,
+          "investedSessions": 1411,
+          "sessions": 1642,
+          "switchEvents": 82
+        },
+        "VWMA_close_N12_OUT4_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3496.509,
+          "endNTD": 35965094.07,
+          "mddPct": -33.448,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 128,
+          "investedSessions": 1514,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "VWMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3316.526,
+          "endNTD": 34165256.42,
+          "mddPct": -33.438,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 184,
+          "investedSessions": 1458,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "VWMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2708.707,
+          "endNTD": 28087074.02,
+          "mddPct": -33.448,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 171,
+          "investedSessions": 1471,
+          "sessions": 1642,
+          "switchEvents": 34
+        },
+        "VWMA_twii_N10_OUT4_RE3_C1": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1929.826,
+          "endNTD": 20298256.04,
+          "mddPct": -37.465,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 325,
+          "investedSessions": 1317,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "VWMA_twii_N12_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2060.249,
+          "endNTD": 21602489.88,
+          "mddPct": -60.662,
+          "riskOffSells": 9,
+          "riskOnReentries": 9,
+          "riskOffSessions": 194,
+          "investedSessions": 1448,
+          "sessions": 1642,
+          "switchEvents": 18
+        },
+        "WMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 635.534,
+          "endNTD": 7355342.05,
+          "mddPct": -55.312,
+          "riskOffSells": 44,
+          "riskOnReentries": 44,
+          "riskOffSessions": 198,
+          "investedSessions": 1444,
+          "sessions": 1642,
+          "switchEvents": 88
+        },
+        "WMA_close_N12_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3111.948,
+          "endNTD": 32119483.93,
+          "mddPct": -33.448,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 142,
+          "investedSessions": 1500,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "WMA_close_N15_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3183.46,
+          "endNTD": 32834603.21,
+          "mddPct": -32.169,
+          "riskOffSells": 12,
+          "riskOnReentries": 12,
+          "riskOffSessions": 220,
+          "investedSessions": 1422,
+          "sessions": 1642,
+          "switchEvents": 24
+        },
+        "WMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1808.385,
+          "endNTD": 19083847.73,
+          "mddPct": -59.136,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 74,
+          "investedSessions": 1568,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "WMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 4003.175,
+          "endNTD": 41031753.86,
+          "mddPct": -34.947,
+          "riskOffSells": 8,
+          "riskOnReentries": 8,
+          "riskOffSessions": 445,
+          "investedSessions": 1197,
+          "sessions": 1642,
+          "switchEvents": 16
+        },
+        "WMA_twii_N8_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3306.758,
+          "endNTD": 34067576.21,
+          "mddPct": -36.444,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 576,
+          "investedSessions": 1066,
+          "sessions": 1642,
+          "switchEvents": 8
+        }
+      },
+      "1": {
+        "EMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1924.46,
+          "endNTD": 20244602.66,
+          "mddPct": -48.345,
+          "riskOffSells": 29,
+          "riskOnReentries": 29,
+          "riskOffSessions": 248,
+          "investedSessions": 1394,
+          "sessions": 1642,
+          "switchEvents": 58
+        },
+        "EMA_close_N5_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1519.948,
+          "endNTD": 16199476.02,
+          "mddPct": -59.98,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 151,
+          "investedSessions": 1491,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_close_N8_OUT3_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3295.928,
+          "endNTD": 33959279.89,
+          "mddPct": -35.518,
+          "riskOffSells": 13,
+          "riskOnReentries": 13,
+          "riskOffSessions": 193,
+          "investedSessions": 1449,
+          "sessions": 1642,
+          "switchEvents": 26
+        },
+        "EMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2388.457,
+          "endNTD": 24884570.59,
+          "mddPct": -45.531,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 134,
+          "investedSessions": 1508,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "EMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3120.721,
+          "endNTD": 32207211.77,
+          "mddPct": -33.448,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 599,
+          "investedSessions": 1043,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_twii_N5_OUT1_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 906.306,
+          "endNTD": 10063058.56,
+          "mddPct": -35.564,
+          "riskOffSells": 4,
+          "riskOnReentries": 3,
+          "riskOffSessions": 843,
+          "investedSessions": 799,
+          "sessions": 1642,
+          "switchEvents": 7
+        },
+        "SMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 772.246,
+          "endNTD": 8722460.26,
+          "mddPct": -50.615,
+          "riskOffSells": 42,
+          "riskOnReentries": 42,
+          "riskOffSessions": 299,
+          "investedSessions": 1343,
+          "sessions": 1642,
+          "switchEvents": 84
+        },
+        "SMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2696.098,
+          "endNTD": 27960975.79,
+          "mddPct": -41.769,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 221,
+          "investedSessions": 1421,
+          "sessions": 1642,
+          "switchEvents": 32
+        },
+        "SMA_close_N8_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2638.721,
+          "endNTD": 27387214.57,
+          "mddPct": -41.315,
+          "riskOffSells": 23,
+          "riskOnReentries": 23,
+          "riskOffSessions": 223,
+          "investedSessions": 1419,
+          "sessions": 1642,
+          "switchEvents": 46
+        },
+        "SMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2983.767,
+          "endNTD": 30837667.83,
+          "mddPct": -35.277,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 165,
+          "investedSessions": 1477,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "SMA_twii_N10_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2206.789,
+          "endNTD": 23067888.09,
+          "mddPct": -53.214,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 230,
+          "investedSessions": 1412,
+          "sessions": 1642,
+          "switchEvents": 14
+        },
+        "SMA_twii_N5_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1893.43,
+          "endNTD": 19934296.0,
+          "mddPct": -59.39,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 414,
+          "investedSessions": 1228,
+          "sessions": 1642,
+          "switchEvents": 10
+        },
+        "VWMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 720.821,
+          "endNTD": 8208210.66,
+          "mddPct": -53.799,
+          "riskOffSells": 41,
+          "riskOnReentries": 41,
+          "riskOffSessions": 231,
+          "investedSessions": 1411,
+          "sessions": 1642,
+          "switchEvents": 82
+        },
+        "VWMA_close_N12_OUT4_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2571.134,
+          "endNTD": 26711342.87,
+          "mddPct": -40.065,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 128,
+          "investedSessions": 1514,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "VWMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2520.145,
+          "endNTD": 26201447.04,
+          "mddPct": -39.017,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 184,
+          "investedSessions": 1458,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "VWMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2077.185,
+          "endNTD": 21771851.11,
+          "mddPct": -42.308,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 171,
+          "investedSessions": 1471,
+          "sessions": 1642,
+          "switchEvents": 34
+        },
+        "VWMA_twii_N10_OUT4_RE3_C1": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1763.315,
+          "endNTD": 18633146.29,
+          "mddPct": -43.744,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 325,
+          "investedSessions": 1317,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "VWMA_twii_N12_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1428.982,
+          "endNTD": 15289819.07,
+          "mddPct": -59.616,
+          "riskOffSells": 9,
+          "riskOnReentries": 9,
+          "riskOffSessions": 194,
+          "investedSessions": 1448,
+          "sessions": 1642,
+          "switchEvents": 18
+        },
+        "WMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 871.517,
+          "endNTD": 9715170.38,
+          "mddPct": -52.241,
+          "riskOffSells": 44,
+          "riskOnReentries": 44,
+          "riskOffSessions": 198,
+          "investedSessions": 1444,
+          "sessions": 1642,
+          "switchEvents": 88
+        },
+        "WMA_close_N12_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1970.322,
+          "endNTD": 20703215.4,
+          "mddPct": -42.167,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 142,
+          "investedSessions": 1500,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "WMA_close_N15_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2934.061,
+          "endNTD": 30340610.92,
+          "mddPct": -37.585,
+          "riskOffSells": 12,
+          "riskOnReentries": 12,
+          "riskOffSessions": 220,
+          "investedSessions": 1422,
+          "sessions": 1642,
+          "switchEvents": 24
+        },
+        "WMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1149.92,
+          "endNTD": 12499202.86,
+          "mddPct": -59.39,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 74,
+          "investedSessions": 1568,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "WMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3108.79,
+          "endNTD": 32087903.85,
+          "mddPct": -34.08,
+          "riskOffSells": 8,
+          "riskOnReentries": 8,
+          "riskOffSessions": 445,
+          "investedSessions": 1197,
+          "sessions": 1642,
+          "switchEvents": 16
+        },
+        "WMA_twii_N8_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2846.205,
+          "endNTD": 29462053.17,
+          "mddPct": -36.444,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 576,
+          "investedSessions": 1066,
+          "sessions": 1642,
+          "switchEvents": 8
+        }
+      },
+      "2": {
+        "EMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1698.976,
+          "endNTD": 17989757.11,
+          "mddPct": -49.283,
+          "riskOffSells": 29,
+          "riskOnReentries": 29,
+          "riskOffSessions": 248,
+          "investedSessions": 1394,
+          "sessions": 1642,
+          "switchEvents": 58
+        },
+        "EMA_close_N5_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1747.179,
+          "endNTD": 18471794.7,
+          "mddPct": -58.111,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 151,
+          "investedSessions": 1491,
+          "sessions": 1642,
+          "switchEvents": 12
+        },
+        "EMA_close_N8_OUT3_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2611.419,
+          "endNTD": 27114192.57,
+          "mddPct": -42.017,
+          "riskOffSells": 13,
+          "riskOnReentries": 13,
+          "riskOffSessions": 193,
+          "investedSessions": 1449,
+          "sessions": 1642,
+          "switchEvents": 26
+        },
+        "EMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1604.257,
+          "endNTD": 17042569.23,
+          "mddPct": -47.309,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 134,
+          "investedSessions": 1508,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "EMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3388.037,
+          "endNTD": 34880368.53,
+          "mddPct": -33.448,
+          "riskOffSells": 6,
+          "riskOnReentries": 5,
+          "riskOffSessions": 599,
+          "investedSessions": 1043,
+          "sessions": 1642,
+          "switchEvents": 11
+        },
+        "EMA_twii_N5_OUT1_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1055.547,
+          "endNTD": 11555465.75,
+          "mddPct": -33.447,
+          "riskOffSells": 4,
+          "riskOnReentries": 3,
+          "riskOffSessions": 842,
+          "investedSessions": 800,
+          "sessions": 1642,
+          "switchEvents": 7
+        },
+        "SMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1016.509,
+          "endNTD": 11165085.84,
+          "mddPct": -44.823,
+          "riskOffSells": 42,
+          "riskOnReentries": 42,
+          "riskOffSessions": 299,
+          "investedSessions": 1343,
+          "sessions": 1642,
+          "switchEvents": 84
+        },
+        "SMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2154.56,
+          "endNTD": 22545601.15,
+          "mddPct": -41.495,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 221,
+          "investedSessions": 1421,
+          "sessions": 1642,
+          "switchEvents": 32
+        },
+        "SMA_close_N8_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2791.623,
+          "endNTD": 28916234.5,
+          "mddPct": -44.145,
+          "riskOffSells": 23,
+          "riskOnReentries": 23,
+          "riskOffSessions": 223,
+          "investedSessions": 1419,
+          "sessions": 1642,
+          "switchEvents": 46
+        },
+        "SMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3002.162,
+          "endNTD": 31021616.01,
+          "mddPct": -38.811,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 165,
+          "investedSessions": 1477,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "SMA_twii_N10_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2039.475,
+          "endNTD": 21394747.78,
+          "mddPct": -56.107,
+          "riskOffSells": 7,
+          "riskOnReentries": 7,
+          "riskOffSessions": 230,
+          "investedSessions": 1412,
+          "sessions": 1642,
+          "switchEvents": 14
+        },
+        "SMA_twii_N5_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2249.75,
+          "endNTD": 23497495.81,
+          "mddPct": -58.041,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 414,
+          "investedSessions": 1228,
+          "sessions": 1642,
+          "switchEvents": 10
+        },
+        "VWMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 988.417,
+          "endNTD": 10884165.93,
+          "mddPct": -51.725,
+          "riskOffSells": 41,
+          "riskOnReentries": 41,
+          "riskOffSessions": 231,
+          "investedSessions": 1411,
+          "sessions": 1642,
+          "switchEvents": 82
+        },
+        "VWMA_close_N12_OUT4_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2359.006,
+          "endNTD": 24590060.44,
+          "mddPct": -41.363,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 128,
+          "investedSessions": 1514,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "VWMA_close_N15_OUT4_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2231.988,
+          "endNTD": 23319883.25,
+          "mddPct": -35.307,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 184,
+          "investedSessions": 1458,
+          "sessions": 1642,
+          "switchEvents": 30
+        },
+        "VWMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2081.899,
+          "endNTD": 21818991.95,
+          "mddPct": -38.81,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 171,
+          "investedSessions": 1471,
+          "sessions": 1642,
+          "switchEvents": 34
+        },
+        "VWMA_twii_N10_OUT4_RE3_C1": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1237.229,
+          "endNTD": 13372285.33,
+          "mddPct": -53.072,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 325,
+          "investedSessions": 1317,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "VWMA_twii_N12_OUT3_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1462.078,
+          "endNTD": 15620778.34,
+          "mddPct": -60.63,
+          "riskOffSells": 9,
+          "riskOnReentries": 9,
+          "riskOffSessions": 194,
+          "investedSessions": 1448,
+          "sessions": 1642,
+          "switchEvents": 18
+        },
+        "WMA_close_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 899.936,
+          "endNTD": 9999360.09,
+          "mddPct": -50.252,
+          "riskOffSells": 44,
+          "riskOnReentries": 44,
+          "riskOffSessions": 198,
+          "investedSessions": 1444,
+          "sessions": 1642,
+          "switchEvents": 88
+        },
+        "WMA_close_N12_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1660.945,
+          "endNTD": 17609454.44,
+          "mddPct": -48.487,
+          "riskOffSells": 11,
+          "riskOnReentries": 11,
+          "riskOffSessions": 142,
+          "investedSessions": 1500,
+          "sessions": 1642,
+          "switchEvents": 22
+        },
+        "WMA_close_N15_OUT4_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 2483.705,
+          "endNTD": 25837047.14,
+          "mddPct": -34.3,
+          "riskOffSells": 12,
+          "riskOnReentries": 12,
+          "riskOffSessions": 220,
+          "investedSessions": 1422,
+          "sessions": 1642,
+          "switchEvents": 24
+        },
+        "WMA_twii_N10_OUT2_RE1_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 1573.877,
+          "endNTD": 16738769.0,
+          "mddPct": -58.041,
+          "riskOffSells": 10,
+          "riskOnReentries": 10,
+          "riskOffSessions": 74,
+          "investedSessions": 1568,
+          "sessions": 1642,
+          "switchEvents": 20
+        },
+        "WMA_twii_N5_OUT1_RE2_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3116.551,
+          "endNTD": 32165506.98,
+          "mddPct": -36.561,
+          "riskOffSells": 8,
+          "riskOnReentries": 7,
+          "riskOffSessions": 445,
+          "investedSessions": 1197,
+          "sessions": 1642,
+          "switchEvents": 15
+        },
+        "WMA_twii_N8_OUT2_RE3_C3": {
+          "start": "2020-01-02",
+          "end": "2026-10-07",
+          "returnPct": 3169.068,
+          "endNTD": 32690675.99,
+          "mddPct": -36.444,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 576,
+          "investedSessions": 1066,
+          "sessions": 1642,
+          "switchEvents": 8
+        }
+      }
+    }
+  },
+  "warnings": [
+    "2020-2023 and 2024-2026 have already been viewed in the research process, so none are truly independent prospective returns; the period split only limits new code selection.",
+    "VWMA input Yahoo index volume may have scaling/market-definition changes; no substitution with ETF volume for index price is permitted.",
+    "Adjusted ETF price series paired with unadjusted exchange volume can be affected by corporate-action adjustments; check price adjustment factor for discontinuities.",
+    "Parameter search has thousands of similar variants: top in-sample selection is subject to multiple-test and survivor bias.",
+    "SMA/EMA/WMA/VWMA are all price-following, not independent risk hedges; large 2x ETF crashes and opening gaps may cause >30% portfolio drawdown.",
+    "No borrowing and no imaginary after-close fills; model assumes next-open liquidity at assumed slippage and omits real broker limitations.",
+    "VWMA rolling window is entirely invalid if any source bar has zero/missing/nonpositive volume; no fabricated volume."
+  ],
+  "elapsedSeconds": 15.8
+}
