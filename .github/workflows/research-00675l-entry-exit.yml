@@ -1,0 +1,110 @@
+name: Research 00675L SMA10 Entry Exit 2018-2026
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/research-00675l-entry-exit.yml'
+      - 'tw-stock-dashboard/scripts/research_00675l_exit_entry_v2.py'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: 00675l-entry-exit-v2
+  cancel-in-progress: false
+jobs:
+  backtest-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Fetch original independently archived simulator sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          b='research/00675l-vwma5-vs-sma10-2018-2026'
+          git fetch --no-tags origin "+refs/heads/$b:refs/remotes/origin/$b"
+          mkdir -p /tmp/legacy_src
+          for file in research_00675l_swing_grid research_00675l_near_hold_switch research_00675l_ma_family_2020_2026 research_00675l_vwma5_sma10_2018_2026; do
+            git show "origin/$b:tw-stock-dashboard/src/$file.py" > "/tmp/legacy_src/$file.py"
+          done
+          git rev-parse "origin/$b"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Install backtest dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Run entire 2018-2026 causal backtest and selection checks
+        env:
+          PYTHONPATH: /tmp/legacy_src:${{ github.workspace }}/tw-stock-dashboard/src
+        run: python -u tw-stock-dashboard/scripts/research_00675l_exit_entry_v2.py
+      - name: Verify all published entries, daily curves and training grid
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check tw-stock-dashboard/docs/etf-research.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=Path("tw-stock-dashboard/docs/data/research/etf_history")
+          ix=json.loads((d/"index.json").read_text())
+          x=next(a for a in ix["studies"] if a["id"]=="00675_risk_v2")
+          assert len(x["models"])==22 and x["sessions"]==2128
+          assert len({a["id"] for a in x["models"]})==22
+          assert len(ix["studies"])>=6
+          assert next(s for s in ix["studies"] if s["id"]=="00675_2018")["models"][1]["returnPct"]==4110.755
+          res=json.loads((d/"00675l_risk_v2/summary.json").read_text())
+          assert res["legacy"]["exactAlgorithmParity"]
+          grid=json.loads((d/"00675l_risk_v2/grid.json").read_text())
+          assert grid["count"]==270 and len(grid["rows"])==270
+          for m in x["models"]:
+            p=json.loads((d/m["curve"]).read_text())
+            assert p["id"]==m["id"] and p["study"]==x["id"]
+            assert len(p["points"])==x["sessions"]
+            assert p["points"][0][0]=="2018-01-02" and p["points"][-1][0]=="2026-10-07"
+            assert abs(p["points"][-1][1]-m["endTWD"])<.02
+          print("PASS 22 models, 270 parameter grid, 2128-day full curves, historical archives unchanged")
+          PY
+      - name: Upload complete research artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: 00675L-SMA10-Entry-Exit-2018-2026-V2
+          path: |
+            tw-stock-dashboard/docs/data/research/etf_history/index.json
+            tw-stock-dashboard/docs/data/research/etf_history/00675l_risk_v2
+            tw-stock-dashboard/docs/data/research/etf_history/curves/00675_risk_v2__*.json
+          retention-days: 90
+      - name: Commit final verified summary, grid and trade curves to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_history/index.json tw-stock-dashboard/docs/data/research/etf_history/00675l_risk_v2 tw-stock-dashboard/docs/data/research/etf_history/curves/00675_risk_v2__*.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: publish 00675L 2018–2026 entry exit risk comparison, 270 parameter audits"
+            git push origin HEAD:main
+          fi
+  deploy:
+    needs: backtest-and-publish
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - name: Deploy updated 00675L result index
+        id: deployment
+        uses: actions/deploy-pages@v4
