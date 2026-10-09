@@ -64,7 +64,7 @@ def ep_study(a,dates,ma,start,end,mode):
         "numBuys":len(orders),"investedPctApprox":round(100*(1-(cash/CAPITAL)),2),
         "orders":orders,"signalCount":sum(idx_pct(idx,int(i))<=-.05 for i in xs),
         "points":equity}
-def sleeve(a,dates,ma):
+def sleeve(a,dates,ma,trigger='drawdown'):
     idx=a["twii"];cash=float(CAPITAL);shares=0;budget=float(CAPITAL);used=set();orders=[];equity=[]
     xs=np.flatnonzero((dates>=BEGIN)&(dates<=END))
     for pos,i in enumerate(xs):
@@ -77,8 +77,11 @@ def sleeve(a,dates,ma):
                 orders.append([dt,"SELL",n,round(op,5),round(v,2),round(dd*100,3)])
             elif recovery and shares==0:
                 used=set();budget=cash
-            elif dd>=.05:
-                new=[k for k,t in enumerate((.05,.10,.15,.20)) if k not in used and dd>=t]
+            elif dd>=.05 or (trigger=="daily5" and idx_pct(idx,j)<=-.05):
+                if trigger=="daily5":
+                    new=[min(set(range(4))-used)] if idx_pct(idx,j)<=-.05 and len(used)<4 else []
+                else:
+                    new=[k for k,t in enumerate((.05,.10,.15,.20)) if k not in used and dd>=t]
                 if new:
                     if not used:budget=cash
                     used.update(new)
@@ -123,16 +126,20 @@ def main():
     core={"points":base["points"],"endTWD":base["endNTD"],"returnPct":base["returnPct"],
           "mddPct":base["mddPct"],"annual":base["annual"]}
     crash=sleeve(a,dates,sma)
-    variants=[("BASE","原版SMA10＋急跌4%（100%趨勢）",0.),
-              ("RESERVE25","75%趨勢＋25%現金分批抄底",.25),
-              ("RESERVE50","50%趨勢＋50%現金分批抄底",.50)]
+    daily=sleeve(a,dates,sma,"daily5")
+    variants=[("BASE","原版SMA10＋急跌4%（100%趨勢）",0.,"none"),
+              ("RESERVE25","75%趨勢＋25%現金：累跌分批",.25,"drawdown"),
+              ("RESERVE50","50%趨勢＋50%現金：累跌分批",.50,"drawdown"),
+              ("DAILY5_25","75%趨勢＋25%現金：單日跌5%分批",.25,"daily5"),
+              ("DAILY5_50","50%趨勢＋50%現金：單日跌5%分批",.50,"daily5")]
     all_models=[];curves={}
-    for id,title,weight in variants:
-        r=core if weight==0 else audit(base["points"],crash["points"],weight)
+    for id,title,weight,mode in variants:
+        chosen=crash if mode!="daily5" else daily
+        r=core if weight==0 else audit(base["points"],chosen["points"],weight)
         curves[id]=r
         rel="curves/"+STUDY+"__"+id+".json"
         points=r["points"]
-        trades=base["orders"] if weight==0 else crash["trades"]
+        trades=base["orders"] if weight==0 else chosen["trades"]
         payload={"study":STUDY,"id":id,"currency":"TWD","columns":["date","equity"],
             "points":points,"trades":trades,
             "tradeColumns":["date","side","phase","units","unitPrice","cashFlow","cashAfter"] if weight==0
@@ -145,7 +152,7 @@ def main():
            "cashDays":base["riskOffSessions"],"sessions":2128,"annual":r["annual"],"curve":rel,
            "curveCurrency":"TWD",
            "notes":"出場維持SMA10＋單日急跌4%；核心資金占"+str(int((1-weight)*100))+
-                   "%，剩餘資金獨立保留，台指距當時過去60日高點回落5/10/15/20%各買入備用金25%，指數重返SMA10+1%時賣出備用部位並重新保留備用金。核心與備用金從不互相借款，無額外注資。"}
+                   "%，剩餘資金獨立保留。抄底觸發="+("單日收盤跌5%以上，每次買備用金25%" if mode=="daily5" else "距過去60日高點回落5/10/15/20%各買備用金25%") + "；指數重返SMA10+1%時賣出備用部位並重新保留備用金。無外部注資。"}
         all_models.append(sample)
         print("FULL",id,json.dumps({"returnPct":r["returnPct"],"endTWD":r["endTWD"],"mdd":r["mddPct"]}),flush=True)
     episode_results={}
@@ -186,12 +193,12 @@ def main():
     (OUT/"events.json").write_text(json.dumps(file_event,ensure_ascii=False,indent=2),encoding="utf-8")
     rep={"version":"00675L_CRASH_RESERVE_2018_2026_V1","generatedAtUTC":file_event["generatedAtUTC"],
       "controlValidated":True,"fullResults":{k:{"endTWD":v["endTWD"],"returnPct":v["returnPct"],"mddPct":v["mddPct"]} for k,v in curves.items()},
-      "sleeve": {"trades":crash["trades"],"unallocatedEndTWD":crash["final"]},
+      "sleeve": {"drawdownTrades":crash["trades"],"drawdownEndTWD":crash["final"],"singleDay5Trades":daily["trades"],"singleDay5EndTWD":daily["final"]},
       "eventFile":"00675l_crash_entry/events.json","dataQuality":quality,"warnings":file_event["limitations"]}
     (OUT/"summary.json").write_text(json.dumps(rep,ensure_ascii=False,indent=2),encoding="utf-8")
     repo="https://github.com/jacky-168168/Tradingview-testing"
     study={"id":STUDY,"title":"00675L｜疫情、關稅、伊朗戰爭：急跌分批買 vs SMA10",
-      "description":"2018–2026全期間：100% SMA10對照，75%趨勢＋25%股災備用金，50%趨勢＋50%備用金；另附2020疫情、2025關稅、2026伊朗戰爭三段獨立事件入場測試。",
+      "description":"2018–2026全期間：100% SMA10對照；分別保留25%與50%備用金，比較單日暴跌5%分批、60日高點累跌5/10/15/20%分批。附疫情、關稅、伊朗戰爭3段獨立事件測試。",
       "period":[BEGIN,END],"sessions":2128,"models":all_models,
       "warnings":file_event["limitations"][:5],
       "dataQuality":"Yahoo 台指+00675L相同2128交易日；原始SMA10急跌4%策略逐筆核對；以先前收盤訊號於下一開盤成交，未加入任何資金。",
@@ -203,6 +210,6 @@ def main():
     archive["studyOrder"]=[s for s in archive.get("studyOrder",[]) if s!=STUDY]+[STUDY]
     archive["generatedAtUTC"]=file_event["generatedAtUTC"]
     (DATA/"index.json").write_text(json.dumps(archive,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
-    assert all(len(z["points"])==2128 for z in curves.values()) and len(all_models)==3
+    assert all(len(z["points"])==2128 for z in curves.values()) and len(all_models)==5
     print("CRISIS_COMPLETE",json.dumps({"full":rep["fullResults"],"events":{k:{mode:o["returnPct"] for mode,o in v["modes"].items()} for k,v in episode_results.items()}},ensure_ascii=False),flush=True)
 if __name__=="__main__":main()
