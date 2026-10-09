@@ -72,8 +72,10 @@ def main():
     _,etf,e=update_symbol(SYMBOL,datetime(2023,1,1),datetime(2026,10,9))
     _,ind,e2=update_symbol(INDEX,datetime(2023,1,1),datetime(2026,10,9))
     if e or e2 or etf is None or ind is None or etf.empty or ind.empty:raise RuntimeError(str((e,e2)))
-    d=prepare(data_prepare(etf,ind));a,dates=indicators(d)
     summary=json.loads((OUT/"summary.json").read_text(encoding="utf-8"))
+    # Compare against EXACTLY the frozen research date, independent of fresh Yahoo bar updates.
+    raw=data_prepare(etf,ind)
+    d=prepare(raw[raw.date<=summary["dateEnd"]].copy());a,dates=indicators(d)
     byid={x["id"]:x["params"] for x in summary["frozenComparisons"]}
     baseline=bt_lag(a,dates,byid[WATCH[0]],*PERIODS["continuous"],lag=0)
     expected=next(x["continuous"] for x in summary["frozenComparisons"] if x["id"]==WATCH[0])
