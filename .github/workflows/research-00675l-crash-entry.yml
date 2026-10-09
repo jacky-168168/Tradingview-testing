@@ -51,7 +51,7 @@ jobs:
           d=Path("tw-stock-dashboard/docs/data/research/etf_history")
           ix=json.loads((d/"index.json").read_text())
           study=next(s for s in ix["studies"] if s["id"]=="00675_crash_entry")
-          assert len(study["models"])==3 and study["sessions"]==2128
+          assert len(study["models"])==5 and study["sessions"]==2128
           old=next(s for s in ix["studies"] if s["id"]=="00675_risk_v2")
           base=next(m for m in old["models"] if m["id"]=="IDX_DROP_4")
           same=next(m for m in study["models"] if m["id"]=="BASE")
@@ -68,7 +68,7 @@ jobs:
               assert strategy["points"] and 0<=strategy["numBuys"]<=4
               for order in strategy["orders"]:
                 assert order[0]>=event["window"][0] and order[0]<=event["window"][1]
-          print("PASS parity, 3 full curves, 3 event panels x 7 entries and no extra cash")
+          print("PASS parity, 5 full curves, 3 event panels x 7 entries and no extra cash")
           PY
       - uses: actions/upload-artifact@v4
         with:
