@@ -47,7 +47,7 @@ def foreign_market_net(trade_date):
     d=trade_date.replace("-","")
     j=_report(trade_date,"fund/BFI82U",{"dayDate":d,"type":"day"})
     for row in j.get("data") or []:
-        if row and "外資" in str(row[0]) and "外資自營商" not in str(row[0]):
+        if row and "外資及陸資" in str(row[0]) and not str(row[0]).strip().startswith("外資自營商"):
             return _num(row[-1])/100_000_000
     raise RuntimeError("Missing date-specific TWSE foreign net for "+trade_date)
 
