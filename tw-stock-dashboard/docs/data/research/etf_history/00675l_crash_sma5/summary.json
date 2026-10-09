@@ -1,0 +1,3211 @@
+{
+  "version": "00675_CRASH_SMA5_REENTRY_2026_V1",
+  "generatedAtUTC": "2026-10-09T19:58:41.225358+00:00",
+  "study": "00675_crash_sma5",
+  "period": [
+    "2018-01-02",
+    "2026-10-07"
+  ],
+  "currency": "TWD",
+  "principal": 1000000,
+  "method": "TWII close signals with no lookahead; next TWSE 00675L open execution. 100% cash deployed initially; no credit, no capital injection.",
+  "normalSell": "TWII below own SMA10*(1-0.02) 3 closes OR a single TWII session daily decline >=4%; next open full liquidation.",
+  "reentry": "Normal: TWII close>SMA10*1.01. Crash override: a qualifying X-day TWII crash in previous W trading sessions AND TWII close>SMA5. First condition wins if both.",
+  "crashDefs": {
+    "each4": "每一天跌幅≥4%",
+    "red4": "連續收跌且累計≥4%",
+    "total4": "X日累積跌幅≥4%"
+  },
+  "crashN": [
+    1,
+    2,
+    3
+  ],
+  "lookbackDays": [
+    5,
+    10,
+    20
+  ],
+  "fees": {
+    "brokerEachSide": 0.001425,
+    "etfSellTax": 0.001,
+    "slippageEachSide": 0.001
+  },
+  "controlExactTradeParity": true,
+  "testCount": 21,
+  "caseResults": {
+    "BASE": {
+      "total": {
+        "returnPct": 4194.082,
+        "endNTD": 42940824.72,
+        "mddPct": -30.792,
+        "riskOffSells": 21,
+        "riskOnReentries": 21,
+        "riskOffSessions": 249
+      },
+      "sma5OverrideBuys": 0,
+      "sma5OverrideDates": [],
+      "triggerDates": [],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 477.627,
+          "endNTD": 5776267.05,
+          "mddPct": -30.552,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 183,
+          "sma5OverrideBuys": 0
+        },
+        "validation_2024_2025": {
+          "returnPct": 188.137,
+          "endNTD": 2881373.18,
+          "mddPct": -30.792,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 46,
+          "sma5OverrideBuys": 0
+        },
+        "audit_2026": {
+          "returnPct": 152.515,
+          "endNTD": 2525145.67,
+          "mddPct": -23.419,
+          "riskOffSells": 2,
+          "riskOnReentries": 2,
+          "riskOffSessions": 20,
+          "sma5OverrideBuys": 0
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 39.278,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 30.961,
+          "maxDrawdownPct": -8.682
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 55.997,
+          "maxDrawdownPct": -22.716
+        }
+      }
+    },
+    "EACH4_1D_W5": {
+      "total": {
+        "returnPct": 3925.929,
+        "endNTD": 40259288.38,
+        "mddPct": -34.199,
+        "riskOffSells": 24,
+        "riskOnReentries": 24,
+        "riskOffSessions": 225
+      },
+      "sma5OverrideBuys": 10,
+      "sma5OverrideDates": [
+        "2018-10-18",
+        "2020-02-06",
+        "2020-03-25",
+        "2021-05-19",
+        "2024-08-08",
+        "2024-08-12",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-10-11",
+        "2020-01-30",
+        "2020-03-12",
+        "2020-03-16",
+        "2020-03-19",
+        "2021-05-12",
+        "2022-10-11",
+        "2024-08-02",
+        "2024-08-05",
+        "2024-09-04",
+        "2025-03-31",
+        "2025-04-07",
+        "2025-04-08",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-09",
+        "2026-07-17",
+        "2026-07-28"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 496.474,
+          "endNTD": 5964740.82,
+          "mddPct": -32.889,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 173,
+          "sma5OverrideBuys": 4
+        },
+        "validation_2024_2025": {
+          "returnPct": 199.394,
+          "endNTD": 2993937.86,
+          "mddPct": -28.089,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 42,
+          "sma5OverrideBuys": 3
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "EACH4_1D_W10": {
+      "total": {
+        "returnPct": 3811.145,
+        "endNTD": 39111446.19,
+        "mddPct": -34.566,
+        "riskOffSells": 25,
+        "riskOnReentries": 25,
+        "riskOffSessions": 207
+      },
+      "sma5OverrideBuys": 14,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2018-10-18",
+        "2018-10-23",
+        "2020-02-06",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-10-19",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-10-11",
+        "2020-01-30",
+        "2020-03-12",
+        "2020-03-16",
+        "2020-03-19",
+        "2021-05-12",
+        "2022-10-11",
+        "2024-08-02",
+        "2024-08-05",
+        "2024-09-04",
+        "2025-03-31",
+        "2025-04-07",
+        "2025-04-08",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-09",
+        "2026-07-17",
+        "2026-07-28"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 477.15,
+          "endNTD": 5771498.04,
+          "mddPct": -34.566,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 156,
+          "sma5OverrideBuys": 7
+        },
+        "validation_2024_2025": {
+          "returnPct": 200.598,
+          "endNTD": 3005979.84,
+          "mddPct": -27.8,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 41,
+          "sma5OverrideBuys": 4
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "EACH4_1D_W20": {
+      "total": {
+        "returnPct": 3903.688,
+        "endNTD": 40036879.87,
+        "mddPct": -34.199,
+        "riskOffSells": 25,
+        "riskOnReentries": 25,
+        "riskOffSessions": 206
+      },
+      "sma5OverrideBuys": 15,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2018-10-18",
+        "2018-10-23",
+        "2018-11-01",
+        "2020-02-06",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-10-19",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-10-11",
+        "2020-01-30",
+        "2020-03-12",
+        "2020-03-16",
+        "2020-03-19",
+        "2021-05-12",
+        "2022-10-11",
+        "2024-08-02",
+        "2024-08-05",
+        "2024-09-04",
+        "2025-03-31",
+        "2025-04-07",
+        "2025-04-08",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-09",
+        "2026-07-17",
+        "2026-07-28"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 490.805,
+          "endNTD": 5908052.12,
+          "mddPct": -33.018,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 155,
+          "sma5OverrideBuys": 8
+        },
+        "validation_2024_2025": {
+          "returnPct": 200.598,
+          "endNTD": 3005979.84,
+          "mddPct": -27.8,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 41,
+          "sma5OverrideBuys": 4
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.42,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "EACH4_2D_W5": {
+      "total": {
+        "returnPct": 4361.778,
+        "endNTD": 44617780.4,
+        "mddPct": -30.552,
+        "riskOffSells": 22,
+        "riskOnReentries": 22,
+        "riskOffSessions": 245
+      },
+      "sma5OverrideBuys": 3,
+      "sma5OverrideDates": [
+        "2024-08-08",
+        "2024-08-12",
+        "2025-04-14"
+      ],
+      "triggerDates": [
+        "2024-08-05",
+        "2025-04-08",
+        "2025-04-09"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 477.627,
+          "endNTD": 5776267.05,
+          "mddPct": -30.552,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 183,
+          "sma5OverrideBuys": 0
+        },
+        "validation_2024_2025": {
+          "returnPct": 199.394,
+          "endNTD": 2993937.86,
+          "mddPct": -28.089,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 42,
+          "sma5OverrideBuys": 3
+        },
+        "audit_2026": {
+          "returnPct": 152.515,
+          "endNTD": 2525145.67,
+          "mddPct": -23.419,
+          "riskOffSells": 2,
+          "riskOnReentries": 2,
+          "riskOffSessions": 20,
+          "sma5OverrideBuys": 0
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 39.278,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 55.997,
+          "maxDrawdownPct": -22.716
+        }
+      }
+    },
+    "EACH4_2D_W10": {
+      "total": {
+        "returnPct": 4361.778,
+        "endNTD": 44617780.4,
+        "mddPct": -30.552,
+        "riskOffSells": 22,
+        "riskOnReentries": 22,
+        "riskOffSessions": 245
+      },
+      "sma5OverrideBuys": 3,
+      "sma5OverrideDates": [
+        "2024-08-08",
+        "2024-08-12",
+        "2025-04-14"
+      ],
+      "triggerDates": [
+        "2024-08-05",
+        "2025-04-08",
+        "2025-04-09"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 477.627,
+          "endNTD": 5776267.05,
+          "mddPct": -30.552,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 183,
+          "sma5OverrideBuys": 0
+        },
+        "validation_2024_2025": {
+          "returnPct": 199.394,
+          "endNTD": 2993937.86,
+          "mddPct": -28.089,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 42,
+          "sma5OverrideBuys": 3
+        },
+        "audit_2026": {
+          "returnPct": 152.515,
+          "endNTD": 2525145.67,
+          "mddPct": -23.419,
+          "riskOffSells": 2,
+          "riskOnReentries": 2,
+          "riskOffSessions": 20,
+          "sma5OverrideBuys": 0
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 39.278,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 55.997,
+          "maxDrawdownPct": -22.716
+        }
+      }
+    },
+    "EACH4_2D_W20": {
+      "total": {
+        "returnPct": 4361.778,
+        "endNTD": 44617780.4,
+        "mddPct": -30.552,
+        "riskOffSells": 22,
+        "riskOnReentries": 22,
+        "riskOffSessions": 245
+      },
+      "sma5OverrideBuys": 3,
+      "sma5OverrideDates": [
+        "2024-08-08",
+        "2024-08-12",
+        "2025-04-14"
+      ],
+      "triggerDates": [
+        "2024-08-05",
+        "2025-04-08",
+        "2025-04-09"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 477.627,
+          "endNTD": 5776267.05,
+          "mddPct": -30.552,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 183,
+          "sma5OverrideBuys": 0
+        },
+        "validation_2024_2025": {
+          "returnPct": 199.394,
+          "endNTD": 2993937.86,
+          "mddPct": -28.089,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 42,
+          "sma5OverrideBuys": 3
+        },
+        "audit_2026": {
+          "returnPct": 152.515,
+          "endNTD": 2525145.67,
+          "mddPct": -23.419,
+          "riskOffSells": 2,
+          "riskOnReentries": 2,
+          "riskOffSessions": 20,
+          "sma5OverrideBuys": 0
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 39.278,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 55.997,
+          "maxDrawdownPct": -22.716
+        }
+      }
+    },
+    "EACH4_3D_W5": {
+      "total": {
+        "returnPct": 4093.215,
+        "endNTD": 41932152.48,
+        "mddPct": -32.417,
+        "riskOffSells": 21,
+        "riskOnReentries": 21,
+        "riskOffSessions": 247
+      },
+      "sma5OverrideBuys": 1,
+      "sma5OverrideDates": [
+        "2025-04-14"
+      ],
+      "triggerDates": [
+        "2025-04-09"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 477.627,
+          "endNTD": 5776267.05,
+          "mddPct": -30.552,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 183,
+          "sma5OverrideBuys": 0
+        },
+        "validation_2024_2025": {
+          "returnPct": 181.372,
+          "endNTD": 2813721.08,
+          "mddPct": -32.417,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 44,
+          "sma5OverrideBuys": 1
+        },
+        "audit_2026": {
+          "returnPct": 152.515,
+          "endNTD": 2525145.67,
+          "mddPct": -23.419,
+          "riskOffSells": 2,
+          "riskOnReentries": 2,
+          "riskOffSessions": 20,
+          "sma5OverrideBuys": 0
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 39.278,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 55.997,
+          "maxDrawdownPct": -22.716
+        }
+      }
+    },
+    "EACH4_3D_W10": {
+      "total": {
+        "returnPct": 4093.215,
+        "endNTD": 41932152.48,
+        "mddPct": -32.417,
+        "riskOffSells": 21,
+        "riskOnReentries": 21,
+        "riskOffSessions": 247
+      },
+      "sma5OverrideBuys": 1,
+      "sma5OverrideDates": [
+        "2025-04-14"
+      ],
+      "triggerDates": [
+        "2025-04-09"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 477.627,
+          "endNTD": 5776267.05,
+          "mddPct": -30.552,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 183,
+          "sma5OverrideBuys": 0
+        },
+        "validation_2024_2025": {
+          "returnPct": 181.372,
+          "endNTD": 2813721.08,
+          "mddPct": -32.417,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 44,
+          "sma5OverrideBuys": 1
+        },
+        "audit_2026": {
+          "returnPct": 152.515,
+          "endNTD": 2525145.67,
+          "mddPct": -23.419,
+          "riskOffSells": 2,
+          "riskOnReentries": 2,
+          "riskOffSessions": 20,
+          "sma5OverrideBuys": 0
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 39.278,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 55.997,
+          "maxDrawdownPct": -22.716
+        }
+      }
+    },
+    "EACH4_3D_W20": {
+      "total": {
+        "returnPct": 4093.215,
+        "endNTD": 41932152.48,
+        "mddPct": -32.417,
+        "riskOffSells": 21,
+        "riskOnReentries": 21,
+        "riskOffSessions": 247
+      },
+      "sma5OverrideBuys": 1,
+      "sma5OverrideDates": [
+        "2025-04-14"
+      ],
+      "triggerDates": [
+        "2025-04-09"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 477.627,
+          "endNTD": 5776267.05,
+          "mddPct": -30.552,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 183,
+          "sma5OverrideBuys": 0
+        },
+        "validation_2024_2025": {
+          "returnPct": 181.372,
+          "endNTD": 2813721.08,
+          "mddPct": -32.417,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 44,
+          "sma5OverrideBuys": 1
+        },
+        "audit_2026": {
+          "returnPct": 152.515,
+          "endNTD": 2525145.67,
+          "mddPct": -23.419,
+          "riskOffSells": 2,
+          "riskOnReentries": 2,
+          "riskOffSessions": 20,
+          "sma5OverrideBuys": 0
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 39.278,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 55.997,
+          "maxDrawdownPct": -22.716
+        }
+      }
+    },
+    "RED4_2D_W5": {
+      "total": {
+        "returnPct": 4238.327,
+        "endNTD": 43383272.12,
+        "mddPct": -34.199,
+        "riskOffSells": 23,
+        "riskOnReentries": 23,
+        "riskOffSessions": 208
+      },
+      "sma5OverrideBuys": 12,
+      "sma5OverrideDates": [
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-08",
+        "2024-08-12",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2020-03-09",
+        "2020-03-12",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2021-05-11",
+        "2021-05-12",
+        "2021-05-13",
+        "2022-03-07",
+        "2022-03-08",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-10-11",
+        "2022-10-12",
+        "2024-04-16",
+        "2024-04-22",
+        "2024-07-22",
+        "2024-08-05",
+        "2024-09-04",
+        "2025-03-31",
+        "2025-04-08",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-09",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-07-17",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 507.587,
+          "endNTD": 6075866.5,
+          "mddPct": -31.569,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 159,
+          "sma5OverrideBuys": 5
+        },
+        "validation_2024_2025": {
+          "returnPct": 216.726,
+          "endNTD": 3167255.5,
+          "mddPct": -28.089,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 39,
+          "sma5OverrideBuys": 4
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "RED4_2D_W10": {
+      "total": {
+        "returnPct": 3804.115,
+        "endNTD": 39041152.98,
+        "mddPct": -37.863,
+        "riskOffSells": 24,
+        "riskOnReentries": 24,
+        "riskOffSessions": 204
+      },
+      "sma5OverrideBuys": 15,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2020-03-09",
+        "2020-03-12",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2021-05-11",
+        "2021-05-12",
+        "2021-05-13",
+        "2022-03-07",
+        "2022-03-08",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-10-11",
+        "2022-10-12",
+        "2024-04-16",
+        "2024-04-22",
+        "2024-07-22",
+        "2024-08-05",
+        "2024-09-04",
+        "2025-03-31",
+        "2025-04-08",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-09",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-07-17",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 532.78,
+          "endNTD": 6327798.35,
+          "mddPct": -31.569,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 157,
+          "sma5OverrideBuys": 6
+        },
+        "validation_2024_2025": {
+          "returnPct": 173.675,
+          "endNTD": 2736746.44,
+          "mddPct": -37.862,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 37,
+          "sma5OverrideBuys": 6
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "RED4_2D_W20": {
+      "total": {
+        "returnPct": 3804.115,
+        "endNTD": 39041152.98,
+        "mddPct": -37.863,
+        "riskOffSells": 24,
+        "riskOnReentries": 24,
+        "riskOffSessions": 204
+      },
+      "sma5OverrideBuys": 15,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2020-03-09",
+        "2020-03-12",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2021-05-11",
+        "2021-05-12",
+        "2021-05-13",
+        "2022-03-07",
+        "2022-03-08",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-10-11",
+        "2022-10-12",
+        "2024-04-16",
+        "2024-04-22",
+        "2024-07-22",
+        "2024-08-05",
+        "2024-09-04",
+        "2025-03-31",
+        "2025-04-08",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-09",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-07-17",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 532.78,
+          "endNTD": 6327798.35,
+          "mddPct": -31.569,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 157,
+          "sma5OverrideBuys": 6
+        },
+        "validation_2024_2025": {
+          "returnPct": 173.675,
+          "endNTD": 2736746.44,
+          "mddPct": -37.862,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 37,
+          "sma5OverrideBuys": 6
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "RED4_3D_W5": {
+      "total": {
+        "returnPct": 3689.273,
+        "endNTD": 37892726.07,
+        "mddPct": -34.199,
+        "riskOffSells": 22,
+        "riskOnReentries": 22,
+        "riskOffSessions": 216
+      },
+      "sma5OverrideBuys": 9,
+      "sma5OverrideDates": [
+        "2018-11-01",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-19",
+        "2025-04-14",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-10-25",
+        "2018-12-06",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2020-08-20",
+        "2020-09-24",
+        "2021-05-05",
+        "2021-05-12",
+        "2021-05-13",
+        "2022-03-08",
+        "2022-06-30",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-09-26",
+        "2022-10-12",
+        "2022-10-13",
+        "2024-04-16",
+        "2024-07-19",
+        "2024-07-22",
+        "2024-09-04",
+        "2025-03-31",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-23",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 521.96,
+          "endNTD": 6219600.11,
+          "mddPct": -31.569,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 158,
+          "sma5OverrideBuys": 6
+        },
+        "validation_2024_2025": {
+          "returnPct": 181.372,
+          "endNTD": 2813721.08,
+          "mddPct": -32.417,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 44,
+          "sma5OverrideBuys": 1
+        },
+        "audit_2026": {
+          "returnPct": 111.928,
+          "endNTD": 2119278.1,
+          "mddPct": -34.196,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 14,
+          "sma5OverrideBuys": 2
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 55.997,
+          "maxDrawdownPct": -22.716
+        }
+      }
+    },
+    "RED4_3D_W10": {
+      "total": {
+        "returnPct": 3672.056,
+        "endNTD": 37720562.07,
+        "mddPct": -41.603,
+        "riskOffSells": 23,
+        "riskOnReentries": 23,
+        "riskOffSessions": 203
+      },
+      "sma5OverrideBuys": 15,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2018-11-01",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-05",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-10-25",
+        "2018-12-06",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2020-08-20",
+        "2020-09-24",
+        "2021-05-05",
+        "2021-05-12",
+        "2021-05-13",
+        "2022-03-08",
+        "2022-06-30",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-09-26",
+        "2022-10-12",
+        "2022-10-13",
+        "2024-04-16",
+        "2024-07-19",
+        "2024-07-22",
+        "2024-09-04",
+        "2025-03-31",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-23",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 550.531,
+          "endNTD": 6505314.41,
+          "mddPct": -31.275,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 154,
+          "sma5OverrideBuys": 8
+        },
+        "validation_2024_2025": {
+          "returnPct": 157.202,
+          "endNTD": 2572024.66,
+          "mddPct": -41.603,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 39,
+          "sma5OverrideBuys": 4
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.62,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "RED4_3D_W20": {
+      "total": {
+        "returnPct": 3913.629,
+        "endNTD": 40136292.7,
+        "mddPct": -37.863,
+        "riskOffSells": 24,
+        "riskOnReentries": 24,
+        "riskOffSessions": 201
+      },
+      "sma5OverrideBuys": 17,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2018-11-01",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-05",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-10-25",
+        "2018-12-06",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2020-08-20",
+        "2020-09-24",
+        "2021-05-05",
+        "2021-05-12",
+        "2021-05-13",
+        "2022-03-08",
+        "2022-06-30",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-09-26",
+        "2022-10-12",
+        "2022-10-13",
+        "2024-04-16",
+        "2024-07-19",
+        "2024-07-22",
+        "2024-09-04",
+        "2025-03-31",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-23",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 550.531,
+          "endNTD": 6505314.41,
+          "mddPct": -31.275,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 154,
+          "sma5OverrideBuys": 8
+        },
+        "validation_2024_2025": {
+          "returnPct": 173.675,
+          "endNTD": 2736746.44,
+          "mddPct": -37.862,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 37,
+          "sma5OverrideBuys": 6
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.62,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "TOTAL4_2D_W5": {
+      "total": {
+        "returnPct": 4202.726,
+        "endNTD": 43027255.53,
+        "mddPct": -34.199,
+        "riskOffSells": 24,
+        "riskOnReentries": 24,
+        "riskOffSessions": 202
+      },
+      "sma5OverrideBuys": 14,
+      "sma5OverrideDates": [
+        "2018-10-18",
+        "2020-02-06",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-08",
+        "2024-08-12",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-10-11",
+        "2018-10-12",
+        "2020-01-30",
+        "2020-01-31",
+        "2020-03-09",
+        "2020-03-12",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2021-05-11",
+        "2021-05-12",
+        "2021-05-13",
+        "2022-03-07",
+        "2022-03-08",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-10-11",
+        "2022-10-12",
+        "2024-04-16",
+        "2024-04-22",
+        "2024-07-22",
+        "2024-08-05",
+        "2024-08-06",
+        "2024-09-04",
+        "2024-09-05",
+        "2025-03-31",
+        "2025-04-07",
+        "2025-04-08",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-09",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-07-17",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 502.6,
+          "endNTD": 6026002.62,
+          "mddPct": -32.889,
+          "riskOffSells": 16,
+          "riskOnReentries": 16,
+          "riskOffSessions": 153,
+          "sma5OverrideBuys": 7
+        },
+        "validation_2024_2025": {
+          "returnPct": 216.726,
+          "endNTD": 3167255.5,
+          "mddPct": -28.089,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 39,
+          "sma5OverrideBuys": 4
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "TOTAL4_2D_W10": {
+      "total": {
+        "returnPct": 3524.971,
+        "endNTD": 36249706.06,
+        "mddPct": -37.863,
+        "riskOffSells": 26,
+        "riskOnReentries": 26,
+        "riskOffSessions": 193
+      },
+      "sma5OverrideBuys": 18,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2018-10-18",
+        "2018-10-23",
+        "2020-02-06",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-10-11",
+        "2018-10-12",
+        "2020-01-30",
+        "2020-01-31",
+        "2020-03-09",
+        "2020-03-12",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2021-05-11",
+        "2021-05-12",
+        "2021-05-13",
+        "2022-03-07",
+        "2022-03-08",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-10-11",
+        "2022-10-12",
+        "2024-04-16",
+        "2024-04-22",
+        "2024-07-22",
+        "2024-08-05",
+        "2024-08-06",
+        "2024-09-04",
+        "2024-09-05",
+        "2025-03-31",
+        "2025-04-07",
+        "2025-04-08",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-09",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-07-17",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 487.535,
+          "endNTD": 5875354.03,
+          "mddPct": -34.566,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 146,
+          "sma5OverrideBuys": 9
+        },
+        "validation_2024_2025": {
+          "returnPct": 173.675,
+          "endNTD": 2736746.44,
+          "mddPct": -37.862,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 37,
+          "sma5OverrideBuys": 6
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "TOTAL4_2D_W20": {
+      "total": {
+        "returnPct": 3610.724,
+        "endNTD": 37107240.93,
+        "mddPct": -37.863,
+        "riskOffSells": 26,
+        "riskOnReentries": 26,
+        "riskOffSessions": 192
+      },
+      "sma5OverrideBuys": 19,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2018-10-18",
+        "2018-10-23",
+        "2018-11-01",
+        "2020-02-06",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-10-11",
+        "2018-10-12",
+        "2020-01-30",
+        "2020-01-31",
+        "2020-03-09",
+        "2020-03-12",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2021-05-11",
+        "2021-05-12",
+        "2021-05-13",
+        "2022-03-07",
+        "2022-03-08",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-10-11",
+        "2022-10-12",
+        "2024-04-16",
+        "2024-04-22",
+        "2024-07-22",
+        "2024-08-05",
+        "2024-08-06",
+        "2024-09-04",
+        "2024-09-05",
+        "2025-03-31",
+        "2025-04-07",
+        "2025-04-08",
+        "2025-04-09",
+        "2026-03-04",
+        "2026-03-09",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-07-17",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 501.436,
+          "endNTD": 6014356.48,
+          "mddPct": -33.018,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 145,
+          "sma5OverrideBuys": 10
+        },
+        "validation_2024_2025": {
+          "returnPct": 173.675,
+          "endNTD": 2736746.44,
+          "mddPct": -37.862,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 37,
+          "sma5OverrideBuys": 6
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "TOTAL4_3D_W5": {
+      "total": {
+        "returnPct": 3877.64,
+        "endNTD": 39776396.87,
+        "mddPct": -37.226,
+        "riskOffSells": 25,
+        "riskOnReentries": 25,
+        "riskOffSessions": 193
+      },
+      "sma5OverrideBuys": 17,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2018-10-18",
+        "2018-11-01",
+        "2020-02-06",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-05-03",
+        "2022-07-08",
+        "2022-10-05",
+        "2022-10-19",
+        "2024-08-08",
+        "2024-08-12",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-02-07",
+        "2018-10-11",
+        "2018-10-15",
+        "2018-10-25",
+        "2018-12-06",
+        "2020-01-30",
+        "2020-01-31",
+        "2020-02-03",
+        "2020-03-10",
+        "2020-03-12",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2020-08-20",
+        "2020-09-24",
+        "2021-05-05",
+        "2021-05-12",
+        "2021-05-13",
+        "2021-05-14",
+        "2022-03-08",
+        "2022-03-09",
+        "2022-04-27",
+        "2022-06-30",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-09-26",
+        "2022-09-28",
+        "2022-10-11",
+        "2022-10-12",
+        "2022-10-13",
+        "2024-04-16",
+        "2024-07-19",
+        "2024-07-22",
+        "2024-08-05",
+        "2024-08-06",
+        "2024-09-04",
+        "2024-09-05",
+        "2025-03-31",
+        "2025-04-07",
+        "2025-04-08",
+        "2025-04-09",
+        "2025-11-18",
+        "2026-03-04",
+        "2026-03-05",
+        "2026-03-23",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-06-10",
+        "2026-06-26",
+        "2026-07-17",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 489.32,
+          "endNTD": 5893198.75,
+          "mddPct": -37.226,
+          "riskOffSells": 17,
+          "riskOnReentries": 17,
+          "riskOffSessions": 141,
+          "sma5OverrideBuys": 11
+        },
+        "validation_2024_2025": {
+          "returnPct": 199.394,
+          "endNTD": 2993937.86,
+          "mddPct": -28.089,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 42,
+          "sma5OverrideBuys": 3
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "TOTAL4_3D_W10": {
+      "total": {
+        "returnPct": 3303.958,
+        "endNTD": 34039575.95,
+        "mddPct": -37.863,
+        "riskOffSells": 27,
+        "riskOnReentries": 27,
+        "riskOffSessions": 183
+      },
+      "sma5OverrideBuys": 21,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2018-10-18",
+        "2018-10-23",
+        "2018-11-01",
+        "2020-02-06",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-05-03",
+        "2022-07-08",
+        "2022-10-05",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-02-07",
+        "2018-10-11",
+        "2018-10-15",
+        "2018-10-25",
+        "2018-12-06",
+        "2020-01-30",
+        "2020-01-31",
+        "2020-02-03",
+        "2020-03-10",
+        "2020-03-12",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2020-08-20",
+        "2020-09-24",
+        "2021-05-05",
+        "2021-05-12",
+        "2021-05-13",
+        "2021-05-14",
+        "2022-03-08",
+        "2022-03-09",
+        "2022-04-27",
+        "2022-06-30",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-09-26",
+        "2022-09-28",
+        "2022-10-11",
+        "2022-10-12",
+        "2022-10-13",
+        "2024-04-16",
+        "2024-07-19",
+        "2024-07-22",
+        "2024-08-05",
+        "2024-08-06",
+        "2024-09-04",
+        "2024-09-05",
+        "2025-03-31",
+        "2025-04-07",
+        "2025-04-08",
+        "2025-04-09",
+        "2025-11-18",
+        "2026-03-04",
+        "2026-03-05",
+        "2026-03-23",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-06-10",
+        "2026-06-26",
+        "2026-07-17",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 451.714,
+          "endNTD": 5517137.49,
+          "mddPct": -37.226,
+          "riskOffSells": 18,
+          "riskOnReentries": 18,
+          "riskOffSessions": 136,
+          "sma5OverrideBuys": 12
+        },
+        "validation_2024_2025": {
+          "returnPct": 173.675,
+          "endNTD": 2736746.44,
+          "mddPct": -37.862,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 37,
+          "sma5OverrideBuys": 6
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.42,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    "TOTAL4_3D_W20": {
+      "total": {
+        "returnPct": 3279.158,
+        "endNTD": 33791578.0,
+        "mddPct": -37.863,
+        "riskOffSells": 27,
+        "riskOnReentries": 27,
+        "riskOffSessions": 181
+      },
+      "sma5OverrideBuys": 22,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2018-10-18",
+        "2018-10-23",
+        "2018-11-01",
+        "2020-02-06",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-05-03",
+        "2022-05-17",
+        "2022-07-08",
+        "2022-10-05",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "triggerDates": [
+        "2018-02-06",
+        "2018-02-07",
+        "2018-10-11",
+        "2018-10-15",
+        "2018-10-25",
+        "2018-12-06",
+        "2020-01-30",
+        "2020-01-31",
+        "2020-02-03",
+        "2020-03-10",
+        "2020-03-12",
+        "2020-03-13",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2020-08-20",
+        "2020-09-24",
+        "2021-05-05",
+        "2021-05-12",
+        "2021-05-13",
+        "2021-05-14",
+        "2022-03-08",
+        "2022-03-09",
+        "2022-04-27",
+        "2022-06-30",
+        "2022-07-01",
+        "2022-07-04",
+        "2022-09-26",
+        "2022-09-28",
+        "2022-10-11",
+        "2022-10-12",
+        "2022-10-13",
+        "2024-04-16",
+        "2024-07-19",
+        "2024-07-22",
+        "2024-08-05",
+        "2024-08-06",
+        "2024-09-04",
+        "2024-09-05",
+        "2025-03-31",
+        "2025-04-07",
+        "2025-04-08",
+        "2025-04-09",
+        "2025-11-18",
+        "2026-03-04",
+        "2026-03-05",
+        "2026-03-23",
+        "2026-03-31",
+        "2026-06-08",
+        "2026-06-10",
+        "2026-06-26",
+        "2026-07-17",
+        "2026-07-20",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "split": {
+        "training_2018_2023": {
+          "returnPct": 447.694,
+          "endNTD": 5476937.43,
+          "mddPct": -37.683,
+          "riskOffSells": 18,
+          "riskOnReentries": 18,
+          "riskOffSessions": 134,
+          "sma5OverrideBuys": 13
+        },
+        "validation_2024_2025": {
+          "returnPct": 173.675,
+          "endNTD": 2736746.44,
+          "mddPct": -37.862,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 37,
+          "sma5OverrideBuys": 6
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "episodes": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    }
+  },
+  "trainTop5": [
+    {
+      "id": "RED4_3D_W10",
+      "name": "連續收跌且累計≥4%｜X=3｜10日內SMA5買回",
+      "group": "暴跌觸發SMA5提前買回",
+      "endTWD": 37720562.07,
+      "returnPct": 3672.056,
+      "mddPct": -41.603,
+      "sells": 23,
+      "rebuys": 23,
+      "cashDays": 203,
+      "sessions": 2128,
+      "annual": [
+        {
+          "year": "2018",
+          "pct": -12.572,
+          "wealthTWD": 874279.9,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2019",
+          "pct": 59.834,
+          "wealthTWD": 1397400.19,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2020",
+          "pct": 125.552,
+          "wealthTWD": 3151858.55,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2021",
+          "pct": 35.294,
+          "wealthTWD": 4264268.84,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2022",
+          "pct": -7.124,
+          "wealthTWD": 3960495.94,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2023",
+          "pct": 64.255,
+          "wealthTWD": 6505314.41,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2024",
+          "pct": 32.176,
+          "wealthTWD": 8598456.27,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2025",
+          "pct": 96.214,
+          "wealthTWD": 16871388.32,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2026",
+          "pct": 123.577,
+          "wealthTWD": 37720562.07,
+          "wealthUSD": null,
+          "usdPct": null
+        }
+      ],
+      "curve": "curves/00675_crash_sma5__RED4_3D_W10.json",
+      "curveCurrency": "TWD",
+      "notes": "原始SMA10+1%買回，跌破SMA10 2%連3日或台指單日跌4%即出場；空手時若近期已發生指定暴跌，且台指收盤>SMA5，可提前買回。崩跌定義:連續收跌且累計≥4%, X=3, 最長10日有效.隔日開盤成交；無外部注資；初始2018/1/2直接建倉。",
+      "sma5OverrideBuys": 15,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2018-11-01",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-05",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "crashTriggerDays": 34,
+      "rule": {
+        "crashType": "red4",
+        "x": 3,
+        "validDays": 10
+      },
+      "splitResults": {
+        "training_2018_2023": {
+          "returnPct": 550.531,
+          "endNTD": 6505314.41,
+          "mddPct": -31.275,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 154,
+          "sma5OverrideBuys": 8
+        },
+        "validation_2024_2025": {
+          "returnPct": 157.202,
+          "endNTD": 2572024.66,
+          "mddPct": -41.603,
+          "riskOffSells": 5,
+          "riskOnReentries": 5,
+          "riskOffSessions": 39,
+          "sma5OverrideBuys": 4
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "events": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.62,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    {
+      "id": "RED4_3D_W20",
+      "name": "連續收跌且累計≥4%｜X=3｜20日內SMA5買回",
+      "group": "暴跌觸發SMA5提前買回",
+      "endTWD": 40136292.7,
+      "returnPct": 3913.629,
+      "mddPct": -37.863,
+      "sells": 24,
+      "rebuys": 24,
+      "cashDays": 201,
+      "sessions": 2128,
+      "annual": [
+        {
+          "year": "2018",
+          "pct": -12.572,
+          "wealthTWD": 874279.9,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2019",
+          "pct": 59.834,
+          "wealthTWD": 1397400.19,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2020",
+          "pct": 125.552,
+          "wealthTWD": 3151858.55,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2021",
+          "pct": 35.294,
+          "wealthTWD": 4264268.84,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2022",
+          "pct": -7.124,
+          "wealthTWD": 3960495.94,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2023",
+          "pct": 64.255,
+          "wealthTWD": 6505314.41,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2024",
+          "pct": 40.641,
+          "wealthTWD": 9149141.24,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2025",
+          "pct": 96.214,
+          "wealthTWD": 17951898.02,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2026",
+          "pct": 123.577,
+          "wealthTWD": 40136292.7,
+          "wealthUSD": null,
+          "usdPct": null
+        }
+      ],
+      "curve": "curves/00675_crash_sma5__RED4_3D_W20.json",
+      "curveCurrency": "TWD",
+      "notes": "原始SMA10+1%買回，跌破SMA10 2%連3日或台指單日跌4%即出場；空手時若近期已發生指定暴跌，且台指收盤>SMA5，可提前買回。崩跌定義:連續收跌且累計≥4%, X=3, 最長20日有效.隔日開盤成交；無外部注資；初始2018/1/2直接建倉。",
+      "sma5OverrideBuys": 17,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2018-11-01",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-05",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "crashTriggerDays": 34,
+      "rule": {
+        "crashType": "red4",
+        "x": 3,
+        "validDays": 20
+      },
+      "splitResults": {
+        "training_2018_2023": {
+          "returnPct": 550.531,
+          "endNTD": 6505314.41,
+          "mddPct": -31.275,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 154,
+          "sma5OverrideBuys": 8
+        },
+        "validation_2024_2025": {
+          "returnPct": 173.675,
+          "endNTD": 2736746.44,
+          "mddPct": -37.862,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 37,
+          "sma5OverrideBuys": 6
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "events": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.62,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    {
+      "id": "RED4_2D_W10",
+      "name": "連續收跌且累計≥4%｜X=2｜10日內SMA5買回",
+      "group": "暴跌觸發SMA5提前買回",
+      "endTWD": 39041152.98,
+      "returnPct": 3804.115,
+      "mddPct": -37.863,
+      "sells": 24,
+      "rebuys": 24,
+      "cashDays": 204,
+      "sessions": 2128,
+      "annual": [
+        {
+          "year": "2018",
+          "pct": -14.593,
+          "wealthTWD": 854073.24,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2019",
+          "pct": 59.834,
+          "wealthTWD": 1365101.18,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2020",
+          "pct": 125.551,
+          "wealthTWD": 3079002.52,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2021",
+          "pct": 35.294,
+          "wealthTWD": 4165701.82,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2022",
+          "pct": -7.52,
+          "wealthTWD": 3852427.25,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2023",
+          "pct": 64.255,
+          "wealthTWD": 6327798.35,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2024",
+          "pct": 40.641,
+          "wealthTWD": 8899476.53,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2025",
+          "pct": 96.214,
+          "wealthTWD": 17462038.39,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2026",
+          "pct": 123.577,
+          "wealthTWD": 39041152.98,
+          "wealthUSD": null,
+          "usdPct": null
+        }
+      ],
+      "curve": "curves/00675_crash_sma5__RED4_2D_W10.json",
+      "curveCurrency": "TWD",
+      "notes": "原始SMA10+1%買回，跌破SMA10 2%連3日或台指單日跌4%即出場；空手時若近期已發生指定暴跌，且台指收盤>SMA5，可提前買回。崩跌定義:連續收跌且累計≥4%, X=2, 最長10日有效.隔日開盤成交；無外部注資；初始2018/1/2直接建倉。",
+      "sma5OverrideBuys": 15,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "crashTriggerDays": 34,
+      "rule": {
+        "crashType": "red4",
+        "x": 2,
+        "validDays": 10
+      },
+      "splitResults": {
+        "training_2018_2023": {
+          "returnPct": 532.78,
+          "endNTD": 6327798.35,
+          "mddPct": -31.569,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 157,
+          "sma5OverrideBuys": 6
+        },
+        "validation_2024_2025": {
+          "returnPct": 173.675,
+          "endNTD": 2736746.44,
+          "mddPct": -37.862,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 37,
+          "sma5OverrideBuys": 6
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "events": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    {
+      "id": "RED4_2D_W20",
+      "name": "連續收跌且累計≥4%｜X=2｜20日內SMA5買回",
+      "group": "暴跌觸發SMA5提前買回",
+      "endTWD": 39041152.98,
+      "returnPct": 3804.115,
+      "mddPct": -37.863,
+      "sells": 24,
+      "rebuys": 24,
+      "cashDays": 204,
+      "sessions": 2128,
+      "annual": [
+        {
+          "year": "2018",
+          "pct": -14.593,
+          "wealthTWD": 854073.24,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2019",
+          "pct": 59.834,
+          "wealthTWD": 1365101.18,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2020",
+          "pct": 125.551,
+          "wealthTWD": 3079002.52,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2021",
+          "pct": 35.294,
+          "wealthTWD": 4165701.82,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2022",
+          "pct": -7.52,
+          "wealthTWD": 3852427.25,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2023",
+          "pct": 64.255,
+          "wealthTWD": 6327798.35,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2024",
+          "pct": 40.641,
+          "wealthTWD": 8899476.53,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2025",
+          "pct": 96.214,
+          "wealthTWD": 17462038.39,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2026",
+          "pct": 123.577,
+          "wealthTWD": 39041152.98,
+          "wealthUSD": null,
+          "usdPct": null
+        }
+      ],
+      "curve": "curves/00675_crash_sma5__RED4_2D_W20.json",
+      "curveCurrency": "TWD",
+      "notes": "原始SMA10+1%買回，跌破SMA10 2%連3日或台指單日跌4%即出場；空手時若近期已發生指定暴跌，且台指收盤>SMA5，可提前買回。崩跌定義:連續收跌且累計≥4%, X=2, 最長20日有效.隔日開盤成交；無外部注資；初始2018/1/2直接建倉。",
+      "sma5OverrideBuys": 15,
+      "sma5OverrideDates": [
+        "2018-02-22",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-19",
+        "2024-04-25",
+        "2024-08-02",
+        "2024-08-08",
+        "2024-08-12",
+        "2024-09-13",
+        "2025-04-14",
+        "2026-03-12",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "crashTriggerDays": 34,
+      "rule": {
+        "crashType": "red4",
+        "x": 2,
+        "validDays": 20
+      },
+      "splitResults": {
+        "training_2018_2023": {
+          "returnPct": 532.78,
+          "endNTD": 6327798.35,
+          "mddPct": -31.569,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 157,
+          "sma5OverrideBuys": 6
+        },
+        "validation_2024_2025": {
+          "returnPct": 173.675,
+          "endNTD": 2736746.44,
+          "mddPct": -37.862,
+          "riskOffSells": 6,
+          "riskOnReentries": 6,
+          "riskOffSessions": 37,
+          "sma5OverrideBuys": 6
+        },
+        "audit_2026": {
+          "returnPct": 120.653,
+          "endNTD": 2206525.98,
+          "mddPct": -34.198,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 10,
+          "sma5OverrideBuys": 3
+        }
+      },
+      "events": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 62.419,
+          "maxDrawdownPct": -19.534
+        }
+      }
+    },
+    {
+      "id": "RED4_3D_W5",
+      "name": "連續收跌且累計≥4%｜X=3｜5日內SMA5買回",
+      "group": "暴跌觸發SMA5提前買回",
+      "endTWD": 37892726.07,
+      "returnPct": 3689.273,
+      "mddPct": -34.199,
+      "sells": 22,
+      "rebuys": 22,
+      "cashDays": 216,
+      "sessions": 2128,
+      "annual": [
+        {
+          "year": "2018",
+          "pct": -16.053,
+          "wealthTWD": 839473.71,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2019",
+          "pct": 59.834,
+          "wealthTWD": 1341765.64,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2020",
+          "pct": 125.55,
+          "wealthTWD": 3026357.27,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2021",
+          "pct": 35.294,
+          "wealthTWD": 4094468.84,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2022",
+          "pct": -7.52,
+          "wealthTWD": 3786552.25,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2023",
+          "pct": 64.255,
+          "wealthTWD": 6219600.11,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2024",
+          "pct": 44.597,
+          "wealthTWD": 8993332.03,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2025",
+          "pct": 96.214,
+          "wealthTWD": 17646167.86,
+          "wealthUSD": null,
+          "usdPct": null
+        },
+        {
+          "year": "2026",
+          "pct": 114.736,
+          "wealthTWD": 37892726.07,
+          "wealthUSD": null,
+          "usdPct": null
+        }
+      ],
+      "curve": "curves/00675_crash_sma5__RED4_3D_W5.json",
+      "curveCurrency": "TWD",
+      "notes": "原始SMA10+1%買回，跌破SMA10 2%連3日或台指單日跌4%即出場；空手時若近期已發生指定暴跌，且台指收盤>SMA5，可提前買回。崩跌定義:連續收跌且累計≥4%, X=3, 最長5日有效.隔日開盤成交；無外部注資；初始2018/1/2直接建倉。",
+      "sma5OverrideBuys": 9,
+      "sma5OverrideDates": [
+        "2018-11-01",
+        "2020-03-25",
+        "2021-05-19",
+        "2022-03-11",
+        "2022-07-08",
+        "2022-10-19",
+        "2025-04-14",
+        "2026-07-22",
+        "2026-08-03"
+      ],
+      "crashTriggerDays": 34,
+      "rule": {
+        "crashType": "red4",
+        "x": 3,
+        "validDays": 5
+      },
+      "splitResults": {
+        "training_2018_2023": {
+          "returnPct": 521.96,
+          "endNTD": 6219600.11,
+          "mddPct": -31.569,
+          "riskOffSells": 15,
+          "riskOnReentries": 15,
+          "riskOffSessions": 158,
+          "sma5OverrideBuys": 6
+        },
+        "validation_2024_2025": {
+          "returnPct": 181.372,
+          "endNTD": 2813721.08,
+          "mddPct": -32.417,
+          "riskOffSells": 4,
+          "riskOnReentries": 4,
+          "riskOffSessions": 44,
+          "sma5OverrideBuys": 1
+        },
+        "audit_2026": {
+          "returnPct": 111.928,
+          "endNTD": 2119278.1,
+          "mddPct": -34.196,
+          "riskOffSells": 3,
+          "riskOnReentries": 3,
+          "riskOffSessions": 14,
+          "sma5OverrideBuys": 2
+        }
+      },
+      "events": {
+        "COVID_2020": {
+          "period": [
+            "2020-02-20",
+            "2020-06-30"
+          ],
+          "returnPct": 42.619,
+          "maxDrawdownPct": -8.99
+        },
+        "TARIFF_2025": {
+          "period": [
+            "2025-04-01",
+            "2025-06-30"
+          ],
+          "returnPct": 27.886,
+          "maxDrawdownPct": -10.826
+        },
+        "IRAN_2026": {
+          "period": [
+            "2026-03-02",
+            "2026-06-30"
+          ],
+          "returnPct": 55.997,
+          "maxDrawdownPct": -22.716
+        }
+      }
+    }
+  ],
+  "dataQuality": {
+    "firstHistoricalDate": "2017-01-03",
+    "lastDate": "2026-10-07",
+    "totalTradingDays": 2128,
+    "indexVolumeValidDays": 2120,
+    "indexVolumeValidPct": 99.6241,
+    "indexVolumeMissingDates": [
+      "2019-12-04",
+      "2019-12-05",
+      "2019-12-09",
+      "2019-12-10",
+      "2019-12-18",
+      "2022-02-07",
+      "2024-01-15",
+      "2025-01-21"
+    ],
+    "indexVolumeUnique": 2079,
+    "etfPriceAdjFactorRange": [
+      1.0,
+      1.0
+    ]
+  },
+  "warnings": [
+    "Each-day -4% for multiple consecutive days is exceedingly rare; inspect triggerDays and override buys, not only returns.",
+    "Rolling X-day cumulative -4% and strictly X consecutive down days totalling -4% are different definitions.",
+    "All windows 5, 10, 20 and X=1,2,3 are post-hoc exploratory comparisons; picking best retrospectively may overfit.",
+    "2026 and all three crises already studied before and NOT pristine out-of-sample.",
+    "Crisis examples are within the whole continuously invested strategy, not independently new cash positions.",
+    "Index crash and SMA5 recovery are based on confirmed CLOSE; ETF trades NEXT session open including opening gaps."
+  ]
+}
