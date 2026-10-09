@@ -1,0 +1,101 @@
+name: Publish Verified 2018-2026 ETF Research Archives
+on:
+  push:
+    branches: [feature/etf-research-archives-2018-2026]
+    paths:
+      - '.github/workflows/publish-etf-history.yml'
+      - 'tw-stock-dashboard/scripts/publish_etf_research_archives.py'
+      - 'tw-stock-dashboard/docs/backtest.html'
+      - 'tw-stock-dashboard/docs/etf-research.js'
+      - 'tw-stock-dashboard/docs/etf-research.css'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout feature branch and full archive manifest
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Fetch four archived and previously verified study branches
+        run: |
+          set -eu
+          for branch in research/00675l-vwma5-vs-sma10-2018-2026 research/00675l-ma-family-2020-2026 research/qqq-vt-sma10-vwma5-2018-2026 research/qld-2018-2026-sma10-vwma5; do
+            git fetch --no-tags origin "+refs/heads/$branch:refs/remotes/origin/$branch"
+            git rev-parse "origin/$branch"
+          done
+      - name: Repackage original cash accounts and daily orders without changing research
+        run: python -u tw-stock-dashboard/scripts/publish_etf_research_archives.py
+      - name: Verify archive integrity, legacy UI isolation, and JavaScript
+        run: |
+          set -eu
+          node --check tw-stock-dashboard/docs/etf-research.js
+          node --check tw-stock-dashboard/docs/backtest-research.js
+          node --check tw-stock-dashboard/docs/backtest-g-panel.js
+          python - <<'PY'
+          from pathlib import Path
+          import json,re,math
+          root=Path("tw-stock-dashboard/docs")
+          db=root/"data/research/etf_history"
+          index=json.loads((db/"index.json").read_text())
+          html=(root/"backtest.html").read_text()
+          js=(root/"etf-research.js").read_text()
+          assert index["version"]=="ETF_ARCHIVE_2026_10_09_V1"
+          assert [s["id"] for s in index["studies"]]==["00675_2018","ma_family","qqq_vt","qld"]
+          assert len(index["studies"])==4
+          assert "id=\"ETF_HISTORY\"" in html and "id=\"etfHistoryView\"" in html
+          assert "etf-research.js" in html and "etf-research.css" in html
+          assert all(x in html for x in ("id=\"G\"","id=\"D\"","id=\"F2\"","id=\"F\"","id=\"A\"","id=\"RESEARCH\""))
+          ids=set(re.findall(r'id="(etf[A-Za-z0-9]+|ETF_HISTORY)"',html))
+          required=set(re.findall(r'by\("(etf[A-Za-z0-9]+)"\)',js))
+          assert not (required-ids),("JS element IDs missing",sorted(required-ids))
+          benchmark={"00675_2018":("SMA10_index_original_2_1",4110.755),
+                     "ma_family":("SMA_twii_N10_OUT2_RE1_C3",3312.334),
+                     "qqq_vt":("QQQ__BUY_HOLD",444.202),
+                     "qld":("BUY_HOLD_QLD",1069.663)}
+          count=0
+          for study in index["studies"]:
+            assert len(study["models"]) in {4,6,8,25}
+            assert study["period"][1]=="2026-10-07"
+            assert study["sourceSummary"].startswith("https://github.com/")
+            m=next(x for x in study["models"] if x["id"]==benchmark[study["id"]][0])
+            assert math.isclose(m["returnPct"],benchmark[study["id"]][1],abs_tol=.0001)
+            for model in study["models"]:
+              count+=1
+              path=db/model["curve"]
+              assert path.exists(),path
+              curve=json.loads(path.read_text())
+              assert curve["id"]==model["id"]
+              assert len(curve["points"])==model["sessions"]==study["sessions"]
+              assert curve["points"][0][0]==study["period"][0]
+              assert curve["points"][-1][0]==study["period"][1]
+              assert curve["points"][0][1]>0 and curve["points"][-1][1]>0
+              assert len(model["annual"])==int(study["period"][1][:4])-int(study["period"][0][:4])+1
+              assert all(2018<=int(y["year"])<=2026 for y in model["annual"])
+              assert any(t[1]=="BUY" for t in curve["trades"])
+              assert curve["currency"]==("TWD" if study["id"] in ("00675_2018","ma_family") else "USD")
+          grid=json.loads((db/"grid.json").read_text())
+          assert len(grid["rows"])==4320 and len(grid["cols"])==11
+          assert count==43,count
+          assert len(list(db.rglob("*.json")))==45
+          assert "組合尚未執行" in index["allocationBacktestStatus"]
+          print("PASS: 4 studies, 43 strategies, 43 complete daily curves, 4320 training variants, source parity, same start/end, UI IDs and JS syntax")
+          PY
+      - name: Upload website research files for future debugging
+        uses: actions/upload-artifact@v4
+        with:
+          name: ETF-Research-2018-2026-WebArchive
+          path: tw-stock-dashboard/docs/data/research/etf_history
+          retention-days: 90
+      - name: Commit validated permanent archive onto integration feature branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_history
+          if ! git diff --cached --quiet; then
+            git commit -m "data: publish immutable 2018–2026 ETF backtests, 43 daily curves and 4320 training strategies"
+            git push origin HEAD:feature/etf-research-archives-2018-2026
+          fi
