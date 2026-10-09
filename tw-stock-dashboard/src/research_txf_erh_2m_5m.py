@@ -167,7 +167,7 @@ def run_case(b,tf,mode,segment):
     inDay=b.isDay.to_numpy(bool);day=b.datetime.dt.date.to_numpy();ts=b.datetime.astype(str).to_numpy()
     equity=1_000_000.;qty=0;entry=0;stop=0;tp1=0;tp3=0;highest=0;beReached=False
     trades=[];rows=[];peak=equity;mdd=0;byyear={};pnlGross=0;pnlNet=0
-    pending=0 # 1 open long, -1 open short, 2 close only
+    pending=0;pendingDate=None # 1 open long, -1 open short, 2 close only
     openedDate=None;entryNetCost=0;lastEntryDate="";lastExitDate="";pertrade=[]
     fixed=60.;tax=2e-5;pointVal=200;slip=1.;closed=0;wins=0
     minHour=13*60+40 if tf==5 else 13*60+42
@@ -177,7 +177,7 @@ def run_case(b,tf,mode,segment):
         p=float(open_[i]);cl=float(close[i]);dstr=str(d.date())
         # Execute all previous bar-close events only if THIS open belongs to same day.
         if pending:
-            if not inDay[i] or (openedDate is not None and openedDate!=dstr):
+            if not inDay[i] or (pendingDate is not None and pendingDate!=dstr):
                 pending=0
             else:
                 direction=pending
@@ -198,7 +198,7 @@ def run_case(b,tf,mode,segment):
                     risk=max(atr[i-1],.1)*2 if i else max(atr[i],.1)*2
                     stop=entry-direction*risk;tp1=entry+direction*risk*1.5;tp3=entry+direction*risk*3.0
                     beReached=False
-                pending=0
+                pending=0;pendingDate=None
         # Position safety; on the same bar OPEN we can conservatively check SL and TP3 hits.
         exitReason=""
         if qty and inDay[i] and mode.endswith("_atr"):
@@ -216,7 +216,7 @@ def run_case(b,tf,mode,segment):
             outcost=fixed+tax*execution*pointVal
             net=pnl-outcost-entryNetCost;equity+=pnl-outcost
             pertrade.append({"entry":lastEntryDate,"exit":ts[i],"dir":qty,"netTWD":round(net,2),"reason":exitReason})
-            closed+=1;wins+=int(net>0);qty=0;entryNetCost=0;pending=0
+            closed+=1;wins+=int(net>0);qty=0;entryNetCost=0;pending=0;pendingDate=None
         # Day-flat is mandatory independent of indicator session. No unrealistically carrying futures overnight.
         isLast=bool(inDay[i] and (i==len(b)-1 or day[i+1]!=day[i] or not inDay[i+1]))
         if isLast and qty:
@@ -225,8 +225,8 @@ def run_case(b,tf,mode,segment):
             outcost=fixed+tax*execution*pointVal
             net=pnl-outcost-entryNetCost;equity+=pnl-outcost
             pertrade.append({"entry":lastEntryDate,"exit":ts[i],"dir":qty,"netTWD":round(net,2),"reason":"day_flat"})
-            closed+=1;wins+=int(net>0);qty=0;entryNetCost=0;pending=0
-        elif isLast:pending=0
+            closed+=1;wins+=int(net>0);qty=0;entryNetCost=0;pending=0;pendingDate=None
+        elif isLast:pending=0;pendingDate=None
         elif inDay[i] and not exitReason:
             if qty==0:
                 if mode.startswith("strong"):signal=strong[i]
@@ -235,6 +235,7 @@ def run_case(b,tf,mode,segment):
                 elif mode.startswith("both") and top[i]:pending=-1
             elif qty==1 and top[i]:pending=2 if mode.startswith("long") or mode.startswith("strong") else -1
             elif qty==-1 and bottom[i]:pending=1
+            if pending:pendingDate=dstr
         nav=equity+qty*(cl-entry)*pointVal-(fixed+tax*cl*pointVal if qty else 0)
         peak=max(peak,nav);mdd=min(mdd,(nav/peak-1)*100)
         if inDay[i]:rows.append([ts[i],round(nav,2)])
