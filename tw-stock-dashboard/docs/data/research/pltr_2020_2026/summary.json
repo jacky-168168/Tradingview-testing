@@ -1,0 +1,3155 @@
+{
+  "version": "PLTR_2020_2026_FULL_100W_TWD_V1",
+  "generated": "2026-10-09T17:06:01.950551+08:00",
+  "asset": "PLTR",
+  "firstActualListing": "2020-09-30",
+  "unsupportedYears": [
+    "2018",
+    "2019"
+  ],
+  "period": [
+    "2020-09-30",
+    "2026-10-08"
+  ],
+  "totalSessions": 1513,
+  "quality": {
+    "IPOFirstBar": "2020-09-30",
+    "lastCompletedBar": "2026-10-08",
+    "sessions": 1513,
+    "IPOOpenUSD": 10.0,
+    "lastAdjustedCloseUSD": 198.77999877929688,
+    "dailyPositiveVolumePct": 100.0,
+    "usdTwdFirst": 28.91200065612793,
+    "usdTwdLast": 31.84830093383789,
+    "adjFactorRange": [
+      1.0,
+      1.0
+    ]
+  },
+  "assumptions": {
+    "startingCapitalTWD": 1000000,
+    "startingCapitalUSD": 34587.7137,
+    "currency": "USD internal cash account, TWD equivalent end assets and drawdowns",
+    "brokerFeeEachSide": 0.001425,
+    "slippageEachSide": 0.001,
+    "sellTax": 0,
+    "oneUnit": "whole shares, no margin",
+    "entry": "buy from first trading opening, reinvest all available USD on all reentries",
+    "signal": "completed session close → next US exchange trading open, no same-close fill",
+    "cashInterest": 0,
+    "FX": "Yahoo TWD=X spot at each date; original cash remains USD during rotations",
+    "excluded": "non-US investor capital gain taxes, US dividend withholding, actual USD/TWD bid-ask spread, bank transfer fees"
+  },
+  "strategyResearch": {
+    "gridSize": 2400,
+    "qualifyingTrainingModels": 2370,
+    "train": "2020-09-30 to 2023-12-29",
+    "validate": "2024-01-01 to 2025-12-31",
+    "audit": "2026-01-01 to 2026-10-08",
+    "trainingRank": "returnUSD-0.7*abs(maxDrawdownUSD)-0.75*completedSellCount; >=2 exits and >=1 repurchase",
+    "selection": "top 2 train-only candidates per MA family; all earlier fixed comparators preserved; no 2024-26 used to choose parameters",
+    "caveat": "2026 and 2024-25 not truly prospective unseen research; retrospective selection and multiple tests bias."
+  },
+  "topTrainingOnly": [
+    {
+      "id": "SMA200_D10_U0_C1",
+      "trainScore": 226.807,
+      "train": {
+        "returnUSD": 269.647,
+        "mddUSD": -59.057,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 309
+      }
+    },
+    {
+      "id": "SMA200_D10_U1_C1",
+      "trainScore": 226.807,
+      "train": {
+        "returnUSD": 269.647,
+        "mddUSD": -59.057,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 309
+      }
+    },
+    {
+      "id": "EMA200_D2_U0_C1",
+      "trainScore": 232.398,
+      "train": {
+        "returnUSD": 270.925,
+        "mddUSD": -52.896,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 370
+      }
+    },
+    {
+      "id": "EMA200_D2_U1_C1",
+      "trainScore": 232.398,
+      "train": {
+        "returnUSD": 270.925,
+        "mddUSD": -52.896,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 370
+      }
+    },
+    {
+      "id": "WMA200_D10_U0_C3",
+      "trainScore": 269.047,
+      "train": {
+        "returnUSD": 308.967,
+        "mddUSD": -54.886,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 296
+      }
+    },
+    {
+      "id": "WMA200_D10_U1_C3",
+      "trainScore": 269.047,
+      "train": {
+        "returnUSD": 308.967,
+        "mddUSD": -54.886,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 296
+      }
+    },
+    {
+      "id": "VWMA200_D10_U0_C2",
+      "trainScore": 226.092,
+      "train": {
+        "returnUSD": 269.092,
+        "mddUSD": -59.286,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 319
+      }
+    },
+    {
+      "id": "VWMA200_D10_U1_C2",
+      "trainScore": 225.93,
+      "train": {
+        "returnUSD": 268.942,
+        "mddUSD": -59.303,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 323
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "BUY_HOLD",
+      "kind": "hold",
+      "config": {
+        "id": "BUY_HOLD"
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 684132.93,
+        "endTWD": 21788471.49,
+        "returnUSD": 1877.965,
+        "returnTWD": 2078.847,
+        "mddUSD": -84.613,
+        "mddTWD": -83.069,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 59096.94,
+        "endTWD": 1814157.8,
+        "returnUSD": 70.861,
+        "returnTWD": 81.416,
+        "mddUSD": -84.613,
+        "mddTWD": -83.069,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 360855.36,
+        "endTWD": 11274420.78,
+        "returnUSD": 943.305,
+        "returnTWD": 962.866,
+        "mddUSD": -40.61,
+        "mddTWD": -40.02,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 37733.8,
+        "endTWD": 1201757.28,
+        "returnUSD": 9.096,
+        "returnTWD": 10.995,
+        "mddUSD": -41.051,
+        "mddTWD": -40.198,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 62676.24,
+          "endTWD": 1733543.35,
+          "returnUSD": -22.674,
+          "returnTWD": -23.807
+        },
+        "2022": {
+          "endUSD": 22099.32,
+          "endTWD": 678009.41,
+          "returnUSD": -64.741,
+          "returnTWD": -60.889
+        },
+        "2023": {
+          "endUSD": 59096.94,
+          "endTWD": 1814157.8,
+          "returnUSD": 167.415,
+          "returnTWD": 167.571
+        },
+        "2024": {
+          "endUSD": 260295.12,
+          "endTWD": 8527267.85,
+          "returnUSD": 340.454,
+          "returnTWD": 370.04
+        },
+        "2025": {
+          "endUSD": 611755.27,
+          "endTWD": 19113437.62,
+          "returnUSD": 135.024,
+          "returnTWD": 124.145
+        },
+        "2026": {
+          "endUSD": 684132.93,
+          "endTWD": 21788471.49,
+          "returnUSD": 11.831,
+          "returnTWD": 13.996
+        }
+      }
+    },
+    {
+      "id": "SMA10_D2_U1_C3",
+      "kind": "ma",
+      "config": {
+        "id": "SMA10_D2_U1_C3",
+        "family": "SMA",
+        "window": 10,
+        "down": 0.02,
+        "up": 0.01,
+        "confirm": 3
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 168563.45,
+        "endTWD": 5368459.38,
+        "returnUSD": 387.351,
+        "returnTWD": 436.846,
+        "mddUSD": -77.721,
+        "mddTWD": -75.511,
+        "sells": 52,
+        "rebuys": 52,
+        "daysCash": 436
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 34460.9,
+        "endTWD": 1057880.73,
+        "returnUSD": -0.367,
+        "returnTWD": 5.788,
+        "mddUSD": -77.721,
+        "mddTWD": -75.511,
+        "sells": 29,
+        "rebuys": 29,
+        "daysCash": 244
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 188917.8,
+        "endTWD": 5902472.42,
+        "returnUSD": 446.199,
+        "returnTWD": 456.44,
+        "mddUSD": -29.066,
+        "mddTWD": -28.914,
+        "sells": 15,
+        "rebuys": 15,
+        "daysCash": 109
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 29400.98,
+        "endTWD": 936371.2,
+        "returnUSD": -14.996,
+        "returnTWD": -13.516,
+        "mddUSD": -38.587,
+        "mddTWD": -38.232,
+        "sells": 8,
+        "rebuys": 8,
+        "daysCash": 82
+      },
+      "years": {
+        "2020": {
+          "endUSD": 79046.77,
+          "endTWD": 2218842.92,
+          "returnUSD": 128.54,
+          "returnTWD": 121.884
+        },
+        "2021": {
+          "endUSD": 65361.4,
+          "endTWD": 1807811.39,
+          "returnUSD": -17.313,
+          "returnTWD": -18.525
+        },
+        "2022": {
+          "endUSD": 29055.3,
+          "endTWD": 891419.48,
+          "returnUSD": -55.547,
+          "returnTWD": -50.691
+        },
+        "2023": {
+          "endUSD": 34460.9,
+          "endTWD": 1057880.73,
+          "returnUSD": 18.605,
+          "returnTWD": 18.674
+        },
+        "2024": {
+          "endUSD": 100538.74,
+          "endTWD": 3293648.81,
+          "returnUSD": 191.747,
+          "returnTWD": 211.344
+        },
+        "2025": {
+          "endUSD": 186735.46,
+          "endTWD": 5834288.1,
+          "returnUSD": 85.735,
+          "returnTWD": 77.138
+        },
+        "2026": {
+          "endUSD": 168563.45,
+          "endTWD": 5368459.38,
+          "returnUSD": -9.731,
+          "returnTWD": -7.984
+        }
+      }
+    },
+    {
+      "id": "VWMA5_D2_U1_C3",
+      "kind": "ma",
+      "config": {
+        "id": "VWMA5_D2_U1_C3",
+        "family": "VWMA",
+        "window": 5,
+        "down": 0.02,
+        "up": 0.01,
+        "confirm": 3
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 56649.67,
+        "endTWD": 1804195.82,
+        "returnUSD": 63.786,
+        "returnTWD": 80.42,
+        "mddUSD": -93.158,
+        "mddTWD": -92.448,
+        "sells": 68,
+        "rebuys": 68,
+        "daysCash": 267
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 10140.54,
+        "endTWD": 311294.25,
+        "returnUSD": -70.682,
+        "returnTWD": -68.871,
+        "mddUSD": -93.158,
+        "mddTWD": -92.448,
+        "sells": 42,
+        "rebuys": 42,
+        "daysCash": 187
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 193212.88,
+        "endTWD": 6036666.13,
+        "returnUSD": 458.617,
+        "returnTWD": 469.091,
+        "mddUSD": -33.451,
+        "mddTWD": -32.911,
+        "sells": 18,
+        "rebuys": 17,
+        "daysCash": 49
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 33535.44,
+        "endTWD": 1068046.77,
+        "returnUSD": -3.042,
+        "returnTWD": -1.355,
+        "mddUSD": -42.142,
+        "mddTWD": -41.113,
+        "sells": 9,
+        "rebuys": 9,
+        "daysCash": 30
+      },
+      "years": {
+        "2020": {
+          "endUSD": 68530.34,
+          "endTWD": 1923646.57,
+          "returnUSD": 98.135,
+          "returnTWD": 92.365
+        },
+        "2021": {
+          "endUSD": 46924.43,
+          "endTWD": 1297868.8,
+          "returnUSD": -31.528,
+          "returnTWD": -32.531
+        },
+        "2022": {
+          "endUSD": 8446.23,
+          "endTWD": 259131.25,
+          "returnUSD": -82.0,
+          "returnTWD": -80.034
+        },
+        "2023": {
+          "endUSD": 10140.54,
+          "endTWD": 311294.25,
+          "returnUSD": 20.06,
+          "returnTWD": 20.13
+        },
+        "2024": {
+          "endUSD": 30126.58,
+          "endTWD": 986946.69,
+          "returnUSD": 197.09,
+          "returnTWD": 217.046
+        },
+        "2025": {
+          "endUSD": 56172.45,
+          "endTWD": 1755029.72,
+          "returnUSD": 86.455,
+          "returnTWD": 77.824
+        },
+        "2026": {
+          "endUSD": 56649.67,
+          "endTWD": 1804195.82,
+          "returnUSD": 0.85,
+          "returnTWD": 2.801
+        }
+      }
+    },
+    {
+      "id": "EMA10_D2_U1_C3",
+      "kind": "ma",
+      "config": {
+        "id": "EMA10_D2_U1_C3",
+        "family": "EMA",
+        "window": 10,
+        "down": 0.02,
+        "up": 0.01,
+        "confirm": 3
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 230322.56,
+        "endTWD": 7335382.14,
+        "returnUSD": 565.909,
+        "returnTWD": 633.538,
+        "mddUSD": -71.97,
+        "mddTWD": -69.188,
+        "sells": 44,
+        "rebuys": 44,
+        "daysCash": 452
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 49827.03,
+        "endTWD": 1529590.04,
+        "returnUSD": 44.06,
+        "returnTWD": 52.959,
+        "mddUSD": -71.97,
+        "mddTWD": -69.188,
+        "sells": 26,
+        "rebuys": 25,
+        "daysCash": 281
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 190767.72,
+        "endTWD": 5960270.44,
+        "returnUSD": 451.548,
+        "returnTWD": 461.889,
+        "mddUSD": -32.761,
+        "mddTWD": -32.793,
+        "sells": 12,
+        "rebuys": 12,
+        "daysCash": 99
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 26658.11,
+        "endTWD": 849015.4,
+        "returnUSD": -22.926,
+        "returnTWD": -21.585,
+        "mddUSD": -41.292,
+        "mddTWD": -40.953,
+        "sells": 7,
+        "rebuys": 7,
+        "daysCash": 70
+      },
+      "years": {
+        "2020": {
+          "endUSD": 84771.56,
+          "endTWD": 2379537.65,
+          "returnUSD": 145.092,
+          "returnTWD": 137.954
+        },
+        "2021": {
+          "endUSD": 77174.68,
+          "endTWD": 2134551.32,
+          "returnUSD": -8.962,
+          "returnTWD": -10.296
+        },
+        "2022": {
+          "endUSD": 35904.31,
+          "endTWD": 1101547.67,
+          "returnUSD": -53.477,
+          "returnTWD": -48.394
+        },
+        "2023": {
+          "endUSD": 49827.03,
+          "endTWD": 1529590.04,
+          "returnUSD": 38.777,
+          "returnTWD": 38.858
+        },
+        "2024": {
+          "endUSD": 169986.45,
+          "endTWD": 5568755.79,
+          "returnUSD": 241.153,
+          "returnTWD": 264.069
+        },
+        "2025": {
+          "endUSD": 291777.31,
+          "endTWD": 9116173.87,
+          "returnUSD": 71.647,
+          "returnTWD": 63.702
+        },
+        "2026": {
+          "endUSD": 230322.56,
+          "endTWD": 7335382.14,
+          "returnUSD": -21.062,
+          "returnTWD": -19.534
+        }
+      }
+    },
+    {
+      "id": "WMA10_D2_U1_C3",
+      "kind": "ma",
+      "config": {
+        "id": "WMA10_D2_U1_C3",
+        "family": "WMA",
+        "window": 10,
+        "down": 0.02,
+        "up": 0.01,
+        "confirm": 3
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 86979.45,
+        "endTWD": 2770147.69,
+        "returnUSD": 151.475,
+        "returnTWD": 177.015,
+        "mddUSD": -80.086,
+        "mddTWD": -78.182,
+        "sells": 55,
+        "rebuys": 55,
+        "daysCash": 368
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 24796.0,
+        "endTWD": 761187.52,
+        "returnUSD": -28.31,
+        "returnTWD": -23.881,
+        "mddUSD": -80.086,
+        "mddTWD": -78.182,
+        "sells": 31,
+        "rebuys": 31,
+        "daysCash": 226
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 171327.63,
+        "endTWD": 5352891.98,
+        "returnUSD": 395.342,
+        "returnTWD": 404.63,
+        "mddUSD": -33.159,
+        "mddTWD": -32.912,
+        "sells": 14,
+        "rebuys": 14,
+        "daysCash": 84
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 23260.49,
+        "endTWD": 740806.93,
+        "returnUSD": -32.749,
+        "returnTWD": -31.579,
+        "mddUSD": -45.969,
+        "mddTWD": -44.409,
+        "sells": 10,
+        "rebuys": 10,
+        "daysCash": 57
+      },
+      "years": {
+        "2020": {
+          "endUSD": 67316.59,
+          "endTWD": 1889576.61,
+          "returnUSD": 94.626,
+          "returnTWD": 88.958
+        },
+        "2021": {
+          "endUSD": 58370.72,
+          "endTWD": 1614458.2,
+          "returnUSD": -13.289,
+          "returnTWD": -14.56
+        },
+        "2022": {
+          "endUSD": 20892.21,
+          "endTWD": 640975.21,
+          "returnUSD": -64.208,
+          "returnTWD": -60.298
+        },
+        "2023": {
+          "endUSD": 24796.0,
+          "endTWD": 761187.52,
+          "returnUSD": 18.685,
+          "returnTWD": 18.755
+        },
+        "2024": {
+          "endUSD": 72591.62,
+          "endTWD": 2378101.33,
+          "returnUSD": 192.755,
+          "returnTWD": 212.42
+        },
+        "2025": {
+          "endUSD": 121808.84,
+          "endTWD": 3805746.71,
+          "returnUSD": 67.8,
+          "returnTWD": 60.033
+        },
+        "2026": {
+          "endUSD": 86979.45,
+          "endTWD": 2770147.69,
+          "returnUSD": -28.593,
+          "returnTWD": -27.211
+        }
+      }
+    },
+    {
+      "id": "SMA20_D2_U1_C3",
+      "kind": "ma",
+      "config": {
+        "id": "SMA20_D2_U1_C3",
+        "family": "SMA",
+        "window": 20,
+        "down": 0.02,
+        "up": 0.01,
+        "confirm": 3
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 136090.9,
+        "endTWD": 4334263.91,
+        "returnUSD": 293.466,
+        "returnTWD": 333.426,
+        "mddUSD": -78.105,
+        "mddTWD": -76.327,
+        "sells": 39,
+        "rebuys": 39,
+        "daysCash": 525
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 32125.71,
+        "endTWD": 986194.92,
+        "returnUSD": -7.118,
+        "returnTWD": -1.381,
+        "mddUSD": -78.105,
+        "mddTWD": -76.327,
+        "sells": 24,
+        "rebuys": 23,
+        "daysCash": 329
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 167838.12,
+        "endTWD": 5243867.24,
+        "returnUSD": 385.254,
+        "returnTWD": 394.352,
+        "mddUSD": -36.719,
+        "mddTWD": -36.091,
+        "sells": 10,
+        "rebuys": 10,
+        "daysCash": 103
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 27902.72,
+        "endTWD": 888654.27,
+        "returnUSD": -19.328,
+        "returnTWD": -17.924,
+        "mddUSD": -35.191,
+        "mddTWD": -34.816,
+        "sells": 6,
+        "rebuys": 6,
+        "daysCash": 92
+      },
+      "years": {
+        "2020": {
+          "endUSD": 84771.56,
+          "endTWD": 2379537.65,
+          "returnUSD": 145.092,
+          "returnTWD": 137.954
+        },
+        "2021": {
+          "endUSD": 62326.12,
+          "endTWD": 1723859.43,
+          "returnUSD": -26.478,
+          "returnTWD": -27.555
+        },
+        "2022": {
+          "endUSD": 26956.45,
+          "endTWD": 827026.55,
+          "returnUSD": -56.749,
+          "returnTWD": -52.025
+        },
+        "2023": {
+          "endUSD": 32125.71,
+          "endTWD": 986194.92,
+          "returnUSD": 19.176,
+          "returnTWD": 19.246
+        },
+        "2024": {
+          "endUSD": 94948.05,
+          "endTWD": 3110497.93,
+          "returnUSD": 195.552,
+          "returnTWD": 215.404
+        },
+        "2025": {
+          "endUSD": 164627.95,
+          "endTWD": 5143569.93,
+          "returnUSD": 73.387,
+          "returnTWD": 65.362
+        },
+        "2026": {
+          "endUSD": 136090.9,
+          "endTWD": 4334263.91,
+          "returnUSD": -17.334,
+          "returnTWD": -15.734
+        }
+      }
+    },
+    {
+      "id": "EMA20_D2_U1_C3",
+      "kind": "ma",
+      "config": {
+        "id": "EMA20_D2_U1_C3",
+        "family": "EMA",
+        "window": 20,
+        "down": 0.02,
+        "up": 0.01,
+        "confirm": 3
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 167617.52,
+        "endTWD": 5338333.06,
+        "returnUSD": 384.616,
+        "returnTWD": 433.833,
+        "mddUSD": -80.37,
+        "mddTWD": -78.776,
+        "sells": 39,
+        "rebuys": 39,
+        "daysCash": 526
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 30133.2,
+        "endTWD": 925029.05,
+        "returnUSD": -12.879,
+        "returnTWD": -7.497,
+        "mddUSD": -80.37,
+        "mddTWD": -78.776,
+        "sells": 25,
+        "rebuys": 24,
+        "daysCash": 340
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 198480.44,
+        "endTWD": 6201243.55,
+        "returnUSD": 473.847,
+        "returnTWD": 484.606,
+        "mddUSD": -35.447,
+        "mddTWD": -35.478,
+        "sells": 9,
+        "rebuys": 9,
+        "daysCash": 100
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 30973.18,
+        "endTWD": 986443.32,
+        "returnUSD": -10.45,
+        "returnTWD": -8.892,
+        "mddUSD": -35.336,
+        "mddTWD": -34.962,
+        "sells": 6,
+        "rebuys": 6,
+        "daysCash": 85
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 59553.89,
+          "endTWD": 1647183.12,
+          "returnUSD": -26.526,
+          "returnTWD": -27.603
+        },
+        "2022": {
+          "endUSD": 24307.48,
+          "endTWD": 745756.02,
+          "returnUSD": -59.184,
+          "returnTWD": -54.725
+        },
+        "2023": {
+          "endUSD": 30133.2,
+          "endTWD": 925029.05,
+          "returnUSD": 23.967,
+          "returnTWD": 24.039
+        },
+        "2024": {
+          "endUSD": 112664.47,
+          "endTWD": 3690887.96,
+          "returnUSD": 273.888,
+          "returnTWD": 299.002
+        },
+        "2025": {
+          "endUSD": 182736.9,
+          "endTWD": 5709358.65,
+          "returnUSD": 62.196,
+          "returnTWD": 54.688
+        },
+        "2026": {
+          "endUSD": 167617.52,
+          "endTWD": 5338333.06,
+          "returnUSD": -8.274,
+          "returnTWD": -6.499
+        }
+      }
+    },
+    {
+      "id": "SMA50_D2_U1_C3",
+      "kind": "ma",
+      "config": {
+        "id": "SMA50_D2_U1_C3",
+        "family": "SMA",
+        "window": 50,
+        "down": 0.02,
+        "up": 0.01,
+        "confirm": 3
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 206916.93,
+        "endTWD": 6589952.69,
+        "returnUSD": 498.238,
+        "returnTWD": 558.995,
+        "mddUSD": -72.935,
+        "mddTWD": -70.679,
+        "sells": 23,
+        "rebuys": 23,
+        "daysCash": 556
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 53143.04,
+        "endTWD": 1631385.12,
+        "returnUSD": 53.647,
+        "returnTWD": 63.139,
+        "mddUSD": -72.935,
+        "mddTWD": -70.679,
+        "sells": 13,
+        "rebuys": 12,
+        "daysCash": 371
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 161008.46,
+        "endTWD": 5030484.2,
+        "returnUSD": 365.508,
+        "returnTWD": 374.235,
+        "mddUSD": -49.884,
+        "mddTWD": -50.292,
+        "sells": 6,
+        "rebuys": 6,
+        "daysCash": 90
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 26707.17,
+        "endTWD": 850577.93,
+        "returnUSD": -22.784,
+        "returnTWD": -21.44,
+        "mddUSD": -39.349,
+        "mddTWD": -37.801,
+        "sells": 5,
+        "rebuys": 5,
+        "daysCash": 94
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 70455.86,
+          "endTWD": 1948717.43,
+          "returnUSD": -13.076,
+          "returnTWD": -14.35
+        },
+        "2022": {
+          "endUSD": 36401.03,
+          "endTWD": 1116787.37,
+          "returnUSD": -48.335,
+          "returnTWD": -42.691
+        },
+        "2023": {
+          "endUSD": 53143.04,
+          "endTWD": 1631385.12,
+          "returnUSD": 45.993,
+          "returnTWD": 46.078
+        },
+        "2024": {
+          "endUSD": 175881.22,
+          "endTWD": 5761868.41,
+          "returnUSD": 230.958,
+          "returnTWD": 253.189
+        },
+        "2025": {
+          "endUSD": 261408.25,
+          "endTWD": 8167335.05,
+          "returnUSD": 48.628,
+          "returnTWD": 41.748
+        },
+        "2026": {
+          "endUSD": 206916.93,
+          "endTWD": 6589952.69,
+          "returnUSD": -20.845,
+          "returnTWD": -19.313
+        }
+      }
+    },
+    {
+      "id": "EMA50_D2_U1_C3",
+      "kind": "ma",
+      "config": {
+        "id": "EMA50_D2_U1_C3",
+        "family": "EMA",
+        "window": 50,
+        "down": 0.02,
+        "up": 0.01,
+        "confirm": 3
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 130213.57,
+        "endTWD": 4147080.98,
+        "returnUSD": 276.473,
+        "returnTWD": 314.708,
+        "mddUSD": -80.812,
+        "mddTWD": -79.212,
+        "sells": 30,
+        "rebuys": 30,
+        "daysCash": 532
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 35400.37,
+        "endTWD": 1086720.43,
+        "returnUSD": 2.35,
+        "returnTWD": 8.672,
+        "mddUSD": -80.812,
+        "mddTWD": -79.212,
+        "sells": 17,
+        "rebuys": 17,
+        "daysCash": 374
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 154552.32,
+        "endTWD": 4828770.85,
+        "returnUSD": 346.842,
+        "returnTWD": 355.219,
+        "mddUSD": -52.388,
+        "mddTWD": -51.916,
+        "sells": 8,
+        "rebuys": 8,
+        "daysCash": 64
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 28001.42,
+        "endTWD": 891797.54,
+        "returnUSD": -19.042,
+        "returnTWD": -17.633,
+        "mddUSD": -36.472,
+        "mddTWD": -34.851,
+        "sells": 5,
+        "rebuys": 5,
+        "daysCash": 94
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 55116.85,
+          "endTWD": 1524460.58,
+          "returnUSD": -32.0,
+          "returnTWD": -32.997
+        },
+        "2022": {
+          "endUSD": 25807.07,
+          "endTWD": 791763.34,
+          "returnUSD": -53.178,
+          "returnTWD": -48.063
+        },
+        "2023": {
+          "endUSD": 35400.37,
+          "endTWD": 1086720.43,
+          "returnUSD": 37.173,
+          "returnTWD": 37.253
+        },
+        "2024": {
+          "endUSD": 93562.16,
+          "endTWD": 3065096.26,
+          "returnUSD": 164.297,
+          "returnTWD": 182.05
+        },
+        "2025": {
+          "endUSD": 157009.65,
+          "endTWD": 4905546.95,
+          "returnUSD": 67.813,
+          "returnTWD": 60.045
+        },
+        "2026": {
+          "endUSD": 130213.57,
+          "endTWD": 4147080.98,
+          "returnUSD": -17.067,
+          "returnTWD": -15.461
+        }
+      }
+    },
+    {
+      "id": "SMA100_D2_U1_C3",
+      "kind": "ma",
+      "config": {
+        "id": "SMA100_D2_U1_C3",
+        "family": "SMA",
+        "window": 100,
+        "down": 0.02,
+        "up": 0.01,
+        "confirm": 3
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 315528.69,
+        "endTWD": 10049052.81,
+        "returnUSD": 812.257,
+        "returnTWD": 904.905,
+        "mddUSD": -63.927,
+        "mddTWD": -61.139,
+        "sells": 15,
+        "rebuys": 15,
+        "daysCash": 553
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 64229.25,
+        "endTWD": 1971709.64,
+        "returnUSD": 85.7,
+        "returnTWD": 97.171,
+        "mddUSD": -63.927,
+        "mddTWD": -61.139,
+        "sells": 8,
+        "rebuys": 8,
+        "daysCash": 397
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 174892.15,
+        "endTWD": 5464260.61,
+        "returnUSD": 405.648,
+        "returnTWD": 415.129,
+        "mddUSD": -40.609,
+        "mddTWD": -40.02,
+        "sells": 5,
+        "rebuys": 5,
+        "daysCash": 27
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 33031.95,
+        "endTWD": 1052011.42,
+        "returnUSD": -4.498,
+        "returnTWD": -2.836,
+        "mddUSD": -25.018,
+        "mddTWD": -23.105,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 129
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 54368.95,
+          "endTWD": 1503774.5,
+          "returnUSD": -32.923,
+          "returnTWD": -33.906
+        },
+        "2022": {
+          "endUSD": 51170.26,
+          "endTWD": 1569908.69,
+          "returnUSD": -5.883,
+          "returnTWD": 4.398
+        },
+        "2023": {
+          "endUSD": 64229.25,
+          "endTWD": 1971709.64,
+          "returnUSD": 25.521,
+          "returnTWD": 25.594
+        },
+        "2024": {
+          "endUSD": 175274.64,
+          "endTWD": 5741996.99,
+          "returnUSD": 172.889,
+          "returnTWD": 191.219
+        },
+        "2025": {
+          "endUSD": 322123.4,
+          "endTWD": 10064294.94,
+          "returnUSD": 83.782,
+          "returnTWD": 75.275
+        },
+        "2026": {
+          "endUSD": 315528.69,
+          "endTWD": 10049052.81,
+          "returnUSD": -2.047,
+          "returnTWD": -0.151
+        }
+      }
+    },
+    {
+      "id": "SMA200_D2_U1_C3",
+      "kind": "ma",
+      "config": {
+        "id": "SMA200_D2_U1_C3",
+        "family": "SMA",
+        "window": 200,
+        "down": 0.02,
+        "up": 0.01,
+        "confirm": 3
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 1019127.83,
+        "endTWD": 32457489.73,
+        "returnUSD": 2846.502,
+        "returnTWD": 3145.749,
+        "mddUSD": -64.324,
+        "mddTWD": -60.669,
+        "sells": 8,
+        "rebuys": 8,
+        "daysCash": 482
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 86824.2,
+        "endTWD": 2665329.2,
+        "returnUSD": 151.026,
+        "returnTWD": 166.533,
+        "mddUSD": -64.324,
+        "mddTWD": -60.669,
+        "sells": 7,
+        "rebuys": 7,
+        "daysCash": 356
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 360855.36,
+        "endTWD": 11274420.78,
+        "returnUSD": 943.305,
+        "returnTWD": 962.866,
+        "mddUSD": -40.61,
+        "mddTWD": -40.02,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 38234.42,
+        "endTWD": 1217701.29,
+        "returnUSD": 10.543,
+        "returnTWD": 12.467,
+        "mddUSD": -19.504,
+        "mddTWD": -19.616,
+        "sells": 1,
+        "rebuys": 1,
+        "daysCash": 126
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 64575.67,
+          "endTWD": 1786079.06,
+          "returnUSD": -20.331,
+          "returnTWD": -21.498
+        },
+        "2022": {
+          "endUSD": 64575.67,
+          "endTWD": 1981187.88,
+          "returnUSD": 0.0,
+          "returnTWD": 10.924
+        },
+        "2023": {
+          "endUSD": 86824.2,
+          "endTWD": 2665329.2,
+          "returnUSD": 34.453,
+          "returnTWD": 34.532
+        },
+        "2024": {
+          "endUSD": 382439.74,
+          "endTWD": 12528725.11,
+          "returnUSD": 340.476,
+          "returnTWD": 370.063
+        },
+        "2025": {
+          "endUSD": 898831.48,
+          "endTWD": 28082731.84,
+          "returnUSD": 135.026,
+          "returnTWD": 124.147
+        },
+        "2026": {
+          "endUSD": 1019127.83,
+          "endTWD": 32457489.73,
+          "returnUSD": 13.384,
+          "returnTWD": 15.578
+        }
+      }
+    },
+    {
+      "id": "DUAL_EMA20_100_D0_U0",
+      "kind": "dual",
+      "config": {
+        "id": "DUAL_EMA20_100_D0_U0",
+        "fast": 20,
+        "slow": 100,
+        "down": 0.0,
+        "up": 0.0
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 651916.88,
+        "endTWD": 20762444.85,
+        "returnUSD": 1784.822,
+        "returnTWD": 1976.244,
+        "mddUSD": -66.219,
+        "mddTWD": -62.759,
+        "sells": 8,
+        "rebuys": 8,
+        "daysCash": 519
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 82205.7,
+        "endTWD": 2523550.6,
+        "returnUSD": 137.673,
+        "returnTWD": 152.355,
+        "mddUSD": -66.219,
+        "mddTWD": -62.759,
+        "sells": 6,
+        "rebuys": 6,
+        "daysCash": 383
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 269531.7,
+        "endTWD": 8421140.89,
+        "returnUSD": 679.27,
+        "returnTWD": 693.88,
+        "mddUSD": -40.61,
+        "mddTWD": -40.021,
+        "sells": 1,
+        "rebuys": 1,
+        "daysCash": 4
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 34610.2,
+        "endTWD": 1102276.08,
+        "returnUSD": 0.065,
+        "returnTWD": 1.807,
+        "mddUSD": -16.456,
+        "mddTWD": -15.846,
+        "sells": 1,
+        "rebuys": 1,
+        "daysCash": 132
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 59570.27,
+          "endTWD": 1647636.22,
+          "returnUSD": -26.506,
+          "returnTWD": -27.583
+        },
+        "2022": {
+          "endUSD": 59570.27,
+          "endTWD": 1827621.74,
+          "returnUSD": 0.0,
+          "returnTWD": 10.924
+        },
+        "2023": {
+          "endUSD": 82205.7,
+          "endTWD": 2523550.6,
+          "returnUSD": 37.998,
+          "returnTWD": 38.078
+        },
+        "2024": {
+          "endUSD": 270408.56,
+          "endTWD": 8858584.0,
+          "returnUSD": 228.941,
+          "returnTWD": 251.037
+        },
+        "2025": {
+          "endUSD": 635519.63,
+          "endTWD": 19855921.55,
+          "returnUSD": 135.022,
+          "returnTWD": 124.143
+        },
+        "2026": {
+          "endUSD": 651916.88,
+          "endTWD": 20762444.85,
+          "returnUSD": 2.58,
+          "returnTWD": 4.566
+        }
+      }
+    },
+    {
+      "id": "DONCHIAN_20_55",
+      "kind": "donchian",
+      "config": {
+        "id": "DONCHIAN_20_55",
+        "exitWindow": 20,
+        "entryWindow": 55
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 118312.69,
+        "endTWD": 3768058.19,
+        "returnUSD": 242.066,
+        "returnTWD": 276.806,
+        "mddUSD": -67.875,
+        "mddTWD": -65.267,
+        "sells": 15,
+        "rebuys": 15,
+        "daysCash": 952
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 49796.93,
+        "endTWD": 1528666.14,
+        "returnUSD": 43.973,
+        "returnTWD": 52.867,
+        "mddUSD": -67.875,
+        "mddTWD": -65.267,
+        "sells": 8,
+        "rebuys": 7,
+        "daysCash": 590
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 72049.17,
+        "endTWD": 2251075.51,
+        "returnUSD": 108.309,
+        "returnTWD": 112.214,
+        "mddUSD": -40.587,
+        "mddTWD": -45.603,
+        "sells": 7,
+        "rebuys": 6,
+        "daysCash": 205
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 35839.95,
+        "endTWD": 1141441.65,
+        "returnUSD": 3.62,
+        "returnTWD": 5.424,
+        "mddUSD": -11.277,
+        "mddTWD": -11.137,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 155
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 48292.77,
+          "endTWD": 1335715.25,
+          "returnUSD": -40.419,
+          "returnTWD": -41.292
+        },
+        "2022": {
+          "endUSD": 39037.19,
+          "endTWD": 1197665.02,
+          "returnUSD": -19.166,
+          "returnTWD": -10.335
+        },
+        "2023": {
+          "endUSD": 49796.93,
+          "endTWD": 1528666.14,
+          "returnUSD": 27.563,
+          "returnTWD": 27.637
+        },
+        "2024": {
+          "endUSD": 110854.83,
+          "endTWD": 3631604.08,
+          "returnUSD": 122.614,
+          "returnTWD": 137.567
+        },
+        "2025": {
+          "endUSD": 109591.87,
+          "endTWD": 3424044.68,
+          "returnUSD": -1.139,
+          "returnTWD": -5.715
+        },
+        "2026": {
+          "endUSD": 118312.69,
+          "endTWD": 3768058.19,
+          "returnUSD": 7.958,
+          "returnTWD": 10.047
+        }
+      }
+    },
+    {
+      "id": "TRAIL20_EMA20_RE",
+      "kind": "trail",
+      "config": {
+        "id": "TRAIL20_EMA20_RE",
+        "trailPct": 0.2,
+        "ema": 20,
+        "up": 0.01
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 449430.76,
+        "endTWD": 14313606.19,
+        "returnUSD": 1199.394,
+        "returnTWD": 1331.361,
+        "mddUSD": -74.436,
+        "mddTWD": -72.361,
+        "sells": 22,
+        "rebuys": 22,
+        "daysCash": 320
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 77134.36,
+        "endTWD": 2367870.47,
+        "returnUSD": 123.011,
+        "returnTWD": 136.787,
+        "mddUSD": -74.436,
+        "mddTWD": -72.361,
+        "sells": 13,
+        "rebuys": 13,
+        "daysCash": 226
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 209078.31,
+        "endTWD": 6532359.28,
+        "returnUSD": 504.487,
+        "returnTWD": 515.821,
+        "mddUSD": -48.503,
+        "mddTWD": -48.528,
+        "sells": 5,
+        "rebuys": 5,
+        "daysCash": 42
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 32832.61,
+        "endTWD": 1045662.77,
+        "returnUSD": -5.074,
+        "returnTWD": -3.422,
+        "mddUSD": -41.49,
+        "mddTWD": -39.646,
+        "sells": 3,
+        "rebuys": 3,
+        "daysCash": 35
+      },
+      "years": {
+        "2020": {
+          "endUSD": 76351.84,
+          "endTWD": 2143196.2,
+          "returnUSD": 120.748,
+          "returnTWD": 114.32
+        },
+        "2021": {
+          "endUSD": 72818.17,
+          "endTWD": 2014056.09,
+          "returnUSD": -4.628,
+          "returnTWD": -6.026
+        },
+        "2022": {
+          "endUSD": 33007.06,
+          "endTWD": 1012659.82,
+          "returnUSD": -54.672,
+          "returnTWD": -49.72
+        },
+        "2023": {
+          "endUSD": 77134.36,
+          "endTWD": 2367870.47,
+          "returnUSD": 133.69,
+          "returnTWD": 133.827
+        },
+        "2024": {
+          "endUSD": 283538.24,
+          "endTWD": 9288712.24,
+          "returnUSD": 267.59,
+          "returnTWD": 292.281
+        },
+        "2025": {
+          "endUSD": 420772.93,
+          "endTWD": 13146461.34,
+          "returnUSD": 48.401,
+          "returnTWD": 41.532
+        },
+        "2026": {
+          "endUSD": 449430.76,
+          "endTWD": 14313606.19,
+          "returnUSD": 6.811,
+          "returnTWD": 8.878
+        }
+      }
+    },
+    {
+      "id": "TRAIL30_EMA20_RE",
+      "kind": "trail",
+      "config": {
+        "id": "TRAIL30_EMA20_RE",
+        "trailPct": 0.3,
+        "ema": 20,
+        "up": 0.01
+      },
+      "selection": "predefined",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 420871.52,
+        "endTWD": 13404042.95,
+        "returnUSD": 1116.824,
+        "returnTWD": 1240.404,
+        "mddUSD": -82.614,
+        "mddTWD": -81.203,
+        "sells": 10,
+        "rebuys": 10,
+        "daysCash": 172
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 52216.75,
+        "endTWD": 1602949.84,
+        "returnUSD": 50.969,
+        "returnTWD": 60.295,
+        "mddUSD": -82.614,
+        "mddTWD": -81.203,
+        "sells": 7,
+        "rebuys": 7,
+        "daysCash": 134
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 307498.55,
+        "endTWD": 9607361.89,
+        "returnUSD": 789.04,
+        "returnTWD": 805.708,
+        "mddUSD": -49.387,
+        "mddTWD": -48.885,
+        "sells": 1,
+        "rebuys": 1,
+        "daysCash": 16
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 35423.72,
+        "endTWD": 1128185.15,
+        "returnUSD": 2.417,
+        "returnTWD": 4.2,
+        "mddUSD": -36.867,
+        "mddTWD": -34.878,
+        "sells": 1,
+        "rebuys": 1,
+        "daysCash": 8
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 50909.19,
+          "endTWD": 1408082.06,
+          "returnUSD": -37.191,
+          "returnTWD": -38.112
+        },
+        "2022": {
+          "endUSD": 23833.12,
+          "endTWD": 731202.51,
+          "returnUSD": -53.185,
+          "returnTWD": -48.071
+        },
+        "2023": {
+          "endUSD": 52216.75,
+          "endTWD": 1602949.84,
+          "returnUSD": 119.093,
+          "returnTWD": 119.221
+        },
+        "2024": {
+          "endUSD": 229970.98,
+          "endTWD": 7533848.78,
+          "returnUSD": 340.416,
+          "returnTWD": 369.999
+        },
+        "2025": {
+          "endUSD": 460547.29,
+          "endTWD": 14389155.72,
+          "returnUSD": 100.263,
+          "returnTWD": 90.993
+        },
+        "2026": {
+          "endUSD": 420871.52,
+          "endTWD": 13404042.95,
+          "returnUSD": -8.615,
+          "returnTWD": -6.846
+        }
+      }
+    },
+    {
+      "id": "SMA200_D10_U0_C1",
+      "kind": "ma",
+      "config": {
+        "id": "SMA200_D10_U0_C1",
+        "family": "SMA",
+        "window": 200,
+        "down": 0.1,
+        "up": 0.0,
+        "confirm": 1
+      },
+      "selection": "training_2020_2023",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 1243988.6,
+        "endTWD": 39618923.25,
+        "returnUSD": 3496.62,
+        "returnTWD": 3861.892,
+        "mddUSD": -59.057,
+        "mddTWD": -55.083,
+        "sells": 3,
+        "rebuys": 3,
+        "daysCash": 433
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 127852.29,
+        "endTWD": 3924809.72,
+        "returnUSD": 269.647,
+        "returnTWD": 292.481,
+        "mddUSD": -59.057,
+        "mddTWD": -55.083,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 309
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 360855.36,
+        "endTWD": 11274420.78,
+        "returnUSD": 943.305,
+        "returnTWD": 962.866,
+        "mddUSD": -40.61,
+        "mddTWD": -40.02,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 31734.75,
+        "endTWD": 1010698.0,
+        "returnUSD": -8.248,
+        "returnTWD": -6.652,
+        "mddUSD": -28.027,
+        "mddTWD": -26.191,
+        "sells": 1,
+        "rebuys": 1,
+        "daysCash": 124
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 74343.4,
+          "endTWD": 2056241.83,
+          "returnUSD": -8.28,
+          "returnTWD": -9.624
+        },
+        "2022": {
+          "endUSD": 74343.4,
+          "endTWD": 2280862.86,
+          "returnUSD": 0.0,
+          "returnTWD": 10.924
+        },
+        "2023": {
+          "endUSD": 127852.29,
+          "endTWD": 3924809.72,
+          "returnUSD": 71.975,
+          "returnTWD": 72.076
+        },
+        "2024": {
+          "endUSD": 563140.2,
+          "endTWD": 18448471.92,
+          "returnUSD": 340.462,
+          "returnTWD": 370.048
+        },
+        "2025": {
+          "endUSD": 1323516.59,
+          "endTWD": 41351424.1,
+          "returnUSD": 135.024,
+          "returnTWD": 124.146
+        },
+        "2026": {
+          "endUSD": 1243988.6,
+          "endTWD": 39618923.25,
+          "returnUSD": -6.009,
+          "returnTWD": -4.19
+        }
+      }
+    },
+    {
+      "id": "SMA200_D10_U1_C1",
+      "kind": "ma",
+      "config": {
+        "id": "SMA200_D10_U1_C1",
+        "family": "SMA",
+        "window": 200,
+        "down": 0.1,
+        "up": 0.01,
+        "confirm": 1
+      },
+      "selection": "training_2020_2023",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 1243988.6,
+        "endTWD": 39618923.25,
+        "returnUSD": 3496.62,
+        "returnTWD": 3861.892,
+        "mddUSD": -59.057,
+        "mddTWD": -55.083,
+        "sells": 3,
+        "rebuys": 3,
+        "daysCash": 433
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 127852.29,
+        "endTWD": 3924809.72,
+        "returnUSD": 269.647,
+        "returnTWD": 292.481,
+        "mddUSD": -59.057,
+        "mddTWD": -55.083,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 309
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 360855.36,
+        "endTWD": 11274420.78,
+        "returnUSD": 943.305,
+        "returnTWD": 962.866,
+        "mddUSD": -40.61,
+        "mddTWD": -40.02,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 31734.75,
+        "endTWD": 1010698.0,
+        "returnUSD": -8.248,
+        "returnTWD": -6.652,
+        "mddUSD": -28.027,
+        "mddTWD": -26.191,
+        "sells": 1,
+        "rebuys": 1,
+        "daysCash": 124
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 74343.4,
+          "endTWD": 2056241.83,
+          "returnUSD": -8.28,
+          "returnTWD": -9.624
+        },
+        "2022": {
+          "endUSD": 74343.4,
+          "endTWD": 2280862.86,
+          "returnUSD": 0.0,
+          "returnTWD": 10.924
+        },
+        "2023": {
+          "endUSD": 127852.29,
+          "endTWD": 3924809.72,
+          "returnUSD": 71.975,
+          "returnTWD": 72.076
+        },
+        "2024": {
+          "endUSD": 563140.2,
+          "endTWD": 18448471.92,
+          "returnUSD": 340.462,
+          "returnTWD": 370.048
+        },
+        "2025": {
+          "endUSD": 1323516.59,
+          "endTWD": 41351424.1,
+          "returnUSD": 135.024,
+          "returnTWD": 124.146
+        },
+        "2026": {
+          "endUSD": 1243988.6,
+          "endTWD": 39618923.25,
+          "returnUSD": -6.009,
+          "returnTWD": -4.19
+        }
+      }
+    },
+    {
+      "id": "EMA200_D2_U0_C1",
+      "kind": "ma",
+      "config": {
+        "id": "EMA200_D2_U0_C1",
+        "family": "EMA",
+        "window": 200,
+        "down": 0.02,
+        "up": 0.0,
+        "confirm": 1
+      },
+      "selection": "training_2020_2023",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 984853.81,
+        "endTWD": 31365920.48,
+        "returnUSD": 2747.409,
+        "returnTWD": 3036.592,
+        "mddUSD": -52.896,
+        "mddTWD": -52.956,
+        "sells": 7,
+        "rebuys": 7,
+        "daysCash": 476
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 128294.54,
+        "endTWD": 3938385.75,
+        "returnUSD": 270.925,
+        "returnTWD": 293.839,
+        "mddUSD": -52.896,
+        "mddTWD": -52.956,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 370
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 360855.36,
+        "endTWD": 11274420.78,
+        "returnUSD": 943.305,
+        "returnTWD": 962.866,
+        "mddUSD": -40.61,
+        "mddTWD": -40.02,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 25041.61,
+        "endTWD": 797532.72,
+        "returnUSD": -27.6,
+        "returnTWD": -26.34,
+        "mddUSD": -43.175,
+        "mddTWD": -41.821,
+        "sells": 5,
+        "rebuys": 5,
+        "daysCash": 106
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 79299.36,
+          "endTWD": 2193317.28,
+          "returnUSD": -2.165,
+          "returnTWD": -3.599
+        },
+        "2022": {
+          "endUSD": 79299.36,
+          "endTWD": 2432912.25,
+          "returnUSD": 0.0,
+          "returnTWD": 10.924
+        },
+        "2023": {
+          "endUSD": 128294.54,
+          "endTWD": 3938385.75,
+          "returnUSD": 61.785,
+          "returnTWD": 61.879
+        },
+        "2024": {
+          "endUSD": 565098.72,
+          "endTWD": 18512633.06,
+          "returnUSD": 340.47,
+          "returnTWD": 370.056
+        },
+        "2025": {
+          "endUSD": 1328123.8,
+          "endTWD": 41495369.8,
+          "returnUSD": 135.025,
+          "returnTWD": 124.146
+        },
+        "2026": {
+          "endUSD": 984853.81,
+          "endTWD": 31365920.48,
+          "returnUSD": -25.846,
+          "returnTWD": -24.411
+        }
+      }
+    },
+    {
+      "id": "EMA200_D2_U1_C1",
+      "kind": "ma",
+      "config": {
+        "id": "EMA200_D2_U1_C1",
+        "family": "EMA",
+        "window": 200,
+        "down": 0.02,
+        "up": 0.01,
+        "confirm": 1
+      },
+      "selection": "training_2020_2023",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 984853.81,
+        "endTWD": 31365920.48,
+        "returnUSD": 2747.409,
+        "returnTWD": 3036.592,
+        "mddUSD": -52.896,
+        "mddTWD": -52.956,
+        "sells": 7,
+        "rebuys": 7,
+        "daysCash": 476
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 128294.54,
+        "endTWD": 3938385.75,
+        "returnUSD": 270.925,
+        "returnTWD": 293.839,
+        "mddUSD": -52.896,
+        "mddTWD": -52.956,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 370
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 360855.36,
+        "endTWD": 11274420.78,
+        "returnUSD": 943.305,
+        "returnTWD": 962.866,
+        "mddUSD": -40.61,
+        "mddTWD": -40.02,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 25041.61,
+        "endTWD": 797532.72,
+        "returnUSD": -27.6,
+        "returnTWD": -26.34,
+        "mddUSD": -43.175,
+        "mddTWD": -41.821,
+        "sells": 5,
+        "rebuys": 5,
+        "daysCash": 106
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 79299.36,
+          "endTWD": 2193317.28,
+          "returnUSD": -2.165,
+          "returnTWD": -3.599
+        },
+        "2022": {
+          "endUSD": 79299.36,
+          "endTWD": 2432912.25,
+          "returnUSD": 0.0,
+          "returnTWD": 10.924
+        },
+        "2023": {
+          "endUSD": 128294.54,
+          "endTWD": 3938385.75,
+          "returnUSD": 61.785,
+          "returnTWD": 61.879
+        },
+        "2024": {
+          "endUSD": 565098.72,
+          "endTWD": 18512633.06,
+          "returnUSD": 340.47,
+          "returnTWD": 370.056
+        },
+        "2025": {
+          "endUSD": 1328123.8,
+          "endTWD": 41495369.8,
+          "returnUSD": 135.025,
+          "returnTWD": 124.146
+        },
+        "2026": {
+          "endUSD": 984853.81,
+          "endTWD": 31365920.48,
+          "returnUSD": -25.846,
+          "returnTWD": -24.411
+        }
+      }
+    },
+    {
+      "id": "WMA200_D10_U0_C3",
+      "kind": "ma",
+      "config": {
+        "id": "WMA200_D10_U0_C3",
+        "family": "WMA",
+        "window": 200,
+        "down": 0.1,
+        "up": 0.0,
+        "confirm": 3
+      },
+      "selection": "training_2020_2023",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 1335665.75,
+        "endTWD": 42538684.8,
+        "returnUSD": 3761.677,
+        "returnTWD": 4153.868,
+        "mddUSD": -54.886,
+        "mddTWD": -52.956,
+        "sells": 4,
+        "rebuys": 4,
+        "daysCash": 415
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 141452.4,
+        "endTWD": 4342305.89,
+        "returnUSD": 308.967,
+        "returnTWD": 334.231,
+        "mddUSD": -54.886,
+        "mddTWD": -52.956,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 296
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 360855.36,
+        "endTWD": 11274420.78,
+        "returnUSD": 943.305,
+        "returnTWD": 962.866,
+        "mddUSD": -40.61,
+        "mddTWD": -40.02,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 30791.39,
+        "endTWD": 980653.45,
+        "returnUSD": -10.976,
+        "returnTWD": -9.427,
+        "mddUSD": -30.136,
+        "mddTWD": -28.354,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 119
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 70867.34,
+          "endTWD": 1960098.64,
+          "returnUSD": -12.568,
+          "returnTWD": -13.849
+        },
+        "2022": {
+          "endUSD": 70452.28,
+          "endTWD": 2161483.02,
+          "returnUSD": -0.586,
+          "returnTWD": 10.274
+        },
+        "2023": {
+          "endUSD": 141452.4,
+          "endTWD": 4342305.89,
+          "returnUSD": 100.778,
+          "returnTWD": 100.895
+        },
+        "2024": {
+          "endUSD": 623045.05,
+          "endTWD": 20410954.77,
+          "returnUSD": 340.463,
+          "returnTWD": 370.049
+        },
+        "2025": {
+          "endUSD": 1464308.21,
+          "endTWD": 45750261.36,
+          "returnUSD": 135.024,
+          "returnTWD": 124.146
+        },
+        "2026": {
+          "endUSD": 1335665.75,
+          "endTWD": 42538684.8,
+          "returnUSD": -8.785,
+          "returnTWD": -7.02
+        }
+      }
+    },
+    {
+      "id": "WMA200_D10_U1_C3",
+      "kind": "ma",
+      "config": {
+        "id": "WMA200_D10_U1_C3",
+        "family": "WMA",
+        "window": 200,
+        "down": 0.1,
+        "up": 0.01,
+        "confirm": 3
+      },
+      "selection": "training_2020_2023",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 1335665.75,
+        "endTWD": 42538684.8,
+        "returnUSD": 3761.677,
+        "returnTWD": 4153.868,
+        "mddUSD": -54.886,
+        "mddTWD": -52.956,
+        "sells": 4,
+        "rebuys": 4,
+        "daysCash": 415
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 141452.4,
+        "endTWD": 4342305.89,
+        "returnUSD": 308.967,
+        "returnTWD": 334.231,
+        "mddUSD": -54.886,
+        "mddTWD": -52.956,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 296
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 360855.36,
+        "endTWD": 11274420.78,
+        "returnUSD": 943.305,
+        "returnTWD": 962.866,
+        "mddUSD": -40.61,
+        "mddTWD": -40.02,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 30791.39,
+        "endTWD": 980653.45,
+        "returnUSD": -10.976,
+        "returnTWD": -9.427,
+        "mddUSD": -30.136,
+        "mddTWD": -28.354,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 119
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 70867.34,
+          "endTWD": 1960098.64,
+          "returnUSD": -12.568,
+          "returnTWD": -13.849
+        },
+        "2022": {
+          "endUSD": 70452.28,
+          "endTWD": 2161483.02,
+          "returnUSD": -0.586,
+          "returnTWD": 10.274
+        },
+        "2023": {
+          "endUSD": 141452.4,
+          "endTWD": 4342305.89,
+          "returnUSD": 100.778,
+          "returnTWD": 100.895
+        },
+        "2024": {
+          "endUSD": 623045.05,
+          "endTWD": 20410954.77,
+          "returnUSD": 340.463,
+          "returnTWD": 370.049
+        },
+        "2025": {
+          "endUSD": 1464308.21,
+          "endTWD": 45750261.36,
+          "returnUSD": 135.024,
+          "returnTWD": 124.146
+        },
+        "2026": {
+          "endUSD": 1335665.75,
+          "endTWD": 42538684.8,
+          "returnUSD": -8.785,
+          "returnTWD": -7.02
+        }
+      }
+    },
+    {
+      "id": "VWMA200_D10_U0_C2",
+      "kind": "ma",
+      "config": {
+        "id": "VWMA200_D10_U0_C2",
+        "family": "VWMA",
+        "window": 200,
+        "down": 0.1,
+        "up": 0.0,
+        "confirm": 2
+      },
+      "selection": "training_2020_2023",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 1079416.46,
+        "endTWD": 34377580.15,
+        "returnUSD": 3020.809,
+        "returnTWD": 3337.758,
+        "mddUSD": -59.286,
+        "mddTWD": -55.293,
+        "sells": 4,
+        "rebuys": 4,
+        "daysCash": 436
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 127660.42,
+        "endTWD": 3918919.64,
+        "returnUSD": 269.092,
+        "returnTWD": 291.892,
+        "mddUSD": -59.286,
+        "mddTWD": -55.293,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 319
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 360855.36,
+        "endTWD": 11274420.78,
+        "returnUSD": 943.305,
+        "returnTWD": 962.866,
+        "mddUSD": -40.61,
+        "mddTWD": -40.02,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 27590.04,
+        "endTWD": 878695.82,
+        "returnUSD": -20.232,
+        "returnTWD": -18.843,
+        "mddUSD": -37.414,
+        "mddTWD": -35.818,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 117
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 63805.61,
+          "endTWD": 1764780.29,
+          "returnUSD": -21.281,
+          "returnTWD": -22.434
+        },
+        "2022": {
+          "endUSD": 63805.61,
+          "endTWD": 1957562.47,
+          "returnUSD": 0.0,
+          "returnTWD": 10.924
+        },
+        "2023": {
+          "endUSD": 127660.42,
+          "endTWD": 3918919.64,
+          "returnUSD": 100.077,
+          "returnTWD": 100.194
+        },
+        "2024": {
+          "endUSD": 562306.82,
+          "endTWD": 18421170.61,
+          "returnUSD": 340.471,
+          "returnTWD": 370.057
+        },
+        "2025": {
+          "endUSD": 1321562.62,
+          "endTWD": 41290375.01,
+          "returnUSD": 135.025,
+          "returnTWD": 124.146
+        },
+        "2026": {
+          "endUSD": 1079416.46,
+          "endTWD": 34377580.15,
+          "returnUSD": -18.323,
+          "returnTWD": -16.742
+        }
+      }
+    },
+    {
+      "id": "VWMA200_D10_U1_C2",
+      "kind": "ma",
+      "config": {
+        "id": "VWMA200_D10_U1_C2",
+        "family": "VWMA",
+        "window": 200,
+        "down": 0.1,
+        "up": 0.01,
+        "confirm": 2
+      },
+      "selection": "training_2020_2023",
+      "full": {
+        "first": "2020-09-30",
+        "last": "2026-10-08",
+        "sessions": 1513,
+        "initialUSD": 34587.7137,
+        "endUSD": 1239464.28,
+        "endTWD": 39474831.3,
+        "returnUSD": 3483.539,
+        "returnTWD": 3847.483,
+        "mddUSD": -59.303,
+        "mddTWD": -55.311,
+        "sells": 3,
+        "rebuys": 3,
+        "daysCash": 445
+      },
+      "train2020_2023": {
+        "first": "2020-09-30",
+        "last": "2023-12-29",
+        "sessions": 818,
+        "initialUSD": 34587.7137,
+        "endUSD": 127608.54,
+        "endTWD": 3917326.94,
+        "returnUSD": 268.942,
+        "returnTWD": 291.733,
+        "mddUSD": -59.303,
+        "mddTWD": -55.311,
+        "sells": 2,
+        "rebuys": 2,
+        "daysCash": 323
+      },
+      "validation2024_2025": {
+        "first": "2024-01-02",
+        "last": "2025-12-31",
+        "sessions": 502,
+        "initialUSD": 34587.7137,
+        "endUSD": 360855.36,
+        "endTWD": 11274420.78,
+        "returnUSD": 943.305,
+        "returnTWD": 962.866,
+        "mddUSD": -40.61,
+        "mddTWD": -40.02,
+        "sells": 0,
+        "rebuys": 0,
+        "daysCash": 0
+      },
+      "audit2026": {
+        "first": "2026-01-02",
+        "last": "2026-10-08",
+        "sessions": 193,
+        "initialUSD": 34587.7137,
+        "endUSD": 31653.36,
+        "endTWD": 1008105.69,
+        "returnUSD": -8.484,
+        "returnTWD": -6.891,
+        "mddUSD": -28.59,
+        "mddTWD": -28.018,
+        "sells": 1,
+        "rebuys": 1,
+        "daysCash": 122
+      },
+      "years": {
+        "2020": {
+          "endUSD": 81054.59,
+          "endTWD": 2275202.32,
+          "returnUSD": 134.345,
+          "returnTWD": 127.52
+        },
+        "2021": {
+          "endUSD": 63779.43,
+          "endTWD": 1764056.19,
+          "returnUSD": -21.313,
+          "returnTWD": -22.466
+        },
+        "2022": {
+          "endUSD": 63779.43,
+          "endTWD": 1956759.26,
+          "returnUSD": 0.0,
+          "returnTWD": 10.924
+        },
+        "2023": {
+          "endUSD": 127608.54,
+          "endTWD": 3917326.94,
+          "returnUSD": 100.078,
+          "returnTWD": 100.195
+        },
+        "2024": {
+          "endUSD": 562079.99,
+          "endTWD": 18413739.4,
+          "returnUSD": 340.472,
+          "returnTWD": 370.059
+        },
+        "2025": {
+          "endUSD": 1321030.17,
+          "endTWD": 41273739.19,
+          "returnUSD": 135.025,
+          "returnTWD": 124.146
+        },
+        "2026": {
+          "endUSD": 1239464.28,
+          "endTWD": 39474831.3,
+          "returnUSD": -6.174,
+          "returnTWD": -4.358
+        }
+      }
+    }
+  ],
+  "executionSlippageStress": {
+    "0.001": {
+      "BUY_HOLD": {
+        "returnTWD": 2078.847,
+        "returnUSD": 1877.965,
+        "endTWD": 21788471.49,
+        "mddTWD": -83.069
+      },
+      "SMA10_D2_U1_C3": {
+        "returnTWD": 436.846,
+        "returnUSD": 387.351,
+        "endTWD": 5368459.38,
+        "mddTWD": -75.511
+      },
+      "VWMA5_D2_U1_C3": {
+        "returnTWD": 80.42,
+        "returnUSD": 63.786,
+        "endTWD": 1804195.82,
+        "mddTWD": -92.448
+      },
+      "EMA10_D2_U1_C3": {
+        "returnTWD": 633.538,
+        "returnUSD": 565.909,
+        "endTWD": 7335382.14,
+        "mddTWD": -69.188
+      },
+      "WMA10_D2_U1_C3": {
+        "returnTWD": 177.015,
+        "returnUSD": 151.475,
+        "endTWD": 2770147.69,
+        "mddTWD": -78.182
+      },
+      "SMA200_D10_U0_C1": {
+        "returnTWD": 3861.892,
+        "returnUSD": 3496.62,
+        "endTWD": 39618923.25,
+        "mddTWD": -55.083
+      },
+      "SMA200_D10_U1_C1": {
+        "returnTWD": 3861.892,
+        "returnUSD": 3496.62,
+        "endTWD": 39618923.25,
+        "mddTWD": -55.083
+      },
+      "EMA200_D2_U0_C1": {
+        "returnTWD": 3036.592,
+        "returnUSD": 2747.409,
+        "endTWD": 31365920.48,
+        "mddTWD": -52.956
+      },
+      "EMA200_D2_U1_C1": {
+        "returnTWD": 3036.592,
+        "returnUSD": 2747.409,
+        "endTWD": 31365920.48,
+        "mddTWD": -52.956
+      },
+      "WMA200_D10_U0_C3": {
+        "returnTWD": 4153.868,
+        "returnUSD": 3761.677,
+        "endTWD": 42538684.8,
+        "mddTWD": -52.956
+      },
+      "WMA200_D10_U1_C3": {
+        "returnTWD": 4153.868,
+        "returnUSD": 3761.677,
+        "endTWD": 42538684.8,
+        "mddTWD": -52.956
+      },
+      "VWMA200_D10_U0_C2": {
+        "returnTWD": 3337.758,
+        "returnUSD": 3020.809,
+        "endTWD": 34377580.15,
+        "mddTWD": -55.293
+      },
+      "VWMA200_D10_U1_C2": {
+        "returnTWD": 3847.483,
+        "returnUSD": 3483.539,
+        "endTWD": 39474831.3,
+        "mddTWD": -55.311
+      }
+    },
+    "0.003": {
+      "BUY_HOLD": {
+        "returnTWD": 2070.077,
+        "returnUSD": 1870.004,
+        "endTWD": 21700770.05,
+        "mddTWD": -83.068
+      },
+      "SMA10_D2_U1_C3": {
+        "returnTWD": 334.279,
+        "returnUSD": 294.24,
+        "endTWD": 4342785.68,
+        "mddTWD": -77.303
+      },
+      "VWMA5_D2_U1_C3": {
+        "returnTWD": 36.865,
+        "returnUSD": 24.246,
+        "endTWD": 1368645.74,
+        "mddTWD": -93.356
+      },
+      "EMA10_D2_U1_C3": {
+        "returnTWD": 512.758,
+        "returnUSD": 456.264,
+        "endTWD": 6127575.8,
+        "mddTWD": -71.328
+      },
+      "WMA10_D2_U1_C3": {
+        "returnTWD": 121.319,
+        "returnUSD": 100.914,
+        "endTWD": 2213185.25,
+        "mddTWD": -79.94
+      },
+      "SMA200_D10_U0_C1": {
+        "returnTWD": 3799.121,
+        "returnUSD": 3439.636,
+        "endTWD": 38991210.82,
+        "mddTWD": -55.441
+      },
+      "SMA200_D10_U1_C1": {
+        "returnTWD": 3799.121,
+        "returnUSD": 3439.636,
+        "endTWD": 38991210.82,
+        "mddTWD": -55.441
+      },
+      "EMA200_D2_U0_C1": {
+        "returnTWD": 2937.654,
+        "returnUSD": 2657.593,
+        "endTWD": 30376536.62,
+        "mddTWD": -52.956
+      },
+      "EMA200_D2_U1_C1": {
+        "returnTWD": 2937.654,
+        "returnUSD": 2657.593,
+        "endTWD": 30376536.62,
+        "mddTWD": -52.956
+      },
+      "WMA200_D10_U0_C3": {
+        "returnTWD": 4069.733,
+        "returnUSD": 3685.298,
+        "endTWD": 41697328.72,
+        "mddTWD": -52.956
+      },
+      "WMA200_D10_U1_C3": {
+        "returnTWD": 4069.733,
+        "returnUSD": 3685.298,
+        "endTWD": 41697328.72,
+        "mddTWD": -52.956
+      },
+      "VWMA200_D10_U0_C2": {
+        "returnTWD": 3269.751,
+        "returnUSD": 2959.072,
+        "endTWD": 33697508.33,
+        "mddTWD": -55.649
+      },
+      "VWMA200_D10_U1_C2": {
+        "returnTWD": 3784.851,
+        "returnUSD": 3426.682,
+        "endTWD": 38848511.29,
+        "mddTWD": -55.667
+      }
+    },
+    "0.005": {
+      "BUY_HOLD": {
+        "returnTWD": 2061.325,
+        "returnUSD": 1862.059,
+        "endTWD": 21613254.54,
+        "mddTWD": -83.067
+      },
+      "SMA10_D2_U1_C3": {
+        "returnTWD": 251.29,
+        "returnUSD": 218.903,
+        "endTWD": 3512902.39,
+        "mddTWD": -78.962
+      },
+      "VWMA5_D2_U1_C3": {
+        "returnTWD": 3.869,
+        "returnUSD": -5.708,
+        "endTWD": 1038687.19,
+        "mddTWD": -94.151
+      },
+      "EMA10_D2_U1_C3": {
+        "returnTWD": 411.581,
+        "returnUSD": 364.415,
+        "endTWD": 5115807.29,
+        "mddTWD": -73.32
+      },
+      "WMA10_D2_U1_C3": {
+        "returnTWD": 77.087,
+        "returnUSD": 60.76,
+        "endTWD": 1770867.12,
+        "mddTWD": -81.69
+      },
+      "SMA200_D10_U0_C1": {
+        "returnTWD": 3737.009,
+        "returnUSD": 3383.251,
+        "endTWD": 38370094.67,
+        "mddTWD": -55.795
+      },
+      "SMA200_D10_U1_C1": {
+        "returnTWD": 3737.009,
+        "returnUSD": 3383.251,
+        "endTWD": 38370094.67,
+        "mddTWD": -55.795
+      },
+      "EMA200_D2_U0_C1": {
+        "returnTWD": 2841.968,
+        "returnUSD": 2570.729,
+        "endTWD": 29419680.97,
+        "mddTWD": -52.955
+      },
+      "EMA200_D2_U1_C1": {
+        "returnTWD": 2841.968,
+        "returnUSD": 2570.729,
+        "endTWD": 29419680.97,
+        "mddTWD": -52.955
+      },
+      "WMA200_D10_U0_C3": {
+        "returnTWD": 3986.894,
+        "returnUSD": 3610.097,
+        "endTWD": 40868939.52,
+        "mddTWD": -52.955
+      },
+      "WMA200_D10_U1_C3": {
+        "returnTWD": 3986.894,
+        "returnUSD": 3610.097,
+        "endTWD": 40868939.52,
+        "mddTWD": -52.955
+      },
+      "VWMA200_D10_U0_C2": {
+        "returnTWD": 3202.704,
+        "returnUSD": 2898.206,
+        "endTWD": 33027037.39,
+        "mddTWD": -56.003
+      },
+      "VWMA200_D10_U1_C2": {
+        "returnTWD": 3722.879,
+        "returnUSD": 3370.423,
+        "endTWD": 38228788.12,
+        "mddTWD": -56.018
+      }
+    },
+    "0.01": {
+      "BUY_HOLD": {
+        "returnTWD": 2039.825,
+        "returnUSD": 1842.541,
+        "endTWD": 21398247.48,
+        "mddTWD": -83.067
+      },
+      "SMA10_D2_U1_C3": {
+        "returnTWD": 106.653,
+        "returnUSD": 87.601,
+        "endTWD": 2066534.63,
+        "mddTWD": -83.182
+      },
+      "VWMA5_D2_U1_C3": {
+        "returnTWD": -48.178,
+        "returnUSD": -52.955,
+        "endTWD": 518224.13,
+        "mddTWD": -95.886
+      },
+      "EMA10_D2_U1_C3": {
+        "returnTWD": 226.287,
+        "returnUSD": 196.205,
+        "endTWD": 3262871.13,
+        "mddTWD": -77.713
+      },
+      "WMA10_D2_U1_C3": {
+        "returnTWD": 1.143,
+        "returnUSD": -8.182,
+        "endTWD": 1011425.28,
+        "mddTWD": -86.705
+      },
+      "SMA200_D10_U0_C1": {
+        "returnTWD": 3586.663,
+        "returnUSD": 3246.766,
+        "endTWD": 36866628.01,
+        "mddTWD": -56.67
+      },
+      "SMA200_D10_U1_C1": {
+        "returnTWD": 3586.663,
+        "returnUSD": 3246.766,
+        "endTWD": 36866628.01,
+        "mddTWD": -56.67
+      },
+      "EMA200_D2_U0_C1": {
+        "returnTWD": 2615.698,
+        "returnUSD": 2365.321,
+        "endTWD": 27156984.91,
+        "mddTWD": -52.955
+      },
+      "EMA200_D2_U1_C1": {
+        "returnTWD": 2615.698,
+        "returnUSD": 2365.321,
+        "endTWD": 27156984.91,
+        "mddTWD": -52.955
+      },
+      "WMA200_D10_U0_C3": {
+        "returnTWD": 3787.676,
+        "returnUSD": 3429.246,
+        "endTWD": 38876758.89,
+        "mddTWD": -52.955
+      },
+      "WMA200_D10_U1_C3": {
+        "returnTWD": 3787.676,
+        "returnUSD": 3429.246,
+        "endTWD": 38876758.89,
+        "mddTWD": -52.955
+      },
+      "VWMA200_D10_U0_C2": {
+        "returnTWD": 3041.625,
+        "returnUSD": 2751.979,
+        "endTWD": 31416252.08,
+        "mddTWD": -56.873
+      },
+      "VWMA200_D10_U1_C2": {
+        "returnTWD": 3572.963,
+        "returnUSD": 3234.329,
+        "endTWD": 36729628.7,
+        "mddTWD": -56.891
+      }
+    }
+  },
+  "warnings": [
+    "PLTR did not trade publicly before its 2020-09-30 NYSE direct listing, so 2018-19 PLTR daily stock price does not exist.",
+    "First day opening auction prices may not be accessible to a real retail investor at assumed friction; the buyhold backtest assumes execution at model open.",
+    "Backtests have a large upward survivor-selection bias from picking a past multi-bagger; performance is not representative of ordinary new listings.",
+    "PLTR concentration risk and major bear-market drawdowns may be extreme.",
+    "Trading commissions, opening gaps and FX may differ materially from assumptions.",
+    "Selected train-only candidates have far fewer years of data than a long-run stock strategy; potential overfit.",
+    "2026 daily close included through Oct 8; later live bars and future prices are excluded."
+  ],
+  "elapsedSeconds": 4.6
+}
