@@ -119,6 +119,10 @@ def main():
     market_date=str(idx.iloc[-1]["date"]);published=published_data_date()
     if published and market_date<published:
         print(json.dumps({"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"publishedDate":published,"skipped":"stale-market-date"},ensure_ascii=False));return
+    # Never rewrite a completed prior trading day while market is closed or still awaiting a new session.
+    # This prevents a Friday holiday/weekend rerun from mutating Thursday\x27s risk score and F/F2 gating.
+    if published==market_date and market_date<now.date().isoformat():
+        print(json.dumps({"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"publishedDate":published,"skipped":"no-new-trading-day","riskScoreFrozen":True},ensure_ascii=False));return
     universe=load_universe();eligible=[x for x in universe if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
     histories,errors=update_many([(x["code"],x["market"]) for x in universe],start,now)
     risk=build_risk(idx,RISK_ON,RISK_STRONG,RISK_OFF);mkt20=float(risk.get("ret20",0) or 0)
