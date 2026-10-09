@@ -113,22 +113,22 @@ def main():
              "splitResults":stats,"entryMA":n,"exitMA":exit_n,"entryBufferPct":round(100*buf,2),"entryConfirmDays":days,"crossOnly":cross}
         models.append(record);summary[id]={"continuous":publicstats(z),"segments":stats}
         print("CASE_"+id,json.dumps({"total":z["returnPct"],"endingTWD":z["endNTD"],"mdd":z["mddPct"],"sells":z["riskOffSells"],"train":stats["training_2018_2023"]["returnPct"],"valid":stats["validation_2024_2025"]["returnPct"],"audit":stats["audit_2026"]["returnPct"]},ensure_ascii=False),flush=True)
-    meta={"version":"00675L_SMA5_REENTRY_V1","generatedAtUTC":datetime.now(timezone.utc).isoformat(),
+    meta={"version":"00675L_SMA5_ENTRY_EXIT_V2","generatedAtUTC":datetime.now(timezone.utc).isoformat(),
           "ticker":"00675L.TW","signal":"^TWII","period":[BEGIN,END],"capitalNTD":CAPITAL,"samples":len(control["points"]),
-          "sharedSellRule":"3 consecutive TWII closes < own SMA10*0.98 OR TWII daily close-to-close return <= -4%",
-          "reentryInterpretation":"When FLAT, prior completed TWII close > prior same-day SMA5, no +1% buffer. Not a crossover-only requirement.",
+          "sharedSellRule":"All models: TWII daily drop >= 4% as panic exit; except SMA5_EXIT, 3-close trend exit is TWII < SMA10*0.98, while SMA5_EXIT uses TWII < SMA5*0.98",
+          "reentryInterpretation":"SMA5_ABOVE and SMA5_EXIT: while FLAT, previous completed TWII close > same-day SMA5 with zero buffer and no crossover requirement. Other models test SMA5 buffers, 2-day confirmation or crosses.",
           "fills":"The day after signal at ETF open, including gap. Full available cash with integer shares; no margin.",
           "initialPosition":"On 2018-01-02 open, force buy exactly as historical original, irrespective of entry indicator.",
           "feeRateEachSide":BROKER,"etfSellTax":ETF_SELL_TAX,"slippageEachSide":SLIP,
           "exactControlParity":True,"models":summary,"dataQuality":quality,
           "warnings":["2018–2026 has been analyzed in earlier studies; 2026 is NOT a pristine holdout.",
-                      "SMA5 variants are exploratory: if their results are inspected to choose a winner, consider the selection hindsight-biased.",
+                      "SMA5 entry and exit variants are exploratory; using their already observed results to choose a winner is hindsight-biased.",
                       "Historical adjusted Yahoo prices can differ from TradingView corporate-action price policy.",
                       "Fast re-entry can increase round trips; report turnover and risk in addition to return.",
                       "Independent split tests reset to NT$1m at the segment start, while annual rows are continuous compounding."]}
     (OUT/"summary.json").write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding="utf-8")
     repo="https://github.com/jacky-168168/Tradingview-testing"
-    desc={"id":STUDY,"title":"00675L｜SMA5 買回 vs SMA10 原版｜2018～2026",
+    desc={"id":STUDY,"title":"00675L｜SMA5 買回／出場 vs SMA10 原版｜2018～2026",
        "description":"原版SMA10對照、5組SMA5買回且SMA10出場，以及新增SMA5買回且SMA5跌2%連3日出場；全系列維持台指單日跌4%急跌保護。",
        "period":[BEGIN,END],"sessions":2128,"models":models,
        "warnings":meta["warnings"][:4],"dataQuality":"2018～2026 共2,128個交易日，原版逐日淨值與逐筆訂單完全一致。SMA5定義為指數收盤高於自身5日簡單均線；不是ETF自身均線。",
