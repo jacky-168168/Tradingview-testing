@@ -6,8 +6,6 @@ on:
     paths:
       - '.github/workflows/research-00675l-entry-exit.yml'
       - 'tw-stock-dashboard/scripts/research_00675l_exit_entry_v2.py'
-      - 'tw-stock-dashboard/docs/etf-research.js'
-      - 'tw-stock-dashboard/docs/backtest.html'
 permissions:
   contents: write
   pages: write
@@ -94,6 +92,7 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
+  # Deploy from a fresh workflow run, not from retried jobs with duplicate Pages artifacts.
   deploy:
     needs: backtest-and-publish
     runs-on: ubuntu-latest
