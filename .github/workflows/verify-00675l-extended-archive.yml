@@ -1,0 +1,48 @@
+name: Verify 00675L 2020-2026 Archive Dashboard
+on:
+  push:
+    branches: [feature/00675l-2020-2026-full-cycle-archive]
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/docs/backtest.html'
+      - 'tw-stock-dashboard/docs/backtest-research.js'
+      - 'tw-stock-dashboard/docs/data/research/model_execution_2026/00675l_extended_2020_2026_*.json'
+      - '.github/workflows/verify-00675l-extended-archive.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax-check browser JavaScript
+        run: node --check tw-stock-dashboard/docs/backtest-research.js
+      - name: Validate complete 2020-2026 archive and retained research interface
+        run: |
+          python - <<'PY'
+          import json,math
+          from pathlib import Path
+          root=Path("tw-stock-dashboard/docs")
+          p=root/"data/research/model_execution_2026"
+          r=json.loads((p/"00675l_extended_2020_2026_summary.json").read_text())
+          d=json.loads((p/"00675l_extended_2020_2026_daily_equity.json").read_text())
+          assert r["ticker"]=="00675L.TW" and r["sessions"]>=1600
+          assert r["actualLastTradingDate"]=="2026-10-07"
+          assert r["baseline"]["continuous"]["returnPct"]==1653.043
+          assert r["fullDetailsByModel"]["SMA_twii_10_O0.02_R0.01_C3_W0.0"]["continuous"]["returnPct"]==3312.334
+          assert r["fullDetailsByModel"]["SMA_twii_10_O0.02_R0.01_C3_W0.0"]["independentWindowRuns"]["2024_2026"]["returnPct"]==600.612
+          assert r["fullDetailsByModel"]["CRASH_3_0.1_RE10_Gtwii_below60_W0.0"]["independentWindowRuns"]["2024_2026"]["returnPct"]==647.592
+          assert len(r["comparison"])>=9
+          for m in [r["baseline"],*r["comparison"]]:
+            curve=d["cases"][m["id"]]["dailyAccountEquity"]
+            assert len(curve)==1642 and curve[-1]["date"]=="2026-10-07"
+            assert math.isclose(curve[-1]["equity"],m["continuous"]["endNTD"],abs_tol=.06),m["id"]
+            assert set(m["compoundedCalendarYears"])=={str(y) for y in range(2020,2027)}
+          html=(root/"backtest.html").read_text()
+          js=(root/"backtest-research.js").read_text()
+          for old in ("g","h","legacy","risk","timing","capacity","tp","reinvest","trend00675","extended00675"):
+            assert 'data-archive="'+old+'"' in html,old
+          for feature in ("selectExtended00675","select00675Trend","selectReinvestment","selectTPSensitivity","00675l_extended_2020_2026_summary.json","00675l_extended_2020_2026_daily_equity.json"):
+            assert feature in js,feature
+          print("PASS: all 1642 sessions, 11 models, cash reinvestment, 2024-26 frozen parity and original research tabs")
+          PY
