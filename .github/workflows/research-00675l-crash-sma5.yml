@@ -1,0 +1,106 @@
+name: 00675L Crash Followed By SMA5 Entry
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/research-00675l-crash-sma5.yml'
+      - 'tw-stock-dashboard/scripts/research_00675l_crash_sma5.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: 00675l-crash-sma5-2026
+  cancel-in-progress: false
+jobs:
+  backtest-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Fetch original validated 00675L market data and simulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          b='research/00675l-vwma5-vs-sma10-2018-2026'
+          git fetch --no-tags origin "+refs/heads/$b:refs/remotes/origin/$b"
+          mkdir -p /tmp/legacy_src
+          for file in research_00675l_swing_grid research_00675l_near_hold_switch research_00675l_ma_family_2020_2026 research_00675l_vwma5_sma10_2018_2026; do
+            git show "origin/$b:tw-stock-dashboard/src/$file.py" > "/tmp/legacy_src/$file.py"
+          done
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Compare 21 crash x SMA5 recovery scenarios against original
+        env:
+          PYTHONPATH: /tmp/legacy_src:${{ github.workspace }}/tw-stock-dashboard/src
+        run: python -u tw-stock-dashboard/scripts/research_00675l_crash_sma5.py
+      - name: Verify 22 models, 2128 daily curves, original control parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=Path("tw-stock-dashboard/docs/data/research/etf_history")
+          ix=json.loads((d/"index.json").read_text())
+          s=next(z for z in ix["studies"] if z["id"]=="00675_crash_sma5")
+          base=next(m for m in s["models"] if m["id"]=="BASE")
+          old=next(m for m in next(z for z in ix["studies"] if z["id"]=="00675_risk_v2")["models"] if m["id"]=="IDX_DROP_4")
+          summary=json.loads((d/"00675l_crash_sma5/summary.json").read_text())
+          assert len(s["models"])==22 and s["sessions"]==2128
+          assert summary["controlExactTradeParity"] and summary["testCount"]==21
+          assert base["endTWD"]==old["endTWD"] and base["mddPct"]==old["mddPct"]
+          assert len({m["id"] for m in s["models"]})==22
+          for m in s["models"]:
+            p=json.loads((d/m["curve"]).read_text())
+            assert len(p["points"])==2128
+            assert p["points"][0][0]=="2018-01-02" and p["points"][-1][0]=="2026-10-07"
+            assert abs(p["points"][-1][1]-m["endTWD"])<0.02
+            assert len(m["annual"])==9 and len(m["events"])==3
+            assert len(m["splitResults"])==3
+          print("PASS 22 models, 21 crash SMA5 rules, 2128 daily points, exact SMA10 trade parity")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 00675L-Crash-Then-SMA5-Entry-2018-2026
+          path: |
+            tw-stock-dashboard/docs/data/research/etf_history/index.json
+            tw-stock-dashboard/docs/data/research/etf_history/00675l_crash_sma5/
+            tw-stock-dashboard/docs/data/research/etf_history/curves/00675_crash_sma5__*.json
+          retention-days: 90
+      - name: Commit and publish study
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_history/index.json tw-stock-dashboard/docs/data/research/etf_history/00675l_crash_sma5 tw-stock-dashboard/docs/data/research/etf_history/curves/00675_crash_sma5__*.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: publish SMA5 post-crash reentry study with 21 controls"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+  deploy:
+    needs: backtest-and-publish
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - name: Deploy new SMA5 crisis reentry comparisons
+        id: deployment
+        uses: actions/deploy-pages@v4
