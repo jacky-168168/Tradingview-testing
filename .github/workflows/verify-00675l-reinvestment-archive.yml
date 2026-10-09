@@ -1,0 +1,53 @@
+name: Verify 00675L Reinvestment Archive
+on:
+  push:
+    branches: [feature/00675l-profit-reinvestment-edge]
+  pull_request:
+    paths:
+      - '.github/workflows/verify-00675l-reinvestment-archive.yml'
+      - 'tw-stock-dashboard/docs/backtest.html'
+      - 'tw-stock-dashboard/docs/backtest-research.js'
+      - 'tw-stock-dashboard/docs/data/research/model_execution_2026/00675l_reinvestment_*.json'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax check browser JavaScript
+        run: node --check tw-stock-dashboard/docs/backtest-research.js
+      - name: Verify 12 ETF portfolios and original site tabs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,math
+          root=Path("tw-stock-dashboard/docs")
+          a=json.loads((root/"data/research/model_execution_2026/00675l_reinvestment_summary.json").read_text())
+          b=json.loads((root/"data/research/model_execution_2026/00675l_reinvestment_trades_equity.json").read_text())
+          assert a["startingCapitalNTD"]==1_000_000
+          assert a["ticker"]=="00675L.TW"
+          assert set(a["comparison"])=={"fixed_100m","half_profit_reinvest","all_profit_reinvest"}
+          assert a["comparison"]["all_profit_reinvest"]["byPeriod"]["2026"]["returnPct"]==66.445
+          assert a["comparison"]["fixed_100m"]["byPeriod"]["2026"]["returnPct"]==54.554
+          assert a["comparison"]["all_profit_reinvest"]["byPeriod"]["continuous_2024_2026"]["returnPct"]==175.477
+          total=0
+          for name,obj in a["comparison"].items():
+            assert set(obj["byPeriod"])=={"2024","2025","2026","continuous_2024_2026"}
+            for period,row in obj["byPeriod"].items():
+              total+=1
+              z=b["tradesAndEquity"][name][period]
+              assert len(z["dailyEquity"])==row["sessions"]
+              assert len(z["events"])==row["trades"]
+              assert math.isclose(z["dailyEquity"][-1]["equity"],row["endingEquityNTD"],abs_tol=0.01)
+              if name=="fixed_100m":
+                assert all(t["positionCostNTD"]<=1_000_000.01 for t in z["events"])
+          assert total==12
+          html=(root/"backtest.html").read_text()
+          js=(root/"backtest-research.js").read_text()
+          for key in ("g","h","legacy","risk","timing","capacity","tp","reinvest"):
+            assert 'data-archive="'+key+'"' in html,key
+          for key in ("00675l_reinvestment_summary.json","00675l_reinvestment_trades_equity.json","selectReinvestment","data-reinv-mode","selectCapacity","selectTPSensitivity"):
+            assert key in js,key
+          print("PASS 12 cash account portfolio cases, original 2026 compound result, seven previous research tabs")
+          PY
