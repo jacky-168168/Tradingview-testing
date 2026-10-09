@@ -1,0 +1,83 @@
+name: 00675L One Million Fixed vs Profit Reinvest
+on:
+  push:
+    branches: [research/00675l-reinvest-sizing-2024-2026]
+    paths:
+      - 'tw-stock-dashboard/src/research_00675l_reinvestment.py'
+      - '.github/workflows/etf-00675l-reinvest.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore price histories
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: 00675l-reinvest-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            00675l-swing-grid-${{ runner.os }}-
+            00675l-robustness-${{ runner.os }}-
+            00675l-walk-${{ runner.os }}-
+      - name: Install requirements
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Recalculate no-reinvest / half / full
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_00675l_reinvestment.py
+          python src/research_00675l_reinvestment.py
+      - name: Verify archived 100% original baseline, 12 scenarios, and budgeting constraints
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,math
+          p=Path("docs/data/research/etf_00675l_grid_2024_2026")
+          a=json.loads((p/"reinvestment_summary.json").read_text())
+          b=json.loads((p/"reinvestment_trades_equity.json").read_text())
+          assert a["ticker"]=="00675L.TW"
+          assert a["startingCapitalNTD"]==1_000_000
+          assert set(a["comparison"])=={"fixed_100m","half_profit_reinvest","all_profit_reinvest"}
+          assert a["comparison"]["all_profit_reinvest"]["byPeriod"]["2026"]["returnPct"]==66.445
+          assert a["comparison"]["all_profit_reinvest"]["byPeriod"]["2026"]["maxDrawdownPct"]==-9.231
+          total=0
+          for name,v in a["comparison"].items():
+            assert set(v["byPeriod"])=={"2024","2025","2026","continuous_2024_2026"}
+            for period,row in v["byPeriod"].items():
+              total+=1
+              d=b["tradesAndEquity"][name][period]
+              assert len(d["dailyEquity"])==row["sessions"]
+              assert math.isclose((d["dailyEquity"][-1]["equity"]/1e6-1)*100,row["returnPct"],abs_tol=.001)
+              assert len(d["events"])==row["trades"]
+              assert all(e["positionCostNTD"]<=e["cashAfterExitNTD"]+abs(e["netNTD"])+1 for e in d["events"])
+              if name=="fixed_100m":
+                assert all(e["positionCostNTD"]<=1_000_000.01 for e in d["events"])
+              assert row["endingEquityNTD"]>0
+              assert max((e["positionCostNTD"] for e in d["events"]),default=0)<=row["maxSingleTradeCostNTD"]+.01
+          assert total==12
+          print("PASS: same 00675L +66.445% compounding baseline, 12 fixed/half/full cases, fixed budget never over NT$1m")
+          PY
+      - name: Upload all comparisons
+        uses: actions/upload-artifact@v4
+        with:
+          name: etf-00675l-fixed-vs-reinvestment-2024-2026
+          path: tw-stock-dashboard/docs/data/research/etf_00675l_grid_2024_2026/reinvestment_*.json
+          retention-days: 30
+      - name: Preserve research results on separate branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_00675l_grid_2024_2026/reinvestment_*.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive 00675L fixed versus full-profit reinvest cash simulations"
+            git push origin HEAD:research/00675l-reinvest-sizing-2024-2026
+          fi
