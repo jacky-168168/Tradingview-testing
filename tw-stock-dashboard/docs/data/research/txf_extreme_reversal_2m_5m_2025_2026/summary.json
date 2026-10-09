@@ -1,0 +1,1166 @@
+{
+  "version": "TXF_EXTREME_REVERSAL_TREND70_2M_5M_V1",
+  "generated": "2026-10-09T18:25:31+08:00",
+  "sourcePineSha256": "bf45b473792d1dc656bf8b050f211eef33ce7e64f485c321b98dfa546bf1e3a3",
+  "data": {
+    "dataUrl": "https://github.com/jason43314-crypto/taiwan-futures-1min-ohlc",
+    "dataSnapshot": "repository 2026-09-07 snapshot containing data through 2026-09-05",
+    "market": "TXFR1 near-month Taiwan TX futures continuous",
+    "start": "2025-01-02",
+    "end": "2026-08-31",
+    "warmupStart": "2024-01-01",
+    "nightDataUsedInIndicators": true,
+    "testTransactions": "08:45-13:45 DAY SESSION ONLY",
+    "entrySessionTimes": [
+      "09:00-09:30",
+      "10:30-11:00",
+      "13:30-13:45"
+    ],
+    "minuteRows": 732814,
+    "tradingDates": 646,
+    "sourceIsThirdParty": true,
+    "sourceCaveats": [
+      "Monthly futures settlement concatenation creates unadjusted roll gaps",
+      "Some one-minute records are synthetic and are excluded",
+      "Sub-2 minute and sub-5 minute aggregation depends on source timestamp correctness",
+      "Exact TradingView futures settlement and daily SAR may differ",
+      "No order book / bid-ask depth; large moves may have larger slippage."
+    ],
+    "dataQuality": [
+      {
+        "timeframeMin": 2,
+        "totalBars": 365493,
+        "testBars": 227879,
+        "dayTestBars": 59789,
+        "bottoms": 179,
+        "tops": 234,
+        "strongBottoms": 73,
+        "trend70Days": 131,
+        "startingSignalTime": "2025-01-02T08:46:00"
+      },
+      {
+        "timeframeMin": 5,
+        "totalBars": 146172,
+        "testBars": 91032,
+        "dayTestBars": 24072,
+        "bottoms": 105,
+        "tops": 130,
+        "strongBottoms": 36,
+        "trend70Days": 131,
+        "startingSignalTime": "2025-01-02T08:45:00"
+      }
+    ]
+  },
+  "cost": {
+    "contract": "TXF one large Taiwan index futures contract",
+    "pointValueTWD": 200,
+    "brokerFeeTWDPerSide": 60,
+    "simulatedSlippagePointsEachSide": 1.0,
+    "futuresTransactionTaxNotionalPerSide": 2e-05,
+    "initialEquityTWD": 1000000,
+    "position": "fixed one TXF lot maximum, no compounding contract lots",
+    "exitAtDaySessionClose": true,
+    "marginCallsModeled": false
+  },
+  "variants": {
+    "long_top": "BOTTOM long -> TOP exit or session close",
+    "strong_top": "Trend>70 and BOTTOM long -> TOP exit or session close",
+    "long_atr": "BOTTOM long; ATR2 SL, 1.5R BE, 3R exit or session close",
+    "strong_atr": "Trend>70 and BOTTOM long; ATR2 SL, 1.5R BE, 3R exit or session close",
+    "both_top": "BOTTOM long, TOP short, reverse on other signal or session close",
+    "both_atr": "BOTTOM long, TOP short; ATR2 SL/BE/TP3, opposite reversal, session close"
+  },
+  "evaluationWarnings": [
+    "Pine indicator not a TradingView strategy: these are newly explicit, rule-based simulated fills.",
+    "Backtest approximates Pine ta.atr via EWM and SAR; 2m and 5m are reconstructed from public third-party one-minute OHLC.",
+    "Pine's default session filter allows signals only three Taiwan day segments. All trades are flattened before day session close (extra backtest rule).",
+    "Daily Trend70 is previous completed futures trading-date day+night OHLC, not price-only day-session equity market score.",
+    "This backtest fixes one TXF contract; initial 1m capital is margin rather than fully invested market value, no contract scaling or margin enforcement.",
+    "When price hits SL and TP during same bar, pessimistically assume SL filled first, with one point worse fill.",
+    "Transaction notional tax and broker fee are estimated, not broker quote. No detailed intra-bar execution paths available.",
+    "Do not claim one resolution is superior if sample trades are small or profitability is sensitive to trading conditions."
+  ],
+  "results": [
+    {
+      "timeframeMin": 2,
+      "mode": "long_top",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -13910.16,
+      "medianNetTWD": -13910.16,
+      "netPnlTWD": -13910.16,
+      "endingEquityTWD": 986089.84,
+      "returnPct": -1.391,
+      "maxDrawdownPct": -1.929,
+      "annual": {
+        "2025": {
+          "endTWD": 986089.84,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": -13910.16
+        },
+        "2026": {
+          "endTWD": 986089.84,
+          "startTWD": 986089.84,
+          "nBars": 23666,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "long_top",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2025-12-31 13:42:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -13910.16,
+      "medianNetTWD": -13910.16,
+      "netPnlTWD": -13910.16,
+      "endingEquityTWD": 986089.84,
+      "returnPct": -1.391,
+      "maxDrawdownPct": -1.929,
+      "annual": {
+        "2025": {
+          "endTWD": 986089.84,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": -13910.16
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "long_top",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 51437.16,
+      "medianNetTWD": 51437.16,
+      "netPnlTWD": 51437.16,
+      "endingEquityTWD": 1051437.16,
+      "returnPct": 5.144,
+      "maxDrawdownPct": -1.596,
+      "annual": {
+        "2026": {
+          "endTWD": 1051437.16,
+          "startTWD": 1000000.0,
+          "nBars": 23666,
+          "netPnlTWD": 51437.16
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "strong_top",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 1902.0,
+      "medianNetTWD": 1902.0,
+      "netPnlTWD": 1902.0,
+      "endingEquityTWD": 1001902.0,
+      "returnPct": 0.19,
+      "maxDrawdownPct": -1.757,
+      "annual": {
+        "2025": {
+          "endTWD": 1001902.0,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": 1902.0
+        },
+        "2026": {
+          "endTWD": 1001902.0,
+          "startTWD": 1001902.0,
+          "nBars": 23666,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "strong_top",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2025-12-31 13:42:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 1902.0,
+      "medianNetTWD": 1902.0,
+      "netPnlTWD": 1902.0,
+      "endingEquityTWD": 1001902.0,
+      "returnPct": 0.19,
+      "maxDrawdownPct": -1.757,
+      "annual": {
+        "2025": {
+          "endTWD": 1001902.0,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": 1902.0
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "strong_top",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 51437.16,
+      "medianNetTWD": 51437.16,
+      "netPnlTWD": 51437.16,
+      "endingEquityTWD": 1051437.16,
+      "returnPct": 5.144,
+      "maxDrawdownPct": -1.596,
+      "annual": {
+        "2026": {
+          "endTWD": 1051437.16,
+          "startTWD": 1000000.0,
+          "nBars": 23666,
+          "netPnlTWD": 51437.16
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "long_atr",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -7915.9,
+      "medianNetTWD": -7915.9,
+      "netPnlTWD": -7915.9,
+      "endingEquityTWD": 992084.1,
+      "returnPct": -0.792,
+      "maxDrawdownPct": -0.919,
+      "annual": {
+        "2025": {
+          "endTWD": 992084.1,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": -7915.9
+        },
+        "2026": {
+          "endTWD": 992084.1,
+          "startTWD": 992084.1,
+          "nBars": 23666,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "long_atr",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2025-12-31 13:42:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -7915.9,
+      "medianNetTWD": -7915.9,
+      "netPnlTWD": -7915.9,
+      "endingEquityTWD": 992084.1,
+      "returnPct": -0.792,
+      "maxDrawdownPct": -0.919,
+      "annual": {
+        "2025": {
+          "endTWD": 992084.1,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": -7915.9
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "long_atr",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 21695.82,
+      "medianNetTWD": 21695.82,
+      "netPnlTWD": 21695.82,
+      "endingEquityTWD": 1021695.82,
+      "returnPct": 2.17,
+      "maxDrawdownPct": -0.518,
+      "annual": {
+        "2026": {
+          "endTWD": 1021695.82,
+          "startTWD": 1000000.0,
+          "nBars": 23666,
+          "netPnlTWD": 21695.82
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "strong_atr",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -497.96,
+      "medianNetTWD": -497.96,
+      "netPnlTWD": -497.96,
+      "endingEquityTWD": 999502.04,
+      "returnPct": -0.05,
+      "maxDrawdownPct": -1.342,
+      "annual": {
+        "2025": {
+          "endTWD": 999502.04,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": -497.96
+        },
+        "2026": {
+          "endTWD": 999502.04,
+          "startTWD": 999502.04,
+          "nBars": 23666,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "strong_atr",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2025-12-31 13:42:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -497.96,
+      "medianNetTWD": -497.96,
+      "netPnlTWD": -497.96,
+      "endingEquityTWD": 999502.04,
+      "returnPct": -0.05,
+      "maxDrawdownPct": -1.342,
+      "annual": {
+        "2025": {
+          "endTWD": 999502.04,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": -497.96
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "strong_atr",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 21695.82,
+      "medianNetTWD": 21695.82,
+      "netPnlTWD": 21695.82,
+      "endingEquityTWD": 1021695.82,
+      "returnPct": 2.17,
+      "maxDrawdownPct": -0.518,
+      "annual": {
+        "2026": {
+          "endTWD": 1021695.82,
+          "startTWD": 1000000.0,
+          "nBars": 23666,
+          "netPnlTWD": 21695.82
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "both_top",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 13095.94,
+      "medianNetTWD": 13095.94,
+      "netPnlTWD": 13095.94,
+      "endingEquityTWD": 1013095.94,
+      "returnPct": 1.31,
+      "maxDrawdownPct": -3.725,
+      "annual": {
+        "2025": {
+          "endTWD": 1013095.94,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": 13095.94
+        },
+        "2026": {
+          "endTWD": 1013095.94,
+          "startTWD": 1013095.94,
+          "nBars": 23666,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "both_top",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2025-12-31 13:42:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 13095.94,
+      "medianNetTWD": 13095.94,
+      "netPnlTWD": 13095.94,
+      "endingEquityTWD": 1013095.94,
+      "returnPct": 1.31,
+      "maxDrawdownPct": -3.725,
+      "annual": {
+        "2025": {
+          "endTWD": 1013095.94,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": 13095.94
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "both_top",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -25355.38,
+      "medianNetTWD": -25355.38,
+      "netPnlTWD": -25355.38,
+      "endingEquityTWD": 974644.62,
+      "returnPct": -2.536,
+      "maxDrawdownPct": -2.736,
+      "annual": {
+        "2026": {
+          "endTWD": 974644.62,
+          "startTWD": 1000000.0,
+          "nBars": 23666,
+          "netPnlTWD": -25355.38
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "both_atr",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -504.33,
+      "medianNetTWD": -504.33,
+      "netPnlTWD": -504.33,
+      "endingEquityTWD": 999495.67,
+      "returnPct": -0.05,
+      "maxDrawdownPct": -2.535,
+      "annual": {
+        "2025": {
+          "endTWD": 999495.67,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": -504.33
+        },
+        "2026": {
+          "endTWD": 999495.67,
+          "startTWD": 999495.67,
+          "nBars": 23666,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "both_atr",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:46:00",
+      "lastBar": "2025-12-31 13:42:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -504.33,
+      "medianNetTWD": -504.33,
+      "netPnlTWD": -504.33,
+      "endingEquityTWD": 999495.67,
+      "returnPct": -0.05,
+      "maxDrawdownPct": -2.535,
+      "annual": {
+        "2025": {
+          "endTWD": 999495.67,
+          "startTWD": 1000000.0,
+          "nBars": 36123,
+          "netPnlTWD": -504.33
+        }
+      }
+    },
+    {
+      "timeframeMin": 2,
+      "mode": "both_atr",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:46:00",
+      "lastBar": "2026-08-31 13:42:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -9831.41,
+      "medianNetTWD": -9831.41,
+      "netPnlTWD": -9831.41,
+      "endingEquityTWD": 990168.59,
+      "returnPct": -0.983,
+      "maxDrawdownPct": -0.983,
+      "annual": {
+        "2026": {
+          "endTWD": 990168.59,
+          "startTWD": 1000000.0,
+          "nBars": 23666,
+          "netPnlTWD": -9831.41
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "long_top",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -22103.16,
+      "medianNetTWD": -22103.16,
+      "netPnlTWD": -22103.16,
+      "endingEquityTWD": 977896.84,
+      "returnPct": -2.21,
+      "maxDrawdownPct": -5.857,
+      "annual": {
+        "2025": {
+          "endTWD": 977896.84,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -22103.16
+        },
+        "2026": {
+          "endTWD": 977896.84,
+          "startTWD": 977896.84,
+          "nBars": 9528,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "long_top",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2025-12-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -22103.16,
+      "medianNetTWD": -22103.16,
+      "netPnlTWD": -22103.16,
+      "endingEquityTWD": 977896.84,
+      "returnPct": -2.21,
+      "maxDrawdownPct": -5.857,
+      "annual": {
+        "2025": {
+          "endTWD": 977896.84,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -22103.16
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "long_top",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 56629.36,
+      "medianNetTWD": 56629.36,
+      "netPnlTWD": 56629.36,
+      "endingEquityTWD": 1056629.36,
+      "returnPct": 5.663,
+      "maxDrawdownPct": -1.229,
+      "annual": {
+        "2026": {
+          "endTWD": 1056629.36,
+          "startTWD": 1000000.0,
+          "nBars": 9528,
+          "netPnlTWD": 56629.36
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "strong_top",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -898.02,
+      "medianNetTWD": -898.02,
+      "netPnlTWD": -898.02,
+      "endingEquityTWD": 999101.98,
+      "returnPct": -0.09,
+      "maxDrawdownPct": -1.741,
+      "annual": {
+        "2025": {
+          "endTWD": 999101.98,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -898.02
+        },
+        "2026": {
+          "endTWD": 999101.98,
+          "startTWD": 999101.98,
+          "nBars": 9528,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "strong_top",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2025-12-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -898.02,
+      "medianNetTWD": -898.02,
+      "netPnlTWD": -898.02,
+      "endingEquityTWD": 999101.98,
+      "returnPct": -0.09,
+      "maxDrawdownPct": -1.741,
+      "annual": {
+        "2025": {
+          "endTWD": 999101.98,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -898.02
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "strong_top",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 56629.36,
+      "medianNetTWD": 56629.36,
+      "netPnlTWD": 56629.36,
+      "endingEquityTWD": 1056629.36,
+      "returnPct": 5.663,
+      "maxDrawdownPct": -1.229,
+      "annual": {
+        "2026": {
+          "endTWD": 1056629.36,
+          "startTWD": 1000000.0,
+          "nBars": 9528,
+          "netPnlTWD": 56629.36
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "long_atr",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -12731.76,
+      "medianNetTWD": -12731.76,
+      "netPnlTWD": -12731.76,
+      "endingEquityTWD": 987268.24,
+      "returnPct": -1.273,
+      "maxDrawdownPct": -1.988,
+      "annual": {
+        "2025": {
+          "endTWD": 987268.24,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -12731.76
+        },
+        "2026": {
+          "endTWD": 987268.24,
+          "startTWD": 987268.24,
+          "nBars": 9528,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "long_atr",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2025-12-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -12731.76,
+      "medianNetTWD": -12731.76,
+      "netPnlTWD": -12731.76,
+      "endingEquityTWD": 987268.24,
+      "returnPct": -1.273,
+      "maxDrawdownPct": -1.988,
+      "annual": {
+        "2025": {
+          "endTWD": 987268.24,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -12731.76
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "long_atr",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 51437.09,
+      "medianNetTWD": 51437.09,
+      "netPnlTWD": 51437.09,
+      "endingEquityTWD": 1051437.09,
+      "returnPct": 5.144,
+      "maxDrawdownPct": -1.229,
+      "annual": {
+        "2026": {
+          "endTWD": 1051437.09,
+          "startTWD": 1000000.0,
+          "nBars": 9528,
+          "netPnlTWD": 51437.09
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "strong_atr",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -898.02,
+      "medianNetTWD": -898.02,
+      "netPnlTWD": -898.02,
+      "endingEquityTWD": 999101.98,
+      "returnPct": -0.09,
+      "maxDrawdownPct": -1.741,
+      "annual": {
+        "2025": {
+          "endTWD": 999101.98,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -898.02
+        },
+        "2026": {
+          "endTWD": 999101.98,
+          "startTWD": 999101.98,
+          "nBars": 9528,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "strong_atr",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2025-12-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -898.02,
+      "medianNetTWD": -898.02,
+      "netPnlTWD": -898.02,
+      "endingEquityTWD": 999101.98,
+      "returnPct": -0.09,
+      "maxDrawdownPct": -1.741,
+      "annual": {
+        "2025": {
+          "endTWD": 999101.98,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -898.02
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "strong_atr",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 1,
+      "wins": 1,
+      "winRatePct": 100.0,
+      "profitFactor": null,
+      "avgNetTWD": 51437.09,
+      "medianNetTWD": 51437.09,
+      "netPnlTWD": 51437.09,
+      "endingEquityTWD": 1051437.09,
+      "returnPct": 5.144,
+      "maxDrawdownPct": -1.229,
+      "annual": {
+        "2026": {
+          "endTWD": 1051437.09,
+          "startTWD": 1000000.0,
+          "nBars": 9528,
+          "netPnlTWD": 51437.09
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "both_top",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -22103.16,
+      "medianNetTWD": -22103.16,
+      "netPnlTWD": -22103.16,
+      "endingEquityTWD": 977896.84,
+      "returnPct": -2.21,
+      "maxDrawdownPct": -5.857,
+      "annual": {
+        "2025": {
+          "endTWD": 977896.84,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -22103.16
+        },
+        "2026": {
+          "endTWD": 977896.84,
+          "startTWD": 977896.84,
+          "nBars": 9528,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "both_top",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2025-12-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -22103.16,
+      "medianNetTWD": -22103.16,
+      "netPnlTWD": -22103.16,
+      "endingEquityTWD": 977896.84,
+      "returnPct": -2.21,
+      "maxDrawdownPct": -5.857,
+      "annual": {
+        "2025": {
+          "endTWD": 977896.84,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -22103.16
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "both_top",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -79954.2,
+      "medianNetTWD": -79954.2,
+      "netPnlTWD": -79954.2,
+      "endingEquityTWD": 920045.8,
+      "returnPct": -7.995,
+      "maxDrawdownPct": -8.355,
+      "annual": {
+        "2026": {
+          "endTWD": 920045.8,
+          "startTWD": 1000000.0,
+          "nBars": 9528,
+          "netPnlTWD": -79954.2
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "both_atr",
+      "segment": [
+        "2025-01-02",
+        "2026-08-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -12731.76,
+      "medianNetTWD": -12731.76,
+      "netPnlTWD": -12731.76,
+      "endingEquityTWD": 987268.24,
+      "returnPct": -1.273,
+      "maxDrawdownPct": -1.988,
+      "annual": {
+        "2025": {
+          "endTWD": 987268.24,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -12731.76
+        },
+        "2026": {
+          "endTWD": 987268.24,
+          "startTWD": 987268.24,
+          "nBars": 9528,
+          "netPnlTWD": 0
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "both_atr",
+      "segment": [
+        "2025-01-02",
+        "2025-12-31"
+      ],
+      "firstBar": "2025-01-02 08:45:00",
+      "lastBar": "2025-12-31 13:40:00",
+      "trades": 1,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -12731.76,
+      "medianNetTWD": -12731.76,
+      "netPnlTWD": -12731.76,
+      "endingEquityTWD": 987268.24,
+      "returnPct": -1.273,
+      "maxDrawdownPct": -1.988,
+      "annual": {
+        "2025": {
+          "endTWD": 987268.24,
+          "startTWD": 1000000.0,
+          "nBars": 14544,
+          "netPnlTWD": -12731.76
+        }
+      }
+    },
+    {
+      "timeframeMin": 5,
+      "mode": "both_atr",
+      "segment": [
+        "2026-01-01",
+        "2026-08-31"
+      ],
+      "firstBar": "2026-01-02 08:45:00",
+      "lastBar": "2026-08-31 13:40:00",
+      "trades": 2,
+      "wins": 0,
+      "winRatePct": 0.0,
+      "profitFactor": 0.0,
+      "avgNetTWD": -13887.43,
+      "medianNetTWD": -13887.43,
+      "netPnlTWD": -27774.85,
+      "endingEquityTWD": 972225.15,
+      "returnPct": -2.777,
+      "maxDrawdownPct": -2.777,
+      "annual": {
+        "2026": {
+          "endTWD": 972225.15,
+          "startTWD": 1000000.0,
+          "nBars": 9528,
+          "netPnlTWD": -27774.86
+        }
+      }
+    }
+  ],
+  "durationSeconds": 128.3
+}
