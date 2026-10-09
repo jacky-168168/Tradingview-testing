@@ -1,0 +1,75 @@
+name: 00675L Walk Forward 2024-2026
+on:
+  push:
+    branches: [research/00675l-walk-forward-2024-2026]
+    paths:
+      - 'tw-stock-dashboard/src/research_00675l_walkforward.py'
+      - '.github/workflows/etf-00675l-walkforward.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore 00675L historical prices
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: 00675l-walk-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tp-sl-3-10-g-2026-${{ runner.os }}-
+            g-capacity-2026-${{ runner.os }}-
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install requirements
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Compile and run
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_00675l_walkforward.py
+          python src/research_00675l_walkforward.py
+      - name: Verify no 2026 training selection and output integrity
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("docs/data/research/etf_00675l_2024_2026")
+          d=json.loads((p/"summary.json").read_text())
+          s=json.loads((p/"selected_trades_equity.json").read_text())
+          assert d["ticker"]=="00675L.TW"
+          assert d["trainingPeriod"]=={"start":"2024-01-01","end":"2025-12-31"}
+          assert d["outOfSamplePeriod"]=={"start":"2026-01-01","end":"2026-10-08"}
+          assert d["data"]["trainingBars"]>450 and d["data"]["testingBars"]>170
+          assert d["candidateCount"]>=75
+          assert d["selectedTrainingWinner"]==d["trainTop10"][0]["id"]
+          assert set(x["id"] for x in d["validation"])==set(x["id"] for x in s["selected"])
+          for r in s["selected"]:
+            curve=r["equity"];y=r["test2026"]
+            assert len(curve)==y["sessions"] and len(curve)>170
+            assert all(str(x["buyDate"])>="2026-01-01" for x in r["events"])
+            assert abs((curve[-1]["equity"]/1_000_000-1)*100-y["returnPct"])<.001
+          print("PASS 00675L causal train/test split, ETF sale tax and cash-equity reconciliation")
+          PY
+      - name: Upload study
+        uses: actions/upload-artifact@v4
+        with:
+          name: etf-00675l-2024-2026
+          path: tw-stock-dashboard/docs/data/research/etf_00675l_2024_2026/*.json
+          retention-days: 30
+      - name: Commit frozen experiment to separate branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_00675l_2024_2026/
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive independently selected 00675L 2024-26 trading audit"
+            git push origin HEAD:research/00675l-walk-forward-2024-2026
+          fi
