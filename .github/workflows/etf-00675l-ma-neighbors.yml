@@ -1,0 +1,66 @@
+name: 00675L MA Parameter Neighborhood Audit
+on:
+  push:
+    branches: [research/00675l-ma-family-2020-2026]
+    paths:
+      - 'tw-stock-dashboard/src/research_00675l_ma_neighbor_stress.py'
+      - '.github/workflows/etf-00675l-ma-neighbors.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  stability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: 00675l-ma-neighbors-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            00675l-ma-comparison-${{ runner.os }}-
+            00675l-2020-2026-${{ runner.os }}-
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Test 216 parameter neighbors and market regimes
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_00675l_ma_neighbor_stress.py
+          python -u src/research_00675l_ma_neighbor_stress.py
+      - name: Confirm neighbor statistics, counts and unchanged baseline
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("docs/data/research/etf_00675l_ma_family_2020_2026/neighborhood.json")
+          x=json.loads(p.read_text())
+          assert x["originalSMA"]["full2020_2026"]==3312.334
+          assert len(x["groups"])==4
+          assert len(x["allParameterNeighbors"])==216
+          assert all(z["cases"]==54 for z in x["groups"])
+          for g in x["groups"]:
+            assert 0<=g["beatSMA2024_25Count"]<=54
+            assert 0<=g["beatSMA2026Count"]<=54
+            assert 0<=g["beatSMA2020_26Count"]<=54
+          print("PASS 216 parameter stress neighbors around frozen SMA10/WMA5/EMA5/VWMA12, 2020-26 cash accounting")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 00675l-ma-neighborhood-2020-2026
+          path: tw-stock-dashboard/docs/data/research/etf_00675l_ma_family_2020_2026/neighborhood.json
+      - name: Archive parameter-stability results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_00675l_ma_family_2020_2026/neighborhood.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive 216 MA neighboring-parameter validations"
+            git push origin HEAD:research/00675l-ma-family-2020-2026
+          fi
