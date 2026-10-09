@@ -50,7 +50,13 @@ function renderStudy(){
     (study.extraSource?'<a href="'+esc(study.extraSource)+'" target="_blank" rel="noopener">參數穩定性測試 ↗</a>':"");
   by("etfGridPanel").style.display=study.trainingGrid?"block":"none";
   by("etfGridTable").innerHTML="";
-  by("etfGridMeta").textContent=study.trainingGrid?"4,320 組僅包含2020～2023訓練期結果；按「載入訓練結果」後可依名稱搜尋。":"";
+  const isRiskStudy=study.id==="00675_risk_v2";
+  by("etfGridTitle").textContent=isRiskStudy?"🔎 00675L｜270 組進出場參數穩健性測試":"🔎 00675L｜4,320 組均線參數訓練期存檔";
+  by("etfGridLoad").textContent=isRiskStudy?"載入 270 組完整分段績效":"載入 4,320 組原始訓練結果";
+  by("etfGridHead").innerHTML=isRiskStudy?
+   ["參數組合 ID","SMA 週期","出場幅度","買回幅度","出場確認","急跌保護","2018–23 訓練報酬","訓練 MDD","2024–25 驗證報酬","2026 回顧報酬"].map(x=>"<th>"+esc(x)+"</th>").join(""):
+   ["參數組合 ID","訊號來源","均線週期","出場幅度","買回幅度","確認天數","訓練段收益","訓練段 MDD","賣出次數","訓練評分"].map(x=>"<th>"+esc(x)+"</th>").join("");
+  by("etfGridMeta").textContent=study.trainingGrid?(isRiskStudy?"270 組參數都包含2018–23訓練、2024–25驗證及2026回顧資料。2026曾經在其他研究使用，不能視為全新樣本。":"4,320 組僅包含2020～2023訓練期結果；按「載入訓練結果」後可依名稱搜尋。"):"";
   if(study.trainingGrid){grid=null;gridPage=0;}
   filter="";
   by("etfFilter").value="";
@@ -117,23 +123,30 @@ by("etfStudy").addEventListener("change",renderStudy);
 by("etfReload").addEventListener("click",()=>{index=null;curves={};grid=null;load();});
 async function loadGrid(){
   if(!study?.trainingGrid)return;
-  by("etfGridMeta").textContent="正在載入全部4,320組訓練期結果…";
+  const risk=study.id==="00675_risk_v2",expected=risk?270:4320;
+  by("etfGridMeta").textContent="正在載入全部 "+expected+" 組回測資料…";
   try{
     grid=grid||await json(rootPath+study.trainingGrid);
-    if(!Array.isArray(grid.rows)||grid.rows.length!==4320)throw Error("訓練資料不完整");
-    by("etfGridMeta").textContent=grid.note;
+    if(!Array.isArray(grid.rows)||grid.rows.length!==expected)throw Error("參數資料不完整");
+    by("etfGridMeta").textContent=risk?"270 組完整分段績效；排名按2018–23訓練分數，不利用2024–26結果選參數。":grid.note;
     gridPage=0;renderGrid();
-  }catch(err){by("etfGridMeta").textContent="載入訓練結果失敗："+err.message;}
+  }catch(err){by("etfGridMeta").textContent="載入參數結果失敗："+err.message;}
 }
 function renderGrid(){
   if(!grid)return;
+  const risk=study?.id==="00675_risk_v2";
   const q=by("etfGridQuery").value.toLowerCase().trim();
-  const xs=grid.rows.filter(x=>!q||String(x[0]).toLowerCase().includes(q)).sort((a,b)=>Number(b[10])-Number(a[10]));
+  const xs=grid.rows.filter(x=>!q||String(risk?x.id:x[0]).toLowerCase().includes(q))
+    .sort((a,b)=>risk?Number(b.trainScore)-Number(a.trainScore):Number(b[10])-Number(a[10]));
   const pages=Math.max(1,Math.ceil(xs.length/40));gridPage=Math.min(Math.max(0,gridPage),pages-1);
   const list=xs.slice(gridPage*40,(gridPage+1)*40);
-  by("etfGridCount").textContent="訓練期 "+xs.length+"／4,320 組，第 "+(gridPage+1)+"/"+pages+" 頁；僅2020～2023樣本，不能視為已驗證的2026績效。";
-  by("etfGridTable").innerHTML=list.map(x=>'<tr><td>'+esc(x[0])+'</td><td>'+esc(x[2])+'</td><td>'+x[3]+'D</td>'+
-    '<td>'+x[4]+'%</td><td>'+x[5]+'%</td><td>'+x[6]+'</td><td>'+p(x[7])+'</td><td>'+p(x[8])+'</td><td>'+num(x[9],0)+'</td><td>'+num(x[10],2)+'</td></tr>').join("")||'<tr><td colspan="10">無符合資料</td></tr>';
+  by("etfGridCount").textContent=(risk?"2018–26完整參數":"2020–23訓練期")+" "+xs.length+"／"+grid.rows.length+" 組，第 "+(gridPage+1)+"/"+pages+" 頁";
+  by("etfGridTable").innerHTML=(risk?
+    list.map(x=>'<tr><td>'+esc(x.id)+'</td><td>'+num(x.n,0)+'D</td><td>'+num(x.exitPct,1)+'%</td><td>'+num(x.entryPct,1)+'%</td>'+
+      '<td>'+num(x.exitDays,0)+'日</td><td>'+num(x.panicPct,1)+'%</td><td>'+p(x.train.returnPct)+'</td><td>'+p(x.train.mddPct)+'</td>'+
+      '<td>'+p(x.validation2024_2025.returnPct)+'</td><td>'+p(x.audit2026.returnPct)+'</td></tr>'):
+    list.map(x=>'<tr><td>'+esc(x[0])+'</td><td>'+esc(x[2])+'</td><td>'+x[3]+'D</td>'+
+      '<td>'+x[4]+'%</td><td>'+x[5]+'%</td><td>'+x[6]+'</td><td>'+p(x[7])+'</td><td>'+p(x[8])+'</td><td>'+num(x[9],0)+'</td><td>'+num(x[10],2)+'</td></tr>')).join("")||'<tr><td colspan="10">無符合資料</td></tr>';
   by("etfGridPrev").disabled=gridPage===0;by("etfGridNext").disabled=gridPage>=pages-1;
 }
 by("etfGridLoad").addEventListener("click",loadGrid);
