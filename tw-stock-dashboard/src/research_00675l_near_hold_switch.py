@@ -164,8 +164,8 @@ def main():
     d=prepare(data_prepare(etf,index));a,dates=indicators(d)
     allcases=universe()
     bh={year:bt(a,dates,allcases[0],*period) for year,period in PERIODS.items()}
-    assert bh["continuous"]["returnPct"]==492.535,(bh["continuous"],"parity")
-    assert bh["2026"]["returnPct"]==150.836,bh["2026"]
+    assert bh["train"]["returnPct"]==133.131,(bh["train"],"frozen pre-2026 parity")
+    assert bh["continuous"]["sessions"]>=669 and bh["2026"]["sessions"]>=184,(bh["continuous"],bh["2026"])
     print("ETF_NEAR_HOLD_START "+json.dumps({"variants":len(allcases),"lastBar":str(d.iloc[-1].date),"buyhold":{k:v["returnPct"] for k,v in bh.items()}}),flush=True)
     eligible=[]
     family_summary={}
