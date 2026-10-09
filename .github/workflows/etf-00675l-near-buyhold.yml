@@ -1,0 +1,79 @@
+name: 00675L Near BuyHold with Roundtrip Exits
+on:
+  push:
+    branches: [research/00675l-near-buyhold-switch-2024-2026]
+    paths:
+      - 'tw-stock-dashboard/src/research_00675l_near_hold_switch.py'
+      - '.github/workflows/etf-00675l-near-buyhold.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  explore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore 00675L prices
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: 00675l-near-bh-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            00675l-holdcompare-${{ runner.os }}-
+            00675l-reinvest-${{ runner.os }}-
+            00675l-swing-grid-${{ runner.os }}-
+            00675l-walk-${{ runner.os }}-
+      - name: Install
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Run backtest
+        working-directory: tw-stock-dashboard
+        run: |
+          python -m py_compile src/research_00675l_near_hold_switch.py
+          python src/research_00675l_near_hold_switch.py
+      - name: Validate benchmark and roundtrip integrity
+        working-directory: tw-stock-dashboard
+        run: |
+          python - <<'PY'
+          import json,math
+          from pathlib import Path
+          p=Path("docs/data/research/etf_00675l_regime_capture_2024_2026")
+          s=json.loads((p/"summary.json").read_text())
+          t=json.loads((p/"frozen_orders_equity.json").read_text())
+          a=json.loads((p/"training_all.json").read_text())
+          assert s["ticker"]=="00675L.TW"
+          assert s["baseline"]["continuous"]["returnPct"]==492.535
+          assert s["baseline"]["2026"]["returnPct"]==150.836
+          assert len(a["models"])==s["universe"]["eligible"]
+          assert s["universe"]["total"]>500
+          assert len(t["models"])>=3
+          assert len(s["frozenComparisons"])==len(t["models"])
+          for m in s["frozenComparisons"]:
+            assert m["train"]["riskOffSells"]>=2
+            assert m["2024"]["riskOffSells"]>=1 and m["2025"]["riskOffSells"]>=1
+            z=next(x for x in t["models"] if x["id"]==m["id"])
+            assert len(z["equity"])==m["continuous"]["sessions"]
+            assert math.isclose(z["equity"][-1]["equity"],m["continuous"]["endNTD"],abs_tol=.01)
+            assert m["continuous"]["riskOffSells"]>0 and m["continuous"]["riskOnReentries"]>0
+          print("PASS 00675L 2024-26 NT$1m buyhold parity, true exits and reinvest, frozen 2026")
+          PY
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: etf-00675l-genuine-roundtrip-vs-buyhold-2024-26
+          path: tw-stock-dashboard/docs/data/research/etf_00675l_regime_capture_2024_2026/*.json
+          retention-days: 30
+      - name: Commit to separate research branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_00675l_regime_capture_2024_2026/
+          if ! git diff --cached --quiet; then
+            git commit -m "research: archive near-buyhold 00675L 2024-26 real trading simulations"
+            git push origin HEAD:research/00675l-near-buyhold-switch-2024-2026
+          fi
