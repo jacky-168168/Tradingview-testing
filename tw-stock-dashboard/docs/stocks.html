@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>台股量化｜個股體檢（全市場動能・籌碼・模型交集）</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;--blue:#2563eb;--green:#059669;--red:#dc2626}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
+.wrap{max-width:1440px;margin:auto;padding:22px}h1{margin:0;font-size:27px}h2{font-size:17px;margin:0 0 12px}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.header{display:flex;justify-content:space-between;align-items:start;gap:15px;flex-wrap:wrap}.sub,.note{font-size:12px;color:var(--muted);line-height:1.7}.actions{display:flex;gap:7px;flex-wrap:wrap}
+.btn,select,input{background:white;border:1px solid var(--line);border-radius:10px;padding:10px 13px;color:var(--text);font:inherit;font-size:13px}
+.btn{cursor:pointer;font-weight:750;text-decoration:none}.btn.active,.btn.primary{background:var(--blue);border-color:var(--blue);color:white}.btn:hover{text-decoration:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:0 2px 12px #0f172a08}
+.bar{margin:16px 0;padding:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}.bar input{flex:2 1 220px;min-width:140px}.bar select{flex:1 1 145px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}.kpi{padding:16px}.kpi strong{display:block;font-size:25px;margin-top:5px}
+.content{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(330px,1fr);align-items:start;gap:15px}
+.scroll{overflow:auto;max-height:900px}table{width:100%;border-collapse:collapse;white-space:nowrap}th,td{padding:10px 11px;text-align:left;border-bottom:1px solid #edf2f7;font-size:12px}th{position:sticky;top:0;background:#f8fafc;color:var(--muted);z-index:1}
+tr[data-code]{cursor:pointer}tr[data-code]:hover,tr.selected{background:#eff6ff}.num{font-variant-numeric:tabular-nums}.positive{color:var(--red)}.negative{color:var(--green)}
+.detail{padding:20px;position:sticky;top:12px}.stock-name{font-size:22px;font-weight:850}.tags{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.tag{padding:5px 8px;background:#eff6ff;border-radius:7px;color:#1d4ed8;font-size:11px;font-weight:700}.tag.muted{background:#f1f5f9;color:#475569}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}.metric{border-radius:10px;background:#f8fafc;padding:10px}.metric label{display:block;color:var(--muted);font-size:11px}.metric strong{display:block;font-size:17px;margin-top:5px}
+.placeholder{padding:18px;border:1px dashed #cbd5e1;border-radius:11px;background:#f8fafc;color:#475569;font-size:12px;line-height:1.85}
+.status{margin-top:12px;font-size:12px;font-weight:700;line-height:1.7}.warn{color:#9a3412}.footer{font-size:11px;color:var(--muted);text-align:center;margin:20px 0}
+@media(max-width:980px){.content{grid-template-columns:1fr}.detail{position:static}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.wrap{padding:12px}h1{font-size:23px}.kpi strong{font-size:20px}.bar{padding:12px}}
+</style>
+<script src="./site-access.js"></script>
+</head>
+<body>
+<div class="wrap">
+<div class="header"><div><h1>🔬 台股個股量化體檢</h1><div class="sub">獨立計算全市場動能分位 × 低波動 × 法人 × 原有 A／D／F／F2／G／G Pro 入選交集</div></div>
+<div class="actions"><a class="btn primary" href="./index.html">🏠 市場總覽</a><a class="btn" href="./selections.html">📋 選股排行</a><a class="btn" href="./backtest.html">📈 回測</a><a class="btn" href="./bubbles.html">🫧 資金泡泡</a><button id="reload" class="btn" type="button">↻ 重新載入</button></div></div>
+<div id="status" class="status" role="status">載入自建市場資料中…</div>
+<div class="kpis">
+<div class="card kpi"><div class="sub">資料日</div><strong id="dataDate">--</strong></div>
+<div class="card kpi"><div class="sub">有完整當日 K 線可分析</div><strong id="totalCount">--</strong></div>
+<div class="card kpi"><div class="sub">20日報酬為正</div><strong id="positiveCount">--</strong></div>
+<div class="card kpi"><div class="sub">模型入選股票數（去重）</div><strong id="selectedCount">--</strong></div>
+</div>
+<div class="card bar">
+<input id="search" type="search" placeholder="搜尋股票代號或名稱，例如 2330、台積電" aria-label="搜尋股票">
+<select id="sort" aria-label="排列方式"><option value="momentumScore">綜合動能分位 ↓</option><option value="ret20">20日漲幅 ↓</option><option value="rs20">RS20 ↓</option><option value="lowVolP">低波動分位 ↓</option><option value="turnoverB">成交額 ↓</option><option value="signals">訊號數 ↓</option></select>
+<select id="model" aria-label="選股模型"><option value="all">全部股票</option><option value="selected">任何模型入選</option><option value="G">G 強勢股</option><option value="G Pro">G Pro</option><option value="D">D 技術強勢</option><option value="F">F 固定濾網</option><option value="F2">F2 動態濾網</option><option value="A">A 多因子</option></select>
+<select id="industry" aria-label="產業分類"><option value="">全部產業</option></select>
+<button id="watchFilter" class="btn" type="button" aria-pressed="false">☆ 只看觀察清單</button>
+</div>
+<div class="content">
+<div class="card"><div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px"><strong>全市場排名</strong><span class="sub" id="matchCount">--</span></div>
+<div class="scroll"><table><thead><tr><th>觀察</th><th>股票</th><th>產業</th><th>收盤</th><th>20D</th><th>RS20</th><th>動能分位</th><th>低波動</th><th>訊號</th><th>模型</th></tr></thead><tbody id="rows"><tr><td colspan="10">載入中…</td></tr></tbody></table></div>
+<div style="padding:12px;text-align:center"><button id="more" class="btn" type="button" hidden>載入更多股票</button></div></div>
+<aside class="card detail" id="detail"><h2>個股體檢</h2><div class="placeholder">點選左側股票，或在上方輸入代號搜尋。所有分數都由你 GitHub 自有的資料產生，不使用 FinLab 的專有資料。</div></aside>
+</div>
+<div class="footer">此頁為獨立研究工具，和 FinLab 無合作關係；不包含未驗證的 EPS／ROE／本益比或歷史勝率。資料非即時，不構成投資建議。</div>
+</div>
+<script src="./stock-diagnostics.js"></script>
+</body></html>
