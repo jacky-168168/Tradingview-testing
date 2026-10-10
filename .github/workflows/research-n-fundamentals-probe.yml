@@ -1,0 +1,33 @@
+name: N CANSLIM Official Fundamentals Source Probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/n_fundamental_archive.py'
+      - '.github/workflows/research-n-fundamentals-probe.yml'
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install official historical source parsers
+        run: pip install requests==2.32.5 beautifulsoup4==4.14.2
+      - name: Verify Python syntax
+        run: python -m py_compile tw-stock-dashboard/src/n_fundamental_archive.py
+      - name: Probe TWSE and TPEx 2024 historical revenue and quarterly EPS
+        working-directory: tw-stock-dashboard
+        run: python -u src/n_fundamental_archive.py probe
+      - name: Upload source proof including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: N-historical-MOPS-source-proof
+          path: tw-stock-dashboard/docs/data/research/n_canslim/source_probe.json
+          retention-days: 90
