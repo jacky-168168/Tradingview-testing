@@ -4,7 +4,7 @@ from datetime import datetime,timedelta
 from zoneinfo import ZoneInfo
 import requests
 from config import *
-from yahoo_cache import update_many,update_symbol,to_symbol
+from yahoo_cache import update_many,update_symbol,to_symbol,load_cached
 from scoring import calc_metrics,score_a,score_d,d_pass,sort_key
 from institution import fetch_day
 from risk import build as build_risk,f_gate,f2_gate
@@ -165,6 +165,24 @@ def backfill_g_pro_once(market_date):
     print("G_PRO_FROZEN_DAY_BACKFILLED",market_date,len(selected),"/",len(subset),flush=True)
     return True
 
+def backfill_stock_profiles_once(market_date):
+    """上市後遇休市日：若已有完整快取，補建新體檢頁，不改寫既有選股/大盤快照。"""
+    target=DATA_DIR/"stocks"/"latest.json"
+    try:
+        if target.exists() and json.loads(target.read_text(encoding="utf-8")).get("dataDate")==market_date:return False
+        if not UNIVERSE_CACHE.exists() or not LATEST_JSON.exists():return False
+        u=json.loads(UNIVERSE_CACHE.read_text(encoding="utf-8"))
+        if len(u)<MIN_LISTED_UNIVERSE+MIN_OTC_UNIVERSE:return False
+        h={to_symbol(x["code"],x["market"]):load_cached(to_symbol(x["code"],x["market"])) for x in u}
+        valid=sum(not d.empty and str(d.iloc[-1]["date"])[:10]==market_date and len(d)>=21 for d in h.values())
+        if valid<max(1000,int(len(u)*0.65)):
+            print("STOCK_DIAGNOSTICS_BACKFILL_SKIPPED insufficient cached dayK",valid,len(u),flush=True);return False
+        old=json.loads(LATEST_JSON.read_text(encoding="utf-8"))
+        out=write_snapshot(DATA_DIR,u,h,market_date,old.get("benchmarkRet20",0),None,old.get("models"),datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"))
+        print("STOCK_DIAGNOSTICS_BACKFILLED",out["coverage"]["withValidDailyK"],flush=True);return True
+    except Exception as e:
+        print("STOCK_DIAGNOSTICS_BACKFILL_FAILED",type(e).__name__,str(e),file=sys.stderr);return False
+
 def main():
     now=datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None);start=min(now-timedelta(days=LOOKBACK_CALENDAR_DAYS),datetime(now.year,1,1)-timedelta(days=90))
     _,idx,idxerr=update_symbol(BENCHMARK,start,now)
@@ -176,6 +194,7 @@ def main():
     # This prevents a Friday holiday/weekend rerun from mutating Thursday\x27s risk score and F/F2 gating.
     if published==market_date and market_date<now.date().isoformat():
         backfill_g_pro_once(market_date)
+        backfill_stock_profiles_once(market_date)
         print(json.dumps({"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"publishedDate":published,"skipped":"no-new-trading-day","riskScoreFrozen":True},ensure_ascii=False));return
     universe=load_universe();eligible=[x for x in universe if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
     histories,errors=update_many([(x["code"],x["market"]) for x in universe],start,now)
