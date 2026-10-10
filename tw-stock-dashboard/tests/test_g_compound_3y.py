@@ -32,7 +32,7 @@ class CompoundTests(unittest.TestCase):
         picks={dates[0]:[{"sym":"1101.TW","code":"1101","name":"A","close":100.}],
                dates[1]:[{"sym":"1102.TW","code":"1102","name":"B","close":100.}]}
         risk={d:{"score":80} for d in dates}
-        r,_,trades=study_one(dates,picks,bars,risk,"SCORE60",.05,.08,5,500000.,logs=True)
+        r,_,trades=study_one(dates,picks,bars,risk,"SCORE60",.05,.08,5,None,logs=True)
         self.assertEqual(r["filledBuys"],2)
         self.assertEqual(r["closedTrades"],2)
         self.assertEqual(r["wins"],2)
