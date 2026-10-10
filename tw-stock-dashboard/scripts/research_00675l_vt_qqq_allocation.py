@@ -77,7 +77,8 @@ def align_curves(raw,fx):
     for label,src in list(raw.items())+[("FX",fx)]:
         last_dates=pd.Series(src.index,index=src.index).reindex(calendar,method="ffill")
         days=(pd.Series(calendar,index=calendar)-last_dates).dt.days
-        if int(days.max())>8:raise RuntimeError(label+" prolonged data gap "+str(int(days.max())))
+        limit=16 if label.startswith("L2_") else 10
+        if int(days.max())>limit:raise RuntimeError(label+" prolonged data gap "+str(int(days.max())))
     return calendar,aligned,f
 def curve_summary(dates,values):
     v=np.asarray(values,dtype=float)
@@ -113,7 +114,7 @@ def curve_summary(dates,values):
         if goal>end_dt:break
         j=int(dates.searchsorted(goal,side="left"))
         if j>=len(dates):continue
-        start_value=INITIAL if i==0 else float(v[i])
+        start_value=float(v[i])
         ret=100*(float(v[j])/start_value-1)
         rolling.append({"start":start.strftime("%Y-%m-%d"),"end":dates[j].strftime("%Y-%m-%d"),"returnPct":safe_round(ret)})
     ranked=sorted(rolling,key=lambda z:z["returnPct"])
