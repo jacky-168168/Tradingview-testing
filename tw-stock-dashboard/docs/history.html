@@ -58,7 +58,7 @@ td.signal{max-width:235px;overflow:hidden;text-overflow:ellipsis;text-align:left
   <header class="header">
     <div class="head-info">
       <h1>🗂️ G／G Pro／D／F／F2／A 歷史快照</h1>
-      <div class="description">逐日檢視當天已封存的選股名單，不以目前的排名回填過去。</div>
+      <div class="description">逐日檢視真實封存榜單；G 過去兩個月另提供明確標示的歷史行情回推研究（非原始快照）。</div>
     </div>
     <nav class="header-nav" aria-label="頁面導覽">
       <a class="btn" href="./index.html">🏠 返回主頁</a>
@@ -98,7 +98,7 @@ td.signal{max-width:235px;overflow:hidden;text-overflow:ellipsis;text-align:left
 </main>
 <script>
 "use strict";
-let DATA=null,MODEL="G",REQUEST=0,AVAILABLE=[];
+let DATA=null,MODEL="G",REQUEST=0,AVAILABLE=[],G_RECON=null;
 const byId=id=>document.getElementById(id);
 const esc=value=>String(value==null?"":value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const num=(v,n=2)=>v==null||v===""||!Number.isFinite(Number(v))?"—":Number(v).toFixed(n);
@@ -131,15 +131,20 @@ function render(){
    byId("tb").innerHTML='<tr><td colspan="16">資料格式不正確</td></tr>';
    return;
  }
- byId("modelCount").textContent="已封存 "+rows.length+" 檔";
+ byId("modelCount").textContent=(MODEL==="G"&&DATA.__reconstructedG?"歷史回推 ":"正式封存 ")+rows.length+" 檔";
  if(rows.length===0){
    byId("notice").className="notice";
    byId("notice").textContent=MODEL==="G Pro"?"此日已執行 G Pro 嚴格篩選，但沒有任何 G 股票通過，故為 0 檔。":"當日已建立 "+names[MODEL]+" 歷史快照，但符合條件的股票為 0 檔。";
    byId("tb").innerHTML='<tr><td colspan="16" style="text-align:center;padding:26px">當日符合條件：0 檔</td></tr>';
    return;
  }
- byId("notice").className="notice ok";
- byId("notice").textContent="已載入 "+date+" 當日封存的 "+names[MODEL]+" Top"+rows.length+"；排名與分數依當日快照，不使用今日資料重算。";
+ if(MODEL==="G"&&DATA.__reconstructedG){
+   byId("notice").className="notice warn";
+   byId("notice").textContent="⚠ 本日 G 榜單為事後使用當日歷史行情逐日回推，並非當天網站真正封存的選股清單。排名採目前 G 同款雙突破＋持續度邏輯；現存上市公司母體及歷史 Yahoo 價格可能與當年不同，官方 SAR／法人買賣超未經當日驗證故不補假數字。";
+ }else{
+   byId("notice").className="notice ok";
+   byId("notice").textContent="已載入 "+date+" 當日真正封存的 "+names[MODEL]+" Top"+rows.length+"；排名與分數依原始當日快照，不使用今日資料重算。";
+ }
  byId("tb").innerHTML=rows.map((x,i)=>{
    const market=x.market==="上櫃"?"TPEX":"TWSE";
    const symbol=encodeURIComponent(market+":"+String(x.code||""));
@@ -158,50 +163,81 @@ function render(){
 }
 async function load(date){
  const req=++REQUEST;
- byId("meta").textContent="正在讀取 "+date+" 的歷史快照…";
+ byId("meta").textContent="正在讀取 "+date+" 的歷史資料…";
  byId("notice").className="notice";
- byId("notice").textContent="正在讀取已封存的每日資料…";
+ byId("notice").textContent="正在核對真實封存資料與獨立 G 回推研究…";
  try{
-   const response=await fetch("./data/daily/"+encodeURIComponent(date)+".json?t="+Date.now(),{cache:"no-store"});
-   if(!response.ok)throw new Error("HTTP "+response.status);
-   const fresh=await response.json();
+   const officialDate=AVAILABLE.some(row=>row.date===date);
+   let fresh;
+   if(officialDate){
+     const response=await fetch("./data/daily/"+encodeURIComponent(date)+".json?t="+Date.now(),{cache:"no-store"});
+     if(!response.ok)throw new Error("原始每日封存檔 HTTP "+response.status);
+     fresh=await response.json();
+     if(fresh.dataDate!==date||!fresh.models||typeof fresh.models!=="object")throw new Error("真正每日封存日期／格式不符");
+   }else fresh={dataDate:date,models:{},risk:null};
    if(req!==REQUEST)return;
-   if(fresh.dataDate&&fresh.dataDate!==date)throw new Error("快照資料日期與選單不一致");
+   const research=G_RECON&&G_RECON.days&&G_RECON.days[date];
+   if(research&&!Object.prototype.hasOwnProperty.call(fresh.models,"G")){
+     if(research.dataDate!==date||research.source!=="reconstructed"||!Array.isArray(research.stocks))
+       throw new Error("研究 G 當天回推資料未通過驗證");
+     fresh.models={...fresh.models,G:research.stocks};
+     fresh.__reconstructedG=true;
+     fresh.__reconstructedOnly=!officialDate;
+   }
+   if(!officialDate&&!fresh.__reconstructedG)throw new Error("此日沒有正式快照，也沒有驗證通過的 G 回推榜單");
    DATA=fresh;
    const risk=fresh.risk||{};
-   byId("meta").textContent="資料日 "+date+" ｜ Risk "+(risk.score??"—")+" "+(risk.state||"")+" ｜ 更新 "+(fresh.generatedAt||"—");
+   byId("meta").textContent=(fresh.__reconstructedOnly?"🧪 僅G歷史回推 ":"📁 官方封存日期 "+date)+
+      "｜資料日 "+date+"｜Risk "+(risk.score??"未封存")+
+      " ｜ "+(fresh.__reconstructedG?"G為研究回推榜單":"G如有則為原始封存")+
+      " ｜ "+(fresh.generatedAt||G_RECON&&G_RECON.generatedAt||"");
    render();
  }catch(error){
    if(req!==REQUEST)return;
-   DATA=null;byId("meta").textContent="讀取失敗："+error.message;
+   DATA=null;byId("meta").textContent="歷史資料讀取失敗："+error.message;
    byId("notice").className="notice warn";
-   byId("notice").textContent="無法驗證 "+date+" 的原始快照，暫時不顯示股票名單。";
-   byId("tb").innerHTML='<tr><td colspan="16" style="text-align:center;padding:26px">歷史資料載入失敗</td></tr>';
+   byId("notice").textContent="無法驗證 "+date+" 的封存／歷史回推資料，暫時不顯示股票名單。";
+   byId("tb").innerHTML='<tr><td colspan="16" style="text-align:center;padding:26px">歷史資料不可用</td></tr>';
  }
 }
 async function init(){
  try{
-   const response=await fetch("./data/daily/index.json?t="+Date.now(),{cache:"no-store"});
-   if(!response.ok)throw new Error("HTTP "+response.status);
-   const items=await response.json();
-   if(!Array.isArray(items))throw new Error("索引格式不正確");
+   const original=await fetch("./data/daily/index.json?t="+Date.now(),{cache:"no-store"});
+   if(!original.ok)throw new Error("每日索引 HTTP "+original.status);
+   const items=await original.json();
+   if(!Array.isArray(items))throw new Error("每日索引格式不正確");
    AVAILABLE=items;
-   const selector=byId("day");
-   selector.innerHTML="";
-   for(const item of items){
+   try{
+     const response=await fetch("./data/research/g_history_reconstruction_2m/history.json?t="+Date.now(),{cache:"no-store"});
+     if(response.ok){
+       const research=await response.json();
+       if(research.version==="G_LIVE_DOUBLE_PERSIST_HISTORICAL_RECONSTRUCTION_V1"&&
+         research.model==="G"&&research.days&&research.dateCount===Object.keys(research.days).length&&
+         research.audit?.GParityAgainstRealFrozenReference?.intersection>=12)
+           G_RECON=research;
+     }
+   }catch(e){G_RECON=null}
+   const originalByDate=new Map(items.map(x=>[x.date,x]));
+   const allDays=new Set(items.map(x=>x.date));
+   if(G_RECON)Object.keys(G_RECON.days).forEach(d=>allDays.add(d));
+   const selector=byId("day");selector.innerHTML="";
+   for(const date of [...allDays].sort().reverse()){
+     const saved=originalByDate.get(date),recon=G_RECON&&G_RECON.days[date],
+       historicG=saved&&saved.gCount!=null,
+       gLabel=historicG?"📁G "+saved.gCount:recon?"🧪G回推 "+recon.stocks.length:"G—";
      const opt=document.createElement("option");
-     opt.value=item.date;
-     const models=["G"+(item.gCount??"—"),"G Pro"+(item.gProCount??"—"),"D"+(item.dCount??"—"),"F"+(item.fCount??"—"),"F2"+(item.f2Count??"—"),"A"+(item.aCount??"—")];
-     opt.textContent=item.date+"｜Risk "+(item.riskScore??"—")+"｜"+models.join("／");
+     opt.value=date;
+     opt.textContent=date+"｜"+gLabel+
+       (saved?"｜Risk "+(saved.riskScore??"—")+"｜D"+(saved.dCount??"—")+"／F"+(saved.fCount??"—")+"／F2"+(saved.f2Count??"—")+"／A"+(saved.aCount??"—"):"｜此日其他策略未封存");
      selector.appendChild(opt);
    }
-   if(items.length)await load(items[0].date);
-   else{selector.innerHTML="<option>沒有已封存日期</option>";byId("meta").textContent="尚無歷史資料"}
+   if(allDays.size)await load(selector.value);
+   else{selector.innerHTML="<option>沒有歷史資料</option>";byId("meta").textContent="尚無已核對歷史資料"}
  }catch(e){
    byId("day").innerHTML="<option>索引載入失敗</option>";
    byId("meta").textContent="歷史索引讀取失敗："+e.message;
    byId("notice").className="notice warn";
-   byId("notice").textContent="無法取得已封存日期清單。";
+   byId("notice").textContent="無法取得已保存的日期清單。";
  }
 }
 document.querySelectorAll(".tabs button").forEach(btn=>btn.addEventListener("click",()=>{
