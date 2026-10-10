@@ -1,0 +1,83 @@
+name: N CANSLIM Historical MOPS Revenue and EPS Collector
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/research-n-fundamental-history.yml'
+permissions:
+  contents: write
+concurrency:
+  group: n-canslim-official-fundamental-archive
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore historical MOPS checkpoint cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache/n_fundamental/
+          key: mops-n-revenue-eps-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            mops-n-revenue-eps-${{ runner.os }}-
+      - name: Install parsers and pinned data tools
+        run: |
+          pip install -r tw-stock-dashboard/requirements.txt
+          pip install beautifulsoup4==4.14.2
+      - name: Validate historical PDF-free MOPS HTML parser and availability as-of rules
+        run: |
+          python -m py_compile tw-stock-dashboard/src/n_fundamental_archive.py
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_n_canslim_fundamental.py' -v
+      - name: Backfill 2022-2026 monthly revenue and EPS for both TWSE and TPEx
+        working-directory: tw-stock-dashboard
+        run: python -u src/n_fundamental_archive.py collect
+      - name: Confirm complete original source coverage before release
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('tw-stock-dashboard/docs/data/research/n_canslim')
+          s=json.loads((p/'fundamental_coverage.json').read_text(encoding='utf-8'))
+          r=json.loads((p/'monthly_revenue.json').read_text(encoding='utf-8'))
+          e=json.loads((p/'eps_ytd.json').read_text(encoding='utf-8'))
+          assert not s['failures'] and s['revenueRows']>=20000 and s['epsRows']>=5000
+          assert len(r)==s['revenueRows'] and len(e)==s['epsRows']
+          assert s['monthsRequested']>=55 and s['quartersRequested']>=17
+          assert len({(x['year'],x['month']) for x in r})==s['monthsRequested']
+          assert len({(x['year'],x['quarter']) for x in e})==s['quartersRequested']
+          assert all(x['availableFrom']>f"{x['year']}-{x['month']:02d}-01" for x in r)
+          assert all(x['availableFrom']>f"{x['year']}-{x['quarter']*3:02d}-01" for x in e)
+          assert set(x['market'] for x in r)=={'sii','otc'}
+          assert set(x['market'] for x in e)=={'sii','otc'}
+          print('N_MOPS_FULL_HISTORY_VERIFIED',s['revenueRows'],s['epsRows'],s['monthsRequested'],s['quartersRequested'])
+          PY
+      - name: Upload fundamental archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: N-CANSLIM-MOPS-2022-2026-verified
+          path: |
+            tw-stock-dashboard/docs/data/research/n_canslim/monthly_revenue.json
+            tw-stock-dashboard/docs/data/research/n_canslim/eps_ytd.json
+            tw-stock-dashboard/docs/data/research/n_canslim/fundamental_coverage.json
+          retention-days: 90
+      - name: Commit successful complete fundamental history only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/n_canslim/monthly_revenue.json tw-stock-dashboard/docs/data/research/n_canslim/eps_ytd.json tw-stock-dashboard/docs/data/research/n_canslim/fundamental_coverage.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'data: publish complete 2022-26 official MOPS N EPS/revenue history'
+            for i in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
