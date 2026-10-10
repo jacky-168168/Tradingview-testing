@@ -1,0 +1,40 @@
+name: A D F G Official Market Risk Three-Year Comparison
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/research_market_selector_compare_3y.py'
+      - '.github/workflows/research-market-selector-3y.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: market-selector-3y-comparison
+  cancel-in-progress: false
+jobs:
+  study:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile and reproduce A/D/F/G original signals with official dated risk score
+        run: |
+          python -m py_compile tw-stock-dashboard/src/research_market_selector_compare_3y.py
+          python -u tw-stock-dashboard/src/research_market_selector_compare_3y.py
+      - name: Publish research-only results without changing live strategy
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/market_selector_compare_3y/summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish A D F G official market score comparison'
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*5)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*5))
+            done
+            exit 1
+          fi
