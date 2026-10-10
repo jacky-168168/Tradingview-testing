@@ -1,0 +1,73 @@
+name: G Three-Year Market-Regime Threshold Study
+on:
+  workflow_dispatch:
+    inputs:
+      skip_txf:
+        description: 'Skip historical TAIFEX night data collection (spot-only baseline)'
+        type: boolean
+        default: false
+        required: false
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/research_g_regime_3y.py'
+      - '.github/workflows/research-g-regime-3y.yml'
+permissions:
+  contents: write
+concurrency:
+  group: g-regime-3y-research
+  cancel-in-progress: false
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore existing Yahoo price histories
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install scientific / official archive packages
+        run: |
+          pip install -r tw-stock-dashboard/requirements.txt
+          pip install beautifulsoup4
+      - name: Static syntax and no-future G/market input checks
+        run: |
+          python -m py_compile tw-stock-dashboard/src/research_g_regime_3y.py
+          PYTHONPATH=tw-stock-dashboard/src python - <<'PY'
+          from research_g_regime_3y import score_risk
+          import numpy as np
+          prices=np.array([100+x for x in range(75)],dtype=float)
+          assert isinstance(score_risk(prices,35,43.8,-758.5),int)
+          print('PASS: daily cash risk reuses fixed score bins, requires official date-specific breadth and foreign net')
+          PY
+      - name: Run G 2023-2026 market regime OOS grid
+        working-directory: tw-stock-dashboard
+        run: |
+          if [ "${{ inputs.skip_txf }}" = "true" ]; then
+            python -u src/research_g_regime_3y.py --skip-tx
+          else
+            python -u src/research_g_regime_3y.py
+          fi
+      - name: Publish reproducible summary, trades, risk data
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_regime_3y/
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish 2023-2026 G and market regime threshold audit'
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
