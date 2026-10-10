@@ -13,6 +13,7 @@ on:
       - 'tw-stock-dashboard/docs/data/research/g_compound_3y/**'
       - 'tw-stock-dashboard/docs/data/research/g_compound_v2_3y/**'
       - 'tw-stock-dashboard/docs/data/research/g_compound_walkforward_3y/**'
+      - 'tw-stock-dashboard/docs/data/research/n_canslim/**'
       - 'tw-stock-dashboard/docs/data/research/market_cash_oos_3y/**'
       - 'tw-stock-dashboard/docs/etf-research.js'
       - 'tw-stock-dashboard/docs/etf-research.css'
@@ -134,6 +135,28 @@ jobs:
           for(const sessions of Object.values(s.monthlyModelTrainingAudit))for(const m of sessions){
             if(!(m.latestMaturedLabel<m.fitAsOfFirstTradeDate))throw new Error('V3 training label leak');}
           console.log('PASS monthly recursive V3 Top1 front-end JS, 728 days, 16 model cases and as-of-month retraining proof');
+          JS
+      - name: Validate N CANSLIM research screen and published recursion when available
+        run: |
+          node - <<'JS'
+          const fs=require('fs');
+          const root='tw-stock-dashboard/docs/';
+          const html=fs.readFileSync(root+'n-canslim.html','utf8');
+          const first=html.lastIndexOf('<script>'),last=html.lastIndexOf('</script>');
+          if(first<0||last<=first)throw new Error('N factor page missing client JS');
+          new Function(html.slice(first+8,last));
+          const dir=root+'data/research/n_canslim/';
+          if(fs.existsSync(dir+'summary.json')){
+            const s=JSON.parse(fs.readFileSync(dir+'summary.json','utf8'));
+            const t=JSON.parse(fs.readFileSync(dir+'trades.json','utf8'));
+            const e=JSON.parse(fs.readFileSync(dir+'equity.json','utf8'));
+            const p=JSON.parse(fs.readFileSync(dir+'picks.json','utf8'));
+            if(s.version!==t.version||s.version!==e.version||s.version!==p.version)throw new Error('N published 4-file version parity failed');
+            if(s.marketDays!==728||s.officialRiskDays!==728||s.modelCount!==16)throw new Error('N research calendar/model coverage failed');
+            if(!Object.keys(s.benchmark0050).length)throw new Error('Missing 0050 comparison');
+            for(let list of Object.values(s.trainingAudit))for(let m of list){if(m.latestUsedLabelExit&&m.latestUsedLabelExit>=m.firstTradeDate)throw new Error('Future N model label leaked');}
+            console.log('N official MOPS factor simulation and 0050 verified before Pages deploy');
+          }else{console.log('N educational strategy screen JS validated; official historical research not yet published');}
           JS
       - name: Configure Pages
         uses: actions/configure-pages@v5
