@@ -137,6 +137,7 @@ def update_day(session,day,row,timeout=16):
     try:
         if int(z["up"])+int(z["down"])>=500 and math.isfinite(float(z["foreign"])):z["ok"]=True;z.pop("error",None)
     except (KeyError,ValueError,TypeError):pass
+    z["attempts"]=int(z.get("attempts") or 0)+1
     z["checkedAt"]=datetime.now(ZoneInfo("Asia/Taipei")).isoformat()
     return z
 
@@ -148,8 +149,10 @@ def export(index,dates,cache,start,end):
     for day in dates:
         z=cache.get(day) or {};i=pos[day]
         if not valid_saved(z):
-            failures.append({"date":day,"missing":["breadth" if not isinstance(z.get("up"),int) or not isinstance(z.get("down"),int) else None,
-               "foreign" if not isinstance(z.get("foreign"),(int,float)) else None],"error":z.get("error")})
+            missing=[]
+            if not isinstance(z.get("up"),int) or not isinstance(z.get("down"),int):missing.append("breadth")
+            if not isinstance(z.get("foreign"),(int,float)):missing.append("foreign")
+            failures.append({"date":day,"missing":missing,"attempts":z.get("attempts",0),"error":z.get("error")})
             continue
         if i<25:failures.append({"date":day,"error":"INSUFFICIENT_INDEX_WARMUP"});continue
         try:
@@ -187,7 +190,8 @@ def main(args):
     dates=[d for d in index.date.astype(str) if args.start<=d<=args.end]
     if len(dates)<500 and not args.allow_short:raise RuntimeError(f"Unexpectedly short historical index calendar: {len(dates)}")
     cache=json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {}
-    todo=[d for d in dates if not valid_saved(cache.get(d))]
+    # Round-robin failed dates so a permanently unavailable old date cannot starve the other 700.
+    todo=sorted((d for d in dates if not valid_saved(cache.get(d))),key=lambda d:(int((cache.get(d) or {}).get("attempts") or 0),d))
     attempted=0
     with requests.Session() as session:
         for day in todo[:args.max_days]:
