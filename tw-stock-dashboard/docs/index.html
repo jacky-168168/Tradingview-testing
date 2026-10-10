@@ -19,8 +19,8 @@
 <div class="card box"><div class="small-title">REVERSAL MONITOR</div><div id="revMode" class="sub">NORMAL</div><div id="revState" class="rev-state">⚪ Normal</div><div class="rev-grid"><div class="metric"><div id="extremeLabel" class="metric-label">極端程度</div><div id="extreme" class="metric-value">0/9</div></div><div class="metric"><div id="confirmLabel" class="metric-label">反轉確認</div><div id="confirm" class="metric-value">0/9</div></div></div><div id="revDataStatus" class="risk-data-status" role="status">⌛ 核對最近交易日中…</div><div class="chips"><span id="dist" class="chip">距MA20 --</span><span id="dayret" class="chip">當日 --</span><span id="closepos" class="chip">收盤位置 --</span></div></div>
 <div class="card box"><div class="small-title">🌙 台指期（TX）｜同月合約日盤／夜盤</div>
 <div id="futuresSub" class="sub" role="status" style="font-weight:800;line-height:1.8;margin-top:9px">正在載入期交所資料…</div>
-<div class="futures-grid"><div class="metric"><div class="metric-label">台指期日盤收盤</div><div id="txfDay" class="metric-value">--</div></div><div class="metric"><div class="metric-label">台指期夜盤收盤</div><div id="txfNight" class="metric-value">--</div></div><div class="metric"><div class="metric-label">同月台指期夜盤 − 日盤</div><div id="txfChange" class="metric-value">--</div></div><div class="metric"><div class="metric-label">近月合約／資料日期</div><div id="txfContract" class="metric-value" style="font-size:16px">--</div></div></div>
-<div id="nextEntry" class="txf-entry">📋 讀取台指期夜盤觀察中…</div><div class="txf-note">📐 同一交易日、同一到期月份的 TX：夜盤漲跌＝TX 夜盤收盤 − TX 日盤收盤，漲跌率＝漲跌點數 ÷ TX 日盤收盤 ×100%。<br>⚠ 此區完全不採用加權現貨點數、現貨 Risk Score 或 F／F2 進場濾網；夜盤為已完成盤後資料，並非即時報價。F／F2 的現貨選股風控獨立運作，夜盤觀察尚未完成正式回測。</div>
+<div class="futures-grid"><div class="metric"><div class="metric-label">台指期日盤收盤</div><div id="txfDay" class="metric-value">--</div></div><div class="metric"><div class="metric-label">台指期夜盤收盤</div><div id="txfNight" class="metric-value">--</div></div><div class="metric"><div class="metric-label">夜盤對官方結算參考價（期交所／TV）</div><div id="txfOfficial" class="metric-value">--</div></div><div class="metric"><div class="metric-label">夜盤對同月份TX日盤收盤</div><div id="txfChange" class="metric-value">--</div></div><div class="metric"><div class="metric-label">近月合約／資料日期</div><div id="txfContract" class="metric-value" style="font-size:16px">--</div></div></div>
+<div id="nextEntry" class="txf-entry">📋 讀取台指期夜盤觀察中…</div><div class="txf-note">📐 同月份台指期：①「期交所／TradingView漲跌」以期交所結算參考價為基準；②「夜盤對日盤」＝TX夜盤收盤−TX日盤收盤。兩種基準不同，不可混算，也不使用加權現貨。<br>⚠ 此區完全不採用加權現貨點數、現貨 Risk Score 或 F／F2 進場濾網；夜盤為已完成盤後資料，並非即時報價。F／F2 的現貨選股風控獨立運作，夜盤觀察尚未完成正式回測。</div>
 <div class="etf-quicklinks"><a href="https://www.tradingview.com/chart/?symbol=TAIFEX%3ATXF1%21" target="_blank" rel="noopener noreferrer">📈 查看台指期日夜盤連續走勢 ↗</a><a href="https://mis.taifex.com.tw/futures/" target="_blank" rel="noopener noreferrer">🏛 期交所即時行情 ↗</a></div>
 <details class="txf-details" id="txfLiveChart"><summary>📊 展開台指期日夜盤動態走勢（TradingView）</summary><div id="txfWidgetShell" style="height:310px;width:100%;max-width:100%;margin-top:12px"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div></div><div class="txf-note">TradingView行情可能延遲，依其交易所資料權限為準；圖形僅供參考。</div></details><details class="txf-details"><summary>展開獨立的加權現貨 MA／法人指標（不參與台指期日夜盤漲跌計算）</summary><div class="market-grid"><div class="metric"><div class="metric-label">加權指數</div><div id="idx" class="metric-value">--</div></div><div class="metric"><div class="metric-label">MA5</div><div id="ma5" class="metric-value">--</div></div><div class="metric"><div class="metric-label">MA20</div><div id="ma20" class="metric-value">--</div></div><div class="metric"><div class="metric-label">5D</div><div id="r5" class="metric-value">--</div></div><div class="metric"><div class="metric-label">20D</div><div id="r20" class="metric-value">--</div></div><div class="metric"><div class="metric-label">Breadth</div><div id="breadth" class="metric-value">--</div></div><div class="metric"><div class="metric-label">外資</div><div id="foreign" class="metric-value">--</div></div><div class="metric"><div class="metric-label">20日趨勢</div><div id="trend" class="metric-value">--</div></div></div></details></div>
 </div>
@@ -79,6 +79,7 @@ async function loadFutures(){
   const cmp=sameContractTX(d);
   txfDay.textContent=futDisplay(d.day?.close);
   txfNight.textContent=futDisplay(d.night?.close);
+  const official=Number(d.officialNightChangePoints),officialPct=Number(d.officialNightChangePct);txfOfficial.textContent=cmp&&Number.isFinite(official)&&Number.isFinite(officialPct)?(official>=0?"+":"")+futDisplay(official,0)+" ("+(officialPct>=0?"+":"")+futDisplay(officialPct,2)+"%)":"--";txfOfficial.className="metric-value "+(Number.isFinite(official)?C(official):"");
   txfChange.textContent=cmp?(cmp.points>=0?"+":"")+futDisplay(cmp.points,0)+" ("+(cmp.pct>=0?"+":"")+futDisplay(cmp.pct,2)+"%)":"未完成同月份配對";
   txfChange.className="metric-value "+(cmp?C(cmp.pct):"");
   txfContract.textContent=d.contract+" ／ "+d.asOfDate;
@@ -86,7 +87,7 @@ async function loadFutures(){
   futuresSub.textContent=(prev?"⏸ 最近完成交易日 ":"📅 已完成交易日 ")+d.asOfDate+"｜TX "+d.contract+"｜期交所盤後統計（非即時，非現貨）";
  }catch(err){
   FUTURES=null;futuresSub.textContent="⏳ 官方台指期盤後資料暫不可用："+err.message+"；可點下方連結查看即時行情";
-  txfDay.textContent=txfNight.textContent=txfChange.textContent=txfContract.textContent="--";
+  txfDay.textContent=txfNight.textContent=txfChange.textContent=txfOfficial.textContent=txfContract.textContent="--";
  }
  nextEntryPreview();
 }
