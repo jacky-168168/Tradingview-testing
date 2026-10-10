@@ -324,7 +324,7 @@ def main():
                if selected.get("id") else {})}}
     hindsight=sorted(candidates,key=lambda x:x["periods"]["audit2026"]["netReturnPct"],reverse=True)
     author_target=3_658_915.39
-    summary={"version":"G_COMPOUND_MONTHLY_WALKFORWARD_V3",
+    summary={"version":"G_COMPOUND_WALK_FORWARD_MONTHLY_V3",
         "createdAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(),
         "dates":{"start":START,"end":END,"testStart":EVAL_START},
         "marketDays":len(dates),"officialRiskDays":len(risk),
