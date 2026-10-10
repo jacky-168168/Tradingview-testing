@@ -183,6 +183,41 @@ jobs:
           }
           console.log('PASS explicit return home, simplified navigation, N shared ranking table, dated Top3/Top1, source provenance and browser JS syntax');
           JS
+      - name: Validate G and G Pro archived history with honest missing-day handling
+        run: |
+          node - <<'JS'
+          const fs=require('fs');
+          const base='tw-stock-dashboard/docs/';
+          const html=fs.readFileSync(base+'history.html','utf8');
+          const pos=html.lastIndexOf('<script>'),end=html.lastIndexOf('</script>');
+          if(pos<0||end<=pos)throw new Error('Historical selection JS missing');
+          new Function(html.slice(pos+8,end));
+          for(const model of ['G','GPro','D','F','F2','A']){
+            if(!html.includes('id="'+model+'"'))throw new Error('Missing history tab '+model);
+          }
+          if(!html.includes('hasModel(DATA,MODEL)')||!html.includes('當日未建立此模型的歷史快照'))throw new Error('Archive must distinguish not collected from zero candidates');
+          if(!html.includes('href="./index.html"'))throw new Error('History must have return homepage');
+          const index=JSON.parse(fs.readFileSync(base+'data/daily/index.json','utf8'));
+          if(!Array.isArray(index)||!index.length)throw new Error('Daily historical snapshot index missing');
+          let witnessedG=0,witnessedGPro=0;
+          for(const day of index){
+            const file=base+'data/daily/'+day.date+'.json';
+            if(!fs.existsSync(file))throw new Error('Missing historical daily snapshot '+day.date);
+            const obj=JSON.parse(fs.readFileSync(file,'utf8'));
+            if(obj.dataDate!==day.date)throw new Error('Date mismatch '+day.date);
+            if(!obj.models)throw new Error('Historical model object missing '+day.date);
+            if(Object.prototype.hasOwnProperty.call(obj.models,'G')){
+              witnessedG++;
+              if(!Array.isArray(obj.models.G)||obj.models.G.length!==day.gCount)throw new Error('Stored G count mismatch '+day.date);
+            }else if(day.gCount!=null)throw new Error('G count present but G data absent '+day.date);
+            if(Object.prototype.hasOwnProperty.call(obj.models,'G Pro')){
+              witnessedGPro++;
+              if(!Array.isArray(obj.models['G Pro'])||obj.models['G Pro'].length!==day.gProCount)throw new Error('Stored G Pro count mismatch '+day.date);
+            }else if(day.gProCount!=null)throw new Error('G Pro count present but G Pro model absent '+day.date);
+          }
+          if(!witnessedG||!witnessedGPro)throw new Error('No genuine G and G Pro archived data found');
+          console.log('PASS G and G Pro historical snapshots and integrity; days G='+witnessedG+', G Pro='+witnessedGPro);
+          JS
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
