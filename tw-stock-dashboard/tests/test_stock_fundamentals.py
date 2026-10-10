@@ -25,7 +25,7 @@ class FundamentalStockProfileTests(unittest.TestCase):
         p=a.profile("上市","2330","2026-08-21",200)
         self.assertEqual(p["epsFiscal"],"2026Q1")
         self.assertEqual(p["revenueFiscal"],"2026-07")
-        self.assertIsNone(p["epsTurnaround"] if p["epsTurnaround"] is False else "unexpected")
+        self.assertFalse(p["epsTurnaround"])
         p=a.profile("上市","2330","2026-09-15",200)
         self.assertEqual(p["revenueFiscal"],"2026-07")
         self.assertEqual(p["epsFiscal"],"2026Q2")
