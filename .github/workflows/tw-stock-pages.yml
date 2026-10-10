@@ -169,7 +169,9 @@ jobs:
           if(!h.includes('href="./index.html"')||!h.includes('返回主頁'))throw new Error('Missing visible return-home link');
           if(h.includes('id="nRows"'))throw new Error('Old duplicate N ranking table unexpectedly returned');
           const home=fs.readFileSync('tw-stock-dashboard/docs/index.html','utf8');
-          if(!home.includes('href="./selections.html">📋 選股排行</a>')||!home.includes('href="./selections.html#N"'))throw new Error('Home navigation lacks simplified stock ranking or N deep link');
+          if(!home.includes('href="./selections.html">📋 選股排行</a>'))throw new Error('Home navigation lacks stock ranking');
+          if(home.includes('href="./selections.html#N"'))throw new Error('Duplicate N button must not appear on main homepage');
+          if(!h.includes('id="tabN"'))throw new Error('N selection tab must remain available on ranking page');
           new Function(js);
           if(!js.includes('function renderNTable')||!js.includes('toggleNView(true)')||!js.includes('N_TABLE_HEAD')||!js.includes('N_ARCHIVE.version!==N_SUMMARY.version'))throw new Error('N missing integrated as-of-date verified ranking renderer');
           if(!js.includes('location.hash.slice(1)'))throw new Error('N deep link cannot activate strategy tab');
