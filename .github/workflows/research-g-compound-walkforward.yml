@@ -1,0 +1,104 @@
+name: G Compound V3 Monthly Recursive Walk-Forward Top1
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/research_g_compound_walkforward.py'
+      - 'tw-stock-dashboard/tests/test_g_compound_walkforward.py'
+      - '.github/workflows/research-g-compound-walkforward.yml'
+permissions:
+  contents: write
+concurrency:
+  group: g-compound-walkforward-v3
+  cancel-in-progress: false
+jobs:
+  historical_walkforward:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore per-stock historical OHLC caches
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install pinned ML and existing research packages
+        run: |
+          pip install -r tw-stock-dashboard/requirements.txt
+          pip install scikit-learn==1.7.2 beautifulsoup4
+      - name: Compile ML engine and test strict maturation / no lookahead
+        run: |
+          python -m py_compile tw-stock-dashboard/src/research_g_compound_walkforward.py
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_g_compound_walkforward.py' -v
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_g_compound_3y.py' -v
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_g_compound_v2_3y.py' -v
+      - name: Train recursively by month and audit Top1 cash-trading 2025 to 2026
+        working-directory: tw-stock-dashboard
+        run: python -u src/research_g_compound_walkforward.py
+      - name: Verify model-cutoff, original G parity, split separation, cash and signal integrity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('tw-stock-dashboard/docs/data/research/g_compound_walkforward_3y')
+          s=json.loads((p/'summary.json').read_text(encoding='utf-8'))
+          t=json.loads((p/'trades.json').read_text(encoding='utf-8'))
+          e=json.loads((p/'equity.json').read_text(encoding='utf-8'))
+          q=json.loads((p/'picks.json').read_text(encoding='utf-8'))
+          assert s['officialRiskDays']==728 and s['marketDays']==728
+          assert s['GUnmodifiedParityVerified'] is True and s['stockDataErrors']==0
+          assert s['variantCount']==16 and len(s['allCandidateModels'])==16
+          assert len(s['monthlyModelTrainingAudit'])==8
+          assert len(t['models'])>=2 and len(e['models'])==len(t['models'])
+          assert s['dates']['testStart']=='2025-01-01'
+          assert s['selectedBy2025Only']['status'] in ('no_model_passed_validation_gate','selected_by_2025_only')
+          for name,months in s['monthlyModelTrainingAudit'].items():
+              assert len(months)>=20
+              for x in months:
+                  assert x['latestMaturedLabel']<x['fitAsOfFirstTradeDate'],(name,x)
+                  assert x['latestTrainingSignal']<x['fitAsOfFirstTradeDate'],(name,x)
+                  assert x['trainingSamples']>=180
+          for item in s['allCandidateModels']:
+              for part,m in item['periods'].items():
+                  assert m['wins']+m['losses']==m['closedTrades']
+                  assert m['filledBuys']>=m['closedTrades']
+                  assert m['capitalEnd']>0 and -100<m['maxDDPct']<=0
+          for model,folds in t['models'].items():
+              for fold,entry in folds.items():
+                  curve=e['models'][model][fold]
+                  assert abs(curve[-1]['equity']-entry['metrics']['capitalEnd'])<.02
+                  assert entry['metrics']['closedTrades']==len(entry['closedTickets'])
+          assert q['version']==s['version']==t['version']==e['version']
+          print('WALK_FORWARD_V3_AUDIT_PASS',json.dumps({'marketDays':728,'testModels':16,
+            'monthlyModels':len(s['monthlyModelTrainingAudit']),
+            'selection':s['selectedBy2025Only']['status']},ensure_ascii=False))
+          PY
+      - name: Upload reproducible walk-forward audit results
+        uses: actions/upload-artifact@v4
+        with:
+          name: G-Compound-V3-Monthly-Top1-WalkForward-2023-2026
+          path: tw-stock-dashboard/docs/data/research/g_compound_walkforward_3y/
+          retention-days: 90
+      - name: Publish verified no-lookahead Top1 experiment to main
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_compound_walkforward_3y/
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish recursive matured-label Top1 walk-forward 2025-26 results'
+            for i in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
