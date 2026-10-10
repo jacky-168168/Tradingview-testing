@@ -113,7 +113,7 @@ jobs:
           earlier=int(old.get("riskScoredDays",0));latest=int(now.get("riskScoredDays",0))
           print(f"CONTINUATION_CHECK persisted_before={earlier}, persisted_after={latest}, total={now['tradingDays']}")
           if latest>earlier and not now.get("complete"):
-              cmd=["gh","api","-X","POST","repos/jacky-168168/Tradingview-testing/actions/workflows/collect-market-risk-history.yml/dispatches","-f","ref=main","-F","inputs[max_days]=60"]
+              cmd=["gh","api","-X","POST","repos/jacky-168168/Tradingview-testing/actions/workflows/collect-market-risk-history.yml/dispatches","-f","ref=main","-f","inputs[max_days]=60"]
               subprocess.run(cmd,check=True)
               print("NEXT_BATCH_QUEUED; no stale rerun")
           elif latest<=earlier:
