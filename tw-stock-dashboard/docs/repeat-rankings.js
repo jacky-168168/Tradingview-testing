@@ -26,24 +26,27 @@ function renderRepeatPanel(model,data){
   rows.innerHTML='<tr><td colspan="16" class="repeat-empty">歷史重複上榜資料讀取中／尚未可用</td></tr>';
   size.textContent="—";toggle.style.display="none";return;
  }
- if(REPEAT_DATA.version!=="TWO_CALENDAR_MONTHS_FROZEN_TOP20_V1"){
+ if(!["TWO_CALENDAR_MONTHS_FROZEN_TOP20_V1","TWO_CALENDAR_MONTHS_FROZEN_PLUS_RECONSTRUCTED_G_V2"].includes(REPEAT_DATA.version)){
   state.textContent="⚠ 重複上榜統計資料版本不符，請重新執行 GitHub 更新。";
   rows.innerHTML='<tr><td colspan="16" class="repeat-empty">歷史來源尚未通過驗證</td></tr>';
   coverage.textContent="版本不符";size.textContent="—";toggle.style.display="none";return;
  }
  var x=REPEAT_DATA.models&&REPEAT_DATA.models[model];
  if(!x){state.textContent="⚠ 無此選股模型的歷史統計。";size.textContent="—";rows.innerHTML="";toggle.style.display="none";return}
- var total=x.snapshotDays||0,repeated=x.stocks||[],uptodate=data&&data.dataDate===REPEAT_DATA.referenceDate;
- var earlier=x.firstSnapshot&&x.firstSnapshot>REPEAT_DATA.windowStart;
+ var total=x.totalObservedDays==null?(x.snapshotDays||0):x.totalObservedDays,repeated=x.stocks||[],uptodate=data&&data.dataDate===REPEAT_DATA.referenceDate;
+ var rebuilt=x.reconstructedDays||0,frozen=x.snapshotDays||0,usingRebuild=rebuilt>0;
+ var earlier=(x.firstCovered||x.firstSnapshot)&&((x.firstCovered||x.firstSnapshot)>REPEAT_DATA.windowStart);
  coverage.textContent="統計區間 "+REPEAT_DATA.windowStart+" ～ "+REPEAT_DATA.referenceDate+
-  "｜"+model+" 已保存 "+total+" 個交易日｜資料起點 "+(x.firstSnapshot||"尚未建立");
+  "｜"+model+" 正式封存 "+frozen+" 日"+(usingRebuild?"＋歷史回推 "+rebuilt+" 日":"")+
+  "｜最早可用 "+(x.firstCovered||x.firstSnapshot||"尚未建立");
  size.textContent=repeated.length+" 檔重複上榜";
  state.className="repeat-status"+(total<2||earlier||!uptodate?" repeat-attention":"");
- if(total<2)state.textContent="⚠ "+model+" 目前只保存 "+total+" 個正式榜單日期，還不能判斷兩個月內哪些股票重複上榜；資料會從每日更新後持續累積。";
- else if(!repeated.length)state.textContent="目前在已保存的 "+total+" 個榜單日期內，尚無同一股票出現至少2次。"+
+ if(total<2)state.textContent="⚠ "+model+" 目前只覆蓋 "+total+" 個榜單日期（正式 "+frozen+"、回推 "+rebuilt+"），不足以確認重複入選。";
+ else if(!repeated.length)state.textContent="目前在已涵蓋的 "+total+" 個榜單日期內，尚無同一股票出現至少2次。"+
    (earlier?" 資料尚未覆蓋完整兩個月，不能視為完整回溯結果。":"");
- else state.textContent="依「同一選股模型＋相同股票代號／市場」統計不同日期的 Top 榜單，至少2次才列出；"+
+ else state.textContent="同一股票在不同交易日的 Top20 上榜≥2次；"+
   (earlier?"目前歷史不足整整兩個月，以下是已保存日期內的實際次數。":"近兩個月內每個已保存日期只計1次。");
+ if(usingRebuild)state.textContent+=" ⚠ 內含按原G條件逐日回推的研究榜單，不是當時網站實際公布的歷史名單；原有正式快照優先，並有上市存活者與歷史K線版本差異。";
  if(!uptodate&&data)state.textContent+=" ⚠ 最新選股日期與此統計檔案不同，請等待同步更新（未混算）。";
  if(!repeated.length){
   rows.innerHTML='<tr><td colspan="16" class="repeat-empty">'+(total<2?"歷史日期不足，暫無可驗證的重複上榜股票。":"沒有至少2次上榜的標的。")+'</td></tr>';
@@ -52,9 +55,10 @@ function renderRepeatPanel(model,data){
  var all=REPEAT_EXPANDED?repeated:repeated.slice(0,15);
  rows.innerHTML=all.map(function(s,i){
   var score=s.total??s.gScore??null;
+  var evidence=(s.reconstructedCount||0)>0?' <span class="repeat-backfilled" title="含 '+s.reconstructedCount+' 次歷史行情回推，非原始正式封存">含回推</span>':"";
   return '<tr>'+
    '<td><b>'+(i+1)+'</b></td>'+
-   '<td class="stock">'+repeatTradingview(s)+(s.onReferenceDate?' <span class="repeat-live">最新在榜</span>':'')+'</td>'+
+   '<td class="stock">'+repeatTradingview(s)+(s.onReferenceDate?' <span class="repeat-live">最新在榜</span>':'')+evidence+'</td>'+
    '<td>'+repeatSafe(s.market||"—")+'</td>'+
    '<td class="theme" title="'+repeatSafe(s.theme||s.subIndustry||"")+'">'+repeatSafe(s.theme||s.subIndustry||"—")+'</td>'+
    '<td class="repeat-frequency"><strong>'+repeatSafe(s.count)+'</strong> 次</td>'+
@@ -81,7 +85,7 @@ async function refreshRepeatArchive(){
    var r=await fetch("./data/rolling-repeats.json?t="+Date.now(),{cache:"no-store"});
    if(!r.ok)throw Error("HTTP "+r.status+"，請等待 GitHub 更新生成近兩個月統計");
    var fresh=await r.json();
-   if(!fresh||fresh.version!=="TWO_CALENDAR_MONTHS_FROZEN_TOP20_V1"||
+   if(!fresh||!["TWO_CALENDAR_MONTHS_FROZEN_TOP20_V1","TWO_CALENDAR_MONTHS_FROZEN_PLUS_RECONSTRUCTED_G_V2"].includes(fresh.version)||
        fresh.calendarWindowMonths!==2||!fresh.models||!fresh.savedDates||!fresh.referenceDate)
        throw Error("歷史統計檔案尚未通過完整性檢查");
    REPEAT_DATA=fresh;REPEAT_LOAD_ERROR="";
