@@ -43,4 +43,24 @@ jobs:
                           i=r.text.find(txt);print('HTML_CTX',txt,r.text[max(0,i-350):i+350].replace('\\n',' ') if i>=0 else 'not found')
 
               except Exception as e: print(verb,market,'ERROR',type(e).__name__,str(e)[:200])
+          print("DATE WALK")
+          for dt in ['2026/10/07','2026/10/08','2026/10/09','2026/10/10','2026/10/12']:
+              p=dict(params);p.update({'marketCode':'1','MarketCode':'1','queryDate':dt})
+              try:
+                  r=requests.get(url,params=p,timeout=25);soup=BeautifulSoup(r.text,'html.parser')
+                  h=' '.join(soup.get_text(' ',strip=True).split())
+                  tbody=soup.select_one('table.table_f')
+                  tx=[]
+                  if tbody:
+                      for tr in tbody.select('tr'):
+                          cells=[q.get_text(' ',strip=True) for q in tr.select('td')]
+                          if cells and cells[0]=='TX':tx.append(cells[:11])
+                  print('NIGHT_FOR',dt,'tx',tx[:2],'has_48705',('48705' in r.text),'info',h[-260:])
+              except Exception as e:print('FAIL NIGHT_FOR',dt,str(e))
+          print("OPEN API LAST DATES")
+          try:
+              api=requests.get('https://openapi.taifex.com.tw/v1/DailyMarketReportFut',timeout=40).json()
+              matches=[{'Date':v.get('Date'),'TradingSession':v.get('TradingSession'),'Contract':v.get('Contract'),'Month':v.get('ContractMonth(Week)'),'Last':v.get('Last'),'Volume':v.get('Volume')} for v in api if v.get('Contract')=='TX' and v.get('ContractMonth(Week)')=='202610' and v.get('Date','')>='20261007']
+              print('OPEN_API_TX',matches[:25])
+          except Exception as e: print('OPEN_API_FAIL',e)
           PY
