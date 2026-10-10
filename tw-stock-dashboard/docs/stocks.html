@@ -28,7 +28,7 @@ tr[data-code]{cursor:pointer}tr[data-code]:hover,tr.selected{background:#eff6ff}
 </head>
 <body>
 <div class="wrap">
-<div class="header"><div><h1>🔬 台股個股量化體檢</h1><div class="sub">全市場動能 × MOPS 營收與 EPS 成長 × TTM 本益比 × 原選股模型交集</div></div>
+<div class="header"><div><h1>🔬 台股個股量化體檢</h1><div class="sub">全市場動能 × EPS/營收成長 × ROE × 官方 PB 歷史估值 × 模型交集</div></div>
 <div class="actions"><a class="btn primary" href="./index.html">🏠 市場總覽</a><a class="btn" href="./selections.html">📋 選股排行</a><a class="btn" href="./backtest.html">📈 回測</a><a class="btn" href="./bubbles.html">🫧 資金泡泡</a><button id="reload" class="btn" type="button">↻ 重新載入</button></div></div>
 <div id="status" class="status" role="status">載入自建市場資料中…</div>
 <div class="kpis">
@@ -39,18 +39,18 @@ tr[data-code]{cursor:pointer}tr[data-code]:hover,tr.selected{background:#eff6ff}
 </div>
 <div class="card bar">
 <input id="search" type="search" placeholder="搜尋股票代號或名稱，例如 2330、台積電" aria-label="搜尋股票">
-<select id="sort" aria-label="排列方式"><option value="momentumScore">綜合動能分位 ↓</option><option value="financialGrowthScore">營收＋EPS 成長分位 ↓</option><option value="revenueYoYPct">月營收 YoY ↓</option><option value="epsYtdYoYPct">累計 EPS YoY ↓</option><option value="peTTM">TTM 本益比 ↑（低到高）</option><option value="peHistoryPercentile120D">近120日 PE 歷史分位 ↑</option><option value="ret20">20日漲幅 ↓</option><option value="rs20">RS20 ↓</option><option value="lowVolP">低波動分位 ↓</option><option value="turnoverB">成交額 ↓</option><option value="signals">訊號數 ↓</option></select>
+<select id="sort" aria-label="排列方式"><option value="momentumScore">綜合動能分位 ↓</option><option value="financialGrowthScore">營收＋EPS 成長分位 ↓</option><option value="revenueYoYPct">月營收 YoY ↓</option><option value="epsYtdYoYPct">累計 EPS YoY ↓</option><option value="roePct">ROE ↓（高到低）</option><option value="pbRatio">PB ↑（低到高）</option><option value="pbHistoryPercentile3Y">PB 三年分位 ↑</option><option value="peTTM">TTM 本益比 ↑（低到高）</option><option value="peHistoryPercentile120D">近120日 PE 歷史分位 ↑</option><option value="ret20">20日漲幅 ↓</option><option value="rs20">RS20 ↓</option><option value="lowVolP">低波動分位 ↓</option><option value="turnoverB">成交額 ↓</option><option value="signals">訊號數 ↓</option></select>
 <select id="model" aria-label="選股模型"><option value="all">全部股票</option><option value="selected">任何模型入選</option><option value="G">G 強勢股</option><option value="G Pro">G Pro</option><option value="D">D 技術強勢</option><option value="F">F 固定濾網</option><option value="F2">F2 動態濾網</option><option value="A">A 多因子</option></select>
-<select id="industry" aria-label="產業分類"><option value="">全部產業</option></select><select id="fundFilter" aria-label="財務成長篩選"><option value="all">全部財報狀態</option><option value="available">有財報數據</option><option value="growth">營收 YoY 與 EPS YoY 都正成長</option><option value="profitable">近四季 EPS 為正</option></select>
+<select id="industry" aria-label="產業分類"><option value="">全部產業</option></select><select id="fundFilter" aria-label="財務成長篩選"><option value="all">全部財報狀態</option><option value="available">有財報數據</option><option value="growth">營收 YoY 與 EPS YoY 都正成長</option><option value="profitable">近四季 EPS 為正</option><option value="quality">ROE ≥ 15% 且 PB 分位 ≤ 50%</option></select>
 <button id="watchFilter" class="btn" type="button" aria-pressed="false">☆ 只看觀察清單</button>
 </div>
 <div class="content">
 <div class="card"><div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px"><strong>全市場排名</strong><span class="sub" id="matchCount">--</span></div>
-<div class="scroll"><table><thead><tr><th>觀察</th><th>股票</th><th>產業</th><th>收盤</th><th>20D</th><th>RS20</th><th>動能分位</th><th>營收 YoY</th><th>EPS YoY</th><th>TTM PE</th><th>低波動</th><th>訊號</th><th>模型</th></tr></thead><tbody id="rows"><tr><td colspan="13">載入中…</td></tr></tbody></table></div>
+<div class="scroll"><table><thead><tr><th>觀察</th><th>股票</th><th>產業</th><th>收盤</th><th>20D</th><th>RS20</th><th>動能分位</th><th>營收 YoY</th><th>EPS YoY</th><th>TTM PE</th><th>ROE</th><th>PB</th><th>PB 3Y分位</th><th>低波動</th><th>訊號</th><th>模型</th></tr></thead><tbody id="rows"><tr><td colspan="16">載入中…</td></tr></tbody></table></div>
 <div style="padding:12px;text-align:center"><button id="more" class="btn" type="button" hidden>載入更多股票</button></div></div>
 <aside class="card detail" id="detail"><h2>個股體檢</h2><div class="placeholder">點選左側股票，或在上方輸入代號搜尋。所有分數都由你 GitHub 自有的資料產生，不使用 FinLab 的專有資料。</div></aside>
 </div>
-<div class="footer">此頁為獨立研究工具，和 FinLab 無合作關係；MOPS 歷史資料為修訂版，公布日使用保守日期代理。ROE／股利及未驗證的交易勝率維持空值；資料非即時，不構成投資建議。</div>
+<div class="footer">此頁為獨立研究工具，和 FinLab 無合作關係；MOPS 歷史資料為修訂版，公布日使用保守日期代理。ROE/PB 只有資料來源、可用日及會計口徑通過檢驗才顯示；缺值不代表零，未驗證交易勝率維持空值；資料非即時，不構成投資建議。</div>
 </div>
 <script src="./stock-diagnostics.js"></script>
 </body></html>
