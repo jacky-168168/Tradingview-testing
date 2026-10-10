@@ -10,7 +10,8 @@ assert.match(js,/document\.documentElement\.setAttribute\("data-tw-access"/);
 assert.match(js,/Same-origin/i.test(js) ? /Same-origin/i : /GitHub Pages 檔案仍可經由網址直接取得/);
 assert.match(js,/body>\*:not\(#tw-access-gate\)/);
 const pages=fs.readdirSync(base).filter(x=>x.endsWith(".html"));
-assert.equal(pages.length,9,"Expected all nine dashboard routes, including the new protected TXF backtest");
+assert(pages.length>=10,"Expected the protected dashboard and research routes");
+assert(pages.includes("selections.html"),"Dedicated stock selection page must be present");
 assert(pages.includes("txf-backtest.html"),"TXF 2m/5m research route must retain the same password gate");
 for(const p of pages){const html=fs.readFileSync(path.join(base,p),"utf8");const head=html.split(/<\/head>/i)[0];assert.match(head,/<script src="\.\/site-access\.js"><\/script>/,p+": early password gate is missing");assert.equal((html.match(/site-access\.js/g)||[]).length,1,p+": gate included more than once")}
 function init(expiry){
@@ -31,4 +32,4 @@ assert.equal(init(Date.now()-10).attrs["data-tw-access"],"locked");
 assert.equal(init(Date.now()+48*60*60*1000+10000).attrs["data-tw-access"],"locked");
 assert.equal(init(Date.now()+60*60*1000).attrs["data-tw-access"],"unlocked");
 assert.match(init(null).style.textContent,/tw-access-gate/);
-console.log("PASS: password gate syntax, nine routes including TXF 2m/5m, default lock and 48-hour expiration");
+console.log("PASS: password gate syntax, all routes including standalone rankings and TXF, default lock and 48-hour expiration");
