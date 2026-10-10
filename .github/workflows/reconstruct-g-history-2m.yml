@@ -1,0 +1,89 @@
+name: Reconstruct Prior G Default Top20 From Historical Sessions
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/reconstruct_g_history_2m.py'
+      - 'tw-stock-dashboard/tests/test_reconstruct_g_history_2m.py'
+      - '.github/workflows/reconstruct-g-history-2m.yml'
+permissions:
+  contents: write
+concurrency:
+  group: g-history-two-month-independent-reconstruction
+  cancel-in-progress: false
+jobs:
+  reconstruct:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Reuse historical all-Taiwan listed/OTC OHLC stock cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install historical scoring dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Test chronological G pocket replay and original archive parity
+        run: |
+          python -m py_compile tw-stock-dashboard/src/reconstruct_g_history_2m.py tw-stock-dashboard/src/repeated_rankings.py
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_reconstruct_g_history_2m.py' -v
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_repeated_rankings.py' -v
+      - name: Reconstruct all daily G Top20 since prior 2 months (warm up from January)
+        working-directory: tw-stock-dashboard
+        run: python -u src/reconstruct_g_history_2m.py
+      - name: Assert dating/source/old rank overlap without rewriting archived snapshots
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('tw-stock-dashboard/docs/data')
+          d=json.loads((root/'research/g_history_reconstruction_2m/history.json').read_text(encoding='utf-8'))
+          audit=json.loads((root/'research/g_history_reconstruction_2m/coverage.json').read_text(encoding='utf-8'))
+          x=audit['GParityAgainstRealFrozenReference']
+          live=json.loads((root/'latest.json').read_text(encoding='utf-8'))
+          assert d['version']==audit['version']=='G_LIVE_DOUBLE_PERSIST_HISTORICAL_RECONSTRUCTION_V1'
+          assert d['referenceDate']==live['dataDate']
+          assert d['dateCount']>=35 and len(d['days'])==d['dateCount']
+          assert x['intersection']>=12 and x['top3Intersection']>=1
+          assert audit['validSymbolPriceSeries']>=1200
+          assert all(len(z['stocks'])<=20 and z['dataDate']==k and z['source']=='reconstructed'
+             for k,z in d['days'].items())
+          assert any(z['stocks'] for z in d['days'].values())
+          assert all(all(r['dataOrigin']=='retrospectively_reconstructed_not_historical_snapshot'
+             and r['foreignToday'] is None and r['trustToday'] is None and r['sarText']=='歷史SAR未驗證'
+             for r in z['stocks']) for z in d['days'].values())
+          assert all(not k.startswith('2026-07') for k in d['days'])
+          print('G_HISTORICAL_DEFAULT_REBUILD_VALIDATED',json.dumps({'days':d['dateCount'],
+            'start':d['windowStart'],'end':d['referenceDate'],
+            'matchingFrozenGTop20':x['intersection'],'matchingTop3':x['top3Intersection']},ensure_ascii=False))
+          PY
+      - name: Upload reproducible two-month G default historical rank research
+        uses: actions/upload-artifact@v4
+        with:
+          name: G-default-prior-two-month-Top20-reconstructed-with-parity
+          path: tw-stock-dashboard/docs/data/research/g_history_reconstruction_2m/
+          retention-days: 90
+      - name: Publish separately labeled retrospective reconstruction (no daily rewrite)
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_history_reconstruction_2m/
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish retrospective 2-month original G Top20 with actual frozen-day overlap'
+            for i in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((i*8)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              if [ "$i" -eq 5 ]; then exit 1; fi
+              sleep $((i*8))
+            done
+          fi
