@@ -88,6 +88,7 @@ function renderNTable(){
  else nLearned.textContent=leaderDate+"｜"+chosen.code+" "+chosen.name+"｜模型預估淨報酬 "+P(chosen.predictedNetPct,2)+"｜候選 "+chosen.candidatesRanked+" 檔｜EPS 年增 "+P(chosen.epsYtdGrowthPct,1)+"，營收年增 "+P(chosen.revenueYoYPct,1)+"｜這是歷史研究結果，不是今日買進建議。";
 }
 function renderTable(){
+if(typeof renderRepeatPanel==="function")renderRepeatPanel(MODEL,DATA);
 var xs=DATA&&DATA.models&&DATA.models[MODEL]||[],isG=(MODEL==="G"||MODEL==="G Pro"),gs=DATA&&DATA.gSelection||null;
 if(MODEL==="N"){
  tabG.classList.remove("on");tabGPro.classList.remove("on");tabD.classList.remove("on");tabF.classList.remove("on");tabF2.classList.remove("on");tabA.classList.remove("on");tabN.classList.add("on");
@@ -114,7 +115,7 @@ return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+tvStockLink(x)+'</td><t
 }).join("");applyTableMode()
 }
 function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);meta.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),isStale=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5);staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent="⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
-async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderTable();renderMeta()}catch(e){meta.textContent="載入失敗："+e.message;tb.innerHTML='<tr><td colspan="18" style="text-align:center;padding:40px;color:#dc2626">資料載入失敗，請稍後重新載入</td></tr>'}finally{loading.classList.remove("show")}}
+async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderTable();renderMeta();if(typeof refreshRepeatArchive==="function")refreshRepeatArchive()}catch(e){meta.textContent="載入失敗："+e.message;tb.innerHTML='<tr><td colspan="18" style="text-align:center;padding:40px;color:#dc2626">資料載入失敗，請稍後重新載入</td></tr>'}finally{loading.classList.remove("show")}}
 function switchRanking(name){MODEL=name;history.replaceState(null,"",location.pathname+location.search+"#"+encodeURIComponent(name));renderTable()}
 layoutToggle.onclick=function(){TABLE_COMPACT=!TABLE_COMPACT;if(MODEL!=="N")applyTableMode()};
 tabG.onclick=function(){switchRanking("G")};tabGPro.onclick=function(){switchRanking("G Pro")};
