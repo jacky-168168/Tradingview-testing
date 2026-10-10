@@ -96,11 +96,14 @@ def main():
         raise RuntimeError("Risk score official history parity mismatch")
     risk={x["date"]:x for x in raw};positions={d:i for i,d in enumerate(dates)}
     picks,rankAudit=build_ad(dates)
-    picks["G"],gprices,gAudit=make_g(dates,idx,universe,histories)
+    genuineG,gprices,gAudit=make_g(dates,idx,universe,histories)
     original=read(DATA_DIR/"research"/"g_regime_3y"/"trades.json")
     frozen=next(x for x in original["models"] if x["model"]=="SPOT_0" and x["horizon"]==20)
-    drift=[x["date"] for x in frozen["trades"] if [s["code"] for s in picks["G"][x["date"]]]!=x["codes"]]
+    drift=[x["date"] for x in frozen["trades"] if [s["code"] for s in genuineG[x["date"]]]!=x["codes"]]
     if drift:raise RuntimeError("G reconstruction differs from validated original G: "+str(drift[:5]))
+    # Fair 3-name strategy comparison: do not let G invest in only one or two stocks
+    # while A and D are required to supply the full ranked Top3.
+    picks["G"]={d:rows if len(rows)==3 else [] for d,rows in genuineG.items()}
     # Daily mark every selected stock, never assume an unpriced stock generated zero return.
     symbols={x["sym"] for model in picks.values() for rows in model.values() for x in rows}
     prices=dict(gprices);extras=symbols-set(prices)
