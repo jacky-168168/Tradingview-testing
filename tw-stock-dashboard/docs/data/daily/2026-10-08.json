@@ -2893,7 +2893,8 @@
         "theme": "IC封裝測試、電阻器材料(氧化鋁陶瓷基板、導電漿墨)、電容器材料(如電蝕／化成鋁箔、介面瓷粉)、電感器材料(如鐵氧體、導電漿墨)、封裝/模組、材料",
         "subIndustry": "半導體、被動元件、LED照明產業、太陽能產業"
       }
-    ]
+    ],
+    "G Pro": []
   },
   "gSelection": {
     "variant": "G_DOUBLE_PERSIST",
@@ -3212,13 +3213,15 @@
     "D": 442,
     "F": 0,
     "F2": 0,
-    "G": 63
+    "G": 63,
+    "G Pro": 0
   },
   "strictCandidateCounts": {
     "D": 7,
     "F": 0,
     "F2": 0,
-    "G": 20
+    "G": 20,
+    "G Pro": 0
   },
   "phase": "github-python-v8-g-default",
   "notes": [
@@ -3230,5 +3233,26 @@
     "正式選股 D/F/F2 固定保留 Top20 候選：嚴格通過 D 的股票優先，不足 20 才用高分且流動性合格的候補補齊；候補會明確標示。回測實際進場仍只使用嚴格通過 D 的 Rank1~3。",
     "G 預設模型：G_DOUBLE_PERSIST，先使用全市場強勢候選，再要求 3D/18D 前一完整 K 棒高點雙突破，最後按過去10交易日的原 G 雙突破 Top20 入選紀錄加分。首次上線歷史資料未滿10天時仍正常選股但不填補假歷史。",
     "G 今日選股只根據完整更新的日 K 資料，盤中只更新選中股票的最新價格，不會把回測歷史 Top20 偽裝成今日選股。"
-  ]
+  ],
+  "gProSelection": {
+    "version": "G_PRO_FROZEN_G_TOP3_STRICT_V1",
+    "base": "G original Top3 only",
+    "pass": 0,
+    "evaluated": 3,
+    "rules": {
+      "ret20PercentileMin": 75,
+      "ma20SlopePercentileMin": 80,
+      "turnoverPercentileMin": 75,
+      "prior10DaysOriginalGTop20Min": 2,
+      "relativeVolumeVsPrevious20Min": 1.3,
+      "closeAboveEma20": true,
+      "ema20AboveEma60": true,
+      "maxCloseToEma20": 1.15
+    },
+    "rejections": {
+      "persistence": 3
+    },
+    "dataDate": "2026-10-08",
+    "backfilledWithoutRiskRecompute": true
+  }
 }
