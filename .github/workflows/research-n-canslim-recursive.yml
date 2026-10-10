@@ -1,0 +1,115 @@
+name: N CANSLIM Recursive Top1 Growth Momentum Backtest
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/docs/data/research/n_canslim/fundamental_coverage.json'
+      - 'tw-stock-dashboard/docs/data/research/n_canslim/monthly_revenue.json'
+      - 'tw-stock-dashboard/docs/data/research/n_canslim/eps_ytd.json'
+permissions:
+  contents: write
+concurrency:
+  group: n-canslim-recursive-backtest
+  cancel-in-progress: false
+jobs:
+  n_backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore 2023-2026 Yahoo market-price history
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install features and ML libraries
+        run: |
+          pip install -r tw-stock-dashboard/requirements.txt
+          pip install scikit-learn==1.7.2 beautifulsoup4==4.14.2
+      - name: Validate release timing, factor screening and recursive no-future labels
+        run: |
+          python -m py_compile tw-stock-dashboard/src/n_fundamental_archive.py tw-stock-dashboard/src/n_canslim_features.py tw-stock-dashboard/src/research_n_canslim_recursive.py
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_n_canslim_fundamental.py' -v
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_n_canslim_recursive.py' -v
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_g_compound_walkforward.py' -v
+      - name: Rebuild N daily factor universe and monthly matured-label recursion
+        working-directory: tw-stock-dashboard
+        run: python -u src/research_n_canslim_recursive.py
+      - name: Audit EPS/revenue as-of date, N Top1 transaction ledger, risk and 0050
+        run: |
+          python - <<'PY'
+          import json,math
+          from pathlib import Path
+          p=Path('tw-stock-dashboard/docs/data/research/n_canslim')
+          s=json.loads((p/'summary.json').read_text(encoding='utf-8'))
+          t=json.loads((p/'trades.json').read_text(encoding='utf-8'))
+          e=json.loads((p/'equity.json').read_text(encoding='utf-8'))
+          q=json.loads((p/'picks.json').read_text(encoding='utf-8'))
+          assert s['version']==t['version']==e['version']==q['version']
+          assert s['marketDays']==728 and s['officialRiskDays']==728
+          assert s['modelCount']==16 and len(s['models'])==16
+          assert not s['stockPriceErrors'] and s['fundamentals']['rowsRevenue']>20000
+          assert s['signal']['signalDays']>90
+          assert len(s['trainingAudit'])==8
+          assert s['selected']['status'] in ('selected_by_2025_only','none_passed_validation_2025')
+          assert len(s['benchmark0050'])==4
+          for fold,x in s['benchmark0050'].items():
+              assert x['dailySamples']>=70 and x['finalTWD']>0
+              assert math.isfinite(x['netReturnPct']) and math.isfinite(x['maxDrawdownPct'])
+          for model,months in s['trainingAudit'].items():
+              assert len(months)>=20
+              for m in months:
+                  x=m['latestUsedLabelExit']
+                  if x is not None:assert x<m['firstTradeDate'],(model,m)
+          for rows in q['modelDailyTop1'].values():
+              for day,stocks in rows.items():
+                  for row in stocks:
+                      assert row['epsAvailableFrom']<=day and row['revAvailableFrom']<=day,(day,row)
+          for model in s['models']:
+              for fold,z in model['periods'].items():
+                  assert z['wins']+z['losses']==z['closedTrades']
+                  assert z['closedTrades']<=z['filledBuys']
+                  assert z['capitalEnd']>0 and -100<z['maxDDPct']<=0
+                  assert z['metrics']['finalTWD']==z['capitalEnd']
+          for key,folds in t['models'].items():
+              for period,record in folds.items():
+                  curve=e['models'][key][period]
+                  assert len(record['trades'])==record['metrics']['closedTrades']
+                  assert curve and abs(curve[-1]['equity']-record['metrics']['capitalEnd'])<.02
+          print('N_CANSLIM_AUDIT_OK',json.dumps({'marketDays':728,
+            'NModels':16,'candidateDays':s['signal']['signalDays'],
+            '2025Selected':s['selected']['status'],'benchmark':'0050.TW'},ensure_ascii=False))
+          PY
+      - name: Upload reproducible N full-market fundamental/price backtest
+        uses: actions/upload-artifact@v4
+        with:
+          name: N-CANSLIM-Recursive-Top1-2023-2026
+          path: |
+            tw-stock-dashboard/docs/data/research/n_canslim/summary.json
+            tw-stock-dashboard/docs/data/research/n_canslim/picks.json
+            tw-stock-dashboard/docs/data/research/n_canslim/trades.json
+            tw-stock-dashboard/docs/data/research/n_canslim/equity.json
+          retention-days: 90
+      - name: Publish verified N factor recursion, 0050 benchmark and OOS results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/n_canslim/{summary,picks,trades,equity}.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish N CANSLIM fundamental growth Top1 monthly recursive and 0050 audit'
+            for i in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
