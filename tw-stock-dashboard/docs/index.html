@@ -52,7 +52,7 @@ function futDisplay(v,digits){const x=Number(v);return v!=null&&Number.isFinite(
 function sameContractTX(f){
  const a=f&&f.day,b=f&&f.night;
  const day=String(f?.asOfDate||"").replace(/-/g,"");
- if(f?.quality!=="paired-day-night"||!a||!b||!/^20\\d{6}$/.test(day))return null;
+ if(f?.quality!=="paired-day-night"||!a||!b||!/^20\d{6}$/.test(day))return null;
  if(a.date!==day||b.date!==day||a.contract!==f.contract||b.contract!==f.contract)return null;
  const dayClose=Number(a.close),nightClose=Number(b.close);
  if(!Number.isFinite(dayClose)||dayClose<=0||!Number.isFinite(nightClose)||nightClose<=0)return null;
@@ -74,7 +74,7 @@ async function loadFutures(){
   const res=await fetch("./data/futures/latest.json?v="+Date.now(),{cache:"no-store"});
   if(!res.ok)throw Error("期交所夜盤資料尚未建立");
   const d=await res.json();
-  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(d.asOfDate)||!/^20\\d{4}$/.test(d.contract))throw Error("日期或合約欄位不完整");
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d.asOfDate)||!/^20\d{4}$/.test(d.contract))throw Error("日期或合約欄位不完整");
   FUTURES=d;
   const cmp=sameContractTX(d);
   txfDay.textContent=futDisplay(d.day?.close);
