@@ -41,7 +41,7 @@ jobs:
           node - <<'JS'
           const fs=require('fs');
           const html=fs.readFileSync('tw-stock-dashboard/docs/index.html','utf8');
-          const blocks=[...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/g)];
+          const blocks=[...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)];
           const inline=blocks.map(b=>b[1]).filter(Boolean);
           if(!inline.length)throw Error('No inline script found');
           inline.forEach(code=>new Function(code));
