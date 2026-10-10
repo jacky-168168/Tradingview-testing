@@ -1,0 +1,54 @@
+name: G Compound Highlight Audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/scripts/summarize_g_compound.py'
+      - '.github/workflows/g-compound-highlights.yml'
+permissions:
+  contents: write
+concurrency:
+  group: g-compound-highlights
+  cancel-in-progress: false
+jobs:
+  highlights:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify frozen G Compound complete archive and prepare compact findings
+        run: python -u tw-stock-dashboard/scripts/summarize_g_compound.py
+      - name: Verify publication-ready compact comparison
+        run: |
+          python - <<'PY'
+          import json,csv
+          from pathlib import Path
+          p=Path('tw-stock-dashboard/docs/data/research/g_compound_3y')
+          r=json.loads((p/'highlights.json').read_text(encoding='utf-8'))
+          assert r['riskScoreCoverage']==728 and r['modelCount']==1728
+          assert r['authorWindow']==['2026-04-15','2026-10-02'] or r['authorWindow']==('2026-04-15','2026-10-02')
+          assert len(r['standardBaselines'])==9
+          assert r['selectedTrainValidationOnly'] is not None
+          assert r['authorAchievementCounts']['casesTested']==1728
+          assert len(list(csv.DictReader((p/'comparison.csv').open(encoding='utf-8-sig'))))==1728
+          print('VERIFIED COMPACT G COMPOUND FINDINGS',r['selectedTrainValidationOnly']['id'])
+          PY
+      - name: Publish compact findings and 1728 case CSV
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_compound_3y/highlights.json tw-stock-dashboard/docs/data/research/g_compound_3y/comparison.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish author-comparison G Compound validated highlights and CSV'
+            for i in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((i*6)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*6))
+            done
+            exit 1
+          fi
