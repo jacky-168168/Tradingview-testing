@@ -34,7 +34,7 @@ GATES=("SCORE50","SCORE60","SCORE70","SCORE60_NOT_STRONG_TOP")
 TARGETS=(.03,.05,.08,.10)
 STOPS=(.05,.08,.12,None)
 MAX_HOLD=(3,5,10)
-CAPACITY=(200_000.,500_000.)
+CAPACITY=(200_000.,500_000.,None) # None = all currently available cash (independent speculative variant)
 FOLDS={"train":("2023-10-09","2024-12-31"),
        "validation":("2025-01-01","2025-12-31"),
        "audit2026":("2026-01-01",END),
@@ -112,7 +112,7 @@ def study_one(dates, picks, bars, scores, gate, tp, sl, maxhold, cap, logs=False
                         elif ro>=prev_close*1.095 and rh<=rl+1e-8:blocked["locked_limit_up"]+=1
                         elif cash<MIN_TRADE:blocked["cash_below_minimum"]+=1
                         else:
-                            budget=min(cash,float(cap));qty=int(budget/(ao*BUY_FACTOR))
+                            budget=min(cash,float(cap)) if cap is not None else cash;qty=int(budget/(ao*BUY_FACTOR))
                             if qty<=0 or qty*ao*BUY_FACTOR<MIN_TRADE:
                                 blocked["insufficient_for_order"]+=1
                             else:
@@ -239,7 +239,8 @@ def main():
                 for sl in STOPS:
                     for maxhold in MAX_HOLD:
                         for cap in CAPACITY:
-                            id=f"{selector.replace(' ','_')}__{gate}__TP{int(tp*100)}__SL{int(sl*100) if sl else 0}__H{maxhold}__CAP{int(cap/1000)}K"
+                            cap_id="ALL" if cap is None else str(int(cap/1000))+"K"
+                            id=f"{selector.replace(' ','_')}__{gate}__TP{int(tp*100)}__SL{int(sl*100) if sl else 0}__H{maxhold}__CAP{cap_id}"
                             cfg={"selector":selector,"riskGate":gate,"targetPct":100*tp,
                                  "stopPct":100*sl if sl is not None else None,
                                  "maxHoldTradingDays":maxhold,"maxPerEntryTWD":cap}
@@ -258,8 +259,9 @@ def main():
     audit_ids=set()
     if selected.get("id"):audit_ids.add(selected["id"])
     for name in ("G","G Pro balanced","G Pro quality"):
-        for cap in (200_000.,500_000.):
-            cid=f"{name.replace(' ','_')}__SCORE60__TP5__SL8__H5__CAP{int(cap/1000)}K"
+        for cap in (200_000.,500_000.,None):
+            cap_id="ALL" if cap is None else str(int(cap/1000))+"K"
+            cid=f"{name.replace(' ','_')}__SCORE60__TP5__SL8__H5__CAP{cap_id}"
             audit_ids.add(cid)
     detail={};ledger={}
     for model in result:
@@ -319,7 +321,7 @@ def main():
         "Target sell remains working after day 1; maximum holding time exits next day's open; no guaranteed stop liquidity on gap/limit down.",
         "Stock market board lot/odd lot, trading halts, broker order and last-session settlement constraints are simplified.",
         "Night futures archival coverage insufficient; no invented night gate. Historical market risk uses dated TWSE data only.",
-        "Early 200k/day and 500k max were author's initial experiment settings, not proof of later capacity.",
+        "Early 200k/day and 500k max were author's initial experiment settings, not proof of later capacity. ALL cash deployment is an independent speculative variant.",
         "Grid is explorative and huge; best in 2026 is purely hindsight and cannot be called a valid strategy.",
         "2026 price paths are already historically observed in prior G work; chronological audit is not a pristine blind test.",
         "Unrealized open positions at end are valued net of hypothetical liquidation costs, but not counted as completed profitable trades.",
