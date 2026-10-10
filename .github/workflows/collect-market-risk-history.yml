@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       max_days:
-        description: 'Max missing trading days to fetch in this run'
+        description: 'Max missing trading days to fetch; publish after each batch of 45'
         required: false
         default: '800'
         type: string
@@ -40,10 +40,35 @@ jobs:
         run: pip install numpy pandas pyarrow requests
       - name: Offline source-date and checkpoint regression tests
         run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_market_risk_history_collector.py' -v
-      - name: Fetch and validate missing historical market sessions
+      - name: Fetch in batches and publish verified progress after each batch
         working-directory: tw-stock-dashboard
         run: |
-          python -u src/collect_market_risk_history.py --max-days '${{ inputs.max_days || '800' }}'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          remaining=${{ inputs.max_days || '800' }}
+          case "$remaining" in ''|*[!0-9]*) echo "max_days must be an integer"; exit 1;; esac
+          while [ "$remaining" -gt 0 ]; do
+            batch=45
+            if [ "$remaining" -lt "$batch" ]; then batch="$remaining"; fi
+            python -u src/collect_market_risk_history.py --max-days "$batch"
+            remaining=$((remaining-batch))
+            cd ..
+            git add -f tw-stock-dashboard/docs/data/research/g_regime_3y/risk_inputs.json tw-stock-dashboard/docs/data/research/g_regime_3y/risk_errors.json tw-stock-dashboard/docs/data/research/g_regime_3y/coverage.json tw-stock-dashboard/docs/data/research/g_regime_3y/market_risk_daily.json tw-stock-dashboard/docs/data/research/g_regime_3y/market_risk_daily.csv 2>/dev/null || true
+            if ! git diff --cached --quiet; then
+              git commit -m 'data: checkpoint official risk history batch'
+              pushed=0
+              for n in 1 2 3 4 5; do
+                git pull --rebase origin main || { git rebase --abort || true; sleep $((n*5)); continue; }
+                if git push origin HEAD:main; then pushed=1; break; fi
+                sleep $((n*5))
+              done
+              if [ "$pushed" -ne 1 ]; then echo "Checkpoint push failed; prevent silent loss"; exit 1; fi
+            fi
+            cd tw-stock-dashboard
+            if python -c 'import json,pathlib,sys; p=pathlib.Path("docs/data/research/g_regime_3y/coverage.json"); sys.exit(0 if p.exists() and json.loads(p.read_text()).get("complete") else 1)'; then
+              echo "Full market history archived and verified"; break
+            fi
+          done
       - name: Upload per-run checkpoint even if collection fails
         if: always()
         uses: actions/upload-artifact@v4
