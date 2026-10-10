@@ -12,6 +12,7 @@ from sar import apply as apply_sar
 from industry_chain import enrich as enrich_chain
 from panels import institution_flow,topic_heat
 from g_live import select as select_live_g,prior_pockets as load_g_prior_pockets
+from g_pro_rules import G_PRO_RULES,build_daily_indicators,pro_pass
 
 HEADERS={"User-Agent":"Mozilla/5.0 tw-stock-dashboard/3.0","Accept":"application/json"}
 
@@ -161,6 +162,17 @@ def main():
     g_selection["pocketWarmup"]=g_pocket_found<min(10,max(0,len(year_market_days)-1))
     enrich_chain(g)
     apply_sar(g,market_date,min(len(g),TOP_N))
+    # G Pro is a frozen STRICT SUBSET of genuine G Top3 (same rule as 3-year audit).
+    # Never substitute candidate rank4+; never fake unavailable historical institution flows.
+    g_pro_indicators=build_daily_indicators(histories,{to_symbol(s["code"],s["market"]) for s in g[:3]})
+    g_pro=[];g_pro_rejections={}
+    for candidate in g[:3]:
+        sy=to_symbol(candidate["code"],candidate["market"])
+        ok,reason=pro_pass({**candidate,"previousTop20":candidate.get("gPast10",0)},g_pro_indicators.get(sy,{}).get(market_date))
+        if ok:g_pro.append({**candidate,"model":"G Pro","gVariant":"G_PRO_FROZEN_G_TOP3_STRICT_V1","signal":"💎 G Pro 嚴格趨勢＋量能確認"})
+        else:g_pro_rejections[reason]=g_pro_rejections.get(reason,0)+1
+    g_pro_selection={"version":"G_PRO_FROZEN_G_TOP3_STRICT_V1","base":"G original Top3 only","pass":len(g_pro),
+                     "evaluated":len(g[:3]),"rules":G_PRO_RULES,"rejections":g_pro_rejections,"dataDate":market_date}
     gate=f_gate(risk,RISK_ON);prev_f2_on=previous_f2_state(market_date);gate2=f2_gate(risk,prev_f2_on,RISK_ON,55)
     # 正式選股頁是候選清單，不是實際下單：D/F/F2 一律保留最多 TOP_N(20)；只有回測才限制進場 Top3。
     fsrc=d if gate["allowed"] else []
@@ -168,11 +180,11 @@ def main():
     f2src=d if gate2["allowed"] else []
     f2sig="🟣 F2 強反轉例外" if gate2["exception"] else "⛔ F2 Top Veto" if gate2["topVeto"] else "🟢 F2 維持ON" if gate2["reason"]=="HYSTERESIS_HOLD" else "🟢 F2 Risk ON"
     f2=[{**x,"model":"F2","marketGate":gate2["reason"],"signal":f2sig if x.get("strictPass") else "🟡 F2候補"} for x in f2src]
-    candidate_counts["F"]=len(f);candidate_counts["F2"]=len(f2);candidate_counts["G"]=g_selection["doubleBreakCandidates"]
-    strict_candidate_counts["F"]=sum(bool(x.get("strictPass")) for x in f);strict_candidate_counts["F2"]=sum(bool(x.get("strictPass")) for x in f2);strict_candidate_counts["G"]=len(g)
+    candidate_counts["F"]=len(f);candidate_counts["F2"]=len(f2);candidate_counts["G"]=g_selection["doubleBreakCandidates"];candidate_counts["G Pro"]=len(g_pro)
+    strict_candidate_counts["F"]=sum(bool(x.get("strictPass")) for x in f);strict_candidate_counts["F2"]=sum(bool(x.get("strictPass")) for x in f2);strict_candidate_counts["G"]=len(g);strict_candidate_counts["G Pro"]=len(g_pro)
     flow=institution_flow(inst,names);heat=topic_heat(market_date)
     payload={"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"benchmarkRet20":round(mkt20,4),"universeCount":len(eligible),
-             "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d,"F":f,"F2":f2,"G":g},"gSelection":g_selection,"gPocketBaseline":g_pocket_baseline,"risk":{**risk,"fGate":gate,"f2Gate":gate2},
+             "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d,"F":f,"F2":f2,"G":g,"G Pro":g_pro},"gProSelection":g_pro_selection,"gSelection":g_selection,"gPocketBaseline":g_pocket_baseline,"risk":{**risk,"fGate":gate,"f2Gate":gate2},
              "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86／上櫃暫為0","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
              "candidateCounts":candidate_counts,"strictCandidateCounts":strict_candidate_counts,"phase":"github-python-v8-g-default","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃法人仍依V12.2口徑暫時視為0分。","正式選股 D/F/F2 固定保留 Top20 候選：嚴格通過 D 的股票優先，不足 20 才用高分且流動性合格的候補補齊；候補會明確標示。回測實際進場仍只使用嚴格通過 D 的 Rank1~3。","G 預設模型：G_DOUBLE_PERSIST，先使用全市場強勢候選，再要求 3D/18D 前一完整 K 棒高點雙突破，最後按過去10交易日的原 G 雙突破 Top20 入選紀錄加分。首次上線歷史資料未滿10天時仍正常選股但不填補假歷史。","G 今日選股只根據完整更新的日 K 資料，盤中只更新選中股票的最新價格，不會把回測歷史 Top20 偽裝成今日選股。"]}
     DATA_DIR.mkdir(parents=True,exist_ok=True);body=json.dumps(payload,ensure_ascii=False,indent=2);LATEST_JSON.write_text(body,encoding="utf-8")
@@ -180,8 +192,8 @@ def main():
     ip=daily/"index.json"
     try:di=json.loads(ip.read_text(encoding="utf-8")) if ip.exists() else []
     except:di=[]
-    item={"date":market_date,"generatedAt":payload["generatedAt"],"riskScore":risk.get("score"),"riskState":risk.get("state"),"aCount":len(a),"dCount":len(d),"fCount":len(f),"f2Count":len(f2),"gCount":len(g),"gPocketHistory":g_pocket_found}
+    item={"date":market_date,"generatedAt":payload["generatedAt"],"riskScore":risk.get("score"),"riskState":risk.get("state"),"aCount":len(a),"dCount":len(d),"fCount":len(f),"f2Count":len(f2),"gCount":len(g),"gProCount":len(g_pro),"gPocketHistory":g_pocket_found}
     di=[x for x in di if x.get("date")!=market_date];di.insert(0,item);di.sort(key=lambda x:x.get("date",""),reverse=True)
     ip.write_text(json.dumps(di[:750],ensure_ascii=False,indent=2),encoding="utf-8")
-    print(json.dumps({"generatedAt":payload["generatedAt"],"dataDate":market_date,"universeCount":len(eligible),"A":len(a),"D":len(d),"F":len(f),"F2":len(f2),"G":len(g),"gHistoryDays":g_pocket_found,"risk":risk.get("score"),"f2Gate":gate2.get("reason"),"historyErrors":len(errors),"institutionError":insterr},ensure_ascii=False))
+    print(json.dumps({"generatedAt":payload["generatedAt"],"dataDate":market_date,"universeCount":len(eligible),"A":len(a),"D":len(d),"F":len(f),"F2":len(f2),"G":len(g),"GPro":len(g_pro),"gHistoryDays":g_pocket_found,"risk":risk.get("score"),"f2Gate":gate2.get("reason"),"historyErrors":len(errors),"institutionError":insterr},ensure_ascii=False))
 if __name__=="__main__":main()
