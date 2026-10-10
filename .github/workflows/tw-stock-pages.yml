@@ -165,16 +165,21 @@ jobs:
           const fs=require('fs');
           const h=fs.readFileSync('tw-stock-dashboard/docs/selections.html','utf8');
           const js=fs.readFileSync('tw-stock-dashboard/docs/stock-selection.js','utf8');
-          if(!h.includes('id="tabN"')||!h.includes('id="nPanel"')||!h.includes('id="nRows"'))throw new Error('N missing real selection tab/panel');
+          if(!h.includes('id="tabN"')||!h.includes('id="nPanel"')||!h.includes('id="stockTable"')||!h.includes('id="tb"'))throw new Error('N must use the unified selection table, not a detached page');
+          if(!h.includes('href="./index.html"')||!h.includes('返回主頁'))throw new Error('Missing visible return-home link');
+          if(h.includes('id="nRows"'))throw new Error('Old duplicate N ranking table unexpectedly returned');
+          const home=fs.readFileSync('tw-stock-dashboard/docs/index.html','utf8');
+          if(!home.includes('href="./selections.html">📋 選股排行</a>')||!home.includes('href="./selections.html#N"'))throw new Error('Home navigation lacks simplified stock ranking or N deep link');
           new Function(js);
-          if(!js.includes('function renderNTable')||!js.includes('N_ARCHIVE.version!==N_SUMMARY.version'))throw new Error('N lacks dated verified research renderer');
+          if(!js.includes('function renderNTable')||!js.includes('toggleNView(true)')||!js.includes('N_TABLE_HEAD')||!js.includes('N_ARCHIVE.version!==N_SUMMARY.version'))throw new Error('N missing integrated as-of-date verified ranking renderer');
+          if(!js.includes('location.hash.slice(1)'))throw new Error('N deep link cannot activate strategy tab');
           const p='tw-stock-dashboard/docs/data/research/n_canslim/';
           if(fs.existsSync(p+'summary.json')){
             const s=JSON.parse(fs.readFileSync(p+'summary.json','utf8'));
             const q=JSON.parse(fs.readFileSync(p+'picks.json','utf8'));
             if(s.version!==q.version||s.modelCount!==16||s.marketDays!==728)throw new Error('N historical selection archive has inconsistent source');
           }
-          console.log('PASS selectable N integrated Top3 / recursive Top1, source provenance and browser syntax');
+          console.log('PASS explicit return home, simplified navigation, N shared ranking table, dated Top3/Top1, source provenance and browser JS syntax');
           JS
       - name: Configure Pages
         uses: actions/configure-pages@v5
