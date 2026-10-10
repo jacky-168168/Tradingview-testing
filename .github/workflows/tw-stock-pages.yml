@@ -10,6 +10,7 @@ on:
       - 'tw-stock-dashboard/docs/backtest-g-panel.js'
       - 'tw-stock-dashboard/docs/data/backtest_g/*.json'
       - 'tw-stock-dashboard/docs/data/research/etf_history/**'
+      - 'tw-stock-dashboard/docs/data/research/market_cash_oos_3y/**'
       - 'tw-stock-dashboard/docs/etf-research.js'
       - 'tw-stock-dashboard/docs/etf-research.css'
       - '.github/workflows/tw-stock-pages.yml'
@@ -31,6 +32,28 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Validate A D F G research dashboard files
+        run: |
+          node - <<'JS'
+          const fs=require('fs');
+          const html=fs.readFileSync('tw-stock-dashboard/docs/market-cash-3y.html','utf8');
+          const from=html.lastIndexOf('<script>'),to=html.lastIndexOf('</script>');
+          if(from<0||to<from)throw new Error('Missing inline chart script');
+          new Function(html.slice(from+8,to));
+          console.log('PASS: A D F G browser dashboard JavaScript syntax');
+          JS
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=Path('tw-stock-dashboard/docs/data/research/market_cash_oos_3y')
+          j=json.loads((d/'summary.json').read_text())
+          e=json.loads((d/'equity.json').read_text())
+          assert len(j['results'])==160 and j['riskCoverage']==728
+          assert 'D_GE80_10' in e and 'holdout' in e['D_GE80_10']
+          c=e['D_GE80_10']['holdout']
+          assert len(c['date'])==len(c['equity'])>150
+          print('PASS: research JSON, 160 scenarios and 2026 daily equity curve')
+          PY
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
