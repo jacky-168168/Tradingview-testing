@@ -55,7 +55,8 @@ class QualityIndex:
                 out.update(roePct=item["roe"],roeFiscal=f,roeAvailableFrom=a)
         return out
 
-def enrich_quality(payload,data_dir):
+def read_quality_archive(data_dir):
+    """Return archive and validation errors without silently substituting values."""
     root=Path(data_dir)/"research"/"quality"
     errors=[];loaded={}
     for key,file in (("pb","pb_daily.json"),("roe","roe_quarter.json")):
@@ -69,8 +70,12 @@ def enrich_quality(payload,data_dir):
         except (OSError,ValueError) as ex:errors.append(key+": "+str(ex)[:100]);loaded[key]=[]
     try:idx=QualityIndex(loaded["pb"],loaded["roe"])
     except (ValueError,KeyError,TypeError) as ex:idx=None;errors.append("validation: "+str(ex))
+    return idx,errors
+
+def enrich_quality(payload,data_dir):
+    idx,errors=read_quality_archive(data_dir)
     cov=payload.setdefault("coverage",{})
-    cov.update(pbAvailable=0,pbHistoryAvailable=0,roeAvailable=0,qualityArchiveStatus="ok" if not errors else "partial" if idx else "missing",qualityArchiveErrors=errors)
+    cov.update(pbAvailable=0,pbHistoryAvailable=0,roeAvailable=0,pbArchivedSymbols=len(idx.pbkeys) if idx else 0,roeArchivedSymbols=len(idx.roekeys) if idx else 0,qualityArchiveStatus="ok" if idx and not errors and len(idx.pbkeys)>=200 and len(idx.roekeys)>=200 else "partial" if idx else "missing",qualityArchiveErrors=errors)
     payload.setdefault("method",{})["quality"]="ROE＝已公告同口徑近四季合計稅後淨利÷兩期平均權益；PB＝官方每日股價淨值比。欠缺官方歷史資料則為空值；歷史修訂財報不等於原始公告快照。"
     for row in payload.get("stocks",[]):
         q=idx.at("sii" if row.get("market")=="上市" else "otc",row["code"],payload["dataDate"]) if idx else {"roePct":None,"pbRatio":None,"pbAsOf":None,"pbHistoryPercentile3Y":None,"pbHistorySamples":0,"roeFiscal":None,"roeAvailableFrom":None}
