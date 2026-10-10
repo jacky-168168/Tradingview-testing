@@ -155,6 +155,27 @@ def main():
         boot[f"{refName}_{refTh}"]={"differencePerMarketDayPct":round(statistics.mean(monthly),4),
           "monthBootstrap95Pct":[round(draws[int(.025*(len(draws)-1))],4),round(draws[int(.975*(len(draws)-1))],4)],
           "metric":"Average signal net return per 2026 market session, counting no-entry sessions as zero; not equity return"}
+    # Descriptive diagnostics only: bands and market reversal flags are NOT tuned using 2026.
+    band_defs={"0_39":(0,40),"40_49":(40,50),"50_59":(50,60),"60_69":(60,70),"70_79":(70,80),"80_100":(80,101),"BELOW_60":(0,60),"GE_60":(60,101)}
+    riskrows={z["date"]:z for z in rows}
+    scoreBands={}
+    for label,(lo,hi) in band_defs.items():
+        scoreBands[label]={}
+        for period,(begin,finish) in SPLITS.items():
+            scoreBands[label][period]={}
+            for h in HORIZONS:
+                x=[tr["net"] for d,tr in ret[h].items() if begin<=d<=finish and tr["sell"]<=finish and lo<=scored["ORIGINAL"][d]<hi]
+                scoreBands[label][period][str(h)]=metric(x)
+    # Risk state gate is visible at the close but not enough to establish intraday entry timing.
+    states=("NORMAL","BOTTOM","TOP")
+    stateStats={}
+    for state in states:
+        stateStats[state]={}
+        for period,(begin,finish) in SPLITS.items():
+            stateStats[state][period]={}
+            for h in (10,20):
+                x=[tr["net"] for d,tr in ret[h].items() if begin<=d<=finish and tr["sell"]<=finish and riskrows[d]["mode"]==state]
+                stateStats[state][period][str(h)]=metric(x)
     latest=rows[-1];lastScore={name:round(scored[name][latest["date"]],2) for name in WEIGHTS}
     out={"createdAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(),
       "study":"PREDECLARED_WEIGHT_FAMILY_2023_2026_TRAIN_VALIDATION_HOLDOUT_V1",
@@ -172,6 +193,7 @@ def main():
           "G model parameters previously developed against historical datasets; only score weights are held out in 2026",
           "Bottom entry or Strong Reversal Top1-3 stock exception cannot be validated from the frozen G-top3 trade archive",
           "Multiple candidates studied: one held-out period cannot establish a universally optimal weighting"]},
+      "scoreBandDiagnostics":scoreBands,"marketModeDiagnostics":stateStats,
       "roundingDiscrepancies":{"count":len(drift),"sample":drift[:12]},
       "baselineReproduction":"PASS","selectedBeforeHoldout":selected,
       "selectedPerformance":selectedRow["byPeriod"],"benchmarkPolicies":reference,
