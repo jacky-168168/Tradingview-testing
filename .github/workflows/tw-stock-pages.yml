@@ -54,6 +54,23 @@ jobs:
           assert len(c['date'])==len(c['equity'])>150
           print('PASS: research JSON, 160 scenarios and 2026 daily equity curve')
           PY
+      - name: Verify 00675L VT QQQ allocation page and published research data
+        run: |
+          node - <<'JS'
+          const fs=require('fs');
+          const root='tw-stock-dashboard/docs/';
+          const page=fs.readFileSync(root+'etf-allocation.html','utf8');
+          const start=page.lastIndexOf('<script>'),end=page.lastIndexOf('</script>');
+          if(start<0||end<=start)throw new Error('Missing standalone allocation chart logic');
+          new Function(page.slice(start+8,end));
+          const dir=root+'data/research/etf_history/alloc_00675_vt_qqq_2018_2026/';
+          const s=JSON.parse(fs.readFileSync(dir+'summary.json','utf8'));
+          const e=JSON.parse(fs.readFileSync(dir+'equity.json','utf8'));
+          const f=JSON.parse(fs.readFileSync(dir+'fx.json','utf8'));
+          if(s.results.length!==14||Object.keys(e.portfolios).length!==14||s.dailyValuationDates!==e.dates.length||f.dates.length!==e.dates.length)throw new Error('Published portfolio dataset mismatch');
+          if(s.audit.sourceCurveParity.L2_SMA10.deltaPct!==0)throw new Error('Reference benchmark diverged');
+          console.log('PASS allocation browser JavaScript, 14 portfolios and aligned FX archive');
+          JS
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
