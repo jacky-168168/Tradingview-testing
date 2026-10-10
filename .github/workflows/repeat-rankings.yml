@@ -42,14 +42,21 @@ jobs:
           const a=JSON.parse(fs.readFileSync(root+'data/rolling-repeats.json','utf8'));
           const latest=JSON.parse(fs.readFileSync(root+'data/latest.json','utf8'));
           const idx=JSON.parse(fs.readFileSync(root+'data/daily/index.json','utf8'));
-          if(a.version!=='TWO_CALENDAR_MONTHS_FROZEN_TOP20_V1'||a.calendarWindowMonths!==2)throw Error('bad snapshot repeat version');
+          if(!['TWO_CALENDAR_MONTHS_FROZEN_TOP20_V1','TWO_CALENDAR_MONTHS_FROZEN_PLUS_RECONSTRUCTED_G_V2'].includes(a.version)||a.calendarWindowMonths!==2)throw Error('bad snapshot repeat version');
           if(a.referenceDate!==latest.dataDate)throw Error('repeat summary not same as latest selected market date');
           if(!a.savedDates.includes(latest.dataDate))throw Error('current market day absent from true frozen dates');
           if(a.models.G.snapshotDays!==idx.filter(z=>a.savedDates.includes(z.date)&&z.gCount!=null).length)throw Error('G snapshot count mismatch');
           if(a.models['G Pro'].snapshotDays!==idx.filter(z=>a.savedDates.includes(z.date)&&z.gProCount!=null).length)throw Error('G Pro snapshot count mismatch');
+          if(a.version==='TWO_CALENDAR_MONTHS_FROZEN_PLUS_RECONSTRUCTED_G_V2'){
+            const b=JSON.parse(fs.readFileSync(root+'data/research/g_history_reconstruction_2m/history.json','utf8'));
+            if(b.version!=='G_LIVE_DOUBLE_PERSIST_HISTORICAL_RECONSTRUCTION_V1'||b.referenceDate<a.referenceDate)throw Error('Backfill audit missing or outdated');
+            if(a.models.G.reconstructedDays<30||a.models.G.snapshotDays<1)throw Error('Missing reconstructed and genuine G two-month dated coverage');
+            if(a.models['G Pro'].reconstructedDays)throw Error('G Pro MUST remain genuine archival observations');
+          }
           for(const [model,stat] of Object.entries(a.models)){
             for(const item of stat.stocks){
               if(item.count<2||item.dates.length!==item.count)throw Error('False repeated Top '+model);
+              if(item.frozenCount!=null && item.reconstructedCount!=null && item.frozenCount+item.reconstructedCount!==item.count)throw Error('Repeated stock provenance counts inconsistent');
               if(item.previousSeen>=item.lastSeen)throw Error('Invalid preceding appearance day');
               if(item.dates.some(z=>z<a.windowStart||z>a.referenceDate))throw Error('Out-of-window date');
             }
