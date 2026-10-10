@@ -42,29 +42,26 @@ def valid_code(code):
 def parse_month_html(html,market,year,month,kind):
     soup=BeautifulSoup(html,"html.parser")
     found={};table_scans=0
+    # The official file has MANY industry tables and its company code header is
+    # often split across two <br> tags ("公司" / "代號"). Parse data rows directly;
+    # reject aggregates and human headers using the strict numeric security ID.
     for table in soup.select("table"):
-        head=table.get_text(" ",strip=True)[:400]
-        if "公司代號" not in re.sub(r"\\s+","",head) and "當月營收" not in re.sub(r"\\s+","",head) and "營業收入" not in re.sub(r"\\s+","",head):
-            # Some MOPS tables have a multi-row heading >400 chars; inspect first 4 rows
-            head=" ".join(x.get_text(" ",strip=True) for x in table.select("tr")[:4])
-        if "公司代號" not in re.sub(r"\\s+","",head):continue
-        table_scans+=1
-        for tr in table.select("tr"):
+        local=0
+        for tr in table.find_all("tr"):
             cells=[c.get_text(" ",strip=True) for c in tr.find_all(["td","th"],recursive=False)]
-            if len(cells)<5:continue
-            # Old report: code,name,monthly_revenue,prev_month,prev_year,
-            # MoM,YoY,cumulative,cumulative_previous,cumulative_yoy,notes.
-            idx=next((i for i in (0,1) if i<len(cells) and valid_code(cells[i])),None)
+            if len(cells)<7:continue
+            idx=next((i for i in (0,1) if valid_code(cells[i])),None)
             if idx is None or len(cells)<idx+7:continue
             code=valid_code(cells[idx]);rev=numeric(cells[idx+2])
             if rev is None or rev<0:continue
             row={"code":code,"name":cells[idx+1].strip(),"year":year,"month":month,
                  "revenue":rev,"market":market,"domesticType":kind,
                  "src":"MOPS_OFFICIAL_HIST_REVISED","sourceMode":"historical_bulk"}
-            if not row["name"] or not re.search(r"[\u4e00-\u9fffA-Za-z]",row["name"]):continue
+            if not row["name"] or not re.search(r"[\\u4e00-\\u9fffA-Za-z]",row["name"]):continue
             if code in found and abs(found[code]["revenue"]-rev)>1e-6:
                 raise RuntimeError("Conflicting monthly revenue "+code+" "+str((year,month,market,kind)))
-            found[code]=row
+            found[code]=row;local+=1
+        if local:table_scans+=1
     return list(found.values()),table_scans
 def parse_quarter_html(html,market,year,quarter):
     soup=BeautifulSoup(html,"html.parser")
