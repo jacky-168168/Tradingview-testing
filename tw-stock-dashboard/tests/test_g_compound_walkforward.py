@@ -54,7 +54,7 @@ class WalkForwardTests(unittest.TestCase):
             return lambda x:np.ones(len(x))*1.0
         with patch("research_g_compound_walkforward.trainer",side_effect=stub):
             picks,log=rank_monthly_walkforward([day1,day2],pool,
-                "Ridge",{"FAST":past+[newly,future]},"FAST",True)
+                {"FAST":past+[newly,future]},"Ridge","FAST",True)
         self.assertEqual(visits,[200,201])
         self.assertEqual(log[0]["latestMaturedLabel"],"2024-12-30")
         self.assertEqual(log[1]["latestMaturedLabel"],"2025-01-27")
