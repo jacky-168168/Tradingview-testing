@@ -1,0 +1,87 @@
+name: 00675L VT QQQ Five-Year Allocation Audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/scripts/research_00675l_vt_qqq_allocation.py'
+      - 'tw-stock-dashboard/tests/test_00675l_vt_qqq_allocation.py'
+      - '.github/workflows/research-00675l-vt-qqq-allocation.yml'
+permissions:
+  contents: write
+concurrency:
+  group: 00675l-vt-qqq-allocation-research
+  cancel-in-progress: false
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 95
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore historical market cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install model dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Static validation and unit tests
+        run: |
+          python -m py_compile tw-stock-dashboard/scripts/research_00675l_vt_qqq_allocation.py
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_00675l_vt_qqq_allocation.py' -v
+      - name: Run 2018-2026 locked portfolio backtest with historical FX
+        run: python -u tw-stock-dashboard/scripts/research_00675l_vt_qqq_allocation.py
+      - name: Verify three result files and historical benchmark parity
+        run: |
+          python - <<'PY'
+          import json,math
+          from pathlib import Path
+          d=Path('tw-stock-dashboard/docs/data/research/etf_history/alloc_00675_vt_qqq_2018_2026')
+          s=json.loads((d/'summary.json').read_text(encoding='utf-8'))
+          e=json.loads((d/'equity.json').read_text(encoding='utf-8'))
+          f=json.loads((d/'fx.json').read_text(encoding='utf-8'))
+          assert len(s['results'])==14 and len(e['portfolios'])==14
+          assert s['audit']['sourceCurveParity']['L2_SMA10']['reportedEndTWD']==42940824.72
+          assert 2200<=s['dailyValuationDates']<=2450
+          assert len(e['dates'])==s['dailyValuationDates']==len(f['dates'])==len(f['usdtwd'])
+          assert e['dates'][0]=='2018-01-02' and e['dates'][-1]=='2026-10-07'
+          for r in s['results']:
+            m=r['metrics']
+            assert m['rollingFiveYear']['n']>700
+            assert m['rollingFiveYear']['worst']['returnPct']<=m['rollingFiveYear']['best']['returnPct']
+            assert -100<m['maxDrawdownPct']<=0
+            assert m['endingTWD']>0
+            vals=e['portfolios'][r['id']+'__'+r['rebalancing']]['dailyTWD']
+            assert len(vals)==len(e['dates'])
+            assert abs(vals[-1]-m['endingTWD'])<=.011
+          baseline=next(r for r in s['results'] if r['id']=='L2_SMA10_100' and r['rebalancing']=='none')
+          assert abs(baseline['metrics']['endingTWD']-42940824.72)<.1
+          print('PASS independent 2018-2026 historical TWD allocation',len(s['results']),s['dailyValuationDates'],'days')
+          PY
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: 00675L-VT-QQQ-Allocation-2018-2026
+          path: tw-stock-dashboard/docs/data/research/etf_history/alloc_00675_vt_qqq_2018_2026
+          retention-days: 90
+      - name: Publish verified fixed and annual-rebalanced portfolio results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/etf_history/alloc_00675_vt_qqq_2018_2026/
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish 00675L VT QQQ TWD five-year rolling portfolio results'
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
