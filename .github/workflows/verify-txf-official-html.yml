@@ -19,8 +19,9 @@ jobs:
           from bs4 import BeautifulSoup
           url='https://www.taifex.com.tw/cht/3/futDailyMarketReport'
           params={'queryType':'2','marketCode':'0','dateaddcnt':'','commodity_id':'TX','commodity_id2':'','queryDate':'2026/10/08','MarketCode':'1','commodity_idt':'TX','commodity_id2t':''}
-          for verb,market in [('POST','0'),('POST','1'),('GET','1')]:
+          for verb,market in [('POST','0'),('POST','1'),('GET','1'),('POST','night'),('GET','night')]:
               p=dict(params);p['MarketCode']=market
+              if market=='night':p['marketCode']='1';p['MarketCode']='1'
               try:
                   r=requests.post(url,data=p,timeout=30) if verb=='POST' else requests.get(url,params=p,timeout=30)
                   soup=BeautifulSoup(r.text,'html.parser')
