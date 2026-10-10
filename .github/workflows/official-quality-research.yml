@@ -10,6 +10,11 @@ on:
         description: '官方 PB 迄日 YYYY-MM-DD'
         required: true
         default: '2026-10-09'
+      run_roe:
+        description: '收集2022–2026官方合併財報並重建ROE（資源密集）'
+        type: boolean
+        required: true
+        default: false
       run_backtest:
         description: '同時執行成長／ROE-PB 歷史月度回測（資源密集）'
         type: boolean
@@ -40,6 +45,7 @@ jobs:
           PYTHONPATH: src
         run: |
           python -m unittest discover -s tests -p test_stock_quality.py -v
+          python -m unittest discover -s tests -p test_collect_roe_history.py -v
           python -m unittest discover -s tests -p test_quality_backtest.py -v
       - name: Collect official PB with incremental checkpoint
         working-directory: tw-stock-dashboard
@@ -50,6 +56,10 @@ jobs:
           if [ -z "$END" ]; then END="$(TZ=Asia/Taipei date -d yesterday +%F)"; fi
           if [ -z "$START" ]; then START="$(TZ=Asia/Taipei date -d '7 days ago' +%F)"; fi
           python -u src/collect_pb_history.py --start "$START" --end "$END"
+      - name: Collect MOPS quarterly TTM ROE provenance archive
+        if: ${{ inputs.run_roe == true }}
+        working-directory: tw-stock-dashboard
+        run: python -u src/collect_roe_history.py --start-year 2023 --end-year 2026 --asof "$(TZ=Asia/Taipei date +%F)"
       - name: Backtest with verified official financial archives
         if: ${{ inputs.run_backtest == true }}
         working-directory: tw-stock-dashboard
