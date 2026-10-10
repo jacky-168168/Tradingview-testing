@@ -22,7 +22,7 @@ TARGETS=(.05,.08)
 STOPS=(.08,.12)
 HOLD=(5,10)
 CAPACITY=(200_000.,None)
-ANCHOR={"gate":"SCORE60","target":.05,"stop":.08,"maxHold":5,"cap":200_000.}
+ANCHOR={"gate":"SCORE60","tp":.05,"sl":.08,"hold":5,"cap":200_000.}
 # 5 candidate families including the unchanged original G * 2^5 = 160.
 EXPECT_MODELS=len(SELECTORS)*len(GATES)*len(TARGETS)*len(STOPS)*len(HOLD)*len(CAPACITY)
 def candidate_id(selector,gate,tp,sl,hold,cap):
