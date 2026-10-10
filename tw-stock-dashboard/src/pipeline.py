@@ -169,7 +169,9 @@ def backfill_stock_profiles_once(market_date):
     """上市後遇休市日：若已有完整快取，補建新體檢頁，不改寫既有選股/大盤快照。"""
     target=DATA_DIR/"stocks"/"latest.json"
     try:
-        if target.exists() and json.loads(target.read_text(encoding="utf-8")).get("dataDate")==market_date:return False
+        if target.exists():
+            existing=json.loads(target.read_text(encoding="utf-8"))
+            if existing.get("dataDate")==market_date and existing.get("schema")=="stock-diagnostics-v2" and (existing.get("coverage") or {}).get("financialsIncluded"):return False
         if not UNIVERSE_CACHE.exists() or not LATEST_JSON.exists():return False
         u=json.loads(UNIVERSE_CACHE.read_text(encoding="utf-8"))
         if len(u)<MIN_LISTED_UNIVERSE+MIN_OTC_UNIVERSE:return False

@@ -91,6 +91,8 @@ def build_snapshot(universe,histories,market_date,benchmark_ret20,inst=None,mode
 
 def write_snapshot(data_dir,universe,histories,market_date,benchmark_ret20,inst=None,models=None,generated_at=None):
     payload=build_snapshot(universe,histories,market_date,benchmark_ret20,inst,models,generated_at)
+    from stock_fundamentals import enrich_profiles
+    payload=enrich_profiles(payload,data_dir,histories)
     out=Path(data_dir)/"stocks";out.mkdir(parents=True,exist_ok=True)
     path=out/"latest.json";path.write_text(json.dumps(payload,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     return payload

@@ -39,6 +39,15 @@
 - Production：1950 / 1950 檔歷史 K 成功，historyErrors = 0。
 - Python CI 與 Full Parity workflow 通過。
 
+## 個股體檢財報第二階段（MOPS 歷史資料，2026-10-10）
+- 從現有研究封存檔 `docs/data/research/n_canslim/monthly_revenue.json` 與 `eps_ytd.json`，讀取**已通過完整涵蓋率檢查**的官方 MOPS 歷史修訂版資料；不直接抓取 FinLab。
+- 財報欄位：月營收（億元）、MoM/YoY、最近12個連續月份營收高點比率、當年累計 EPS 及同期年增、虧轉盈標籤、最近四季獨立季度 EPS 合計（TTM）、TTM 本益比、盈餘殖利率、全市場營收/EPS 成長分位。
+- 估值歷史分位：最多最近120個已完成交易日、至少60個有效且截至當時已有可用 TTM EPS 的本益比樣本；若財報資訊不足不顯示數值。
+- 全市場資料更新為 `stock-diagnostics-v2`；原模型 A/D/F/F2/G/G Pro、原盤勢分數及原回測流程不改。休市日若已封存完整技術快取則補建新版。
+- **資料限制**：歷史 MOPS 報表可能修訂，`availableFrom` 是保守期限延後的代理，不是發行人真實首次披露日。EPS 為**累計**，須拆分後才可計算 TTM。未有經驗證股東權益就不計 ROE；股利、合理價與歷史訊號勝率也不推估。
+- MOPS 封存目前截止 2026 年 8 月月營收及 2026Q2 EPS（下次必須透過歷史封存收集器更新）；超過 80 天的月營收或 245 天的 EPS 會標成缺值，避免把過期資訊當最新。
+- 驗證：`PYTHONPATH=src python -m unittest discover -s tests -p test_stock_fundamentals.py -v`，加上既有全套 Python / Node CI。
+
 ## 個股量化體檢（參考 FinLab 的研究架構，自行實作）
 - 新頁面：\`docs/stocks.html\`；主頁與選股頁都有入口。股票搜尋、產業與 A/D/F/F2/G/G Pro 篩選、動能/RS20/低波動分位、模型交集、本機觀察清單、TradingView 及 FinLab 外部參考連結。
 - 每次完整交易日更新，自有 \`src/stock_diagnostics.py\` 使用官方公司母檔與現有日 K 快取計算全市場資料，輸出 \`docs/data/stocks/latest.json\`。缺資料維持 null，不能視為零。
