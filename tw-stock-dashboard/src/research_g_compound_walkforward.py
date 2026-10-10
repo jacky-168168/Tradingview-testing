@@ -258,6 +258,7 @@ def main():
     original_g,_,gmeta=make_g(dates,index,universe,hist)
     pool,stat=candidate_universe(hist,universe,market_returns,risk,dates,original_g)
     all_sy={r["sym"] for rows in pool.values() for r in rows}
+    all_sy.update(x["sym"] for rows in original_g.values() for x in rows[:1]) # never drop original-G parity due to V3 feature sparsity
     bars,barerrors=price_bars(hist,all_sy)
     if len(bars)!=len(all_sy):raise RuntimeError("Daily OHLC missing for selected stocks")
     labels,label_stat=with_mature_labels(pool,bars,dates)
