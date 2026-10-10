@@ -175,7 +175,7 @@ def main():
        "elapsedSeconds":round(time.time()-tic)}
     (OUT/"summary.json").write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False),encoding="utf-8")
     (OUT/"equity.json").write_text(json.dumps(curves,ensure_ascii=False),encoding="utf-8")
-    brief={m:{p:{str(h):{k:key[m,p,h,0.][k][v] for k,v in ("holdout","netReturnPct")} for h in HORIZONS} for p in ("BASE","GE60","GE80")} for m in ("A","D","F","G")}
+    brief={m:{p:{str(h):{"holdoutRet":key[m,p,h,0.]["holdout"]["netReturnPct"],"holdoutMDD":key[m,p,h,0.]["holdout"]["dailyMaxDrawdownPct"]} for h in HORIZONS} for p in ("BASE","GE60","GE80")} for m in ("A","D","F","G")}
     print("CASH_STRESS_COMPLETED",json.dumps({"winner":winner,"priceMissing":len(absent),"brief":brief,
           "elapsedSec":result["elapsedSeconds"]},ensure_ascii=False),flush=True)
 if __name__=="__main__":main()
