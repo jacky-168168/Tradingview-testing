@@ -69,9 +69,14 @@ class TestLiveG(unittest.TestCase):
         days=self.calendar(72);s={"code":"1000","market":"上市","name":"test","capitalB":20}
         with self.assertRaisesRegex(RuntimeError,"no valid same-day"):
             select([s],{"1000.TW":self.history(days[:-1])},days,days[-1])
-    def test_index_defaults_to_real_g_daily_data(self):
-        src=Path(__file__).resolve().parents[1]/"docs"/"index.html"
-        text=src.read_text(encoding="utf-8")
+    def test_dedicated_rankings_page_defaults_to_real_g_daily_data(self):
+        root=Path(__file__).resolve().parents[1]/"docs"
+        page=(root/"selections.html").read_text(encoding="utf-8")
+        script=(root/"stock-selection.js").read_text(encoding="utf-8")
+        home=(root/"index.html").read_text(encoding="utf-8")
+        self.assertNotIn('id="stockTable"',home)
+        self.assertIn('href="./selections.html"',home)
+        text=page+"\n"+script
         self.assertIn('var DATA=null,MODEL="G"',text)
         self.assertIn('id="tabG"',text)
         self.assertIn('id="gNote"',text)
