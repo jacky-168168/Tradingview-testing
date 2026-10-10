@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 DATA=Path(__file__).resolve().parents[1]/"docs"/"data"
 MODELS=("G","G Pro","D","F","F2","A")
 VERSION="TWO_CALENDAR_MONTHS_FROZEN_TOP20_V1"
+MIXED_VERSION="TWO_CALENDAR_MONTHS_FROZEN_PLUS_RECONSTRUCTED_G_V2"
 
 def months_before(iso,months=2):
     day=date.fromisoformat(iso)
@@ -21,7 +22,7 @@ def months_before(iso,months=2):
     y,m=divmod(total,12);m+=1
     return date(y,m,min(day.day,calendar.monthrange(y,m)[1])).isoformat()
 
-def build(daily,asof=None):
+def build(daily,asof=None,reconstruction=None):
     indexfile=daily/"index.json"
     if not indexfile.exists():raise RuntimeError("Missing daily snapshot index")
     idx=json.loads(indexfile.read_text(encoding="utf-8"))
@@ -54,13 +55,38 @@ def build(daily,asof=None):
             expected=index_counts[day].get(index_names[model])
             if expected is not None and expected!=len(rows):
                 raise RuntimeError("Frozen snapshot/index count mismatch: "+model+" "+day)
-            daily_rows[model].append((day,rows))
+            daily_rows[model].append((day,rows,"original_frozen"))
+    # Read the separate research archive only when an original G day is missing.
+    # NEVER change daily/ and never describe the rebuilt ranking as frozen.
+    reconstructed_count=0
+    if reconstruction is None:
+        path=daily.parent/"research"/"g_history_reconstruction_2m"/"history.json"
+        if path.exists():
+            reconstruction=json.loads(path.read_text(encoding="utf-8"))
+    if reconstruction is not None:
+        if reconstruction.get("version")!="G_LIVE_DOUBLE_PERSIST_HISTORICAL_RECONSTRUCTION_V1":
+            raise RuntimeError("Reconstructed G provenance version invalid")
+        ref=reconstruction.get("referenceDate")
+        if not ref or ref>latest or reconstruction.get("model")!="G":
+            raise RuntimeError("Reconstructed G reference date/model invalid")
+        rebuilt=reconstruction.get("days") or {}
+        frozen_dates={d for d,_,_ in daily_rows["G"]}
+        for day in sorted(rebuilt):
+            if not(earliest<=day<=latest) or day in frozen_dates:continue
+            row=rebuilt[day];stocks=row.get("stocks")
+            if row.get("dataDate")!=day or row.get("source")!="reconstructed" or not isinstance(stocks,list) or len(stocks)>20:
+                raise RuntimeError("Malformed G reconstruction "+day)
+            if any(x.get("dataOrigin")!="retrospectively_reconstructed_not_historical_snapshot" for x in stocks):
+                raise RuntimeError("Unlabeled historical reconstruction "+day)
+            daily_rows["G"].append((day,stocks,"reconstructed"))
+            reconstructed_count+=1
+    for model in MODELS:daily_rows[model].sort(key=lambda x:x[0])
     results={}
     for model in MODELS:
         records=daily_rows[model]
         seen=defaultdict(list)
         signal_count=0
-        for day,rows in records:
+        for day,rows,origin in records:
             if rows:signal_count+=1
             once=set()
             for rank,stock in enumerate(rows,1):
@@ -70,12 +96,12 @@ def build(daily,asof=None):
                 key=(market,code)
                 if key in once:raise RuntimeError("Duplicate stock in one frozen Top list "+day+" "+model+" "+code)
                 once.add(key)
-                seen[key].append((day,rank,stock))
+                seen[key].append((day,rank,stock,origin))
         repeats=[]
         for (market,code),history in seen.items():
             if len(history)<2:continue
             history.sort(key=lambda x:x[0])
-            last,rank,stock=history[-1];previous=history[-2][0]
+            last,rank,stock,origin=history[-1];previous=history[-2][0]
             value={k:stock.get(k) for k in (
                 "code","name","market","theme","subIndustry","total","gScore","sarText",
                 "close","currentPrice","rs20","ret5","ret20","turnoverB","rvol",
@@ -83,24 +109,33 @@ def build(daily,asof=None):
             value.update({"count":len(history),"firstSeen":history[0][0],
                 "lastSeen":last,"previousSeen":previous,"lastRank":rank,
                 "onReferenceDate":last==latest,
-                "dates":[d for d,_,_ in history]})
+                "dates":[d for d,_,_,_ in history],
+                "lastSeenSource":origin,
+                "reconstructedCount":sum(src=="reconstructed" for _,_,_,src in history),
+                "frozenCount":sum(src=="original_frozen" for _,_,_,src in history)})
             # Never publish a stale intraday quote in frozen history.
             value.pop("currentPrice",None)
             repeats.append(value)
         repeats.sort(key=lambda r:(not r["onReferenceDate"],-r["count"],-int(r["lastSeen"].replace("-","")),r["lastRank"],r["code"]))
-        results[model]={"snapshotDays":len(records),
+        results[model]={"snapshotDays":sum(src=="original_frozen" for _,_,src in records),
+            "reconstructedDays":sum(src=="reconstructed" for _,_,src in records),
+            "totalObservedDays":len(records),
+            "firstCovered":records[0][0] if records else None,
+            "lastCovered":records[-1][0] if records else None,
             "signalDays":signal_count,
-            "firstSnapshot":records[0][0] if records else None,
-            "lastSnapshot":records[-1][0] if records else None,
+            "firstSnapshot":next((d for d,_,src in records if src=="original_frozen"),None),
+            "lastSnapshot":next((d for d,_,src in reversed(records) if src=="original_frozen"),None),
             "repeatedSymbols":len(repeats),"stocks":repeats}
-    return {"version":VERSION,
+    return {"version":MIXED_VERSION if reconstructed_count else VERSION,
         "generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),
         "referenceDate":latest,"windowStart":earliest,"calendarWindowMonths":2,
-        "source":"Original frozen docs/data/daily/YYYY-MM-DD.json ranked models only",
+        "source":"Original frozen days plus explicitly labeled research rebuilt G (only when missing)" if reconstructed_count else "Original frozen docs/data/daily/YYYY-MM-DD.json ranked models only",
         "calendarDaysAvailable":len(days),
+        "backfilledGCalendarDays":reconstructed_count,
+        "effectiveMarketDates":len(set(days)|{d for d,_,_ in daily_rows["G"]}),
         "savedDates":days,"models":results,
-        "meaning":"Counts unique frozen model Top-list appearances on distinct market dates, not candles or modeled backtest signals. Missing snapshots never count as zero or repeated. LastSeen is most recent; previousSeen is prior actual appearance.",
-        "coverageWarning":"History began accumulating on different dates for different models; no reconstructed G/G Pro before their first genuine snapshot."}
+        "meaning":"Distinct dated top-ranking appearances; actual snapshots always take priority. G research reconstruction dates are separately counted and labeled, never presented as originally published.",
+        "coverageWarning":"Retrospective G is subject to current survivor universe/capital and historical OHLC revisions. G Pro and other models stay frozen-only."}
 
 def main():
     DATA.mkdir(parents=True,exist_ok=True)
