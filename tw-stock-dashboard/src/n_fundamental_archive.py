@@ -117,6 +117,17 @@ def collect_month(sess,year,month,market,kind):
         raw=fetch_binary(sess,url);path.write_bytes(raw)
     rows,tables=parse_month_html(text_decode(raw,True),market,year,month,kind)
     # Empty foreign corp tables are valid only if the page at least has heading.
+    if len(rows)<180:
+        soup=BeautifulSoup(text_decode(raw,True),"html.parser")
+        diagnostic=[]
+        for tr in soup.select("tr"):
+            cells=[z.get_text(" ",strip=True) for z in tr.find_all(["td","th"],recursive=False)]
+            if len(cells)>=5:
+                diagnostic.append({"n":len(cells),"head":cells[:6]})
+            if len(diagnostic)>=18:break
+        print("N_MONTH_DIAGNOSTIC",json.dumps({"year":year,"month":month,"market":market,
+            "kind":kind,"tables":len(soup.select("table")),"rows":len(soup.select("tr")),
+            "sample":diagnostic},ensure_ascii=False)[:5000],flush=True)
     if kind==0 and (len(rows)<180 or tables==0):
         raise RuntimeError(f"MOPS monthly bulk insufficient {year}-{month} {market} len={len(rows)} tables={tables} bytes={len(raw)}")
     if kind==1 and tables==0 and not any(x in text_decode(raw,True) for x in ("查無資料","無資料","未有資料","目前尚無")):raise RuntimeError(f"MOPS foreign monthly table unparseable {year}-{month} {market}")
