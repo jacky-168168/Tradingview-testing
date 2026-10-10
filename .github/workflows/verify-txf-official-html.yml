@@ -30,5 +30,16 @@ jobs:
                   trs=tb.select('tr') if tb else []
                   snippets=[re.sub(r'\\s+',' ',tr.get_text(' ',strip=True))[:450] for tr in trs[:6]]
                   print(verb,market,'status',r.status_code,'bytes',len(r.content),'title',title,'hits',hits,'tabletrs',len(trs),'tableheads',snippets,'response_start',r.text[:150].replace('\\n',' '))
+                  if verb=='POST' and market=='0':
+                      for f in soup.find_all('form'):
+                          print('FORM',f.get('id'),f.get('name'),f.get('method'),f.get('action'))
+                          for inp in f.select('input,select'):
+                              if inp.name=='input':
+                                  print('INPUT',inp.get('name'),inp.get('type'),str(inp.get('value',''))[:120])
+                              elif inp.name=='select':
+                                  print('SELECT',inp.get('name'),[(o.get('value'),o.get_text(' ',strip=True),bool(o.has_attr('selected'))) for o in inp.select('option')][:20])
+                      for txt in ['一般交易時段','盤後交易時段','marketCode','MarketCode','queryDate','queryType']:
+                          i=r.text.find(txt);print('HTML_CTX',txt,r.text[max(0,i-350):i+350].replace('\\n',' ') if i>=0 else 'not found')
+
               except Exception as e: print(verb,market,'ERROR',type(e).__name__,str(e)[:200])
           PY
