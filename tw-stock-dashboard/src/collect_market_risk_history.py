@@ -190,6 +190,11 @@ def main(args):
     dates=[d for d in index.date.astype(str) if args.start<=d<=args.end]
     if len(dates)<500 and not args.allow_short:raise RuntimeError(f"Unexpectedly short historical index calendar: {len(dates)}")
     cache=json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {}
+    if all(valid_saved(cache.get(d)) for d in dates) and (OUT/"coverage.json").exists():
+        existing=json.loads((OUT/"coverage.json").read_text(encoding="utf-8"))
+        if existing.get("complete") is True and existing.get("riskScoredDays")==len(dates):
+            print(f"ALREADY_COMPLETE {len(dates)}/{len(dates)}; no rewrite",flush=True)
+            return 0
     # Round-robin failed dates so a permanently unavailable old date cannot starve the other 700.
     todo=sorted((d for d in dates if not valid_saved(cache.get(d))),key=lambda d:(int((cache.get(d) or {}).get("attempts") or 0),d))
     attempted=0
@@ -210,7 +215,7 @@ def main(args):
 if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--start",default=START);p.add_argument("--end",default=END)
-    p.add_argument("--max-days",type=int,default=60)
+    p.add_argument("--max-days",type=int,default=800)
     p.add_argument("--timeout",type=int,default=16)
     p.add_argument("--delay",type=float,default=.8)
     p.add_argument("--allow-short",action="store_true")
