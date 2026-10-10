@@ -1,0 +1,138 @@
+{
+  "version": "G_COMPOUND_V3_MATCHED_EXIT_PARITY_V1",
+  "selectedModel": "Ridge__SWING__POSITIVE__ALL",
+  "sameExecution": {
+    "riskGate": "SCORE60",
+    "targetPct": 8,
+    "stopPct": 12,
+    "holdTradingDays": 10,
+    "ticketCapTWD": null,
+    "initialAccountTWD": 500000
+  },
+  "modelUses2026ForSelection": false,
+  "comparators": {
+    "Walk-forward learned Top1": {
+      "id": "Ridge__SWING__POSITIVE__ALL",
+      "validation2025": {
+        "capitalEnd": 714350.71,
+        "netReturnPct": 42.87,
+        "maxDDPct": -20.493,
+        "filledBuys": 24,
+        "closedTrades": 23,
+        "wins": 15,
+        "losses": 8,
+        "winPct": 65.22,
+        "avgNetPct": 1.819,
+        "openAtEnd": 1
+      },
+      "audit2026": {
+        "capitalEnd": 625211.5,
+        "netReturnPct": 25.042,
+        "maxDDPct": -29.436,
+        "filledBuys": 21,
+        "closedTrades": 21,
+        "wins": 13,
+        "losses": 8,
+        "winPct": 61.9,
+        "avgNetPct": 1.399,
+        "openAtEnd": 0
+      },
+      "authorWindow2026": {
+        "capitalEnd": 804465.98,
+        "netReturnPct": 60.893,
+        "maxDDPct": -15.275,
+        "filledBuys": 12,
+        "closedTrades": 11,
+        "wins": 8,
+        "losses": 3,
+        "winPct": 72.73,
+        "avgNetPct": 4.381,
+        "openAtEnd": 1
+      }
+    },
+    "Original G Top1": {
+      "id": "G__SCORE60__TP8__SL12__H10__CAPALL",
+      "validation2025": {
+        "capitalEnd": 583773.99,
+        "netReturnPct": 16.755,
+        "maxDDPct": -38.489,
+        "filledBuys": 30,
+        "closedTrades": 29,
+        "wins": 20,
+        "losses": 9,
+        "winPct": 68.97,
+        "avgNetPct": 1.297,
+        "openAtEnd": 1
+      },
+      "audit2026": {
+        "capitalEnd": 359085.21,
+        "netReturnPct": -28.183,
+        "maxDDPct": -52.416,
+        "filledBuys": 31,
+        "closedTrades": 30,
+        "wins": 19,
+        "losses": 11,
+        "winPct": 63.33,
+        "avgNetPct": -0.293,
+        "openAtEnd": 1
+      },
+      "authorWindow2026": {
+        "capitalEnd": 754917.54,
+        "netReturnPct": 50.984,
+        "maxDDPct": -23.745,
+        "filledBuys": 24,
+        "closedTrades": 23,
+        "wins": 17,
+        "losses": 6,
+        "winPct": 73.91,
+        "avgNetPct": 2.173,
+        "openAtEnd": 1
+      }
+    },
+    "Static Box20 Prebreak Top1": {
+      "id": "Box20_Prebreak__SCORE60__TP08__SL12__H10__CAPALL",
+      "validation2025": {
+        "capitalEnd": 554176.23,
+        "netReturnPct": 10.835,
+        "maxDDPct": -23.031,
+        "filledBuys": 20,
+        "closedTrades": 19,
+        "wins": 9,
+        "losses": 10,
+        "winPct": 47.37,
+        "avgNetPct": 0.67,
+        "openAtEnd": 1
+      },
+      "audit2026": {
+        "capitalEnd": 496645.87,
+        "netReturnPct": -0.671,
+        "maxDDPct": -23.655,
+        "filledBuys": 17,
+        "closedTrades": 16,
+        "wins": 7,
+        "losses": 9,
+        "winPct": 43.75,
+        "avgNetPct": 0.311,
+        "openAtEnd": 1
+      },
+      "authorWindow2026": {
+        "capitalEnd": 466477.57,
+        "netReturnPct": -6.704,
+        "maxDDPct": -18.388,
+        "filledBuys": 10,
+        "closedTrades": 9,
+        "wins": 4,
+        "losses": 5,
+        "winPct": 44.44,
+        "avgNetPct": -0.862,
+        "openAtEnd": 1
+      }
+    }
+  },
+  "caveats": [
+    "All strategies use shared V1 study_one daily OHLC cash model; ranking itself differs.",
+    "The learned V3 model also abstains on predicted nonpositive edge if POSITIVE in selected ID.",
+    "2026 tested after seeing prior G and Box V2 findings; chronological order is correct but research is not pristine blind.",
+    "Backtest adjusted OHLC, current-survivor universe, order fills, and T+2 capital reuse assumptions remain."
+  ]
+}
