@@ -19,6 +19,7 @@ function renderRepeatPanel(model,data){
  var coverage=document.getElementById("repeatCoverage"),state=document.getElementById("repeatStatus"),rows=document.getElementById("repeatRows"),
      size=document.getElementById("repeatCount"),toggle=document.getElementById("repeatExpand");
  document.getElementById("repeatModel").textContent=model==="G Pro"?"G Pro":model;
+ var goHistory=panel.querySelector(".repeat-history");if(goHistory)goHistory.href="./history.html#"+(model==="G Pro"?"GPro":encodeURIComponent(model));
  if(!REPEAT_DATA){
   coverage.textContent=REPEAT_LOAD_ERROR?"資料讀取失敗":"等待歷史資料";
   state.textContent=REPEAT_LOAD_ERROR?"⚠ "+REPEAT_LOAD_ERROR:"正在讀取近兩個月已封存的歷史榜單…";
