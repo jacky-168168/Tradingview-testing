@@ -37,7 +37,7 @@ class NFundamentalTests(unittest.TestCase):
         self.assertIsNotNone(before);self.assertIsNotNone(after)
         self.assertEqual(before["revFiscal"],"2024-04")
         self.assertEqual(after["revFiscal"],"2024-05")
-        self.assertEqual(after["revenueYoYPct"],30)
+        self.assertAlmostEqual(after["revenueYoYPct"],30)
         self.assertEqual(after["epsYtdGrowthPct"],50)
     def test_no_EPS_visible_on_fiscal_end(self):
         idx=self._idx()
