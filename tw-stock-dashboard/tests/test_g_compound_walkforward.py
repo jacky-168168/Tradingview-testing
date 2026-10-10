@@ -39,9 +39,9 @@ class WalkForwardTests(unittest.TestCase):
         day1="2025-01-02";day2="2025-02-03"
         features=[1.]*len(FEATURES)
         pool={day1:[{"date":day1,"code":"1111","sym":"1111.TW",
-                      "name":"A","close":100,"features":features}],
+                      "name":"A","close":100,"features":features,"sources":["Box15 Breakout"]}],
               day2:[{"date":day2,"code":"1111","sym":"1111.TW",
-                      "name":"A","close":100,"features":features}]}
+                      "name":"A","close":100,"features":features,"sources":["Box15 Breakout"]}]}
         past=[{"date":"2024-12-15","maturity":"2024-12-30",
                "pnl":.02 if i%2 else -.03,"features":features} for i in range(200)]
         newly={"date":"2025-01-06","maturity":"2025-01-27",
