@@ -5,7 +5,7 @@ on:
       max_days:
         description: 'Max missing trading days to fetch in this run'
         required: false
-        default: '800'
+        default: '60'
         type: string
   schedule:
     - cron: '17 * * * *'
@@ -14,9 +14,11 @@ on:
     paths:
       - '.github/workflows/collect-market-risk-history.yml'
       - 'tw-stock-dashboard/src/collect_market_risk_history.py'
+      - 'tw-stock-dashboard/src/merge_market_risk_checkpoint.py'
       - 'tw-stock-dashboard/tests/test_market_risk_history_collector.py'
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: twse-market-risk-archive
   cancel-in-progress: false
@@ -40,10 +42,15 @@ jobs:
         run: pip install numpy pandas pyarrow requests
       - name: Offline source-date and checkpoint regression tests
         run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_market_risk_history_collector.py' -v
+      - name: Sync newest saved risk checkpoint before collecting
+        run: |
+          git fetch origin main
+          git restore --source=origin/main -- tw-stock-dashboard/docs/data/research/g_regime_3y/risk_inputs.json tw-stock-dashboard/docs/data/research/g_regime_3y/risk_errors.json tw-stock-dashboard/docs/data/research/g_regime_3y/coverage.json tw-stock-dashboard/docs/data/research/g_regime_3y/market_risk_daily.json tw-stock-dashboard/docs/data/research/g_regime_3y/market_risk_daily.csv
+          python -c 'import json; from pathlib import Path; a=json.loads(Path("tw-stock-dashboard/docs/data/research/g_regime_3y/coverage.json").read_text());print("START_PERSISTED",a["riskScoredDays"],"/",a["tradingDays"])'
       - name: Fetch and validate missing historical market sessions
         working-directory: tw-stock-dashboard
         run: |
-          python -u src/collect_market_risk_history.py --max-days '${{ inputs.max_days || '800' }}'
+          python -u src/collect_market_risk_history.py --max-days '${{ inputs.max_days || '60' }}'
       - name: Upload per-run checkpoint even if collection fails
         if: always()
         uses: actions/upload-artifact@v4
@@ -57,17 +64,59 @@ jobs:
             tw-stock-dashboard/docs/data/research/g_regime_3y/market_risk_daily.csv
           if-no-files-found: warn
           retention-days: 30
-      - name: Commit accumulated successes and failure audit to main even on partial result
+      - name: Losslessly merge verified archive checkpoints and push
         if: always()
+        env:
+          ARCHIVE_DIR: tw-stock-dashboard/docs/data/research/g_regime_3y
         run: |
+          set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -f tw-stock-dashboard/docs/data/research/g_regime_3y/risk_inputs.json tw-stock-dashboard/docs/data/research/g_regime_3y/risk_errors.json tw-stock-dashboard/docs/data/research/g_regime_3y/coverage.json tw-stock-dashboard/docs/data/research/g_regime_3y/market_risk_daily.json tw-stock-dashboard/docs/data/research/g_regime_3y/market_risk_daily.csv 2>/dev/null || true
-          if git diff --cached --quiet; then echo 'No archive changes to publish'; exit 0; fi
-          git commit -m 'data: checkpoint official historical market risk collection'
-          for n in 1 2 3 4 5; do
-            git pull --rebase origin main || { git rebase --abort || true; sleep $((n*5)); continue; }
-            git push origin HEAD:main && exit 0
-            sleep $((n*5))
+          LOCAL_ARCHIVE="$RUNNER_TEMP/market-risk-new"
+          mkdir -p "$LOCAL_ARCHIVE"
+          cp -f "$ARCHIVE_DIR"/risk_inputs.json "$LOCAL_ARCHIVE"/
+          cp -f "$ARCHIVE_DIR"/risk_errors.json "$LOCAL_ARCHIVE"/
+          cp -f "$ARCHIVE_DIR"/coverage.json "$LOCAL_ARCHIVE"/
+          cp -f "$ARCHIVE_DIR"/market_risk_daily.json "$LOCAL_ARCHIVE"/
+          cp -f "$ARCHIVE_DIR"/market_risk_daily.csv "$LOCAL_ARCHIVE"/
+          for try in 1 2 3 4 5 6; do
+            echo "PUBLISH_ATTEMPT $try: merge verified records onto fresh origin/main"
+            git fetch origin main
+            git reset --hard origin/main
+            cp -f "$ARCHIVE_DIR/coverage.json" "$RUNNER_TEMP/market-risk-base-coverage.json"
+            python tw-stock-dashboard/src/merge_market_risk_checkpoint.py --base "$ARCHIVE_DIR" --local "$LOCAL_ARCHIVE" --out "$ARCHIVE_DIR"
+            git add -f "$ARCHIVE_DIR"/risk_inputs.json "$ARCHIVE_DIR"/risk_errors.json "$ARCHIVE_DIR"/coverage.json "$ARCHIVE_DIR"/market_risk_daily.json "$ARCHIVE_DIR"/market_risk_daily.csv
+            if git diff --cached --quiet; then
+              echo "PUBLISH_OK no new records";exit 0
+            fi
+            git commit -m 'data: losslessly merge historical market risk checkpoints'
+            if git push origin HEAD:main; then
+              echo "PUBLISH_OK merged checkpoint committed without rebase conflict"
+              exit 0
+            fi
+            echo "PUBLISH_RETRY remote updated; remerge, never discard successful dated records"
+            sleep $((try*3))
           done
+          echo 'ERROR unable to publish after 6 verified merges'
           exit 1
+      - name: Queue next small batch when verified coverage grows
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          root=Path("tw-stock-dashboard/docs/data/research/g_regime_3y")
+          now=json.loads((root/"coverage.json").read_text(encoding="utf-8"))
+          old=json.loads((Path(os.environ["RUNNER_TEMP"])/"market-risk-base-coverage.json").read_text(encoding="utf-8"))
+          earlier=int(old.get("riskScoredDays",0));latest=int(now.get("riskScoredDays",0))
+          print(f"CONTINUATION_CHECK persisted_before={earlier}, persisted_after={latest}, total={now['tradingDays']}")
+          if latest>earlier and not now.get("complete"):
+              cmd=["gh","api","-X","POST","repos/jacky-168168/Tradingview-testing/actions/workflows/collect-market-risk-history.yml/dispatches","-f","ref=main","-F","inputs[max_days]=60"]
+              subprocess.run(cmd,check=True)
+              print("NEXT_BATCH_QUEUED; no stale rerun")
+          elif latest<=earlier:
+              print("NO_GROWTH: stop automatic retry; retain error audit")
+          else:print("ARCHIVE_COMPLETE; no further collection")
+          PY
