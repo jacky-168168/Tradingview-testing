@@ -113,6 +113,57 @@ def previous_f2_state(market_date):
     except Exception:pass
     return state
 
+
+def backfill_g_pro_once(market_date):
+    """Upgrade an existing frozen market-day snapshot with only G Pro derived fields.
+    Never recompute or mutate the historic official risk score on a closed day.
+    """
+    if not LATEST_JSON.exists():return False
+    try:data=json.loads(LATEST_JSON.read_text(encoding="utf-8"))
+    except (OSError,ValueError):return False
+    if str(data.get("dataDate") or "")!=market_date or "G Pro" in (data.get("models") or {}):return False
+    base=(data.get("models") or {}).get("G") or []
+    subset=base[:3]
+    requested=[(z["code"],z["market"]) for z in subset]
+    if requested:
+        first=datetime.fromisoformat(market_date)-timedelta(days=430)
+        last=datetime.fromisoformat(market_date)+timedelta(days=1)
+        hh,errors=update_many(requested,first,last)
+        if errors:raise RuntimeError("G Pro frozen-day historical candles unavailable: "+str(errors))
+        for z in subset:
+            sy=to_symbol(z["code"],z["market"])
+            h=hh.get(sy)
+            if h is None or h.empty or market_date not in set(h.date.astype(str)):
+                raise RuntimeError("G Pro frozen-day quote absent for "+sy+" "+market_date)
+        indicator=build_daily_indicators(hh,{to_symbol(x["code"],x["market"]) for x in subset})
+    else:indicator={}
+    selected=[];rejected={}
+    for z in subset:
+        sy=to_symbol(z["code"],z["market"])
+        valid,reason=pro_pass({**z,"previousTop20":z.get("gPast10",0)},indicator.get(sy,{}).get(market_date))
+        if valid:selected.append({**z,"model":"G Pro","gVariant":"G_PRO_FROZEN_G_TOP3_STRICT_V1",
+                                  "signal":"💎 G Pro 嚴格趨勢＋量能確認"})
+        else:rejected[reason]=rejected.get(reason,0)+1
+    data["models"]["G Pro"]=selected
+    data["gProSelection"]={"version":"G_PRO_FROZEN_G_TOP3_STRICT_V1","base":"G original Top3 only",
+                            "pass":len(selected),"evaluated":len(subset),"rules":G_PRO_RULES,
+                            "rejections":rejected,"dataDate":market_date,
+                            "backfilledWithoutRiskRecompute":True}
+    data.setdefault("candidateCounts",{})["G Pro"]=len(selected)
+    data.setdefault("strictCandidateCounts",{})["G Pro"]=len(selected)
+    result=json.dumps(data,ensure_ascii=False,indent=2)
+    LATEST_JSON.write_text(result,encoding="utf-8")
+    dailyfile=DATA_DIR/"daily"/f"{market_date}.json"
+    if dailyfile.exists():dailyfile.write_text(result,encoding="utf-8")
+    listing=DATA_DIR/"daily"/"index.json"
+    if listing.exists():
+        ix=json.loads(listing.read_text(encoding="utf-8"))
+        for item in ix:
+            if item.get("date")==market_date:item["gProCount"]=len(selected)
+        listing.write_text(json.dumps(ix,ensure_ascii=False,indent=2),encoding="utf-8")
+    print("G_PRO_FROZEN_DAY_BACKFILLED",market_date,len(selected),"/",len(subset),flush=True)
+    return True
+
 def main():
     now=datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None);start=min(now-timedelta(days=LOOKBACK_CALENDAR_DAYS),datetime(now.year,1,1)-timedelta(days=90))
     _,idx,idxerr=update_symbol(BENCHMARK,start,now)
@@ -123,6 +174,7 @@ def main():
     # Never rewrite a completed prior trading day while market is closed or still awaiting a new session.
     # This prevents a Friday holiday/weekend rerun from mutating Thursday\x27s risk score and F/F2 gating.
     if published==market_date and market_date<now.date().isoformat():
+        backfill_g_pro_once(market_date)
         print(json.dumps({"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"publishedDate":published,"skipped":"no-new-trading-day","riskScoreFrozen":True},ensure_ascii=False));return
     universe=load_universe();eligible=[x for x in universe if 0<x.get("capitalB",0)<MAX_CAPITAL_B]
     histories,errors=update_many([(x["code"],x["market"]) for x in universe],start,now)
