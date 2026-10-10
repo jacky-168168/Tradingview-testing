@@ -1,5 +1,5 @@
 """ROE/PB official archival factors. Null means unverified, never estimated."""
-import bisect,json,math
+import bisect,json,math,gzip
 from collections import defaultdict
 from datetime import date,timedelta
 from pathlib import Path
@@ -60,7 +60,10 @@ def enrich_quality(payload,data_dir):
     errors=[];loaded={}
     for key,file in (("pb","pb_daily.json"),("roe","roe_quarter.json")):
         try:
-            v=json.loads((root/file).read_text(encoding="utf-8"))
+            source=(root/"pb_daily.json.gz") if key=="pb" and (root/"pb_daily.json.gz").exists() else root/file
+            if source.suffix==".gz":
+                with gzip.open(source,"rt",encoding="utf-8") as stream:v=json.load(stream)
+            else:v=json.loads(source.read_text(encoding="utf-8"))
             if not isinstance(v,list):raise ValueError("expected JSON array")
             loaded[key]=v
         except (OSError,ValueError) as ex:errors.append(key+": "+str(ex)[:100]);loaded[key]=[]
