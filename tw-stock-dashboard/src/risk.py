@@ -1,5 +1,5 @@
 from __future__ import annotations
-import math,re,requests
+import math,re,time,requests
 import numpy as np,pandas as pd
 UA={"User-Agent":"Mozilla/5.0 tw-stock-dashboard/3.0","Accept":"application/json"}
 
@@ -12,9 +12,22 @@ def _report(trade_date,path,params):
     if not isinstance(trade_date,str) or len(trade_date)!=10 or trade_date[4]!="-" or trade_date[7]!="-":
         raise ValueError("Explicit ISO trading date required for Risk Score")
     requested=trade_date.replace("-","")
-    r=requests.get("https://www.twse.com.tw/rwd/zh/"+path,params={"response":"json",**params},headers=UA,timeout=25)
-    r.raise_for_status();data=r.json()
-    if data.get("stat")!="OK":raise RuntimeError("TWSE report not ready for "+trade_date+": "+str(data.get("stat")))
+    # TWSE throttles burst historical requests. Retry 429/5xx and alternate official hosts.
+    params={"response":"json",**params};errors=[];data=None
+    for host in ("https://www.twse.com.tw","https://wwwc.twse.com.tw"):
+        for attempt in range(4):
+            try:
+                r=requests.get(host+"/rwd/zh/"+path,params=params,headers=UA,timeout=30)
+                if r.status_code in (429,500,502,503,504):
+                    raise RuntimeError("HTTP "+str(r.status_code))
+                r.raise_for_status();candidate=r.json()
+                if candidate.get("stat")!="OK":
+                    raise RuntimeError("TWSE stat="+str(candidate.get("stat")))
+                data=candidate;break
+            except (requests.RequestException,ValueError,RuntimeError) as e:
+                errors.append(host+": "+str(e)[:130]);time.sleep(min(15,2**attempt))
+        if data is not None:break
+    if data is None:raise RuntimeError("TWSE official history unavailable "+trade_date+" "+str(errors[-4:]))
     # The report must belong to requested session. No implicit 'latest' fallback.
     reported=str(data.get("date") or "")
     if reported:
