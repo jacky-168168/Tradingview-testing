@@ -127,8 +127,8 @@ def main():
                         r,c,deals=run(calendar,stocks,prices,regimes,horizon,slip)
                         # Deals are per stock (3 records per completed Top3 basket).
                         folds[fold]={**r,"closedBaskets":len({z["signalDate"] for z in deals})}
-                        if fold=="all" and slip==0 and horizon==20 and policy in ("BASE","GE60","GE80","GE60_NO_TOP"):
-                            curves[model+"_"+policy]={"date":[v["date"] for v in c],"equity":[v["equity"] for v in c]}
+                        if slip==0 and policy in ("BASE","GE60","GE80","GE60_NO_TOP"):
+                            curves.setdefault(model+"_"+policy+"_"+str(horizon),{})[fold]={"date":[v["date"] for v in c],"equity":[v["equity"] for v in c]}
                     results.append({"model":model,"gate":policy,"hold":horizon,"slippagePerSidePct":round(100*slip,2),**folds})
             print("CASH_STRESS done",model,"H",horizon,flush=True)
     key={(x["model"],x["gate"],x["hold"],x["slippagePerSidePct"]):x for x in results}
