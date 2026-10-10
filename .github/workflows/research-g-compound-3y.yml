@@ -1,0 +1,89 @@
+name: G Compound Top1 Cash-Rolling 3Y Backtest
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/research_g_compound_3y.py'
+      - 'tw-stock-dashboard/tests/test_g_compound_3y.py'
+      - '.github/workflows/research-g-compound-3y.yml'
+permissions:
+  contents: write
+concurrency:
+  group: g-compound-3y-research
+  cancel-in-progress: false
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore stock market historical OHLC
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install
+        run: |
+          pip install -r tw-stock-dashboard/requirements.txt
+          pip install beautifulsoup4
+      - name: Compile and regression-test Top1 cash execution
+        run: |
+          python -m py_compile tw-stock-dashboard/src/research_g_compound_3y.py
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p test_g_compound_3y.py -v
+      - name: Full G Compound 2023-2026 chronological research
+        working-directory: tw-stock-dashboard
+        run: python -u src/research_g_compound_3y.py
+      - name: Verify official risk, capital and audited funds
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=Path('tw-stock-dashboard/docs/data/research/g_compound_3y')
+          x=json.loads((d/'summary.json').read_text(encoding='utf-8'))
+          t=json.loads((d/'trades.json').read_text(encoding='utf-8'))
+          e=json.loads((d/'equity.json').read_text(encoding='utf-8'))
+          assert x['riskScoreCoverage']==728 and x['originalGParity']
+          assert x['stockHistoryErrors']==0
+          assert x['totalCases']==1728 and len(x['models'])==1728
+          assert x['trainingWindows']['authorWindow2026'][1]=='2026-10-02'
+          assert set(x['testConfig']['selectors'])=={'G','G Pro balanced','G Pro quality'}
+          assert len(t['auditedModels'])>=9 and set(t['auditedModels'])==set(e['auditedModels'])
+          for mid,curves in e['auditedModels'].items():
+              for fold,curve in curves.items():
+                  stats=t['auditedModels'][mid][fold]['metrics']
+                  assert curve and curve[0]['equity']>0
+                  assert abs(curve[-1]['equity']-stats['capitalEnd'])<.02,(mid,fold)
+                  assert stats['wins']+stats['losses']==stats['closedTrades']
+                  assert stats['closedTrades']<=stats['filledBuys']
+                  assert stats['maxDDPct']<=0 and stats['capitalEnd']>0
+          print('VERIFIED 1728 G Compound candidate schemes, 728 risk days, causal close-to-next-open, cash and trades')
+          PY
+      - name: Upload complete cash-rolling research
+        uses: actions/upload-artifact@v4
+        with:
+          name: G-Compound-Top1-500k-2018-2026
+          path: tw-stock-dashboard/docs/data/research/g_compound_3y/
+          retention-days: 90
+      - name: Publish verified results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_compound_3y/
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish G Compound 500k Top1 verified cash rolling results'
+            for i in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
