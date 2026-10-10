@@ -33,7 +33,7 @@ class FundamentalIndex:
         byrev=collections.defaultdict(list);byeps=collections.defaultdict(list)
         for z in revenue:
             code=str(z["code"]);market=z["market"];y=int(z["year"]);m=int(z["month"]);v=float(z["revenue"])
-            if not (0<v<1e20) or z["availableFrom"]!=month_safe_date(y,m):raise RuntimeError("Invalid month provenance "+str(z))
+            if not (0<=v<1e20) or z["availableFrom"]!=month_safe_date(y,m):raise RuntimeError("Invalid month provenance "+str(z))
             byrev[(market,code)].append({"date":str(z["availableFrom"]),"year":y,"month":m,"revenue":v})
         for z in eps:
             code=str(z["code"]);market=z["market"];y=int(z["year"]);q=int(z["quarter"]);v=float(z["epsYtd"])
