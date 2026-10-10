@@ -15,6 +15,16 @@
 - GitHub Pages 直接讀取已產生 JSON，不再等待 Apps Script 現場運算。
 - 完整更新加入交易日單調保護：若 Yahoo / benchmark 暫時回傳較舊交易日，不會覆蓋較新的已發布快照。
 
+## ROE / PB / 財報成長歷史研究（分支實作）
+- 個股體檢擴充 `roePct`、`pbRatio`、`pbHistoryPercentile3Y`、來源可用日與覆蓋率。新欄位**只有通過來源與 as-of 檢驗才顯示**；缺值是 `null`。
+- 官方 PB 歷史：`src/collect_pb_history.py --start YYYY-MM-DD --end YYYY-MM-DD`，使用 TWSE `BWIBBU_d`、TPEx `pera_result.php`，增量存到 `docs/data/research/quality/pb_daily.json.gz`；歷史三年 PB 分位至少120筆、最近 PB 日期距交易日不可超過7日。資料抓取成功與否須以 GitHub Actions 紀錄確認。
+- ROE 歷史收集器：`src/collect_roe_history.py --start-year 2023 --end-year 2026`，從官方 MOPS 季度合併損益彙總表 (`ajax_t163sb04`) 與資產負債彙總表 (`ajax_t163sb05`) 分別取年度累計本期淨利、季底權益。近四季淨利 = 當年度累計 + 上一年度全年 - 上年同期累計（Q4 直接用全年）；股東權益取當季與上年同季平均。缺任一期或資料量未達驗證門檻就停止，不會輸出正式 ROE 歷史。該收集器已寫入，但**尚未完成真實官方資料收集與回測**。
+- ROE **不是 EPS 除股價或 EPS 除推估淨值**。官方季報另須提供 `docs/data/research/quality/roe_quarter.json`，每筆含 `market,code,year,quarter,availableFrom,netIncomeTTM,equityNow,equityYearAgo,source,equityScope,netIncomeScope`，其中 `source="MOPS_CONSOLIDATED_QUARTER"`、`equityScope=netIncomeScope="consolidated_total"`，三個金額必須為**相同貨幣單位及會計口徑**。ROE=TTM稅後淨利／(期初、期末權益平均)×100%；資料不足不得顯示。**目前尚未有已驗證的完整 ROE 檔案，不能聲稱 ROE 已取得。**
+- 報告頁 `docs/quality-backtest.html` 讀取 `docs/data/research/quality/backtest.json`，如未產出就顯示未驗證。固定條件比較純營收/EPS 成長 vs ROE+PB 限制，Top10 等權、月末訊號→次日開盤、隔月再平衡，和同期 0050 買進持有對照。買入成本0.2425%、個股賣出0.5425%（含券商費、股票交易稅、滑價假設）；實際仍依券商計算。
+- **勿誇大**：報告的最大回撤/Sharpe 僅以每月淨值計算，低估月內跌幅；既有股票池為當前存續公司，有存活者偏差；MOPS 歷史修訂資料不是真正不可變的公告時點版本，`availableFrom` 僅採保守期限代理，不可聲稱零前視偏差。
+- 手動工作流程 `.github/workflows/official-quality-research.yml` 預設只收 PB，需指定 `run_backtest=true` 才跑歷史研究。分段補齊歷史 PB 並取得同口徑 ROE 官方季報後，才有資格比較三因子績效。
+- 測試：`PYTHONPATH=src python -m unittest discover -s tests -p 'test_stock_quality.py' -v`、`test_quality_backtest.py`。
+
 ## 已完成
 - 上市＋上櫃股票池。
 - A / D / F 完整選股；F 由 D 加大盤 Gate 派生。
