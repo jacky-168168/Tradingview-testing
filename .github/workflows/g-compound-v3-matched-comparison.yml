@@ -30,7 +30,7 @@ jobs:
           from pathlib import Path
           p=Path('tw-stock-dashboard/docs/data/research/g_compound_walkforward_3y')
           x=json.loads((p/'fair_comparison.json').read_text(encoding='utf-8'))
-          assert x['status']=='no_selected_model' or (x['version']=='G_COMPOUND_V3_MATCHED_EXIT_PARITY_V1'
+          assert x.get('status')=='no_selected_model' or (x['version']=='G_COMPOUND_V3_MATCHED_EXIT_PARITY_V1'
               and x['modelUses2026ForSelection'] is False
               and x['sameExecution']['initialAccountTWD']==500000
               and x['sameExecution']['riskGate']=='SCORE60'
