@@ -126,7 +126,7 @@ def run_cash(dates,picks,prices,market,entry_label,exit_label):
                     pending_entry={"i":i+1,"signalDate":d,"stocks":chosen}
     if positions:
         # Last session open positions valued but not fabricated as closed trades.
-        unrealized=len(positions)
+        unrealized=1
     else:unrealized=0
     final=curve[-1]["equity"]
     return {"startCapital":STARTING_CAPITAL,"finalEquity":final,"netReturnPct":round(100*(final/STARTING_CAPITAL-1),3),
