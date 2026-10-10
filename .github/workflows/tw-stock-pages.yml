@@ -10,6 +10,7 @@ on:
       - 'tw-stock-dashboard/docs/backtest-g-panel.js'
       - 'tw-stock-dashboard/docs/data/backtest_g/*.json'
       - 'tw-stock-dashboard/docs/data/research/etf_history/**'
+      - 'tw-stock-dashboard/docs/data/research/g_compound_3y/**'
       - 'tw-stock-dashboard/docs/data/research/market_cash_oos_3y/**'
       - 'tw-stock-dashboard/docs/etf-research.js'
       - 'tw-stock-dashboard/docs/etf-research.css'
@@ -70,6 +71,26 @@ jobs:
           if(s.results.length!==14||Object.keys(e.portfolios).length!==14||s.dailyValuationDates!==e.dates.length||f.dates.length!==e.dates.length)throw new Error('Published portfolio dataset mismatch');
           if(s.audit.sourceCurveParity.L2_SMA10.deltaPct!==0)throw new Error('Reference benchmark diverged');
           console.log('PASS allocation browser JavaScript, 14 portfolios and aligned FX archive');
+          JS
+      - name: Validate G Compound 1728 audited cash-rolling scenarios
+        run: |
+          node - <<'JS'
+          const fs=require('fs');
+          const root='tw-stock-dashboard/docs/';
+          const html=fs.readFileSync(root+'g-compound-3y.html','utf8');
+          const from=html.lastIndexOf('<script>'),to=html.lastIndexOf('</script>');
+          if(from<0||to<=from)throw new Error('Missing G Compound front end');
+          new Function(html.slice(from+8,to));
+          const dir=root+'data/research/g_compound_3y/';
+          const summary=JSON.parse(fs.readFileSync(dir+'summary.json','utf8'));
+          const executive=JSON.parse(fs.readFileSync(dir+'executive.json','utf8'));
+          const trades=JSON.parse(fs.readFileSync(dir+'trades.json','utf8'));
+          const equity=JSON.parse(fs.readFileSync(dir+'equity.json','utf8'));
+          if(summary.totalCases!==1728||summary.riskScoreCoverage!==728||executive.models!==1728)throw new Error('Missing 728 days or 1728-model results');
+          if(Object.keys(trades.auditedModels).length<9||Object.keys(equity.auditedModels).length<9)throw new Error('Missing top-1 trade ledger');
+          if(executive.distribution.numberCapitalAtLeastAuthorsImpliedEnd!==0)throw new Error('Author comparison unexpectedly changed');
+          if(!executive.selectedModel?.authorWindow2026)throw new Error('Train/validation chosen model absent');
+          console.log('PASS G Compound front-end JS, official risk, 1728 models, funds and independent executive audit');
           JS
       - name: Configure Pages
         uses: actions/configure-pages@v5
