@@ -1,0 +1,40 @@
+name: G Three-Year Risk Weight Holdout Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/research_g_risk_weight_oos.py'
+      - '.github/workflows/research-g-risk-weights.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: g-risk-weight-oos
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate script and run fixed train-validation-holdout grid
+        run: |
+          python -m py_compile tw-stock-dashboard/src/research_g_risk_weight_oos.py
+          python -u tw-stock-dashboard/src/research_g_risk_weight_oos.py
+      - name: Publish reproducible research-only audit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_regime_3y/weight_oos_summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish frozen G risk weighting 2026 holdout audit'
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
