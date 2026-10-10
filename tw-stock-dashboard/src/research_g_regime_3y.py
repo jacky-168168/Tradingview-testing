@@ -39,7 +39,7 @@ def score_risk(c,i,br,foreign):
     s+=10 if r20>5 else 6 if r20>0 else 2 if r20>-5 else 0
     s+=10 if c[i]>c[i-1] else 0
     return min(100,s)
-def get_risk(index,dates,workers=7):
+def get_risk(index,dates,workers=2):
     OUT.mkdir(parents=True,exist_ok=True)
     cache=OUT/"risk_inputs.json"
     old=json.loads(cache.read_text()) if cache.exists() else {}
@@ -60,6 +60,8 @@ def get_risk(index,dates,workers=7):
             for ff in as_completed(fs):
                 d,v=ff.result();old[d]=v
         cache.write_text(json.dumps(old,ensure_ascii=False),encoding="utf-8")
+        errors=collections.Counter(str(z.get("error",""))[:110] for z in old.values() if not z.get("ok"))
+        print("Risk failures",errors.most_common(5),flush=True)
         print("Risk source",min(batch+40,len(required)),"/",len(required),
               "valid",sum(bool(z.get("ok")) for z in old.values()),flush=True)
     closes=index.close.astype(float).to_numpy()
@@ -277,7 +279,7 @@ def main(start,end,skip_tx=False):
     print("Stock fetch complete",len(hist),"errors",len(errors),"market days",len(dates),flush=True)
     picks,prices,audit=make_g(dates,index,universe,hist)
     risk,risk_data=get_risk(index,dates)
-    if len(risk)<len(dates)*.65:raise RuntimeError("Official historical risk coverage <65%, refuse fake 3y result")
+    if len(risk)<len(dates)*.65:raise RuntimeError(f"Official historical risk coverage {len(risk)}/{len(dates)} <65%; saved diagnostics to risk_inputs.json")
     night={} if skip_tx else get_night(dates)
     if night and sum(z.get("ok",False) for z in night.values())<len(dates)*.60:
         print("WARN insufficient night source coverage; TX models will be reported but never treated as validated",flush=True)
