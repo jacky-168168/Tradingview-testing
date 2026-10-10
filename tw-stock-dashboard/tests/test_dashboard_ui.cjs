@@ -42,5 +42,5 @@ assert.notEqual(g.cells[13].style.display,"none");assert.notEqual(g.cells[14].st
 }
 const d=table("D",false);assert.equal(d.headers[8].style.display,"none","No phantom G extra headers for D");assert.notEqual(d.headers[16].style.display,"none","D must retain RVOL in full view");
 for(const key of ["tabG","tabA","tabD","tabF","tabF2"]){assert(html.includes('id="'+key+'"'),key+" toggle missing")}
-assert(html.includes("'+tvStockLink(x)+'</td>"),"All models must render clickable stock name through shared row");
+assert(script.includes("'+tvStockLink(x)+'</td>"),"All models must render clickable stock name through shared row");
 console.log("PASS: TradingView TWSE/TPEX links, rule descriptions A/D/F/F2/G, market gate states and G-specific columns");
