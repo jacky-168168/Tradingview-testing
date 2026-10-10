@@ -1,0 +1,58 @@
+name: G Compound V3 Matched Rule Comparison
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/scripts/g_compound_v3_fair_comparison.py'
+      - 'tw-stock-dashboard/docs/data/research/g_compound_walkforward_3y/summary.json'
+      - '.github/workflows/g-compound-v3-matched-comparison.yml'
+permissions:
+  contents: write
+concurrency:
+  group: g-compound-v3-fair-comparison
+  cancel-in-progress: false
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Matched-stop original G versus V2 prebreak versus V3 learned ranking
+        run: python -u tw-stock-dashboard/scripts/g_compound_v3_fair_comparison.py
+      - name: Confirm apples-to-apples training window, market gate, TP/SL/hold and cash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('tw-stock-dashboard/docs/data/research/g_compound_walkforward_3y')
+          x=json.loads((p/'fair_comparison.json').read_text(encoding='utf-8'))
+          assert x['status']=='no_selected_model' or (x['version']=='G_COMPOUND_V3_MATCHED_EXIT_PARITY_V1'
+              and x['modelUses2026ForSelection'] is False
+              and x['sameExecution']['initialAccountTWD']==500000
+              and x['sameExecution']['riskGate']=='SCORE60'
+              and len(x['comparators'])==3)
+          if 'comparators' in x:
+              for v in x['comparators'].values():
+                  for period in ('validation2025','audit2026','authorWindow2026'):
+                      assert v[period]['wins']+v[period]['losses']==v[period]['closedTrades']
+          print('V3 rule-matched cash comparison PASS')
+          PY
+      - name: Publish verified paired comparison
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_compound_walkforward_3y/fair_comparison.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish identical TP SL hold cash comparator for recursive Top1'
+            for i in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((i*6)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*6))
+            done
+            exit 1
+          fi
