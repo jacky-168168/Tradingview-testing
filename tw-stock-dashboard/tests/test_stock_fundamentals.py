@@ -45,7 +45,7 @@ class FundamentalStockProfileTests(unittest.TestCase):
     def test_negative_eps_no_fake_pe_or_growth(self):
         a=self.fixtures()
         a.quarters[("sii","2330")][(2025,2)]["value"]=-2
-        a.quarters[("sii","2330")][(2026,2)]["value"]=-4
+        a.quarters[("sii","2330")][(2026,2)]["value"]=-50
         p=a.profile("上市","2330","2026-10-08",200)
         self.assertIsNone(p["epsYtdYoYPct"])
         self.assertIsNone(p["peTTM"])
