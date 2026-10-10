@@ -51,19 +51,26 @@ def load():
 def run(start,end,sleep_sec=1):
     if end>date.today():raise ValueError("cannot archive future dates")
     known=load();sess=requests.Session();done=0;fail=[]
+    if start>end:raise ValueError("start > end")
+    known_days={(k[0],k[2]) for k in known}
+    market_file=DATA_DIR/"research"/"g_regime_3y"/"market_risk_daily.json"
+    try:expected={x["date"] for x in json.loads(market_file.read_text(encoding="utf8"))}
+    except (OSError,ValueError,KeyError,TypeError):expected=set()
     d=start
     while d<=end:
         if d.weekday()<5:
-            if all(any(k[0]==m and k[2]==d.isoformat() for k in known) for m in ("sii","otc")):
+            if all((m,d.isoformat()) in known_days for m in ("sii","otc")):
                 d+=timedelta(days=1);continue
             try:
                 a=twse(sess,d);b=tpex(sess,d)
                 if not a and not b:
+                    if d.isoformat() in expected:raise RuntimeError("official sources empty on verified trading date")
                     print("HOLIDAY_OR_NO_REPORT",d,flush=True)
                 elif len(a)<150 or len(b)<100:
                     raise RuntimeError(f"insufficient stocks TWSE={len(a)} TPEx={len(b)}")
                 else:
                     for x in a+b:known[(x["market"],x["code"],x["date"])]=x
+                    known_days.add(("sii",d.isoformat()));known_days.add(("otc",d.isoformat()))
                     done+=1
                     if done%10==0:save(known)
                 print("PB_DAY",d,len(a),len(b),flush=True)
@@ -73,6 +80,7 @@ def run(start,end,sleep_sec=1):
         d+=timedelta(days=1)
     save(known)
     if fail:raise RuntimeError(f"PB archive incomplete {len(fail)} days; first={fail[:3]}")
+    if not known:raise RuntimeError("PB historical endpoint returned no verifiable observations")
     print("PB_ARCHIVE_SUCCESS",len(known),"rows",flush=True)
 def save(records):
     OUT.parent.mkdir(parents=True,exist_ok=True)
