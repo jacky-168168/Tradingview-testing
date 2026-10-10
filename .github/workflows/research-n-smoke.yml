@@ -1,0 +1,31 @@
+name: N CANSLIM Strict Unit and Causality Smoke
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/n_canslim_features.py'
+      - 'tw-stock-dashboard/src/research_n_canslim_recursive.py'
+      - 'tw-stock-dashboard/tests/test_n_canslim_*.py'
+      - '.github/workflows/research-n-smoke.yml'
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install exact model and parser dependencies
+        run: |
+          pip install -r tw-stock-dashboard/requirements.txt
+          pip install scikit-learn==1.7.2 beautifulsoup4==4.14.2
+      - name: Compile N source
+        run: python -m py_compile tw-stock-dashboard/src/n_fundamental_archive.py tw-stock-dashboard/src/n_canslim_features.py tw-stock-dashboard/src/research_n_canslim_recursive.py
+      - name: Test future-leak defenses, as-of fundamentals, 0050 and risk metrics
+        run: |
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_n_canslim_fundamental.py' -v
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_n_canslim_recursive.py' -v
