@@ -1,0 +1,638 @@
+{
+  "version": "G_DOUBLE_PERSIST_TWII_TX_3Y_V1",
+  "createdAt": "2026-10-10T14:51:35.682434+08:00",
+  "period": {
+    "start": "2023-10-09",
+    "end": "2026-10-08"
+  },
+  "signalSessions": 728,
+  "universeNow": 1982,
+  "stockDataErrors": 0,
+  "riskCoverage": 728,
+  "txNightCoverage": 0,
+  "audit": {
+    "symbols": 1977,
+    "dailyFeatureRows": 29768,
+    "validGSignalDays": 650,
+    "meanGStocksPerSignal": 40.89
+  },
+  "method": {
+    "selector": "G_DOUBLE_PERSIST same-day market cross-sectional percentiles; 3D/18D confirmed prior-bar high; prior 10 exchange-day baseline Top20 persistence",
+    "lookahead": "G and TWII risk at finished close D; TX night starts 15:00 D (reported under next trading day), completed 05:00 next trading date; next TX-aware entry at opening D+1",
+    "execution": "Top3 equally weighted, next exchange open to Hth session close, 0.1425% brokerage each side plus 0.30% stock sale tax",
+    "riskScore": "Exact risk.py 8 thresholds, date-pinned TWSE breadth/foreign for each session, no neutral fill",
+    "TXScore": "Unvalidated scenario adjustment using official same-month TX night percentage relative to futures settlement reference (not cash-index). TX models require observed night report",
+    "sampleRisk": "Latest company universe/capital => survivor/corporate-history bias; Yahoo adjusted OHLC; model thresholds tuned only after independent evaluation",
+    "MDD": "Phase-portfolio MDD sampled at trade-exit, NOT a daily marked-to-market max drawdown"
+  },
+  "models": [
+    {
+      "model": "SPOT_0",
+      "horizon": 1,
+      "GsignalDays": 649,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 649,
+      "executedSignals": 644,
+      "netSignal": {
+        "n": 644,
+        "avgPct": -0.932,
+        "medianPct": -0.972,
+        "winPct": 37.89
+      },
+      "meanPhaseReturnPct": -99.85,
+      "medianPhaseReturnPct": -99.85,
+      "worstPhaseReturnPct": -99.85,
+      "worstPhaseExitMDDPct": -99.86
+    },
+    {
+      "model": "SPOT_50",
+      "horizon": 1,
+      "GsignalDays": 649,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 445,
+      "executedSignals": 441,
+      "netSignal": {
+        "n": 441,
+        "avgPct": -0.659,
+        "medianPct": -0.732,
+        "winPct": 40.82
+      },
+      "meanPhaseReturnPct": -96.19,
+      "medianPhaseReturnPct": -96.19,
+      "worstPhaseReturnPct": -96.19,
+      "worstPhaseExitMDDPct": -96.42
+    },
+    {
+      "model": "SPOT_55",
+      "horizon": 1,
+      "GsignalDays": 649,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 399,
+      "executedSignals": 395,
+      "netSignal": {
+        "n": 395,
+        "avgPct": -0.668,
+        "medianPct": -0.732,
+        "winPct": 40.76
+      },
+      "meanPhaseReturnPct": -94.89,
+      "medianPhaseReturnPct": -94.89,
+      "worstPhaseReturnPct": -94.89,
+      "worstPhaseExitMDDPct": -95.14
+    },
+    {
+      "model": "SPOT_60",
+      "horizon": 1,
+      "GsignalDays": 649,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 357,
+      "executedSignals": 353,
+      "netSignal": {
+        "n": 353,
+        "avgPct": -0.692,
+        "medianPct": -0.837,
+        "winPct": 39.66
+      },
+      "meanPhaseReturnPct": -93.63,
+      "medianPhaseReturnPct": -93.63,
+      "worstPhaseReturnPct": -93.63,
+      "worstPhaseExitMDDPct": -93.81
+    },
+    {
+      "model": "SPOT_65",
+      "horizon": 1,
+      "GsignalDays": 649,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 329,
+      "executedSignals": 325,
+      "netSignal": {
+        "n": 325,
+        "avgPct": -0.651,
+        "medianPct": -0.767,
+        "winPct": 40.31
+      },
+      "meanPhaseReturnPct": -91.03,
+      "medianPhaseReturnPct": -91.03,
+      "worstPhaseReturnPct": -91.03,
+      "worstPhaseExitMDDPct": -91.28
+    },
+    {
+      "model": "SPOT_70",
+      "horizon": 1,
+      "GsignalDays": 649,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 296,
+      "executedSignals": 292,
+      "netSignal": {
+        "n": 292,
+        "avgPct": -0.803,
+        "medianPct": -0.848,
+        "winPct": 40.07
+      },
+      "meanPhaseReturnPct": -92.03,
+      "medianPhaseReturnPct": -92.03,
+      "worstPhaseReturnPct": -92.03,
+      "worstPhaseExitMDDPct": -92.26
+    },
+    {
+      "model": "SPOT_75",
+      "horizon": 1,
+      "GsignalDays": 649,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 256,
+      "executedSignals": 253,
+      "netSignal": {
+        "n": 253,
+        "avgPct": -0.89,
+        "medianPct": -0.93,
+        "winPct": 38.74
+      },
+      "meanPhaseReturnPct": -91.07,
+      "medianPhaseReturnPct": -91.07,
+      "worstPhaseReturnPct": -91.07,
+      "worstPhaseExitMDDPct": -91.39
+    },
+    {
+      "model": "SPOT_80",
+      "horizon": 1,
+      "GsignalDays": 649,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 211,
+      "executedSignals": 208,
+      "netSignal": {
+        "n": 208,
+        "avgPct": -0.92,
+        "medianPct": -0.972,
+        "winPct": 38.46
+      },
+      "meanPhaseReturnPct": -87.16,
+      "medianPhaseReturnPct": -87.16,
+      "worstPhaseReturnPct": -87.16,
+      "worstPhaseExitMDDPct": -87.25
+    },
+    {
+      "model": "SPOT_0",
+      "horizon": 5,
+      "GsignalDays": 645,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 645,
+      "executedSignals": 639,
+      "netSignal": {
+        "n": 639,
+        "avgPct": -0.337,
+        "medianPct": -0.212,
+        "winPct": 48.2
+      },
+      "meanPhaseReturnPct": -38.35,
+      "medianPhaseReturnPct": -58.25,
+      "worstPhaseReturnPct": -87.35,
+      "worstPhaseExitMDDPct": -90.27
+    },
+    {
+      "model": "SPOT_50",
+      "horizon": 5,
+      "GsignalDays": 645,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 441,
+      "executedSignals": 436,
+      "netSignal": {
+        "n": 436,
+        "avgPct": -0.272,
+        "medianPct": -0.208,
+        "winPct": 47.94
+      },
+      "meanPhaseReturnPct": -27.16,
+      "medianPhaseReturnPct": -29.61,
+      "worstPhaseReturnPct": -83.1,
+      "worstPhaseExitMDDPct": -88.82
+    },
+    {
+      "model": "SPOT_55",
+      "horizon": 5,
+      "GsignalDays": 645,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 395,
+      "executedSignals": 390,
+      "netSignal": {
+        "n": 390,
+        "avgPct": -0.24,
+        "medianPct": -0.208,
+        "winPct": 48.21
+      },
+      "meanPhaseReturnPct": -23.36,
+      "medianPhaseReturnPct": -17.69,
+      "worstPhaseReturnPct": -81.42,
+      "worstPhaseExitMDDPct": -85.51
+    },
+    {
+      "model": "SPOT_60",
+      "horizon": 5,
+      "GsignalDays": 645,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 353,
+      "executedSignals": 349,
+      "netSignal": {
+        "n": 349,
+        "avgPct": -0.199,
+        "medianPct": -0.243,
+        "winPct": 47.56
+      },
+      "meanPhaseReturnPct": -25.77,
+      "medianPhaseReturnPct": -22.32,
+      "worstPhaseReturnPct": -63.33,
+      "worstPhaseExitMDDPct": -73.71
+    },
+    {
+      "model": "SPOT_65",
+      "horizon": 5,
+      "GsignalDays": 645,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 325,
+      "executedSignals": 321,
+      "netSignal": {
+        "n": 321,
+        "avgPct": -0.224,
+        "medianPct": -0.243,
+        "winPct": 47.98
+      },
+      "meanPhaseReturnPct": -23.76,
+      "medianPhaseReturnPct": -23.31,
+      "worstPhaseReturnPct": -62.3,
+      "worstPhaseExitMDDPct": -71.45
+    },
+    {
+      "model": "SPOT_70",
+      "horizon": 5,
+      "GsignalDays": 645,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 292,
+      "executedSignals": 288,
+      "netSignal": {
+        "n": 288,
+        "avgPct": -0.27,
+        "medianPct": -0.197,
+        "winPct": 48.26
+      },
+      "meanPhaseReturnPct": -22.45,
+      "medianPhaseReturnPct": -26.53,
+      "worstPhaseReturnPct": -58.16,
+      "worstPhaseExitMDDPct": -63.97
+    },
+    {
+      "model": "SPOT_75",
+      "horizon": 5,
+      "GsignalDays": 645,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 253,
+      "executedSignals": 250,
+      "netSignal": {
+        "n": 250,
+        "avgPct": -0.445,
+        "medianPct": -0.421,
+        "winPct": 47.6
+      },
+      "meanPhaseReturnPct": -24.76,
+      "medianPhaseReturnPct": -49.77,
+      "worstPhaseReturnPct": -52.44,
+      "worstPhaseExitMDDPct": -61.55
+    },
+    {
+      "model": "SPOT_80",
+      "horizon": 5,
+      "GsignalDays": 645,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 209,
+      "executedSignals": 206,
+      "netSignal": {
+        "n": 206,
+        "avgPct": -0.331,
+        "medianPct": -0.147,
+        "winPct": 49.03
+      },
+      "meanPhaseReturnPct": -15.78,
+      "medianPhaseReturnPct": -35.1,
+      "worstPhaseReturnPct": -55.44,
+      "worstPhaseExitMDDPct": -64.78
+    },
+    {
+      "model": "SPOT_0",
+      "horizon": 10,
+      "GsignalDays": 640,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 640,
+      "executedSignals": 634,
+      "netSignal": {
+        "n": 634,
+        "avgPct": 0.96,
+        "medianPct": 0.245,
+        "winPct": 51.74
+      },
+      "meanPhaseReturnPct": 52.84,
+      "medianPhaseReturnPct": -0.57,
+      "worstPhaseReturnPct": -71.51,
+      "worstPhaseExitMDDPct": -81.39
+    },
+    {
+      "model": "SPOT_50",
+      "horizon": 10,
+      "GsignalDays": 640,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 437,
+      "executedSignals": 432,
+      "netSignal": {
+        "n": 432,
+        "avgPct": 1.068,
+        "medianPct": 0.673,
+        "winPct": 53.47
+      },
+      "meanPhaseReturnPct": 32.62,
+      "medianPhaseReturnPct": 20.12,
+      "worstPhaseReturnPct": -43.04,
+      "worstPhaseExitMDDPct": -54.87
+    },
+    {
+      "model": "SPOT_55",
+      "horizon": 10,
+      "GsignalDays": 640,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 392,
+      "executedSignals": 387,
+      "netSignal": {
+        "n": 387,
+        "avgPct": 0.976,
+        "medianPct": 0.468,
+        "winPct": 52.71
+      },
+      "meanPhaseReturnPct": 26.7,
+      "medianPhaseReturnPct": 8.58,
+      "worstPhaseReturnPct": -34.6,
+      "worstPhaseExitMDDPct": -55.87
+    },
+    {
+      "model": "SPOT_60",
+      "horizon": 10,
+      "GsignalDays": 640,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 350,
+      "executedSignals": 345,
+      "netSignal": {
+        "n": 345,
+        "avgPct": 1.17,
+        "medianPct": 1.0,
+        "winPct": 53.91
+      },
+      "meanPhaseReturnPct": 37.6,
+      "medianPhaseReturnPct": 16.02,
+      "worstPhaseReturnPct": -40.76,
+      "worstPhaseExitMDDPct": -57.0
+    },
+    {
+      "model": "SPOT_65",
+      "horizon": 10,
+      "GsignalDays": 640,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 322,
+      "executedSignals": 317,
+      "netSignal": {
+        "n": 317,
+        "avgPct": 1.173,
+        "medianPct": 1.0,
+        "winPct": 54.26
+      },
+      "meanPhaseReturnPct": 36.98,
+      "medianPhaseReturnPct": 4.94,
+      "worstPhaseReturnPct": -18.33,
+      "worstPhaseExitMDDPct": -56.79
+    },
+    {
+      "model": "SPOT_70",
+      "horizon": 10,
+      "GsignalDays": 640,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 289,
+      "executedSignals": 284,
+      "netSignal": {
+        "n": 284,
+        "avgPct": 1.211,
+        "medianPct": 1.152,
+        "winPct": 55.28
+      },
+      "meanPhaseReturnPct": 32.2,
+      "medianPhaseReturnPct": 15.66,
+      "worstPhaseReturnPct": -31.05,
+      "worstPhaseExitMDDPct": -63.51
+    },
+    {
+      "model": "SPOT_75",
+      "horizon": 10,
+      "GsignalDays": 640,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 251,
+      "executedSignals": 247,
+      "netSignal": {
+        "n": 247,
+        "avgPct": 1.023,
+        "medianPct": 1.0,
+        "winPct": 53.44
+      },
+      "meanPhaseReturnPct": 22.84,
+      "medianPhaseReturnPct": 8.91,
+      "worstPhaseReturnPct": -48.3,
+      "worstPhaseExitMDDPct": -59.87
+    },
+    {
+      "model": "SPOT_80",
+      "horizon": 10,
+      "GsignalDays": 640,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 207,
+      "executedSignals": 203,
+      "netSignal": {
+        "n": 203,
+        "avgPct": 1.247,
+        "medianPct": 1.0,
+        "winPct": 53.69
+      },
+      "meanPhaseReturnPct": 24.67,
+      "medianPhaseReturnPct": 16.15,
+      "worstPhaseReturnPct": -32.9,
+      "worstPhaseExitMDDPct": -45.82
+    },
+    {
+      "model": "SPOT_0",
+      "horizon": 20,
+      "GsignalDays": 630,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 630,
+      "executedSignals": 624,
+      "netSignal": {
+        "n": 624,
+        "avgPct": 1.819,
+        "medianPct": -0.635,
+        "winPct": 48.56
+      },
+      "meanPhaseReturnPct": 44.6,
+      "medianPhaseReturnPct": 12.05,
+      "worstPhaseReturnPct": -81.26,
+      "worstPhaseExitMDDPct": -81.72
+    },
+    {
+      "model": "SPOT_50",
+      "horizon": 20,
+      "GsignalDays": 630,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 431,
+      "executedSignals": 426,
+      "netSignal": {
+        "n": 426,
+        "avgPct": 2.291,
+        "medianPct": 0.373,
+        "winPct": 50.47
+      },
+      "meanPhaseReturnPct": 45.01,
+      "medianPhaseReturnPct": 63.08,
+      "worstPhaseReturnPct": -79.45,
+      "worstPhaseExitMDDPct": -79.95
+    },
+    {
+      "model": "SPOT_55",
+      "horizon": 20,
+      "GsignalDays": 630,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 387,
+      "executedSignals": 382,
+      "netSignal": {
+        "n": 382,
+        "avgPct": 2.649,
+        "medianPct": 0.81,
+        "winPct": 51.57
+      },
+      "meanPhaseReturnPct": 51.92,
+      "medianPhaseReturnPct": 60.82,
+      "worstPhaseReturnPct": -70.62,
+      "worstPhaseExitMDDPct": -73.94
+    },
+    {
+      "model": "SPOT_60",
+      "horizon": 20,
+      "GsignalDays": 630,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 345,
+      "executedSignals": 341,
+      "netSignal": {
+        "n": 341,
+        "avgPct": 3.103,
+        "medianPct": 1.71,
+        "winPct": 53.96
+      },
+      "meanPhaseReturnPct": 60.48,
+      "medianPhaseReturnPct": 72.94,
+      "worstPhaseReturnPct": -60.6,
+      "worstPhaseExitMDDPct": -65.04
+    },
+    {
+      "model": "SPOT_65",
+      "horizon": 20,
+      "GsignalDays": 630,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 317,
+      "executedSignals": 313,
+      "netSignal": {
+        "n": 313,
+        "avgPct": 3.223,
+        "medianPct": 2.044,
+        "winPct": 54.95
+      },
+      "meanPhaseReturnPct": 57.08,
+      "medianPhaseReturnPct": 49.64,
+      "worstPhaseReturnPct": -63.72,
+      "worstPhaseExitMDDPct": -63.72
+    },
+    {
+      "model": "SPOT_70",
+      "horizon": 20,
+      "GsignalDays": 630,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 284,
+      "executedSignals": 280,
+      "netSignal": {
+        "n": 280,
+        "avgPct": 3.355,
+        "medianPct": 1.993,
+        "winPct": 55.0
+      },
+      "meanPhaseReturnPct": 49.25,
+      "medianPhaseReturnPct": 38.16,
+      "worstPhaseReturnPct": -45.5,
+      "worstPhaseExitMDDPct": -55.25
+    },
+    {
+      "model": "SPOT_75",
+      "horizon": 20,
+      "GsignalDays": 630,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 246,
+      "executedSignals": 243,
+      "netSignal": {
+        "n": 243,
+        "avgPct": 3.625,
+        "medianPct": 2.092,
+        "winPct": 55.14
+      },
+      "meanPhaseReturnPct": 49.64,
+      "medianPhaseReturnPct": 40.67,
+      "worstPhaseReturnPct": -46.96,
+      "worstPhaseExitMDDPct": -51.54
+    },
+    {
+      "model": "SPOT_80",
+      "horizon": 20,
+      "GsignalDays": 630,
+      "riskMissingDays": 0,
+      "txNightDays": 0,
+      "gatedDays": 203,
+      "executedSignals": 200,
+      "netSignal": {
+        "n": 200,
+        "avgPct": 4.598,
+        "medianPct": 2.427,
+        "winPct": 57.5
+      },
+      "meanPhaseReturnPct": 54.64,
+      "medianPhaseReturnPct": 25.34,
+      "worstPhaseReturnPct": -48.59,
+      "worstPhaseExitMDDPct": -52.15
+    }
+  ]
+}
