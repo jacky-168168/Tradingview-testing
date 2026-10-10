@@ -8,7 +8,10 @@ from research_g_compound_walkforward import PLANS
 class NRecursiveTests(unittest.TestCase):
     def test_cagr_sharpe_daily_NAV(self):
         ds=[d.strftime("%Y-%m-%d") for d in pd.bdate_range("2025-01-02",periods=260)]
-        nav=[500000*(1+.0007)**(i+1) for i in range(260)]
+        nav=[];asset=500000
+        for i in range(260):
+            asset*=1.0014 if i%2 else 1.0004
+            nav.append(asset)
         x=perf_stats(ds,nav)
         self.assertGreater(x["annualizedCAGRpct"],0)
         self.assertGreater(x["annualizedSharpeRf0"],0)
