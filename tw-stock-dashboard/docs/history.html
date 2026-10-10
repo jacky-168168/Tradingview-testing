@@ -1,10 +1,218 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>台股 D/F/A 歷史快照</title><style>
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;margin:0;background:#f4f6f9;color:#172033}.wrap{max-width:1500px;margin:auto;padding:20px}.top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.card{background:#fff;border:1px solid #e4e8ef;border-radius:14px;padding:16px;margin-top:14px}.muted{color:#7b8494;font-size:12px}.btn,select{border:1px solid #d8dce7;background:#fff;border-radius:9px;padding:8px 10px;font-weight:700;color:#172033;text-decoration:none}.tabs button{border:1px solid #d8dce7;background:#fff;padding:8px 14px;border-radius:10px;font-weight:800;cursor:pointer}.tabs button.on{background:#111827;color:#fff}.primary:after{content:"主模型";font-size:9px;margin-left:6px;padding:2px 5px;border-radius:99px;background:#ede9fe;color:#6d28d9}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th,td{padding:8px;border-bottom:1px solid #eef0f4;text-align:right}th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}.pos{color:#16a34a}.neg{color:#dc2626}@media(max-width:650px){.wrap{padding:12px}}
-</style><script src="./site-access.js"></script>
-</head><body><div class="wrap"><div class="top"><h1 style="margin:0">🗂️ D / F / F2 / A 歷史快照</h1><a class="btn" href="./index.html">← 今日 Dashboard</a><a class="btn" href="./backtest.html">📈 回測 / Edge</a><label>日期 <select id="day"><option>讀取中...</option></select></label><span id="meta" class="muted"></span></div><div class="card tabs"><button id="D" class="primary on">D 技術強勢</button><button id="F">F 固定濾網</button><button id="F2">F2 動態濾網</button><button id="A">A 原始多因子</button></div><div class="card"><div class="scroll"><table><thead><tr><th>Rank</th><th>股票</th><th>市場</th><th>題材</th><th>總分</th><th>SAR</th><th>收盤</th><th>股本(億)</th><th>成交額(億)</th><th>外資</th><th>投信</th><th>RS20</th><th>RVOL</th><th>5D</th><th>20D</th><th>訊號</th></tr></thead><tbody id="tb"><tr><td colspan="16">尚無資料</td></tr></tbody></table></div></div></div><script>
-var DATA=null,MODEL="D";function F(x,n){var v=Number(x);return Number.isFinite(v)?v.toFixed(n==null?2:n):"—"}function P(x){return Number.isFinite(Number(x))?F(x)+"%":"—"}function C(x){return Number(x)>=0?"pos":"neg"}function E(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
-function render(){var xs=DATA&&DATA.models&&DATA.models[MODEL]||[];document.querySelectorAll(".tabs button").forEach(function(b){b.classList.toggle("on",b.id===MODEL)});tb.innerHTML=xs.length?xs.map(function(x,i){return "<tr><td><b>"+(i+1)+"</b></td><td><b>"+E(x.code)+" "+E(x.name)+"</b></td><td>"+E(x.market)+"</td><td title='"+E(x.theme||"")+"'>"+E(x.theme||"—")+"</td><td><b>"+F(x.total==null?x.score:x.total,0)+"</b></td><td>"+E(x.sarText||"—")+"</td><td>"+F(x.close)+"</td><td>"+F(x.capitalB==null?x.capital:x.capitalB)+"</td><td>"+F(x.turnoverB==null?x.turnover:x.turnoverB)+"</td><td class='"+C(x.foreignToday)+"'>"+F(x.foreignToday,0)+"</td><td class='"+C(x.trustToday)+"'>"+F(x.trustToday,0)+"</td><td class='"+C(x.rs20)+"'>"+P(x.rs20)+"</td><td>"+F(x.rvol)+"</td><td class='"+C(x.ret5)+"'>"+P(x.ret5)+"</td><td class='"+C(x.ret20)+"'>"+P(x.ret20)+"</td><td>"+E(x.signal||"")+"</td></tr>"}).join(""):"<tr><td colspan='16'>該模型無股票</td></tr>"}
-async function load(date){try{var r=await fetch("./data/daily/"+date+".json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();meta.textContent="資料日 "+(DATA.dataDate||date)+" ｜ Risk "+(DATA.risk&&DATA.risk.score!=null?DATA.risk.score:"—")+" "+(DATA.risk&&DATA.risk.state||"")+" ｜ 更新 "+(DATA.generatedAt||"--");render()}catch(e){meta.textContent="讀取失敗："+e.message}}
-async function init(){try{var r=await fetch("./data/daily/index.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);var xs=await r.json();day.innerHTML="";xs.forEach(function(x){var o=document.createElement("option");o.value=x.date;o.textContent=x.date+"｜Risk "+(x.riskScore==null?"—":x.riskScore)+"｜D"+(x.dCount||0)+"/F"+(x.fCount||0)+"/F2"+(x.f2Count||0)+"/A"+(x.aCount||0);day.appendChild(o)});if(xs.length)load(xs[0].date);else day.innerHTML="<option>尚無歷史快照</option>"}catch(e){day.innerHTML="<option>載入失敗</option>"}}
-["D","F","F2","A"].forEach(function(id){document.getElementById(id).onclick=function(){MODEL=id;render()}});day.addEventListener("change",function(){load(day.value)});init();
-</script></body></html>
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>台股量化｜G／G Pro／D／F／F2／A 歷史快照</title>
+<script src="./site-access.js"></script>
+<style>
+:root{--bg:#f4f6f9;--text:#172033;--border:#e4e8ef;--blue:#2563eb;--muted:#66758b}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;margin:0;background:var(--bg);color:var(--text)}
+.wrap{max-width:1500px;margin:0 auto;padding:18px}
+.header{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.header h1{font-size:23px;margin:0;line-height:1.5}
+.header .description{font-size:11px;color:var(--muted);line-height:1.6;margin-top:3px}
+.head-info{min-width:210px;flex:1}
+.header-nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:12px}
+.btn,select{border:1px solid #d8dce7;background:#fff;border-radius:9px;padding:9px 11px;font-weight:750;color:var(--text);text-decoration:none;font-size:12px}
+.btn{cursor:pointer;white-space:nowrap}
+.btn:hover,.tabs button:hover{background:#eff6ff;border-color:#bfdbfe}
+.btn:focus-visible,.tabs button:focus-visible,select:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.selector{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.selector label{font-size:12px;font-weight:750;color:#475569}
+.selector select{font-size:12px;min-width:130px}
+.meta{font-size:11px;color:var(--muted);line-height:1.7;overflow-wrap:anywhere;flex:1;min-width:180px}
+.tabs{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.tabs button{border:1px solid #d8dce7;background:#fff;padding:9px 13px;border-radius:9px;font-weight:800;cursor:pointer;color:var(--text);font-size:12px;min-height:35px}
+.tabs button.on{background:#111827;border-color:#111827;color:#fff}
+.tabs button.primary:after{content:"主模型";font-size:9px;margin-left:6px;padding:2px 5px;border-radius:99px;background:#ede9fe;color:#6d28d9}
+.tabs button.on.primary:after{background:#ddd6fe}
+.tabs button.gpro{color:#1d4ed8;background:#eff6ff;border-color:#bfdbfe}
+.tabs button.gpro.on{color:#fff;background:#1d4ed8;border-color:#1d4ed8}
+.tabs .count{margin-left:4px;font-size:10px;opacity:.75}
+.summary{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:11px}
+.summary strong{font-size:14px}
+.summary .muted{color:var(--muted);font-size:11px}
+.notice{font-size:12px;line-height:1.75;margin:0 0 12px;padding:10px 12px;border-radius:9px;border:1px solid #e2e8f0;background:#f8fafc;color:#475569}
+.notice.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+.notice.ok{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.notice:empty{display:none}
+.scroll{overflow:auto;max-width:100%}
+table{border-collapse:collapse;width:100%;min-width:1180px;font-size:12px;white-space:nowrap}
+th,td{padding:9px;border-bottom:1px solid #eef0f4;text-align:right}
+th{background:#fafbfc;color:#64748b;font-size:11px;position:sticky;top:0;z-index:1}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+tr:hover{background:#f8fafc}
+td.stock a{color:#1d4ed8;text-decoration:none;font-weight:850}
+td.stock a:hover{text-decoration:underline}
+td.theme{max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+td.signal{max-width:235px;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.pos{color:#16a34a}.neg{color:#dc2626}
+.foot{margin-top:10px;font-size:11px;color:#64748b;line-height:1.8}
+@media(max-width:680px){.wrap{padding:10px}.header h1{font-size:20px}.header-nav{width:100%}.selector{align-items:stretch}.selector select{flex:1}.tabs{gap:6px}.tabs button{font-size:11px;padding:9px 10px}.summary{gap:6px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="header">
+    <div class="head-info">
+      <h1>🗂️ G／G Pro／D／F／F2／A 歷史快照</h1>
+      <div class="description">逐日檢視當天已封存的選股名單，不以目前的排名回填過去。</div>
+    </div>
+    <nav class="header-nav" aria-label="頁面導覽">
+      <a class="btn" href="./index.html">🏠 返回主頁</a>
+      <a class="btn" href="./selections.html">📋 即時選股排行</a>
+      <a class="btn" href="./backtest.html">📈 回測中心</a>
+    </nav>
+  </header>
+  <section class="card selector">
+    <label for="day">歷史資料日期</label>
+    <select id="day"><option>讀取中…</option></select>
+    <span id="meta" class="meta" role="status" aria-live="polite">正在載入歷史資料…</span>
+  </section>
+  <section class="card tabs" aria-label="選股歷史模型">
+    <button type="button" id="G" data-model="G" class="primary on">🚀 G 雙突破 <span class="count"></span></button>
+    <button type="button" id="GPro" class="gpro" data-model="G Pro">💎 G Pro <span class="count"></span></button>
+    <button type="button" id="D" data-model="D">D 技術強勢 <span class="count"></span></button>
+    <button type="button" id="F" data-model="F">F 固定濾網 <span class="count"></span></button>
+    <button type="button" id="F2" data-model="F2">F2 動態濾網 <span class="count"></span></button>
+    <button type="button" id="A" data-model="A">A 原始多因子 <span class="count"></span></button>
+  </section>
+  <section class="card">
+    <div class="summary">
+      <strong id="tableTitle">🚀 G 雙突破｜歷史排行</strong>
+      <span id="modelCount" class="muted"></span>
+    </div>
+    <p id="notice" class="notice" role="status" aria-live="polite"></p>
+    <div class="scroll">
+      <table aria-label="歷史選股排名">
+        <thead><tr>
+          <th>Rank</th><th>股票</th><th>市場</th><th>題材</th><th>總分</th><th>SAR</th><th>收盤</th><th>股本(億)</th><th>成交額(億)</th><th>外資</th><th>投信</th><th>RS20</th><th>RVOL</th><th>5D</th><th>20D</th><th>訊號</th>
+        </tr></thead>
+        <tbody id="tb"><tr><td colspan="16">讀取歷史快照中…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="foot">點選股票名稱可直接開啟 TradingView。歷史快照為選股當日封存資料；G Pro 是 G 的嚴格篩選子集合，當日 0 檔與當日尚未建立快照會分別顯示。</div>
+  </section>
+</main>
+<script>
+"use strict";
+let DATA=null,MODEL="G",REQUEST=0,AVAILABLE=[];
+const byId=id=>document.getElementById(id);
+const esc=value=>String(value==null?"":value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=(v,n=2)=>v==null||v===""||!Number.isFinite(Number(v))?"—":Number(v).toFixed(n);
+const pct=v=>v==null||v===""||!Number.isFinite(Number(v))?"—":num(v)+"%";
+const cssClass=v=>v==null||!Number.isFinite(Number(v))?"":Number(v)>=0?"pos":"neg";
+const names={"G":"🚀 G 雙突破","G Pro":"💎 G Pro","D":"D 技術強勢","F":"F 固定濾網","F2":"F2 動態濾網","A":"A 原始多因子"};
+const hasModel=(data,name)=>!!data&&!!data.models&&Object.prototype.hasOwnProperty.call(data.models,name);
+function render(){
+ const date=DATA?.dataDate||byId("day").value;
+ document.querySelectorAll(".tabs button").forEach(btn=>{
+   const name=btn.dataset.model,records=hasModel(DATA,name)?DATA.models[name]:null;
+   btn.classList.toggle("on",name===MODEL);
+   btn.setAttribute("aria-pressed",String(name===MODEL));
+   btn.querySelector(".count").textContent=Array.isArray(records)?String(records.length):"—";
+ });
+ byId("tableTitle").textContent=names[MODEL]+"｜"+date+" 歷史排行";
+ if(!DATA){byId("modelCount").textContent="";return}
+ if(!hasModel(DATA,MODEL)){
+   byId("modelCount").textContent="未封存";
+   byId("notice").className="notice warn";
+   byId("notice").textContent=date+" 的原始日快照沒有保存「"+names[MODEL]+"」資料。這不是選出 0 檔；不會使用較晚日期的股票名單回填。";
+   byId("tb").innerHTML='<tr><td colspan="16" style="text-align:center;padding:26px">當日未建立此模型的歷史快照</td></tr>';
+   return;
+ }
+ const rows=DATA.models[MODEL];
+ if(!Array.isArray(rows)){
+   byId("notice").className="notice warn";
+   byId("notice").textContent="當日模型資料格式不正確。";
+   byId("modelCount").textContent="資料錯誤";
+   byId("tb").innerHTML='<tr><td colspan="16">資料格式不正確</td></tr>';
+   return;
+ }
+ byId("modelCount").textContent="已封存 "+rows.length+" 檔";
+ if(rows.length===0){
+   byId("notice").className="notice";
+   byId("notice").textContent=MODEL==="G Pro"?"此日已執行 G Pro 嚴格篩選，但沒有任何 G 股票通過，故為 0 檔。":"當日已建立 "+names[MODEL]+" 歷史快照，但符合條件的股票為 0 檔。";
+   byId("tb").innerHTML='<tr><td colspan="16" style="text-align:center;padding:26px">當日符合條件：0 檔</td></tr>';
+   return;
+ }
+ byId("notice").className="notice ok";
+ byId("notice").textContent="已載入 "+date+" 當日封存的 "+names[MODEL]+" Top"+rows.length+"；排名與分數依當日快照，不使用今日資料重算。";
+ byId("tb").innerHTML=rows.map((x,i)=>{
+   const market=x.market==="上櫃"?"TPEX":"TWSE";
+   const symbol=encodeURIComponent(market+":"+String(x.code||""));
+   const link='<a href="https://www.tradingview.com/chart/?symbol='+symbol+'" target="_blank" rel="noopener noreferrer">'+esc(x.code)+" "+esc(x.name)+"</a>";
+   const score=x.total??x.gScore??x.score;
+   return '<tr>'+
+     '<td><b>'+(i+1)+'</b></td><td class="stock">'+link+'</td><td>'+esc(x.market||"—")+'</td>'+
+     '<td class="theme" title="'+esc(x.theme||x.subIndustry||"")+'">'+esc(x.theme||x.subIndustry||"—")+'</td>'+
+     '<td><b>'+num(score,1)+'</b></td><td>'+esc(x.sarText||"—")+'</td>'+
+     '<td>'+num(x.close)+'</td><td>'+num(x.capitalB??x.capital)+'</td><td>'+num(x.turnoverB??x.turnover)+'</td>'+
+     '<td class="'+cssClass(x.foreignToday)+'">'+num(x.foreignToday,0)+'</td><td class="'+cssClass(x.trustToday)+'">'+num(x.trustToday,0)+'</td>'+
+     '<td class="'+cssClass(x.rs20)+'">'+pct(x.rs20)+'</td><td>'+num(x.rvol)+'</td>'+
+     '<td class="'+cssClass(x.ret5)+'">'+pct(x.ret5)+'</td><td class="'+cssClass(x.ret20)+'">'+pct(x.ret20)+'</td>'+
+     '<td class="signal" title="'+esc(x.signal||"")+'">'+esc(x.signal||"—")+'</td></tr>';
+ }).join("");
+}
+async function load(date){
+ const req=++REQUEST;
+ byId("meta").textContent="正在讀取 "+date+" 的歷史快照…";
+ byId("notice").className="notice";
+ byId("notice").textContent="正在讀取已封存的每日資料…";
+ try{
+   const response=await fetch("./data/daily/"+encodeURIComponent(date)+".json?t="+Date.now(),{cache:"no-store"});
+   if(!response.ok)throw new Error("HTTP "+response.status);
+   const fresh=await response.json();
+   if(req!==REQUEST)return;
+   if(fresh.dataDate&&fresh.dataDate!==date)throw new Error("快照資料日期與選單不一致");
+   DATA=fresh;
+   const risk=fresh.risk||{};
+   byId("meta").textContent="資料日 "+date+" ｜ Risk "+(risk.score??"—")+" "+(risk.state||"")+" ｜ 更新 "+(fresh.generatedAt||"—");
+   render();
+ }catch(error){
+   if(req!==REQUEST)return;
+   DATA=null;byId("meta").textContent="讀取失敗："+error.message;
+   byId("notice").className="notice warn";
+   byId("notice").textContent="無法驗證 "+date+" 的原始快照，暫時不顯示股票名單。";
+   byId("tb").innerHTML='<tr><td colspan="16" style="text-align:center;padding:26px">歷史資料載入失敗</td></tr>';
+ }
+}
+async function init(){
+ try{
+   const response=await fetch("./data/daily/index.json?t="+Date.now(),{cache:"no-store"});
+   if(!response.ok)throw new Error("HTTP "+response.status);
+   const items=await response.json();
+   if(!Array.isArray(items))throw new Error("索引格式不正確");
+   AVAILABLE=items;
+   const selector=byId("day");
+   selector.innerHTML="";
+   for(const item of items){
+     const opt=document.createElement("option");
+     opt.value=item.date;
+     const models=["G"+(item.gCount??"—"),"G Pro"+(item.gProCount??"—"),"D"+(item.dCount??"—"),"F"+(item.fCount??"—"),"F2"+(item.f2Count??"—"),"A"+(item.aCount??"—")];
+     opt.textContent=item.date+"｜Risk "+(item.riskScore??"—")+"｜"+models.join("／");
+     selector.appendChild(opt);
+   }
+   if(items.length)await load(items[0].date);
+   else{selector.innerHTML="<option>沒有已封存日期</option>";byId("meta").textContent="尚無歷史資料"}
+ }catch(e){
+   byId("day").innerHTML="<option>索引載入失敗</option>";
+   byId("meta").textContent="歷史索引讀取失敗："+e.message;
+   byId("notice").className="notice warn";
+   byId("notice").textContent="無法取得已封存日期清單。";
+ }
+}
+document.querySelectorAll(".tabs button").forEach(btn=>btn.addEventListener("click",()=>{
+ MODEL=btn.dataset.model;
+ history.replaceState(null,"",location.pathname+location.search+"#"+(MODEL==="G Pro"?"GPro":encodeURIComponent(MODEL)));
+ render();
+}));
+const selectedHash=decodeURIComponent(location.hash.slice(1));
+if(selectedHash==="GPro")MODEL="G Pro";
+else if(Object.prototype.hasOwnProperty.call(names,selectedHash))MODEL=selectedHash;
+byId("day").addEventListener("change",()=>load(byId("day").value));
+init();
+</script>
+</body></html>
