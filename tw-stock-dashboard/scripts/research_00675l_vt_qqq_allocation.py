@@ -76,8 +76,8 @@ def align_curves(raw,fx):
     # Never forward-fill older than seven calendar days; ETF holidays are expected.
     for label,src in list(raw.items())+[("FX",fx)]:
         last_dates=pd.Series(src.index,index=src.index).reindex(calendar,method="ffill")
-        days=(calendar-last_dates).days
-        if max(days)>8:raise RuntimeError(label+" prolonged data gap "+str(max(days)))
+        days=(pd.Series(calendar,index=calendar)-last_dates).dt.days
+        if int(days.max())>8:raise RuntimeError(label+" prolonged data gap "+str(int(days.max())))
     return calendar,aligned,f
 def curve_summary(dates,values):
     v=np.asarray(values,dtype=float)
