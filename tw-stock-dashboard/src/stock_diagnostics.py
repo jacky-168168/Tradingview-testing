@@ -50,8 +50,9 @@ def build_snapshot(universe,histories,market_date,benchmark_ret20,inst=None,mode
         volratio=_num(volume.iloc[-1]/rv) if rv>0 else None
         daily=close.pct_change(fill_method=None).iloc[-20:].dropna()
         vol20=_num(float(daily.std())*math.sqrt(252)*100) if len(daily)>=15 else None
-        hi120=_num(close.iloc[-120:].max()) if len(close)>=120 else None
-        hi252=_num(close.iloc[-252:].max()) if len(close)>=252 else None
+        highs=pd.to_numeric(h["high"],errors="coerce") if "high" in h else close
+        hi120=_num(highs.iloc[-120:].max()) if len(highs)>=120 else None
+        hi252=_num(highs.iloc[-252:].max()) if len(highs)>=252 else None
         k=market+"_"+code;ii=inst.get(k,{})
         has_inst=market=="上市" and bool(ii)
         foreign=_num(float(ii.get("foreign",0))/1000) if has_inst else None
