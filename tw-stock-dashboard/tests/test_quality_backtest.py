@@ -50,6 +50,10 @@ class FactorBacktestTests(unittest.TestCase):
         rows=simulate(universe,bars,FakeMops(),None,days)
         self.assertIsNone(rows["quality"][0]["netReturn"])
         self.assertEqual(rows["quality"][0]["status"],"missing_quality_archive")
+    def test_research_runner_imports_and_is_fail_closed(self):
+        from research_fundamental_quality import benchmark,FOLDS
+        self.assertIn("oos2025",FOLDS)
+        self.assertEqual(benchmark({},[])["status"],"no_periods")
     def test_profit_is_net_of_all_costs(self):
         universe,bars,days=history()
         picks=[{"symbol":str(2000+i)+".TW"} for i in range(5)]
