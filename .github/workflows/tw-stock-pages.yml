@@ -7,6 +7,7 @@ on:
     paths:
       - 'tw-stock-dashboard/docs/*.html'
       - 'tw-stock-dashboard/docs/site-access.js'
+      - 'tw-stock-dashboard/docs/stock-selection.js'
       - 'tw-stock-dashboard/docs/backtest-g-panel.js'
       - 'tw-stock-dashboard/docs/data/backtest_g/*.json'
       - 'tw-stock-dashboard/docs/data/research/etf_history/**'
@@ -157,6 +158,23 @@ jobs:
             for(let list of Object.values(s.trainingAudit))for(let m of list){if(m.latestUsedLabelExit&&m.latestUsedLabelExit>=m.firstTradeDate)throw new Error('Future N model label leaked');}
             console.log('N official MOPS factor simulation and 0050 verified before Pages deploy');
           }else{console.log('N educational strategy screen JS validated; official historical research not yet published');}
+          JS
+      - name: Validate N integrated stock selection page
+        run: |
+          node - <<'JS'
+          const fs=require('fs');
+          const h=fs.readFileSync('tw-stock-dashboard/docs/selections.html','utf8');
+          const js=fs.readFileSync('tw-stock-dashboard/docs/stock-selection.js','utf8');
+          if(!h.includes('id="tabN"')||!h.includes('id="nPanel"')||!h.includes('id="nRows"'))throw new Error('N missing real selection tab/panel');
+          new Function(js);
+          if(!js.includes('function renderNTable')||!js.includes('N_ARCHIVE.version!==N_SUMMARY.version'))throw new Error('N lacks dated verified research renderer');
+          const p='tw-stock-dashboard/docs/data/research/n_canslim/';
+          if(fs.existsSync(p+'summary.json')){
+            const s=JSON.parse(fs.readFileSync(p+'summary.json','utf8'));
+            const q=JSON.parse(fs.readFileSync(p+'picks.json','utf8'));
+            if(s.version!==q.version||s.modelCount!==16||s.marketDays!==728)throw new Error('N historical selection archive has inconsistent source');
+          }
+          console.log('PASS selectable N integrated Top3 / recursive Top1, source provenance and browser syntax');
           JS
       - name: Configure Pages
         uses: actions/configure-pages@v5
