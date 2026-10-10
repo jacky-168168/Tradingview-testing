@@ -11,6 +11,7 @@ on:
       - 'tw-stock-dashboard/docs/data/backtest_g/*.json'
       - 'tw-stock-dashboard/docs/data/research/etf_history/**'
       - 'tw-stock-dashboard/docs/data/research/g_compound_3y/**'
+      - 'tw-stock-dashboard/docs/data/research/g_compound_v2_3y/**'
       - 'tw-stock-dashboard/docs/data/research/market_cash_oos_3y/**'
       - 'tw-stock-dashboard/docs/etf-research.js'
       - 'tw-stock-dashboard/docs/etf-research.css'
@@ -91,6 +92,25 @@ jobs:
           if(executive.distribution.numberCapitalAtLeastAuthorsImpliedEnd!==0)throw new Error('Author comparison unexpectedly changed');
           if(!executive.selectedModel?.authorWindow2026)throw new Error('Train/validation chosen model absent');
           console.log('PASS G Compound front-end JS, official risk, 1728 models, funds and independent executive audit');
+          JS
+      - name: Validate G Compound V2 box breakout research
+        run: |
+          node - <<'JS'
+          const fs=require('fs');
+          const root='tw-stock-dashboard/docs/';
+          const page=fs.readFileSync(root+'g-compound-v2-3y.html','utf8');
+          const start=page.lastIndexOf('<script>'),end=page.lastIndexOf('</script>');
+          if(start<0||end<=start)throw new Error('G Compound V2 front-end JS missing');
+          new Function(page.slice(start+8,end));
+          const dir=root+'data/research/g_compound_v2_3y/';
+          const s=JSON.parse(fs.readFileSync(dir+'summary.json','utf8'));
+          const t=JSON.parse(fs.readFileSync(dir+'trades.json','utf8'));
+          const e=JSON.parse(fs.readFileSync(dir+'equity.json','utf8'));
+          const p=JSON.parse(fs.readFileSync(dir+'picks.json','utf8'));
+          if(s.totalCases!==160||s.riskDays!==728||s.marketDays!==728||!s.originalGUnchangedAndParityPassed)throw new Error('V2 unverified 160 cases or risk dates');
+          if(Object.keys(t.cases).length<5||Object.keys(e.cases).length<5||!p.families['Box20 Prebreak'])throw new Error('V2 missing trace or candidate data');
+          if(s.selectionFromTrainValidation.status==='chosen_without_2026'&&!s.models.some(x=>x.id===s.selectionFromTrainValidation.id))throw new Error('Selected model missing');
+          console.log('PASS V2 HTML JavaScript syntax, verified risk, unchanged G, cash curves and 160 cases');
           JS
       - name: Configure Pages
         uses: actions/configure-pages@v5
