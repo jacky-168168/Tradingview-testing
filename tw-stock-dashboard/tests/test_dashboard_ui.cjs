@@ -1,9 +1,15 @@
-// Homepage regression: G visual columns, TradingView links, and actual A/D/F/F2/G rule captions.
+// Standalone rankings regression: G visual columns, links, model descriptions and no homepage selection table.
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict");
-const html=fs.readFileSync(path.resolve(__dirname,"../docs/index.html"),"utf8");
-const script=(html.match(/<script>\s*([\s\S]*?)<\/script>/)||[])[1];assert(script,"Homepage inline JavaScript missing");new Function(script);
+const html=fs.readFileSync(path.resolve(__dirname,"../docs/selections.html"),"utf8");
+const home=fs.readFileSync(path.resolve(__dirname,"../docs/index.html"),"utf8");
+const script=fs.readFileSync(path.resolve(__dirname,"../docs/stock-selection.js"),"utf8");
+assert.match(html,/<script src="\.\/stock-selection\.js"><\/script>/,"Rankings page must load its own script");new Function(script);
+assert(!home.includes('id="stockTable"')&&!home.includes('id="tabG"'),"Home must not show the stock selection table");
+assert(home.includes('href="./selections.html"'),"Home needs an obvious rankings entry");
+assert(home.includes('id="riskScore"')&&home.includes('id="buyRows"')&&home.includes('id="txfNight"'),"Market and institutional panels must stay on homepage");
+const homeScript=(home.match(/<script>\s*([\s\S]*?)<\/script>/)||[])[1];assert(homeScript,"Homepage market script missing");new Function(homeScript);
 function part(from,to){const a=script.indexOf(from),b=script.indexOf(to,a+from.length);assert(a!==-1&&b>a,from+" missing");return script.slice(a,b)}
-const link=new Function("x",part("function esc(","function renderRisk(")+"return tvStockLink(x)");
+const link=new Function("x",part("function esc(","function dayInfo(")+"return tvStockLink(x)");
 assert.equal(link({code:"1714",name:"和桐",market:"上市"}).includes("symbol=TWSE%3A1714"),true);
 assert.equal(link({code:"3624",name:"光頡",market:"上櫃"}).includes("symbol=TPEX%3A3624"),true);
 assert(link({code:"3624",name:"光頡",market:"上櫃"}).includes('target="_blank" rel="noopener noreferrer"'));
@@ -36,5 +42,5 @@ assert.notEqual(g.cells[13].style.display,"none");assert.notEqual(g.cells[14].st
 }
 const d=table("D",false);assert.equal(d.headers[8].style.display,"none","No phantom G extra headers for D");assert.notEqual(d.headers[16].style.display,"none","D must retain RVOL in full view");
 for(const key of ["tabG","tabA","tabD","tabF","tabF2"]){assert(html.includes('id="'+key+'"'),key+" toggle missing")}
-assert(html.includes("'+tvStockLink(x)+'</td>"),"All models must render clickable stock name through shared row");
+assert(script.includes("'+tvStockLink(x)+'</td>"),"All models must render clickable stock name through shared row");
 console.log("PASS: TradingView TWSE/TPEX links, rule descriptions A/D/F/F2/G, market gate states and G-specific columns");
