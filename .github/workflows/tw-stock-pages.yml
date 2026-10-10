@@ -12,6 +12,7 @@ on:
       - 'tw-stock-dashboard/docs/data/research/etf_history/**'
       - 'tw-stock-dashboard/docs/data/research/g_compound_3y/**'
       - 'tw-stock-dashboard/docs/data/research/g_compound_v2_3y/**'
+      - 'tw-stock-dashboard/docs/data/research/g_compound_walkforward_3y/**'
       - 'tw-stock-dashboard/docs/data/research/market_cash_oos_3y/**'
       - 'tw-stock-dashboard/docs/etf-research.js'
       - 'tw-stock-dashboard/docs/etf-research.css'
@@ -111,6 +112,28 @@ jobs:
           if(Object.keys(t.cases).length<5||Object.keys(e.cases).length<5||!p.families['Box20 Prebreak'])throw new Error('V2 missing trace or candidate data');
           if(s.selectionFromTrainValidation.status==='chosen_without_2026'&&!s.models.some(x=>x.id===s.selectionFromTrainValidation.id))throw new Error('Selected model missing');
           console.log('PASS V2 HTML JavaScript syntax, verified risk, unchanged G, cash curves and 160 cases');
+          JS
+      - name: Validate G Compound V3 monthly recursive Top1 site and four result files
+        run: |
+          node - <<'JS'
+          const fs=require('fs');
+          const root='tw-stock-dashboard/docs/';
+          const page=fs.readFileSync(root+'g-compound-v3-walkforward.html','utf8');
+          const first=page.lastIndexOf('<script>'),last=page.lastIndexOf('</script>');
+          if(first<0||last<=first)throw new Error('Missing inline G Compound V3 page script');
+          new Function(page.slice(first+8,last));
+          const dir=root+'data/research/g_compound_walkforward_3y/';
+          const s=JSON.parse(fs.readFileSync(dir+'summary.json','utf8'));
+          const t=JSON.parse(fs.readFileSync(dir+'trades.json','utf8'));
+          const e=JSON.parse(fs.readFileSync(dir+'equity.json','utf8'));
+          const p=JSON.parse(fs.readFileSync(dir+'picks.json','utf8'));
+          if(s.marketDays!==728||s.officialRiskDays!==728||!s.GUnmodifiedParityVerified)throw new Error('Missing V3 dated risk or baseline parity');
+          if(s.variantCount!==16||Object.keys(s.monthlyModelTrainingAudit).length!==8)throw new Error('V3 walkforward model grid incomplete');
+          if(s.version!==t.version||s.version!==e.version||s.version!==p.version)throw new Error('V3 version mismatch');
+          if(Object.keys(e.models).length<2||Object.keys(t.models).length<2)throw new Error('V3 trade ledgers missing');
+          for(const sessions of Object.values(s.monthlyModelTrainingAudit))for(const m of sessions){
+            if(!(m.latestMaturedLabel<m.fitAsOfFirstTradeDate))throw new Error('V3 training label leak');}
+          console.log('PASS monthly recursive V3 Top1 front-end JS, 728 days, 16 model cases and as-of-month retraining proof');
           JS
       - name: Configure Pages
         uses: actions/configure-pages@v5
