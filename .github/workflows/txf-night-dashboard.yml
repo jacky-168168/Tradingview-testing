@@ -25,17 +25,32 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install requests
-      - name: Validate official TX day and night matching logic
+      - run: pip install requests beautifulsoup4
+      - name: Validate official TX same-session, same-contract matching
         shell: bash
         run: |
           PYTHONPATH=tw-stock-dashboard/src python - <<'PY'
-          from futures_night import parse
-          sample=[{"Date":"20261008","Contract":"TX","ContractMonth(Week)":"202610","Last":"49000","Volume":"2000","TradingSession":"一般"},{"Date":"20261008","Contract":"TX","ContractMonth(Week)":"202610","Last":"48510","Volume":"400","TradingSession":"盤後"},{"Date":"20261008","Contract":"TX","ContractMonth(Week)":"202611","Last":"50000","Volume":"30","TradingSession":"盤後"}]
-          z=parse(sample)
-          assert z["quality"]=="paired-day-night" and z["nightVsDayPoints"]==-490 and z["nightVsDayPct"]==-1
-          solo=parse(sample[:1]);assert solo["quality"]=="single-session" and solo["nightVsDayPct"] is None
-          print("PASS dates, near-month, incomplete session protection and no fabricated night prices")
+          from futures_night import day_from_openapi,night_from_html,build
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          api=[
+           {"Date":"20261008","Contract":"TX","ContractMonth(Week)":"202610","Last":"49349","Volume":"36039","TradingSession":"一般"},
+           {"Date":"20261008","Contract":"TX","ContractMonth(Week)":"202610","Last":"49593","Volume":"29306","TradingSession":"盤後"},
+           {"Date":"20261008","Contract":"TX","ContractMonth(Week)":"202611","Last":"49700","Volume":"15","TradingSession":"一般"}]
+          day=day_from_openapi(api)
+          assert day["close"]==49349 and day["contract"]=="202610",day
+          html="""<html><body>2026/10/08 15:00~次日05:00 盤後交易時段行情表
+          <table class="table_f"><tr><th>契約</th></tr>
+          <tr><td>TX</td><td>202610</td><td>49122</td><td>49226</td>
+          <td>48413</td><td>48705</td><td>▼-652</td><td>▼-1.32%</td><td>39441</td></tr></table>
+          </body></html>"""
+          night=night_from_html(html,"2026-10-08","202610","2026-10-12")
+          assert night and night["close"]==48705 and night["officialChangePoints"]==-652,night
+          assert night_from_html(html,"2026-10-07","202610","2026-10-12") is None
+          assert night_from_html(html,"2026-10-08","202611","2026-10-12") is None
+          result=build(day,night,datetime.now(ZoneInfo("Asia/Taipei")))
+          assert result["nightVsDayPoints"]==-644 and result["officialNightChangePoints"]==-652,result
+          print("PASS holiday crossover TX day=49349, night=48705, day delta=-644, official settlement delta=-652")
           PY
       - name: Fetch official TAIFEX completed sessions
         working-directory: tw-stock-dashboard
