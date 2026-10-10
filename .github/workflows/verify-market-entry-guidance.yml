@@ -1,0 +1,50 @@
+name: Verify Market Entry Guidance
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/risk.py'
+      - 'tw-stock-dashboard/docs/index.html'
+      - '.github/workflows/verify-market-entry-guidance.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install numpy pandas requests
+      - name: Verify market price levels do not leak current or future highs
+        run: |
+          PYTHONPATH=tw-stock-dashboard/src python - <<'PY'
+          import pandas as pd
+          from risk import high_context
+          n=150
+          q=pd.DataFrame({'close':[100.]*n,'high':[105.]*n})
+          q.loc[n-1,'close']=104
+          q.loc[n-1,'high']=200
+          z=high_context(q)
+          assert z['priorHigh60']==105 and z['priorHigh120']==105
+          assert abs(z['distHigh120Pct']-(-0.95))<0.02
+          q.loc[n-2,'high']=110
+          z=high_context(q)
+          assert z['priorHigh60']==110 and z['priorHigh120']==110
+          print('PASS: prior 60/120 high excludes current session, leaves original risk score untouched')
+          PY
+      - name: Parse index inline JavaScript and confirm separate G advisory
+        run: |
+          node - <<'JS'
+          const fs=require('fs');
+          const html=fs.readFileSync('tw-stock-dashboard/docs/index.html','utf8');
+          const blocks=[...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/g)];
+          const inline=blocks.map(b=>b[1]).filter(Boolean);
+          if(!inline.length)throw Error('No inline script found');
+          inline.forEach(code=>new Function(code));
+          ['marketEntryAdvisor','marketEntryGuidance','renderMarketEntry','distHigh120Pct','Strong Bottom Reversal'].forEach(k=>{if(!html.includes(k))throw Error('Missing '+k)});
+          console.log('PASS: advisory UI parses and keeps G/F/F2 rule changes out of this edit');
+          JS

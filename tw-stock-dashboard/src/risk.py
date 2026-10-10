@@ -110,6 +110,19 @@ def reversal(idx,ctx):
         active=ts
     return {"mode":mode,"activeState":active,"oversoldScore":os,"bottomConfirmScore":bc,"bottomState":bs,"overboughtScore":ob,"topConfirmScore":tc,"topState":ts,"distMA20":round(dist,2),"indexRvol":round(rvol,2),"closePosition":round(cp,1),"breakPrevHigh":bph,"breakPrevLow":bpl,"recentOversold":ros,"recentOverbought":rob,"volExpansion":round(ve,2)}
 
+def high_context(idx):
+    """Previous 60/120 completed trading-session intraday highs, excluding current day.
+    Research-only proximity flags; does not change original Risk Score or F/F2 gates.
+    """
+    result={};last=float(idx.close.iloc[-1])
+    for period in (60,120):
+        prior=idx.high.iloc[-period-1:-1].astype(float)
+        valid=len(prior)==period and all(math.isfinite(x) and x>0 for x in prior)
+        high=float(prior.max()) if valid else None
+        result["priorHigh"+str(period)]=round(high,2) if high is not None else None
+        result["distHigh"+str(period)+"Pct"]=round((last/high-1)*100,2) if high is not None else None
+    return result
+
 def build(index_df,risk_on=60,risk_strong=75,risk_off=45):
     idx=index_df.copy().sort_values("date").reset_index(drop=True)
     if len(idx)<25:return {"state":"尚未分析","score":0}
@@ -127,7 +140,7 @@ def build(index_df,risk_on=60,risk_strong=75,risk_off=45):
     if latest.close>prev.close:s+=10
     s=min(100,s);state="🟢 Strong Risk ON" if s>=risk_strong else "🟢 Risk ON" if s>=risk_on else "🟡 Neutral" if s>=risk_off else "🔴 Risk OFF"
     rv=reversal(idx,{"ret5":r5,"ret20":r20,"ma20":ma20,"breadth":br,"foreign":foreign,"dayRet":dr})
-    return {"date":str(latest.date),"index":round(float(latest.close),2),"ma5":round(ma5,2),"ma20":round(ma20,2),"ret5":round(r5,2),"ret20":round(r20,2),"trend":"多" if latest.close>ma20 else "空","up":up,"down":down,"breadth":round(br,1),"foreign":round(foreign,1),"score":s,"state":state,"dayRet":round(dr,2),**rv}
+    return {"date":str(latest.date),"index":round(float(latest.close),2),"ma5":round(ma5,2),"ma20":round(ma20,2),"ret5":round(r5,2),"ret20":round(r20,2),"trend":"多" if latest.close>ma20 else "空","up":up,"down":down,"breadth":round(br,1),"foreign":round(foreign,1),"score":s,"state":state,"dayRet":round(dr,2),**rv,**high_context(idx)}
 
 
 def build_historical(index_df,breadth_value=50.0,foreign_value=0.0,risk_on=60,risk_strong=75,risk_off=45):
@@ -148,7 +161,7 @@ def build_historical(index_df,breadth_value=50.0,foreign_value=0.0,risk_on=60,ri
     if latest.close>prev.close:s+=10
     s=min(100,s);state="🟢 Strong Risk ON" if s>=risk_strong else "🟢 Risk ON" if s>=risk_on else "🟡 Neutral" if s>=risk_off else "🔴 Risk OFF"
     rv=reversal(idx,{"ret5":r5,"ret20":r20,"ma20":ma20,"breadth":br,"foreign":foreign,"dayRet":dr})
-    return {"date":str(latest.date),"index":round(float(latest.close),2),"ma5":round(ma5,2),"ma20":round(ma20,2),"ret5":round(r5,2),"ret20":round(r20,2),"trend":"多" if latest.close>ma20 else "空","breadth":round(br,1),"foreign":round(foreign,1),"score":s,"state":state,"dayRet":round(dr,2),**rv}
+    return {"date":str(latest.date),"index":round(float(latest.close),2),"ma5":round(ma5,2),"ma20":round(ma20,2),"ret5":round(r5,2),"ret20":round(r20,2),"trend":"多" if latest.close>ma20 else "空","breadth":round(br,1),"foreign":round(foreign,1),"score":s,"state":state,"dayRet":round(dr,2),**rv,**high_context(idx)}
 
 def f_gate(risk,risk_on=60):
     score=float((risk or {}).get("score",0) or 0)
