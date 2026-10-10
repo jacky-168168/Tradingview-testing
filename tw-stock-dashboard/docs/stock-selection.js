@@ -28,48 +28,75 @@ F2:"F2 動態大盤濾網＝D 技術強勢＋Risk Score≥60 進場、≥55 維�
 gNote.textContent=MODEL==="G Pro"?"G Pro：只檢查原G Top3，要求20D動能前25%、均線斜率前20%、成交額前25%、過去10天至少2次進原G Top20、相對量≥1.3、EMA20＞EMA60、收盤在EMA20上方且距離≤15%。未過則不選；此為嚴格選股，非回測勝率保證。":(MODEL==="G"||MODEL==="G Pro")?(gs?"G：最新完整日K "+gs.dataDate+"｜3D＋18D 前高雙突破｜前10日原版 G Top20 持續度加分（最高7分）｜可用歷史 "+(gs.pocketSnapshotsFound||0)+"/10"+(gs.pocketWarmup?"｜持續度建檔中":"")+"｜盤中僅更新現價，不當成 BOTTOM／TOP 觸發":"⚠ 尚未產生每日 G 訊號，請按「GitHub 更新」執行 full 完整更新；不會把舊的 2026 回測清單冒充今日名單。"):(notes[MODEL]||"尚未設定模型說明");
 }
 var N_ARCHIVE=null,N_SUMMARY=null,N_LOADING=false;
+var NORMAL_TABLE_HEAD=document.getElementById("stockTable").tHead.innerHTML;
+var N_TABLE_HEAD='<tr><th>Rank</th><th>股票</th><th>市場</th><th>收盤價</th><th>EPS 累計年增</th><th>月營收 YoY</th><th>RS 全市場分位</th><th>距 52 週高點</th><th>成長動能分</th><th>EPS／營收最早可用日</th></tr>';
+function toggleNView(show){
+ stockTable.classList.toggle("stock-n-table",show);
+ stockTable.tHead.innerHTML=show?N_TABLE_HEAD:NORMAL_TABLE_HEAD;
+ stockTable.closest(".table-card").style.display="";
+ nPanel.style.display=show?"block":"none";
+ layoutToggle.style.display=show?"none":"";
+ tableHint.style.display="";
+}
 async function loadNArchive(){
  if(N_LOADING)return;N_LOADING=true;
  try{
   var root="./data/research/n_canslim/";
   var results=await Promise.all(["picks","summary"].map(async function(kind){
    var r=await fetch(root+kind+".json?t="+Date.now(),{cache:"no-store"});
-   if(!r.ok)throw new Error(kind+" 官方歷史研究尚未發布 ("+r.status+")");
+   if(!r.ok)throw new Error(kind+" 歷史研究尚未發布 ("+r.status+")");
    return await r.json();
   }));
   N_ARCHIVE=results[0];N_SUMMARY=results[1];
-  if(N_ARCHIVE.version!==N_SUMMARY.version||N_SUMMARY.marketDays!==728||N_SUMMARY.modelCount!==16)throw new Error("N 來源／交易日／模型數驗證不符");
+  if(N_ARCHIVE.version!==N_SUMMARY.version||N_SUMMARY.marketDays!==728||N_SUMMARY.modelCount!==16||!N_ARCHIVE.signalTop3)throw new Error("N 資料版本或回測日數不符");
   if(MODEL==="N")renderNTable();
  }catch(err){
-  if(MODEL==="N"){nStatus.textContent="⚠ N 研究資料尚未完成驗證："+err.message;nRows.innerHTML='<tr><td colspan="9">尚無通過驗證的N歷史Top3，不顯示假訊號。</td></tr>';nLearned.textContent="—"}
+  N_ARCHIVE=null;N_SUMMARY=null;
+  if(MODEL==="N"){
+   nStatus.textContent="⚠ N 尚無通過驗證的選股排行："+err.message;
+   tb.innerHTML='<tr><td colspan="10" style="text-align:center;padding:28px">N 歷史選股資料無法載入；不顯示猜測的股票。</td></tr>';
+   nLearned.textContent="請檢查 N 遞迴回測資料。";count.textContent="資料不可用";
+  }
  }finally{N_LOADING=false}
 }
 function renderNTable(){
- if(!N_ARCHIVE||!N_SUMMARY){nStatus.textContent="⏳ 正在讀取N三年基本面與每日Top1資料…";nRows.innerHTML='<tr><td colspan="9">載入中…</td></tr>';loadNArchive();return}
- var raw=N_ARCHIVE.signalTop3||{},allDates=Object.keys(raw).sort(),last=allDates.at(-1);
- if(!last){nStatus.textContent="N歷史研究無任何符合條件的Top3";return}
- var list=raw[last]||[],sel=N_SUMMARY.selected?.id,leader=N_ARCHIVE.modelDailyTop1?.[sel]||{};
- var bestDates=Object.keys(leader).filter(function(d){return Array.isArray(leader[d])&&leader[d].length>0}).sort();
- var selectedLast=bestDates.at(-1)||"",chosen=selectedLast?leader[selectedLast][0]:null;
- nStatus.textContent="📅 N歷史研究最新訊號日："+last+"（非即時、非今日下單名單）｜全市場 "+N_SUMMARY.baseUniverse+" 檔｜N合格候選有訊號 "+N_SUMMARY.signal.signalDays+"/728 交易日｜2025驗證："+(sel?"選定 "+sel:"未選出通過門檻的模型");
- nRows.innerHTML=list.map(function(z,i){
-  var m=z.metrics||{},market=z.market==="otc"?"上櫃":"上市",symbol=(z.market==="otc"?"TPEX":"TWSE")+":"+z.code;
-  return '<tr><td><b>'+(i+1)+'</b></td><td><a class="tv-link" target="_blank" rel="noopener" href="https://www.tradingview.com/chart/?symbol='+encodeURIComponent(symbol)+'">'+esc(z.code)+" "+esc(z.name)+'</a></td><td>'+N(z.close,2)+'</td><td>'+P(m.epsYtdGrowthPct,1)+'</td><td>'+P(m.revenueYoYPct,1)+'</td><td>'+P(m.rsPercentile,1)+'</td><td>'+P(m.near52WeekHighPct,1)+'</td><td>'+esc(m.epsFiscal||"—")+" "+esc(m.epsAvailableFrom||"—")+' / '+esc(m.revFiscal||"—")+" "+esc(m.revAvailableFrom||"—")+'</td><td>'+N(z.factorScore,1)+'</td></tr>';
- }).join("")||'<tr><td colspan="9">此歷史日沒有符合N條件的股票。</td></tr>';
- if(!sel)nLearned.textContent="沒有通過2025驗證的N遞迴Top1模型；不推薦事後最佳。";
- else if(!chosen)nLearned.textContent="選定模型 "+sel+"，但目前尚無已發布的歷史Top1訊號。";
- else nLearned.textContent=selectedLast+"｜"+chosen.code+" "+chosen.name+"｜預測模型淨報酬 "+P(chosen.predictedNetPct,2)+"｜當日共排序 "+chosen.candidatesRanked+" 檔｜EPS成長 "+P(chosen.epsYtdGrowthPct,1)+"，月營收YoY "+P(chosen.revenueYoYPct,1)+"｜歷史已選Top1，不表示可保證達到停利或今日可成交。";
+ if(MODEL!=="N")return;
+ if(!N_ARCHIVE||!N_SUMMARY){
+  nStatus.textContent="⏳ 正在讀取 N 成長動能歷史排行…";
+  tb.innerHTML='<tr><td colspan="10" style="text-align:center;padding:28px">載入 N 歷史選股資料中…</td></tr>';
+  count.textContent="讀取中";loadNArchive();return;
+ }
+ var raw=N_ARCHIVE.signalTop3||{},days=Object.keys(raw).sort(),last=days.length?days[days.length-1]:null;
+ if(!last){nStatus.textContent="沒有任何可用的 N 歷史候選股";count.textContent="0 檔";tb.innerHTML='<tr><td colspan="10">N 歷史回測沒有合格候選。</td></tr>';return}
+ var list=raw[last]||[],selected=N_SUMMARY.selected&&N_SUMMARY.selected.id||null;
+ var leader=selected&&(N_ARCHIVE.modelDailyTop1||{})[selected]||{},selectedDays=Object.keys(leader).filter(function(d){return Array.isArray(leader[d])&&leader[d].length>0}).sort();
+ var leaderDate=selectedDays.length?selectedDays[selectedDays.length-1]:null;
+ var chosen=leaderDate?leader[leaderDate][0]:null;
+ var mainDate=DATA&&DATA.dataDate||"",isOlder=mainDate&&last<mainDate;
+ modelTitle.textContent="N｜基本面 × 成長動能排行";
+ count.textContent=list.length+" 檔｜資料 "+last;
+ tableHint.textContent="N 使用已發布的歷史因子 Top3，非盤中最新即時排行；與 G 等即時選股來源不同。點選股票可開啟 TradingView。";
+ nStatus.textContent=(isOlder?"⚠ 資料晚於其他策略尚未更新｜":"📅 已驗證歷史選股｜")+"N 訊號日 "+last+"｜G等策略資料日 "+(mainDate||"—")+"｜全市場 "+N_SUMMARY.baseUniverse+" 檔｜"+(selected?"2025年驗證選定遞迴模型":"沒有通過2025驗證的模型");
+ tb.innerHTML=list.map(function(z,i){
+  var m=z.metrics||{},ex=z.market==="otc"?"TPEX":"TWSE",symbol=ex+":"+z.code,where=z.market==="otc"?"上櫃":"上市";
+  var ratio=m.near52WeekHighPct==null?null:100-Number(m.near52WeekHighPct),isMl=(leaderDate===last&&chosen&&chosen.code===z.code);
+  var name='<a class="tv-link" href="https://www.tradingview.com/chart/?symbol='+encodeURIComponent(symbol)+'" target="_blank" rel="noopener noreferrer">'+esc(z.code)+" "+esc(z.name)+'</a>'+(isMl?' <span class="badge" title="本日遞迴模型 Top1">Top1</span>':'');
+  return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+name+'</td><td>'+where+'</td><td>'+N(z.close,2)+'</td><td class="pos">'+P(m.epsYtdGrowthPct,1)+'</td><td>'+P(m.revenueYoYPct,1)+'</td><td>'+P(m.rsPercentile,1)+'</td><td>'+(ratio==null?"—":N(ratio,1)+"%")+'</td><td class="score">'+N(z.factorScore,1)+'</td><td>'+esc(m.epsAvailableFrom||"—")+'／'+esc(m.revAvailableFrom||"—")+'</td></tr>';
+ }).join("")||'<tr><td colspan="10">最新歷史交易日沒有符合 N 條件的股票。</td></tr>';
+ if(!selected)nLearned.textContent="2025年沒有通過驗證門檻的 N 遞迴 Top1 模型，因此不推薦事後最佳。";
+ else if(!chosen)nLearned.textContent="已選擇模型 "+selected+"，但目前沒有已發布的 Top1 交易訊號。";
+ else nLearned.textContent=leaderDate+"｜"+chosen.code+" "+chosen.name+"｜模型預估淨報酬 "+P(chosen.predictedNetPct,2)+"｜候選 "+chosen.candidatesRanked+" 檔｜EPS 年增 "+P(chosen.epsYtdGrowthPct,1)+"，營收年增 "+P(chosen.revenueYoYPct,1)+"｜這是歷史研究結果，不是今日買進建議。";
 }
 function renderTable(){
 var xs=DATA&&DATA.models&&DATA.models[MODEL]||[],isG=(MODEL==="G"||MODEL==="G Pro"),gs=DATA&&DATA.gSelection||null;
 if(MODEL==="N"){
  tabG.classList.remove("on");tabGPro.classList.remove("on");tabD.classList.remove("on");tabF.classList.remove("on");tabF2.classList.remove("on");tabA.classList.remove("on");tabN.classList.add("on");
- stockTable.closest(".table-card").style.display="none";nPanel.style.display="block";layoutToggle.style.display="none";tableHint.style.display="none";
- modelTitle.textContent="N CANSLIM基本面與成長動能";count.textContent="歷史Top3";
- gNote.textContent="N 基本面採MOPS歷史彙總與保守公告可用日期，僅顯示發布過的最近研究日，不會把舊資料視為即時選股。";
+ toggleNView(true);
+ modelTitle.textContent="N｜基本面 × 成長動能排行";count.textContent="讀取中";
+ gNote.textContent="N 基本面採 MOPS 歷史彙總與保守公告可用日期；僅顯示研究檔案已發布的最新歷史候選，不代表今日即時買進訊號。";
  renderNTable();return;
 }
-tabN.classList.remove("on");stockTable.closest(".table-card").style.display="";nPanel.style.display="none";layoutToggle.style.display="";tableHint.style.display="";
+tabN.classList.remove("on");if(stockTable.classList.contains("stock-n-table"))toggleNView(false);
 tabG.classList.toggle("on",MODEL==="G");tabGPro.classList.toggle("on",MODEL==="G Pro");tabD.classList.toggle("on",MODEL==="D");tabF.classList.toggle("on",MODEL==="F");tabF2.classList.toggle("on",MODEL==="F2");tabA.classList.toggle("on",MODEL==="A");
 
 modelTitle.textContent=MODEL==="G Pro"?"G Pro 嚴格強勢突破排行":isG?"G 雙突破＋強勢持續度排行":MODEL==="D"?"D 主模型排行":MODEL==="F"?"F 固定濾網排行":MODEL==="F2"?"F2 動態濾網排行":"A 備用模型排行";
@@ -88,4 +115,13 @@ return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+tvStockLink(x)+'</td><t
 }
 function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);meta.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),isStale=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5);staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent="⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
 async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderTable();renderMeta()}catch(e){meta.textContent="載入失敗："+e.message;tb.innerHTML='<tr><td colspan="18" style="text-align:center;padding:40px;color:#dc2626">資料載入失敗，請稍後重新載入</td></tr>'}finally{loading.classList.remove("show")}}
-layoutToggle.onclick=function(){TABLE_COMPACT=!TABLE_COMPACT;applyTableMode()};tabG.onclick=function(){MODEL="G";renderTable()};tabGPro.onclick=function(){MODEL="G Pro";renderTable()};tabD.onclick=function(){MODEL="D";renderTable()};tabF.onclick=function(){MODEL="F";renderTable()};tabF2.onclick=function(){MODEL="F2";renderTable()};tabA.onclick=function(){MODEL="A";renderTable()};tabN.onclick=function(){MODEL="N";renderTable()};reload.onclick=load;load();setInterval(load,90000);
+function switchRanking(name){MODEL=name;history.replaceState(null,"",location.pathname+location.search+"#"+encodeURIComponent(name));renderTable()}
+layoutToggle.onclick=function(){TABLE_COMPACT=!TABLE_COMPACT;if(MODEL!=="N")applyTableMode()};
+tabG.onclick=function(){switchRanking("G")};tabGPro.onclick=function(){switchRanking("G Pro")};
+tabD.onclick=function(){switchRanking("D")};tabF.onclick=function(){switchRanking("F")};
+tabF2.onclick=function(){switchRanking("F2")};tabA.onclick=function(){switchRanking("A")};
+tabN.onclick=function(){switchRanking("N")};
+var incoming=decodeURIComponent(location.hash.slice(1));
+if(["G","G Pro","D","F","F2","A","N"].includes(incoming))MODEL=incoming;
+window.addEventListener("hashchange",function(){var value=decodeURIComponent(location.hash.slice(1));if(["G","G Pro","D","F","F2","A","N"].includes(value)){MODEL=value;renderTable()}});
+reload.onclick=load;load();setInterval(load,90000);
