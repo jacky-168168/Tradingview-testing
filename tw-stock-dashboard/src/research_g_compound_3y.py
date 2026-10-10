@@ -38,7 +38,8 @@ CAPACITY=(200_000.,500_000.)
 FOLDS={"train":("2023-10-09","2024-12-31"),
        "validation":("2025-01-01","2025-12-31"),
        "audit2026":("2026-01-01",END),
-       "authorWindow2026":("2026-04-15",END),
+       "authorWindow2026":("2026-04-15","2026-10-02"),
+       "postPublication2026":("2026-04-15",END),
        "all":(START,END)}
 def price_bars(hist, symbols):
     """Daily adjusted OHLC derived using SAME-DAY adjclose/close ratio;
@@ -132,6 +133,10 @@ def study_one(dates, picks, bars, scores, gate, tp, sl, maxhold, cap, logs=False
             pos["held"]+=1
             pos["last"]=ac
             stop=pos["stop"];target=pos["target"];elapsed=pos["held"]
+            # The time-stop already expired after the previous session close.
+            # Execute at THIS OPEN before inspecting the current high or low.
+            if elapsed>maxhold:
+                exit_pos(pos,day,ao,"time_next_open");continue
             # Both sides cannot be filled at the same time; OPEN is known first.
             if stop is not None and ao<=stop:
                 exit_pos(pos,day,ao,"gap_stop");continue
@@ -144,10 +149,6 @@ def study_one(dates, picks, bars, scores, gate, tp, sl, maxhold, cap, logs=False
             if ah>=target*(1+TP_FILL_BUFFER):
                 exit_pos(pos,day,target,"target_limit");continue
             if ah>=target:limit_touch_uncertain+=1
-            # Time cap: at close of max holding day, queue a NEXT-OPEN exit;
-            # on next session this branch executes only after one extra opening.
-            if elapsed>maxhold:
-                exit_pos(pos,day,ao,"time_next_open");continue
             remain.append(pos)
         positions=remain
         total=cash+sum(p["units"]*p["last"]*SELL_FACTOR for p in positions)
@@ -265,7 +266,7 @@ def main():
         if model["id"] not in audit_ids:continue
         p=model["params"];picks={d:([x] if x else []) for d,x in candidates[p["selector"]].items()}
         rows={};equities={}
-        for fold in ("all","authorWindow2026"):
+        for fold in ("all","authorWindow2026","postPublication2026"):
             lo,hi=FOLDS[fold];valid_dates=[d for d in dates if lo<=d<=hi]
             performance,curve,tx=study_one(valid_dates,picks,bars,risk,p["riskGate"],
                 p["targetPct"]/100,p["stopPct"]/100 if p["stopPct"] is not None else None,
@@ -281,6 +282,7 @@ def main():
         "claimedInitialInvestedCapTWD":500_000,
         "claimedClosedTickets":52,"claimedWinningTickets":51,
         "claimedRealizedProfitTWD":3_158_915.39,"impliedWealthWithoutNetDepositsTWD":3_658_915.39,
+        "comparisonCutoff":"2026-10-02 (last TWSE session before 2026-10-04 article)",
         "unverifiable":["Secret ranking inputs and score","Secret market risk algorithm",
             "Secret profit target and stop loss","Exact trade accounting flows","Whether early cap later increased",
             "Historical futures/night snapshots"] }
