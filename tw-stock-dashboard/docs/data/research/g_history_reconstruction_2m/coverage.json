@@ -1,0 +1,177 @@
+{
+  "version": "G_LIVE_DOUBLE_PERSIST_HISTORICAL_RECONSTRUCTION_V1",
+  "windowStart": "2026-08-08",
+  "referenceDate": "2026-10-08",
+  "generatedAt": "2026-10-10T22:09:40+08:00",
+  "backfilledTradeDays": 42,
+  "currentUniverse": 1982,
+  "validSymbolPriceSeries": 1977,
+  "downloadErrors": 0,
+  "featureExclusions": {
+    "lessThan60Bars": 5
+  },
+  "GParityAgainstRealFrozenReference": {
+    "status": "compared",
+    "officialTop20": 20,
+    "rebuiltTop20": 20,
+    "intersection": 19,
+    "top3Intersection": 3,
+    "identicalOrder": false,
+    "originalTopCodes": [
+      "3624",
+      "2340",
+      "6672",
+      "2241",
+      "2466",
+      "6957",
+      "6174",
+      "8996",
+      "2492",
+      "6456",
+      "6505",
+      "4556",
+      "3236",
+      "6199",
+      "1303",
+      "4174",
+      "3147",
+      "5228",
+      "3265",
+      "4760"
+    ],
+    "rebuiltTopCodes": [
+      "6672",
+      "3624",
+      "2340",
+      "2466",
+      "6957",
+      "4556",
+      "6456",
+      "2241",
+      "6505",
+      "8996",
+      "2492",
+      "6199",
+      "6174",
+      "4174",
+      "1303",
+      "3265",
+      "3236",
+      "3147",
+      "6278",
+      "5228"
+    ],
+    "missingFromRebuild": [
+      "4760"
+    ],
+    "rankDifference": [
+      {
+        "code": "3624",
+        "originalRank": 1,
+        "rebuiltRank": 2
+      },
+      {
+        "code": "2340",
+        "originalRank": 2,
+        "rebuiltRank": 3
+      },
+      {
+        "code": "6672",
+        "originalRank": 3,
+        "rebuiltRank": 1
+      },
+      {
+        "code": "2241",
+        "originalRank": 4,
+        "rebuiltRank": 8
+      },
+      {
+        "code": "2466",
+        "originalRank": 5,
+        "rebuiltRank": 4
+      },
+      {
+        "code": "6957",
+        "originalRank": 6,
+        "rebuiltRank": 5
+      },
+      {
+        "code": "6174",
+        "originalRank": 7,
+        "rebuiltRank": 13
+      },
+      {
+        "code": "8996",
+        "originalRank": 8,
+        "rebuiltRank": 10
+      },
+      {
+        "code": "2492",
+        "originalRank": 9,
+        "rebuiltRank": 11
+      },
+      {
+        "code": "6456",
+        "originalRank": 10,
+        "rebuiltRank": 7
+      },
+      {
+        "code": "6505",
+        "originalRank": 11,
+        "rebuiltRank": 9
+      },
+      {
+        "code": "4556",
+        "originalRank": 12,
+        "rebuiltRank": 6
+      },
+      {
+        "code": "3236",
+        "originalRank": 13,
+        "rebuiltRank": 17
+      },
+      {
+        "code": "6199",
+        "originalRank": 14,
+        "rebuiltRank": 12
+      },
+      {
+        "code": "1303",
+        "originalRank": 15,
+        "rebuiltRank": 15
+      },
+      {
+        "code": "4174",
+        "originalRank": 16,
+        "rebuiltRank": 14
+      },
+      {
+        "code": "3147",
+        "originalRank": 17,
+        "rebuiltRank": 18
+      },
+      {
+        "code": "5228",
+        "originalRank": 18,
+        "rebuiltRank": 20
+      },
+      {
+        "code": "3265",
+        "originalRank": 19,
+        "rebuiltRank": 16
+      }
+    ]
+  },
+  "dataProvenance": "Historical Yahoo OHLC + current TWSE/TPEx listed universe. Not actual historic published Top20.",
+  "modelRule": "Exact g_live.g_score / g_target.eligible / 3D+18D prior complete annual calendar high / pre-10 original G pocket persistence",
+  "limitations": [
+    "RECONSTRUCTED RESEARCH ONLY: output is NOT the watchlist actually published on each past date.",
+    "Survivorship bias: today's still-listed stock universe and paid-in capital, not point-in-time delisted securities.",
+    "Historical Yahoo OHLC can be retrospectively adjusted or revised; original live exchange source may differ.",
+    "Missing issuer-specific foreign and trust historic trade tape; null, never fabricated zero.",
+    "Official unadjusted historical SAR series has not been independently validated for the retrospective universe; label explicitly unavailable, not invented.",
+    "Current industry/stock names may differ from past dates; thematic membership is not point-in-time verified.",
+    "Parity with latest archived G Top20 is reported. Exact same ranks cannot be promised from different vintages.",
+    "Model itself is not reoptimized on future data; daily cross section uses past price features only."
+  ]
+}
