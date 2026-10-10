@@ -20,6 +20,7 @@ jobs:
       - run: pip install -r tw-stock-dashboard/requirements.txt
       - name: Test password-gate JavaScript and all HTML routes
         run: |
+          node --check tw-stock-dashboard/docs/stock-diagnostics.js
           node --check tw-stock-dashboard/docs/site-access.js
           node tw-stock-dashboard/tests/test_site_access.cjs
           node --check tw-stock-dashboard/docs/backtest-g-panel.js
