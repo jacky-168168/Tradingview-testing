@@ -1,0 +1,75 @@
+name: G Pro Three-Year Strict Selection Backtest
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/research_g_pro_3y.py'
+      - 'tw-stock-dashboard/tests/test_g_pro.py'
+      - '.github/workflows/research-g-pro-3y.yml'
+permissions:
+  contents: write
+concurrency:
+  group: g-pro-3y-backtest
+  cancel-in-progress: false
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore historical Yahoo caches
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install requirements
+        run: |
+          pip install -r tw-stock-dashboard/requirements.txt
+          pip install beautifulsoup4
+      - name: Validate G Pro code and regression tests
+        run: |
+          python -m py_compile tw-stock-dashboard/src/research_g_pro_3y.py
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p test_g_pro.py -v
+      - name: Verify archived official Risk Score and run frozen G versus G Pro
+        working-directory: tw-stock-dashboard
+        run: python -u src/research_g_pro_3y.py --start 2023-10-09 --end 2026-10-08
+      - name: Verify results before publishing
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('tw-stock-dashboard/docs/data/research/g_pro_3y')
+          s=json.loads((p/'summary.json').read_text())
+          t=json.loads((p/'trades.json').read_text())
+          e=json.loads((p/'equity.json').read_text())
+          assert s['riskScoredDays']==728
+          assert s['gProSignalDays']>0
+          assert len(s['models'])==56 and len(t['models'])==56 and len(e['models'])==56
+          assert {v['model'] for v in s['models']}=={'G','G Pro'}
+          for m in s['models']:
+              assert m['portfolio']['dailyMaxDrawdownPct']<=0
+              assert m['portfolio']['finalEquity']>0
+          print('VERIFIED G PRO THREE-YEAR HISTORICAL OUTPUT',s['gProSignalDays'])
+          PY
+      - name: Publish independent G Pro audit output
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_pro_3y/
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish verified G Pro three-year portfolio audit'
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
