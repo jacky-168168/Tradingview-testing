@@ -57,7 +57,7 @@ def parse_month_html(html,market,year,month,kind):
             row={"code":code,"name":cells[idx+1].strip(),"year":year,"month":month,
                  "revenue":rev,"market":market,"domesticType":kind,
                  "src":"MOPS_OFFICIAL_HIST_REVISED","sourceMode":"historical_bulk"}
-            if not row["name"] or not re.search(r"[\\u4e00-\\u9fffA-Za-z]",row["name"]):continue
+            if not row["name"] or not re.search(r"[\u4e00-\u9fffA-Za-z]",row["name"]):continue
             if code in found and abs(found[code]["revenue"]-rev)>1e-6:
                 raise RuntimeError("Conflicting monthly revenue "+code+" "+str((year,month,market,kind)))
             found[code]=row;local+=1
