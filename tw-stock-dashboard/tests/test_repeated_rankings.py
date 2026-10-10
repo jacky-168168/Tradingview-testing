@@ -63,6 +63,33 @@ class RepeatArchiveTests(unittest.TestCase):
             p=Path(t);self.write(p,[("2026-10-08",{"G":[]})])
             (p/"index.json").write_text('[{"date":"2026-10-08","gCount":20}]',encoding="utf-8")
             with self.assertRaisesRegex(RuntimeError,"mismatch"):build(p)
+    def test_reconstruction_supplements_missing_G_only_never_replaces_frozen(self):
+        with tempfile.TemporaryDirectory() as t:
+            p=Path(t)
+            old={"code":"2330","market":"上市","name":"原始真榜","total":99}
+            recovered={"code":"2330","market":"上市","name":"歷史回推","total":80,
+                "dataOrigin":"retrospectively_reconstructed_not_historical_snapshot"}
+            self.write(p,[("2026-10-06",{"D":[{"code":"1111","market":"上市"}]}),
+                          ("2026-10-08",{"G":[old],"G Pro":[]})])
+            archive={"version":"G_LIVE_DOUBLE_PERSIST_HISTORICAL_RECONSTRUCTION_V1",
+                "model":"G","referenceDate":"2026-10-08",
+                "days":{"2026-10-06":{"dataDate":"2026-10-06","source":"reconstructed","stocks":[recovered]},
+                        "2026-10-08":{"dataDate":"2026-10-08","source":"reconstructed","stocks":[recovered]}}}
+            x=build(p,"2026-10-08",archive)
+            self.assertEqual(x["version"],"TWO_CALENDAR_MONTHS_FROZEN_PLUS_RECONSTRUCTED_G_V2")
+            g=x["models"]["G"]
+            self.assertEqual(g["snapshotDays"],1)
+            self.assertEqual(g["reconstructedDays"],1)
+            self.assertEqual(g["repeatedSymbols"],1)
+            record=g["stocks"][0]
+            self.assertEqual(record["name"],"原始真榜")
+            self.assertEqual(record["lastSeenSource"],"original_frozen")
+            self.assertEqual(record["count"],2)
+            self.assertEqual(record["reconstructedCount"],1)
+            self.assertEqual(record["frozenCount"],1)
+            self.assertEqual(record["previousSeen"],"2026-10-06")
+            self.assertEqual(x["models"]["G Pro"]["reconstructedDays"],0)
+            self.assertEqual(x["models"]["D"]["snapshotDays"],1)
     def test_end_of_month_window(self):
         self.assertEqual(months_before("2026-10-31"),"2026-08-31")
         self.assertEqual(months_before("2026-04-30"),"2026-02-28")
