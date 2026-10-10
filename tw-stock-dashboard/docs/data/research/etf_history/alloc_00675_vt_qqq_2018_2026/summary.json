@@ -1,0 +1,1662 @@
+{
+  "version": "L2_SMA10_VT_QQQ_TWD_PORTFOLIO_2018_2026_LOCKED_V1",
+  "generatedAtUTC": "2026-10-10T10:46:24.893006+00:00",
+  "window": [
+    "2018-01-02",
+    "2026-10-07"
+  ],
+  "initialCapitalTWD": 1000000.0,
+  "dailyValuationDates": 2273,
+  "portfolioWeights": {
+    "L2_SMA10_100": {
+      "L2_SMA10": 1.0
+    },
+    "L2_SMA10_50_VT30_QQQ20": {
+      "L2_SMA10": 0.5,
+      "VT": 0.3,
+      "QQQ": 0.2
+    },
+    "L2_SMA10_30_VT50_QQQ20": {
+      "L2_SMA10": 0.3,
+      "VT": 0.5,
+      "QQQ": 0.2
+    },
+    "VT55_QQQ45": {
+      "VT": 0.55,
+      "QQQ": 0.45
+    },
+    "VT_100": {
+      "VT": 1.0
+    },
+    "QQQ_100": {
+      "QQQ": 1.0
+    },
+    "L2_BUY_HOLD_100": {
+      "L2_HOLD": 1.0
+    }
+  },
+  "sources": {
+    "L2_SMA10": "curves/00675_crash_sma5__BASE.json",
+    "L2_HOLD": "curves/00675_2018__BUY_HOLD.json",
+    "VT": "curves/qqq_vt__VT__BUY_HOLD.json",
+    "QQQ": "curves/qqq_vt__QQQ__BUY_HOLD.json"
+  },
+  "audit": {
+    "sourceCurveParity": {
+      "L2_SMA10": {
+        "archiveCurve": "curves/00675_crash_sma5__BASE.json",
+        "reportedEndTWD": 42940824.72,
+        "joinedEndTWD": 42940824.72,
+        "deltaPct": 0.0,
+        "marketSessions": 2128
+      },
+      "L2_HOLD": {
+        "archiveCurve": "curves/00675_2018__BUY_HOLD.json",
+        "reportedEndTWD": 25641733.91,
+        "joinedEndTWD": 25641733.91,
+        "deltaPct": 0.0,
+        "marketSessions": 2128
+      },
+      "VT": {
+        "archiveCurve": "curves/qqq_vt__VT__BUY_HOLD.json",
+        "reportedEndTWD": 2724256.84,
+        "joinedEndTWD": 2724256.84,
+        "deltaPct": 0.0,
+        "marketSessions": 2203
+      },
+      "QQQ": {
+        "archiveCurve": "curves/qqq_vt__QQQ__BUY_HOLD.json",
+        "reportedEndTWD": 5442018.87,
+        "joinedEndTWD": 5442018.87,
+        "deltaPct": -0.0,
+        "marketSessions": 2203
+      }
+    },
+    "fxFirstQuote": 29.773,
+    "fxLastAsOfEnd": 31.8483,
+    "fxFetchedTradingDays": 2306,
+    "fxLastQuoteDate": "2026-10-10",
+    "valuationCalendarDates": 2273
+  },
+  "method": {
+    "00675L": "Frozen market index SMA10 -2% three consecutive closes or -4% single-day index panic triggers sale, SMA10+1% reentry; trade next TWSE open; archived complete account curve with actual historical commission, sale tax and 0.1% slippage each side.",
+    "VT_QQQ": "Frozen whole-share USD buy-and-hold accounts; already include each-side broker fee and 0.1% modeled slippage; adjusted-price dividend reinvestment approximation.",
+    "currency": "Historical Yahoo TWD=X USD/TWD daily reference, asof-backward on each joint valuation calendar date; no interpolated future quotes.",
+    "calendar": "Union of Taiwan and US market dates; last observed stale closing price carries over holidays. Same calendar date valuation is defined after US close, hours after TWSE; only independent asset sleeve orders, no cross-asset day-of-close market signal.",
+    "fixedAllocation": "Initial allocated weights buy distinct strategy sleeves, then never cross-rebalance; winners can grow much larger than initial assigned allocation.",
+    "annualAllocation": "On first joint valuation day of next calendar year, rebalance based only on the preceding completed valuation date with additional 0.1425% broker+0.1% slippage on traded amount and Taiwan ETF selling tax; approximate cross-market execution.",
+    "cash": "Leverage sleeve holds TWD cash during its exit signals; no debt and no interest on uninvested TWD cash. VT/QQQ hold USD exposure throughout.",
+    "maxDrawdown": "Full daily TWD portfolio mark-to-market peak-to-trough, not trade-exit-only.",
+    "fiveYear": "Every joint valuation calendar date with five complete forward calendar years, use the first observation at or after its five-year anniversary."
+  },
+  "assetMetadata": {
+    "symbol00675": "00675L.TW",
+    "currency00675": "TWD",
+    "globalEquity": "VT",
+    "usGrowth": "QQQ",
+    "fx": "TWD=X"
+  },
+  "results": [
+    {
+      "id": "L2_SMA10_100",
+      "rebalancing": "none",
+      "startWeightsPct": {
+        "L2_SMA10": 100
+      },
+      "endingExposurePct": {
+        "L2_SMA10": 100.0
+      },
+      "annualRebalanceEvents": 0,
+      "annualRebalanceCostTWD": 0.0,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 42940824.72,
+        "netReturnPct": 4194.082,
+        "cagrPct": 53.594,
+        "maxDrawdownPct": -30.792,
+        "deepestDrawdown": {
+          "drawdownPct": -30.792,
+          "peakDate": "2024-07-11",
+          "troughDate": "2025-04-22",
+          "recoveryDate": "2025-07-01",
+          "peakToRecoveryCalendarDays": 355,
+          "recoveryFromTroughCalendarDays": 70
+        },
+        "longestUnderwaterDays": 643,
+        "longestUnderwaterPeriod": {
+          "start": "2021-04-30",
+          "recovered": "2023-02-02"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 245.454
+          },
+          "medianReturnPct": 550.638,
+          "best": {
+            "start": "2021-10-04",
+            "end": "2026-10-05",
+            "returnPct": 1220.109
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -17.993,
+            "closingTWD": 820071.61
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 59.834,
+            "closingTWD": 1310753.5
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 120.266,
+            "closingTWD": 2887147.66
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 33.061,
+            "closingTWD": 3841654.82
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -8.46,
+            "closingTWD": 3516646.43
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 64.255,
+            "closingTWD": 5776267.05
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 44.597,
+            "closingTWD": 8352286.77
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 100.933,
+            "closingTWD": 16782494.84
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 155.867,
+            "closingTWD": 42940824.72
+          }
+        ]
+      }
+    },
+    {
+      "id": "L2_SMA10_50_VT30_QQQ20",
+      "rebalancing": "none",
+      "startWeightsPct": {
+        "L2_SMA10": 50,
+        "VT": 30,
+        "QQQ": 20
+      },
+      "endingExposurePct": {
+        "L2_SMA10": 91.85,
+        "VT": 3.5,
+        "QQQ": 4.66
+      },
+      "annualRebalanceEvents": 0,
+      "annualRebalanceCostTWD": 0.0,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 23376093.19,
+        "netReturnPct": 2237.609,
+        "cagrPct": 43.294,
+        "maxDrawdownPct": -25.569,
+        "deepestDrawdown": {
+          "drawdownPct": -25.569,
+          "peakDate": "2024-07-11",
+          "troughDate": "2025-04-22",
+          "recoveryDate": "2025-07-01",
+          "peakToRecoveryCalendarDays": 355,
+          "recoveryFromTroughCalendarDays": 70
+        },
+        "longestUnderwaterDays": 567,
+        "longestUnderwaterPeriod": {
+          "start": "2021-07-15",
+          "recovered": "2023-02-02"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 147.634
+          },
+          "medianReturnPct": 348.587,
+          "best": {
+            "start": "2021-10-04",
+            "end": "2026-10-05",
+            "returnPct": 845.456
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -11.161,
+            "closingTWD": 888387.62
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 43.699,
+            "closingTWD": 1276605.91
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 72.478,
+            "closingTWD": 2201862.19
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 28.939,
+            "closingTWD": 2839053.71
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -11.392,
+            "closingTWD": 2515615.48
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 56.268,
+            "closingTWD": 3931111.21
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 40.593,
+            "closingTWD": 5526850.14
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 80.147,
+            "closingTWD": 9956459.19
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 134.783,
+            "closingTWD": 23376093.19
+          }
+        ]
+      }
+    },
+    {
+      "id": "L2_SMA10_30_VT50_QQQ20",
+      "rebalancing": "none",
+      "startWeightsPct": {
+        "L2_SMA10": 30,
+        "VT": 50,
+        "QQQ": 20
+      },
+      "endingExposurePct": {
+        "L2_SMA10": 84.02,
+        "VT": 8.88,
+        "QQQ": 7.1
+      },
+      "annualRebalanceEvents": 0,
+      "annualRebalanceCostTWD": 0.0,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 15332779.61,
+        "netReturnPct": 1433.278,
+        "cagrPct": 36.56,
+        "maxDrawdownPct": -25.878,
+        "deepestDrawdown": {
+          "drawdownPct": -25.878,
+          "peakDate": "2020-01-22",
+          "troughDate": "2020-03-23",
+          "recoveryDate": "2020-06-02",
+          "peakToRecoveryCalendarDays": 132,
+          "recoveryFromTroughCalendarDays": 71
+        },
+        "longestUnderwaterDays": 406,
+        "longestUnderwaterPeriod": {
+          "start": "2022-01-04",
+          "recovered": "2023-02-14"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 104.678
+          },
+          "medianReturnPct": 252.681,
+          "best": {
+            "start": "2021-10-04",
+            "end": "2026-10-05",
+            "returnPct": 631.068
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -9.203,
+            "closingTWD": 907974.95
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 36.965,
+            "closingTWD": 1243605.61
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 50.673,
+            "closingTWD": 1873773.19
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 26.017,
+            "closingTWD": 2361267.94
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -12.057,
+            "closingTWD": 2076569.79
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 49.213,
+            "closingTWD": 3098502.99
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 37.404,
+            "closingTWD": 4257477.83
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 66.02,
+            "closingTWD": 7068266.36
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 116.924,
+            "closingTWD": 15332779.61
+          }
+        ]
+      }
+    },
+    {
+      "id": "VT55_QQQ45",
+      "rebalancing": "none",
+      "startWeightsPct": {
+        "VT": 55,
+        "QQQ": 45
+      },
+      "endingExposurePct": {
+        "VT": 37.96,
+        "QQQ": 62.04
+      },
+      "annualRebalanceEvents": 0,
+      "annualRebalanceCostTWD": 0.0,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 3947249.75,
+        "netReturnPct": 294.725,
+        "cagrPct": 16.966,
+        "maxDrawdownPct": -30.386,
+        "deepestDrawdown": {
+          "drawdownPct": -30.386,
+          "peakDate": "2020-02-19",
+          "troughDate": "2020-03-23",
+          "recoveryDate": "2020-07-09",
+          "peakToRecoveryCalendarDays": 141,
+          "recoveryFromTroughCalendarDays": 108
+        },
+        "longestUnderwaterDays": 570,
+        "longestUnderwaterPeriod": {
+          "start": "2021-11-19",
+          "recovered": "2023-06-12"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 50.192
+          },
+          "medianReturnPct": 113.012,
+          "best": {
+            "start": "2020-03-23",
+            "end": "2025-03-24",
+            "returnPct": 195.649
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -3.846,
+            "closingTWD": 961540.55
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 30.473,
+            "closingTWD": 1254546.61
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 23.575,
+            "closingTWD": 1550310.98
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 21.551,
+            "closingTWD": 1884418.44
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -18.345,
+            "closingTWD": 1538730.35
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 39.404,
+            "closingTWD": 2145046.55
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 29.993,
+            "closingTWD": 2788412.04
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 15.802,
+            "closingTWD": 3229035.13
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 22.242,
+            "closingTWD": 3947249.75
+          }
+        ]
+      }
+    },
+    {
+      "id": "VT_100",
+      "rebalancing": "none",
+      "startWeightsPct": {
+        "VT": 100
+      },
+      "endingExposurePct": {
+        "VT": 100.0
+      },
+      "annualRebalanceEvents": 0,
+      "annualRebalanceCostTWD": 0.0,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 2724256.84,
+        "netReturnPct": 172.426,
+        "cagrPct": 12.119,
+        "maxDrawdownPct": -33.623,
+        "deepestDrawdown": {
+          "drawdownPct": -33.623,
+          "peakDate": "2020-02-19",
+          "troughDate": "2020-03-23",
+          "recoveryDate": "2020-09-02",
+          "peakToRecoveryCalendarDays": 196,
+          "recoveryFromTroughCalendarDays": 163
+        },
+        "longestUnderwaterDays": 581,
+        "longestUnderwaterPeriod": {
+          "start": "2021-11-08",
+          "recovered": "2023-06-12"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-08-13",
+          "calendarDays": 55
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-19",
+            "end": "2023-01-19",
+            "returnPct": 30.73
+          },
+          "medianReturnPct": 79.515,
+          "best": {
+            "start": "2020-03-23",
+            "end": "2025-03-24",
+            "returnPct": 163.539
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -8.199,
+            "closingTWD": 918008.26
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 24.808,
+            "closingTWD": 1145752.01
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 8.811,
+            "closingTWD": 1246702.65
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 16.525,
+            "closingTWD": 1452725.97
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -9.039,
+            "closingTWD": 1321417.96
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 22.083,
+            "closingTWD": 1613225.94
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 24.311,
+            "closingTWD": 2005425.25
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 16.76,
+            "closingTWD": 2341530.73
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 16.345,
+            "closingTWD": 2724256.84
+          }
+        ]
+      }
+    },
+    {
+      "id": "QQQ_100",
+      "rebalancing": "none",
+      "startWeightsPct": {
+        "QQQ": 100
+      },
+      "endingExposurePct": {
+        "QQQ": 100.0
+      },
+      "annualRebalanceEvents": 0,
+      "annualRebalanceCostTWD": 0.0,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 5442018.87,
+        "netReturnPct": 444.202,
+        "cagrPct": 21.333,
+        "maxDrawdownPct": -28.413,
+        "deepestDrawdown": {
+          "drawdownPct": -28.413,
+          "peakDate": "2020-02-19",
+          "troughDate": "2020-03-16",
+          "recoveryDate": "2020-06-05",
+          "peakToRecoveryCalendarDays": 107,
+          "recoveryFromTroughCalendarDays": 81
+        },
+        "longestUnderwaterDays": 572,
+        "longestUnderwaterPeriod": {
+          "start": "2021-11-19",
+          "recovered": "2023-06-14"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 73.45
+          },
+          "medianReturnPct": 135.052,
+          "best": {
+            "start": "2020-03-23",
+            "end": "2025-03-24",
+            "returnPct": 222.889
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": 1.475,
+            "closingTWD": 1014746.69
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 36.735,
+            "closingTWD": 1387517.8
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 38.477,
+            "closingTWD": 1921387.83
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 25.536,
+            "closingTWD": 2412042.57
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -25.195,
+            "closingTWD": 1804334.39
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 54.908,
+            "closingTWD": 2795049.52
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 34.001,
+            "closingTWD": 3745395.9
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 15.175,
+            "closingTWD": 4313762.73
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 26.155,
+            "closingTWD": 5442018.87
+          }
+        ]
+      }
+    },
+    {
+      "id": "L2_BUY_HOLD_100",
+      "rebalancing": "none",
+      "startWeightsPct": {
+        "L2_HOLD": 100
+      },
+      "endingExposurePct": {
+        "L2_HOLD": 100.0
+      },
+      "annualRebalanceEvents": 0,
+      "annualRebalanceCostTWD": 0.0,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 25641733.91,
+        "netReturnPct": 2464.173,
+        "cagrPct": 44.815,
+        "maxDrawdownPct": -55.244,
+        "deepestDrawdown": {
+          "drawdownPct": -55.244,
+          "peakDate": "2024-07-11",
+          "troughDate": "2025-04-09",
+          "recoveryDate": "2025-09-12",
+          "peakToRecoveryCalendarDays": 428,
+          "recoveryFromTroughCalendarDays": 156
+        },
+        "longestUnderwaterDays": 696,
+        "longestUnderwaterPeriod": {
+          "start": "2022-01-17",
+          "recovered": "2023-12-14"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 156.669
+          },
+          "medianReturnPct": 364.936,
+          "best": {
+            "start": "2020-03-19",
+            "end": "2025-03-19",
+            "returnPct": 740.175
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -12.275,
+            "closingTWD": 877245.86
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 64.804,
+            "closingTWD": 1445739.69
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 67.554,
+            "closingTWD": 2422400.84
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 65.029,
+            "closingTWD": 3997660.88
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -34.641,
+            "closingTWD": 2612832.36
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 64.255,
+            "closingTWD": 4291709.47
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 56.281,
+            "closingTWD": 6707108.46
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 50.418,
+            "closingTWD": 10088666.89
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 154.164,
+            "closingTWD": 25641733.91
+          }
+        ]
+      }
+    },
+    {
+      "id": "L2_SMA10_100",
+      "rebalancing": "annual",
+      "startWeightsPct": {
+        "L2_SMA10": 100
+      },
+      "endingExposurePct": {
+        "L2_SMA10": 100.0
+      },
+      "annualRebalanceEvents": 0,
+      "annualRebalanceCostTWD": 0.0,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 42940824.72,
+        "netReturnPct": 4194.082,
+        "cagrPct": 53.594,
+        "maxDrawdownPct": -30.792,
+        "deepestDrawdown": {
+          "drawdownPct": -30.792,
+          "peakDate": "2024-07-11",
+          "troughDate": "2025-04-22",
+          "recoveryDate": "2025-07-01",
+          "peakToRecoveryCalendarDays": 355,
+          "recoveryFromTroughCalendarDays": 70
+        },
+        "longestUnderwaterDays": 643,
+        "longestUnderwaterPeriod": {
+          "start": "2021-04-30",
+          "recovered": "2023-02-02"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 245.454
+          },
+          "medianReturnPct": 550.638,
+          "best": {
+            "start": "2021-10-04",
+            "end": "2026-10-05",
+            "returnPct": 1220.109
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -17.993,
+            "closingTWD": 820071.61
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 59.834,
+            "closingTWD": 1310753.5
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 120.266,
+            "closingTWD": 2887147.66
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 33.061,
+            "closingTWD": 3841654.82
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -8.46,
+            "closingTWD": 3516646.43
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 64.255,
+            "closingTWD": 5776267.05
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 44.597,
+            "closingTWD": 8352286.77
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 100.933,
+            "closingTWD": 16782494.84
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 155.867,
+            "closingTWD": 42940824.72
+          }
+        ]
+      }
+    },
+    {
+      "id": "L2_SMA10_50_VT30_QQQ20",
+      "rebalancing": "annual",
+      "startWeightsPct": {
+        "L2_SMA10": 50,
+        "VT": 30,
+        "QQQ": 20
+      },
+      "endingExposurePct": {
+        "L2_SMA10": 68.03,
+        "VT": 18.56,
+        "QQQ": 13.42
+      },
+      "annualRebalanceEvents": 8,
+      "annualRebalanceCostTWD": 11453.67,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 14825051.93,
+        "netReturnPct": 1382.505,
+        "cagrPct": 36.037,
+        "maxDrawdownPct": -23.151,
+        "deepestDrawdown": {
+          "drawdownPct": -23.151,
+          "peakDate": "2020-01-22",
+          "troughDate": "2020-03-23",
+          "recoveryDate": "2020-05-11",
+          "peakToRecoveryCalendarDays": 110,
+          "recoveryFromTroughCalendarDays": 49
+        },
+        "longestUnderwaterDays": 406,
+        "longestUnderwaterPeriod": {
+          "start": "2022-01-04",
+          "recovered": "2023-02-14"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 139.094
+          },
+          "medianReturnPct": 288.035,
+          "best": {
+            "start": "2021-10-04",
+            "end": "2026-10-05",
+            "returnPct": 505.109
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -11.161,
+            "closingTWD": 888387.62
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 44.68,
+            "closingTWD": 1285316.07
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 70.42,
+            "closingTWD": 2190430.32
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 26.487,
+            "closingTWD": 2770610.71
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -11.994,
+            "closingTWD": 2438309.87
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 49.709,
+            "closingTWD": 3650371.23
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 36.349,
+            "closingTWD": 4977233.98
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 58.502,
+            "closingTWD": 7888992.13
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 87.921,
+            "closingTWD": 14825051.93
+          }
+        ]
+      }
+    },
+    {
+      "id": "L2_SMA10_30_VT50_QQQ20",
+      "rebalancing": "annual",
+      "startWeightsPct": {
+        "L2_SMA10": 30,
+        "VT": 50,
+        "QQQ": 20
+      },
+      "endingExposurePct": {
+        "L2_SMA10": 47.93,
+        "VT": 36.32,
+        "QQQ": 15.75
+      },
+      "annualRebalanceEvents": 8,
+      "annualRebalanceCostTWD": 8356.18,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 8496010.94,
+        "netReturnPct": 749.601,
+        "cagrPct": 27.661,
+        "maxDrawdownPct": -26.376,
+        "deepestDrawdown": {
+          "drawdownPct": -26.376,
+          "peakDate": "2020-01-22",
+          "troughDate": "2020-03-23",
+          "recoveryDate": "2020-06-03",
+          "peakToRecoveryCalendarDays": 133,
+          "recoveryFromTroughCalendarDays": 72
+        },
+        "longestUnderwaterDays": 454,
+        "longestUnderwaterPeriod": {
+          "start": "2022-01-04",
+          "recovered": "2023-04-03"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 96.951
+          },
+          "medianReturnPct": 199.871,
+          "best": {
+            "start": "2021-10-04",
+            "end": "2026-10-05",
+            "returnPct": 312.003
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -9.203,
+            "closingTWD": 907974.95
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 37.682,
+            "closingTWD": 1250119.17
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 48.139,
+            "closingTWD": 1851911.98
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 23.183,
+            "closingTWD": 2281239.5
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -12.11,
+            "closingTWD": 2004978.34
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 41.277,
+            "closingTWD": 2832579.12
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 32.285,
+            "closingTWD": 3747073.02
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 41.67,
+            "closingTWD": 5308479.48
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 60.046,
+            "closingTWD": 8496010.94
+          }
+        ]
+      }
+    },
+    {
+      "id": "VT55_QQQ45",
+      "rebalancing": "annual",
+      "startWeightsPct": {
+        "VT": 55,
+        "QQQ": 45
+      },
+      "endingExposurePct": {
+        "VT": 52.99,
+        "QQQ": 47.01
+      },
+      "annualRebalanceEvents": 8,
+      "annualRebalanceCostTWD": 2126.49,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 3803124.56,
+        "netReturnPct": 280.312,
+        "cagrPct": 16.471,
+        "maxDrawdownPct": -30.684,
+        "deepestDrawdown": {
+          "drawdownPct": -30.684,
+          "peakDate": "2020-02-19",
+          "troughDate": "2020-03-23",
+          "recoveryDate": "2020-07-15",
+          "peakToRecoveryCalendarDays": 147,
+          "recoveryFromTroughCalendarDays": 114
+        },
+        "longestUnderwaterDays": 570,
+        "longestUnderwaterPeriod": {
+          "start": "2021-11-19",
+          "recovered": "2023-06-12"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 50.724
+          },
+          "medianReturnPct": 109.866,
+          "best": {
+            "start": "2020-03-23",
+            "end": "2025-03-24",
+            "returnPct": 193.425
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -3.846,
+            "closingTWD": 961540.55
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 30.16,
+            "closingTWD": 1251539.82
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 22.147,
+            "closingTWD": 1528718.6
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 20.545,
+            "closingTWD": 1842797.91
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -16.316,
+            "closingTWD": 1542118.73
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 36.822,
+            "closingTWD": 2109962.12
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 28.635,
+            "closingTWD": 2714144.5
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 16.036,
+            "closingTWD": 3149389.93
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 20.758,
+            "closingTWD": 3803124.56
+          }
+        ]
+      }
+    },
+    {
+      "id": "VT_100",
+      "rebalancing": "annual",
+      "startWeightsPct": {
+        "VT": 100
+      },
+      "endingExposurePct": {
+        "VT": 100.0
+      },
+      "annualRebalanceEvents": 0,
+      "annualRebalanceCostTWD": 0.0,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 2724256.84,
+        "netReturnPct": 172.426,
+        "cagrPct": 12.119,
+        "maxDrawdownPct": -33.623,
+        "deepestDrawdown": {
+          "drawdownPct": -33.623,
+          "peakDate": "2020-02-19",
+          "troughDate": "2020-03-23",
+          "recoveryDate": "2020-09-02",
+          "peakToRecoveryCalendarDays": 196,
+          "recoveryFromTroughCalendarDays": 163
+        },
+        "longestUnderwaterDays": 581,
+        "longestUnderwaterPeriod": {
+          "start": "2021-11-08",
+          "recovered": "2023-06-12"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-08-13",
+          "calendarDays": 55
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-19",
+            "end": "2023-01-19",
+            "returnPct": 30.73
+          },
+          "medianReturnPct": 79.515,
+          "best": {
+            "start": "2020-03-23",
+            "end": "2025-03-24",
+            "returnPct": 163.539
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -8.199,
+            "closingTWD": 918008.26
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 24.808,
+            "closingTWD": 1145752.01
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 8.811,
+            "closingTWD": 1246702.65
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 16.525,
+            "closingTWD": 1452725.97
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -9.039,
+            "closingTWD": 1321417.96
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 22.083,
+            "closingTWD": 1613225.94
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 24.311,
+            "closingTWD": 2005425.25
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 16.76,
+            "closingTWD": 2341530.73
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 16.345,
+            "closingTWD": 2724256.84
+          }
+        ]
+      }
+    },
+    {
+      "id": "QQQ_100",
+      "rebalancing": "annual",
+      "startWeightsPct": {
+        "QQQ": 100
+      },
+      "endingExposurePct": {
+        "QQQ": 100.0
+      },
+      "annualRebalanceEvents": 0,
+      "annualRebalanceCostTWD": 0.0,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 5442018.87,
+        "netReturnPct": 444.202,
+        "cagrPct": 21.333,
+        "maxDrawdownPct": -28.413,
+        "deepestDrawdown": {
+          "drawdownPct": -28.413,
+          "peakDate": "2020-02-19",
+          "troughDate": "2020-03-16",
+          "recoveryDate": "2020-06-05",
+          "peakToRecoveryCalendarDays": 107,
+          "recoveryFromTroughCalendarDays": 81
+        },
+        "longestUnderwaterDays": 572,
+        "longestUnderwaterPeriod": {
+          "start": "2021-11-19",
+          "recovered": "2023-06-14"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 73.45
+          },
+          "medianReturnPct": 135.052,
+          "best": {
+            "start": "2020-03-23",
+            "end": "2025-03-24",
+            "returnPct": 222.889
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": 1.475,
+            "closingTWD": 1014746.69
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 36.735,
+            "closingTWD": 1387517.8
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 38.477,
+            "closingTWD": 1921387.83
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 25.536,
+            "closingTWD": 2412042.57
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -25.195,
+            "closingTWD": 1804334.39
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 54.908,
+            "closingTWD": 2795049.52
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 34.001,
+            "closingTWD": 3745395.9
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 15.175,
+            "closingTWD": 4313762.73
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 26.155,
+            "closingTWD": 5442018.87
+          }
+        ]
+      }
+    },
+    {
+      "id": "L2_BUY_HOLD_100",
+      "rebalancing": "annual",
+      "startWeightsPct": {
+        "L2_HOLD": 100
+      },
+      "endingExposurePct": {
+        "L2_HOLD": 100.0
+      },
+      "annualRebalanceEvents": 0,
+      "annualRebalanceCostTWD": 0.0,
+      "metrics": {
+        "start": "2018-01-02",
+        "end": "2026-10-07",
+        "tradingValuationDates": 2273,
+        "startingTWD": 1000000,
+        "endingTWD": 25641733.91,
+        "netReturnPct": 2464.173,
+        "cagrPct": 44.815,
+        "maxDrawdownPct": -55.244,
+        "deepestDrawdown": {
+          "drawdownPct": -55.244,
+          "peakDate": "2024-07-11",
+          "troughDate": "2025-04-09",
+          "recoveryDate": "2025-09-12",
+          "peakToRecoveryCalendarDays": 428,
+          "recoveryFromTroughCalendarDays": 156
+        },
+        "longestUnderwaterDays": 696,
+        "longestUnderwaterPeriod": {
+          "start": "2022-01-17",
+          "recovered": "2023-12-14"
+        },
+        "underwaterAtEnd": {
+          "since": "2026-10-06",
+          "calendarDays": 1
+        },
+        "rollingFiveYear": {
+          "n": 977,
+          "worst": {
+            "start": "2018-01-05",
+            "end": "2023-01-05",
+            "returnPct": 156.669
+          },
+          "medianReturnPct": 364.936,
+          "best": {
+            "start": "2020-03-19",
+            "end": "2025-03-19",
+            "returnPct": 740.175
+          }
+        },
+        "calendarYears": [
+          {
+            "year": 2018,
+            "lastDate": "2018-12-31",
+            "returnPct": -12.275,
+            "closingTWD": 877245.86
+          },
+          {
+            "year": 2019,
+            "lastDate": "2019-12-31",
+            "returnPct": 64.804,
+            "closingTWD": 1445739.69
+          },
+          {
+            "year": 2020,
+            "lastDate": "2020-12-31",
+            "returnPct": 67.554,
+            "closingTWD": 2422400.84
+          },
+          {
+            "year": 2021,
+            "lastDate": "2021-12-31",
+            "returnPct": 65.029,
+            "closingTWD": 3997660.88
+          },
+          {
+            "year": 2022,
+            "lastDate": "2022-12-30",
+            "returnPct": -34.641,
+            "closingTWD": 2612832.36
+          },
+          {
+            "year": 2023,
+            "lastDate": "2023-12-29",
+            "returnPct": 64.255,
+            "closingTWD": 4291709.47
+          },
+          {
+            "year": 2024,
+            "lastDate": "2024-12-31",
+            "returnPct": 56.281,
+            "closingTWD": 6707108.46
+          },
+          {
+            "year": 2025,
+            "lastDate": "2025-12-31",
+            "returnPct": 50.418,
+            "closingTWD": 10088666.89
+          },
+          {
+            "year": 2026,
+            "lastDate": "2026-10-07",
+            "returnPct": 154.164,
+            "closingTWD": 25641733.91
+          }
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "The observed 2018-2026 period is dominated by strong technology-led returns; do not project these returns into 2026-2031.",
+    "Public archived 2018-2026 strategy variants and backtest choices were already studied; 2026 is not genuinely blind testing.",
+    "QQQ and VT overlap heavily in US mega-cap technology holdings; neither eliminates equity bear-market risk.",
+    "Asynchronous Taiwan/US trading calendars and daily Yahoo FX close references are approximations for historical valuation, not executable simultaneous prices.",
+    "Rebalance on the previous complete joint valuation as a close-based approximation; real FX/US/TW order timing and spreads add execution friction.",
+    "US ETF adjusted OHLC approximate dividend reinvestment without US nonresident 30% dividend withholding tax; actual after-tax wealth can be lower.",
+    "Historical archived account curves already include the respective broker and 0.1% slippage assumptions but do not include foreign exchange conversion spreads, cross-border transfer fees, broker FX margins or local income tax.",
+    "Terminal US archives have hypothetical liquidation transaction costs; ongoing rebalancing trades use approximate extra fees.",
+    "FX daily spots can be revised and may not precisely match broker settlement FX rates.",
+    "Only 2018-2026 historical records, not the 2008 crash. Rolling five-year windows overlap and are highly correlated.",
+    "Leveraged 00675L targets 2x DAILY Taiwan index, not guaranteed 2x five-year cumulative returns.",
+    "Risk-off only triggers after the close; overnight price gaps or market halts may cause much worse losses.",
+    "Annual sleeves are mathematically scaled archived strategy NAVs; whole-share and discrete FX settlement not replayed on each rebalance."
+  ]
+}
