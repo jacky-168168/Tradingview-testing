@@ -1,0 +1,86 @@
+name: Publish G Compound Verified Executive Results
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/g-compound-executive.yml'
+permissions:
+  contents: write
+concurrency:
+  group: g-compound-executive
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract auditable compact results without rerunning historical data
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('tw-stock-dashboard/docs/data/research/g_compound_3y')
+          src=json.loads((root/'summary.json').read_text(encoding='utf-8'))
+          t=json.loads((root/'trades.json').read_text(encoding='utf-8'))
+          e=json.loads((root/'equity.json').read_text(encoding='utf-8'))
+          assert src['riskScoreCoverage']==728 and len(src['models'])==src['totalCases']==1728
+          assert src['trainingWindows']['authorWindow2026'][1]=='2026-10-02'
+          selected=src['selectionFromTrainValidationOnly']
+          def reduced(x):
+              return {key:x.get(key) for key in ('capitalEnd','netReturnPct','maxDDPct','filledBuys','closedTrades','wins','losses','winPct','avgNetPct','avgWinPct','avgLossPct','avgHoldSessions','openAtEnd','cashAtEnd','netUnrealizedTWD')}
+          def result(m):
+              return {'id':m['id'],'parameters':m['params'],
+                      'train':reduced(m['byPeriod']['train']),
+                      'validation':reduced(m['byPeriod']['validation']),
+                      'audit2026':reduced(m['byPeriod']['audit2026']),
+                      'authorWindow2026':reduced(m['byPeriod']['authorWindow2026']),
+                      'all':reduced(m['byPeriod']['all'])}
+          selected_row=next((r for r in src['models'] if r['id']==selected.get('id')),None)
+          if selected.get('id') and not selected_row:raise RuntimeError('Selected research model not found')
+          baselines=[result(m) for m in src['models'] if m['params']['riskGate']=='SCORE60'
+              and m['params']['targetPct']==5 and m['params']['stopPct']==8
+              and m['params']['maxHoldTradingDays']==5]
+          best2026=sorted(src['models'],key=lambda x:x['byPeriod']['authorWindow2026']['netReturnPct'],reverse=True)[:12]
+          passing2026=sum(m['byPeriod']['authorWindow2026']['netReturnPct']>0 for m in src['models'])
+          close52=sum(m['byPeriod']['authorWindow2026']['closedTrades']>=52 for m in src['models'])
+          close51wins=sum(m['byPeriod']['authorWindow2026']['wins']>=51 for m in src['models'])
+          end_target=3_658_915.39
+          ending_ge_author=sum(m['byPeriod']['authorWindow2026']['capitalEnd']>=end_target for m in src['models'])
+          out={'version':'G_COMPOUND_EXECUTIVE_AUDIT_V1','sourceVersion':src['version'],
+               'period':src['period'],'riskDays':src['riskScoreCoverage'],
+               'models':src['totalCases'],'selectorSignalDays':src['selectorSignalDays'],
+               'stockHistoryErrors':src['stockHistoryErrors'],
+               'author':src['authorDisclosure'],
+               'trainValidationSelection':selected,
+               'selectedModel':result(selected_row) if selected_row else None,
+               'baselines':baselines,
+               'best2026NotSelected':[result(m) for m in best2026],
+               'distribution':{'numberPositiveDuringAuthorPeriod':passing2026,
+                   'numberAtLeast52ClosedDuringAuthorPeriod':close52,
+                   'numberAtLeast51WinsDuringAuthorPeriod':close51wins,
+                   'numberCapitalAtLeastAuthorsImpliedEnd':ending_ge_author,
+                   'testedVariants':len(src['models'])},
+               'limits':src['limitations']}
+          (root/'executive.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+          print('EXECUTIVE_RESULT',json.dumps({'selected':out['selectedModel'],
+               'distribution':out['distribution'],
+               'best2026':out['best2026NotSelected'][0]},ensure_ascii=False))
+          assert len(t['auditedModels'])>=9 and set(t['auditedModels'])==set(e['auditedModels'])
+          PY
+      - name: Publish compact results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_compound_3y/executive.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish audited compact G Compound winner and 2026 OOS baseline'
+            for i in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
