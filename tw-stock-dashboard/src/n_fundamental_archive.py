@@ -175,7 +175,7 @@ def main():
     # Every month is a reusable checkpoint; do not silently fabricate missing rows.
     for year,month in MONTHS:
         for market in MARKETS:
-            for typ in (0,1):
+            for typ in (0,): # MOPS _0 historical page states 'includes domestic and foreign firms'; avoid unnecessary duplicate _1 request
                 key=f"month_{year}{month:02d}_{market}_{typ}"
                 try:
                     rows,proof=collect_month(sess,year,month,market,typ)
