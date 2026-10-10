@@ -39,6 +39,13 @@
 - Production：1950 / 1950 檔歷史 K 成功，historyErrors = 0。
 - Python CI 與 Full Parity workflow 通過。
 
+## 個股量化體檢（參考 FinLab 的研究架構，自行實作）
+- 新頁面：\`docs/stocks.html\`；主頁與選股頁都有入口。股票搜尋、產業與 A/D/F/F2/G/G Pro 篩選、動能/RS20/低波動分位、模型交集、本機觀察清單、TradingView 及 FinLab 外部參考連結。
+- 每次完整交易日更新，自有 \`src/stock_diagnostics.py\` 使用官方公司母檔與現有日 K 快取計算全市場資料，輸出 \`docs/data/stocks/latest.json\`。缺資料維持 null，不能視為零。
+- 原本 \`docs/data/latest.json\` 與 A/D/F/F2/G/G Pro 模型、回測及交易風控規則**全部不變**。若新快照尚未發布，頁面僅以當日選股 Top20 合併名單提供**明確標註的部分預覽**，不冒充全市場。
+- 技術訊號只代表截至資料日的觀察條件，沒有對應歷史樣本的勝率/OOS；**尚未接入 EPS/ROE/本益比/股利/估值模型**。FinLab 資料和前端原始碼均未擷取或重製，僅作功能規劃參考。
+- QA：\`python -m unittest tests.test_stock_diagnostics\`（或正式 CI 的 unittest discover）；\`node --check docs/stock-diagnostics.js\`。
+
 ## 網頁
 - 主選股：`tw-stock-dashboard/docs/index.html`
 - 歷史快照：`tw-stock-dashboard/docs/history.html`
