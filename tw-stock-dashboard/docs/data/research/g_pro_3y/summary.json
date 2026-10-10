@@ -1,0 +1,2974 @@
+{
+  "version": "G_PRO_FROZEN_G_TOP3_STRICT_V1",
+  "createdAt": "2026-10-10T16:36:05.619470+08:00",
+  "period": {
+    "start": "2023-10-09",
+    "end": "2026-10-08"
+  },
+  "riskScoredDays": 728,
+  "rawGSignalDays": 650,
+  "gProSignalDays": 25,
+  "universeNow": 1982,
+  "stockDataErrors": 0,
+  "originalGAudit": {
+    "symbols": 1977,
+    "dailyFeatureRows": 29768,
+    "validGSignalDays": 650,
+    "meanGStocksPerSignal": 40.89
+  },
+  "rules": {
+    "ret20PercentileMin": 75,
+    "ma20SlopePercentileMin": 80,
+    "turnoverPercentileMin": 75,
+    "prior10DaysOriginalGTop20Min": 2,
+    "relativeVolumeVsPrevious20Min": 1.3,
+    "closeAboveEma20": true,
+    "ema20AboveEma60": true,
+    "maxCloseToEma20": 1.15
+  },
+  "rejectionCount": {
+    "persistence": 200,
+    "overextended": 1122,
+    "rvol": 555,
+    "turnover": 16,
+    "passed": 26,
+    "ema_trend": 9,
+    "missing_indicators": 1,
+    "ma20slope": 1
+  },
+  "limitations": [
+    "G Pro filters only the original G Top3, never substitutes rank4+.",
+    "Current listed universe and capital are survivorship/capital-history biased.",
+    "Historical stock prices use Yahoo adjusted-price data.",
+    "No verified per-stock historic foreign/trust series; no institutional buying gate.",
+    "TX futures night history has 0 validated coverage in the baseline and is excluded.",
+    "Daily cash portfolio uses fractional shares and no explicit market-impact/slippage.",
+    "Non-quoted held positions carry the last valuation, disclosed by staleDailyMarks.",
+    "Horizon-specific signals near each calendar-fold end excluded from fold stats.",
+    "G Pro is predeclared; do not tune using the 2026 holdout."
+  ],
+  "models": [
+    {
+      "model": "G",
+      "threshold": 50,
+      "horizon": 1,
+      "qualifiedSignalDays": 445,
+      "executedSignalDays": 441,
+      "signalStats": {
+        "n": 441,
+        "winPct": 40.82,
+        "meanNetPct": -0.659,
+        "medianNetPct": -0.732,
+        "meanWinPct": 2.755,
+        "meanLossPct": -3.013
+      },
+      "byPeriod": {
+        "train": {
+          "n": 188,
+          "winPct": 39.89,
+          "meanNetPct": -0.89,
+          "medianNetPct": -0.795,
+          "meanWinPct": 2.343,
+          "meanLossPct": -3.035
+        },
+        "validation": {
+          "n": 143,
+          "winPct": 40.56,
+          "meanNetPct": -0.408,
+          "medianNetPct": -0.689,
+          "meanWinPct": 3.15,
+          "meanLossPct": -2.836
+        },
+        "holdout": {
+          "n": 109,
+          "winPct": 42.2,
+          "meanNetPct": -0.597,
+          "medianNetPct": -0.631,
+          "meanWinPct": 2.983,
+          "meanLossPct": -3.21
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 37969.37,
+        "netReturnPct": -96.203,
+        "dailyMaxDrawdownPct": -96.438,
+        "closedStockTrades": 1329,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {
+          "missing_open_or_busy": 1
+        }
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 50,
+      "horizon": 1,
+      "qualifiedSignalDays": 9,
+      "executedSignalDays": 9,
+      "signalStats": {
+        "n": 9,
+        "winPct": 22.22,
+        "meanNetPct": -0.234,
+        "medianNetPct": -2.091,
+        "meanWinPct": 9.718,
+        "meanLossPct": -3.077
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 0.0,
+          "meanNetPct": -2.37,
+          "medianNetPct": -2.091,
+          "meanWinPct": null,
+          "meanLossPct": -2.37
+        },
+        "validation": {
+          "n": 4,
+          "winPct": 50.0,
+          "meanNetPct": 3.158,
+          "medianNetPct": 4.24,
+          "meanWinPct": 9.718,
+          "meanLossPct": -3.403
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -3.812,
+          "medianNetPct": -3.812,
+          "meanWinPct": null,
+          "meanLossPct": -3.812
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 966244.68,
+        "netReturnPct": -3.376,
+        "dailyMaxDrawdownPct": -13.236,
+        "closedStockTrades": 9,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 55,
+      "horizon": 1,
+      "qualifiedSignalDays": 399,
+      "executedSignalDays": 395,
+      "signalStats": {
+        "n": 395,
+        "winPct": 40.76,
+        "meanNetPct": -0.668,
+        "medianNetPct": -0.732,
+        "meanWinPct": 2.756,
+        "meanLossPct": -3.024
+      },
+      "byPeriod": {
+        "train": {
+          "n": 167,
+          "winPct": 39.52,
+          "meanNetPct": -0.934,
+          "medianNetPct": -0.837,
+          "meanWinPct": 2.281,
+          "meanLossPct": -3.034
+        },
+        "validation": {
+          "n": 124,
+          "winPct": 41.13,
+          "meanNetPct": -0.343,
+          "medianNetPct": -0.582,
+          "meanWinPct": 3.307,
+          "meanLossPct": -2.894
+        },
+        "holdout": {
+          "n": 103,
+          "winPct": 41.75,
+          "meanNetPct": -0.638,
+          "medianNetPct": -0.631,
+          "meanWinPct": 2.89,
+          "meanLossPct": -3.166
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 50814.87,
+        "netReturnPct": -94.919,
+        "dailyMaxDrawdownPct": -95.158,
+        "closedStockTrades": 1191,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {
+          "missing_open_or_busy": 1
+        }
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 55,
+      "horizon": 1,
+      "qualifiedSignalDays": 9,
+      "executedSignalDays": 9,
+      "signalStats": {
+        "n": 9,
+        "winPct": 22.22,
+        "meanNetPct": -0.234,
+        "medianNetPct": -2.091,
+        "meanWinPct": 9.718,
+        "meanLossPct": -3.077
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 0.0,
+          "meanNetPct": -2.37,
+          "medianNetPct": -2.091,
+          "meanWinPct": null,
+          "meanLossPct": -2.37
+        },
+        "validation": {
+          "n": 4,
+          "winPct": 50.0,
+          "meanNetPct": 3.158,
+          "medianNetPct": 4.24,
+          "meanWinPct": 9.718,
+          "meanLossPct": -3.403
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -3.812,
+          "medianNetPct": -3.812,
+          "meanWinPct": null,
+          "meanLossPct": -3.812
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 966244.68,
+        "netReturnPct": -3.376,
+        "dailyMaxDrawdownPct": -13.236,
+        "closedStockTrades": 9,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 60,
+      "horizon": 1,
+      "qualifiedSignalDays": 357,
+      "executedSignalDays": 353,
+      "signalStats": {
+        "n": 353,
+        "winPct": 39.66,
+        "meanNetPct": -0.692,
+        "medianNetPct": -0.837,
+        "meanWinPct": 2.838,
+        "meanLossPct": -3.012
+      },
+      "byPeriod": {
+        "train": {
+          "n": 157,
+          "winPct": 38.22,
+          "meanNetPct": -0.988,
+          "medianNetPct": -0.93,
+          "meanWinPct": 2.366,
+          "meanLossPct": -3.062
+        },
+        "validation": {
+          "n": 106,
+          "winPct": 38.68,
+          "meanNetPct": -0.423,
+          "medianNetPct": -0.753,
+          "meanWinPct": 3.358,
+          "meanLossPct": -2.808
+        },
+        "holdout": {
+          "n": 89,
+          "winPct": 42.7,
+          "meanNetPct": -0.501,
+          "medianNetPct": -0.629,
+          "meanWinPct": 3.093,
+          "meanLossPct": -3.179
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 63412.84,
+        "netReturnPct": -93.659,
+        "dailyMaxDrawdownPct": -93.841,
+        "closedStockTrades": 1066,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {
+          "missing_open_or_busy": 1
+        }
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 60,
+      "horizon": 1,
+      "qualifiedSignalDays": 7,
+      "executedSignalDays": 7,
+      "signalStats": {
+        "n": 7,
+        "winPct": 0.0,
+        "meanNetPct": -3.077,
+        "medianNetPct": -2.64,
+        "meanWinPct": null,
+        "meanLossPct": -3.077
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 0.0,
+          "meanNetPct": -2.37,
+          "medianNetPct": -2.091,
+          "meanWinPct": null,
+          "meanLossPct": -2.37
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -3.403,
+          "medianNetPct": -3.403,
+          "meanWinPct": null,
+          "meanLossPct": -3.403
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -3.812,
+          "medianNetPct": -3.812,
+          "meanWinPct": null,
+          "meanLossPct": -3.812
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 802650.56,
+        "netReturnPct": -19.735,
+        "dailyMaxDrawdownPct": -19.735,
+        "closedStockTrades": 7,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 65,
+      "horizon": 1,
+      "qualifiedSignalDays": 329,
+      "executedSignalDays": 325,
+      "signalStats": {
+        "n": 325,
+        "winPct": 40.31,
+        "meanNetPct": -0.651,
+        "medianNetPct": -0.767,
+        "meanWinPct": 2.855,
+        "meanLossPct": -3.019
+      },
+      "byPeriod": {
+        "train": {
+          "n": 144,
+          "winPct": 38.19,
+          "meanNetPct": -1.016,
+          "medianNetPct": -0.908,
+          "meanWinPct": 2.344,
+          "meanLossPct": -3.092
+        },
+        "validation": {
+          "n": 94,
+          "winPct": 42.55,
+          "meanNetPct": -0.116,
+          "medianNetPct": -0.476,
+          "meanWinPct": 3.436,
+          "meanLossPct": -2.748
+        },
+        "holdout": {
+          "n": 86,
+          "winPct": 40.7,
+          "meanNetPct": -0.636,
+          "medianNetPct": -0.907,
+          "meanWinPct": 3.068,
+          "meanLossPct": -3.179
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 89267.48,
+        "netReturnPct": -91.073,
+        "dailyMaxDrawdownPct": -91.331,
+        "closedStockTrades": 982,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {
+          "missing_open_or_busy": 1
+        }
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 65,
+      "horizon": 1,
+      "qualifiedSignalDays": 7,
+      "executedSignalDays": 7,
+      "signalStats": {
+        "n": 7,
+        "winPct": 0.0,
+        "meanNetPct": -3.077,
+        "medianNetPct": -2.64,
+        "meanWinPct": null,
+        "meanLossPct": -3.077
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 0.0,
+          "meanNetPct": -2.37,
+          "medianNetPct": -2.091,
+          "meanWinPct": null,
+          "meanLossPct": -2.37
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -3.403,
+          "medianNetPct": -3.403,
+          "meanWinPct": null,
+          "meanLossPct": -3.403
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -3.812,
+          "medianNetPct": -3.812,
+          "meanWinPct": null,
+          "meanLossPct": -3.812
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 802650.56,
+        "netReturnPct": -19.735,
+        "dailyMaxDrawdownPct": -19.735,
+        "closedStockTrades": 7,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 70,
+      "horizon": 1,
+      "qualifiedSignalDays": 296,
+      "executedSignalDays": 292,
+      "signalStats": {
+        "n": 292,
+        "winPct": 40.07,
+        "meanNetPct": -0.803,
+        "medianNetPct": -0.848,
+        "meanWinPct": 2.541,
+        "meanLossPct": -3.039
+      },
+      "byPeriod": {
+        "train": {
+          "n": 126,
+          "winPct": 37.3,
+          "meanNetPct": -1.065,
+          "medianNetPct": -1.037,
+          "meanWinPct": 2.377,
+          "meanLossPct": -3.113
+        },
+        "validation": {
+          "n": 85,
+          "winPct": 43.53,
+          "meanNetPct": -0.551,
+          "medianNetPct": -0.432,
+          "meanWinPct": 2.268,
+          "meanLossPct": -2.724
+        },
+        "holdout": {
+          "n": 80,
+          "winPct": 40.0,
+          "meanNetPct": -0.673,
+          "medianNetPct": -1.215,
+          "meanWinPct": 3.168,
+          "meanLossPct": -3.233
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 79211.06,
+        "netReturnPct": -92.079,
+        "dailyMaxDrawdownPct": -92.307,
+        "closedStockTrades": 885,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {
+          "missing_open_or_busy": 1
+        }
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 70,
+      "horizon": 1,
+      "qualifiedSignalDays": 6,
+      "executedSignalDays": 6,
+      "signalStats": {
+        "n": 6,
+        "winPct": 0.0,
+        "meanNetPct": -2.958,
+        "medianNetPct": -2.366,
+        "meanWinPct": null,
+        "meanLossPct": -2.958
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -1.659,
+          "medianNetPct": -1.659,
+          "meanWinPct": null,
+          "meanLossPct": -1.659
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -3.403,
+          "medianNetPct": -3.403,
+          "meanWinPct": null,
+          "meanLossPct": -3.403
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -3.812,
+          "medianNetPct": -3.812,
+          "meanWinPct": null,
+          "meanLossPct": -3.812
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 834279.15,
+        "netReturnPct": -16.572,
+        "dailyMaxDrawdownPct": -16.572,
+        "closedStockTrades": 6,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 75,
+      "horizon": 1,
+      "qualifiedSignalDays": 256,
+      "executedSignalDays": 253,
+      "signalStats": {
+        "n": 253,
+        "winPct": 38.74,
+        "meanNetPct": -0.89,
+        "medianNetPct": -0.93,
+        "meanWinPct": 2.598,
+        "meanLossPct": -3.095
+      },
+      "byPeriod": {
+        "train": {
+          "n": 111,
+          "winPct": 36.04,
+          "meanNetPct": -1.166,
+          "medianNetPct": -1.078,
+          "meanWinPct": 2.325,
+          "meanLossPct": -3.133
+        },
+        "validation": {
+          "n": 74,
+          "winPct": 41.89,
+          "meanNetPct": -0.68,
+          "medianNetPct": -0.476,
+          "meanWinPct": 2.37,
+          "meanLossPct": -2.879
+        },
+        "holdout": {
+          "n": 68,
+          "winPct": 39.71,
+          "meanNetPct": -0.667,
+          "medianNetPct": -0.907,
+          "meanWinPct": 3.264,
+          "meanLossPct": -3.256
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 88751.34,
+        "netReturnPct": -91.125,
+        "dailyMaxDrawdownPct": -91.44,
+        "closedStockTrades": 768,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 75,
+      "horizon": 1,
+      "qualifiedSignalDays": 5,
+      "executedSignalDays": 5,
+      "signalStats": {
+        "n": 5,
+        "winPct": 0.0,
+        "meanNetPct": -3.356,
+        "medianNetPct": -2.64,
+        "meanWinPct": null,
+        "meanLossPct": -3.356
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -1.659,
+          "medianNetPct": -1.659,
+          "meanWinPct": null,
+          "meanLossPct": -1.659
+        },
+        "validation": {
+          "n": 1,
+          "winPct": 0.0,
+          "meanNetPct": -5.839,
+          "medianNetPct": -5.839,
+          "meanWinPct": null,
+          "meanLossPct": -5.839
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -3.812,
+          "medianNetPct": -3.812,
+          "meanWinPct": null,
+          "meanLossPct": -3.812
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 842409.0,
+        "netReturnPct": -15.759,
+        "dailyMaxDrawdownPct": -15.759,
+        "closedStockTrades": 5,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 80,
+      "horizon": 1,
+      "qualifiedSignalDays": 211,
+      "executedSignalDays": 208,
+      "signalStats": {
+        "n": 208,
+        "winPct": 38.46,
+        "meanNetPct": -0.92,
+        "medianNetPct": -0.972,
+        "meanWinPct": 2.612,
+        "meanLossPct": -3.128
+      },
+      "byPeriod": {
+        "train": {
+          "n": 87,
+          "winPct": 35.63,
+          "meanNetPct": -1.285,
+          "medianNetPct": -1.169,
+          "meanWinPct": 2.217,
+          "meanLossPct": -3.224
+        },
+        "validation": {
+          "n": 59,
+          "winPct": 44.07,
+          "meanNetPct": -0.504,
+          "medianNetPct": -0.469,
+          "meanWinPct": 2.42,
+          "meanLossPct": -2.807
+        },
+        "holdout": {
+          "n": 62,
+          "winPct": 37.1,
+          "meanNetPct": -0.804,
+          "medianNetPct": -1.215,
+          "meanWinPct": 3.361,
+          "meanLossPct": -3.26
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 127621.64,
+        "netReturnPct": -87.238,
+        "dailyMaxDrawdownPct": -87.325,
+        "closedStockTrades": 633,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 80,
+      "horizon": 1,
+      "qualifiedSignalDays": 4,
+      "executedSignalDays": 4,
+      "signalStats": {
+        "n": 4,
+        "winPct": 0.0,
+        "meanNetPct": -3.535,
+        "medianNetPct": -3.538,
+        "meanWinPct": null,
+        "meanLossPct": -3.535
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -1.659,
+          "medianNetPct": -1.659,
+          "meanWinPct": null,
+          "meanLossPct": -1.659
+        },
+        "validation": {
+          "n": 1,
+          "winPct": 0.0,
+          "meanNetPct": -5.839,
+          "medianNetPct": -5.839,
+          "meanWinPct": null,
+          "meanLossPct": -5.839
+        },
+        "holdout": {
+          "n": 1,
+          "winPct": 0.0,
+          "meanNetPct": -4.984,
+          "medianNetPct": -4.984,
+          "meanWinPct": null,
+          "meanLossPct": -4.984
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 865245.2,
+        "netReturnPct": -13.475,
+        "dailyMaxDrawdownPct": -13.475,
+        "closedStockTrades": 4,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 50,
+      "horizon": 5,
+      "qualifiedSignalDays": 441,
+      "executedSignalDays": 436,
+      "signalStats": {
+        "n": 436,
+        "winPct": 47.94,
+        "meanNetPct": -0.272,
+        "medianNetPct": -0.208,
+        "meanWinPct": 6.076,
+        "meanLossPct": -6.117
+      },
+      "byPeriod": {
+        "train": {
+          "n": 185,
+          "winPct": 46.49,
+          "meanNetPct": -0.637,
+          "medianNetPct": -0.2,
+          "meanWinPct": 5.362,
+          "meanLossPct": -5.848
+        },
+        "validation": {
+          "n": 138,
+          "winPct": 47.1,
+          "meanNetPct": -0.219,
+          "medianNetPct": -1.11,
+          "meanWinPct": 5.425,
+          "meanLossPct": -5.244
+        },
+        "holdout": {
+          "n": 105,
+          "winPct": 54.29,
+          "meanNetPct": 0.56,
+          "medianNetPct": 0.39,
+          "meanWinPct": 7.948,
+          "meanLossPct": -8.213
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 188302.48,
+        "netReturnPct": -81.17,
+        "dailyMaxDrawdownPct": -84.24,
+        "closedStockTrades": 332,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 3,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 50,
+      "horizon": 5,
+      "qualifiedSignalDays": 9,
+      "executedSignalDays": 9,
+      "signalStats": {
+        "n": 9,
+        "winPct": 33.33,
+        "meanNetPct": 0.086,
+        "medianNetPct": -3.535,
+        "meanWinPct": 13.765,
+        "meanLossPct": -6.754
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 0.0,
+          "meanNetPct": -9.698,
+          "medianNetPct": -10.09,
+          "meanWinPct": null,
+          "meanLossPct": -9.698
+        },
+        "validation": {
+          "n": 4,
+          "winPct": 50.0,
+          "meanNetPct": 4.13,
+          "medianNetPct": 2.875,
+          "meanWinPct": 13.683,
+          "meanLossPct": -5.423
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 6.673,
+          "medianNetPct": 6.673,
+          "meanWinPct": 13.931,
+          "meanLossPct": -0.585
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 844557.3,
+        "netReturnPct": -15.544,
+        "dailyMaxDrawdownPct": -32.116,
+        "closedStockTrades": 8,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 55,
+      "horizon": 5,
+      "qualifiedSignalDays": 395,
+      "executedSignalDays": 390,
+      "signalStats": {
+        "n": 390,
+        "winPct": 48.21,
+        "meanNetPct": -0.24,
+        "medianNetPct": -0.208,
+        "meanWinPct": 6.09,
+        "meanLossPct": -6.13
+      },
+      "byPeriod": {
+        "train": {
+          "n": 164,
+          "winPct": 45.73,
+          "meanNetPct": -0.867,
+          "medianNetPct": -0.223,
+          "meanWinPct": 5.183,
+          "meanLossPct": -5.966
+        },
+        "validation": {
+          "n": 119,
+          "winPct": 47.9,
+          "meanNetPct": -0.025,
+          "medianNetPct": -0.884,
+          "meanWinPct": 5.548,
+          "meanLossPct": -5.148
+        },
+        "holdout": {
+          "n": 99,
+          "winPct": 55.56,
+          "meanNetPct": 0.821,
+          "medianNetPct": 0.575,
+          "meanWinPct": 7.942,
+          "meanLossPct": -8.08
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 306618.31,
+        "netReturnPct": -69.338,
+        "dailyMaxDrawdownPct": -75.876,
+        "closedStockTrades": 311,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 55,
+      "horizon": 5,
+      "qualifiedSignalDays": 9,
+      "executedSignalDays": 9,
+      "signalStats": {
+        "n": 9,
+        "winPct": 33.33,
+        "meanNetPct": 0.086,
+        "medianNetPct": -3.535,
+        "meanWinPct": 13.765,
+        "meanLossPct": -6.754
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 0.0,
+          "meanNetPct": -9.698,
+          "medianNetPct": -10.09,
+          "meanWinPct": null,
+          "meanLossPct": -9.698
+        },
+        "validation": {
+          "n": 4,
+          "winPct": 50.0,
+          "meanNetPct": 4.13,
+          "medianNetPct": 2.875,
+          "meanWinPct": 13.683,
+          "meanLossPct": -5.423
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 6.673,
+          "medianNetPct": 6.673,
+          "meanWinPct": 13.931,
+          "meanLossPct": -0.585
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 844557.3,
+        "netReturnPct": -15.544,
+        "dailyMaxDrawdownPct": -32.116,
+        "closedStockTrades": 8,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 60,
+      "horizon": 5,
+      "qualifiedSignalDays": 353,
+      "executedSignalDays": 349,
+      "signalStats": {
+        "n": 349,
+        "winPct": 47.56,
+        "meanNetPct": -0.199,
+        "medianNetPct": -0.243,
+        "meanWinPct": 6.184,
+        "meanLossPct": -5.989
+      },
+      "byPeriod": {
+        "train": {
+          "n": 154,
+          "winPct": 44.16,
+          "meanNetPct": -1.032,
+          "medianNetPct": -0.399,
+          "meanWinPct": 5.266,
+          "meanLossPct": -6.012
+        },
+        "validation": {
+          "n": 102,
+          "winPct": 48.04,
+          "meanNetPct": -0.072,
+          "medianNetPct": -0.6,
+          "meanWinPct": 5.56,
+          "meanLossPct": -5.279
+        },
+        "holdout": {
+          "n": 85,
+          "winPct": 56.47,
+          "meanNetPct": 1.488,
+          "medianNetPct": 0.575,
+          "meanWinPct": 8.187,
+          "meanLossPct": -7.201
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 749230.36,
+        "netReturnPct": -25.077,
+        "dailyMaxDrawdownPct": -51.482,
+        "closedStockTrades": 288,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 60,
+      "horizon": 5,
+      "qualifiedSignalDays": 7,
+      "executedSignalDays": 7,
+      "signalStats": {
+        "n": 7,
+        "winPct": 28.57,
+        "meanNetPct": -0.711,
+        "medianNetPct": -7.311,
+        "meanWinPct": 16.005,
+        "meanLossPct": -7.398
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 0.0,
+          "meanNetPct": -9.698,
+          "medianNetPct": -10.09,
+          "meanWinPct": null,
+          "meanLossPct": -9.698
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 5.384,
+          "medianNetPct": 5.384,
+          "meanWinPct": 18.079,
+          "meanLossPct": -7.311
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 6.673,
+          "medianNetPct": 6.673,
+          "meanWinPct": 13.931,
+          "meanLossPct": -0.585
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 801101.57,
+        "netReturnPct": -19.89,
+        "dailyMaxDrawdownPct": -32.116,
+        "closedStockTrades": 6,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 65,
+      "horizon": 5,
+      "qualifiedSignalDays": 325,
+      "executedSignalDays": 321,
+      "signalStats": {
+        "n": 321,
+        "winPct": 47.98,
+        "meanNetPct": -0.224,
+        "medianNetPct": -0.243,
+        "meanWinPct": 5.994,
+        "meanLossPct": -5.958
+      },
+      "byPeriod": {
+        "train": {
+          "n": 141,
+          "winPct": 44.68,
+          "meanNetPct": -1.036,
+          "medianNetPct": -0.365,
+          "meanWinPct": 4.881,
+          "meanLossPct": -5.815
+        },
+        "validation": {
+          "n": 91,
+          "winPct": 49.45,
+          "meanNetPct": 0.045,
+          "medianNetPct": -0.316,
+          "meanWinPct": 5.598,
+          "meanLossPct": -5.387
+        },
+        "holdout": {
+          "n": 82,
+          "winPct": 54.88,
+          "meanNetPct": 1.147,
+          "medianNetPct": 0.389,
+          "meanWinPct": 8.012,
+          "meanLossPct": -7.201
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 404073.68,
+        "netReturnPct": -59.593,
+        "dailyMaxDrawdownPct": -65.739,
+        "closedStockTrades": 279,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 65,
+      "horizon": 5,
+      "qualifiedSignalDays": 7,
+      "executedSignalDays": 7,
+      "signalStats": {
+        "n": 7,
+        "winPct": 28.57,
+        "meanNetPct": -0.711,
+        "medianNetPct": -7.311,
+        "meanWinPct": 16.005,
+        "meanLossPct": -7.398
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 0.0,
+          "meanNetPct": -9.698,
+          "medianNetPct": -10.09,
+          "meanWinPct": null,
+          "meanLossPct": -9.698
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 5.384,
+          "medianNetPct": 5.384,
+          "meanWinPct": 18.079,
+          "meanLossPct": -7.311
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 6.673,
+          "medianNetPct": 6.673,
+          "meanWinPct": 13.931,
+          "meanLossPct": -0.585
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 801101.57,
+        "netReturnPct": -19.89,
+        "dailyMaxDrawdownPct": -32.116,
+        "closedStockTrades": 6,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 70,
+      "horizon": 5,
+      "qualifiedSignalDays": 292,
+      "executedSignalDays": 288,
+      "signalStats": {
+        "n": 288,
+        "winPct": 48.26,
+        "meanNetPct": -0.27,
+        "medianNetPct": -0.197,
+        "meanWinPct": 5.794,
+        "meanLossPct": -5.927
+      },
+      "byPeriod": {
+        "train": {
+          "n": 123,
+          "winPct": 44.72,
+          "meanNetPct": -1.032,
+          "medianNetPct": -0.365,
+          "meanWinPct": 4.589,
+          "meanLossPct": -5.579
+        },
+        "validation": {
+          "n": 83,
+          "winPct": 50.6,
+          "meanNetPct": -0.125,
+          "medianNetPct": 0.098,
+          "meanWinPct": 5.105,
+          "meanLossPct": -5.483
+        },
+        "holdout": {
+          "n": 76,
+          "winPct": 55.26,
+          "meanNetPct": 1.14,
+          "medianNetPct": 0.389,
+          "meanWinPct": 8.061,
+          "meanLossPct": -7.408
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 420763.59,
+        "netReturnPct": -57.924,
+        "dailyMaxDrawdownPct": -65.529,
+        "closedStockTrades": 276,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 70,
+      "horizon": 5,
+      "qualifiedSignalDays": 6,
+      "executedSignalDays": 6,
+      "signalStats": {
+        "n": 6,
+        "winPct": 33.33,
+        "meanNetPct": 0.953,
+        "medianNetPct": -3.948,
+        "meanWinPct": 16.005,
+        "meanLossPct": -6.573
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -9.197,
+          "medianNetPct": -9.197,
+          "meanWinPct": null,
+          "meanLossPct": -9.197
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 5.384,
+          "medianNetPct": 5.384,
+          "meanWinPct": 18.079,
+          "meanLossPct": -7.311
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 6.673,
+          "medianNetPct": 6.673,
+          "meanWinPct": 13.931,
+          "meanLossPct": -0.585
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 897074.45,
+        "netReturnPct": -10.293,
+        "dailyMaxDrawdownPct": -23.983,
+        "closedStockTrades": 5,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 75,
+      "horizon": 5,
+      "qualifiedSignalDays": 253,
+      "executedSignalDays": 250,
+      "signalStats": {
+        "n": 250,
+        "winPct": 47.6,
+        "meanNetPct": -0.445,
+        "medianNetPct": -0.421,
+        "meanWinPct": 5.729,
+        "meanLossPct": -6.054
+      },
+      "byPeriod": {
+        "train": {
+          "n": 108,
+          "winPct": 45.37,
+          "meanNetPct": -1.081,
+          "medianNetPct": -0.365,
+          "meanWinPct": 4.415,
+          "meanLossPct": -5.645
+        },
+        "validation": {
+          "n": 72,
+          "winPct": 50.0,
+          "meanNetPct": -0.162,
+          "medianNetPct": -0.109,
+          "meanWinPct": 5.171,
+          "meanLossPct": -5.495
+        },
+        "holdout": {
+          "n": 65,
+          "winPct": 52.31,
+          "meanNetPct": 0.599,
+          "medianNetPct": 0.302,
+          "meanWinPct": 8.213,
+          "meanLossPct": -7.752
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 291468.51,
+        "netReturnPct": -70.853,
+        "dailyMaxDrawdownPct": -71.665,
+        "closedStockTrades": 252,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 75,
+      "horizon": 5,
+      "qualifiedSignalDays": 5,
+      "executedSignalDays": 5,
+      "signalStats": {
+        "n": 5,
+        "winPct": 20.0,
+        "meanNetPct": -2.472,
+        "medianNetPct": -7.311,
+        "meanWinPct": 13.931,
+        "meanLossPct": -6.573
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -9.197,
+          "medianNetPct": -9.197,
+          "meanWinPct": null,
+          "meanLossPct": -9.197
+        },
+        "validation": {
+          "n": 1,
+          "winPct": 0.0,
+          "meanNetPct": -7.311,
+          "medianNetPct": -7.311,
+          "meanWinPct": null,
+          "meanLossPct": -7.311
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 6.673,
+          "medianNetPct": 6.673,
+          "meanWinPct": 13.931,
+          "meanLossPct": -0.585
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 759716.81,
+        "netReturnPct": -24.028,
+        "dailyMaxDrawdownPct": -27.634,
+        "closedStockTrades": 4,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 80,
+      "horizon": 5,
+      "qualifiedSignalDays": 209,
+      "executedSignalDays": 206,
+      "signalStats": {
+        "n": 206,
+        "winPct": 49.03,
+        "meanNetPct": -0.331,
+        "medianNetPct": -0.147,
+        "meanWinPct": 5.814,
+        "meanLossPct": -6.242
+      },
+      "byPeriod": {
+        "train": {
+          "n": 85,
+          "winPct": 44.71,
+          "meanNetPct": -1.545,
+          "medianNetPct": -0.525,
+          "meanWinPct": 4.026,
+          "meanLossPct": -6.049
+        },
+        "validation": {
+          "n": 57,
+          "winPct": 52.63,
+          "meanNetPct": 0.495,
+          "medianNetPct": 0.116,
+          "meanWinPct": 5.275,
+          "meanLossPct": -4.817
+        },
+        "holdout": {
+          "n": 60,
+          "winPct": 55.0,
+          "meanNetPct": 0.93,
+          "medianNetPct": 0.389,
+          "meanWinPct": 8.363,
+          "meanLossPct": -8.156
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 274847.19,
+        "netReturnPct": -72.515,
+        "dailyMaxDrawdownPct": -79.652,
+        "closedStockTrades": 234,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 80,
+      "horizon": 5,
+      "qualifiedSignalDays": 4,
+      "executedSignalDays": 4,
+      "signalStats": {
+        "n": 4,
+        "winPct": 25.0,
+        "meanNetPct": -2.943,
+        "medianNetPct": -7.808,
+        "meanWinPct": 13.931,
+        "meanLossPct": -8.568
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 0.0,
+          "meanNetPct": -9.197,
+          "medianNetPct": -9.197,
+          "meanWinPct": null,
+          "meanLossPct": -9.197
+        },
+        "validation": {
+          "n": 1,
+          "winPct": 0.0,
+          "meanNetPct": -7.311,
+          "medianNetPct": -7.311,
+          "meanWinPct": null,
+          "meanLossPct": -7.311
+        },
+        "holdout": {
+          "n": 1,
+          "winPct": 100.0,
+          "meanNetPct": 13.931,
+          "medianNetPct": 13.931,
+          "meanWinPct": 13.931,
+          "meanLossPct": null
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 870648.91,
+        "netReturnPct": -12.935,
+        "dailyMaxDrawdownPct": -27.067,
+        "closedStockTrades": 4,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 50,
+      "horizon": 10,
+      "qualifiedSignalDays": 437,
+      "executedSignalDays": 432,
+      "signalStats": {
+        "n": 432,
+        "winPct": 53.47,
+        "meanNetPct": 1.068,
+        "medianNetPct": 0.673,
+        "meanWinPct": 8.839,
+        "meanLossPct": -7.864
+      },
+      "byPeriod": {
+        "train": {
+          "n": 182,
+          "winPct": 50.0,
+          "meanNetPct": 0.512,
+          "medianNetPct": -0.181,
+          "meanWinPct": 8.576,
+          "meanLossPct": -7.552
+        },
+        "validation": {
+          "n": 135,
+          "winPct": 51.11,
+          "meanNetPct": 0.184,
+          "medianNetPct": 0.085,
+          "meanWinPct": 7.671,
+          "meanLossPct": -7.644
+        },
+        "holdout": {
+          "n": 101,
+          "winPct": 60.4,
+          "meanNetPct": 2.823,
+          "medianNetPct": 3.168,
+          "meanWinPct": 10.377,
+          "meanLossPct": -8.696
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 662025.2,
+        "netReturnPct": -33.797,
+        "dailyMaxDrawdownPct": -65.043,
+        "closedStockTrades": 180,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 50,
+      "horizon": 10,
+      "qualifiedSignalDays": 9,
+      "executedSignalDays": 9,
+      "signalStats": {
+        "n": 9,
+        "winPct": 66.67,
+        "meanNetPct": 2.98,
+        "medianNetPct": 2.147,
+        "meanWinPct": 9.238,
+        "meanLossPct": -9.536
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 33.33,
+          "meanNetPct": -3.55,
+          "medianNetPct": -9.319,
+          "meanWinPct": 11.465,
+          "meanLossPct": -11.058
+        },
+        "validation": {
+          "n": 4,
+          "winPct": 100.0,
+          "meanNetPct": 6.848,
+          "medianNetPct": 5.717,
+          "meanWinPct": 6.848,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 5.039,
+          "medianNetPct": 5.039,
+          "meanWinPct": 16.571,
+          "meanLossPct": -6.493
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1179549.0,
+        "netReturnPct": 17.955,
+        "dailyMaxDrawdownPct": -27.167,
+        "closedStockTrades": 7,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 55,
+      "horizon": 10,
+      "qualifiedSignalDays": 392,
+      "executedSignalDays": 387,
+      "signalStats": {
+        "n": 387,
+        "winPct": 52.71,
+        "meanNetPct": 0.976,
+        "medianNetPct": 0.468,
+        "meanWinPct": 8.894,
+        "meanLossPct": -7.851
+      },
+      "byPeriod": {
+        "train": {
+          "n": 161,
+          "winPct": 49.69,
+          "meanNetPct": 0.375,
+          "medianNetPct": -0.374,
+          "meanWinPct": 8.409,
+          "meanLossPct": -7.561
+        },
+        "validation": {
+          "n": 116,
+          "winPct": 49.14,
+          "meanNetPct": 0.213,
+          "medianNetPct": -0.233,
+          "meanWinPct": 8.154,
+          "meanLossPct": -7.458
+        },
+        "holdout": {
+          "n": 96,
+          "winPct": 59.38,
+          "meanNetPct": 2.442,
+          "medianNetPct": 3.198,
+          "meanWinPct": 10.134,
+          "meanLossPct": -8.8
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 660640.29,
+        "netReturnPct": -33.936,
+        "dailyMaxDrawdownPct": -70.479,
+        "closedStockTrades": 173,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 55,
+      "horizon": 10,
+      "qualifiedSignalDays": 9,
+      "executedSignalDays": 9,
+      "signalStats": {
+        "n": 9,
+        "winPct": 66.67,
+        "meanNetPct": 2.98,
+        "medianNetPct": 2.147,
+        "meanWinPct": 9.238,
+        "meanLossPct": -9.536
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 33.33,
+          "meanNetPct": -3.55,
+          "medianNetPct": -9.319,
+          "meanWinPct": 11.465,
+          "meanLossPct": -11.058
+        },
+        "validation": {
+          "n": 4,
+          "winPct": 100.0,
+          "meanNetPct": 6.848,
+          "medianNetPct": 5.717,
+          "meanWinPct": 6.848,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 5.039,
+          "medianNetPct": 5.039,
+          "meanWinPct": 16.571,
+          "meanLossPct": -6.493
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1179549.0,
+        "netReturnPct": 17.955,
+        "dailyMaxDrawdownPct": -27.167,
+        "closedStockTrades": 7,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 60,
+      "horizon": 10,
+      "qualifiedSignalDays": 350,
+      "executedSignalDays": 345,
+      "signalStats": {
+        "n": 345,
+        "winPct": 53.91,
+        "meanNetPct": 1.17,
+        "medianNetPct": 1.0,
+        "meanWinPct": 8.754,
+        "meanLossPct": -7.702
+      },
+      "byPeriod": {
+        "train": {
+          "n": 151,
+          "winPct": 50.33,
+          "meanNetPct": 0.352,
+          "medianNetPct": 0.011,
+          "meanWinPct": 8.269,
+          "meanLossPct": -7.671
+        },
+        "validation": {
+          "n": 99,
+          "winPct": 50.51,
+          "meanNetPct": 0.569,
+          "medianNetPct": 0.884,
+          "meanWinPct": 8.36,
+          "meanLossPct": -7.381
+        },
+        "holdout": {
+          "n": 82,
+          "winPct": 62.2,
+          "meanNetPct": 3.106,
+          "medianNetPct": 3.545,
+          "meanWinPct": 9.83,
+          "meanLossPct": -7.955
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 872717.24,
+        "netReturnPct": -12.728,
+        "dailyMaxDrawdownPct": -68.498,
+        "closedStockTrades": 165,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 60,
+      "horizon": 10,
+      "qualifiedSignalDays": 7,
+      "executedSignalDays": 7,
+      "signalStats": {
+        "n": 7,
+        "winPct": 57.14,
+        "meanNetPct": 2.209,
+        "medianNetPct": 2.147,
+        "meanWinPct": 11.018,
+        "meanLossPct": -9.536
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 33.33,
+          "meanNetPct": -3.55,
+          "medianNetPct": -9.319,
+          "meanWinPct": 11.465,
+          "meanLossPct": -11.058
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 100.0,
+          "meanNetPct": 8.018,
+          "medianNetPct": 8.018,
+          "meanWinPct": 8.018,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 5.039,
+          "medianNetPct": 5.039,
+          "meanWinPct": 16.571,
+          "meanLossPct": -6.493
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1057416.59,
+        "netReturnPct": 5.742,
+        "dailyMaxDrawdownPct": -27.167,
+        "closedStockTrades": 5,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 65,
+      "horizon": 10,
+      "qualifiedSignalDays": 322,
+      "executedSignalDays": 317,
+      "signalStats": {
+        "n": 317,
+        "winPct": 54.26,
+        "meanNetPct": 1.173,
+        "medianNetPct": 1.0,
+        "meanWinPct": 8.497,
+        "meanLossPct": -7.514
+      },
+      "byPeriod": {
+        "train": {
+          "n": 138,
+          "winPct": 51.45,
+          "meanNetPct": 0.373,
+          "medianNetPct": 0.191,
+          "meanWinPct": 7.745,
+          "meanLossPct": -7.439
+        },
+        "validation": {
+          "n": 88,
+          "winPct": 51.14,
+          "meanNetPct": 0.945,
+          "medianNetPct": 1.186,
+          "meanWinPct": 8.592,
+          "meanLossPct": -7.058
+        },
+        "holdout": {
+          "n": 79,
+          "winPct": 60.76,
+          "meanNetPct": 2.604,
+          "medianNetPct": 3.228,
+          "meanWinPct": 9.424,
+          "meanLossPct": -7.955
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 706969.99,
+        "netReturnPct": -29.303,
+        "dailyMaxDrawdownPct": -71.799,
+        "closedStockTrades": 165,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 65,
+      "horizon": 10,
+      "qualifiedSignalDays": 7,
+      "executedSignalDays": 7,
+      "signalStats": {
+        "n": 7,
+        "winPct": 57.14,
+        "meanNetPct": 2.209,
+        "medianNetPct": 2.147,
+        "meanWinPct": 11.018,
+        "meanLossPct": -9.536
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 33.33,
+          "meanNetPct": -3.55,
+          "medianNetPct": -9.319,
+          "meanWinPct": 11.465,
+          "meanLossPct": -11.058
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 100.0,
+          "meanNetPct": 8.018,
+          "medianNetPct": 8.018,
+          "meanWinPct": 8.018,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 5.039,
+          "medianNetPct": 5.039,
+          "meanWinPct": 16.571,
+          "meanLossPct": -6.493
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1057416.59,
+        "netReturnPct": 5.742,
+        "dailyMaxDrawdownPct": -27.167,
+        "closedStockTrades": 5,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 70,
+      "horizon": 10,
+      "qualifiedSignalDays": 289,
+      "executedSignalDays": 284,
+      "signalStats": {
+        "n": 284,
+        "winPct": 55.28,
+        "meanNetPct": 1.211,
+        "medianNetPct": 1.152,
+        "meanWinPct": 8.403,
+        "meanLossPct": -7.681
+      },
+      "byPeriod": {
+        "train": {
+          "n": 120,
+          "winPct": 52.5,
+          "meanNetPct": 0.467,
+          "medianNetPct": 0.346,
+          "meanWinPct": 7.688,
+          "meanLossPct": -7.515
+        },
+        "validation": {
+          "n": 81,
+          "winPct": 53.09,
+          "meanNetPct": 1.056,
+          "medianNetPct": 1.581,
+          "meanWinPct": 8.358,
+          "meanLossPct": -7.206
+        },
+        "holdout": {
+          "n": 73,
+          "winPct": 61.64,
+          "meanNetPct": 2.628,
+          "medianNetPct": 3.28,
+          "meanWinPct": 9.425,
+          "meanLossPct": -8.295
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 904886.8,
+        "netReturnPct": -9.511,
+        "dailyMaxDrawdownPct": -63.114,
+        "closedStockTrades": 162,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 70,
+      "horizon": 10,
+      "qualifiedSignalDays": 6,
+      "executedSignalDays": 6,
+      "signalStats": {
+        "n": 6,
+        "winPct": 66.67,
+        "meanNetPct": 4.71,
+        "medianNetPct": 6.806,
+        "meanWinPct": 11.018,
+        "meanLossPct": -7.906
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 1.073,
+          "medianNetPct": 1.073,
+          "meanWinPct": 11.465,
+          "meanLossPct": -9.319
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 100.0,
+          "meanNetPct": 8.018,
+          "medianNetPct": 8.018,
+          "meanWinPct": 8.018,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 5.039,
+          "medianNetPct": 5.039,
+          "meanWinPct": 16.571,
+          "meanLossPct": -6.493
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1212568.29,
+        "netReturnPct": 21.257,
+        "dailyMaxDrawdownPct": -16.48,
+        "closedStockTrades": 4,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 75,
+      "horizon": 10,
+      "qualifiedSignalDays": 251,
+      "executedSignalDays": 247,
+      "signalStats": {
+        "n": 247,
+        "winPct": 53.44,
+        "meanNetPct": 1.023,
+        "medianNetPct": 1.0,
+        "meanWinPct": 8.465,
+        "meanLossPct": -7.519
+      },
+      "byPeriod": {
+        "train": {
+          "n": 105,
+          "winPct": 51.43,
+          "meanNetPct": 0.322,
+          "medianNetPct": 0.308,
+          "meanWinPct": 7.873,
+          "meanLossPct": -7.672
+        },
+        "validation": {
+          "n": 70,
+          "winPct": 52.86,
+          "meanNetPct": 1.19,
+          "medianNetPct": 1.535,
+          "meanWinPct": 8.326,
+          "meanLossPct": -6.81
+        },
+        "holdout": {
+          "n": 63,
+          "winPct": 57.14,
+          "meanNetPct": 2.213,
+          "medianNetPct": 2.433,
+          "meanWinPct": 9.641,
+          "meanLossPct": -7.69
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1526511.47,
+        "netReturnPct": 52.651,
+        "dailyMaxDrawdownPct": -37.876,
+        "closedStockTrades": 153,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 75,
+      "horizon": 10,
+      "qualifiedSignalDays": 5,
+      "executedSignalDays": 5,
+      "signalStats": {
+        "n": 5,
+        "winPct": 60.0,
+        "meanNetPct": 2.874,
+        "medianNetPct": 2.147,
+        "meanWinPct": 10.061,
+        "meanLossPct": -7.906
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 1.073,
+          "medianNetPct": 1.073,
+          "meanWinPct": 11.465,
+          "meanLossPct": -9.319
+        },
+        "validation": {
+          "n": 1,
+          "winPct": 100.0,
+          "meanNetPct": 2.147,
+          "medianNetPct": 2.147,
+          "meanWinPct": 2.147,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 5.039,
+          "medianNetPct": 5.039,
+          "meanWinPct": 16.571,
+          "meanLossPct": -6.493
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1064682.16,
+        "netReturnPct": 6.468,
+        "dailyMaxDrawdownPct": -16.48,
+        "closedStockTrades": 3,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 80,
+      "horizon": 10,
+      "qualifiedSignalDays": 207,
+      "executedSignalDays": 203,
+      "signalStats": {
+        "n": 203,
+        "winPct": 53.69,
+        "meanNetPct": 1.247,
+        "medianNetPct": 1.0,
+        "meanWinPct": 8.466,
+        "meanLossPct": -7.124
+      },
+      "byPeriod": {
+        "train": {
+          "n": 82,
+          "winPct": 50.0,
+          "meanNetPct": 0.074,
+          "medianNetPct": -0.15,
+          "meanWinPct": 7.888,
+          "meanLossPct": -7.739
+        },
+        "validation": {
+          "n": 55,
+          "winPct": 54.55,
+          "meanNetPct": 1.7,
+          "medianNetPct": 1.581,
+          "meanWinPct": 7.644,
+          "meanLossPct": -5.433
+        },
+        "holdout": {
+          "n": 58,
+          "winPct": 56.9,
+          "meanNetPct": 2.448,
+          "medianNetPct": 2.549,
+          "meanWinPct": 10.089,
+          "meanLossPct": -7.639
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1201716.73,
+        "netReturnPct": 20.172,
+        "dailyMaxDrawdownPct": -54.521,
+        "closedStockTrades": 147,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 80,
+      "horizon": 10,
+      "qualifiedSignalDays": 4,
+      "executedSignalDays": 4,
+      "signalStats": {
+        "n": 4,
+        "winPct": 75.0,
+        "meanNetPct": 5.216,
+        "medianNetPct": 6.806,
+        "meanWinPct": 10.061,
+        "meanLossPct": -9.319
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 1.073,
+          "medianNetPct": 1.073,
+          "meanWinPct": 11.465,
+          "meanLossPct": -9.319
+        },
+        "validation": {
+          "n": 1,
+          "winPct": 100.0,
+          "meanNetPct": 2.147,
+          "medianNetPct": 2.147,
+          "meanWinPct": 2.147,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 1,
+          "winPct": 100.0,
+          "meanNetPct": 16.571,
+          "medianNetPct": 16.571,
+          "meanWinPct": 16.571,
+          "meanLossPct": null
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1327293.58,
+        "netReturnPct": 32.729,
+        "dailyMaxDrawdownPct": -16.48,
+        "closedStockTrades": 3,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 50,
+      "horizon": 20,
+      "qualifiedSignalDays": 431,
+      "executedSignalDays": 426,
+      "signalStats": {
+        "n": 426,
+        "winPct": 50.47,
+        "meanNetPct": 2.291,
+        "medianNetPct": 0.373,
+        "meanWinPct": 14.915,
+        "meanLossPct": -10.573
+      },
+      "byPeriod": {
+        "train": {
+          "n": 175,
+          "winPct": 45.71,
+          "meanNetPct": -0.082,
+          "medianNetPct": -0.838,
+          "meanWinPct": 9.899,
+          "meanLossPct": -8.487
+        },
+        "validation": {
+          "n": 126,
+          "winPct": 51.59,
+          "meanNetPct": 3.333,
+          "medianNetPct": 0.816,
+          "meanWinPct": 16.097,
+          "meanLossPct": -10.267
+        },
+        "holdout": {
+          "n": 95,
+          "winPct": 57.89,
+          "meanNetPct": 5.377,
+          "medianNetPct": 3.169,
+          "meanWinPct": 21.353,
+          "meanLossPct": -16.59
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 456013.32,
+        "netReturnPct": -54.399,
+        "dailyMaxDrawdownPct": -68.421,
+        "closedStockTrades": 95,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 50,
+      "horizon": 20,
+      "qualifiedSignalDays": 9,
+      "executedSignalDays": 9,
+      "signalStats": {
+        "n": 9,
+        "winPct": 55.56,
+        "meanNetPct": 13.373,
+        "medianNetPct": 6.466,
+        "meanWinPct": 28.757,
+        "meanLossPct": -5.857
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 33.33,
+          "meanNetPct": 12.153,
+          "medianNetPct": -6.365,
+          "meanWinPct": 54.018,
+          "meanLossPct": -8.779
+        },
+        "validation": {
+          "n": 4,
+          "winPct": 75.0,
+          "meanNetPct": 11.187,
+          "medianNetPct": 12.398,
+          "meanWinPct": 15.308,
+          "meanLossPct": -1.175
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 19.574,
+          "medianNetPct": 19.574,
+          "meanWinPct": 43.844,
+          "meanLossPct": -4.695
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1623054.64,
+        "netReturnPct": 62.305,
+        "dailyMaxDrawdownPct": -26.41,
+        "closedStockTrades": 6,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 1,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 55,
+      "horizon": 20,
+      "qualifiedSignalDays": 387,
+      "executedSignalDays": 382,
+      "signalStats": {
+        "n": 382,
+        "winPct": 51.57,
+        "meanNetPct": 2.649,
+        "medianNetPct": 0.81,
+        "meanWinPct": 15.122,
+        "meanLossPct": -10.634
+      },
+      "byPeriod": {
+        "train": {
+          "n": 155,
+          "winPct": 45.81,
+          "meanNetPct": 0.009,
+          "medianNetPct": -0.838,
+          "meanWinPct": 9.74,
+          "meanLossPct": -8.216
+        },
+        "validation": {
+          "n": 110,
+          "winPct": 52.73,
+          "meanNetPct": 3.905,
+          "medianNetPct": 1.944,
+          "meanWinPct": 16.436,
+          "meanLossPct": -10.072
+        },
+        "holdout": {
+          "n": 91,
+          "winPct": 59.34,
+          "meanNetPct": 5.559,
+          "medianNetPct": 3.641,
+          "meanWinPct": 21.202,
+          "meanLossPct": -17.271
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 506708.54,
+        "netReturnPct": -49.329,
+        "dailyMaxDrawdownPct": -64.097,
+        "closedStockTrades": 92,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 55,
+      "horizon": 20,
+      "qualifiedSignalDays": 9,
+      "executedSignalDays": 9,
+      "signalStats": {
+        "n": 9,
+        "winPct": 55.56,
+        "meanNetPct": 13.373,
+        "medianNetPct": 6.466,
+        "meanWinPct": 28.757,
+        "meanLossPct": -5.857
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 33.33,
+          "meanNetPct": 12.153,
+          "medianNetPct": -6.365,
+          "meanWinPct": 54.018,
+          "meanLossPct": -8.779
+        },
+        "validation": {
+          "n": 4,
+          "winPct": 75.0,
+          "meanNetPct": 11.187,
+          "medianNetPct": 12.398,
+          "meanWinPct": 15.308,
+          "meanLossPct": -1.175
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 19.574,
+          "medianNetPct": 19.574,
+          "meanWinPct": 43.844,
+          "meanLossPct": -4.695
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1623054.64,
+        "netReturnPct": 62.305,
+        "dailyMaxDrawdownPct": -26.41,
+        "closedStockTrades": 6,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 1,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 60,
+      "horizon": 20,
+      "qualifiedSignalDays": 345,
+      "executedSignalDays": 341,
+      "signalStats": {
+        "n": 341,
+        "winPct": 53.96,
+        "meanNetPct": 3.103,
+        "medianNetPct": 1.71,
+        "meanWinPct": 14.781,
+        "meanLossPct": -10.583
+      },
+      "byPeriod": {
+        "train": {
+          "n": 145,
+          "winPct": 46.9,
+          "meanNetPct": 0.068,
+          "medianNetPct": -0.522,
+          "meanWinPct": 9.705,
+          "meanLossPct": -8.443
+        },
+        "validation": {
+          "n": 94,
+          "winPct": 57.45,
+          "meanNetPct": 4.891,
+          "medianNetPct": 2.613,
+          "meanWinPct": 16.179,
+          "meanLossPct": -10.347
+        },
+        "holdout": {
+          "n": 77,
+          "winPct": 63.64,
+          "meanNetPct": 7.184,
+          "medianNetPct": 5.343,
+          "meanWinPct": 21.148,
+          "meanLossPct": -17.253
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 839239.04,
+        "netReturnPct": -16.076,
+        "dailyMaxDrawdownPct": -58.837,
+        "closedStockTrades": 87,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 60,
+      "horizon": 20,
+      "qualifiedSignalDays": 7,
+      "executedSignalDays": 7,
+      "signalStats": {
+        "n": 7,
+        "winPct": 57.14,
+        "meanNetPct": 16.438,
+        "medianNetPct": 18.331,
+        "meanWinPct": 34.33,
+        "meanLossPct": -7.418
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 33.33,
+          "meanNetPct": 12.153,
+          "medianNetPct": -6.365,
+          "meanWinPct": 54.018,
+          "meanLossPct": -8.779
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 100.0,
+          "meanNetPct": 19.729,
+          "medianNetPct": 19.729,
+          "meanWinPct": 19.729,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 19.574,
+          "medianNetPct": 19.574,
+          "meanWinPct": 43.844,
+          "meanLossPct": -4.695
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1542585.63,
+        "netReturnPct": 54.259,
+        "dailyMaxDrawdownPct": -26.41,
+        "closedStockTrades": 4,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 65,
+      "horizon": 20,
+      "qualifiedSignalDays": 317,
+      "executedSignalDays": 313,
+      "signalStats": {
+        "n": 313,
+        "winPct": 54.95,
+        "meanNetPct": 3.223,
+        "medianNetPct": 2.044,
+        "meanWinPct": 14.704,
+        "meanLossPct": -10.781
+      },
+      "byPeriod": {
+        "train": {
+          "n": 132,
+          "winPct": 47.73,
+          "meanNetPct": -0.062,
+          "medianNetPct": -0.351,
+          "meanWinPct": 9.226,
+          "meanLossPct": -8.542
+        },
+        "validation": {
+          "n": 83,
+          "winPct": 60.24,
+          "meanNetPct": 5.73,
+          "medianNetPct": 2.705,
+          "meanWinPct": 16.186,
+          "meanLossPct": -10.111
+        },
+        "holdout": {
+          "n": 74,
+          "winPct": 63.51,
+          "meanNetPct": 6.912,
+          "medianNetPct": 5.399,
+          "meanWinPct": 21.151,
+          "meanLossPct": -17.873
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 647301.51,
+        "netReturnPct": -35.27,
+        "dailyMaxDrawdownPct": -71.128,
+        "closedStockTrades": 87,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 65,
+      "horizon": 20,
+      "qualifiedSignalDays": 7,
+      "executedSignalDays": 7,
+      "signalStats": {
+        "n": 7,
+        "winPct": 57.14,
+        "meanNetPct": 16.438,
+        "medianNetPct": 18.331,
+        "meanWinPct": 34.33,
+        "meanLossPct": -7.418
+      },
+      "byPeriod": {
+        "train": {
+          "n": 3,
+          "winPct": 33.33,
+          "meanNetPct": 12.153,
+          "medianNetPct": -6.365,
+          "meanWinPct": 54.018,
+          "meanLossPct": -8.779
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 100.0,
+          "meanNetPct": 19.729,
+          "medianNetPct": 19.729,
+          "meanWinPct": 19.729,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 19.574,
+          "medianNetPct": 19.574,
+          "meanWinPct": 43.844,
+          "meanLossPct": -4.695
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1542585.63,
+        "netReturnPct": 54.259,
+        "dailyMaxDrawdownPct": -26.41,
+        "closedStockTrades": 4,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 70,
+      "horizon": 20,
+      "qualifiedSignalDays": 284,
+      "executedSignalDays": 280,
+      "signalStats": {
+        "n": 280,
+        "winPct": 55.0,
+        "meanNetPct": 3.355,
+        "medianNetPct": 1.993,
+        "meanWinPct": 15.06,
+        "meanLossPct": -10.951
+      },
+      "byPeriod": {
+        "train": {
+          "n": 118,
+          "winPct": 47.46,
+          "meanNetPct": 0.006,
+          "medianNetPct": -0.445,
+          "meanWinPct": 9.601,
+          "meanLossPct": -8.661
+        },
+        "validation": {
+          "n": 77,
+          "winPct": 59.74,
+          "meanNetPct": 5.642,
+          "medianNetPct": 2.684,
+          "meanWinPct": 16.4,
+          "meanLossPct": -10.321
+        },
+        "holdout": {
+          "n": 68,
+          "winPct": 64.71,
+          "meanNetPct": 7.286,
+          "medianNetPct": 5.399,
+          "meanWinPct": 21.127,
+          "meanLossPct": -18.088
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 761191.47,
+        "netReturnPct": -23.881,
+        "dailyMaxDrawdownPct": -66.042,
+        "closedStockTrades": 87,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 70,
+      "horizon": 20,
+      "qualifiedSignalDays": 6,
+      "executedSignalDays": 6,
+      "signalStats": {
+        "n": 6,
+        "winPct": 66.67,
+        "meanNetPct": 21.043,
+        "medianNetPct": 19.729,
+        "meanWinPct": 34.33,
+        "meanLossPct": -5.53
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 23.826,
+          "medianNetPct": 23.826,
+          "meanWinPct": 54.018,
+          "meanLossPct": -6.365
+        },
+        "validation": {
+          "n": 2,
+          "winPct": 100.0,
+          "meanNetPct": 19.729,
+          "medianNetPct": 19.729,
+          "meanWinPct": 19.729,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 19.574,
+          "medianNetPct": 19.574,
+          "meanWinPct": 43.844,
+          "meanLossPct": -4.695
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1736985.78,
+        "netReturnPct": 73.699,
+        "dailyMaxDrawdownPct": -17.136,
+        "closedStockTrades": 3,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 75,
+      "horizon": 20,
+      "qualifiedSignalDays": 246,
+      "executedSignalDays": 243,
+      "signalStats": {
+        "n": 243,
+        "winPct": 55.14,
+        "meanNetPct": 3.625,
+        "medianNetPct": 2.092,
+        "meanWinPct": 15.725,
+        "meanLossPct": -11.25
+      },
+      "byPeriod": {
+        "train": {
+          "n": 103,
+          "winPct": 46.6,
+          "meanNetPct": -0.217,
+          "medianNetPct": -0.679,
+          "meanWinPct": 9.733,
+          "meanLossPct": -8.901
+        },
+        "validation": {
+          "n": 66,
+          "winPct": 60.61,
+          "meanNetPct": 6.064,
+          "medianNetPct": 2.784,
+          "meanWinPct": 17.202,
+          "meanLossPct": -11.071
+        },
+        "holdout": {
+          "n": 58,
+          "winPct": 67.24,
+          "meanNetPct": 8.638,
+          "medianNetPct": 7.861,
+          "meanWinPct": 22.079,
+          "meanLossPct": -18.95
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 815967.22,
+        "netReturnPct": -18.403,
+        "dailyMaxDrawdownPct": -66.01,
+        "closedStockTrades": 84,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 75,
+      "horizon": 20,
+      "qualifiedSignalDays": 5,
+      "executedSignalDays": 5,
+      "signalStats": {
+        "n": 5,
+        "winPct": 60.0,
+        "meanNetPct": 21.027,
+        "medianNetPct": 18.331,
+        "meanWinPct": 38.731,
+        "meanLossPct": -5.53
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 23.826,
+          "medianNetPct": 23.826,
+          "meanWinPct": 54.018,
+          "meanLossPct": -6.365
+        },
+        "validation": {
+          "n": 1,
+          "winPct": 100.0,
+          "meanNetPct": 18.331,
+          "medianNetPct": 18.331,
+          "meanWinPct": 18.331,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 19.574,
+          "medianNetPct": 19.574,
+          "meanWinPct": 43.844,
+          "meanLossPct": -4.695
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1736985.78,
+        "netReturnPct": 73.699,
+        "dailyMaxDrawdownPct": -17.136,
+        "closedStockTrades": 3,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G",
+      "threshold": 80,
+      "horizon": 20,
+      "qualifiedSignalDays": 203,
+      "executedSignalDays": 200,
+      "signalStats": {
+        "n": 200,
+        "winPct": 57.5,
+        "meanNetPct": 4.598,
+        "medianNetPct": 2.427,
+        "meanWinPct": 16.256,
+        "meanLossPct": -11.175
+      },
+      "byPeriod": {
+        "train": {
+          "n": 81,
+          "winPct": 44.44,
+          "meanNetPct": -0.878,
+          "medianNetPct": -1.212,
+          "meanWinPct": 9.251,
+          "meanLossPct": -8.981
+        },
+        "validation": {
+          "n": 52,
+          "winPct": 67.31,
+          "meanNetPct": 8.139,
+          "medianNetPct": 4.657,
+          "meanWinPct": 16.995,
+          "meanLossPct": -10.095
+        },
+        "holdout": {
+          "n": 54,
+          "winPct": 68.52,
+          "meanNetPct": 9.883,
+          "medianNetPct": 10.5,
+          "meanWinPct": 22.996,
+          "meanLossPct": -18.655
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 1656720.51,
+        "netReturnPct": 65.672,
+        "dailyMaxDrawdownPct": -71.594,
+        "closedStockTrades": 84,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 3,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    },
+    {
+      "model": "G Pro",
+      "threshold": 80,
+      "horizon": 20,
+      "qualifiedSignalDays": 4,
+      "executedSignalDays": 4,
+      "signalStats": {
+        "n": 4,
+        "winPct": 75.0,
+        "meanNetPct": 27.457,
+        "medianNetPct": 31.088,
+        "meanWinPct": 38.731,
+        "meanLossPct": -6.365
+      },
+      "byPeriod": {
+        "train": {
+          "n": 2,
+          "winPct": 50.0,
+          "meanNetPct": 23.826,
+          "medianNetPct": 23.826,
+          "meanWinPct": 54.018,
+          "meanLossPct": -6.365
+        },
+        "validation": {
+          "n": 1,
+          "winPct": 100.0,
+          "meanNetPct": 18.331,
+          "medianNetPct": 18.331,
+          "meanWinPct": 18.331,
+          "meanLossPct": null
+        },
+        "holdout": {
+          "n": 1,
+          "winPct": 100.0,
+          "meanNetPct": 43.844,
+          "medianNetPct": 43.844,
+          "meanWinPct": 43.844,
+          "meanLossPct": null
+        }
+      },
+      "portfolio": {
+        "initialCapital": 1000000,
+        "finalEquity": 2621637.46,
+        "netReturnPct": 162.164,
+        "dailyMaxDrawdownPct": -17.136,
+        "closedStockTrades": 3,
+        "unclosedStockPositions": 0,
+        "staleDailyMarks": 0,
+        "deferredExitDays": 0,
+        "skippedOrders": {}
+      }
+    }
+  ]
+}
