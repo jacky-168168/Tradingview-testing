@@ -40,35 +40,41 @@ def score_risk(c,i,br,foreign):
     s+=10 if c[i]>c[i-1] else 0
     return min(100,s)
 def get_risk(index,dates,workers=7):
-    OUT.mkdir(parents=True,exist_ok=True)
-    cache=OUT/"risk_inputs.json"
-    old=json.loads(cache.read_text()) if cache.exists() else {}
-    required=[d for d in dates if d not in old or old[d].get("ok") is not True]
-    def task(day):
-        for attempt in range(3):
-            try:
-                up,down=breadth(day);foreign=foreign_market_net(day)
-                if up+down<500:raise RuntimeError("Insufficient equity breadth")
-                return day,{"ok":True,"breadth":round(100*up/(up+down),5),"up":up,"down":down,"foreign":foreign}
-            except Exception as e:
-                if attempt==2:return day,{"ok":False,"error":str(e)[:220]}
-                time.sleep((attempt+1)*2)
-    print("TWSE official risk source: cache",len(old),"request",len(required),flush=True)
-    for batch in range(0,len(required),40):
-        with ThreadPoolExecutor(max_workers=workers) as ex:
-            fs=[ex.submit(task,d) for d in required[batch:batch+40]]
-            for ff in as_completed(fs):
-                d,v=ff.result();old[d]=v
-        cache.write_text(json.dumps(old,ensure_ascii=False),encoding="utf-8")
-        print("Risk source",min(batch+40,len(required)),"/",len(required),
-              "valid",sum(bool(z.get("ok")) for z in old.values()),flush=True)
-    closes=index.close.astype(float).to_numpy()
-    pos={d:i for i,d in enumerate(index.date.astype(str))}
-    score={}
-    for d in dates:
-        z=old.get(d) or {};i=pos[d]
-        if i>=25 and z.get("ok"):score[d]=score_risk(closes,i,z["breadth"],z["foreign"])
-    return score,old
+    """Use the completed, independently collected official date-pinned Risk Score archive.
+    No TWSE live refetch, no missing-day interpolation, no changing archived bins.
+    """
+    coverage_path=OUT/"coverage.json";daily_path=OUT/"market_risk_daily.json";inputs_path=OUT/"risk_inputs.json"
+    if not all(p.exists() for p in (coverage_path,daily_path,inputs_path)):
+        raise RuntimeError("Validated historical risk archive missing; run standalone collector first")
+    coverage=json.loads(coverage_path.read_text(encoding="utf-8"))
+    rows=json.loads(daily_path.read_text(encoding="utf-8"))
+    inputs=json.loads(inputs_path.read_text(encoding="utf-8"))
+    n=len(dates)
+    if coverage.get("complete") is not True or any(coverage.get(k)!=n for k in ("tradingDays","riskScoredDays","officialValidDays")):
+        raise RuntimeError("Historical Risk Score coverage is not verified for every market session")
+    if len(rows)!=n or [r.get("date") for r in rows]!=list(dates) or len(set(dates))!=n:
+        raise RuntimeError("Historical risk archive and benchmark trading calendars differ")
+    ix=index.set_index(index.date.astype(str))
+    scores={}
+    for r in rows:
+        day=r["date"];z=inputs.get(day)
+        if not isinstance(z,dict) or z.get("ok") is not True:
+            raise RuntimeError("Official TWSE risk inputs unverified for "+day)
+        try:
+            up=int(z["up"]);down=int(z["down"]);foreign=float(z["foreign"])
+            score=r["score"];close=float(r["index"]);index_close=float(ix.loc[day,"close"])
+            if isinstance(score,bool) or not isinstance(score,int) or not 0<=score<=100:
+                raise ValueError("bad score")
+            if up+down<500 or not math.isfinite(foreign) or abs(float(r["breadth"])-100*up/(up+down))>0.11:
+                raise ValueError("bad official breadth/foreign")
+            if not math.isfinite(close) or abs(close-index_close)>max(0.5,index_close*0.0001):
+                raise ValueError("index close differs from archived scoring source")
+        except (KeyError,ValueError,TypeError) as e:
+            raise RuntimeError("Risk archive invalid on "+day+": "+str(e)) from e
+        scores[day]=score
+    print("PASS verified official historical Risk Score archive",len(scores),"/",n,
+          "source",str(daily_path),"collected",coverage.get("generatedAt"),flush=True)
+    return scores,inputs
 def tx_report(d,contract,report_date):
     query={"queryType":"2","marketCode":"1","MarketCode":"1","dateaddcnt":"",
            "commodity_id":"TX","commodity_idt":"TX","commodity_id2":"",
@@ -277,7 +283,7 @@ def main(start,end,skip_tx=False):
     print("Stock fetch complete",len(hist),"errors",len(errors),"market days",len(dates),flush=True)
     picks,prices,audit=make_g(dates,index,universe,hist)
     risk,risk_data=get_risk(index,dates)
-    if len(risk)<len(dates)*.65:raise RuntimeError("Official historical risk coverage <65%, refuse fake 3y result")
+    if len(risk)!=len(dates):raise RuntimeError("Incomplete official historical Risk Score archive; refuse 3y result")
     night={} if skip_tx else get_night(dates)
     if night and sum(z.get("ok",False) for z in night.values())<len(dates)*.60:
         print("WARN insufficient night source coverage; TX models will be reported but never treated as validated",flush=True)

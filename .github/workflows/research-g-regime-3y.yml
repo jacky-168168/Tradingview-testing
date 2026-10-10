@@ -5,7 +5,7 @@ on:
       skip_txf:
         description: 'Skip historical TAIFEX night data collection (spot-only baseline)'
         type: boolean
-        default: false
+        default: true
         required: false
   push:
     branches: [main]
@@ -49,10 +49,10 @@ jobs:
           assert isinstance(score_risk(prices,35,43.8,-758.5),int)
           print('PASS: daily cash risk reuses fixed score bins, requires official date-specific breadth and foreign net')
           PY
-      - name: Run G 2023-2026 market regime OOS grid
+      - name: Run G 2023-2026 cash Risk Score OOS grid (TX optional)
         working-directory: tw-stock-dashboard
         run: |
-          if [ "${{ inputs.skip_txf }}" = "true" ]; then
+          if [ "${{ github.event_name }}" = "push" ] || [ "${{ inputs.skip_txf }}" = "true" ]; then
             python -u src/research_g_regime_3y.py --skip-tx
           else
             python -u src/research_g_regime_3y.py
