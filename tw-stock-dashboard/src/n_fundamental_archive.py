@@ -19,7 +19,7 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"docs"/"data"/"research"/"n_canslim"
 CACHE=ROOT/"cache"/"n_fundamental"
 HEADERS={"User-Agent":"Mozilla/5.0 (compatible; ResearchArchive/1.0; educational historical tests)","Referer":"https://mopsov.twse.com.tw/mops/web/index"}
-MONTHS=[(y,m) for y in range(2022,2027) for m in range(1,13) if (y>2022 or m>=1) and (y<2026 or m<=9)]
+MONTHS=[(y,m) for y in range(2022,2027) for m in range(1,13) if (y>2022 or m>=1) and (y<2026 or m<=8)]
 QUARTERS=[(y,q) for y in range(2022,2027) for q in range(1,5) if (y<2026 or q<=2)]
 MARKETS=("sii","otc")
 def text_decode(blob,html=False):
@@ -44,10 +44,10 @@ def parse_month_html(html,market,year,month,kind):
     found={};table_scans=0
     for table in soup.select("table"):
         head=table.get_text(" ",strip=True)[:400]
-        if "公司代號" not in head and "當月營收" not in head and "營業收入" not in head:
+        if "公司代號" not in re.sub(r"\\s+","",head) and "當月營收" not in re.sub(r"\\s+","",head) and "營業收入" not in re.sub(r"\\s+","",head):
             # Some MOPS tables have a multi-row heading >400 chars; inspect first 4 rows
             head=" ".join(x.get_text(" ",strip=True) for x in table.select("tr")[:4])
-        if "公司代號" not in head:continue
+        if "公司代號" not in re.sub(r"\\s+","",head):continue
         table_scans+=1
         for tr in table.select("tr"):
             cells=[c.get_text(" ",strip=True) for c in tr.find_all(["td","th"],recursive=False)]
@@ -122,7 +122,7 @@ def collect_month(sess,year,month,market,kind):
     # Empty foreign corp tables are valid only if the page at least has heading.
     if kind==0 and (len(rows)<180 or tables==0):
         raise RuntimeError(f"MOPS monthly bulk insufficient {year}-{month} {market} len={len(rows)} tables={tables} bytes={len(raw)}")
-    if kind==1 and tables==0:raise RuntimeError(f"MOPS foreign monthly table unparseable {year}-{month} {market}")
+    if kind==1 and tables==0 and not any(x in text_decode(raw,True) for x in ("查無資料","無資料","未有資料","目前尚無")):raise RuntimeError(f"MOPS foreign monthly table unparseable {year}-{month} {market}")
     for r in rows:r["availableFrom"]=month_safe_date(year,month)
     return rows,{"url":url,"bytes":len(raw),"tables":tables,"rows":len(rows),"cached":path.exists()}
 def collect_quarter(sess,year,quarter,market):
