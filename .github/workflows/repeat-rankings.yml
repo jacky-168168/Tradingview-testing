@@ -1,0 +1,89 @@
+name: Repeat Rankings Two-Month Historical Audit and Pages
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/repeated_rankings.py'
+      - 'tw-stock-dashboard/tests/test_repeated_rankings.py'
+      - 'tw-stock-dashboard/docs/repeat-rankings.js'
+      - 'tw-stock-dashboard/docs/selections.html'
+      - '.github/workflows/repeat-rankings.yml'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: two-month-repeat-rankings
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test true archived duplicates and data-date integrity
+        run: |
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_repeated_rankings.py' -v
+      - name: Generate rolling two-month on-list histories
+        working-directory: tw-stock-dashboard
+        run: python -u src/repeated_rankings.py
+      - name: Validate exact existing G snapshots, model coverage and browser UI
+        run: |
+          node - <<'JS'
+          const fs=require('fs');
+          const root='tw-stock-dashboard/docs/';
+          const a=JSON.parse(fs.readFileSync(root+'data/rolling-repeats.json','utf8'));
+          const latest=JSON.parse(fs.readFileSync(root+'data/latest.json','utf8'));
+          const idx=JSON.parse(fs.readFileSync(root+'data/daily/index.json','utf8'));
+          if(a.version!=='TWO_CALENDAR_MONTHS_FROZEN_TOP20_V1'||a.calendarWindowMonths!==2)throw Error('bad snapshot repeat version');
+          if(a.referenceDate!==latest.dataDate)throw Error('repeat summary not same as latest selected market date');
+          if(!a.savedDates.includes(latest.dataDate))throw Error('current market day absent from true frozen dates');
+          if(a.models.G.snapshotDays!==idx.filter(z=>a.savedDates.includes(z.date)&&z.gCount!=null).length)throw Error('G snapshot count mismatch');
+          if(a.models['G Pro'].snapshotDays!==idx.filter(z=>a.savedDates.includes(z.date)&&z.gProCount!=null).length)throw Error('G Pro snapshot count mismatch');
+          for(const [model,stat] of Object.entries(a.models)){
+            for(const item of stat.stocks){
+              if(item.count<2||item.dates.length!==item.count)throw Error('False repeated Top '+model);
+              if(item.previousSeen>=item.lastSeen)throw Error('Invalid preceding appearance day');
+              if(item.dates.some(z=>z<a.windowStart||z>a.referenceDate))throw Error('Out-of-window date');
+            }
+          }
+          const html=fs.readFileSync(root+'selections.html','utf8');
+          const js=fs.readFileSync(root+'repeat-rankings.js','utf8');
+          if(!html.includes('id="repeatPanel"')||!html.includes('id="repeatRows"')||!html.includes('id="repeatCoverage"'))throw Error('Missing added repeated stocks table');
+          if(html.indexOf('id="repeatPanel"')>html.indexOf('id="stockTable"'))throw Error('Rolling repeat table must precede live ranked stocks');
+          if(!html.includes('src="./repeat-rankings.js"'))throw Error('Repeat renderer JS not linked');
+          new Function(js);new Function(fs.readFileSync(root+'stock-selection.js','utf8'));
+          console.log('ROLLED_2_MONTH_REPEAT_VALIDATED',JSON.stringify({reference:a.referenceDate,saved:a.savedDates.length,
+            gDays:a.models.G.snapshotDays,gRepeats:a.models.G.repeatedSymbols,models:Object.keys(a.models)}));
+          JS
+      - name: Commit verified historical 2-month Top-list statistics
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/rolling-repeats.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'data: save actual rolling two-month repeat appearances for all live stock screens'
+            for i in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((i*5)); continue; }
+              if git push origin HEAD:main; then break; fi
+              if [ "$i" -eq 5 ]; then exit 1; fi
+              sleep $((i*5))
+            done
+          fi
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
