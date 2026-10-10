@@ -81,6 +81,11 @@ jobs:
         if: steps.mode.outputs.mode == 'intraday'
         working-directory: tw-stock-dashboard
         run: python src/intraday.py
+      - name: Regenerate honest two-month repeat rankings from frozen daily snapshots
+        working-directory: tw-stock-dashboard
+        run: |
+          PYTHONPATH=src python -m unittest discover -s tests -p 'test_repeated_rankings.py' -v
+          python -u src/repeated_rankings.py
       - name: Commit generated JSON
         run: |
           git config user.name "github-actions[bot]"
