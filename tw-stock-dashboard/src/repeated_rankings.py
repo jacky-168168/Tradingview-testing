@@ -87,7 +87,7 @@ def build(daily,asof=None):
             # Never publish a stale intraday quote in frozen history.
             value.pop("currentPrice",None)
             repeats.append(value)
-        repeats.sort(key=lambda r:(not r["onReferenceDate"],-r["count"],-r["lastSeen"],r["lastRank"],r["code"]))
+        repeats.sort(key=lambda r:(not r["onReferenceDate"],-r["count"],-int(r["lastSeen"].replace("-","")),r["lastRank"],r["code"]))
         results[model]={"snapshotDays":len(records),
             "signalDays":signal_count,
             "firstSnapshot":records[0][0] if records else None,
