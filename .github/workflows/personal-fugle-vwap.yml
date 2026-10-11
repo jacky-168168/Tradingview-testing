@@ -1,6 +1,13 @@
 name: Personal Fugle VWAP Probe (0050 + G3)
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/research/private_fugle_vwap.py'
+      - 'tw-stock-dashboard/tests/test_private_fugle_vwap.py'
+      - 'tw-stock-dashboard/research/README_PRIVATE_FUGLE_VWAP.md'
+      - '.github/workflows/personal-fugle-vwap.yml'
   schedule:
     # UTC: 01:18 01:38 02:03 = Taiwan 09:18 09:38 10:03, may be delayed.
     - cron: '18,38 1 * * 1-5'
