@@ -1,0 +1,55 @@
+name: Compare RNN GRU TCN vs Risk Score on Next-Day TWSE Breadth
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/research/market_deep_breadth.py'
+      - '.github/workflows/market-deep-breadth.yml'
+      - 'tw-stock-dashboard/docs/data/research/market_history_extended/years/*.json'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: official-market-deep-breadth-models
+  cancel-in-progress: true
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install reproducible machine learning dependencies
+        run: |
+          pip install numpy scikit-learn
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Fit chronological preopen-proxy RNN, GRU, TCN and tabular baselines
+        run: |
+          python -m py_compile tw-stock-dashboard/research/market_deep_breadth.py
+          python -u tw-stock-dashboard/research/market_deep_breadth.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('tw-stock-dashboard/docs/data/research/market_sequence_models/summary.json')
+          d=json.loads(p.read_text(encoding='utf-8'))
+          assert d['officialRows']>=728
+          assert set(['RNN','GRU','TCN','RISK_SCORE_LOGIT','TABULAR_LOGIT']).issubset(d['tasks']['NEXT_BREADTH_MAJORITY']['models'])
+          assert d['deployment'].startswith('NEVER_USE_AS_LIVE_BUY_SIGNAL')
+          print('PASS: trained genuine temporal models and preserved research-only deployment')
+          PY
+      - name: Publish 2025 validation and 2026 holdout model audit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/market_sequence_models/summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish RNN GRU TCN next-day stock breadth comparison'
+            for i in 1 2 3 4 5 6 7 8; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*5)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*5))
+            done
+            exit 1
+          fi
