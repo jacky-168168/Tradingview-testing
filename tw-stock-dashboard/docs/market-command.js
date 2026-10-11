@@ -66,7 +66,7 @@ function draw(data,diag){
  const dist=info.distancePrior120HighPct;
  txt("commandHigh",dist==null?"—":(Number(dist)>0?"+":"")+Number(dist).toFixed(1)+"%");
  txt("commandHighSub",info.prior120HighType?"相對前120日"+info.prior120HighType:"距前120日高點");
- const reasons=$("commandReasons");if(reasons){reasons.replaceChildren();let flags=Array.isArray(d.flags)?d.flags:[];
+ const reasons=$("commandReasons");if(reasons){reasons.replaceChildren();const flagPriority={NEAR_HIGH_TOP:1,NARROW_BREADTH:2,SCORE_DECELERATION:3,HIGH_VOLATILITY:4,STRETCHED_MA:5,FOREIGN_OUTFLOW:6,WEAK_BREADTH:7,DAY_BREADTH_WEAK:8};let flags=Array.isArray(d.flags)?[...d.flags].sort((a,b)=>(flagPriority[a.code]??50)-(flagPriority[b.code]??50)):[];
   if(!flags.length&&r.score<60){flags=[{code:"BELOW_GATE",title:"分數未達60",severity:"caution"}];if(breadth<45)flags.push({code:"LOW_BREADTH",title:"當日廣度偏弱",severity:"caution"});}
   if(!flags.length)flags=[{code:"NO_EXTRA_VETO",title:"暫無主要附加警訊",severity:"info"}];
   for(const f of flags.slice(0,3)){const chip=document.createElement("span");chip.className="command-chip "+(f.severity||"info");chip.textContent=f.title||String(f.code||"");reasons.appendChild(chip)}
