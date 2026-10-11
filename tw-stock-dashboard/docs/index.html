@@ -33,7 +33,9 @@
 </style>
 <script src="./site-access.js"></script>
 <link rel="stylesheet" href="./market-command.css">
+<link rel="stylesheet" href="./entry-playbook.css">
 <script src="./market-command.js"></script>
+<script src="./entry-playbook.js"></script>
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -68,6 +70,14 @@
     </div>
   </nav>
 </header>
+<section id="entryPlaybook" class="entry-playbook" data-tone="unknown" aria-label="股票買進時機與市場同步確認">
+ <div class="entry-topline"><span class="entry-eyebrow">🎯 股票何時能買？｜G 波段／D 強勢</span><span class="entry-note" id="entryPlaybookInstant">盤中即時買進許可：未確認</span></div>
+ <div class="entry-mainline"><div class="entry-headings"><div id="entryPlaybookStatus" class="entry-status" role="status" aria-live="polite">⏳ 核對風險與歷史回測…</div><div id="entryPlaybookHeadline" class="entry-headline">等待研究結果載入</div><div id="entryPlaybookAction" class="entry-action">以市場廣度、趨勢與個股買點確認，不能靠第一根紅 K 追價。</div></div>
+ <div class="entry-context"><strong id="entryPlaybookHorizon">—</strong><span id="entryPlaybookTiming">讀取市場交易時間…</span></div></div>
+ <div id="entryPlaybookFacts" class="entry-facts" aria-label="買進環境的確認依據"><span class="entry-fact no">• 等待市場資料</span></div>
+ <div class="entry-source"><span id="entryPlaybookSource">核對資料時間與研究中…</span><a href="./selections.html">查看 G／D 候選股 →</a></div>
+ <details class="entry-details"><summary>為何這樣判斷？查看回測證據與限制</summary><p id="entryPlaybookBasis">正在分析。</p><p id="entryPlaybookResearch">等待歷史研究。</p><p class="entry-research-disclaimer">2026 曾在先前研究被檢視，不是完全未見的樣本外資料。沒有即時 09:15 廣度及 VWAP 前，不會宣稱「現在買進已確認」。平均訊號報酬≠帳戶複利。</p><a href="./data/research/market_entry_playbook/report.md" target="_blank" rel="noopener">查看買進時機回測報告 ↗</a></details>
+</section>
 <section id="marketCommand" class="market-command cmd-unknown" aria-label="大盤是否適合進場：盤後決策總覽">
   <div class="cmd-main">
     <div class="cmd-top">
@@ -232,6 +242,7 @@ function renderOpeningPreview(){
  const box=document.getElementById("openingPreview"),state=document.getElementById("openingState"),value=document.getElementById("openingScore"),details=document.getElementById("openingDetails");
  const x=overnightPreviewModel(DATA?.risk,FUTURES,taipeiDate(),localClock());
  if(window.MarketCommand)MarketCommand.applyPremarket(x);
+ if(window.EntryPlaybook)EntryPlaybook.applyPremarket(x);
  box.className="opening-preview";
  if(!x.valid){box.classList.add("warn");state.textContent="⌛ 盤前推估暫不可用";value.textContent="--";details.textContent=x.reason;return}
  if(x.pct<=-1||x.score<45)box.classList.add("stop");else if(x.pct<=-0.5||x.score<60)box.classList.add("warn");
@@ -275,7 +286,7 @@ async function loadFutures(){
 
 function renderPanels(){var p=DATA&&DATA.panels||{},f=p.institutionFlow||{buy:[],sell:[]};buyRows.innerHTML=(f.buy||[]).map(panelRow).join("")||'<div class="sub">--</div>';sellRows.innerHTML=(f.sell||[]).map(panelRow).join("")||'<div class="sub">--</div>';instSource.textContent=p.institutionSource||"";var hs=p.topicHeat||[];themeRows.innerHTML=hs.length?hs.map(function(x){return '<div class="row"><span><b>'+esc(x.theme)+'</b></span><span class="'+C(x.avgRet)+'">'+(Number(x.avgRet)>=0?"+":"")+N(x.avgRet)+'%</span></div>'}).join(""):'<div class="sub">--</div>';themeSource.textContent=p.topicSource||""}
 function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);marketMeta.textContent="最新資料日 "+(DATA.dataDate||"--")+" ｜ 官方現貨盤後資料，非即時交易建議";var more=document.getElementById("marketMetaDetails");if(more)more.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),isStale=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5);staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent="⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
-async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();MarketCommand.refresh(DATA);MarketCommand.checkMl();renderPanels();renderMeta();await loadFutures()}catch(e){marketMeta.textContent="市場資料載入失敗："+e.message;futuresSub.textContent="市場資料暫時不可用，請稍後重新載入。"}finally{loading.classList.remove("show")}}
+async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();MarketCommand.refresh(DATA);MarketCommand.checkMl();EntryPlaybook.refresh(DATA);renderPanels();renderMeta();await loadFutures()}catch(e){marketMeta.textContent="市場資料載入失敗："+e.message;futuresSub.textContent="市場資料暫時不可用，請稍後重新載入。"}finally{loading.classList.remove("show")}}
 // At 08:30–08:59 revisit the latest COMPLETED exchange session; this
 // is not a live 08:58 quote stream. At 09:00 retire the provisional view.
 setInterval(function(){
@@ -283,6 +294,7 @@ setInterval(function(){
  const m=localClock();
  if(m>=510&&m<540)loadFutures();
  else if(m>=540&&m<543)renderOpeningPreview();
+ if(window.EntryPlaybook)EntryPlaybook.tick();
 },60000);
 
 document.getElementById("txfLiveChart").addEventListener("toggle",function(){
