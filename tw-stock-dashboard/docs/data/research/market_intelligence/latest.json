@@ -1,0 +1,52 @@
+{
+  "version": "MARKET_DECISION_SUPPORT_2026_10_V1",
+  "asOf": "2026-10-08",
+  "riskScore": 46,
+  "originalRiskState": "🟡 Neutral",
+  "marketMode": "TOP",
+  "marketHealth": {
+    "breadthTodayPct": 43.8,
+    "breadth5Pct": 47.3,
+    "breadth10Pct": 48.3,
+    "breadthChangeVsPrev5Pts": -1.9,
+    "advanceDecline10Sum": -301,
+    "indexRet10Pct": 3.17,
+    "indexBreadthDivergence": false,
+    "riskScore3MA": 63.7,
+    "riskScore5SessionChange": -25.0,
+    "realizedVol20AnnualPct": 15.7,
+    "volatilityHistoryPercentile": 18.1,
+    "distancePrior120HighPct": -1.02,
+    "prior120HighType": "收盤高點",
+    "distanceMA20Pct": 3.41,
+    "previousScore": 75,
+    "sourceHistoryDays": 728
+  },
+  "decision": {
+    "level": "STOP",
+    "headline": "🔴 暫不建議一般新倉",
+    "action": "市場尚未達到60分基準；等待趨勢回升或另行確認反轉。",
+    "primaryGate": ">=60 Risk Score, with separate Strong Bottom exception",
+    "flags": [
+      {
+        "code": "NEAR_HIGH_TOP",
+        "severity": "watch",
+        "title": "接近120日高點＋Top Watch",
+        "detail": "距前120交易日收盤高點不足2%，又處於頂部觀察；屬尚未證實有效的追價警示，不是確認頂部。"
+      },
+      {
+        "code": "FOREIGN_OUTFLOW",
+        "severity": "info",
+        "title": "單日外資明顯賣超",
+        "detail": "外資單日賣超超過300億，可能造成分數跳動；不可用單日法人數據推論長期走勢。"
+      }
+    ],
+    "scope": "盤後下一交易日的個股進場評估，不是當日即時交易許可"
+  },
+  "research": {
+    "model": "Market ML v1 2026 chronological study",
+    "mlNotUsedToGate": true,
+    "cautionFiltersValidatedForStockBuying": false,
+    "reason": "Original score weights and A/D/F/G production gates must remain unchanged until independent portfolio tests prove added edge"
+  }
+}
