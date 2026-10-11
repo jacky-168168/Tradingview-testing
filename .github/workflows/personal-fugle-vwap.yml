@@ -1,0 +1,31 @@
+name: Personal Fugle VWAP Probe (0050 + G3)
+on:
+  workflow_dispatch:
+  schedule:
+    # UTC: 01:18 01:38 02:03 = Taiwan 09:18 09:38 10:03, may be delayed.
+    - cron: '18,38 1 * * 1-5'
+    - cron: '3 2 * * 1-5'
+permissions:
+  contents: read
+jobs:
+  personal-vwap-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test quote freshness, trial guard, and completed 15-minute range
+        run: |
+          python -m unittest discover -s tw-stock-dashboard/tests -p test_private_fugle_vwap.py -v
+          python -m py_compile tw-stock-dashboard/research/private_fugle_vwap.py
+      - name: Private market data probe (no public price logs or artifacts)
+        env:
+          FUGLE_API_KEY: ${{ secrets.FUGLE_API_KEY }}
+        run: |
+          python tw-stock-dashboard/research/private_fugle_vwap.py
+      - name: Explicit compliance boundaries
+        run: |
+          echo 'Personal development only; no price feed, derived VWAP values or API key are published to GitHub Pages.'
+          echo 'GitHub schedules are not second-by-second realtime. Do not use this Action for automated market orders.'
