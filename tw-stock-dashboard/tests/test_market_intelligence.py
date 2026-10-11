@@ -32,6 +32,7 @@ class MarketIntelligenceTests(unittest.TestCase):
     def test_divergence_is_watch_not_invented_buy_veto(self):
         a=self.series(score=72)
         for x in a[-10:]:x["breadth"]=39
+        for x in a[-10:]:x["index"]=x["index"]*1.04
         out=compute(a[-1],a)
         self.assertIn("NARROW_BREADTH",[f["code"] for f in out["decision"]["flags"]])
         self.assertEqual(out["decision"]["level"],"READY")
