@@ -1,0 +1,47 @@
+/* Regression: real dated 2026/10/08 TAIFEX paired night, next trade day 10/12.
+ * Never call a completed night price the actual 08:58 tick.
+ */
+const assert=require("assert"),fs=require("fs"),path=require("path");
+const root=path.resolve(__dirname,".."),base=path.join(root,"docs");
+const model=require(path.join(base,"market-command.js"));
+const html=fs.readFileSync(path.join(base,"index.html"),"utf8");
+const latest=JSON.parse(fs.readFileSync(path.join(base,"data/latest.json"),"utf8"));
+const future=JSON.parse(fs.readFileSync(path.join(base,"data/futures/latest.json"),"utf8"));
+const begin=html.indexOf("function sameContractTX(f)"),end=html.indexOf("function renderOpeningPreview(){",begin);
+assert(begin>0&&end>begin,"Original same-contract daily/overnight rule must still be present");
+const extract=new Function(html.slice(begin,end)+"\nreturn {sameContractTX,overnightPreviewModel};");
+const fns=extract();
+const c=fns.sameContractTX(future);
+assert(c,"2026-10-08 should contain genuine same-month TX day+completed night");
+assert.strictEqual(future.asOfDate,"2026-10-08");
+assert.strictEqual(future.night.reportQueryDate,"2026-10-12");
+assert(Math.abs(c.pct-(-1.305))<.01,c.pct);
+assert.strictEqual(latest.risk.score,46);
+const estimate=fns.overnightPreviewModel(latest.risk,future,"2026-10-12",8*60+58);
+assert(estimate.valid,estimate.reason);
+assert.strictEqual(estimate.base,46);
+assert.strictEqual(estimate.adjustment,-15);
+assert.strictEqual(estimate.score,31);
+const at=(hour,min,day="2026-10-12")=>new Date(day+"T"+String(hour).padStart(2,"0")+":"+String(min).padStart(2,"0")+":00+08:00");
+const prem=model.marketPremarket(latest.risk,estimate,at(8,58));
+assert(prem&&prem.score===31&&prem.level==="STOP",prem);
+assert.strictEqual(prem.source,"已完成TX夜盤，非08:58即時報價");
+assert.strictEqual(model.marketPremarket(latest.risk,estimate,at(8,29)),null);
+assert.strictEqual(model.marketPremarket(latest.risk,estimate,at(9,0)),null);
+assert.strictEqual(model.marketPremarket(latest.risk,estimate,at(8,58,"2026-10-11")),null);
+assert.strictEqual(model.marketPremarket(latest.risk,estimate,at(8,58,"2026-10-13")),null);
+assert.strictEqual(model.marketPremarket(latest.risk,{...estimate,nextDate:"2026-10-13"},at(8,58)),null);
+assert.strictEqual(model.marketPremarket(latest.risk,{...estimate,sourceDate:"2026-10-07"},at(8,58)),null);
+assert.strictEqual(model.marketPremarket(latest.risk,{...estimate,score:80},at(8,58)),null);
+assert.strictEqual(model.marketPremarket(latest.risk,{...estimate,valid:false},at(8,58)),null);
+const pos=model.marketPremarket({score:55,date:"2026-10-08"},{...estimate,base:55,score:65,adjustment:10,pct:2.1},at(8,58));
+assert(pos&&pos.level==="WAIT"&&pos.score===65,"positive TX does not upgrade weak cash to auto BUY");
+const negative=model.marketPremarket({score:90,date:"2026-10-08"},{...estimate,base:90,score:75,adjustment:-15,pct:-1.3},at(8,58));
+assert(negative&&negative.level==="STOP","overnight selloff must veto even original high cash score");
+const after=model.postOpenState(latest.risk,at(9,0));
+assert(after&&after.level==="WAIT","preview must expire after 09:00");
+assert.strictEqual(model.postOpenState({...latest.risk,date:"2026-10-12"},at(9,0)),null);
+assert(html.includes('id="commandCashReference"'),"Keep official 46 visibly separate");
+assert(html.includes("MarketCommand.applyPremarket(x)"),"Completed overnight preview must reach top hero");
+assert(html.includes("m>=510&&m<540"),"Preview refresh before 09:00");
+console.log("PASS 2026-10-12 08:58 official cash46 and completed-night -1.305 -> provisional31; stale/mismatch/realtime and positive-buy guardrails");
