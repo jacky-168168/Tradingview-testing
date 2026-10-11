@@ -33,9 +33,7 @@
 </style>
 <script src="./site-access.js"></script>
 <link rel="stylesheet" href="./market-command.css">
-<link rel="stylesheet" href="./entry-playbook.css">
 <script src="./market-command.js"></script>
-<script src="./entry-playbook.js"></script>
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -70,14 +68,6 @@
     </div>
   </nav>
 </header>
-<section id="entryPlaybook" class="entry-playbook" data-tone="unknown" aria-label="股票買進時機與市場同步確認">
- <div class="entry-topline"><span class="entry-eyebrow">🎯 股票何時能買？｜G 波段／D 強勢</span><span class="entry-note" id="entryPlaybookInstant">盤中即時買進許可：未確認</span></div>
- <div class="entry-mainline"><div class="entry-headings"><div id="entryPlaybookStatus" class="entry-status" role="status" aria-live="polite">⏳ 核對風險與歷史回測…</div><div id="entryPlaybookHeadline" class="entry-headline">等待研究結果載入</div><div id="entryPlaybookAction" class="entry-action">以市場廣度、趨勢與個股買點確認，不能靠第一根紅 K 追價。</div></div>
- <div class="entry-context"><strong id="entryPlaybookHorizon">—</strong><span id="entryPlaybookTiming">讀取市場交易時間…</span></div></div>
- <div id="entryPlaybookFacts" class="entry-facts" aria-label="買進環境的確認依據"><span class="entry-fact no">• 等待市場資料</span></div>
- <div class="entry-source"><span id="entryPlaybookSource">核對資料時間與研究中…</span><a href="./selections.html">查看 G／D 候選股 →</a></div>
- <details class="entry-details"><summary>為何這樣判斷？查看回測證據與限制</summary><p id="entryPlaybookBasis">正在分析。</p><p id="entryPlaybookResearch">等待歷史研究。</p><p class="entry-research-disclaimer">2026 曾在先前研究被檢視，不是完全未見的樣本外資料。沒有即時 09:15 廣度及 VWAP 前，不會宣稱「現在買進已確認」。平均訊號報酬≠帳戶複利。</p><a href="./data/research/market_entry_playbook/report.md" target="_blank" rel="noopener">查看買進時機回測報告 ↗</a></details>
-</section>
 <section id="marketCommand" class="market-command cmd-unknown" aria-label="大盤是否適合進場：盤後決策總覽">
   <div class="cmd-main">
     <div class="cmd-top">
@@ -103,6 +93,7 @@
     </div>
     <div class="advanced-mini-title">全部風險警示</div><div id="commandFullFlags" class="advanced-warning-list">分析中…</div>
     <div class="cmd-notes" id="commandLogic">僅盤後研究提示，不自動下單，也不修改原始 Risk Score。</div>
+    <div class="cmd-validated-strategy"><strong>G／D 策略歷史檢驗</strong><span id="commandStrategyEvidence">正在核對 G 20 日／D 10 日歷史淨報酬…</span><small>2026 年資料曾被先前研究檢視；以下為歷史訊號平均淨報酬，非即時買點或帳戶複利。</small><a href="./data/research/market_entry_playbook/report.md" target="_blank" rel="noopener">查看完整回測與限制 ↗</a></div>
     <div class="cmd-research"><span id="commandAi">機器學習回測狀態核對中…</span><a href="./data/research/market_ml_audit/summary.json" target="_blank" rel="noopener">AI 驗證</a><a href="./data/research/market_intelligence/latest.json" target="_blank" rel="noopener">風險依據</a><a href="./market-methodology.html">書籍／GitHub／研究說明</a></div>
   </details>
 </section>
@@ -140,7 +131,6 @@
     <div class="small-title">原始 100 分風控（F／F2 正式使用）</div>
     <div class="risk-main"><div id="riskLight" class="risk-light">●</div><div><div id="riskState" class="risk-state">尚未分析</div><div class="risk-score"><span id="riskScore">0</span><small>/100 現貨分數</small></div></div></div>
     <div id="riskAdvice" class="sub"></div>
-    <div id="marketEntryAdvisor" class="entry-advice" role="status"><div class="entry-advice-head"><span>G 強勢股進場觀察（舊版對照）</span><strong id="marketEntryHeadline">讀取中…</strong></div><div class="entry-advice-detail" id="marketEntryDetail"></div><div class="entry-advice-flags" id="marketEntryFlags"></div><div class="entry-advice-foot">研究性警示與原始 F／F2 交易卡控是不同概念。正式分數不變。</div></div>
     <div id="riskDataStatus" class="risk-data-status" role="status">核對最近交易日中…</div>
     <div id="riskWarning" class="warning">⚠ 現貨風控未達 Risk ON，並非期貨夜盤分數。</div>
    </section>
@@ -168,42 +158,7 @@ function C(x){return Number(x)>=0?"pos":"neg"}
 function esc(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function taipeiDate(){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
 function dayInfo(){var d=String(DATA&&DATA.dataDate||DATA&&DATA.risk&&DATA.risk.date||'');var today=taipeiDate();var weekend=[0,6].includes(new Date().getDay());var label=d===today?'📅 '+d+'｜當日交易日資料':(weekend?'⏸ 週末休市｜':'⏸ 尚無今日交易日資料｜')+'最近交易日 '+(d||'未知')+'（非即時訊號）';return {d:d,today:today,weekend:weekend,isCurrent:d===today,label:label}}
-function marketEntryGuidance(r){
- const score=Number(r&&r.score),top=String(r&&r.topState||""),bottom=String(r&&r.bottomState||"");
- if(!r||r.score==null||!Number.isFinite(score))return {tone:"watch",title:"⚪ 資料不足，暫不判斷",detail:"請等待有效的大盤現貨資料，不能把缺值視為零分。",flags:[]};
- const dist=Number(r.distMA20),five=Number(r.ret5),twenty=Number(r.ret20),nearHigh=Number(r.distHigh120Pct);
- const hasHigh=r.distHigh120Pct!=null&&Number.isFinite(nearHigh);
- const flags=[];
- if(hasHigh&&nearHigh>=-2&&nearHigh<=0)flags.push("⚠ 距前120交易日高點 "+Math.abs(nearHigh).toFixed(2)+"%（不等於歷史最高點）");
- if(hasHigh&&nearHigh>0)flags.push("📈 已突破前120交易日高點 "+nearHigh.toFixed(2)+"%");
- if(Number.isFinite(dist)&&dist>=6)flags.push("⚠ 距MA20偏高 "+dist.toFixed(2)+"%（試驗性門檻）");
- if(Number.isFinite(five)&&five>=8)flags.push("⚠ 近5日漲幅 "+five.toFixed(2)+"%（試驗性門檻）");
- if(Number.isFinite(twenty)&&twenty>=12)flags.push("⚠ 近20日漲幅 "+twenty.toFixed(2)+"%（試驗性門檻）");
- if(r.mode==="TOP"&&top==="⚪ Top Watch")flags.push("頂部觀察中，尚未確認反轉");
- const ready=bottom==="🟢 Strong Bottom Reversal";
- const strongTop=top==="🔴 Strong Top Reversal"||top==="🟠 Top Reversal Attempt";
- const extremeTop=top==="🔴 Extreme Overbought";
- const overheat=r.mode==="TOP"&&(Number(r.overboughtScore)>=5||(Number.isFinite(dist)&&dist>=6&&Number.isFinite(five)&&five>=8));
- if(strongTop)return {tone:"stop",title:"⛔ 頂部反轉：暫停一般新倉",detail:"已出現頂部轉弱確認，優先控制風險，不因 Risk Score 高就追價。",flags};
- if(extremeTop)return {tone:"stop",title:"⛔ 極端過熱：禁止追價觀察",detail:"這是追價風險警報，與原本的 F2 過熱否決相呼應；未變更 G 交易規則。",flags};
- if(score<60&&ready)return {tone:"reverse",title:"🟣 超跌反轉例外候選",detail:"大盤雖低於60分，但已出現 Strong Bottom Reversal；只適合另行確認個股 Bottom 訊號與停損，不視為一般 G 趨勢買點。",flags};
- if(score<40){
-   const oversold=Number(r.oversoldScore)>=3||/Oversold/.test(bottom);
-   return {tone:oversold?"reverse":"stop",title:oversold?"🟣 超跌觀察：等待確認":"⛔ 弱勢：暫緩一般新倉",detail:oversold?"分數極低且有超跌跡象，但尚未形成 Strong Bottom Reversal；不能只因低分就抄底。":"低分可能是跌勢延續，不代表已經跌到底。",flags};
- }
- if(score<50)return {tone:"stop",title:"🔴 不建議一般新倉",detail:"尚未符合 G 趨勢濾網；可追蹤是否開始出現 Bottom 反轉訊號。",flags};
- if(score<60)return {tone:"watch",title:"🟠 觀察等待：50–59分",detail:"尚未達到一般 G 策略60分基準門檻；等待大盤改善或獨立反轉確認。",flags};
- if(overheat)return {tone:"watch",title:"🟠 漲幅過大：不宜追價",detail:"趨勢分數雖符合條件，但短線過熱；先等待個股回檔或盤整後再確認。",flags};
- if(hasHigh&&nearHigh>=-2&&nearHigh<=0&&r.mode==="TOP")return {tone:"watch",title:"🟠 近前高＋頂部觀察：暫緩追價",detail:"接近前120交易日高點，同時大盤進入 Top Watch；此條件為研究警訊，不是已驗證的高勝率賣點。",flags};
- return {tone:"allow",title:score>=80?"🟢 強勢：可評估 G 進場":"🟢 符合基準：可評估 G 進場",detail:"大盤分數符合 G 強勢股觀察門檻，但仍需個股訊號、合理進場價與停損；高分不保證續漲。",flags};
-}
-function renderMarketEntry(r){const result=marketEntryGuidance(r),box=document.getElementById("marketEntryAdvisor");
- box.className="entry-advice "+result.tone;document.getElementById("marketEntryHeadline").textContent=result.title;
- document.getElementById("marketEntryDetail").textContent=result.detail;
- const flags=document.getElementById("marketEntryFlags");flags.replaceChildren();
- for(const x of result.flags){const n=document.createElement("span");n.textContent=x;flags.appendChild(n)}
-}
-function renderRisk(){var state=dayInfo();riskDataStatus.textContent=state.label;revDataStatus.textContent=state.label;var r=DATA&&DATA.risk||{};riskScore.textContent=Number.isFinite(Number(r.score))?r.score:"--";riskState.textContent=r.state||"尚未分析";var s=Number(r.score||0);riskLight.style.background=s>=60?"#dcfce7":s>=45?"#fef3c7":"#fee2e2";riskLight.style.color=s>=60?"#16a34a":s>=45?"#d97706":"#dc2626";var g2=r.f2Gate||{};riskAdvice.textContent="現貨風控："+(s>=75?"強勢多頭。":s>=60?"Risk ON。":s>=45?"Neutral。":"Risk OFF。")+" F2："+(g2.reason||"尚未分析");riskWarning.style.display=s<60?"block":"none";renderMarketEntry(r);const mode=r.mode||"NORMAL";revMode.textContent=mode==="TOP"?"頂部觀察":mode==="BOTTOM"?"底部觀察":"一般狀態";const names={"⚪ Normal":"⚪ 未見明確反轉","⚪ Top Watch":"⚪ 頂部觀察中，尚未確認轉弱","⚪ Bottom Watch":"⚪ 底部觀察中，尚未確認反轉","🟡 Overbought Watch":"🟡 短線過熱，留意追價","🟣 Oversold Watch":"🟣 超跌觀察，尚未確認反彈","🟣 Extreme Oversold":"🟣 極端超跌，等待反轉確認","🟠 Bottom Reversal Attempt":"🟠 底部反轉嘗試中","🟢 Strong Bottom Reversal":"🟢 強底部反轉已確認","🟠 Top Reversal Attempt":"🟠 頂部轉弱嘗試中","🔴 Strong Top Reversal":"🔴 頂部反轉警戒","🔴 Extreme Overbought":"🔴 極端過熱"};revState.textContent=names[r.activeState]||r.activeState||"⚪ 未見明確反轉";var top=r.mode==="TOP";extremeLabel.textContent=top?"過熱程度":"極端程度";confirmLabel.textContent=top?"轉弱確認":"反轉確認";extreme.textContent=(top?(r.overboughtScore||0):(r.oversoldScore||0))+"/9";confirm.textContent=(top?(r.topConfirmScore||0):(r.bottomConfirmScore||0))+"/9";dist.textContent="距MA20 "+P(r.distMA20);dayret.textContent=(state.isCurrent?"當日 ":"資料日 ")+P(r.dayRet);closepos.textContent="收盤位置 "+P(r.closePosition,1);idx.textContent=N(r.index);ma5.textContent=N(r.ma5);ma20.textContent=N(r.ma20);r5.textContent=P(r.ret5);r5.className="metric-value "+C(r.ret5);r20.textContent=P(r.ret20);r20.className="metric-value "+C(r.ret20);breadth.textContent=P(r.breadth,1);foreign.textContent=N(r.foreign,1)+" 億";foreign.className="metric-value "+C(r.foreign);trend.textContent=r.trend||"--"}
+function renderRisk(){var state=dayInfo();riskDataStatus.textContent=state.label;revDataStatus.textContent=state.label;var r=DATA&&DATA.risk||{};riskScore.textContent=Number.isFinite(Number(r.score))?r.score:"--";riskState.textContent=r.state||"尚未分析";var s=Number(r.score||0);riskLight.style.background=s>=60?"#dcfce7":s>=45?"#fef3c7":"#fee2e2";riskLight.style.color=s>=60?"#16a34a":s>=45?"#d97706":"#dc2626";var g2=r.f2Gate||{};riskAdvice.textContent="現貨風控："+(s>=75?"強勢多頭。":s>=60?"Risk ON。":s>=45?"Neutral。":"Risk OFF。")+" F2："+(g2.reason||"尚未分析");riskWarning.style.display=s<60?"block":"none";const mode=r.mode||"NORMAL";revMode.textContent=mode==="TOP"?"頂部觀察":mode==="BOTTOM"?"底部觀察":"一般狀態";const names={"⚪ Normal":"⚪ 未見明確反轉","⚪ Top Watch":"⚪ 頂部觀察中，尚未確認轉弱","⚪ Bottom Watch":"⚪ 底部觀察中，尚未確認反轉","🟡 Overbought Watch":"🟡 短線過熱，留意追價","🟣 Oversold Watch":"🟣 超跌觀察，尚未確認反彈","🟣 Extreme Oversold":"🟣 極端超跌，等待反轉確認","🟠 Bottom Reversal Attempt":"🟠 底部反轉嘗試中","🟢 Strong Bottom Reversal":"🟢 強底部反轉已確認","🟠 Top Reversal Attempt":"🟠 頂部轉弱嘗試中","🔴 Strong Top Reversal":"🔴 頂部反轉警戒","🔴 Extreme Overbought":"🔴 極端過熱"};revState.textContent=names[r.activeState]||r.activeState||"⚪ 未見明確反轉";var top=r.mode==="TOP";extremeLabel.textContent=top?"過熱程度":"極端程度";confirmLabel.textContent=top?"轉弱確認":"反轉確認";extreme.textContent=(top?(r.overboughtScore||0):(r.oversoldScore||0))+"/9";confirm.textContent=(top?(r.topConfirmScore||0):(r.bottomConfirmScore||0))+"/9";dist.textContent="距MA20 "+P(r.distMA20);dayret.textContent=(state.isCurrent?"當日 ":"資料日 ")+P(r.dayRet);closepos.textContent="收盤位置 "+P(r.closePosition,1);idx.textContent=N(r.index);ma5.textContent=N(r.ma5);ma20.textContent=N(r.ma20);r5.textContent=P(r.ret5);r5.className="metric-value "+C(r.ret5);r20.textContent=P(r.ret20);r20.className="metric-value "+C(r.ret20);breadth.textContent=P(r.breadth,1);foreign.textContent=N(r.foreign,1)+" 億";foreign.className="metric-value "+C(r.foreign);trend.textContent=r.trend||"--"}
 function panelRow(x){return '<div class="row"><span><b>'+esc(x.code)+" "+esc(x.name)+'</b></span><span>'+N(x.lots,0)+' 張</span></div>'}
 let FUTURES=null;
 function futDisplay(v,digits){const x=Number(v);return v!=null&&Number.isFinite(x)?x.toLocaleString("zh-TW",{minimumFractionDigits:digits||0,maximumFractionDigits:digits||0}):"--"}
@@ -242,7 +197,6 @@ function renderOpeningPreview(){
  const box=document.getElementById("openingPreview"),state=document.getElementById("openingState"),value=document.getElementById("openingScore"),details=document.getElementById("openingDetails");
  const x=overnightPreviewModel(DATA?.risk,FUTURES,taipeiDate(),localClock());
  if(window.MarketCommand)MarketCommand.applyPremarket(x);
- if(window.EntryPlaybook)EntryPlaybook.applyPremarket(x);
  box.className="opening-preview";
  if(!x.valid){box.classList.add("warn");state.textContent="⌛ 盤前推估暫不可用";value.textContent="--";details.textContent=x.reason;return}
  if(x.pct<=-1||x.score<45)box.classList.add("stop");else if(x.pct<=-0.5||x.score<60)box.classList.add("warn");
@@ -286,7 +240,7 @@ async function loadFutures(){
 
 function renderPanels(){var p=DATA&&DATA.panels||{},f=p.institutionFlow||{buy:[],sell:[]};buyRows.innerHTML=(f.buy||[]).map(panelRow).join("")||'<div class="sub">--</div>';sellRows.innerHTML=(f.sell||[]).map(panelRow).join("")||'<div class="sub">--</div>';instSource.textContent=p.institutionSource||"";var hs=p.topicHeat||[];themeRows.innerHTML=hs.length?hs.map(function(x){return '<div class="row"><span><b>'+esc(x.theme)+'</b></span><span class="'+C(x.avgRet)+'">'+(Number(x.avgRet)>=0?"+":"")+N(x.avgRet)+'%</span></div>'}).join(""):'<div class="sub">--</div>';themeSource.textContent=p.topicSource||""}
 function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);marketMeta.textContent="最新資料日 "+(DATA.dataDate||"--")+" ｜ 官方現貨盤後資料，非即時交易建議";var more=document.getElementById("marketMetaDetails");if(more)more.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),isStale=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5);staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent="⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
-async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();MarketCommand.refresh(DATA);MarketCommand.checkMl();EntryPlaybook.refresh(DATA);renderPanels();renderMeta();await loadFutures()}catch(e){marketMeta.textContent="市場資料載入失敗："+e.message;futuresSub.textContent="市場資料暫時不可用，請稍後重新載入。"}finally{loading.classList.remove("show")}}
+async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();MarketCommand.refresh(DATA);MarketCommand.checkMl();renderPanels();renderMeta();await loadFutures()}catch(e){marketMeta.textContent="市場資料載入失敗："+e.message;futuresSub.textContent="市場資料暫時不可用，請稍後重新載入。"}finally{loading.classList.remove("show")}}
 // At 08:30–08:59 revisit the latest COMPLETED exchange session; this
 // is not a live 08:58 quote stream. At 09:00 retire the provisional view.
 setInterval(function(){
@@ -294,7 +248,6 @@ setInterval(function(){
  const m=localClock();
  if(m>=510&&m<540)loadFutures();
  else if(m>=540&&m<543)renderOpeningPreview();
- if(window.EntryPlaybook)EntryPlaybook.tick();
 },60000);
 
 document.getElementById("txfLiveChart").addEventListener("toggle",function(){
