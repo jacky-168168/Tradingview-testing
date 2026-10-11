@@ -119,11 +119,31 @@ function draw(data,diag){
  const btn=$("commandPrimaryLink");
  if(btn){btn.href="./selections.html";btn.textContent=d.level==="READY"?"查看 G／D 強勢股候選 →":d.level==="REVERSAL"?"查看個股 Bottom 反轉候選 →":"查看選股名單（僅觀察） →";}
 }
+let strategyEvidencePending=null,strategyEvidenceLoaded=false;
+async function loadStrategyEvidence(){
+ const el=$("commandStrategyEvidence");if(!el||strategyEvidenceLoaded||strategyEvidencePending)return strategyEvidencePending;
+ strategyEvidencePending=(async()=>{
+  try{
+   const res=await fetch("./data/research/market_entry_playbook/summary.json?v="+Date.now(),{cache:"no-store"});
+   if(!res.ok)throw Error("研究資料不存在");
+   const j=await res.json();
+   if(j?.version!=="MARKET_ENTRY_PLAYBOOK_2026_V1"||j?.research?.marketDays!==728||j?.source2025ValidationOnly!==true)throw Error("驗證版本不符");
+   const g=j?.comparisons?.G20_RISK60,d=j?.comparisons?.D10_RISK60;
+   if(!g?.validation?.n||!g?.holdout?.n||!d?.validation?.n||!d?.holdout?.n)throw Error("驗證樣本不足");
+   const f=(x)=>Number(x.meanNetPct).toFixed(2);
+   if([g.validation,g.holdout,d.validation,d.holdout].some(x=>!Number.isFinite(Number(x.meanNetPct))))throw Error("無效報酬數值");
+   el.textContent="G 波段20日｜2025 "+f(g.validation)+"%、2026 "+f(g.holdout)+"%；D 波段10日｜2025 "+f(d.validation)+"%、2026 "+f(d.holdout)+"%（訊號平均淨報酬）。";
+   strategyEvidenceLoaded=true;
+  }catch(_){el.textContent="歷史研究暫時無法核對，請查看回測報告；不因此給出額外買進許可。"}
+  finally{strategyEvidencePending=null}
+ })();
+ return strategyEvidencePending;
+}
 let currentData=null,currentDiag=null,currentPremarket=null,fetchToken=0;
 function applyPremarket(snapshot){currentPremarket=snapshot;if(currentData)draw(currentData,currentDiag)}
 async function refresh(data){
  currentData=data;currentPremarket=null;currentDiag=data?.marketIntelligence?.asOf===data?.dataDate?data.marketIntelligence:null;
- draw(data,currentDiag);const token=++fetchToken;
+ draw(data,currentDiag);if(!strategyEvidenceLoaded)void loadStrategyEvidence();const token=++fetchToken;
  try{
  const url="./data/research/market_intelligence/latest.json?v="+Date.now();
  const response=await fetch(url,{cache:"no-store"});if(!response.ok)throw Error("diagnostic http "+response.status);
