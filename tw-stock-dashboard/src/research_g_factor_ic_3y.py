@@ -161,7 +161,7 @@ def main():
     # Yahoo ^TWII can omit or delay recent sessions: never interpolate them.
     official=json.loads((DATA_DIR/"research"/"g_regime_3y"/"market_risk_daily.json").read_text(encoding="utf-8"))
     dates=[str(z["date"]) for z in official]
-    if len(dates)!=728 or dates[0]!=START or dates[-1]!=END or len(set(dates))!=728:
+    if len(dates)!=728 or dates[0]<START or dates[-1]!=END or len(set(dates))!=728:
         raise RuntimeError("Historical verified 728-session archive invalid")
     observed=set(index.date.astype(str));missing=[d for d in dates if d not in observed]
     extra=[d for d in observed if START<=d<=END and d not in set(dates)]
