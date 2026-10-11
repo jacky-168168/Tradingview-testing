@@ -1,0 +1,62 @@
+name: Market Entry Playbook 2025 Validation and 2026 OOS Audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/research/market_entry_playbook.py'
+      - '.github/workflows/market-entry-playbook.yml'
+permissions:
+  contents: write
+concurrency:
+  group: market-entry-playbook-research
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Re-audit frozen 2025 validation, 2026 OOS and GRU research
+        run: |
+          python -m py_compile tw-stock-dashboard/research/market_entry_playbook.py
+          python tw-stock-dashboard/research/market_entry_playbook.py
+      - name: Verify sample coverage and reject AI-as-buy gate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=Path("tw-stock-dashboard/docs/data/research/market_entry_playbook")
+          s=json.loads((r/"summary.json").read_text())
+          assert s["source2025ValidationOnly"] is True and s["testYear2026PreviouslyInspected"] is True
+          assert s["research"]["noMinuteOHLC"] and s["research"]["marketDays"]==728
+          assert len(s["comparisons"])==6
+          assert s["comparisons"]["G20_RISK60"]["validation"]["n"]>=90
+          assert s["comparisons"]["G20_RISK60"]["holdout"]["n"]>=70
+          assert s["comparisons"]["G20_RISK80"]["holdout"]["meanNetPct"]>0
+          assert s["comparisons"]["G1_RISK60"]["validation"]["meanNetPct"]<0
+          assert s["comparisons"]["G1_RISK60"]["holdout"]["meanNetPct"]<0
+          assert s["comparisons"]["G10_GRU_RISK60"]["validation"]["meanNetPct"]<s["comparisons"]["G10_RISK60"]["validation"]["meanNetPct"]
+          assert not s["blockBootstrapG20Risk80Vs60"]["2025"]["excludesZero"]
+          assert not s["blockBootstrapG20Risk80Vs60"]["2026"]["excludesZero"]
+          assert s["referenceCashDate"]
+          print("PASS year-sealed evidence; no false GRU edge or 9AM live quote")
+          PY
+      - name: Commit audited page evidence
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/market_entry_playbook/
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish tested G D entry playbook 2025-26'
+            for i in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
