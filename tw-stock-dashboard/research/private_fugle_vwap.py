@@ -65,6 +65,7 @@ def quote_analysis(quote,symbol,now):
     if vol is None or vol<=0:return {"symbol":symbol,"valid":False,"reason":"no_reported_volume"}
     return {"symbol":symbol,"valid":True,"date":trading_date,
         "tradeAt":at.isoformat(timespec="seconds"),"ageSeconds":round(lag),
+        "tradePricePrivate":px,"sessionAveragePrivate":average,
         "tradeVsSessionAveragePct":round((px/average-1)*100,4),
         "aboveCumulativeAverage":px>average,"atCumulativeAverage":px==average,
         "source":"Fugle stock intraday/quote avgPrice (session cumulative)"}
@@ -99,12 +100,15 @@ def interpret(data,opening=None):
         return {"state":"VWAP_ONLY","GAboveAverageCount":count,"benchAboveAverage":ref["aboveCumulativeAverage"],
             "claimBuyPermission":False,"reason":"no_confirmed_15minute_opening_range"}
     nowAbove=ref["aboveCumulativeAverage"];p=ref["tradeVsSessionAveragePct"]
-    if nowAbove and count>=2:
-        state="BREADTH_CONFIRMED_4_SYMBOLS" if count==3 else "BREADTH_PARTIAL_4_SYMBOLS"
-    elif not nowAbove and count<=1:state="WEAK_4_SYMBOLS"
-    else:state="DIVERGENT_4_SYMBOLS"
+    quote=ref["tradePricePrivate"];breaks_high=quote>opening["rangeHigh"];breaks_low=quote<opening["rangeLow"]
+    if nowAbove and breaks_high and count>=2:
+        state="FOLLOW_THROUGH_15M"  # candidate ONLY, still unbacktested
+    elif not nowAbove and breaks_low and count<=1:state="BREAKDOWN_15M"
+    elif nowAbove and count>=2:state="VWAP_ABOVE_BUT_NOT_15M_BREAKOUT"
+    else:state="MIXED_OR_WEAK_4_SYMBOLS"
     return {"state":state,"GAboveAverageCount":count,"benchAboveAverage":nowAbove,
-        "benchVsAveragePct":p,"openingRangeOnly":True,"claimBuyPermission":False,
+        "benchVsAveragePct":p,"benchmarkBreaksOpeningHigh":breaks_high,"benchmarkBreaksOpeningLow":breaks_low,
+        "openingRangeOnly":True,"claimBuyPermission":False,
         "warning":"Only 0050 + G Top3, not whole TWSE breadth; NOT backtested or execution-ready"}
 def get_json(url,key):
     if not url.startswith(API+"/"):raise RuntimeError("Blocked non-Fugle stock URL")
