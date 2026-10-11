@@ -11,7 +11,7 @@
     "breadthChangeVsPrev5Pts": -1.9,
     "advanceDecline10Sum": -301,
     "indexRet10Pct": 3.17,
-    "indexBreadthDivergence": false,
+    "indexBreadthDivergence": true,
     "riskScore3MA": 63.7,
     "riskScore5SessionChange": -25.0,
     "realizedVol20AnnualPct": 15.7,
@@ -28,6 +28,24 @@
     "action": "市場尚未達到60分基準；等待趨勢回升或另行確認反轉。",
     "primaryGate": ">=60 Risk Score, with separate Strong Bottom exception",
     "flags": [
+      {
+        "code": "NARROW_BREADTH",
+        "severity": "caution",
+        "title": "指數上漲但市場廣度不足",
+        "detail": "10日加權指數上漲≥2%，但10日平均上漲家數占比不足50%，須防權值股獨強。"
+      },
+      {
+        "code": "DAY_BREADTH_WEAK",
+        "severity": "caution",
+        "title": "當日上漲家數偏少",
+        "detail": "今天只有不到45%的上市股票上漲；這是一日風險訊號，不能單獨作為禁止買進依據。"
+      },
+      {
+        "code": "SCORE_DECELERATION",
+        "severity": "caution",
+        "title": "五日大盤分數快速下降",
+        "detail": "Risk Score 相較5個交易日前下降至少20分；需留意多頭動能轉弱，但原分數和策略門檻不變。"
+      },
       {
         "code": "NEAR_HIGH_TOP",
         "severity": "watch",
