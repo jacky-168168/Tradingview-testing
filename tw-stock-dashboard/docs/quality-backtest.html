@@ -1,0 +1,45 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>財報品質回測｜ROE × PB × 營收 EPS</title>
+<style>
+:root{--bg:#f4f6fa;--white:#fff;--ink:#142134;--muted:#64748b;--line:#dae2eb;--blue:#2563eb}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;line-height:1.7}
+main{max-width:1200px;margin:0 auto;padding:24px 14px}.header{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}
+h1{font-size:26px;margin:0 0 6px}h2{font-size:17px;margin:0 0 8px}.sub{font-size:13px;color:var(--muted)}
+a{color:var(--blue);text-decoration:none}.button{padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:white}
+.card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0;box-shadow:0 3px 12px #1f293708}
+.status{font-size:13px;white-space:normal}.warning{color:#9a3412;font-weight:700}table{width:100%;border-collapse:collapse;white-space:nowrap}th,td{padding:10px 12px;border-bottom:1px solid #e9eef4;text-align:right;font-size:13px}th:first-child,td:first-child{text-align:left}th{color:var(--muted);background:#f7f9fb}.scroll{overflow:auto}
+.note{font-size:12px;color:#64748b}.tag{font-size:11px;border-radius:5px;background:#eaf1ff;color:#1e40af;padding:3px 6px}
+</style><script src="./site-access.js"></script></head><body><main>
+<div class="header"><div><h1>📘 ROE × PB × 財報成長｜歷史回測</h1><div class="sub">嚴格使用已可取得的季報資料與官方歷史 PB，不將當下 ROE/PB 倒灌過去</div></div>
+<nav><a class="button" href="./stocks.html">🔬 個股體檢</a> <a class="button" href="./selections.html">📋 選股頁</a></nav></div>
+<section class="card"><h2>研究資料與可用性</h2><div id="status" class="status">讀取歷史研究檔案…</div><div class="note" id="coverage"></div></section>
+<section class="card"><h2>固定參數的分期比較</h2><div class="scroll"><table><thead><tr><th>期間</th><th>方案</th><th>報酬率</th><th>CAGR</th><th>Sharpe（月）</th><th>最大回撤（月）</th><th>正報酬月比例</th><th>可交易月份</th></tr></thead><tbody id="rows"><tr><td colspan="8">尚未產出經驗證歷史資料</td></tr></tbody></table></div><p class="note">月度最大回撤、月度 Sharpe 並非逐日最大回撤／逐日 Sharpe。若來源或行情不完整，不會將缺值補成零獲利。</p></section>
+<section class="card"><h2>交易與評分規則</h2><div id="rules" class="note">成長基準：EPS 累計年增 ≥10%、營收年增 ≥10%、TTM EPS 正值、近12月營收高點比率 ≥80%。品質組：額外要求 ROE ≥15%、PB 0.3～12、過去三年 PB 分位 ≤50%。月末收盤觀察、次交易日調整後開盤價成交，持有到下個月再平衡，Top10 等權，至少五檔才投入；閒置月份持現金。</div></section>
+<section class="card"><h2>歷史樣本限制</h2><div class="note">財報採 MOPS 最新修訂歷史彙總檔與保守公告延後日期，不保證保留當年最初發布的版本；目前公司母檔為存續股票池，有存活者偏差。官方 PB 依真實歷史交易日，不使用今天 PB 推回以前。ROE 使用一致會計口徑的 TTM 稅後淨利除以平均權益，分子分母不足即不計算。所有數字僅供研究，非投資建議。</div></section>
+</main><script>
+"use strict";
+const el=id=>document.getElementById(id),fmt=(x,d=2)=>x==null||!Number.isFinite(Number(x))?"—":Number(x).toFixed(d)+"%",num=x=>x==null?"—":String(x);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const folds={validation2024:"2024 驗證",oos2025:"2025 樣本外",audit2026:"2026 追蹤"};
+async function main(){
+try{
+ const r=await fetch("./data/research/quality/backtest.json?v="+Date.now(),{cache:"no-store"});
+ if(!r.ok)throw Error("尚無經驗證的歷史研究檔（HTTP "+r.status+"）");
+ const a=await r.json();if(a.version!=="FUNDAMENTAL_QUALITY_ROE_PB_GROWTH_V1"||!a.folds)throw Error("研究檔版本或欄位異常");
+ el("status").innerHTML=a.status==="full_quality_ready"?"✅ 已載入 ROE/PB 完整來源的歷史研究結果":"⚠ 僅有營收／EPS 成長基準；ROE + PB 尚未取得充分官方歷史紀錄，品質組績效不得宣稱已驗證";
+ el("status").className="status"+(a.status==="full_quality_ready"?"":" warning");
+ el("coverage").textContent="公司池 "+num(a.historicalUniverse)+" 檔；PB 有歷史的公司 "+num(a.pbSymbols)+" 檔；ROE 有歷史的公司 "+num(a.roeSymbols)+" 檔。行情錯誤 "+num(a.priceErrorsCount)+" 檔。";
+ let html="";
+ for(const [key,name] of Object.entries(folds)){
+  const item=a.folds[key];if(!item)continue;
+  for(const [strategy,label] of [["growth","EPS/營收成長"],["quality","成長＋ROE＋PB"],["benchmark0050","0050 買進持有"]]){
+   const v=item[strategy]||{},ok=v.status==="ok";
+   html+="<tr><td>"+esc(name)+"</td><td>"+esc(label)+"</td><td>"+(ok?fmt(v.totalReturnPct):"未驗證")+"</td><td>"+(ok?fmt(v.cagrPct):"—")+"</td><td>"+(strategy==="benchmark0050"?"—":ok?num(v.monthlySharpeRf0):"—")+"</td><td>"+(strategy==="benchmark0050"?"—":ok?fmt(v.monthlyMaxDrawdownPct):"—")+"</td><td>"+(strategy==="benchmark0050"?"—":ok?fmt(v.monthlyWinRatePct):"—")+"</td><td>"+(strategy==="benchmark0050"?"—":num(v.tradedMonths))+"</td></tr>";
+  }
+ }
+ el("rows").innerHTML=html||'<tr><td colspan="8">尚無研究期間</td></tr>';
+ if(a.rules)el("rules").textContent=JSON.stringify(a.rules,null,2);
+}catch(e){el("status").textContent="⚠ "+e.message+"。研究數據尚未發布，請勿將空白視為0%報酬。";el("status").className="status warning";}
+}
+main();
+</script></body></html>

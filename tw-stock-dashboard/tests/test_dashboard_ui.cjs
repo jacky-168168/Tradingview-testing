@@ -15,7 +15,7 @@ assert.equal(link({code:"3624",name:"光頡",market:"上櫃"}).includes("symbol=
 assert(link({code:"3624",name:"光頡",market:"上櫃"}).includes('target="_blank" rel="noopener noreferrer"'));
 assert(!link({code:"1714",name:"測試",market:"未知"}).includes("<a"),"Unknown market should not open a wrong chart");
 assert(!link({code:"<tag>",name:"測試",market:"上市"}).includes("<a"),"Invalid symbol should not open a chart");
-const noteJs=part("function renderModelNote(){","function renderTable(){");
+const noteJs=part("function renderModelNote(){","var N_ARCHIVE=");
 const describe=new Function("MODEL","DATA","gNote",noteJs+"renderModelNote()");
 const data={gSelection:{dataDate:"2026-10-08",pocketSnapshotsFound:4,pocketWarmup:true},risk:{score:71,fGate:{allowed:true,reason:"RISK_ON"},f2Gate:{allowed:true,reason:"HYSTERESIS_HOLD"}}};
 const expected={A:["股本＜500億元","成交額≥1億元","SAR"],D:["日成交量＞2,000萬股","RVOL10＞1.2","候補"],F:["Risk Score≥60","濾網：放行","RISK_ON"],F2:["≥55 維持","Strong Bottom Reversal","HYSTERESIS_HOLD"],G:["3D＋18D 前高雙突破","可用歷史 4/10","盤中僅更新現價"]};
