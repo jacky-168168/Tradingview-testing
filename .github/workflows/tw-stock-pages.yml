@@ -6,6 +6,10 @@ on:
     branches: [main]
     paths:
       - 'tw-stock-dashboard/docs/*.html'
+      - 'tw-stock-dashboard/docs/market-command.js'
+      - 'tw-stock-dashboard/docs/market-command.css'
+      - 'tw-stock-dashboard/docs/data/research/market_intelligence/**'
+      - 'tw-stock-dashboard/docs/data/research/market_ml_audit/**'
       - 'tw-stock-dashboard/docs/site-access.js'
       - 'tw-stock-dashboard/docs/stock-selection.js'
       - 'tw-stock-dashboard/docs/backtest-g-panel.js'
@@ -218,6 +222,34 @@ jobs:
           if(!witnessedG||!witnessedGPro)throw new Error('No genuine G and G Pro archived data found');
           console.log('PASS G and G Pro historical snapshots and integrity; days G='+witnessedG+', G Pro='+witnessedGPro);
           JS
+      - name: Verify homepage decision controls, JS syntax and source alignment
+        run: |
+          node --check tw-stock-dashboard/docs/market-command.js
+          node - <<'JS'
+          const assert=require('assert'),fs=require('fs'),r=require('./tw-stock-dashboard/docs/market-command.js');
+          assert.equal(r.fallback({score:46}).level,'STOP');
+          assert.equal(r.fallback({score:75}).level,'READY');
+          assert.equal(r.fallback({score:29,bottomState:'🟢 Strong Bottom Reversal'}).level,'REVERSAL');
+          assert.equal(r.fallback({score:90,topState:'🔴 Strong Top Reversal'}).level,'STOP');
+          assert.equal(r.fallback({score:85,topState:'🔴 Extreme Overbought'}).level,'CAUTION');
+          const html=fs.readFileSync('tw-stock-dashboard/docs/index.html','utf8');
+          ['marketCommand','commandStatus','commandBreadth','commandScore','commandAction','commandReasons','commandAi'].forEach(id=>assert(html.includes('id="'+id+'"'),id));
+          const inline=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(x=>x[1]);
+          inline.forEach(code=>new Function(code));
+          console.log('PASS: Homepage decision JS, HTML DOM IDs, low-score and overheat cases');
+          JS
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('tw-stock-dashboard/docs/data')
+          current=json.loads((root/'latest.json').read_text())
+          note=json.loads((root/'research/market_intelligence/latest.json').read_text())
+          ml=json.loads((root/'research/market_ml_audit/summary.json').read_text())
+          assert current['risk']['score']==note['riskScore'] and current['dataDate']==note['asOf']
+          assert note['research']['mlNotUsedToGate'] is True
+          assert ml['advisoryEligible'] is False
+          print('PASS: Official market score unchanged and AI is not a live trading gate')
+          PY
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
