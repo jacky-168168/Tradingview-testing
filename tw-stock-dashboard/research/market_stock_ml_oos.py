@@ -105,7 +105,7 @@ def predictions(rows):
         for j,pos in enumerate(splitName):
             d=dates[pos]
             output[d]={"riskLogit":round(float(logit[pos]),7),
-                       "gru":round(float(chosen[2][k]["validation" if k=="validation" else "holdout"][j]),7),
+                       "gru":round(float(chosen[2][k][j]),7),
                        "trueNextMajority":int(y[pos]),"sampleFold":k}
     err={}
     for fold,idx in (("validation",val),("holdout",hold)):
