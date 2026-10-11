@@ -1,0 +1,701 @@
+{
+  "version": "AI_VS_RISK_MARKET_BLOCK_BOOTSTRAP_V1",
+  "createdAt": "2026-10-11T12:56:47.566572+08:00",
+  "marketRows": 728,
+  "predictionDays": 426,
+  "blockDays": 20,
+  "resamples": 3000,
+  "seed": 20261011,
+  "compareTo": "Risk Score >=60 baseline; same selector and horizon within same calendar year",
+  "method": "Sample blocks of 20 CONSECUTIVE market sessions with replacement (circular); preserve clustering of daily signals; compute mean of full Top3 baskets selected by each fixed policy",
+  "targets": [
+    "G",
+    "D"
+  ],
+  "holds": [
+    10,
+    20
+  ],
+  "results": [
+    {
+      "model": "G",
+      "horizon": 10,
+      "fold": "2025",
+      "baselineScore60": {
+        "samples": 98,
+        "mean": 0.386,
+        "winRatePct": 50.0
+      },
+      "fixedPolicies": {
+        "SCORE_GE80": {
+          "selected": {
+            "samples": 55,
+            "mean": 1.7,
+            "winRatePct": 54.55
+          },
+          "meanNetImprovementVsScore60Pts": 1.314,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -0.561,
+            3.629
+          ],
+          "bootstrapFractionDeltaPositivePct": 90.43,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GRU_AND_SCORE60": {
+          "selected": {
+            "samples": 35,
+            "mean": -3.862,
+            "winRatePct": 25.71
+          },
+          "meanNetImprovementVsScore60Pts": -4.248,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -8.873,
+            -0.867
+          ],
+          "bootstrapFractionDeltaPositivePct": 0.37,
+          "excludesZero": true,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GREEN_AND_SCORE60": {
+          "selected": {
+            "samples": 80,
+            "mean": 0.331,
+            "winRatePct": 50.0
+          },
+          "meanNetImprovementVsScore60Pts": -0.055,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -1.445,
+            1.098
+          ],
+          "bootstrapFractionDeltaPositivePct": 49.3,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "RED_AND_SCORE60": {
+          "selected": {
+            "samples": 18,
+            "mean": 0.631,
+            "winRatePct": 50.0
+          },
+          "meanNetImprovementVsScore60Pts": 0.245,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2998,
+          "delta95IntervalPctPts": [
+            -4.49,
+            7.222
+          ],
+          "bootstrapFractionDeltaPositivePct": 52.54,
+          "excludesZero": false,
+          "smallSample": true,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        }
+      }
+    },
+    {
+      "model": "G",
+      "horizon": 10,
+      "fold": "2026",
+      "baselineScore60": {
+        "samples": 82,
+        "mean": 3.106,
+        "winRatePct": 62.2
+      },
+      "fixedPolicies": {
+        "SCORE_GE80": {
+          "selected": {
+            "samples": 58,
+            "mean": 2.448,
+            "winRatePct": 56.9
+          },
+          "meanNetImprovementVsScore60Pts": -0.658,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -1.985,
+            0.809
+          ],
+          "bootstrapFractionDeltaPositivePct": 16.77,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GRU_AND_SCORE60": {
+          "selected": {
+            "samples": 31,
+            "mean": 5.478,
+            "winRatePct": 70.97
+          },
+          "meanNetImprovementVsScore60Pts": 2.372,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -2.782,
+            6.04
+          ],
+          "bootstrapFractionDeltaPositivePct": 84.43,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GREEN_AND_SCORE60": {
+          "selected": {
+            "samples": 71,
+            "mean": 2.983,
+            "winRatePct": 60.56
+          },
+          "meanNetImprovementVsScore60Pts": -0.124,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -1.113,
+            1.115
+          ],
+          "bootstrapFractionDeltaPositivePct": 39.77,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "RED_AND_SCORE60": {
+          "selected": {
+            "samples": 10,
+            "mean": 3.376,
+            "winRatePct": 70.0
+          },
+          "meanNetImprovementVsScore60Pts": 0.27,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2954,
+          "delta95IntervalPctPts": [
+            -6.972,
+            9.275
+          ],
+          "bootstrapFractionDeltaPositivePct": 54.4,
+          "excludesZero": false,
+          "smallSample": true,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        }
+      }
+    },
+    {
+      "model": "D",
+      "horizon": 10,
+      "fold": "2025",
+      "baselineScore60": {
+        "samples": 53,
+        "mean": 1.478,
+        "winRatePct": 54.72
+      },
+      "fixedPolicies": {
+        "SCORE_GE80": {
+          "selected": {
+            "samples": 21,
+            "mean": 4.344,
+            "winRatePct": 71.43
+          },
+          "meanNetImprovementVsScore60Pts": 2.866,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -0.833,
+            6.732
+          ],
+          "bootstrapFractionDeltaPositivePct": 93.7,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GRU_AND_SCORE60": {
+          "selected": {
+            "samples": 21,
+            "mean": 0.847,
+            "winRatePct": 52.38
+          },
+          "meanNetImprovementVsScore60Pts": -0.632,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2994,
+          "delta95IntervalPctPts": [
+            -5.269,
+            4.208
+          ],
+          "bootstrapFractionDeltaPositivePct": 39.78,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GREEN_AND_SCORE60": {
+          "selected": {
+            "samples": 44,
+            "mean": 1.243,
+            "winRatePct": 52.27
+          },
+          "meanNetImprovementVsScore60Pts": -0.236,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -1.074,
+            0.372
+          ],
+          "bootstrapFractionDeltaPositivePct": 23.97,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "RED_AND_SCORE60": {
+          "selected": {
+            "samples": 9,
+            "mean": 2.63,
+            "winRatePct": 66.67
+          },
+          "meanNetImprovementVsScore60Pts": 1.152,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2766,
+          "delta95IntervalPctPts": [
+            -1.655,
+            4.774
+          ],
+          "bootstrapFractionDeltaPositivePct": 76.43,
+          "excludesZero": false,
+          "smallSample": true,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        }
+      }
+    },
+    {
+      "model": "D",
+      "horizon": 10,
+      "fold": "2026",
+      "baselineScore60": {
+        "samples": 90,
+        "mean": 1.727,
+        "winRatePct": 58.89
+      },
+      "fixedPolicies": {
+        "SCORE_GE80": {
+          "selected": {
+            "samples": 62,
+            "mean": 0.136,
+            "winRatePct": 51.61
+          },
+          "meanNetImprovementVsScore60Pts": -1.59,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -3.554,
+            0.294
+          ],
+          "bootstrapFractionDeltaPositivePct": 4.53,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GRU_AND_SCORE60": {
+          "selected": {
+            "samples": 29,
+            "mean": 4.532,
+            "winRatePct": 72.41
+          },
+          "meanNetImprovementVsScore60Pts": 2.806,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -2.431,
+            6.943
+          ],
+          "bootstrapFractionDeltaPositivePct": 84.63,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GREEN_AND_SCORE60": {
+          "selected": {
+            "samples": 77,
+            "mean": 1.749,
+            "winRatePct": 57.14
+          },
+          "meanNetImprovementVsScore60Pts": 0.022,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -0.948,
+            1.035
+          ],
+          "bootstrapFractionDeltaPositivePct": 52.3,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "RED_AND_SCORE60": {
+          "selected": {
+            "samples": 12,
+            "mean": 3.113,
+            "winRatePct": 75.0
+          },
+          "meanNetImprovementVsScore60Pts": 1.387,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2978,
+          "delta95IntervalPctPts": [
+            -3.495,
+            5.91
+          ],
+          "bootstrapFractionDeltaPositivePct": 72.3,
+          "excludesZero": false,
+          "smallSample": true,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        }
+      }
+    },
+    {
+      "model": "G",
+      "horizon": 20,
+      "fold": "2025",
+      "baselineScore60": {
+        "samples": 93,
+        "mean": 4.761,
+        "winRatePct": 56.99
+      },
+      "fixedPolicies": {
+        "SCORE_GE80": {
+          "selected": {
+            "samples": 52,
+            "mean": 8.139,
+            "winRatePct": 67.31
+          },
+          "meanNetImprovementVsScore60Pts": 3.378,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -0.339,
+            9.102
+          ],
+          "bootstrapFractionDeltaPositivePct": 95.73,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GRU_AND_SCORE60": {
+          "selected": {
+            "samples": 31,
+            "mean": -4.863,
+            "winRatePct": 29.03
+          },
+          "meanNetImprovementVsScore60Pts": -9.624,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2999,
+          "delta95IntervalPctPts": [
+            -17.324,
+            -3.056
+          ],
+          "bootstrapFractionDeltaPositivePct": 0.07,
+          "excludesZero": true,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GREEN_AND_SCORE60": {
+          "selected": {
+            "samples": 75,
+            "mean": 4.804,
+            "winRatePct": 57.33
+          },
+          "meanNetImprovementVsScore60Pts": 0.043,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -1.418,
+            1.463
+          ],
+          "bootstrapFractionDeltaPositivePct": 55.43,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "RED_AND_SCORE60": {
+          "selected": {
+            "samples": 18,
+            "mean": 4.581,
+            "winRatePct": 55.56
+          },
+          "meanNetImprovementVsScore60Pts": -0.18,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2998,
+          "delta95IntervalPctPts": [
+            -5.602,
+            6.836
+          ],
+          "bootstrapFractionDeltaPositivePct": 45.73,
+          "excludesZero": false,
+          "smallSample": true,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        }
+      }
+    },
+    {
+      "model": "G",
+      "horizon": 20,
+      "fold": "2026",
+      "baselineScore60": {
+        "samples": 77,
+        "mean": 7.184,
+        "winRatePct": 63.64
+      },
+      "fixedPolicies": {
+        "SCORE_GE80": {
+          "selected": {
+            "samples": 54,
+            "mean": 9.883,
+            "winRatePct": 68.52
+          },
+          "meanNetImprovementVsScore60Pts": 2.699,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -0.349,
+            6.867
+          ],
+          "bootstrapFractionDeltaPositivePct": 94.77,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GRU_AND_SCORE60": {
+          "selected": {
+            "samples": 29,
+            "mean": 12.995,
+            "winRatePct": 82.76
+          },
+          "meanNetImprovementVsScore60Pts": 5.81,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -0.246,
+            11.812
+          ],
+          "bootstrapFractionDeltaPositivePct": 96.93,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GREEN_AND_SCORE60": {
+          "selected": {
+            "samples": 66,
+            "mean": 7.919,
+            "winRatePct": 63.64
+          },
+          "meanNetImprovementVsScore60Pts": 0.735,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -0.91,
+            2.762
+          ],
+          "bootstrapFractionDeltaPositivePct": 79.23,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "RED_AND_SCORE60": {
+          "selected": {
+            "samples": 10,
+            "mean": 2.441,
+            "winRatePct": 60.0
+          },
+          "meanNetImprovementVsScore60Pts": -4.743,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2945,
+          "delta95IntervalPctPts": [
+            -15.815,
+            7.285
+          ],
+          "bootstrapFractionDeltaPositivePct": 22.21,
+          "excludesZero": false,
+          "smallSample": true,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        }
+      }
+    },
+    {
+      "model": "D",
+      "horizon": 20,
+      "fold": "2025",
+      "baselineScore60": {
+        "samples": 48,
+        "mean": 3.741,
+        "winRatePct": 54.17
+      },
+      "fixedPolicies": {
+        "SCORE_GE80": {
+          "selected": {
+            "samples": 18,
+            "mean": 5.112,
+            "winRatePct": 61.11
+          },
+          "meanNetImprovementVsScore60Pts": 1.371,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2999,
+          "delta95IntervalPctPts": [
+            -4.493,
+            7.16
+          ],
+          "bootstrapFractionDeltaPositivePct": 68.29,
+          "excludesZero": false,
+          "smallSample": true,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GRU_AND_SCORE60": {
+          "selected": {
+            "samples": 18,
+            "mean": 0.852,
+            "winRatePct": 44.44
+          },
+          "meanNetImprovementVsScore60Pts": -2.889,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2992,
+          "delta95IntervalPctPts": [
+            -8.334,
+            5.511
+          ],
+          "bootstrapFractionDeltaPositivePct": 19.65,
+          "excludesZero": false,
+          "smallSample": true,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GREEN_AND_SCORE60": {
+          "selected": {
+            "samples": 39,
+            "mean": 2.323,
+            "winRatePct": 48.72
+          },
+          "meanNetImprovementVsScore60Pts": -1.418,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -3.76,
+            0.42
+          ],
+          "bootstrapFractionDeltaPositivePct": 8.37,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "RED_AND_SCORE60": {
+          "selected": {
+            "samples": 9,
+            "mean": 9.885,
+            "winRatePct": 77.78
+          },
+          "meanNetImprovementVsScore60Pts": 6.143,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2723,
+          "delta95IntervalPctPts": [
+            -2.271,
+            14.897
+          ],
+          "bootstrapFractionDeltaPositivePct": 91.33,
+          "excludesZero": false,
+          "smallSample": true,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        }
+      }
+    },
+    {
+      "model": "D",
+      "horizon": 20,
+      "fold": "2026",
+      "baselineScore60": {
+        "samples": 85,
+        "mean": 3.507,
+        "winRatePct": 50.59
+      },
+      "fixedPolicies": {
+        "SCORE_GE80": {
+          "selected": {
+            "samples": 58,
+            "mean": 3.724,
+            "winRatePct": 51.72
+          },
+          "meanNetImprovementVsScore60Pts": 0.217,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -2.83,
+            3.399
+          ],
+          "bootstrapFractionDeltaPositivePct": 55.93,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GRU_AND_SCORE60": {
+          "selected": {
+            "samples": 27,
+            "mean": 5.922,
+            "winRatePct": 62.96
+          },
+          "meanNetImprovementVsScore60Pts": 2.415,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -4.87,
+            7.691
+          ],
+          "bootstrapFractionDeltaPositivePct": 72.83,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "GREEN_AND_SCORE60": {
+          "selected": {
+            "samples": 72,
+            "mean": 4.296,
+            "winRatePct": 51.39
+          },
+          "meanNetImprovementVsScore60Pts": 0.79,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 3000,
+          "delta95IntervalPctPts": [
+            -0.537,
+            2.366
+          ],
+          "bootstrapFractionDeltaPositivePct": 86.8,
+          "excludesZero": false,
+          "smallSample": false,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        },
+        "RED_AND_SCORE60": {
+          "selected": {
+            "samples": 12,
+            "mean": 0.889,
+            "winRatePct": 50.0
+          },
+          "meanNetImprovementVsScore60Pts": -2.618,
+          "bootstrapBlockTradingDays": 20,
+          "draws": 2975,
+          "delta95IntervalPctPts": [
+            -11.264,
+            4.283
+          ],
+          "bootstrapFractionDeltaPositivePct": 25.08,
+          "excludesZero": false,
+          "smallSample": true,
+          "warning": "Non-iid market block resampling. Estimates only mean selected-signal edge vs SCORE60, not portfolio excess return."
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "2026 previously reviewed; do not interpret as pristine unseen data",
+    "Intervals only descriptive with 1-2 years of highly autocorrelated, overlapping 10/20D trades",
+    "No daily-MTM drawdown or executable buy fills inferred from bootstrap",
+    "Mean-return differences affected by sample selection and policy trade frequency",
+    "GRU trained using 2025 early stopping: validation results are model-selected, not pristine holdout",
+    "Not a multiple-test-adjusted statistical significance result; study 4 gates, 2 selectors, 2 horizons and 2 years"
+  ]
+}
