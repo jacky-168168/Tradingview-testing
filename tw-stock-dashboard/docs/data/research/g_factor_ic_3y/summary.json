@@ -1,0 +1,4969 @@
+{
+  "version": "G_FACTOR_2023_26_QUANTDINGER_AUDIT_V1",
+  "generatedAt": "2026-10-11T14:54:40.962345+08:00",
+  "period": [
+    "2023-10-09",
+    "2026-10-08"
+  ],
+  "folds": {
+    "train": [
+      "2023-10-09",
+      "2024-12-31"
+    ],
+    "validation": [
+      "2025-01-01",
+      "2025-12-31"
+    ],
+    "holdout": [
+      "2026-01-01",
+      "2026-10-08"
+    ]
+  },
+  "horizons": [
+    5,
+    10,
+    20
+  ],
+  "inputAudit": {
+    "universeNow": 1982,
+    "stockDataErrors": 0,
+    "dailyFeatureRows": 29768,
+    "validGSignalDays": 650,
+    "top3StockSignals": 1930,
+    "symbols": 1977
+  },
+  "GParity": {
+    "passed": true,
+    "comparedHistoricalSignalDays": 639
+  },
+  "forwardCoverage": {
+    "h5_ok": 29224,
+    "h10_ok": 28837,
+    "h20_ok": 28370,
+    "h5_missing": 151,
+    "h10_missing": 142,
+    "h20_missing": 145
+  },
+  "transactionCostPct": 0.585,
+  "method": "G conditional cross-sectional Spearman IC, within-day quintile return, 400 month-block bootstrap and matched Top3 ablation; forward next-open to Hth-close net return.",
+  "factors": {
+    "gate0": {
+      "train": {
+        "5": [
+          {
+            "factor": "ret20P",
+            "daysIC": 267,
+            "stockSignalsIC": 12272,
+            "rankIC": -0.00196,
+            "rankICCI95": [
+              -0.04388,
+              0.04309
+            ],
+            "icPositiveRatePct": 50.94,
+            "evidence": "inconclusive",
+            "daysQuintiles": 267,
+            "QMeanNetPct": {
+              "1": -0.7232,
+              "2": -0.722,
+              "3": -0.3869,
+              "4": -0.1302,
+              "5": -0.1713
+            },
+            "Q5MinusQ1NetPct": 0.5519,
+            "Q5MinusQ1CI95Pct": [
+              -0.593,
+              1.859
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 267,
+            "stockSignalsIC": 12272,
+            "rankIC": 0.00292,
+            "rankICCI95": [
+              -0.0405,
+              0.04453
+            ],
+            "icPositiveRatePct": 50.94,
+            "evidence": "inconclusive",
+            "daysQuintiles": 267,
+            "QMeanNetPct": {
+              "1": -0.7827,
+              "2": -0.3352,
+              "3": -0.4135,
+              "4": -0.3119,
+              "5": -0.2878
+            },
+            "Q5MinusQ1NetPct": 0.4949,
+            "Q5MinusQ1CI95Pct": [
+              -0.615,
+              1.677
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 267,
+            "stockSignalsIC": 12272,
+            "rankIC": -0.0426,
+            "rankICCI95": [
+              -0.06837,
+              -0.0013
+            ],
+            "icPositiveRatePct": 38.58,
+            "evidence": "negative",
+            "daysQuintiles": 267,
+            "QMeanNetPct": {
+              "1": -0.268,
+              "2": -0.482,
+              "3": -0.7335,
+              "4": -0.0199,
+              "5": -0.5835
+            },
+            "Q5MinusQ1NetPct": -0.3155,
+            "Q5MinusQ1CI95Pct": [
+              -0.884,
+              0.497
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 267,
+            "stockSignalsIC": 12272,
+            "rankIC": -0.01501,
+            "rankICCI95": [
+              -0.06247,
+              0.03751
+            ],
+            "icPositiveRatePct": 49.81,
+            "evidence": "inconclusive",
+            "daysQuintiles": 267,
+            "QMeanNetPct": {
+              "1": -0.6559,
+              "2": -0.3977,
+              "3": -0.5377,
+              "4": -0.433,
+              "5": -0.1514
+            },
+            "Q5MinusQ1NetPct": 0.5045,
+            "Q5MinusQ1CI95Pct": [
+              -1.028,
+              2.022
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 267,
+            "stockSignalsIC": 12272,
+            "rankIC": -0.01563,
+            "rankICCI95": [
+              -0.05134,
+              0.07808
+            ],
+            "icPositiveRatePct": 45.32,
+            "evidence": "inconclusive",
+            "daysQuintiles": 267,
+            "QMeanNetPct": {
+              "1": 0.033,
+              "2": -0.2613,
+              "3": -0.4565,
+              "4": -0.631,
+              "5": -0.714
+            },
+            "Q5MinusQ1NetPct": -0.747,
+            "Q5MinusQ1CI95Pct": [
+              -1.938,
+              1.259
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 267,
+            "stockSignalsIC": 12272,
+            "rankIC": 0.01488,
+            "rankICCI95": [
+              -0.00681,
+              0.06141
+            ],
+            "icPositiveRatePct": 52.81,
+            "evidence": "inconclusive",
+            "daysQuintiles": 267,
+            "QMeanNetPct": {
+              "1": -1.1137,
+              "2": -0.2742,
+              "3": -0.4874,
+              "4": -0.6814,
+              "5": 0.3717
+            },
+            "Q5MinusQ1NetPct": 1.4854,
+            "Q5MinusQ1CI95Pct": [
+              0.813,
+              3.014
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 262,
+            "stockSignalsIC": 12104,
+            "rankIC": 0.00122,
+            "rankICCI95": [
+              -0.04849,
+              0.03471
+            ],
+            "icPositiveRatePct": 53.82,
+            "evidence": "inconclusive",
+            "daysQuintiles": 1,
+            "QMeanNetPct": {
+              "1": 2.7698,
+              "2": 1.6199,
+              "3": 7.9491,
+              "4": 2.6591,
+              "5": 5.9479
+            },
+            "Q5MinusQ1NetPct": 3.1781,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 267,
+            "stockSignalsIC": 12272,
+            "rankIC": -0.01155,
+            "rankICCI95": [
+              -0.04951,
+              0.05422
+            ],
+            "icPositiveRatePct": 48.69,
+            "evidence": "inconclusive",
+            "daysQuintiles": 267,
+            "QMeanNetPct": {
+              "1": -0.5523,
+              "2": -0.8377,
+              "3": -0.1727,
+              "4": -0.3104,
+              "5": -0.2518
+            },
+            "Q5MinusQ1NetPct": 0.3005,
+            "Q5MinusQ1CI95Pct": [
+              -0.749,
+              1.834
+            ]
+          }
+        ],
+        "10": [
+          {
+            "factor": "ret20P",
+            "daysIC": 262,
+            "stockSignalsIC": 12097,
+            "rankIC": -0.01415,
+            "rankICCI95": [
+              -0.07225,
+              0.01861
+            ],
+            "icPositiveRatePct": 45.04,
+            "evidence": "inconclusive",
+            "daysQuintiles": 262,
+            "QMeanNetPct": {
+              "1": -0.4902,
+              "2": -0.1551,
+              "3": 0.1573,
+              "4": 0.5074,
+              "5": 0.7854
+            },
+            "Q5MinusQ1NetPct": 1.2757,
+            "Q5MinusQ1CI95Pct": [
+              -0.683,
+              2.428
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 262,
+            "stockSignalsIC": 12097,
+            "rankIC": 0.00301,
+            "rankICCI95": [
+              -0.06006,
+              0.03432
+            ],
+            "icPositiveRatePct": 49.62,
+            "evidence": "inconclusive",
+            "daysQuintiles": 262,
+            "QMeanNetPct": {
+              "1": -0.6948,
+              "2": 0.1757,
+              "3": 0.2433,
+              "4": 0.6952,
+              "5": 0.415
+            },
+            "Q5MinusQ1NetPct": 1.1098,
+            "Q5MinusQ1CI95Pct": [
+              -1.024,
+              2.318
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 262,
+            "stockSignalsIC": 12097,
+            "rankIC": -0.06028,
+            "rankICCI95": [
+              -0.10188,
+              -0.02889
+            ],
+            "icPositiveRatePct": 34.73,
+            "evidence": "negative",
+            "daysQuintiles": 262,
+            "QMeanNetPct": {
+              "1": 0.3556,
+              "2": 0.5794,
+              "3": -0.3482,
+              "4": 0.3736,
+              "5": -0.0455
+            },
+            "Q5MinusQ1NetPct": -0.4012,
+            "Q5MinusQ1CI95Pct": [
+              -2.604,
+              0.658
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 262,
+            "stockSignalsIC": 12097,
+            "rankIC": -0.02952,
+            "rankICCI95": [
+              -0.10435,
+              0.0107
+            ],
+            "icPositiveRatePct": 46.18,
+            "evidence": "inconclusive",
+            "daysQuintiles": 262,
+            "QMeanNetPct": {
+              "1": -0.3151,
+              "2": 0.1768,
+              "3": 0.34,
+              "4": -0.0729,
+              "5": 0.6369
+            },
+            "Q5MinusQ1NetPct": 0.952,
+            "Q5MinusQ1CI95Pct": [
+              -1.756,
+              2.186
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 262,
+            "stockSignalsIC": 12097,
+            "rankIC": -0.03206,
+            "rankICCI95": [
+              -0.0719,
+              0.0403
+            ],
+            "icPositiveRatePct": 45.8,
+            "evidence": "inconclusive",
+            "daysQuintiles": 262,
+            "QMeanNetPct": {
+              "1": 1.2968,
+              "2": 0.5885,
+              "3": -0.0376,
+              "4": -0.1212,
+              "5": -0.7598
+            },
+            "Q5MinusQ1NetPct": -2.0566,
+            "Q5MinusQ1CI95Pct": [
+              -3.831,
+              0.229
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 262,
+            "stockSignalsIC": 12097,
+            "rankIC": 0.00086,
+            "rankICCI95": [
+              -0.01709,
+              0.02747
+            ],
+            "icPositiveRatePct": 47.71,
+            "evidence": "inconclusive",
+            "daysQuintiles": 262,
+            "QMeanNetPct": {
+              "1": -0.743,
+              "2": 0.1376,
+              "3": 0.0637,
+              "4": 0.1036,
+              "5": 1.1329
+            },
+            "Q5MinusQ1NetPct": 1.8758,
+            "Q5MinusQ1CI95Pct": [
+              0.998,
+              3.36
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 257,
+            "stockSignalsIC": 11929,
+            "rankIC": -0.01056,
+            "rankICCI95": [
+              -0.07263,
+              0.01891
+            ],
+            "icPositiveRatePct": 49.81,
+            "evidence": "inconclusive",
+            "daysQuintiles": 1,
+            "QMeanNetPct": {
+              "1": 7.2122,
+              "2": 0.3279,
+              "3": 7.8988,
+              "4": 4.9488,
+              "5": 9.0531
+            },
+            "Q5MinusQ1NetPct": 1.8409,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 262,
+            "stockSignalsIC": 12097,
+            "rankIC": -0.02929,
+            "rankICCI95": [
+              -0.08544,
+              0.00724
+            ],
+            "icPositiveRatePct": 44.27,
+            "evidence": "inconclusive",
+            "daysQuintiles": 262,
+            "QMeanNetPct": {
+              "1": -0.105,
+              "2": -0.1324,
+              "3": 0.4654,
+              "4": 0.2971,
+              "5": 0.3226
+            },
+            "Q5MinusQ1NetPct": 0.4276,
+            "Q5MinusQ1CI95Pct": [
+              -1.371,
+              1.406
+            ]
+          }
+        ],
+        "20": [
+          {
+            "factor": "ret20P",
+            "daysIC": 252,
+            "stockSignalsIC": 11757,
+            "rankIC": -0.00813,
+            "rankICCI95": [
+              -0.06082,
+              0.02507
+            ],
+            "icPositiveRatePct": 48.81,
+            "evidence": "inconclusive",
+            "daysQuintiles": 252,
+            "QMeanNetPct": {
+              "1": -0.144,
+              "2": 0.4998,
+              "3": 0.8366,
+              "4": 1.29,
+              "5": 1.8518
+            },
+            "Q5MinusQ1NetPct": 1.9958,
+            "Q5MinusQ1CI95Pct": [
+              -1.139,
+              3.312
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 252,
+            "stockSignalsIC": 11757,
+            "rankIC": 0.00449,
+            "rankICCI95": [
+              -0.05048,
+              0.0352
+            ],
+            "icPositiveRatePct": 53.97,
+            "evidence": "inconclusive",
+            "daysQuintiles": 252,
+            "QMeanNetPct": {
+              "1": -0.1471,
+              "2": 1.0252,
+              "3": 0.7432,
+              "4": 1.3642,
+              "5": 1.4268
+            },
+            "Q5MinusQ1NetPct": 1.5739,
+            "Q5MinusQ1CI95Pct": [
+              -1.434,
+              2.817
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 252,
+            "stockSignalsIC": 11757,
+            "rankIC": -0.07322,
+            "rankICCI95": [
+              -0.10956,
+              -0.03924
+            ],
+            "icPositiveRatePct": 33.73,
+            "evidence": "negative",
+            "daysQuintiles": 252,
+            "QMeanNetPct": {
+              "1": 1.8506,
+              "2": 1.4595,
+              "3": -0.1094,
+              "4": 0.7312,
+              "5": 0.5918
+            },
+            "Q5MinusQ1NetPct": -1.2589,
+            "Q5MinusQ1CI95Pct": [
+              -4.735,
+              0.478
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 252,
+            "stockSignalsIC": 11757,
+            "rankIC": -0.02281,
+            "rankICCI95": [
+              -0.08179,
+              0.00886
+            ],
+            "icPositiveRatePct": 44.44,
+            "evidence": "inconclusive",
+            "daysQuintiles": 252,
+            "QMeanNetPct": {
+              "1": 0.1439,
+              "2": 0.4617,
+              "3": 1.141,
+              "4": 1.3158,
+              "5": 1.3272
+            },
+            "Q5MinusQ1NetPct": 1.1834,
+            "Q5MinusQ1CI95Pct": [
+              -2.905,
+              2.182
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 252,
+            "stockSignalsIC": 11757,
+            "rankIC": -0.03037,
+            "rankICCI95": [
+              -0.05541,
+              0.05965
+            ],
+            "icPositiveRatePct": 43.25,
+            "evidence": "inconclusive",
+            "daysQuintiles": 252,
+            "QMeanNetPct": {
+              "1": 2.7802,
+              "2": 1.5418,
+              "3": 0.5792,
+              "4": -0.0944,
+              "5": -0.1254
+            },
+            "Q5MinusQ1NetPct": -2.9056,
+            "Q5MinusQ1CI95Pct": [
+              -4.631,
+              0.592
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 252,
+            "stockSignalsIC": 11757,
+            "rankIC": 0.00601,
+            "rankICCI95": [
+              -0.01244,
+              0.07618
+            ],
+            "icPositiveRatePct": 50.0,
+            "evidence": "inconclusive",
+            "daysQuintiles": 252,
+            "QMeanNetPct": {
+              "1": -0.0871,
+              "2": 0.8215,
+              "3": 0.7013,
+              "4": 0.2329,
+              "5": 2.5496
+            },
+            "Q5MinusQ1NetPct": 2.6367,
+            "Q5MinusQ1CI95Pct": [
+              1.681,
+              4.737
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 247,
+            "stockSignalsIC": 11589,
+            "rankIC": -0.02523,
+            "rankICCI95": [
+              -0.08388,
+              -0.00996
+            ],
+            "icPositiveRatePct": 44.94,
+            "evidence": "negative",
+            "daysQuintiles": 1,
+            "QMeanNetPct": {
+              "1": 6.5748,
+              "2": 0.8312,
+              "3": 4.9617,
+              "4": 4.7506,
+              "5": 9.9201
+            },
+            "Q5MinusQ1NetPct": 3.3453,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 252,
+            "stockSignalsIC": 11757,
+            "rankIC": -0.02749,
+            "rankICCI95": [
+              -0.0757,
+              0.01383
+            ],
+            "icPositiveRatePct": 44.84,
+            "evidence": "inconclusive",
+            "daysQuintiles": 252,
+            "QMeanNetPct": {
+              "1": 0.6176,
+              "2": 0.3894,
+              "3": 1.1531,
+              "4": 1.4672,
+              "5": 0.8795
+            },
+            "Q5MinusQ1NetPct": 0.2618,
+            "Q5MinusQ1CI95Pct": [
+              -3.028,
+              1.838
+            ]
+          }
+        ]
+      },
+      "validation": {
+        "5": [
+          {
+            "factor": "ret20P",
+            "daysIC": 175,
+            "stockSignalsIC": 7004,
+            "rankIC": -0.01119,
+            "rankICCI95": [
+              -0.07625,
+              0.01416
+            ],
+            "icPositiveRatePct": 46.86,
+            "evidence": "inconclusive",
+            "daysQuintiles": 175,
+            "QMeanNetPct": {
+              "1": -1.3788,
+              "2": -0.7867,
+              "3": -0.538,
+              "4": -0.4736,
+              "5": -1.1947
+            },
+            "Q5MinusQ1NetPct": 0.1841,
+            "Q5MinusQ1CI95Pct": [
+              -0.961,
+              1.167
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 175,
+            "stockSignalsIC": 7004,
+            "rankIC": -0.00829,
+            "rankICCI95": [
+              -0.07459,
+              0.02734
+            ],
+            "icPositiveRatePct": 49.14,
+            "evidence": "inconclusive",
+            "daysQuintiles": 175,
+            "QMeanNetPct": {
+              "1": -1.4028,
+              "2": -0.6166,
+              "3": -0.5075,
+              "4": -0.3678,
+              "5": -1.3922
+            },
+            "Q5MinusQ1NetPct": 0.0106,
+            "Q5MinusQ1CI95Pct": [
+              -0.983,
+              1.053
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 175,
+            "stockSignalsIC": 7004,
+            "rankIC": -0.06404,
+            "rankICCI95": [
+              -0.12575,
+              -0.01056
+            ],
+            "icPositiveRatePct": 38.29,
+            "evidence": "negative",
+            "daysQuintiles": 175,
+            "QMeanNetPct": {
+              "1": -0.8948,
+              "2": -0.4313,
+              "3": -0.6637,
+              "4": -0.5775,
+              "5": -1.8003
+            },
+            "Q5MinusQ1NetPct": -0.9055,
+            "Q5MinusQ1CI95Pct": [
+              -2.299,
+              0.042
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 175,
+            "stockSignalsIC": 7004,
+            "rankIC": -0.02487,
+            "rankICCI95": [
+              -0.06983,
+              -0.00129
+            ],
+            "icPositiveRatePct": 44.0,
+            "evidence": "negative",
+            "daysQuintiles": 175,
+            "QMeanNetPct": {
+              "1": -1.2171,
+              "2": -0.7124,
+              "3": -0.7423,
+              "4": -0.886,
+              "5": -0.902
+            },
+            "Q5MinusQ1NetPct": 0.3151,
+            "Q5MinusQ1CI95Pct": [
+              -0.576,
+              1.003
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 175,
+            "stockSignalsIC": 7004,
+            "rankIC": 0.05466,
+            "rankICCI95": [
+              -0.03722,
+              0.13223
+            ],
+            "icPositiveRatePct": 61.14,
+            "evidence": "inconclusive",
+            "daysQuintiles": 175,
+            "QMeanNetPct": {
+              "1": -1.5986,
+              "2": -0.8681,
+              "3": -0.7861,
+              "4": -0.6024,
+              "5": -0.5689
+            },
+            "Q5MinusQ1NetPct": 1.0297,
+            "Q5MinusQ1CI95Pct": [
+              -0.518,
+              2.193
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 175,
+            "stockSignalsIC": 7004,
+            "rankIC": -0.01587,
+            "rankICCI95": [
+              -0.04682,
+              0.00109
+            ],
+            "icPositiveRatePct": 44.0,
+            "evidence": "inconclusive",
+            "daysQuintiles": 175,
+            "QMeanNetPct": {
+              "1": -1.2358,
+              "2": -0.7688,
+              "3": -0.4632,
+              "4": -1.1645,
+              "5": -0.7735
+            },
+            "Q5MinusQ1NetPct": 0.4622,
+            "Q5MinusQ1CI95Pct": [
+              0.051,
+              1.158
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 171,
+            "stockSignalsIC": 6827,
+            "rankIC": 0.00489,
+            "rankICCI95": [
+              -0.037,
+              0.04852
+            ],
+            "icPositiveRatePct": 49.71,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 175,
+            "stockSignalsIC": 7004,
+            "rankIC": 0.00249,
+            "rankICCI95": [
+              -0.05723,
+              0.03631
+            ],
+            "icPositiveRatePct": 50.29,
+            "evidence": "inconclusive",
+            "daysQuintiles": 175,
+            "QMeanNetPct": {
+              "1": -1.4406,
+              "2": -0.7325,
+              "3": -0.4286,
+              "4": -1.0357,
+              "5": -0.8029
+            },
+            "Q5MinusQ1NetPct": 0.6378,
+            "Q5MinusQ1CI95Pct": [
+              -0.847,
+              1.287
+            ]
+          }
+        ],
+        "10": [
+          {
+            "factor": "ret20P",
+            "daysIC": 170,
+            "stockSignalsIC": 6813,
+            "rankIC": 0.0107,
+            "rankICCI95": [
+              -0.12865,
+              0.07974
+            ],
+            "icPositiveRatePct": 54.71,
+            "evidence": "inconclusive",
+            "daysQuintiles": 170,
+            "QMeanNetPct": {
+              "1": -1.3416,
+              "2": -0.9519,
+              "3": -0.42,
+              "4": 0.1492,
+              "5": -0.8402
+            },
+            "Q5MinusQ1NetPct": 0.5014,
+            "Q5MinusQ1CI95Pct": [
+              -2.6,
+              4.408
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 170,
+            "stockSignalsIC": 6813,
+            "rankIC": 0.01234,
+            "rankICCI95": [
+              -0.13355,
+              0.08009
+            ],
+            "icPositiveRatePct": 55.29,
+            "evidence": "inconclusive",
+            "daysQuintiles": 170,
+            "QMeanNetPct": {
+              "1": -1.4614,
+              "2": -0.6508,
+              "3": -0.5158,
+              "4": 0.1184,
+              "5": -0.9019
+            },
+            "Q5MinusQ1NetPct": 0.5594,
+            "Q5MinusQ1CI95Pct": [
+              -2.398,
+              4.942
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 170,
+            "stockSignalsIC": 6813,
+            "rankIC": -0.05368,
+            "rankICCI95": [
+              -0.12056,
+              0.03829
+            ],
+            "icPositiveRatePct": 41.18,
+            "evidence": "inconclusive",
+            "daysQuintiles": 170,
+            "QMeanNetPct": {
+              "1": -0.9882,
+              "2": 0.2152,
+              "3": -0.3536,
+              "4": -0.6978,
+              "5": -1.6235
+            },
+            "Q5MinusQ1NetPct": -0.6353,
+            "Q5MinusQ1CI95Pct": [
+              -2.95,
+              3.518
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 170,
+            "stockSignalsIC": 6813,
+            "rankIC": -0.00994,
+            "rankICCI95": [
+              -0.12577,
+              0.05436
+            ],
+            "icPositiveRatePct": 48.82,
+            "evidence": "inconclusive",
+            "daysQuintiles": 170,
+            "QMeanNetPct": {
+              "1": -0.7824,
+              "2": -0.7719,
+              "3": -0.8113,
+              "4": -0.7983,
+              "5": -0.389
+            },
+            "Q5MinusQ1NetPct": 0.3934,
+            "Q5MinusQ1CI95Pct": [
+              -2.418,
+              3.896
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 170,
+            "stockSignalsIC": 6813,
+            "rankIC": 0.06712,
+            "rankICCI95": [
+              -0.02789,
+              0.16262
+            ],
+            "icPositiveRatePct": 65.29,
+            "evidence": "inconclusive",
+            "daysQuintiles": 170,
+            "QMeanNetPct": {
+              "1": -1.2703,
+              "2": -0.9964,
+              "3": -0.9825,
+              "4": -0.4633,
+              "5": 0.1876
+            },
+            "Q5MinusQ1NetPct": 1.4579,
+            "Q5MinusQ1CI95Pct": [
+              -0.861,
+              4.864
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 170,
+            "stockSignalsIC": 6813,
+            "rankIC": -0.00375,
+            "rankICCI95": [
+              -0.03086,
+              0.02817
+            ],
+            "icPositiveRatePct": 47.65,
+            "evidence": "inconclusive",
+            "daysQuintiles": 170,
+            "QMeanNetPct": {
+              "1": -0.9988,
+              "2": -0.7161,
+              "3": -0.3898,
+              "4": -0.901,
+              "5": -0.4239
+            },
+            "Q5MinusQ1NetPct": 0.5749,
+            "Q5MinusQ1CI95Pct": [
+              -0.223,
+              2.629
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 166,
+            "stockSignalsIC": 6636,
+            "rankIC": 0.01879,
+            "rankICCI95": [
+              -0.1379,
+              0.09984
+            ],
+            "icPositiveRatePct": 56.63,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 170,
+            "stockSignalsIC": 6813,
+            "rankIC": 0.01396,
+            "rankICCI95": [
+              -0.12691,
+              0.09704
+            ],
+            "icPositiveRatePct": 53.53,
+            "evidence": "inconclusive",
+            "daysQuintiles": 170,
+            "QMeanNetPct": {
+              "1": -1.3124,
+              "2": -0.7876,
+              "3": -0.2729,
+              "4": -0.5708,
+              "5": -0.5563
+            },
+            "Q5MinusQ1NetPct": 0.7561,
+            "Q5MinusQ1CI95Pct": [
+              -2.624,
+              4.657
+            ]
+          }
+        ],
+        "20": [
+          {
+            "factor": "ret20P",
+            "daysIC": 160,
+            "stockSignalsIC": 6295,
+            "rankIC": -0.01265,
+            "rankICCI95": [
+              -0.07345,
+              0.11353
+            ],
+            "icPositiveRatePct": 53.12,
+            "evidence": "inconclusive",
+            "daysQuintiles": 160,
+            "QMeanNetPct": {
+              "1": -0.7181,
+              "2": -0.4493,
+              "3": 1.1377,
+              "4": 0.8337,
+              "5": 0.2086
+            },
+            "Q5MinusQ1NetPct": 0.9267,
+            "Q5MinusQ1CI95Pct": [
+              -1.118,
+              6.807
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 160,
+            "stockSignalsIC": 6295,
+            "rankIC": -0.01484,
+            "rankICCI95": [
+              -0.08369,
+              0.11058
+            ],
+            "icPositiveRatePct": 48.75,
+            "evidence": "inconclusive",
+            "daysQuintiles": 160,
+            "QMeanNetPct": {
+              "1": -0.4884,
+              "2": 0.2594,
+              "3": -0.0184,
+              "4": 1.5658,
+              "5": -0.173
+            },
+            "Q5MinusQ1NetPct": 0.3154,
+            "Q5MinusQ1CI95Pct": [
+              -2.325,
+              4.703
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 160,
+            "stockSignalsIC": 6295,
+            "rankIC": -0.06404,
+            "rankICCI95": [
+              -0.11096,
+              0.03709
+            ],
+            "icPositiveRatePct": 40.0,
+            "evidence": "inconclusive",
+            "daysQuintiles": 160,
+            "QMeanNetPct": {
+              "1": 0.1178,
+              "2": 0.8049,
+              "3": 0.5119,
+              "4": 0.8201,
+              "5": -1.1382
+            },
+            "Q5MinusQ1NetPct": -1.256,
+            "Q5MinusQ1CI95Pct": [
+              -4.202,
+              1.261
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 160,
+            "stockSignalsIC": 6295,
+            "rankIC": -0.02577,
+            "rankICCI95": [
+              -0.08123,
+              0.08713
+            ],
+            "icPositiveRatePct": 48.12,
+            "evidence": "inconclusive",
+            "daysQuintiles": 160,
+            "QMeanNetPct": {
+              "1": -0.1372,
+              "2": -0.3706,
+              "3": 0.8006,
+              "4": 0.1855,
+              "5": 0.4585
+            },
+            "Q5MinusQ1NetPct": 0.5957,
+            "Q5MinusQ1CI95Pct": [
+              -1.52,
+              4.863
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 160,
+            "stockSignalsIC": 6295,
+            "rankIC": 0.10039,
+            "rankICCI95": [
+              -0.02905,
+              0.17455
+            ],
+            "icPositiveRatePct": 65.62,
+            "evidence": "inconclusive",
+            "daysQuintiles": 160,
+            "QMeanNetPct": {
+              "1": -1.1903,
+              "2": -0.7723,
+              "3": -0.3589,
+              "4": 0.7682,
+              "5": 2.3399
+            },
+            "Q5MinusQ1NetPct": 3.5302,
+            "Q5MinusQ1CI95Pct": [
+              -3.278,
+              6.662
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 160,
+            "stockSignalsIC": 6295,
+            "rankIC": 0.00286,
+            "rankICCI95": [
+              -0.01013,
+              0.0775
+            ],
+            "icPositiveRatePct": 53.75,
+            "evidence": "inconclusive",
+            "daysQuintiles": 160,
+            "QMeanNetPct": {
+              "1": -1.1569,
+              "2": 0.6293,
+              "3": 0.8989,
+              "4": 0.5081,
+              "5": 0.1081
+            },
+            "Q5MinusQ1NetPct": 1.2651,
+            "Q5MinusQ1CI95Pct": [
+              0.279,
+              3.683
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 156,
+            "stockSignalsIC": 6118,
+            "rankIC": -0.00407,
+            "rankICCI95": [
+              -0.11514,
+              0.07295
+            ],
+            "icPositiveRatePct": 51.92,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 160,
+            "stockSignalsIC": 6295,
+            "rankIC": 0.0022,
+            "rankICCI95": [
+              -0.08431,
+              0.11517
+            ],
+            "icPositiveRatePct": 53.75,
+            "evidence": "inconclusive",
+            "daysQuintiles": 160,
+            "QMeanNetPct": {
+              "1": -1.2625,
+              "2": -0.0931,
+              "3": 1.3556,
+              "4": 0.7089,
+              "5": 0.2188
+            },
+            "Q5MinusQ1NetPct": 1.4813,
+            "Q5MinusQ1CI95Pct": [
+              -2.287,
+              5.676
+            ]
+          }
+        ]
+      },
+      "holdout": {
+        "5": [
+          {
+            "factor": "ret20P",
+            "daysIC": 148,
+            "stockSignalsIC": 9218,
+            "rankIC": 0.01916,
+            "rankICCI95": [
+              -0.03836,
+              0.04952
+            ],
+            "icPositiveRatePct": 54.73,
+            "evidence": "inconclusive",
+            "daysQuintiles": 148,
+            "QMeanNetPct": {
+              "1": 0.1258,
+              "2": -0.0936,
+              "3": 0.6426,
+              "4": 0.8724,
+              "5": 1.064
+            },
+            "Q5MinusQ1NetPct": 0.9381,
+            "Q5MinusQ1CI95Pct": [
+              -0.432,
+              2.222
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 148,
+            "stockSignalsIC": 9218,
+            "rankIC": 0.01642,
+            "rankICCI95": [
+              -0.05661,
+              0.03767
+            ],
+            "icPositiveRatePct": 51.35,
+            "evidence": "inconclusive",
+            "daysQuintiles": 148,
+            "QMeanNetPct": {
+              "1": 0.0697,
+              "2": 0.4054,
+              "3": 0.5674,
+              "4": 0.6297,
+              "5": 0.9392
+            },
+            "Q5MinusQ1NetPct": 0.8695,
+            "Q5MinusQ1CI95Pct": [
+              -1.286,
+              1.698
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 148,
+            "stockSignalsIC": 9218,
+            "rankIC": 0.01948,
+            "rankICCI95": [
+              -0.09681,
+              0.06416
+            ],
+            "icPositiveRatePct": 59.46,
+            "evidence": "inconclusive",
+            "daysQuintiles": 148,
+            "QMeanNetPct": {
+              "1": -0.2142,
+              "2": 0.285,
+              "3": 0.8909,
+              "4": 1.1218,
+              "5": 0.5862
+            },
+            "Q5MinusQ1NetPct": 0.8004,
+            "Q5MinusQ1CI95Pct": [
+              -2.181,
+              2.526
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 148,
+            "stockSignalsIC": 9218,
+            "rankIC": 0.03277,
+            "rankICCI95": [
+              -0.05302,
+              0.07534
+            ],
+            "icPositiveRatePct": 57.43,
+            "evidence": "inconclusive",
+            "daysQuintiles": 148,
+            "QMeanNetPct": {
+              "1": -0.2682,
+              "2": 0.1528,
+              "3": 0.6923,
+              "4": 0.5636,
+              "5": 1.3694
+            },
+            "Q5MinusQ1NetPct": 1.6376,
+            "Q5MinusQ1CI95Pct": [
+              -0.358,
+              3.061
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 148,
+            "stockSignalsIC": 9218,
+            "rankIC": 0.02988,
+            "rankICCI95": [
+              -0.04119,
+              0.08176
+            ],
+            "icPositiveRatePct": 55.41,
+            "evidence": "inconclusive",
+            "daysQuintiles": 148,
+            "QMeanNetPct": {
+              "1": -0.3374,
+              "2": 0.5594,
+              "3": 0.6355,
+              "4": 1.4964,
+              "5": 0.2708
+            },
+            "Q5MinusQ1NetPct": 0.6082,
+            "Q5MinusQ1CI95Pct": [
+              -1.67,
+              1.924
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 148,
+            "stockSignalsIC": 9218,
+            "rankIC": 0.01395,
+            "rankICCI95": [
+              -0.00217,
+              0.10103
+            ],
+            "icPositiveRatePct": 49.32,
+            "evidence": "inconclusive",
+            "daysQuintiles": 148,
+            "QMeanNetPct": {
+              "1": -0.0685,
+              "2": 0.5542,
+              "3": 0.3875,
+              "4": 0.2295,
+              "5": 1.429
+            },
+            "Q5MinusQ1NetPct": 1.4975,
+            "Q5MinusQ1CI95Pct": [
+              0.973,
+              3.886
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 146,
+            "stockSignalsIC": 9120,
+            "rankIC": 0.02781,
+            "rankICCI95": [
+              -0.10462,
+              0.05006
+            ],
+            "icPositiveRatePct": 56.85,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 148,
+            "stockSignalsIC": 9218,
+            "rankIC": 0.03362,
+            "rankICCI95": [
+              -0.0658,
+              0.07049
+            ],
+            "icPositiveRatePct": 54.05,
+            "evidence": "inconclusive",
+            "daysQuintiles": 148,
+            "QMeanNetPct": {
+              "1": -0.2522,
+              "2": 0.3204,
+              "3": 0.5199,
+              "4": 0.549,
+              "5": 1.4564
+            },
+            "Q5MinusQ1NetPct": 1.7086,
+            "Q5MinusQ1CI95Pct": [
+              -1.077,
+              2.758
+            ]
+          }
+        ],
+        "10": [
+          {
+            "factor": "ret20P",
+            "daysIC": 143,
+            "stockSignalsIC": 8818,
+            "rankIC": 0.01205,
+            "rankICCI95": [
+              -0.08345,
+              0.07521
+            ],
+            "icPositiveRatePct": 50.35,
+            "evidence": "inconclusive",
+            "daysQuintiles": 143,
+            "QMeanNetPct": {
+              "1": 1.9297,
+              "2": 1.3618,
+              "3": 2.9863,
+              "4": 2.4289,
+              "5": 3.4529
+            },
+            "Q5MinusQ1NetPct": 1.5233,
+            "Q5MinusQ1CI95Pct": [
+              -1.911,
+              3.668
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 143,
+            "stockSignalsIC": 8818,
+            "rankIC": -0.00157,
+            "rankICCI95": [
+              -0.10945,
+              0.05366
+            ],
+            "icPositiveRatePct": 51.05,
+            "evidence": "inconclusive",
+            "daysQuintiles": 143,
+            "QMeanNetPct": {
+              "1": 2.1408,
+              "2": 2.6425,
+              "3": 2.0484,
+              "4": 2.6623,
+              "5": 2.8764
+            },
+            "Q5MinusQ1NetPct": 0.7356,
+            "Q5MinusQ1CI95Pct": [
+              -3.984,
+              2.513
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 143,
+            "stockSignalsIC": 8818,
+            "rankIC": 0.01424,
+            "rankICCI95": [
+              -0.11107,
+              0.07796
+            ],
+            "icPositiveRatePct": 52.45,
+            "evidence": "inconclusive",
+            "daysQuintiles": 143,
+            "QMeanNetPct": {
+              "1": 1.6045,
+              "2": 2.0597,
+              "3": 2.3237,
+              "4": 3.2373,
+              "5": 3.0212
+            },
+            "Q5MinusQ1NetPct": 1.4167,
+            "Q5MinusQ1CI95Pct": [
+              -2.899,
+              3.912
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 143,
+            "stockSignalsIC": 8818,
+            "rankIC": 0.01788,
+            "rankICCI95": [
+              -0.09539,
+              0.1005
+            ],
+            "icPositiveRatePct": 54.55,
+            "evidence": "inconclusive",
+            "daysQuintiles": 143,
+            "QMeanNetPct": {
+              "1": 1.4246,
+              "2": 2.1232,
+              "3": 2.8781,
+              "4": 2.2115,
+              "5": 3.5723
+            },
+            "Q5MinusQ1NetPct": 2.1477,
+            "Q5MinusQ1CI95Pct": [
+              -1.432,
+              4.848
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 143,
+            "stockSignalsIC": 8818,
+            "rankIC": 0.06093,
+            "rankICCI95": [
+              -0.00866,
+              0.10051
+            ],
+            "icPositiveRatePct": 60.84,
+            "evidence": "inconclusive",
+            "daysQuintiles": 143,
+            "QMeanNetPct": {
+              "1": 1.2565,
+              "2": 1.7296,
+              "3": 2.4019,
+              "4": 3.93,
+              "5": 2.8948
+            },
+            "Q5MinusQ1NetPct": 1.6383,
+            "Q5MinusQ1CI95Pct": [
+              -1.388,
+              3.413
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 143,
+            "stockSignalsIC": 8818,
+            "rankIC": 0.0347,
+            "rankICCI95": [
+              0.0172,
+              0.06264
+            ],
+            "icPositiveRatePct": 58.74,
+            "evidence": "positive",
+            "daysQuintiles": 143,
+            "QMeanNetPct": {
+              "1": 1.7201,
+              "2": 1.8484,
+              "3": 2.1628,
+              "4": 1.8544,
+              "5": 4.5738
+            },
+            "Q5MinusQ1NetPct": 2.8537,
+            "Q5MinusQ1CI95Pct": [
+              1.955,
+              5.02
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 141,
+            "stockSignalsIC": 8720,
+            "rankIC": 0.01387,
+            "rankICCI95": [
+              -0.09506,
+              0.05965
+            ],
+            "icPositiveRatePct": 53.19,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 143,
+            "stockSignalsIC": 8818,
+            "rankIC": 0.03402,
+            "rankICCI95": [
+              -0.0947,
+              0.09772
+            ],
+            "icPositiveRatePct": 55.94,
+            "evidence": "inconclusive",
+            "daysQuintiles": 143,
+            "QMeanNetPct": {
+              "1": 1.4757,
+              "2": 1.829,
+              "3": 2.6128,
+              "4": 2.2436,
+              "5": 4.0087
+            },
+            "Q5MinusQ1NetPct": 2.533,
+            "Q5MinusQ1CI95Pct": [
+              -2.616,
+              4.642
+            ]
+          }
+        ],
+        "20": [
+          {
+            "factor": "ret20P",
+            "daysIC": 133,
+            "stockSignalsIC": 8352,
+            "rankIC": -0.01954,
+            "rankICCI95": [
+              -0.15121,
+              0.04613
+            ],
+            "icPositiveRatePct": 51.88,
+            "evidence": "inconclusive",
+            "daysQuintiles": 133,
+            "QMeanNetPct": {
+              "1": 4.6589,
+              "2": 3.4814,
+              "3": 5.2181,
+              "4": 5.5309,
+              "5": 5.5985
+            },
+            "Q5MinusQ1NetPct": 0.9396,
+            "Q5MinusQ1CI95Pct": [
+              -3.648,
+              4.296
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 133,
+            "stockSignalsIC": 8352,
+            "rankIC": -0.03124,
+            "rankICCI95": [
+              -0.16048,
+              0.0262
+            ],
+            "icPositiveRatePct": 45.11,
+            "evidence": "inconclusive",
+            "daysQuintiles": 133,
+            "QMeanNetPct": {
+              "1": 4.7419,
+              "2": 5.2049,
+              "3": 4.5086,
+              "4": 5.3888,
+              "5": 4.8974
+            },
+            "Q5MinusQ1NetPct": 0.1555,
+            "Q5MinusQ1CI95Pct": [
+              -6.215,
+              3.246
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 133,
+            "stockSignalsIC": 8352,
+            "rankIC": -0.01937,
+            "rankICCI95": [
+              -0.15462,
+              0.0458
+            ],
+            "icPositiveRatePct": 54.89,
+            "evidence": "inconclusive",
+            "daysQuintiles": 133,
+            "QMeanNetPct": {
+              "1": 2.3473,
+              "2": 6.1831,
+              "3": 7.0759,
+              "4": 4.7871,
+              "5": 4.1379
+            },
+            "Q5MinusQ1NetPct": 1.7907,
+            "Q5MinusQ1CI95Pct": [
+              -4.686,
+              5.01
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 133,
+            "stockSignalsIC": 8352,
+            "rankIC": -0.02114,
+            "rankICCI95": [
+              -0.16787,
+              0.07063
+            ],
+            "icPositiveRatePct": 48.12,
+            "evidence": "inconclusive",
+            "daysQuintiles": 133,
+            "QMeanNetPct": {
+              "1": 3.1416,
+              "2": 5.3417,
+              "3": 5.4085,
+              "4": 4.5123,
+              "5": 5.9369
+            },
+            "Q5MinusQ1NetPct": 2.7953,
+            "Q5MinusQ1CI95Pct": [
+              -3.252,
+              7.169
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 133,
+            "stockSignalsIC": 8352,
+            "rankIC": 0.09797,
+            "rankICCI95": [
+              -0.02064,
+              0.12785
+            ],
+            "icPositiveRatePct": 77.44,
+            "evidence": "inconclusive",
+            "daysQuintiles": 133,
+            "QMeanNetPct": {
+              "1": 1.9117,
+              "2": 3.816,
+              "3": 3.8037,
+              "4": 7.9959,
+              "5": 6.7867
+            },
+            "Q5MinusQ1NetPct": 4.8749,
+            "Q5MinusQ1CI95Pct": [
+              -0.247,
+              6.54
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 133,
+            "stockSignalsIC": 8352,
+            "rankIC": 0.01338,
+            "rankICCI95": [
+              -0.02376,
+              0.05735
+            ],
+            "icPositiveRatePct": 51.13,
+            "evidence": "inconclusive",
+            "daysQuintiles": 133,
+            "QMeanNetPct": {
+              "1": 3.382,
+              "2": 4.4584,
+              "3": 5.221,
+              "4": 4.5501,
+              "5": 6.6716
+            },
+            "Q5MinusQ1NetPct": 3.2896,
+            "Q5MinusQ1CI95Pct": [
+              1.171,
+              7.46
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 131,
+            "stockSignalsIC": 8254,
+            "rankIC": -0.01572,
+            "rankICCI95": [
+              -0.11622,
+              0.0253
+            ],
+            "icPositiveRatePct": 50.38,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 133,
+            "stockSignalsIC": 8352,
+            "rankIC": 0.00847,
+            "rankICCI95": [
+              -0.14485,
+              0.0739
+            ],
+            "icPositiveRatePct": 58.65,
+            "evidence": "inconclusive",
+            "daysQuintiles": 133,
+            "QMeanNetPct": {
+              "1": 3.8145,
+              "2": 3.8569,
+              "3": 5.4628,
+              "4": 4.5038,
+              "5": 6.8035
+            },
+            "Q5MinusQ1NetPct": 2.989,
+            "Q5MinusQ1CI95Pct": [
+              -3.971,
+              6.022
+            ]
+          }
+        ]
+      }
+    },
+    "gate60": {
+      "train": {
+        "5": [
+          {
+            "factor": "ret20P",
+            "daysIC": 155,
+            "stockSignalsIC": 8442,
+            "rankIC": -0.02324,
+            "rankICCI95": [
+              -0.05652,
+              0.02424
+            ],
+            "icPositiveRatePct": 47.74,
+            "evidence": "inconclusive",
+            "daysQuintiles": 155,
+            "QMeanNetPct": {
+              "1": -0.7374,
+              "2": -0.4745,
+              "3": -0.6389,
+              "4": -0.2105,
+              "5": -0.5129
+            },
+            "Q5MinusQ1NetPct": 0.2245,
+            "Q5MinusQ1CI95Pct": [
+              -0.582,
+              1.298
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 155,
+            "stockSignalsIC": 8442,
+            "rankIC": -0.01523,
+            "rankICCI95": [
+              -0.05365,
+              0.03005
+            ],
+            "icPositiveRatePct": 47.1,
+            "evidence": "inconclusive",
+            "daysQuintiles": 155,
+            "QMeanNetPct": {
+              "1": -0.851,
+              "2": -0.3469,
+              "3": -0.2693,
+              "4": -0.5563,
+              "5": -0.5673
+            },
+            "Q5MinusQ1NetPct": 0.2837,
+            "Q5MinusQ1CI95Pct": [
+              -0.732,
+              1.103
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 155,
+            "stockSignalsIC": 8442,
+            "rankIC": -0.05049,
+            "rankICCI95": [
+              -0.07412,
+              0.0142
+            ],
+            "icPositiveRatePct": 40.0,
+            "evidence": "inconclusive",
+            "daysQuintiles": 155,
+            "QMeanNetPct": {
+              "1": -0.1728,
+              "2": -0.7391,
+              "3": -0.7181,
+              "4": -0.2537,
+              "5": -0.6562
+            },
+            "Q5MinusQ1NetPct": -0.4834,
+            "Q5MinusQ1CI95Pct": [
+              -1.129,
+              1.13
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 155,
+            "stockSignalsIC": 8442,
+            "rankIC": -0.03535,
+            "rankICCI95": [
+              -0.07189,
+              0.02551
+            ],
+            "icPositiveRatePct": 46.45,
+            "evidence": "inconclusive",
+            "daysQuintiles": 155,
+            "QMeanNetPct": {
+              "1": -0.8409,
+              "2": -0.1894,
+              "3": -0.5693,
+              "4": -0.5747,
+              "5": -0.4704
+            },
+            "Q5MinusQ1NetPct": 0.3705,
+            "Q5MinusQ1CI95Pct": [
+              -0.415,
+              1.58
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 155,
+            "stockSignalsIC": 8442,
+            "rankIC": -0.0194,
+            "rankICCI95": [
+              -0.03827,
+              0.07192
+            ],
+            "icPositiveRatePct": 46.45,
+            "evidence": "inconclusive",
+            "daysQuintiles": 155,
+            "QMeanNetPct": {
+              "1": -0.0898,
+              "2": -0.2145,
+              "3": -0.7399,
+              "4": -0.5405,
+              "5": -0.9711
+            },
+            "Q5MinusQ1NetPct": -0.8813,
+            "Q5MinusQ1CI95Pct": [
+              -1.728,
+              0.669
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 155,
+            "stockSignalsIC": 8442,
+            "rankIC": 0.00288,
+            "rankICCI95": [
+              -0.03402,
+              0.05337
+            ],
+            "icPositiveRatePct": 52.26,
+            "evidence": "inconclusive",
+            "daysQuintiles": 155,
+            "QMeanNetPct": {
+              "1": -1.2881,
+              "2": -0.5708,
+              "3": -0.0396,
+              "4": -0.4607,
+              "5": -0.251
+            },
+            "Q5MinusQ1NetPct": 1.0371,
+            "Q5MinusQ1CI95Pct": [
+              -0.125,
+              2.808
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 151,
+            "stockSignalsIC": 8298,
+            "rankIC": -0.01195,
+            "rankICCI95": [
+              -0.05712,
+              0.03174
+            ],
+            "icPositiveRatePct": 54.3,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 155,
+            "stockSignalsIC": 8442,
+            "rankIC": -0.02764,
+            "rankICCI95": [
+              -0.05594,
+              0.04626
+            ],
+            "icPositiveRatePct": 45.16,
+            "evidence": "inconclusive",
+            "daysQuintiles": 155,
+            "QMeanNetPct": {
+              "1": -0.7091,
+              "2": -0.7151,
+              "3": -0.1341,
+              "4": -0.5914,
+              "5": -0.466
+            },
+            "Q5MinusQ1NetPct": 0.2431,
+            "Q5MinusQ1CI95Pct": [
+              -0.842,
+              1.282
+            ]
+          }
+        ],
+        "10": [
+          {
+            "factor": "ret20P",
+            "daysIC": 152,
+            "stockSignalsIC": 8330,
+            "rankIC": -0.02834,
+            "rankICCI95": [
+              -0.09068,
+              -0.00022
+            ],
+            "icPositiveRatePct": 44.08,
+            "evidence": "negative",
+            "daysQuintiles": 152,
+            "QMeanNetPct": {
+              "1": -0.1648,
+              "2": -0.0089,
+              "3": -0.2884,
+              "4": 0.2774,
+              "5": 1.0314
+            },
+            "Q5MinusQ1NetPct": 1.1962,
+            "Q5MinusQ1CI95Pct": [
+              -1.206,
+              2.35
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 152,
+            "stockSignalsIC": 8330,
+            "rankIC": -0.00741,
+            "rankICCI95": [
+              -0.07953,
+              0.02661
+            ],
+            "icPositiveRatePct": 48.68,
+            "evidence": "inconclusive",
+            "daysQuintiles": 152,
+            "QMeanNetPct": {
+              "1": -0.5269,
+              "2": 0.2349,
+              "3": 0.184,
+              "4": 0.1222,
+              "5": 0.7685
+            },
+            "Q5MinusQ1NetPct": 1.2954,
+            "Q5MinusQ1CI95Pct": [
+              -1.765,
+              2.348
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 152,
+            "stockSignalsIC": 8330,
+            "rankIC": -0.04991,
+            "rankICCI95": [
+              -0.10102,
+              -0.0183
+            ],
+            "icPositiveRatePct": 38.16,
+            "evidence": "negative",
+            "daysQuintiles": 152,
+            "QMeanNetPct": {
+              "1": 0.5327,
+              "2": -0.0085,
+              "3": -0.5046,
+              "4": 0.4094,
+              "5": 0.4666
+            },
+            "Q5MinusQ1NetPct": -0.0662,
+            "Q5MinusQ1CI95Pct": [
+              -2.584,
+              0.74
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 152,
+            "stockSignalsIC": 8330,
+            "rankIC": -0.03734,
+            "rankICCI95": [
+              -0.10713,
+              -0.00256
+            ],
+            "icPositiveRatePct": 44.74,
+            "evidence": "negative",
+            "daysQuintiles": 152,
+            "QMeanNetPct": {
+              "1": -0.3512,
+              "2": 0.3737,
+              "3": 0.0068,
+              "4": -0.3281,
+              "5": 1.0198
+            },
+            "Q5MinusQ1NetPct": 1.371,
+            "Q5MinusQ1CI95Pct": [
+              -1.016,
+              2.51
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 152,
+            "stockSignalsIC": 8330,
+            "rankIC": -0.04026,
+            "rankICCI95": [
+              -0.08081,
+              0.01319
+            ],
+            "icPositiveRatePct": 42.11,
+            "evidence": "inconclusive",
+            "daysQuintiles": 152,
+            "QMeanNetPct": {
+              "1": 1.4852,
+              "2": 0.987,
+              "3": -0.3631,
+              "4": 0.0163,
+              "5": -1.2328
+            },
+            "Q5MinusQ1NetPct": -2.718,
+            "Q5MinusQ1CI95Pct": [
+              -4.756,
+              -0.739
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 152,
+            "stockSignalsIC": 8330,
+            "rankIC": -0.01338,
+            "rankICCI95": [
+              -0.04243,
+              0.00199
+            ],
+            "icPositiveRatePct": 48.03,
+            "evidence": "inconclusive",
+            "daysQuintiles": 152,
+            "QMeanNetPct": {
+              "1": -0.7873,
+              "2": 0.051,
+              "3": 0.6871,
+              "4": 0.2184,
+              "5": 0.5696
+            },
+            "Q5MinusQ1NetPct": 1.357,
+            "Q5MinusQ1CI95Pct": [
+              0.211,
+              2.635
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 148,
+            "stockSignalsIC": 8186,
+            "rankIC": -0.00343,
+            "rankICCI95": [
+              -0.07988,
+              0.02371
+            ],
+            "icPositiveRatePct": 52.7,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 152,
+            "stockSignalsIC": 8330,
+            "rankIC": -0.03641,
+            "rankICCI95": [
+              -0.09455,
+              -0.01642
+            ],
+            "icPositiveRatePct": 42.11,
+            "evidence": "negative",
+            "daysQuintiles": 152,
+            "QMeanNetPct": {
+              "1": 0.0867,
+              "2": -0.0713,
+              "3": 0.2711,
+              "4": -0.1279,
+              "5": 0.6239
+            },
+            "Q5MinusQ1NetPct": 0.5372,
+            "Q5MinusQ1CI95Pct": [
+              -2.593,
+              1.168
+            ]
+          }
+        ],
+        "20": [
+          {
+            "factor": "ret20P",
+            "daysIC": 146,
+            "stockSignalsIC": 8099,
+            "rankIC": -0.02037,
+            "rankICCI95": [
+              -0.0897,
+              0.00926
+            ],
+            "icPositiveRatePct": 47.26,
+            "evidence": "inconclusive",
+            "daysQuintiles": 146,
+            "QMeanNetPct": {
+              "1": 0.3503,
+              "2": 0.6139,
+              "3": 0.2539,
+              "4": 1.2416,
+              "5": 1.9722
+            },
+            "Q5MinusQ1NetPct": 1.6219,
+            "Q5MinusQ1CI95Pct": [
+              -2.65,
+              2.957
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 146,
+            "stockSignalsIC": 8099,
+            "rankIC": -0.0059,
+            "rankICCI95": [
+              -0.09431,
+              0.02668
+            ],
+            "icPositiveRatePct": 52.05,
+            "evidence": "inconclusive",
+            "daysQuintiles": 146,
+            "QMeanNetPct": {
+              "1": 0.0703,
+              "2": 0.9582,
+              "3": 0.7292,
+              "4": 1.0142,
+              "5": 1.5829
+            },
+            "Q5MinusQ1NetPct": 1.5125,
+            "Q5MinusQ1CI95Pct": [
+              -3.502,
+              2.525
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 146,
+            "stockSignalsIC": 8099,
+            "rankIC": -0.07117,
+            "rankICCI95": [
+              -0.12066,
+              -0.04027
+            ],
+            "icPositiveRatePct": 30.82,
+            "evidence": "negative",
+            "daysQuintiles": 146,
+            "QMeanNetPct": {
+              "1": 2.2015,
+              "2": 0.6502,
+              "3": -0.0039,
+              "4": 0.5042,
+              "5": 1.1908
+            },
+            "Q5MinusQ1NetPct": -1.0107,
+            "Q5MinusQ1CI95Pct": [
+              -5.595,
+              -0.028
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 146,
+            "stockSignalsIC": 8099,
+            "rankIC": -0.03792,
+            "rankICCI95": [
+              -0.10778,
+              0.00133
+            ],
+            "icPositiveRatePct": 43.15,
+            "evidence": "inconclusive",
+            "daysQuintiles": 146,
+            "QMeanNetPct": {
+              "1": 0.194,
+              "2": 1.2376,
+              "3": 0.7056,
+              "4": 0.6353,
+              "5": 1.5475
+            },
+            "Q5MinusQ1NetPct": 1.3535,
+            "Q5MinusQ1CI95Pct": [
+              -3.645,
+              2.712
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 146,
+            "stockSignalsIC": 8099,
+            "rankIC": -0.04609,
+            "rankICCI95": [
+              -0.06062,
+              0.05068
+            ],
+            "icPositiveRatePct": 39.73,
+            "evidence": "inconclusive",
+            "daysQuintiles": 146,
+            "QMeanNetPct": {
+              "1": 2.6359,
+              "2": 2.5401,
+              "3": 0.0437,
+              "4": 0.1361,
+              "5": -0.8076
+            },
+            "Q5MinusQ1NetPct": -3.4434,
+            "Q5MinusQ1CI95Pct": [
+              -4.46,
+              1.045
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 146,
+            "stockSignalsIC": 8099,
+            "rankIC": -0.0115,
+            "rankICCI95": [
+              -0.04468,
+              0.03237
+            ],
+            "icPositiveRatePct": 47.95,
+            "evidence": "inconclusive",
+            "daysQuintiles": 146,
+            "QMeanNetPct": {
+              "1": -0.0696,
+              "2": 1.0601,
+              "3": 1.44,
+              "4": 0.3666,
+              "5": 1.5451
+            },
+            "Q5MinusQ1NetPct": 1.6147,
+            "Q5MinusQ1CI95Pct": [
+              0.186,
+              3.635
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 142,
+            "stockSignalsIC": 7955,
+            "rankIC": -0.02501,
+            "rankICCI95": [
+              -0.09873,
+              -0.0021
+            ],
+            "icPositiveRatePct": 43.66,
+            "evidence": "negative",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 146,
+            "stockSignalsIC": 8099,
+            "rankIC": -0.03716,
+            "rankICCI95": [
+              -0.10882,
+              0.00359
+            ],
+            "icPositiveRatePct": 42.47,
+            "evidence": "inconclusive",
+            "daysQuintiles": 146,
+            "QMeanNetPct": {
+              "1": 0.6901,
+              "2": 0.3264,
+              "3": 1.3203,
+              "4": 1.2765,
+              "5": 0.8071
+            },
+            "Q5MinusQ1NetPct": 0.117,
+            "Q5MinusQ1CI95Pct": [
+              -4.579,
+              1.507
+            ]
+          }
+        ]
+      },
+      "validation": {
+        "5": [
+          {
+            "factor": "ret20P",
+            "daysIC": 101,
+            "stockSignalsIC": 4541,
+            "rankIC": 0.001,
+            "rankICCI95": [
+              -0.09222,
+              0.03631
+            ],
+            "icPositiveRatePct": 52.48,
+            "evidence": "inconclusive",
+            "daysQuintiles": 101,
+            "QMeanNetPct": {
+              "1": -1.0735,
+              "2": -0.496,
+              "3": -0.3987,
+              "4": 0.0734,
+              "5": -0.6215
+            },
+            "Q5MinusQ1NetPct": 0.4519,
+            "Q5MinusQ1CI95Pct": [
+              -0.889,
+              1.402
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 101,
+            "stockSignalsIC": 4541,
+            "rankIC": 0.00421,
+            "rankICCI95": [
+              -0.06831,
+              0.04654
+            ],
+            "icPositiveRatePct": 53.47,
+            "evidence": "inconclusive",
+            "daysQuintiles": 101,
+            "QMeanNetPct": {
+              "1": -1.0367,
+              "2": -0.2441,
+              "3": -0.4746,
+              "4": 0.0048,
+              "5": -0.7274
+            },
+            "Q5MinusQ1NetPct": 0.3093,
+            "Q5MinusQ1CI95Pct": [
+              -0.805,
+              1.385
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 101,
+            "stockSignalsIC": 4541,
+            "rankIC": -0.07122,
+            "rankICCI95": [
+              -0.15115,
+              0.00383
+            ],
+            "icPositiveRatePct": 37.62,
+            "evidence": "inconclusive",
+            "daysQuintiles": 101,
+            "QMeanNetPct": {
+              "1": -0.4701,
+              "2": 0.147,
+              "3": -0.4486,
+              "4": -0.1559,
+              "5": -1.5524
+            },
+            "Q5MinusQ1NetPct": -1.0823,
+            "Q5MinusQ1CI95Pct": [
+              -2.799,
+              0.531
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 101,
+            "stockSignalsIC": 4541,
+            "rankIC": -0.01367,
+            "rankICCI95": [
+              -0.07651,
+              0.01975
+            ],
+            "icPositiveRatePct": 48.51,
+            "evidence": "inconclusive",
+            "daysQuintiles": 101,
+            "QMeanNetPct": {
+              "1": -0.6307,
+              "2": -0.5373,
+              "3": -0.3862,
+              "4": -0.6357,
+              "5": -0.3034
+            },
+            "Q5MinusQ1NetPct": 0.3273,
+            "Q5MinusQ1CI95Pct": [
+              -0.438,
+              1.179
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 101,
+            "stockSignalsIC": 4541,
+            "rankIC": 0.07714,
+            "rankICCI95": [
+              -0.02752,
+              0.15803
+            ],
+            "icPositiveRatePct": 62.38,
+            "evidence": "inconclusive",
+            "daysQuintiles": 101,
+            "QMeanNetPct": {
+              "1": -1.2613,
+              "2": -0.8778,
+              "3": -0.4339,
+              "4": -0.2716,
+              "5": 0.3009
+            },
+            "Q5MinusQ1NetPct": 1.5622,
+            "Q5MinusQ1CI95Pct": [
+              -0.546,
+              2.641
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 101,
+            "stockSignalsIC": 4541,
+            "rankIC": 0.0009,
+            "rankICCI95": [
+              -0.04258,
+              0.01613
+            ],
+            "icPositiveRatePct": 47.52,
+            "evidence": "inconclusive",
+            "daysQuintiles": 101,
+            "QMeanNetPct": {
+              "1": -0.9365,
+              "2": -0.5089,
+              "3": -0.263,
+              "4": -0.6949,
+              "5": -0.1274
+            },
+            "Q5MinusQ1NetPct": 0.8091,
+            "Q5MinusQ1CI95Pct": [
+              0.178,
+              1.537
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 97,
+            "stockSignalsIC": 4364,
+            "rankIC": 0.02337,
+            "rankICCI95": [
+              -0.02119,
+              0.06374
+            ],
+            "icPositiveRatePct": 55.67,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 101,
+            "stockSignalsIC": 4541,
+            "rankIC": 0.01494,
+            "rankICCI95": [
+              -0.04622,
+              0.0608
+            ],
+            "icPositiveRatePct": 54.46,
+            "evidence": "inconclusive",
+            "daysQuintiles": 101,
+            "QMeanNetPct": {
+              "1": -1.1076,
+              "2": -0.4653,
+              "3": -0.065,
+              "4": -0.6103,
+              "5": -0.2279
+            },
+            "Q5MinusQ1NetPct": 0.8797,
+            "Q5MinusQ1CI95Pct": [
+              -0.571,
+              1.899
+            ]
+          }
+        ],
+        "10": [
+          {
+            "factor": "ret20P",
+            "daysIC": 98,
+            "stockSignalsIC": 4427,
+            "rankIC": 0.0204,
+            "rankICCI95": [
+              -0.14334,
+              0.10317
+            ],
+            "icPositiveRatePct": 60.2,
+            "evidence": "inconclusive",
+            "daysQuintiles": 98,
+            "QMeanNetPct": {
+              "1": 0.3145,
+              "2": -0.1883,
+              "3": -0.0311,
+              "4": 1.3026,
+              "5": 0.5712
+            },
+            "Q5MinusQ1NetPct": 0.2566,
+            "Q5MinusQ1CI95Pct": [
+              -3.007,
+              4.149
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 98,
+            "stockSignalsIC": 4427,
+            "rankIC": 0.01697,
+            "rankICCI95": [
+              -0.13799,
+              0.09658
+            ],
+            "icPositiveRatePct": 61.22,
+            "evidence": "inconclusive",
+            "daysQuintiles": 98,
+            "QMeanNetPct": {
+              "1": 0.1208,
+              "2": 0.3866,
+              "3": 0.0497,
+              "4": 0.9105,
+              "5": 0.5058
+            },
+            "Q5MinusQ1NetPct": 0.385,
+            "Q5MinusQ1CI95Pct": [
+              -2.433,
+              5.253
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 98,
+            "stockSignalsIC": 4427,
+            "rankIC": -0.04145,
+            "rankICCI95": [
+              -0.09873,
+              0.06602
+            ],
+            "icPositiveRatePct": 43.88,
+            "evidence": "inconclusive",
+            "daysQuintiles": 98,
+            "QMeanNetPct": {
+              "1": -0.0162,
+              "2": 1.5869,
+              "3": 0.6038,
+              "4": 0.7783,
+              "5": -0.89
+            },
+            "Q5MinusQ1NetPct": -0.8738,
+            "Q5MinusQ1CI95Pct": [
+              -2.994,
+              3.852
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 98,
+            "stockSignalsIC": 4427,
+            "rankIC": 0.00627,
+            "rankICCI95": [
+              -0.13359,
+              0.08481
+            ],
+            "icPositiveRatePct": 56.12,
+            "evidence": "inconclusive",
+            "daysQuintiles": 98,
+            "QMeanNetPct": {
+              "1": 0.8553,
+              "2": -0.2598,
+              "3": 0.3994,
+              "4": -0.1005,
+              "5": 1.1058
+            },
+            "Q5MinusQ1NetPct": 0.2504,
+            "Q5MinusQ1CI95Pct": [
+              -2.596,
+              3.919
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 98,
+            "stockSignalsIC": 4427,
+            "rankIC": 0.1127,
+            "rankICCI95": [
+              -0.02552,
+              0.21371
+            ],
+            "icPositiveRatePct": 70.41,
+            "evidence": "inconclusive",
+            "daysQuintiles": 98,
+            "QMeanNetPct": {
+              "1": -0.3333,
+              "2": -0.7877,
+              "3": 0.2565,
+              "4": 0.9007,
+              "5": 1.8431
+            },
+            "Q5MinusQ1NetPct": 2.1764,
+            "Q5MinusQ1CI95Pct": [
+              -1.265,
+              5.129
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 98,
+            "stockSignalsIC": 4427,
+            "rankIC": 0.00287,
+            "rankICCI95": [
+              -0.06518,
+              0.04139
+            ],
+            "icPositiveRatePct": 50.0,
+            "evidence": "inconclusive",
+            "daysQuintiles": 98,
+            "QMeanNetPct": {
+              "1": 0.4705,
+              "2": 0.0326,
+              "3": 0.3908,
+              "4": 0.0697,
+              "5": 1.0501
+            },
+            "Q5MinusQ1NetPct": 0.5796,
+            "Q5MinusQ1CI95Pct": [
+              -0.844,
+              2.793
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 94,
+            "stockSignalsIC": 4250,
+            "rankIC": 0.04329,
+            "rankICCI95": [
+              -0.1269,
+              0.12199
+            ],
+            "icPositiveRatePct": 67.02,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 98,
+            "stockSignalsIC": 4427,
+            "rankIC": 0.03736,
+            "rankICCI95": [
+              -0.1228,
+              0.14086
+            ],
+            "icPositiveRatePct": 62.24,
+            "evidence": "inconclusive",
+            "daysQuintiles": 98,
+            "QMeanNetPct": {
+              "1": 0.0853,
+              "2": -0.1723,
+              "3": 0.5158,
+              "4": 0.88,
+              "5": 0.7304
+            },
+            "Q5MinusQ1NetPct": 0.6451,
+            "Q5MinusQ1CI95Pct": [
+              -2.633,
+              4.744
+            ]
+          }
+        ],
+        "20": [
+          {
+            "factor": "ret20P",
+            "daysIC": 93,
+            "stockSignalsIC": 4179,
+            "rankIC": -0.00757,
+            "rankICCI95": [
+              -0.07955,
+              0.12877
+            ],
+            "icPositiveRatePct": 59.14,
+            "evidence": "inconclusive",
+            "daysQuintiles": 93,
+            "QMeanNetPct": {
+              "1": 2.0729,
+              "2": 1.1481,
+              "3": 1.4242,
+              "4": 2.3072,
+              "5": 2.8052
+            },
+            "Q5MinusQ1NetPct": 0.7323,
+            "Q5MinusQ1CI95Pct": [
+              -1.678,
+              5.798
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 93,
+            "stockSignalsIC": 4179,
+            "rankIC": -0.01146,
+            "rankICCI95": [
+              -0.08012,
+              0.13818
+            ],
+            "icPositiveRatePct": 52.69,
+            "evidence": "inconclusive",
+            "daysQuintiles": 93,
+            "QMeanNetPct": {
+              "1": 2.1665,
+              "2": 1.48,
+              "3": 0.953,
+              "4": 2.6865,
+              "5": 2.5367
+            },
+            "Q5MinusQ1NetPct": 0.3702,
+            "Q5MinusQ1CI95Pct": [
+              -2.297,
+              3.704
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 93,
+            "stockSignalsIC": 4179,
+            "rankIC": -0.07286,
+            "rankICCI95": [
+              -0.1131,
+              0.04671
+            ],
+            "icPositiveRatePct": 36.56,
+            "evidence": "inconclusive",
+            "daysQuintiles": 93,
+            "QMeanNetPct": {
+              "1": 1.5728,
+              "2": 3.5034,
+              "3": 2.3727,
+              "4": 2.6479,
+              "5": -0.0758
+            },
+            "Q5MinusQ1NetPct": -1.6486,
+            "Q5MinusQ1CI95Pct": [
+              -6.448,
+              1.933
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 93,
+            "stockSignalsIC": 4179,
+            "rankIC": -0.02233,
+            "rankICCI95": [
+              -0.07309,
+              0.12224
+            ],
+            "icPositiveRatePct": 52.69,
+            "evidence": "inconclusive",
+            "daysQuintiles": 93,
+            "QMeanNetPct": {
+              "1": 2.3751,
+              "2": 0.8654,
+              "3": 2.472,
+              "4": 1.8691,
+              "5": 2.3768
+            },
+            "Q5MinusQ1NetPct": 0.0017,
+            "Q5MinusQ1CI95Pct": [
+              -1.589,
+              5.799
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 93,
+            "stockSignalsIC": 4179,
+            "rankIC": 0.16332,
+            "rankICCI95": [
+              -0.036,
+              0.22395
+            ],
+            "icPositiveRatePct": 75.27,
+            "evidence": "inconclusive",
+            "daysQuintiles": 93,
+            "QMeanNetPct": {
+              "1": -0.1658,
+              "2": -1.1957,
+              "3": 1.4907,
+              "4": 3.345,
+              "5": 6.0229
+            },
+            "Q5MinusQ1NetPct": 6.1887,
+            "Q5MinusQ1CI95Pct": [
+              -3.852,
+              6.858
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 93,
+            "stockSignalsIC": 4179,
+            "rankIC": 0.00541,
+            "rankICCI95": [
+              -0.02917,
+              0.12529
+            ],
+            "icPositiveRatePct": 54.84,
+            "evidence": "inconclusive",
+            "daysQuintiles": 93,
+            "QMeanNetPct": {
+              "1": 0.8659,
+              "2": 2.1286,
+              "3": 2.7776,
+              "4": 2.1048,
+              "5": 2.0665
+            },
+            "Q5MinusQ1NetPct": 1.2006,
+            "Q5MinusQ1CI95Pct": [
+              -0.164,
+              5.821
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 89,
+            "stockSignalsIC": 4002,
+            "rankIC": 0.01913,
+            "rankICCI95": [
+              -0.1148,
+              0.07882
+            ],
+            "icPositiveRatePct": 57.3,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 93,
+            "stockSignalsIC": 4179,
+            "rankIC": 0.02151,
+            "rankICCI95": [
+              -0.07723,
+              0.1528
+            ],
+            "icPositiveRatePct": 59.14,
+            "evidence": "inconclusive",
+            "daysQuintiles": 93,
+            "QMeanNetPct": {
+              "1": 1.3654,
+              "2": 0.6602,
+              "3": 2.8439,
+              "4": 2.3477,
+              "5": 2.7676
+            },
+            "Q5MinusQ1NetPct": 1.4022,
+            "Q5MinusQ1CI95Pct": [
+              -2.414,
+              5.34
+            ]
+          }
+        ]
+      },
+      "holdout": {
+        "5": [
+          {
+            "factor": "ret20P",
+            "daysIC": 84,
+            "stockSignalsIC": 6458,
+            "rankIC": 0.00492,
+            "rankICCI95": [
+              -0.0362,
+              0.02709
+            ],
+            "icPositiveRatePct": 51.19,
+            "evidence": "inconclusive",
+            "daysQuintiles": 84,
+            "QMeanNetPct": {
+              "1": 0.5964,
+              "2": 0.2969,
+              "3": 0.3778,
+              "4": 0.8059,
+              "5": 1.239
+            },
+            "Q5MinusQ1NetPct": 0.6427,
+            "Q5MinusQ1CI95Pct": [
+              -0.366,
+              1.608
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 84,
+            "stockSignalsIC": 6458,
+            "rankIC": 0.00714,
+            "rankICCI95": [
+              -0.04105,
+              0.02003
+            ],
+            "icPositiveRatePct": 48.81,
+            "evidence": "inconclusive",
+            "daysQuintiles": 84,
+            "QMeanNetPct": {
+              "1": 0.4604,
+              "2": 0.8696,
+              "3": 0.142,
+              "4": 0.9035,
+              "5": 1.0155
+            },
+            "Q5MinusQ1NetPct": 0.5551,
+            "Q5MinusQ1CI95Pct": [
+              -0.75,
+              1.171
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 84,
+            "stockSignalsIC": 6458,
+            "rankIC": 0.0221,
+            "rankICCI95": [
+              -0.06476,
+              0.05026
+            ],
+            "icPositiveRatePct": 55.95,
+            "evidence": "inconclusive",
+            "daysQuintiles": 84,
+            "QMeanNetPct": {
+              "1": -0.7127,
+              "2": 0.6894,
+              "3": 1.565,
+              "4": 1.2114,
+              "5": 0.5816
+            },
+            "Q5MinusQ1NetPct": 1.2943,
+            "Q5MinusQ1CI95Pct": [
+              -1.026,
+              3.202
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 84,
+            "stockSignalsIC": 6458,
+            "rankIC": 0.02828,
+            "rankICCI95": [
+              -0.03993,
+              0.05081
+            ],
+            "icPositiveRatePct": 52.38,
+            "evidence": "inconclusive",
+            "daysQuintiles": 84,
+            "QMeanNetPct": {
+              "1": 0.0957,
+              "2": 0.4632,
+              "3": 0.5451,
+              "4": 0.6296,
+              "5": 1.5689
+            },
+            "Q5MinusQ1NetPct": 1.4731,
+            "Q5MinusQ1CI95Pct": [
+              0.359,
+              2.45
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 84,
+            "stockSignalsIC": 6458,
+            "rankIC": 0.00656,
+            "rankICCI95": [
+              -0.0564,
+              0.07205
+            ],
+            "icPositiveRatePct": 52.38,
+            "evidence": "inconclusive",
+            "daysQuintiles": 84,
+            "QMeanNetPct": {
+              "1": 0.4599,
+              "2": 0.7173,
+              "3": 0.714,
+              "4": 1.6212,
+              "5": -0.0297
+            },
+            "Q5MinusQ1NetPct": -0.4896,
+            "Q5MinusQ1CI95Pct": [
+              -2.562,
+              1.217
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 84,
+            "stockSignalsIC": 6458,
+            "rankIC": 2e-05,
+            "rankICCI95": [
+              -0.04443,
+              0.09072
+            ],
+            "icPositiveRatePct": 50.0,
+            "evidence": "inconclusive",
+            "daysQuintiles": 84,
+            "QMeanNetPct": {
+              "1": 0.3172,
+              "2": 0.8346,
+              "3": 0.6021,
+              "4": 0.5876,
+              "5": 0.9752
+            },
+            "Q5MinusQ1NetPct": 0.658,
+            "Q5MinusQ1CI95Pct": [
+              -0.761,
+              3.637
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 82,
+            "stockSignalsIC": 6360,
+            "rankIC": 0.01917,
+            "rankICCI95": [
+              -0.03523,
+              0.04997
+            ],
+            "icPositiveRatePct": 54.88,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 84,
+            "stockSignalsIC": 6458,
+            "rankIC": 0.01852,
+            "rankICCI95": [
+              -0.04172,
+              0.03936
+            ],
+            "icPositiveRatePct": 47.62,
+            "evidence": "inconclusive",
+            "daysQuintiles": 84,
+            "QMeanNetPct": {
+              "1": 0.1776,
+              "2": 0.7045,
+              "3": 0.7096,
+              "4": 0.1594,
+              "5": 1.5107
+            },
+            "Q5MinusQ1NetPct": 1.3331,
+            "Q5MinusQ1CI95Pct": [
+              0.114,
+              1.878
+            ]
+          }
+        ],
+        "10": [
+          {
+            "factor": "ret20P",
+            "daysIC": 81,
+            "stockSignalsIC": 6197,
+            "rankIC": 0.00929,
+            "rankICCI95": [
+              -0.09067,
+              0.05189
+            ],
+            "icPositiveRatePct": 45.68,
+            "evidence": "inconclusive",
+            "daysQuintiles": 81,
+            "QMeanNetPct": {
+              "1": 1.78,
+              "2": 1.8277,
+              "3": 2.8081,
+              "4": 2.1323,
+              "5": 3.1583
+            },
+            "Q5MinusQ1NetPct": 1.3783,
+            "Q5MinusQ1CI95Pct": [
+              -2.555,
+              2.89
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 81,
+            "stockSignalsIC": 6197,
+            "rankIC": 0.0071,
+            "rankICCI95": [
+              -0.09766,
+              0.0507
+            ],
+            "icPositiveRatePct": 49.38,
+            "evidence": "inconclusive",
+            "daysQuintiles": 81,
+            "QMeanNetPct": {
+              "1": 1.9596,
+              "2": 2.9465,
+              "3": 1.7477,
+              "4": 2.3895,
+              "5": 2.7744
+            },
+            "Q5MinusQ1NetPct": 0.8148,
+            "Q5MinusQ1CI95Pct": [
+              -3.648,
+              2.521
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 81,
+            "stockSignalsIC": 6197,
+            "rankIC": 0.01121,
+            "rankICCI95": [
+              -0.11959,
+              0.06913
+            ],
+            "icPositiveRatePct": 48.15,
+            "evidence": "inconclusive",
+            "daysQuintiles": 81,
+            "QMeanNetPct": {
+              "1": 1.0552,
+              "2": 2.7462,
+              "3": 3.2571,
+              "4": 2.6827,
+              "5": 2.0104
+            },
+            "Q5MinusQ1NetPct": 0.9552,
+            "Q5MinusQ1CI95Pct": [
+              -3.482,
+              3.644
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 81,
+            "stockSignalsIC": 6197,
+            "rankIC": 0.02572,
+            "rankICCI95": [
+              -0.07819,
+              0.07098
+            ],
+            "icPositiveRatePct": 51.85,
+            "evidence": "inconclusive",
+            "daysQuintiles": 81,
+            "QMeanNetPct": {
+              "1": 1.2341,
+              "2": 2.287,
+              "3": 2.414,
+              "4": 2.6329,
+              "5": 3.1819
+            },
+            "Q5MinusQ1NetPct": 1.9478,
+            "Q5MinusQ1CI95Pct": [
+              -1.315,
+              3.691
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 81,
+            "stockSignalsIC": 6197,
+            "rankIC": 0.04384,
+            "rankICCI95": [
+              -0.02965,
+              0.08971
+            ],
+            "icPositiveRatePct": 60.49,
+            "evidence": "inconclusive",
+            "daysQuintiles": 81,
+            "QMeanNetPct": {
+              "1": 2.077,
+              "2": 1.8502,
+              "3": 2.2183,
+              "4": 3.6018,
+              "5": 2.1264
+            },
+            "Q5MinusQ1NetPct": 0.0494,
+            "Q5MinusQ1CI95Pct": [
+              -4.227,
+              1.874
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 81,
+            "stockSignalsIC": 6197,
+            "rankIC": 0.01718,
+            "rankICCI95": [
+              -0.02187,
+              0.05209
+            ],
+            "icPositiveRatePct": 56.79,
+            "evidence": "inconclusive",
+            "daysQuintiles": 81,
+            "QMeanNetPct": {
+              "1": 1.801,
+              "2": 1.9847,
+              "3": 1.66,
+              "4": 2.3963,
+              "5": 3.8344
+            },
+            "Q5MinusQ1NetPct": 2.0335,
+            "Q5MinusQ1CI95Pct": [
+              -0.511,
+              5.894
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 79,
+            "stockSignalsIC": 6099,
+            "rankIC": 0.01712,
+            "rankICCI95": [
+              -0.07233,
+              0.07077
+            ],
+            "icPositiveRatePct": 50.63,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 81,
+            "stockSignalsIC": 6197,
+            "rankIC": 0.02747,
+            "rankICCI95": [
+              -0.09522,
+              0.0707
+            ],
+            "icPositiveRatePct": 53.09,
+            "evidence": "inconclusive",
+            "daysQuintiles": 81,
+            "QMeanNetPct": {
+              "1": 1.2493,
+              "2": 2.4705,
+              "3": 3.2588,
+              "4": 2.0392,
+              "5": 2.6879
+            },
+            "Q5MinusQ1NetPct": 1.4386,
+            "Q5MinusQ1CI95Pct": [
+              -3.215,
+              2.81
+            ]
+          }
+        ],
+        "20": [
+          {
+            "factor": "ret20P",
+            "daysIC": 76,
+            "stockSignalsIC": 5881,
+            "rankIC": 0.00182,
+            "rankICCI95": [
+              -0.12933,
+              0.04236
+            ],
+            "icPositiveRatePct": 50.0,
+            "evidence": "inconclusive",
+            "daysQuintiles": 76,
+            "QMeanNetPct": {
+              "1": 3.9053,
+              "2": 4.1244,
+              "3": 4.9783,
+              "4": 5.3773,
+              "5": 6.1069
+            },
+            "Q5MinusQ1NetPct": 2.2016,
+            "Q5MinusQ1CI95Pct": [
+              -3.109,
+              4.903
+            ]
+          },
+          {
+            "factor": "slopeP",
+            "daysIC": 76,
+            "stockSignalsIC": 5881,
+            "rankIC": -0.00941,
+            "rankICCI95": [
+              -0.12252,
+              0.03094
+            ],
+            "icPositiveRatePct": 42.11,
+            "evidence": "inconclusive",
+            "daysQuintiles": 76,
+            "QMeanNetPct": {
+              "1": 4.4806,
+              "2": 5.3542,
+              "3": 3.9381,
+              "4": 5.7184,
+              "5": 5.0379
+            },
+            "Q5MinusQ1NetPct": 0.5573,
+            "Q5MinusQ1CI95Pct": [
+              -4.796,
+              3.384
+            ]
+          },
+          {
+            "factor": "atrP",
+            "daysIC": 76,
+            "stockSignalsIC": 5881,
+            "rankIC": -0.01512,
+            "rankICCI95": [
+              -0.19132,
+              0.06054
+            ],
+            "icPositiveRatePct": 57.89,
+            "evidence": "inconclusive",
+            "daysQuintiles": 76,
+            "QMeanNetPct": {
+              "1": 1.8471,
+              "2": 7.331,
+              "3": 7.5531,
+              "4": 4.4386,
+              "5": 3.3373
+            },
+            "Q5MinusQ1NetPct": 1.4902,
+            "Q5MinusQ1CI95Pct": [
+              -5.615,
+              5.868
+            ]
+          },
+          {
+            "factor": "range20P",
+            "daysIC": 76,
+            "stockSignalsIC": 5881,
+            "rankIC": 0.00289,
+            "rankICCI95": [
+              -0.15449,
+              0.05464
+            ],
+            "icPositiveRatePct": 52.63,
+            "evidence": "inconclusive",
+            "daysQuintiles": 76,
+            "QMeanNetPct": {
+              "1": 2.9862,
+              "2": 4.891,
+              "3": 5.3567,
+              "4": 4.8745,
+              "5": 6.3124
+            },
+            "Q5MinusQ1NetPct": 3.3262,
+            "Q5MinusQ1CI95Pct": [
+              -3.405,
+              6.853
+            ]
+          },
+          {
+            "factor": "turnoverP",
+            "daysIC": 76,
+            "stockSignalsIC": 5881,
+            "rankIC": 0.07487,
+            "rankICCI95": [
+              -0.01351,
+              0.10207
+            ],
+            "icPositiveRatePct": 75.0,
+            "evidence": "inconclusive",
+            "daysQuintiles": 76,
+            "QMeanNetPct": {
+              "1": 2.8603,
+              "2": 3.9133,
+              "3": 4.8785,
+              "4": 7.2749,
+              "5": 5.5955
+            },
+            "Q5MinusQ1NetPct": 2.7351,
+            "Q5MinusQ1CI95Pct": [
+              -1.978,
+              4.018
+            ]
+          },
+          {
+            "factor": "breakoutPct",
+            "daysIC": 76,
+            "stockSignalsIC": 5881,
+            "rankIC": 0.01408,
+            "rankICCI95": [
+              -0.02113,
+              0.05573
+            ],
+            "icPositiveRatePct": 50.0,
+            "evidence": "inconclusive",
+            "daysQuintiles": 76,
+            "QMeanNetPct": {
+              "1": 3.1246,
+              "2": 4.8215,
+              "3": 5.1366,
+              "4": 5.2194,
+              "5": 6.0356
+            },
+            "Q5MinusQ1NetPct": 2.9109,
+            "Q5MinusQ1CI95Pct": [
+              0.209,
+              7.576
+            ]
+          },
+          {
+            "factor": "past10Top20",
+            "daysIC": 74,
+            "stockSignalsIC": 5783,
+            "rankIC": -0.01527,
+            "rankICCI95": [
+              -0.14788,
+              0.05362
+            ],
+            "icPositiveRatePct": 45.95,
+            "evidence": "inconclusive",
+            "daysQuintiles": 0,
+            "QMeanNetPct": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null
+            },
+            "Q5MinusQ1NetPct": null,
+            "Q5MinusQ1CI95Pct": null
+          },
+          {
+            "factor": "score",
+            "daysIC": 76,
+            "stockSignalsIC": 5881,
+            "rankIC": 0.0194,
+            "rankICCI95": [
+              -0.15151,
+              0.06875
+            ],
+            "icPositiveRatePct": 59.21,
+            "evidence": "inconclusive",
+            "daysQuintiles": 76,
+            "QMeanNetPct": {
+              "1": 3.148,
+              "2": 4.7683,
+              "3": 5.2791,
+              "4": 5.1953,
+              "5": 5.9556
+            },
+            "Q5MinusQ1NetPct": 2.8075,
+            "Q5MinusQ1CI95Pct": [
+              -4.357,
+              6.138
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "ablations": {
+    "gate0": {
+      "train": {
+        "5": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 274,
+            "modifiedMinusOriginalNetPct": -0.1326,
+            "deltaCI95Pct": [
+              -0.352,
+              0.144
+            ],
+            "differentTop3Pct": 27.74
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 274,
+            "modifiedMinusOriginalNetPct": -0.1787,
+            "deltaCI95Pct": [
+              -0.595,
+              0.186
+            ],
+            "differentTop3Pct": 34.67
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 274,
+            "modifiedMinusOriginalNetPct": -0.3148,
+            "deltaCI95Pct": [
+              -0.745,
+              0.071
+            ],
+            "differentTop3Pct": 66.79
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 274,
+            "modifiedMinusOriginalNetPct": -0.2604,
+            "deltaCI95Pct": [
+              -0.484,
+              -0.012
+            ],
+            "differentTop3Pct": 28.1
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 274,
+            "modifiedMinusOriginalNetPct": 0.2843,
+            "deltaCI95Pct": [
+              -0.441,
+              1.143
+            ],
+            "differentTop3Pct": 83.21
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 274,
+            "modifiedMinusOriginalNetPct": -0.204,
+            "deltaCI95Pct": [
+              -0.39,
+              0.011
+            ],
+            "differentTop3Pct": 38.69
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 274,
+            "modifiedMinusOriginalNetPct": -0.0568,
+            "deltaCI95Pct": [
+              -0.482,
+              0.616
+            ],
+            "differentTop3Pct": 81.75
+          }
+        ],
+        "10": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 269,
+            "modifiedMinusOriginalNetPct": -0.4203,
+            "deltaCI95Pct": [
+              -0.854,
+              0.05
+            ],
+            "differentTop3Pct": 27.88
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 269,
+            "modifiedMinusOriginalNetPct": -0.5945,
+            "deltaCI95Pct": [
+              -1.01,
+              -0.084
+            ],
+            "differentTop3Pct": 34.94
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 269,
+            "modifiedMinusOriginalNetPct": -0.5937,
+            "deltaCI95Pct": [
+              -1.162,
+              -0.09
+            ],
+            "differentTop3Pct": 66.17
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 269,
+            "modifiedMinusOriginalNetPct": -0.5438,
+            "deltaCI95Pct": [
+              -0.894,
+              -0.116
+            ],
+            "differentTop3Pct": 28.25
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 269,
+            "modifiedMinusOriginalNetPct": 0.7735,
+            "deltaCI95Pct": [
+              -0.383,
+              2.05
+            ],
+            "differentTop3Pct": 84.01
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 269,
+            "modifiedMinusOriginalNetPct": -0.5177,
+            "deltaCI95Pct": [
+              -0.89,
+              -0.101
+            ],
+            "differentTop3Pct": 38.29
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 269,
+            "modifiedMinusOriginalNetPct": -0.2234,
+            "deltaCI95Pct": [
+              -0.805,
+              0.863
+            ],
+            "differentTop3Pct": 81.41
+          }
+        ],
+        "20": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 259,
+            "modifiedMinusOriginalNetPct": -0.3894,
+            "deltaCI95Pct": [
+              -0.913,
+              0.233
+            ],
+            "differentTop3Pct": 27.8
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 259,
+            "modifiedMinusOriginalNetPct": -0.4952,
+            "deltaCI95Pct": [
+              -1.114,
+              0.243
+            ],
+            "differentTop3Pct": 35.14
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 259,
+            "modifiedMinusOriginalNetPct": -0.595,
+            "deltaCI95Pct": [
+              -1.088,
+              0.474
+            ],
+            "differentTop3Pct": 66.41
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 259,
+            "modifiedMinusOriginalNetPct": -0.6228,
+            "deltaCI95Pct": [
+              -0.971,
+              -0.118
+            ],
+            "differentTop3Pct": 28.19
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 259,
+            "modifiedMinusOriginalNetPct": 1.0907,
+            "deltaCI95Pct": [
+              -0.231,
+              2.521
+            ],
+            "differentTop3Pct": 84.17
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 259,
+            "modifiedMinusOriginalNetPct": -0.418,
+            "deltaCI95Pct": [
+              -0.843,
+              0.017
+            ],
+            "differentTop3Pct": 37.84
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 259,
+            "modifiedMinusOriginalNetPct": 0.1351,
+            "deltaCI95Pct": [
+              -0.657,
+              1.424
+            ],
+            "differentTop3Pct": 81.47
+          }
+        ]
+      },
+      "validation": {
+        "5": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 184,
+            "modifiedMinusOriginalNetPct": 0.1224,
+            "deltaCI95Pct": [
+              -0.036,
+              0.269
+            ],
+            "differentTop3Pct": 26.63
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 184,
+            "modifiedMinusOriginalNetPct": -0.0076,
+            "deltaCI95Pct": [
+              -0.412,
+              0.398
+            ],
+            "differentTop3Pct": 32.61
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 184,
+            "modifiedMinusOriginalNetPct": 0.1661,
+            "deltaCI95Pct": [
+              -0.31,
+              0.719
+            ],
+            "differentTop3Pct": 61.41
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 184,
+            "modifiedMinusOriginalNetPct": -0.0335,
+            "deltaCI95Pct": [
+              -0.326,
+              0.259
+            ],
+            "differentTop3Pct": 20.65
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 184,
+            "modifiedMinusOriginalNetPct": -0.7704,
+            "deltaCI95Pct": [
+              -3.434,
+              -0.248
+            ],
+            "differentTop3Pct": 80.43
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 184,
+            "modifiedMinusOriginalNetPct": 0.0233,
+            "deltaCI95Pct": [
+              -1.283,
+              0.429
+            ],
+            "differentTop3Pct": 39.67
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 184,
+            "modifiedMinusOriginalNetPct": -0.0998,
+            "deltaCI95Pct": [
+              -0.742,
+              0.603
+            ],
+            "differentTop3Pct": 82.61
+          }
+        ],
+        "10": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 179,
+            "modifiedMinusOriginalNetPct": 0.0355,
+            "deltaCI95Pct": [
+              -0.154,
+              0.252
+            ],
+            "differentTop3Pct": 26.26
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 179,
+            "modifiedMinusOriginalNetPct": 0.1214,
+            "deltaCI95Pct": [
+              -0.251,
+              0.477
+            ],
+            "differentTop3Pct": 32.96
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 179,
+            "modifiedMinusOriginalNetPct": 0.1551,
+            "deltaCI95Pct": [
+              -0.36,
+              0.857
+            ],
+            "differentTop3Pct": 61.45
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 179,
+            "modifiedMinusOriginalNetPct": -0.0687,
+            "deltaCI95Pct": [
+              -0.35,
+              0.2
+            ],
+            "differentTop3Pct": 21.23
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 179,
+            "modifiedMinusOriginalNetPct": -0.5584,
+            "deltaCI95Pct": [
+              -5.14,
+              0.47
+            ],
+            "differentTop3Pct": 81.01
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 179,
+            "modifiedMinusOriginalNetPct": 0.2467,
+            "deltaCI95Pct": [
+              -0.249,
+              0.859
+            ],
+            "differentTop3Pct": 40.78
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 179,
+            "modifiedMinusOriginalNetPct": 0.4537,
+            "deltaCI95Pct": [
+              -5.084,
+              1.223
+            ],
+            "differentTop3Pct": 82.12
+          }
+        ],
+        "20": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 169,
+            "modifiedMinusOriginalNetPct": -0.1412,
+            "deltaCI95Pct": [
+              -0.641,
+              0.495
+            ],
+            "differentTop3Pct": 24.85
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 169,
+            "modifiedMinusOriginalNetPct": -0.3144,
+            "deltaCI95Pct": [
+              -0.742,
+              0.378
+            ],
+            "differentTop3Pct": 32.54
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 169,
+            "modifiedMinusOriginalNetPct": 0.215,
+            "deltaCI95Pct": [
+              -0.767,
+              1.857
+            ],
+            "differentTop3Pct": 63.91
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 169,
+            "modifiedMinusOriginalNetPct": -0.0051,
+            "deltaCI95Pct": [
+              -0.437,
+              0.537
+            ],
+            "differentTop3Pct": 21.3
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 169,
+            "modifiedMinusOriginalNetPct": -0.9346,
+            "deltaCI95Pct": [
+              -4.521,
+              1.412
+            ],
+            "differentTop3Pct": 82.84
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 169,
+            "modifiedMinusOriginalNetPct": 0.0768,
+            "deltaCI95Pct": [
+              -0.117,
+              1.715
+            ],
+            "differentTop3Pct": 41.42
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 169,
+            "modifiedMinusOriginalNetPct": 0.19,
+            "deltaCI95Pct": [
+              -3.509,
+              1.045
+            ],
+            "differentTop3Pct": 82.25
+          }
+        ]
+      },
+      "holdout": {
+        "5": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 158,
+            "modifiedMinusOriginalNetPct": -0.1638,
+            "deltaCI95Pct": [
+              -1.669,
+              0.091
+            ],
+            "differentTop3Pct": 31.01
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 158,
+            "modifiedMinusOriginalNetPct": -0.228,
+            "deltaCI95Pct": [
+              -1.782,
+              -0.108
+            ],
+            "differentTop3Pct": 31.65
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 158,
+            "modifiedMinusOriginalNetPct": -0.3176,
+            "deltaCI95Pct": [
+              -3.906,
+              0.476
+            ],
+            "differentTop3Pct": 65.19
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 158,
+            "modifiedMinusOriginalNetPct": -0.2772,
+            "deltaCI95Pct": [
+              -1.838,
+              -0.106
+            ],
+            "differentTop3Pct": 32.28
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 158,
+            "modifiedMinusOriginalNetPct": 0.2356,
+            "deltaCI95Pct": [
+              -1.284,
+              0.712
+            ],
+            "differentTop3Pct": 82.28
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 158,
+            "modifiedMinusOriginalNetPct": 0.2728,
+            "deltaCI95Pct": [
+              -1.106,
+              0.942
+            ],
+            "differentTop3Pct": 43.67
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 158,
+            "modifiedMinusOriginalNetPct": -0.2607,
+            "deltaCI95Pct": [
+              -1.233,
+              0.701
+            ],
+            "differentTop3Pct": 87.34
+          }
+        ],
+        "10": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 153,
+            "modifiedMinusOriginalNetPct": 0.1038,
+            "deltaCI95Pct": [
+              -0.296,
+              1.186
+            ],
+            "differentTop3Pct": 30.72
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 153,
+            "modifiedMinusOriginalNetPct": 0.1584,
+            "deltaCI95Pct": [
+              -0.291,
+              1.011
+            ],
+            "differentTop3Pct": 31.37
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 153,
+            "modifiedMinusOriginalNetPct": -0.0149,
+            "deltaCI95Pct": [
+              -0.487,
+              1.554
+            ],
+            "differentTop3Pct": 65.36
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 153,
+            "modifiedMinusOriginalNetPct": -0.0784,
+            "deltaCI95Pct": [
+              -0.485,
+              0.586
+            ],
+            "differentTop3Pct": 32.03
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 153,
+            "modifiedMinusOriginalNetPct": 0.0756,
+            "deltaCI95Pct": [
+              -1.254,
+              1.319
+            ],
+            "differentTop3Pct": 82.35
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 153,
+            "modifiedMinusOriginalNetPct": -0.3392,
+            "deltaCI95Pct": [
+              -1.103,
+              0.536
+            ],
+            "differentTop3Pct": 42.48
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 153,
+            "modifiedMinusOriginalNetPct": -0.0469,
+            "deltaCI95Pct": [
+              -1.04,
+              0.907
+            ],
+            "differentTop3Pct": 86.93
+          }
+        ],
+        "20": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 143,
+            "modifiedMinusOriginalNetPct": 0.2064,
+            "deltaCI95Pct": [
+              -0.562,
+              0.861
+            ],
+            "differentTop3Pct": 32.87
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 143,
+            "modifiedMinusOriginalNetPct": 0.0061,
+            "deltaCI95Pct": [
+              -0.544,
+              0.317
+            ],
+            "differentTop3Pct": 33.57
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 143,
+            "modifiedMinusOriginalNetPct": 0.9553,
+            "deltaCI95Pct": [
+              0.236,
+              2.836
+            ],
+            "differentTop3Pct": 66.43
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 143,
+            "modifiedMinusOriginalNetPct": 0.2199,
+            "deltaCI95Pct": [
+              -0.365,
+              0.475
+            ],
+            "differentTop3Pct": 33.57
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 143,
+            "modifiedMinusOriginalNetPct": -0.9758,
+            "deltaCI95Pct": [
+              -2.447,
+              1.687
+            ],
+            "differentTop3Pct": 84.62
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 143,
+            "modifiedMinusOriginalNetPct": -0.2104,
+            "deltaCI95Pct": [
+              -1.597,
+              1.17
+            ],
+            "differentTop3Pct": 43.36
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 143,
+            "modifiedMinusOriginalNetPct": -0.122,
+            "deltaCI95Pct": [
+              -1.899,
+              2.574
+            ],
+            "differentTop3Pct": 86.01
+          }
+        ]
+      }
+    },
+    "gate60": {
+      "train": {
+        "5": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 154,
+            "modifiedMinusOriginalNetPct": -0.0306,
+            "deltaCI95Pct": [
+              -0.27,
+              0.178
+            ],
+            "differentTop3Pct": 27.27
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 154,
+            "modifiedMinusOriginalNetPct": -0.0953,
+            "deltaCI95Pct": [
+              -0.819,
+              0.168
+            ],
+            "differentTop3Pct": 33.12
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 154,
+            "modifiedMinusOriginalNetPct": -0.3007,
+            "deltaCI95Pct": [
+              -1.853,
+              0.259
+            ],
+            "differentTop3Pct": 62.99
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 154,
+            "modifiedMinusOriginalNetPct": -0.0556,
+            "deltaCI95Pct": [
+              -0.183,
+              0.189
+            ],
+            "differentTop3Pct": 25.32
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 154,
+            "modifiedMinusOriginalNetPct": 0.6792,
+            "deltaCI95Pct": [
+              -1.197,
+              1.404
+            ],
+            "differentTop3Pct": 83.77
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 154,
+            "modifiedMinusOriginalNetPct": -0.2203,
+            "deltaCI95Pct": [
+              -1.348,
+              0.046
+            ],
+            "differentTop3Pct": 41.56
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 154,
+            "modifiedMinusOriginalNetPct": -0.0005,
+            "deltaCI95Pct": [
+              -0.566,
+              0.571
+            ],
+            "differentTop3Pct": 81.82
+          }
+        ],
+        "10": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 151,
+            "modifiedMinusOriginalNetPct": -0.4826,
+            "deltaCI95Pct": [
+              -0.891,
+              -0.018
+            ],
+            "differentTop3Pct": 27.81
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 151,
+            "modifiedMinusOriginalNetPct": -0.6657,
+            "deltaCI95Pct": [
+              -1.344,
+              -0.281
+            ],
+            "differentTop3Pct": 33.77
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 151,
+            "modifiedMinusOriginalNetPct": -0.7378,
+            "deltaCI95Pct": [
+              -1.217,
+              1.116
+            ],
+            "differentTop3Pct": 62.25
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 151,
+            "modifiedMinusOriginalNetPct": -0.3936,
+            "deltaCI95Pct": [
+              -0.601,
+              -0.017
+            ],
+            "differentTop3Pct": 25.83
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 151,
+            "modifiedMinusOriginalNetPct": 1.1279,
+            "deltaCI95Pct": [
+              -0.641,
+              2.116
+            ],
+            "differentTop3Pct": 84.77
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 151,
+            "modifiedMinusOriginalNetPct": -0.5382,
+            "deltaCI95Pct": [
+              -0.953,
+              -0.182
+            ],
+            "differentTop3Pct": 41.06
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 151,
+            "modifiedMinusOriginalNetPct": -0.179,
+            "deltaCI95Pct": [
+              -0.841,
+              0.624
+            ],
+            "differentTop3Pct": 81.46
+          }
+        ],
+        "20": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 145,
+            "modifiedMinusOriginalNetPct": -0.5098,
+            "deltaCI95Pct": [
+              -0.77,
+              0.014
+            ],
+            "differentTop3Pct": 28.97
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 145,
+            "modifiedMinusOriginalNetPct": -0.6534,
+            "deltaCI95Pct": [
+              -0.985,
+              0.635
+            ],
+            "differentTop3Pct": 34.48
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 145,
+            "modifiedMinusOriginalNetPct": -0.6562,
+            "deltaCI95Pct": [
+              -1.056,
+              2.445
+            ],
+            "differentTop3Pct": 63.45
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 145,
+            "modifiedMinusOriginalNetPct": -0.4924,
+            "deltaCI95Pct": [
+              -0.624,
+              -0.021
+            ],
+            "differentTop3Pct": 26.9
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 145,
+            "modifiedMinusOriginalNetPct": 1.3975,
+            "deltaCI95Pct": [
+              -0.657,
+              2.363
+            ],
+            "differentTop3Pct": 85.52
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 145,
+            "modifiedMinusOriginalNetPct": -0.4884,
+            "deltaCI95Pct": [
+              -1.009,
+              0.077
+            ],
+            "differentTop3Pct": 40.69
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 145,
+            "modifiedMinusOriginalNetPct": -0.4045,
+            "deltaCI95Pct": [
+              -1.016,
+              0.709
+            ],
+            "differentTop3Pct": 81.38
+          }
+        ]
+      },
+      "validation": {
+        "5": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 101,
+            "modifiedMinusOriginalNetPct": 0.2327,
+            "deltaCI95Pct": [
+              -0.063,
+              0.44
+            ],
+            "differentTop3Pct": 33.66
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 101,
+            "modifiedMinusOriginalNetPct": 0.1272,
+            "deltaCI95Pct": [
+              -0.175,
+              0.402
+            ],
+            "differentTop3Pct": 39.6
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 101,
+            "modifiedMinusOriginalNetPct": 0.1754,
+            "deltaCI95Pct": [
+              -0.417,
+              0.774
+            ],
+            "differentTop3Pct": 60.4
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 101,
+            "modifiedMinusOriginalNetPct": 0.0501,
+            "deltaCI95Pct": [
+              -0.28,
+              0.339
+            ],
+            "differentTop3Pct": 18.81
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 101,
+            "modifiedMinusOriginalNetPct": -1.1614,
+            "deltaCI95Pct": [
+              -4.005,
+              -0.388
+            ],
+            "differentTop3Pct": 78.22
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 101,
+            "modifiedMinusOriginalNetPct": -0.0524,
+            "deltaCI95Pct": [
+              -1.454,
+              0.256
+            ],
+            "differentTop3Pct": 41.58
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 101,
+            "modifiedMinusOriginalNetPct": 0.097,
+            "deltaCI95Pct": [
+              -0.823,
+              0.941
+            ],
+            "differentTop3Pct": 91.09
+          }
+        ],
+        "10": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 98,
+            "modifiedMinusOriginalNetPct": 0.0049,
+            "deltaCI95Pct": [
+              -0.374,
+              0.324
+            ],
+            "differentTop3Pct": 33.67
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 98,
+            "modifiedMinusOriginalNetPct": 0.1804,
+            "deltaCI95Pct": [
+              -0.36,
+              0.501
+            ],
+            "differentTop3Pct": 39.8
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 98,
+            "modifiedMinusOriginalNetPct": 0.3559,
+            "deltaCI95Pct": [
+              -0.643,
+              1.177
+            ],
+            "differentTop3Pct": 60.2
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 98,
+            "modifiedMinusOriginalNetPct": 0.0001,
+            "deltaCI95Pct": [
+              -0.504,
+              0.38
+            ],
+            "differentTop3Pct": 19.39
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 98,
+            "modifiedMinusOriginalNetPct": -1.0062,
+            "deltaCI95Pct": [
+              -5.716,
+              -0.018
+            ],
+            "differentTop3Pct": 79.59
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 98,
+            "modifiedMinusOriginalNetPct": -0.1019,
+            "deltaCI95Pct": [
+              -0.717,
+              0.307
+            ],
+            "differentTop3Pct": 42.86
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 98,
+            "modifiedMinusOriginalNetPct": 0.5477,
+            "deltaCI95Pct": [
+              -5.542,
+              1.045
+            ],
+            "differentTop3Pct": 90.82
+          }
+        ],
+        "20": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 93,
+            "modifiedMinusOriginalNetPct": -0.3362,
+            "deltaCI95Pct": [
+              -1.175,
+              0.747
+            ],
+            "differentTop3Pct": 32.26
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 93,
+            "modifiedMinusOriginalNetPct": -0.8506,
+            "deltaCI95Pct": [
+              -1.49,
+              0.117
+            ],
+            "differentTop3Pct": 38.71
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 93,
+            "modifiedMinusOriginalNetPct": 0.7886,
+            "deltaCI95Pct": [
+              -0.963,
+              1.798
+            ],
+            "differentTop3Pct": 62.37
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 93,
+            "modifiedMinusOriginalNetPct": 0.1756,
+            "deltaCI95Pct": [
+              -0.574,
+              0.977
+            ],
+            "differentTop3Pct": 18.28
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 93,
+            "modifiedMinusOriginalNetPct": -2.3251,
+            "deltaCI95Pct": [
+              -6.07,
+              0.087
+            ],
+            "differentTop3Pct": 81.72
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 93,
+            "modifiedMinusOriginalNetPct": -0.6476,
+            "deltaCI95Pct": [
+              -1.235,
+              0.933
+            ],
+            "differentTop3Pct": 41.94
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 93,
+            "modifiedMinusOriginalNetPct": -0.4381,
+            "deltaCI95Pct": [
+              -4.207,
+              0.409
+            ],
+            "differentTop3Pct": 91.4
+          }
+        ]
+      },
+      "holdout": {
+        "5": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 85,
+            "modifiedMinusOriginalNetPct": -0.0119,
+            "deltaCI95Pct": [
+              -1.801,
+              0.383
+            ],
+            "differentTop3Pct": 41.18
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 85,
+            "modifiedMinusOriginalNetPct": -0.3066,
+            "deltaCI95Pct": [
+              -2.218,
+              0.242
+            ],
+            "differentTop3Pct": 38.82
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 85,
+            "modifiedMinusOriginalNetPct": -0.2871,
+            "deltaCI95Pct": [
+              -3.844,
+              0.452
+            ],
+            "differentTop3Pct": 69.41
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 85,
+            "modifiedMinusOriginalNetPct": -0.0782,
+            "deltaCI95Pct": [
+              -2.071,
+              0.373
+            ],
+            "differentTop3Pct": 36.47
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 85,
+            "modifiedMinusOriginalNetPct": 0.168,
+            "deltaCI95Pct": [
+              -1.954,
+              0.425
+            ],
+            "differentTop3Pct": 85.88
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 85,
+            "modifiedMinusOriginalNetPct": 0.5789,
+            "deltaCI95Pct": [
+              -1.149,
+              1.188
+            ],
+            "differentTop3Pct": 45.88
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 85,
+            "modifiedMinusOriginalNetPct": -0.4529,
+            "deltaCI95Pct": [
+              -1.433,
+              1.015
+            ],
+            "differentTop3Pct": 96.47
+          }
+        ],
+        "10": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 82,
+            "modifiedMinusOriginalNetPct": 0.3651,
+            "deltaCI95Pct": [
+              -0.511,
+              2.594
+            ],
+            "differentTop3Pct": 41.46
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 82,
+            "modifiedMinusOriginalNetPct": -0.1896,
+            "deltaCI95Pct": [
+              -1.141,
+              1.677
+            ],
+            "differentTop3Pct": 37.8
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 82,
+            "modifiedMinusOriginalNetPct": 0.5396,
+            "deltaCI95Pct": [
+              -0.158,
+              1.644
+            ],
+            "differentTop3Pct": 69.51
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 82,
+            "modifiedMinusOriginalNetPct": 0.5817,
+            "deltaCI95Pct": [
+              -0.626,
+              3.088
+            ],
+            "differentTop3Pct": 35.37
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 82,
+            "modifiedMinusOriginalNetPct": 0.2291,
+            "deltaCI95Pct": [
+              -3.315,
+              1.392
+            ],
+            "differentTop3Pct": 85.37
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 82,
+            "modifiedMinusOriginalNetPct": 0.5876,
+            "deltaCI95Pct": [
+              -0.335,
+              1.708
+            ],
+            "differentTop3Pct": 43.9
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 82,
+            "modifiedMinusOriginalNetPct": -0.1221,
+            "deltaCI95Pct": [
+              -0.996,
+              2.589
+            ],
+            "differentTop3Pct": 96.34
+          }
+        ],
+        "20": [
+          {
+            "removed": "ret20P",
+            "matchedDays": 77,
+            "modifiedMinusOriginalNetPct": 0.2799,
+            "deltaCI95Pct": [
+              -2.081,
+              2.301
+            ],
+            "differentTop3Pct": 44.16
+          },
+          {
+            "removed": "slopeP",
+            "matchedDays": 77,
+            "modifiedMinusOriginalNetPct": -0.119,
+            "deltaCI95Pct": [
+              -2.063,
+              1.847
+            ],
+            "differentTop3Pct": 40.26
+          },
+          {
+            "removed": "atrP",
+            "matchedDays": 77,
+            "modifiedMinusOriginalNetPct": 1.6023,
+            "deltaCI95Pct": [
+              0.031,
+              3.346
+            ],
+            "differentTop3Pct": 70.13
+          },
+          {
+            "removed": "range20P",
+            "matchedDays": 77,
+            "modifiedMinusOriginalNetPct": 0.781,
+            "deltaCI95Pct": [
+              -1.597,
+              2.847
+            ],
+            "differentTop3Pct": 37.66
+          },
+          {
+            "removed": "turnoverP",
+            "matchedDays": 77,
+            "modifiedMinusOriginalNetPct": -1.5743,
+            "deltaCI95Pct": [
+              -3.016,
+              -0.224
+            ],
+            "differentTop3Pct": 87.01
+          },
+          {
+            "removed": "breakoutPct",
+            "matchedDays": 77,
+            "modifiedMinusOriginalNetPct": 0.7192,
+            "deltaCI95Pct": [
+              -0.853,
+              2.566
+            ],
+            "differentTop3Pct": 45.45
+          },
+          {
+            "removed": "past10Top20",
+            "matchedDays": 77,
+            "modifiedMinusOriginalNetPct": -1.3626,
+            "deltaCI95Pct": [
+              -3.095,
+              2.026
+            ],
+            "differentTop3Pct": 96.1
+          }
+        ]
+      }
+    }
+  },
+  "limitations": [
+    "Current survivor universe and capital are not historical point-in-time.",
+    "No historical complete foreign/trust or financial statements; untested.",
+    "Daily overlapping signals are correlated; compounded portfolio return not estimated."
+  ],
+  "elapsedSeconds": 168.8
+}
