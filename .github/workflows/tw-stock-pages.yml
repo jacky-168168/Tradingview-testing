@@ -8,8 +8,6 @@ on:
       - 'tw-stock-dashboard/docs/*.html'
       - 'tw-stock-dashboard/docs/market-command.js'
       - 'tw-stock-dashboard/docs/market-command.css'
-      - 'tw-stock-dashboard/docs/entry-playbook.js'
-      - 'tw-stock-dashboard/docs/entry-playbook.css'
       - 'tw-stock-dashboard/docs/data/research/market_entry_playbook/**'
       - 'tw-stock-dashboard/docs/data/research/market_intelligence/**'
       - 'tw-stock-dashboard/docs/data/research/market_ml_audit/**'
@@ -44,7 +42,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Verify practical G D entry-time decision and no false live permission
+      - name: Verify single market decision card, historical research and no VWAP placeholder
         run: |
           node tw-stock-dashboard/tests/test_entry_playbook.js
           PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p test_market_homepage_layout.py -v
