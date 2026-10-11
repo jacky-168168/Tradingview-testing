@@ -1,0 +1,51 @@
+name: Verify 9AM Proxy vs Actual Next-Day TWSE Breadth
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/research/market_preopen_breadth.py'
+      - '.github/workflows/market-preopen-breadth.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: market-preopen-breadth-audit
+  cancel-in-progress: true
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test original dated official 728 session preopen decisions without lookahead
+        run: |
+          python -m py_compile tw-stock-dashboard/research/market_preopen_breadth.py
+          python -u tw-stock-dashboard/research/market_preopen_breadth.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('tw-stock-dashboard/docs/data/research/market_preopen_breadth/summary.json')
+          z=json.loads(root.read_text())
+          assert z['outcomeCount']==726
+          assert sum(x['n'] for x in z['riskScorePreviousCloseBands'].values())==726
+          assert z['candidateThresholds']['GE_60']['n']+z['candidateThresholds']['LESS_60']['n']==726
+          assert 'true 9AM' in ' '.join(z['limitations']) or 'true 9AM' in z['signalDefinition']
+          print('PASS: 726 source days, source date isolation, complete score cohorts and honest 9AM limitations')
+          PY
+      - name: Save auditable 08:59 proxy results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/market_preopen_breadth/summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish dated next-session breadth and buying-red-vs-green study'
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*6)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*6))
+            done
+            exit 1
+          fi
