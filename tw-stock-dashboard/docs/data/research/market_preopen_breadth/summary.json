@@ -1,0 +1,438 @@
+{
+  "version": "MARKET_PREOPEN_BREADTH_EVAL_2026_10_V1",
+  "createdAt": "2026-10-11T12:15:40.617218+08:00",
+  "sourceDates": {
+    "start": "2023-10-11",
+    "end": "2026-10-08",
+    "officialVerifiedSessions": 728
+  },
+  "signalDefinition": "All facts are available at end of day D and may be used by 08:59 on next *trading* session D+1. No 09:00 intraday quotation reconstructed.",
+  "primaryLabel": "Of TWSE advancing+declining STOCKS, more than half advanced on next market session D+1. Not OTC. On exactly 50% treated not majority.",
+  "secondaryLabel": "^TWII D+1 close versus D close; 2nd-next breadth majority; labels observed AFTER decision, never input to predictor",
+  "outcomeCount": 726,
+  "baseline": {
+    "n": 726,
+    "nextStockMajorityUpPct": 46.97,
+    "nextStockMajorityUpCI95": [
+      43.36,
+      50.61
+    ],
+    "nextIndexUpPct": 57.16,
+    "day2StockMajorityUpPct": 46.83,
+    "nextStockBreadthMeanPct": 48.5,
+    "nextIndexCloseReturnMeanPct": 0.162,
+    "nextDownThenDay2UpCount": 178,
+    "nextUpThenDay2DownCount": 179
+  },
+  "riskScorePreviousCloseBands": {
+    "0-39": {
+      "n": 165,
+      "nextStockMajorityUpPct": 50.91,
+      "nextStockMajorityUpCI95": [
+        43.35,
+        58.43
+      ],
+      "nextIndexUpPct": 56.97,
+      "day2StockMajorityUpPct": 54.55,
+      "nextStockBreadthMeanPct": 51.99,
+      "nextIndexCloseReturnMeanPct": 0.304,
+      "nextDownThenDay2UpCount": 43,
+      "nextUpThenDay2DownCount": 37
+    },
+    "40-59": {
+      "n": 162,
+      "nextStockMajorityUpPct": 40.74,
+      "nextStockMajorityUpCI95": [
+        33.47,
+        48.44
+      ],
+      "nextIndexUpPct": 52.47,
+      "day2StockMajorityUpPct": 41.36,
+      "nextStockBreadthMeanPct": 44.53,
+      "nextIndexCloseReturnMeanPct": -0.056,
+      "nextDownThenDay2UpCount": 42,
+      "nextUpThenDay2DownCount": 41
+    },
+    "60-79": {
+      "n": 167,
+      "nextStockMajorityUpPct": 49.7,
+      "nextStockMajorityUpCI95": [
+        42.21,
+        57.2
+      ],
+      "nextIndexUpPct": 53.89,
+      "day2StockMajorityUpPct": 48.5,
+      "nextStockBreadthMeanPct": 49.4,
+      "nextIndexCloseReturnMeanPct": 0.128,
+      "nextDownThenDay2UpCount": 45,
+      "nextUpThenDay2DownCount": 47
+    },
+    "80-100": {
+      "n": 232,
+      "nextStockMajorityUpPct": 46.55,
+      "nextStockMajorityUpCI95": [
+        40.24,
+        52.97
+      ],
+      "nextIndexUpPct": 62.93,
+      "day2StockMajorityUpPct": 43.97,
+      "nextStockBreadthMeanPct": 48.15,
+      "nextIndexCloseReturnMeanPct": 0.238,
+      "nextDownThenDay2UpCount": 48,
+      "nextUpThenDay2DownCount": 54
+    }
+  },
+  "candidateThresholds": {
+    "LESS_60": {
+      "n": 327,
+      "nextStockMajorityUpPct": 45.87,
+      "nextStockMajorityUpCI95": [
+        40.55,
+        51.29
+      ],
+      "nextIndexUpPct": 54.74,
+      "day2StockMajorityUpPct": 48.01,
+      "nextStockBreadthMeanPct": 48.3,
+      "nextIndexCloseReturnMeanPct": 0.126,
+      "nextDownThenDay2UpCount": 85,
+      "nextUpThenDay2DownCount": 78
+    },
+    "GE_60": {
+      "n": 399,
+      "nextStockMajorityUpPct": 47.87,
+      "nextStockMajorityUpCI95": [
+        43.01,
+        52.77
+      ],
+      "nextIndexUpPct": 59.15,
+      "day2StockMajorityUpPct": 45.86,
+      "nextStockBreadthMeanPct": 48.67,
+      "nextIndexCloseReturnMeanPct": 0.192,
+      "nextDownThenDay2UpCount": 93,
+      "nextUpThenDay2DownCount": 101
+    },
+    "GE_70": {
+      "n": 331,
+      "nextStockMajorityUpPct": 48.04,
+      "nextStockMajorityUpCI95": [
+        42.71,
+        53.41
+      ],
+      "nextIndexUpPct": 61.03,
+      "day2StockMajorityUpPct": 44.71,
+      "nextStockBreadthMeanPct": 48.34,
+      "nextIndexCloseReturnMeanPct": 0.215,
+      "nextDownThenDay2UpCount": 75,
+      "nextUpThenDay2DownCount": 86
+    },
+    "GE_80": {
+      "n": 232,
+      "nextStockMajorityUpPct": 46.55,
+      "nextStockMajorityUpCI95": [
+        40.24,
+        52.97
+      ],
+      "nextIndexUpPct": 62.93,
+      "day2StockMajorityUpPct": 43.97,
+      "nextStockBreadthMeanPct": 48.15,
+      "nextIndexCloseReturnMeanPct": 0.238,
+      "nextDownThenDay2UpCount": 48,
+      "nextUpThenDay2DownCount": 54
+    },
+    "BELOW_40": {
+      "n": 165,
+      "nextStockMajorityUpPct": 50.91,
+      "nextStockMajorityUpCI95": [
+        43.35,
+        58.43
+      ],
+      "nextIndexUpPct": 56.97,
+      "day2StockMajorityUpPct": 54.55,
+      "nextStockBreadthMeanPct": 51.99,
+      "nextIndexCloseReturnMeanPct": 0.304,
+      "nextDownThenDay2UpCount": 43,
+      "nextUpThenDay2DownCount": 37
+    }
+  },
+  "scoreBandBySignalYear": {
+    "2023": {
+      "0-39": {
+        "n": 10,
+        "nextStockMajorityUpPct": 60.0,
+        "nextStockMajorityUpCI95": [
+          31.27,
+          83.18
+        ],
+        "nextIndexUpPct": 70.0,
+        "day2StockMajorityUpPct": 60.0,
+        "nextStockBreadthMeanPct": 53.05,
+        "nextIndexCloseReturnMeanPct": 0.152,
+        "nextDownThenDay2UpCount": 2,
+        "nextUpThenDay2DownCount": 2
+      },
+      "40-59": {
+        "n": 11,
+        "nextStockMajorityUpPct": 54.55,
+        "nextStockMajorityUpCI95": [
+          28.01,
+          78.73
+        ],
+        "nextIndexUpPct": 63.64,
+        "day2StockMajorityUpPct": 36.36,
+        "nextStockBreadthMeanPct": 49.61,
+        "nextIndexCloseReturnMeanPct": 0.108,
+        "nextDownThenDay2UpCount": 1,
+        "nextUpThenDay2DownCount": 3
+      },
+      "60-79": {
+        "n": 15,
+        "nextStockMajorityUpPct": 33.33,
+        "nextStockMajorityUpCI95": [
+          15.18,
+          58.29
+        ],
+        "nextIndexUpPct": 46.67,
+        "day2StockMajorityUpPct": 60.0,
+        "nextStockBreadthMeanPct": 45.54,
+        "nextIndexCloseReturnMeanPct": -0.035,
+        "nextDownThenDay2UpCount": 7,
+        "nextUpThenDay2DownCount": 3
+      },
+      "80-100": {
+        "n": 22,
+        "nextStockMajorityUpPct": 68.18,
+        "nextStockMajorityUpCI95": [
+          47.32,
+          83.64
+        ],
+        "nextIndexUpPct": 77.27,
+        "day2StockMajorityUpPct": 54.55,
+        "nextStockBreadthMeanPct": 54.98,
+        "nextIndexCloseReturnMeanPct": 0.217,
+        "nextDownThenDay2UpCount": 1,
+        "nextUpThenDay2DownCount": 4
+      }
+    },
+    "2024": {
+      "0-39": {
+        "n": 54,
+        "nextStockMajorityUpPct": 53.7,
+        "nextStockMajorityUpCI95": [
+          40.61,
+          66.31
+        ],
+        "nextIndexUpPct": 59.26,
+        "day2StockMajorityUpPct": 53.7,
+        "nextStockBreadthMeanPct": 52.55,
+        "nextIndexCloseReturnMeanPct": 0.387,
+        "nextDownThenDay2UpCount": 14,
+        "nextUpThenDay2DownCount": 14
+      },
+      "40-59": {
+        "n": 59,
+        "nextStockMajorityUpPct": 40.68,
+        "nextStockMajorityUpCI95": [
+          29.09,
+          53.41
+        ],
+        "nextIndexUpPct": 52.54,
+        "day2StockMajorityUpPct": 44.07,
+        "nextStockBreadthMeanPct": 43.53,
+        "nextIndexCloseReturnMeanPct": -0.161,
+        "nextDownThenDay2UpCount": 19,
+        "nextUpThenDay2DownCount": 17
+      },
+      "60-79": {
+        "n": 60,
+        "nextStockMajorityUpPct": 48.33,
+        "nextStockMajorityUpCI95": [
+          36.17,
+          60.69
+        ],
+        "nextIndexUpPct": 50.0,
+        "day2StockMajorityUpPct": 48.33,
+        "nextStockBreadthMeanPct": 48.33,
+        "nextIndexCloseReturnMeanPct": 0.031,
+        "nextDownThenDay2UpCount": 17,
+        "nextUpThenDay2DownCount": 17
+      },
+      "80-100": {
+        "n": 69,
+        "nextStockMajorityUpPct": 44.93,
+        "nextStockMajorityUpCI95": [
+          33.77,
+          56.62
+        ],
+        "nextIndexUpPct": 63.77,
+        "day2StockMajorityUpPct": 42.03,
+        "nextStockBreadthMeanPct": 47.76,
+        "nextIndexCloseReturnMeanPct": 0.195,
+        "nextDownThenDay2UpCount": 13,
+        "nextUpThenDay2DownCount": 15
+      }
+    },
+    "2025": {
+      "0-39": {
+        "n": 60,
+        "nextStockMajorityUpPct": 51.67,
+        "nextStockMajorityUpCI95": [
+          39.31,
+          63.83
+        ],
+        "nextIndexUpPct": 60.0,
+        "day2StockMajorityUpPct": 50.0,
+        "nextStockBreadthMeanPct": 52.16,
+        "nextIndexCloseReturnMeanPct": 0.237,
+        "nextDownThenDay2UpCount": 16,
+        "nextUpThenDay2DownCount": 17
+      },
+      "40-59": {
+        "n": 55,
+        "nextStockMajorityUpPct": 38.18,
+        "nextStockMajorityUpCI95": [
+          26.52,
+          51.39
+        ],
+        "nextIndexUpPct": 50.91,
+        "day2StockMajorityUpPct": 40.0,
+        "nextStockBreadthMeanPct": 44.47,
+        "nextIndexCloseReturnMeanPct": -0.012,
+        "nextDownThenDay2UpCount": 13,
+        "nextUpThenDay2DownCount": 12
+      },
+      "60-79": {
+        "n": 58,
+        "nextStockMajorityUpPct": 55.17,
+        "nextStockMajorityUpCI95": [
+          42.45,
+          67.25
+        ],
+        "nextIndexUpPct": 62.07,
+        "day2StockMajorityUpPct": 48.28,
+        "nextStockBreadthMeanPct": 51.12,
+        "nextIndexCloseReturnMeanPct": 0.263,
+        "nextDownThenDay2UpCount": 13,
+        "nextUpThenDay2DownCount": 17
+      },
+      "80-100": {
+        "n": 70,
+        "nextStockMajorityUpPct": 42.86,
+        "nextStockMajorityUpCI95": [
+          31.94,
+          54.52
+        ],
+        "nextIndexUpPct": 52.86,
+        "day2StockMajorityUpPct": 48.57,
+        "nextStockBreadthMeanPct": 46.59,
+        "nextIndexCloseReturnMeanPct": -0.012,
+        "nextDownThenDay2UpCount": 20,
+        "nextUpThenDay2DownCount": 16
+      }
+    },
+    "2026": {
+      "0-39": {
+        "n": 41,
+        "nextStockMajorityUpPct": 43.9,
+        "nextStockMajorityUpCI95": [
+          29.89,
+          58.96
+        ],
+        "nextIndexUpPct": 46.34,
+        "day2StockMajorityUpPct": 60.98,
+        "nextStockBreadthMeanPct": 50.76,
+        "nextIndexCloseReturnMeanPct": 0.331,
+        "nextDownThenDay2UpCount": 11,
+        "nextUpThenDay2DownCount": 4
+      },
+      "40-59": {
+        "n": 37,
+        "nextStockMajorityUpPct": 40.54,
+        "nextStockMajorityUpCI95": [
+          26.35,
+          56.51
+        ],
+        "nextIndexUpPct": 51.35,
+        "day2StockMajorityUpPct": 40.54,
+        "nextStockBreadthMeanPct": 44.71,
+        "nextIndexCloseReturnMeanPct": -0.002,
+        "nextDownThenDay2UpCount": 9,
+        "nextUpThenDay2DownCount": 9
+      },
+      "60-79": {
+        "n": 34,
+        "nextStockMajorityUpPct": 50.0,
+        "nextStockMajorityUpCI95": [
+          34.07,
+          65.93
+        ],
+        "nextIndexUpPct": 50.0,
+        "day2StockMajorityUpPct": 44.12,
+        "nextStockBreadthMeanPct": 50.08,
+        "nextIndexCloseReturnMeanPct": 0.14,
+        "nextDownThenDay2UpCount": 8,
+        "nextUpThenDay2DownCount": 10
+      },
+      "80-100": {
+        "n": 71,
+        "nextStockMajorityUpPct": 45.07,
+        "nextStockMajorityUpCI95": [
+          34.05,
+          56.6
+        ],
+        "nextIndexUpPct": 67.61,
+        "day2StockMajorityUpPct": 38.03,
+        "nextStockBreadthMeanPct": 47.93,
+        "nextIndexCloseReturnMeanPct": 0.534,
+        "nextDownThenDay2UpCount": 14,
+        "nextUpThenDay2DownCount": 19
+      }
+    }
+  },
+  "redVersusGreenPreviousClose": {
+    "PREVIOUS_INDEX_RED": {
+      "n": 309,
+      "nextStockMajorityUpPct": 44.98,
+      "nextStockMajorityUpCI95": [
+        39.53,
+        50.56
+      ],
+      "nextIndexUpPct": 55.66,
+      "day2StockMajorityUpPct": 48.22,
+      "nextStockBreadthMeanPct": 47.86,
+      "nextIndexCloseReturnMeanPct": 0.157,
+      "nextDownThenDay2UpCount": 82,
+      "nextUpThenDay2DownCount": 72
+    },
+    "PREVIOUS_INDEX_GREEN": {
+      "n": 416,
+      "nextStockMajorityUpPct": 48.56,
+      "nextStockMajorityUpCI95": [
+        43.79,
+        53.35
+      ],
+      "nextIndexUpPct": 58.41,
+      "day2StockMajorityUpPct": 45.91,
+      "nextStockBreadthMeanPct": 49.02,
+      "nextIndexCloseReturnMeanPct": 0.169,
+      "nextDownThenDay2UpCount": 96,
+      "nextUpThenDay2DownCount": 107
+    }
+  },
+  "counterexamples": {
+    "highScore70NextMajorityDown": 172,
+    "highScore70NextIndexDown": 129,
+    "lowScore40NextMajorityUp": 84,
+    "highScore70NextDownThenDay2Up": 75,
+    "highScore70NextUpThenDay2Down": 86
+  },
+  "limitations": [
+    "This is a next-session PREOPEN proxy from previous-day close, NOT true 9AM first traded/opening-price snapshot",
+    "Score captures market regime, not guaranteed next-day breadth prediction or expected profit",
+    "TWSE listed-only advancing/declining report, not all listed+OTC stock universe",
+    "Wilson confidence intervals assume independent days and are optimistic under serial dependence",
+    "Index red/green close-to-close statistics do NOT model executable next-open entry/exit or transaction fees",
+    "2026 was inspected previously; no pristine held-out causal test",
+    "No after-hours foreign data known at 08:59 beyond prior officially published closing day",
+    "Do not make 09:00 trading claims until actual time-stamped opening records are collected"
+  ]
+}
