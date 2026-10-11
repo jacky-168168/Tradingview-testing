@@ -66,12 +66,14 @@ def compute(risk,records):
     if gap is None:gap=100*(closes[-1]/float(risk["ma20"])-1)
     # Divergence is a monitoring condition; it has NOT proved that vetoing buys
     # improves A/D/F/G realized portfolio outcomes.
-    divergence=per10 is not None and per10>=2 and b10<48
+    divergence=per10 is not None and per10>=2 and b10<50
     flags=[]
     def flag(code,severity,short,detail):
         flags.append({"code":code,"severity":severity,"title":short,"detail":detail})
-    if divergence:flag("NARROW_BREADTH","caution","指數上漲但市場廣度不足","10日加權指數上漲≥2%，但10日平均上漲家數占比不足48%，須防權值股獨強。")
+    if divergence:flag("NARROW_BREADTH","caution","指數上漲但市場廣度不足","10日加權指數上漲≥2%，但10日平均上漲家數占比不足50%，須防權值股獨強。")
     if b5<45:flag("WEAK_BREADTH","caution","市場參與度偏弱","近5交易日上漲家數平均不足45%，強勢股追價需要更謹慎。")
+    if breadth[-1]<45:flag("DAY_BREADTH_WEAK","caution","當日上漲家數偏少","今天只有不到45%的上市股票上漲；這是一日風險訊號，不能單獨作為禁止買進依據。")
+    if scoreChange<=-20:flag("SCORE_DECELERATION","caution","五日大盤分數快速下降","Risk Score 相較5個交易日前下降至少20分；需留意多頭動能轉弱，但原分數和策略門檻不變。")
     if volrank>=90:flag("HIGH_VOLATILITY","caution","波動位於歷史高區","20日年化波動率位於可觀察滾動歷史的前10%；較易放大停損與隔夜跳空風險。")
     if highDist is not None and -2<=highDist<=0 and risk.get("mode")=="TOP":
         flag("NEAR_HIGH_TOP","watch","接近120日高點＋Top Watch","距前120交易日"+highType+"不足2%，又處於頂部觀察；屬尚未證實有效的追價警示，不是確認頂部。")
@@ -97,7 +99,7 @@ def compute(risk,records):
         level,head,action="STOP","🔴 暫不建議一般新倉","市場尚未達到60分基準；等待趨勢回升或另行確認反轉。"
     elif score<60:
         level,head,action="WAIT","🟡 觀察等待｜未達進場門檻","50–59分屬中性偏弱，先觀察市場參與度與個股訊號。"
-    elif any(x["code"] in ("NEAR_HIGH_TOP","STRETCHED_MA") for x in flags) or volrank>=90:
+    elif any(x["code"] in ("NEAR_HIGH_TOP","STRETCHED_MA") for x in flags) or volrank>=90 or (scoreChange<=-20 and b5<50):
         level,head,action="CAUTION","🟠 趨勢合格，但不宜立即追高","Risk Score已過60，但短線過熱、近壓力或高波動，優先等可控的個股買點。"
     elif score>=80:
         level,head,action="READY","🟢 強勢｜可評估新倉","市場趨勢符合條件；仍需個股 G/D 訊號、進場價、停損與部位控管。"
