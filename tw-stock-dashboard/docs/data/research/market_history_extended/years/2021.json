@@ -7,18 +7,18 @@
       "end": "2021-12-31"
     },
     "tradingDays": 243,
-    "officialValidDays": 223,
-    "riskScoredDays": 223,
-    "missingDays": 20,
-    "coveragePct": 91.77,
-    "complete": false,
+    "officialValidDays": 243,
+    "riskScoredDays": 243,
+    "missingDays": 0,
+    "coveragePct": 100.0,
+    "complete": true,
     "sources": {
       "upDown": "TWSE MI_INDEX reported daily stock advances/declines",
       "foreign": "TWSE BFI82U reported daily foreign flow",
       "index": "Yahoo ^TWII daily OHLC"
     },
     "warning": "Never impute official missing days or use future/stale report date",
-    "lastCheckpoint": "2026-10-11T13:04:30.358997+08:00"
+    "lastCheckpoint": "2026-10-11T13:20:11.841014+08:00"
   },
   "dates": [
     "2021-01-04",
@@ -490,12 +490,11 @@
       "up": 444,
       "down": 377,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:50:08.622029+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:09.104922+08:00",
+      "foreign": -3.33382802,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-02-04": {
       "up": 333,
@@ -721,12 +720,11 @@
       "up": 597,
       "down": 258,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:51:19.448576+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:12.118991+08:00",
+      "foreign": 108.0539546,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-03-19": {
       "up": 315,
@@ -741,12 +739,12 @@
     "2021-03-22": {
       "foreign": -50.7584589,
       "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U",
-      "ok": false,
-      "error": {
-        "breadth": "ALL:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0) | ALLBUT0999:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:51:37.441433+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:17.580561+08:00",
+      "up": 548,
+      "down": 319,
+      "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL"
     },
     "2021-03-23": {
       "up": 268,
@@ -771,12 +769,12 @@
     "2021-03-25": {
       "foreign": -165.73118715,
       "foreignSource": "https://wwwc.twse.com.tw/rwd/zh/fund/BFI82U",
-      "ok": false,
-      "error": {
-        "breadth": "ALL:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0) | ALLBUT0999:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:52:00.677985+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:21.736104+08:00",
+      "up": 377,
+      "down": 465,
+      "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL"
     },
     "2021-03-26": {
       "up": 625,
@@ -801,23 +799,22 @@
     "2021-03-30": {
       "foreign": 112.20534957,
       "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U",
-      "ok": false,
-      "error": {
-        "breadth": "ALL:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0) | ALLBUT0999:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:52:24.486933+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:25.505494+08:00",
+      "up": 546,
+      "down": 295,
+      "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL"
     },
     "2021-03-31": {
       "up": 410,
       "down": 442,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:52:31.440507+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:28.350452+08:00",
+      "foreign": -165.28772639,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-04-01": {
       "up": 423,
@@ -833,12 +830,11 @@
       "up": 566,
       "down": 282,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:52:45.222993+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:31.169423+08:00",
+      "foreign": 64.57424297,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-04-08": {
       "up": 585,
@@ -894,12 +890,11 @@
       "up": 708,
       "down": 177,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:53:10.433797+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:34.215834+08:00",
+      "foreign": 43.1091178,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-04-16": {
       "up": 684,
@@ -965,12 +960,11 @@
       "up": 614,
       "down": 264,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:53:47.076599+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:37.115011+08:00",
+      "foreign": 160.16229585,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-04-27": {
       "up": 479,
@@ -1036,12 +1030,11 @@
       "up": 405,
       "down": 463,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:54:11.514852+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:40.250905+08:00",
+      "foreign": -69.15210329,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-05-07": {
       "up": 762,
@@ -1187,12 +1180,11 @@
       "up": 369,
       "down": 480,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:54:58.040555+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:43.150623+08:00",
+      "foreign": -123.40267525,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-05-28": {
       "up": 770,
@@ -1478,12 +1470,11 @@
       "up": 553,
       "down": 284,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:57:21.075610+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:45.967958+08:00",
+      "foreign": -38.14097184,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-07-09": {
       "up": 272,
@@ -1499,12 +1490,11 @@
       "up": 472,
       "down": 386,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:57:31.986094+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:48.996905+08:00",
+      "foreign": 154.66781595,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-07-13": {
       "up": 282,
@@ -1640,12 +1630,11 @@
       "up": 256,
       "down": 612,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:58:23.498042+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:51.835804+08:00",
+      "foreign": -173.68927876,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-08-02": {
       "up": 623,
@@ -1731,12 +1720,11 @@
       "up": 572,
       "down": 253,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:58:58.002081+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:54.653111+08:00",
+      "foreign": 51.44221487,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-08-13": {
       "up": 131,
@@ -1762,12 +1750,11 @@
       "up": 179,
       "down": 681,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:59:09.850327+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:19:57.469952+08:00",
+      "foreign": -87.33907481,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-08-18": {
       "up": 720,
@@ -1793,12 +1780,11 @@
       "up": 385,
       "down": 430,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:59:22.448987+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:20:00.285725+08:00",
+      "foreign": -129.94928051,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-08-23": {
       "up": 857,
@@ -1854,12 +1840,11 @@
       "up": 578,
       "down": 257,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T12:59:55.948350+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:20:03.127961+08:00",
+      "foreign": 212.48387243,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-08-31": {
       "up": 478,
@@ -2475,12 +2460,11 @@
       "up": 249,
       "down": 628,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T13:03:10.284943+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:20:05.951966+08:00",
+      "foreign": 60.65033372,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-11-30": {
       "up": 592,
@@ -2496,12 +2480,11 @@
       "up": 616,
       "down": 261,
       "breadthSource": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=ALL",
-      "ok": false,
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1,
-      "checkedAt": "2026-10-11T13:03:20.444535+08:00"
+      "ok": true,
+      "attempts": 2,
+      "checkedAt": "2026-10-11T13:20:09.134157+08:00",
+      "foreign": 84.33788899,
+      "foreignSource": "https://www.twse.com.tw/rwd/zh/fund/BFI82U"
     },
     "2021-12-02": {
       "up": 224,
@@ -3530,6 +3513,43 @@
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
+      "date": "2021-02-03",
+      "index": 15771.32,
+      "ma5": 15499.13,
+      "ma20": 15655.02,
+      "ret5": 0.44,
+      "ret20": 5.26,
+      "trend": "多",
+      "breadth": 54.1,
+      "foreign": -3.3,
+      "score": 68,
+      "state": "🟢 Risk ON",
+      "dayRet": 0.07,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": 0.74,
+      "indexRvol": 0.9,
+      "closePosition": 19.4,
+      "breakPrevHigh": false,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 1.69,
+      "priorHigh60": 16238.46,
+      "distHigh60Pct": -2.88,
+      "priorHigh120": null,
+      "distHigh120Pct": null,
+      "up": 444,
+      "down": 377,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
       "date": "2021-02-04",
       "index": 15706.22,
       "ma5": 15557.2,
@@ -4344,6 +4364,43 @@
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
+      "date": "2021-03-18",
+      "index": 16287.84,
+      "ma5": 16264.27,
+      "ma20": 16162.2,
+      "ret5": 0.67,
+      "ret20": -0.46,
+      "trend": "多",
+      "breadth": 69.8,
+      "foreign": 108.1,
+      "score": 87,
+      "state": "🟢 Strong Risk ON",
+      "dayRet": 0.44,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": 0.78,
+      "indexRvol": 1.01,
+      "closePosition": 16.0,
+      "breakPrevHigh": false,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 0.37,
+      "priorHigh60": 16579.17,
+      "distHigh60Pct": -1.76,
+      "priorHigh120": 16579.17,
+      "distHigh120Pct": -1.76,
+      "up": 597,
+      "down": 258,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
       "date": "2021-03-19",
       "index": 16070.24,
       "ma5": 16227.28,
@@ -4378,6 +4435,43 @@
       "distHigh120Pct": -3.07,
       "up": 315,
       "down": 576,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
+      "date": "2021-03-22",
+      "index": 16189.22,
+      "ma5": 16215.26,
+      "ma20": 16136.88,
+      "ret5": -0.37,
+      "ret20": -0.93,
+      "trend": "多",
+      "breadth": 63.2,
+      "foreign": -50.8,
+      "score": 66,
+      "state": "🟢 Risk ON",
+      "dayRet": 0.74,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": 0.32,
+      "indexRvol": 1.25,
+      "closePosition": 81.6,
+      "breakPrevHigh": true,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 0.74,
+      "priorHigh60": 16579.17,
+      "distHigh60Pct": -2.35,
+      "priorHigh120": 16579.17,
+      "distHigh120Pct": -2.35,
+      "up": 548,
+      "down": 319,
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
@@ -4455,6 +4549,43 @@
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
+      "date": "2021-03-25",
+      "index": 16060.14,
+      "ma5": 16105.86,
+      "ma20": 16097.06,
+      "ret5": -1.4,
+      "ret20": -0.94,
+      "trend": "空",
+      "breadth": 44.8,
+      "foreign": -165.7,
+      "score": 26,
+      "state": "🔴 Risk OFF",
+      "dayRet": 0.17,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": -0.23,
+      "indexRvol": 1.03,
+      "closePosition": 57.1,
+      "breakPrevHigh": false,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 0.82,
+      "priorHigh60": 16579.17,
+      "distHigh60Pct": -3.13,
+      "priorHigh120": 16579.17,
+      "distHigh120Pct": -3.13,
+      "up": 377,
+      "down": 465,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
       "date": "2021-03-26",
       "index": 16305.88,
       "ma5": 16152.99,
@@ -4529,6 +4660,80 @@
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
+      "date": "2021-03-30",
+      "index": 16554.9,
+      "ma5": 16285.8,
+      "ma20": 16146.26,
+      "ret5": 2.33,
+      "ret20": 3.81,
+      "trend": "多",
+      "breadth": 64.9,
+      "foreign": 112.2,
+      "score": 96,
+      "state": "🟢 Strong Risk ON",
+      "dayRet": 0.48,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": 2.53,
+      "indexRvol": 1.04,
+      "closePosition": 98.9,
+      "breakPrevHigh": true,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 0.99,
+      "priorHigh60": 16579.17,
+      "distHigh60Pct": -0.15,
+      "priorHigh120": 16579.17,
+      "distHigh120Pct": -0.15,
+      "up": 546,
+      "down": 295,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
+      "date": "2021-03-31",
+      "index": 16431.13,
+      "ma5": 16365.6,
+      "ma20": 16157.23,
+      "ret5": 2.49,
+      "ret20": 1.35,
+      "trend": "多",
+      "breadth": 48.1,
+      "foreign": -165.3,
+      "score": 56,
+      "state": "🟡 Neutral",
+      "dayRet": -0.75,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": 1.7,
+      "indexRvol": 1.05,
+      "closePosition": 3.2,
+      "breakPrevHigh": false,
+      "breakPrevLow": true,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 0.92,
+      "priorHigh60": 16579.17,
+      "distHigh60Pct": -0.89,
+      "priorHigh120": 16579.17,
+      "distHigh120Pct": -0.89,
+      "up": 410,
+      "down": 442,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
       "date": "2021-04-01",
       "index": 16571.28,
       "ma5": 16467.83,
@@ -4563,6 +4768,43 @@
       "distHigh120Pct": -0.05,
       "up": 423,
       "down": 419,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
+      "date": "2021-04-07",
+      "index": 16815.36,
+      "ma5": 16569.73,
+      "ma20": 16238.48,
+      "ret5": 3.12,
+      "ret20": 6.06,
+      "trend": "多",
+      "breadth": 66.7,
+      "foreign": 64.6,
+      "score": 100,
+      "state": "🟢 Strong Risk ON",
+      "dayRet": 1.47,
+      "mode": "TOP",
+      "activeState": "⚪ Top Watch",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Top Watch",
+      "distMA20": 3.55,
+      "indexRvol": 1.19,
+      "closePosition": 99.0,
+      "breakPrevHigh": true,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 1.14,
+      "priorHigh60": 16602.47,
+      "distHigh60Pct": 1.28,
+      "priorHigh120": 16602.47,
+      "distHigh120Pct": 1.28,
+      "up": 566,
+      "down": 282,
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
@@ -4748,6 +4990,43 @@
       "distHigh120Pct": -1.03,
       "up": 245,
       "down": 645,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
+      "date": "2021-04-15",
+      "index": 17076.73,
+      "ma5": 16896.28,
+      "ma20": 16495.42,
+      "ret5": 0.89,
+      "ret20": 5.09,
+      "trend": "多",
+      "breadth": 80.0,
+      "foreign": 43.1,
+      "score": 95,
+      "state": "🟢 Strong Risk ON",
+      "dayRet": 1.25,
+      "mode": "TOP",
+      "activeState": "⚪ Top Watch",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 2,
+      "topConfirmScore": 0,
+      "topState": "⚪ Top Watch",
+      "distMA20": 3.52,
+      "indexRvol": 1.04,
+      "closePosition": 100.0,
+      "breakPrevHigh": true,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 0.61,
+      "priorHigh60": 17041.37,
+      "distHigh60Pct": 0.21,
+      "priorHigh120": 17041.37,
+      "distHigh120Pct": 0.21,
+      "up": 708,
+      "down": 177,
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
@@ -4973,6 +5252,43 @@
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
+      "date": "2021-04-26",
+      "index": 17572.29,
+      "ma5": 17299.1,
+      "ma20": 16877.01,
+      "ret5": 1.79,
+      "ret20": 9.61,
+      "trend": "多",
+      "breadth": 69.9,
+      "foreign": 160.2,
+      "score": 95,
+      "state": "🟢 Strong Risk ON",
+      "dayRet": 1.57,
+      "mode": "TOP",
+      "activeState": "⚪ Top Watch",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Top Watch",
+      "distMA20": 4.12,
+      "indexRvol": 1.15,
+      "closePosition": 100.0,
+      "breakPrevHigh": true,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 1.29,
+      "priorHigh60": 17428.15,
+      "distHigh60Pct": 0.83,
+      "priorHigh120": 17428.15,
+      "distHigh120Pct": 0.83,
+      "up": 614,
+      "down": 264,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
       "date": "2021-04-27",
       "index": 17595.9,
       "ma5": 17353.51,
@@ -5192,6 +5508,43 @@
       "distHigh120Pct": -4.89,
       "up": 503,
       "down": 388,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
+      "date": "2021-05-06",
+      "index": 16994.36,
+      "ma5": 17112.12,
+      "ma20": 17152.47,
+      "ret5": -3.26,
+      "ret20": 1.06,
+      "trend": "空",
+      "breadth": 46.7,
+      "foreign": -69.2,
+      "score": 26,
+      "state": "🔴 Risk OFF",
+      "dayRet": 0.9,
+      "mode": "BOTTOM",
+      "activeState": "⚪ Bottom Watch",
+      "oversoldScore": 1,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Bottom Watch",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": -0.92,
+      "indexRvol": 0.93,
+      "closePosition": 70.9,
+      "breakPrevHigh": false,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 1.53,
+      "priorHigh60": 17709.23,
+      "distHigh60Pct": -4.04,
+      "priorHigh120": 17709.23,
+      "distHigh120Pct": -4.04,
+      "up": 405,
+      "down": 463,
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
@@ -5710,6 +6063,43 @@
       "distHigh120Pct": -6.02,
       "up": 552,
       "down": 291,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
+      "date": "2021-05-27",
+      "index": 16601.61,
+      "ma5": 16496.26,
+      "ma20": 16511.0,
+      "ret5": 3.49,
+      "ret20": -5.5,
+      "trend": "多",
+      "breadth": 43.5,
+      "foreign": -123.4,
+      "score": 30,
+      "state": "🔴 Risk OFF",
+      "dayRet": -0.25,
+      "mode": "TOP",
+      "activeState": "⚪ Top Watch",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Top Watch",
+      "distMA20": 0.55,
+      "indexRvol": 0.89,
+      "closePosition": 100.0,
+      "breakPrevHigh": false,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 0.53,
+      "priorHigh60": 17709.23,
+      "distHigh60Pct": -6.25,
+      "priorHigh120": 17709.23,
+      "distHigh120Pct": -6.25,
+      "up": 369,
+      "down": 480,
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
@@ -6749,6 +7139,43 @@
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
+      "date": "2021-07-08",
+      "index": 17866.09,
+      "ma5": 17851.87,
+      "ma20": 17503.26,
+      "ret5": 0.86,
+      "ret20": 5.3,
+      "trend": "多",
+      "breadth": 66.1,
+      "foreign": -38.1,
+      "score": 86,
+      "state": "🟢 Strong Risk ON",
+      "dayRet": 0.09,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": 2.07,
+      "indexRvol": 1.09,
+      "closePosition": 64.2,
+      "breakPrevHigh": false,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 0.58,
+      "priorHigh60": 18008.37,
+      "distHigh60Pct": -0.79,
+      "priorHigh120": 18008.37,
+      "distHigh120Pct": -0.79,
+      "up": 553,
+      "down": 284,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
       "date": "2021-07-09",
       "index": 17661.48,
       "ma5": 17842.13,
@@ -6783,6 +7210,43 @@
       "distHigh120Pct": -1.93,
       "up": 272,
       "down": 594,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
+      "date": "2021-07-12",
+      "index": 17814.33,
+      "ma5": 17821.13,
+      "ma20": 17558.41,
+      "ret5": -0.59,
+      "ret20": 3.49,
+      "trend": "多",
+      "breadth": 55.0,
+      "foreign": 154.7,
+      "score": 85,
+      "state": "🟢 Strong Risk ON",
+      "dayRet": 0.87,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": 1.46,
+      "indexRvol": 0.92,
+      "closePosition": 29.0,
+      "breakPrevHigh": true,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 0.86,
+      "priorHigh60": 18008.37,
+      "distHigh60Pct": -1.08,
+      "priorHigh120": 18008.37,
+      "distHigh120Pct": -1.08,
+      "up": 472,
+      "down": 386,
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
@@ -7267,6 +7731,43 @@
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
+      "date": "2021-07-30",
+      "index": 17247.41,
+      "ma5": 17291.77,
+      "ma20": 17651.43,
+      "ret5": -1.85,
+      "ret20": -2.61,
+      "trend": "空",
+      "breadth": 29.5,
+      "foreign": -173.7,
+      "score": 6,
+      "state": "🔴 Risk OFF",
+      "dayRet": -0.89,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": -2.29,
+      "indexRvol": 0.95,
+      "closePosition": 5.1,
+      "breakPrevHigh": false,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 1.89,
+      "priorHigh60": 18034.19,
+      "distHigh60Pct": -4.36,
+      "priorHigh120": 18034.19,
+      "distHigh120Pct": -4.36,
+      "up": 256,
+      "down": 612,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
       "date": "2021-08-02",
       "index": 17503.28,
       "ma5": 17311.72,
@@ -7563,6 +8064,43 @@
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
+      "date": "2021-08-12",
+      "index": 17219.94,
+      "ma5": 17356.44,
+      "ma20": 17467.12,
+      "ret5": -2.18,
+      "ret20": -4.52,
+      "trend": "空",
+      "breadth": 69.3,
+      "foreign": 51.4,
+      "score": 37,
+      "state": "🔴 Risk OFF",
+      "dayRet": -0.04,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": -1.42,
+      "indexRvol": 0.7,
+      "closePosition": 86.0,
+      "breakPrevHigh": false,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 0.61,
+      "priorHigh60": 18034.19,
+      "distHigh60Pct": -4.52,
+      "priorHigh120": 18034.19,
+      "distHigh120Pct": -4.52,
+      "up": 572,
+      "down": 253,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
       "date": "2021-08-13",
       "index": 16982.11,
       "ma5": 17247.6,
@@ -7637,6 +8175,43 @@
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
+      "date": "2021-08-17",
+      "index": 16661.36,
+      "ma5": 16989.87,
+      "ma20": 17331.57,
+      "ret5": -3.82,
+      "ret20": -4.95,
+      "trend": "空",
+      "breadth": 20.8,
+      "foreign": -87.3,
+      "score": 2,
+      "state": "🔴 Risk OFF",
+      "dayRet": -1.17,
+      "mode": "BOTTOM",
+      "activeState": "⚪ Bottom Watch",
+      "oversoldScore": 2,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Bottom Watch",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": -3.87,
+      "indexRvol": 0.71,
+      "closePosition": 1.8,
+      "breakPrevHigh": false,
+      "breakPrevLow": true,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 1.12,
+      "priorHigh60": 18034.19,
+      "distHigh60Pct": -7.61,
+      "priorHigh120": 18034.19,
+      "distHigh120Pct": -7.61,
+      "up": 179,
+      "down": 681,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
       "date": "2021-08-18",
       "index": 16826.27,
       "ma5": 16909.69,
@@ -7708,6 +8283,43 @@
       "distHigh120Pct": -9.2,
       "up": 60,
       "down": 840,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
+      "date": "2021-08-20",
+      "index": 16341.94,
+      "ma5": 16612.75,
+      "ma20": 17178.55,
+      "ret5": -3.77,
+      "ret20": -7.0,
+      "trend": "空",
+      "breadth": 47.2,
+      "foreign": -129.9,
+      "score": 5,
+      "state": "🔴 Risk OFF",
+      "dayRet": -0.2,
+      "mode": "BOTTOM",
+      "activeState": "⚪ Bottom Watch",
+      "oversoldScore": 1,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Bottom Watch",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": -4.87,
+      "indexRvol": 0.83,
+      "closePosition": 36.2,
+      "breakPrevHigh": false,
+      "breakPrevLow": true,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 1.66,
+      "priorHigh60": 18034.19,
+      "distHigh60Pct": -9.38,
+      "priorHigh120": 18034.19,
+      "distHigh120Pct": -9.38,
+      "up": 385,
+      "down": 430,
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
@@ -7893,6 +8505,43 @@
       "distHigh120Pct": -4.57,
       "up": 571,
       "down": 278,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
+      "date": "2021-08-30",
+      "index": 17396.52,
+      "ma5": 17107.6,
+      "ma20": 17094.43,
+      "ret5": 3.91,
+      "ret20": -0.61,
+      "trend": "多",
+      "breadth": 69.2,
+      "foreign": 212.5,
+      "score": 87,
+      "state": "🟢 Strong Risk ON",
+      "dayRet": 1.08,
+      "mode": "TOP",
+      "activeState": "⚪ Top Watch",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Top Watch",
+      "distMA20": 1.77,
+      "indexRvol": 0.77,
+      "closePosition": 100.0,
+      "breakPrevHigh": true,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 0.85,
+      "priorHigh60": 18034.19,
+      "distHigh60Pct": -3.54,
+      "priorHigh120": 18034.19,
+      "distHigh120Pct": -3.54,
+      "up": 578,
+      "down": 257,
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
@@ -10153,6 +10802,43 @@
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
+      "date": "2021-11-29",
+      "index": 17328.09,
+      "ma5": 17532.06,
+      "ma20": 17513.3,
+      "ret5": -2.67,
+      "ret20": 1.52,
+      "trend": "空",
+      "breadth": 28.4,
+      "foreign": 60.7,
+      "score": 36,
+      "state": "🔴 Risk OFF",
+      "dayRet": -0.24,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": -1.06,
+      "indexRvol": 0.9,
+      "closePosition": 64.8,
+      "breakPrevHigh": false,
+      "breakPrevLow": true,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 1.33,
+      "priorHigh60": 17986.18,
+      "distHigh60Pct": -3.66,
+      "priorHigh120": 18034.19,
+      "distHigh120Pct": -3.92,
+      "up": 249,
+      "down": 628,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
       "date": "2021-11-30",
       "index": 17427.76,
       "ma5": 17484.39,
@@ -10187,6 +10873,43 @@
       "distHigh120Pct": -3.36,
       "up": 592,
       "down": 276,
+      "source": "OFFICIAL_TWSE_DATE_LOCKED"
+    },
+    {
+      "date": "2021-12-01",
+      "index": 17585.99,
+      "ma5": 17473.08,
+      "ma20": 17554.58,
+      "ret5": -0.32,
+      "ret20": 2.71,
+      "trend": "多",
+      "breadth": 70.2,
+      "foreign": 84.3,
+      "score": 75,
+      "state": "🟢 Strong Risk ON",
+      "dayRet": 0.91,
+      "mode": "NORMAL",
+      "activeState": "⚪ Normal",
+      "oversoldScore": 0,
+      "bottomConfirmScore": 0,
+      "bottomState": "⚪ Inactive",
+      "overboughtScore": 0,
+      "topConfirmScore": 0,
+      "topState": "⚪ Inactive",
+      "distMA20": 0.18,
+      "indexRvol": 0.77,
+      "closePosition": 84.0,
+      "breakPrevHigh": true,
+      "breakPrevLow": false,
+      "recentOversold": false,
+      "recentOverbought": false,
+      "volExpansion": 1.64,
+      "priorHigh60": 17986.18,
+      "distHigh60Pct": -2.22,
+      "priorHigh120": 18034.19,
+      "distHigh120Pct": -2.49,
+      "up": 616,
+      "down": 261,
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     },
     {
@@ -10967,147 +11690,6 @@
       "source": "OFFICIAL_TWSE_DATE_LOCKED"
     }
   ],
-  "errors": [
-    {
-      "date": "2021-02-03",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-03-18",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-03-22",
-      "error": {
-        "breadth": "ALL:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0) | ALLBUT0999:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-03-25",
-      "error": {
-        "breadth": "ALL:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0) | ALLBUT0999:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-03-30",
-      "error": {
-        "breadth": "ALL:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0) | ALLBUT0999:JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-03-31",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-04-07",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-04-15",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-04-26",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-05-06",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-05-27",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-07-08",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-07-12",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-07-30",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-08-12",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-08-17",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-08-20",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-08-30",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-11-29",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    },
-    {
-      "date": "2021-12-01",
-      "error": {
-        "foreign": "JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0); JSONDecodeError:Expecting value: line 1 column 1 (char 0)"
-      },
-      "attempts": 1
-    }
-  ],
+  "errors": [],
   "version": "EXTENDED_MARKET_YEAR_V1"
 }
