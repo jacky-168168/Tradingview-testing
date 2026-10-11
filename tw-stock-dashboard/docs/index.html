@@ -32,6 +32,8 @@
 @media(max-width:375px){.site-nav-links{grid-template-columns:1fr 1fr}.site-head h1{font-size:19px}.site-nav-links .btn{font-size:10px}}
 </style>
 <script src="./site-access.js"></script>
+<link rel="stylesheet" href="./market-command.css">
+<script src="./market-command.js"></script>
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -66,6 +68,29 @@
     </div>
   </nav>
 </header>
+<section id="marketCommand" class="market-command cmd-unknown" aria-label="大盤是否適合進場：盤後決策總覽">
+  <div class="cmd-main">
+    <div class="cmd-top">
+      <div class="cmd-eyebrow">TODAY'S MARKET DECISION · 大盤進場判斷</div>
+      <div id="commandStatus" class="cmd-headline" role="status" aria-live="polite">核對最新交易日中…</div>
+      <div id="commandAction" class="cmd-action">分別確認趨勢、風險警訊與個股買點；分數高不代表一定能追價。</div>
+      <div class="cmd-meta"><span id="commandAsOf">資料日期核對中…</span><span id="commandTiming">非即時交易指令</span></div>
+    </div>
+    <div class="cmd-score" aria-label="原始現貨大盤風險分數">
+      <div class="cmd-score-main"><span id="commandScore">—</span><span class="cmd-score-units">/100</span></div>
+      <div id="commandScoreDescription" class="cmd-score-label">原始 Risk Score<br>沒有混入 AI 預測</div>
+    </div>
+  </div>
+  <div class="cmd-metrics">
+    <div class="cmd-metric"><span>市場廣度｜上漲家數</span><strong id="commandBreadth">—</strong><small id="commandBreadthSub">TWSE 上漲股票比例</small></div>
+    <div class="cmd-metric"><span>分數動能｜近5日</span><strong id="commandScoreChange">—</strong><small id="commandScoreChangeSub">趨勢變化，不取代原始分數</small></div>
+    <div class="cmd-metric"><span>實現波動｜20日年化</span><strong id="commandVol">—</strong><small id="commandVolSub">用歷史分位衡量波動風險</small></div>
+    <div class="cmd-metric"><span>距離前120日高點</span><strong id="commandHigh">—</strong><small id="commandHighSub">接近前高不代表一定反轉</small></div>
+  </div>
+  <div class="cmd-bottom"><div id="commandReasons" class="cmd-chips" aria-label="大盤風險與注意事項"><span class="command-chip">市場風險核對中</span></div><a id="commandPrimaryLink" class="cmd-cta" href="./selections.html">查看選股候選 →</a></div>
+  <div class="cmd-notes" id="commandLogic">僅盤後研究提示，不自動下單，不改變正式選股與風控規則。</div>
+  <div class="cmd-research"><span id="commandAi">機器學習回測狀態核對中…</span><a href="./data/research/market_ml_audit/summary.json" target="_blank" rel="noopener">機器學習驗證</a><a href="./data/research/market_intelligence/latest.json" target="_blank" rel="noopener">風險依據</a></div>
+</section>
 <div class="grid-top">
 <div class="card box"><div class="small-title">🧭 隔日盤前風險｜現貨＋台指期夜盤</div><div id="openingPreview" class="opening-preview" role="status"><div class="opening-head"><span id="openingState">⏳ 正在核對完整夜盤…</span><strong id="openingScore">--</strong></div><div class="opening-meta" id="openingDetails">需核對同月台指期夜盤及下一交易日</div><div class="opening-foot">盤前分數為尚未回測的風險情境估計，不能當作正式現貨分數或保證隔日漲跌。</div><details class="txf-details"><summary>查看盤前分數如何調整（暫定規則）</summary><div class="txf-note">TX同月夜盤相對日盤：跌≥2%扣25分；跌≥1%扣15分；跌≥0.5%扣8分；漲≥0.5%加4分；漲≥1%加7分；漲≥2%加10分；其餘不調整。最高100、最低0。這是尚未回測的初版假設，歷史正式分數及F／F2不變。</div></details></div><div class="small-title" style="margin-top:16px">📌 已收盤加權現貨正式風控（F／F2原版）</div><div class="risk-main"><div id="riskLight" class="risk-light">●</div><div><div id="riskState" class="risk-state">尚未分析</div><div class="risk-score"><span id="riskScore">0</span><small>/100 現貨分數</small></div></div></div><div id="riskAdvice" class="sub"></div><div id="marketEntryAdvisor" class="entry-advice" role="status"><div class="entry-advice-head"><span>🎯 G 強勢股／超跌反轉進場觀察</span><strong id="marketEntryHeadline">讀取中…</strong></div><div class="entry-advice-detail" id="marketEntryDetail">將分數與反轉風險一起評估</div><div class="entry-advice-flags" id="marketEntryFlags"></div><div class="entry-advice-foot">本區為盤後研究性風險提示；「禁止／可評估」不會直接下單或改變正式 G、F、F2 規則。超跌反轉不等於確認個股買點。</div></div><div id="riskDataStatus" class="risk-data-status" role="status">⌛ 核對最近交易日中…</div></div>
 <div class="card box"><div class="small-title">REVERSAL MONITOR</div><div id="revMode" class="sub">NORMAL</div><div id="revState" class="rev-state">⚪ Normal</div><div class="rev-grid"><div class="metric"><div id="extremeLabel" class="metric-label">極端程度</div><div id="extreme" class="metric-value">0/9</div></div><div class="metric"><div id="confirmLabel" class="metric-label">反轉確認</div><div id="confirm" class="metric-value">0/9</div></div></div><div id="revDataStatus" class="risk-data-status" role="status">⌛ 核對最近交易日中…</div><div class="chips"><span id="dist" class="chip">距MA20 --</span><span id="dayret" class="chip">當日 --</span><span id="closepos" class="chip">收盤位置 --</span></div></div>
@@ -208,7 +233,7 @@ async function loadFutures(){
 
 function renderPanels(){var p=DATA&&DATA.panels||{},f=p.institutionFlow||{buy:[],sell:[]};buyRows.innerHTML=(f.buy||[]).map(panelRow).join("")||'<div class="sub">--</div>';sellRows.innerHTML=(f.sell||[]).map(panelRow).join("")||'<div class="sub">--</div>';instSource.textContent=p.institutionSource||"";var hs=p.topicHeat||[];themeRows.innerHTML=hs.length?hs.map(function(x){return '<div class="row"><span><b>'+esc(x.theme)+'</b></span><span class="'+C(x.avgRet)+'">'+(Number(x.avgRet)>=0?"+":"")+N(x.avgRet)+'%</span></div>'}).join(""):'<div class="sub">--</div>';themeSource.textContent=p.topicSource||""}
 function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);marketMeta.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),isStale=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5);staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent="⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
-async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();renderPanels();renderMeta();await loadFutures()}catch(e){marketMeta.textContent="市場資料載入失敗："+e.message;futuresSub.textContent="市場資料暫時不可用，請稍後重新載入。"}finally{loading.classList.remove("show")}}
+async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();MarketCommand.refresh(DATA);MarketCommand.checkMl();renderPanels();renderMeta();await loadFutures()}catch(e){marketMeta.textContent="市場資料載入失敗："+e.message;futuresSub.textContent="市場資料暫時不可用，請稍後重新載入。"}finally{loading.classList.remove("show")}}
 document.getElementById("txfLiveChart").addEventListener("toggle",function(){
  if(!this.open||this.dataset.loaded==="1")return;
  this.dataset.loaded="1";
