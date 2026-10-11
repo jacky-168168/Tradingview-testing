@@ -1,0 +1,180 @@
+{
+  "version": "MARKET_ENTRY_PLAYBOOK_2026_V1",
+  "generatedAt": "2026-10-11T15:34:08.843678+08:00",
+  "source2025ValidationOnly": true,
+  "testYear2026PreviouslyInspected": true,
+  "referenceCashDate": "2026-10-08",
+  "referenceCashRiskScore": 46,
+  "research": {
+    "marketDays": 728,
+    "training": {
+      "trainingSamples": 286,
+      "validationSamples": 242,
+      "holdoutSamples": 184,
+      "selectedGRUSeedOn2025": 29,
+      "selectedEpochOn2025": 3,
+      "candidateSeeds": [
+        11,
+        29
+      ],
+      "expectedDateTrainStarts": "2023-10-11",
+      "predictiveSkill": {
+        "validation": {
+          "n": 242,
+          "GRU_Brier": 0.24708,
+          "SCORE_LOGIT_Brier": 0.24961,
+          "GRU_AUC": 0.5616,
+          "GRU_balancedAccuracyPct": 53.41,
+          "GRU_vs_SCORE_BrierImprovement": 0.00253
+        },
+        "holdout": {
+          "n": 184,
+          "GRU_Brier": 0.24577,
+          "SCORE_LOGIT_Brier": 0.2489,
+          "GRU_AUC": 0.546,
+          "GRU_balancedAccuracyPct": 48.34,
+          "GRU_vs_SCORE_BrierImprovement": 0.00313
+        }
+      }
+    },
+    "noMinuteOHLC": true,
+    "noLive09ClockClaims": true,
+    "roundTripCostPct": 0.585
+  },
+  "policy": {
+    "risk60": "minimum trend candidate, not an execution permission",
+    "risk80": "stronger G20 context, not proven incremental win over Risk60",
+    "strongTop": "veto追價",
+    "09to1330": "lack live breadth and G synchrony: wait for independently verified confirmation",
+    "nightTX": "completed night market is preopen caution only, never an automatic positive buy gate",
+    "GRU": "research-only; failed validation and not used for buy permission"
+  },
+  "comparisons": {
+    "G20_RISK60": {
+      "validation": {
+        "n": 93,
+        "meanNetPct": 4.761,
+        "winPct": 56.99,
+        "exitSampledCapitalReturnPct": -30.96,
+        "exitSampledMDDPct": -30.96
+      },
+      "holdout": {
+        "n": 77,
+        "meanNetPct": 7.184,
+        "winPct": 63.64,
+        "exitSampledCapitalReturnPct": 19.68,
+        "exitSampledMDDPct": -16.41
+      }
+    },
+    "G20_RISK80": {
+      "validation": {
+        "n": 52,
+        "meanNetPct": 8.139,
+        "winPct": 67.31,
+        "exitSampledCapitalReturnPct": 97.99,
+        "exitSampledMDDPct": -31.28
+      },
+      "holdout": {
+        "n": 54,
+        "meanNetPct": 9.883,
+        "winPct": 68.52,
+        "exitSampledCapitalReturnPct": 46.8,
+        "exitSampledMDDPct": -47.29
+      }
+    },
+    "G10_RISK60": {
+      "validation": {
+        "n": 98,
+        "meanNetPct": 0.386,
+        "winPct": 50.0,
+        "exitSampledCapitalReturnPct": -39.65,
+        "exitSampledMDDPct": -44.76
+      },
+      "holdout": {
+        "n": 82,
+        "meanNetPct": 3.106,
+        "winPct": 62.2,
+        "exitSampledCapitalReturnPct": 23.0,
+        "exitSampledMDDPct": -20.46
+      }
+    },
+    "G1_RISK60": {
+      "validation": {
+        "n": 105,
+        "meanNetPct": -0.898,
+        "winPct": 38.1,
+        "exitSampledCapitalReturnPct": -63.15,
+        "exitSampledMDDPct": -66.97
+      },
+      "holdout": {
+        "n": 89,
+        "meanNetPct": -0.501,
+        "winPct": 42.7,
+        "exitSampledCapitalReturnPct": -39.93,
+        "exitSampledMDDPct": -49.66
+      }
+    },
+    "D10_RISK60": {
+      "validation": {
+        "n": 53,
+        "meanNetPct": 1.478,
+        "winPct": 54.72,
+        "exitSampledCapitalReturnPct": 6.92,
+        "exitSampledMDDPct": -29.51
+      },
+      "holdout": {
+        "n": 90,
+        "meanNetPct": 1.727,
+        "winPct": 58.89,
+        "exitSampledCapitalReturnPct": 157.46,
+        "exitSampledMDDPct": -26.5
+      }
+    },
+    "G10_GRU_RISK60": {
+      "validation": {
+        "n": 35,
+        "meanNetPct": -3.862,
+        "winPct": 25.71,
+        "exitSampledCapitalReturnPct": -40.65,
+        "exitSampledMDDPct": -44.3
+      },
+      "holdout": {
+        "n": 31,
+        "meanNetPct": 5.478,
+        "winPct": 70.97,
+        "exitSampledCapitalReturnPct": 6.96,
+        "exitSampledMDDPct": -16.0
+      }
+    }
+  },
+  "blockBootstrapG20Risk80Vs60": {
+    "2025": {
+      "differenceRisk80MinusRisk60PctPts": 3.378,
+      "CI95PctPts": [
+        -0.339,
+        9.102
+      ],
+      "excludesZero": false
+    },
+    "2026": {
+      "differenceRisk80MinusRisk60PctPts": 2.699,
+      "CI95PctPts": [
+        -0.349,
+        6.867
+      ],
+      "excludesZero": false
+    }
+  },
+  "nextDayBreadth": {
+    "baselineMajorityUpPct": 46.97,
+    "risk60MajorityUpPct": 47.87,
+    "risk80MajorityUpPct": 46.55
+  },
+  "limitations": [
+    "2026 was inspected previously; not pristine holdout",
+    "Daily overlapping stock returns are not investable compounded account equity",
+    "Exit-sampled capital MDD is not daily marked-to-market MDD",
+    "No historic 09:15/09:30 market-wide synchronized prices or true intraday breadth",
+    "Current universe/survivorship bias; G80 vs G60 bootstrap confidence intervals cross zero"
+  ]
+}
