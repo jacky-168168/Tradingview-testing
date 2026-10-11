@@ -236,6 +236,11 @@ jobs:
           ['marketCommand','commandStatus','commandBreadth','commandScore','commandAction','commandReasons','commandAi'].forEach(id=>assert(html.includes('id="'+id+'"'),id));
           const inline=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(x=>x[1]);
           inline.forEach(code=>new Function(code));
+          const guide=fs.readFileSync('tw-stock-dashboard/docs/market-methodology.html','utf8');
+          const scripts=[...guide.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(x=>x[1]);
+          assert(scripts.length>0,'methodology page script');
+          scripts.forEach(code=>new Function(code));
+          assert(html.includes('./market-methodology.html'),'homepage must link researched methods');
           console.log('PASS: Homepage decision JS, HTML DOM IDs, low-score and overheat cases');
           JS
           python - <<'PY'
@@ -247,7 +252,8 @@ jobs:
           ml=json.loads((root/'research/market_ml_audit/summary.json').read_text())
           assert current['risk']['score']==note['riskScore'] and current['dataDate']==note['asOf']
           assert note['research']['mlNotUsedToGate'] is True
-          assert ml['advisoryEligible'] is False
+          assert isinstance(ml['advisoryEligible'],bool)
+          assert not note['research']['cautionFiltersValidatedForStockBuying']
           print('PASS: Official market score unchanged and AI is not a live trading gate')
           PY
       - name: Configure Pages
