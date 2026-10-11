@@ -1,0 +1,93 @@
+name: G Factor RankIC Quintile 2023-26 OOS Audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/research_g_factor_ic_3y.py'
+      - 'tw-stock-dashboard/tests/test_g_factor_ic_3y.py'
+      - '.github/workflows/research-g-factor-ic-3y.yml'
+permissions:
+  contents: write
+concurrency:
+  group: g-factor-ic-3y
+  cancel-in-progress: false
+jobs:
+  factor-study:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore historical per-stock OHLC cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install established market and factor research dependencies
+        run: |
+          python -m pip install -r tw-stock-dashboard/requirements.txt
+          python -m pip install beautifulsoup4
+      - name: Validate study does not leak fold-end future labels
+        run: |
+          python -m py_compile tw-stock-dashboard/src/research_g_factor_ic_3y.py
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p test_g_factor_ic_3y.py -v
+      - name: Reconstruct full original G candidates and evaluate factor evidence
+        working-directory: tw-stock-dashboard
+        run: python -u src/research_g_factor_ic_3y.py
+      - name: Audit published G parity and independent 2026 sample
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("tw-stock-dashboard/docs/data/research/g_factor_ic_3y")
+          r=json.loads((root/"summary.json").read_text(encoding="utf-8"))
+          assert r["GParity"]["passed"] and r["GParity"]["comparedHistoricalSignalDays"]>=500
+          assert r["inputAudit"]["dailyFeatureRows"]==29768
+          assert r["inputAudit"]["validGSignalDays"]==650
+          assert r["inputAudit"]["stockDataErrors"]==0
+          assert r["folds"]["holdout"][0]=="2026-01-01"
+          assert r["folds"]["train"][1]<r["folds"]["validation"][0]<r["folds"]["holdout"][0]
+          for gate in ("gate0","gate60"):
+              for fold in ("train","validation","holdout"):
+                  for h in ("5","10","20"):
+                      f=r["factors"][gate][fold][h]
+                      a=r["ablations"][gate][fold][h]
+                      assert len(f)==8 and len(a)==7
+                      for x in f:
+                          assert 0<=x["daysQuintiles"]<=x["daysIC"]
+                          assert (x["rankIC"] is None or -1<=x["rankIC"]<=1)
+                      for x in a:
+                          assert 0<=x["differentTop3Pct"]<=100
+          for h in ("5","10","20"):
+              assert sum(x["daysIC"] for x in r["factors"]["gate0"]["holdout"][h])>=60
+          assert (root/"report.md").stat().st_size>1000
+          print("G_FACTOR_2026_HOLDOUT_AUDIT_PASS",r["inputAudit"],r["GParity"])
+          PY
+      - name: Upload reproducible factor study artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: G-Factor-IC-Quintiles-OOS-2023-2026
+          path: tw-stock-dashboard/docs/data/research/g_factor_ic_3y/
+          retention-days: 90
+      - name: Publish completed auditable factor study to repository
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_factor_ic_3y/
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish G RankIC factor quintiles and 2026 blind OOS'
+            for i in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
