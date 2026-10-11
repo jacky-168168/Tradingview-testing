@@ -157,8 +157,19 @@ def main():
     _,index,err=update_symbol(BENCHMARK,lo,hi)
     if err or index is None or index.empty:raise RuntimeError("Missing ^TWII calendar")
     index=index.sort_values("date").drop_duplicates("date").reset_index(drop=True)
-    dates=[d for d in index.date.astype(str) if START<=d<=END]
-    if len(dates)!=728 or dates[0]!=START or dates[-1]!=END:raise RuntimeError("Historical 728-session calendar mismatch")
+    # The verified official TWSE archive is the canonical signal-day calendar.
+    # Yahoo ^TWII can omit or delay recent sessions: never interpolate them.
+    official=json.loads((DATA_DIR/"research"/"g_regime_3y"/"market_risk_daily.json").read_text(encoding="utf-8"))
+    dates=[str(z["date"]) for z in official]
+    if len(dates)!=728 or dates[0]!=START or dates[-1]!=END or len(set(dates))!=728:
+        raise RuntimeError("Historical verified 728-session archive invalid")
+    observed=set(index.date.astype(str));missing=[d for d in dates if d not in observed]
+    extra=[d for d in observed if START<=d<=END and d not in set(dates)]
+    print("YAHOO_VS_OFFICIAL_TWII_CALENDAR",{"observedDays":sum(START<=d<=END for d in observed),
+        "officialDays":len(dates),"missing":missing[:15],"extra":extra[:15]},flush=True)
+    prefix=index[index.date.astype(str)<START][["date","close"]]
+    index=pd.concat([prefix,pd.DataFrame([{"date":z["date"],"close":z["index"]} for z in official])],ignore_index=True)
+    index=index.sort_values("date").drop_duplicates("date").reset_index(drop=True)
     risk,_=get_risk(index,dates)
     grouped,picks,prices,info=reconstruct(dates,index,universe,hist)
     parity=assert_g_parity(picks,info)
