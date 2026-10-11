@@ -30,7 +30,8 @@ def history(root,risk):
         if x.get("date") and x["date"]<=asof and x["date"] not in daily:daily[x["date"]]=x
     # The last day's actual dashboard row wins for DISPLAY/DIAGNOSTICS ONLY.
     # Never change the independently frozen 728-day official research archive.
-    daily[asof]=dict(risk)
+    base=daily.get(asof,{})
+    daily[asof]={**base,**dict(risk)}
     ordered=[daily[k] for k in sorted(daily)]
     if len(ordered)<45 or any(finite(x.get("index")) is None for x in ordered):
         raise RuntimeError("Not enough valid market observations")
