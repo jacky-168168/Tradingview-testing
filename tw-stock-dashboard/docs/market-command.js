@@ -50,6 +50,7 @@ function draw(data,diag){
  txt("commandAction",d.action);
  txt("commandScore",Number.isFinite(val)&&r.score!=null?String(val):"--");
  txt("commandScoreDescription",strength(val)+"｜原始現貨分數");
+ const fill=$("commandScoreFill");if(fill)fill.style.width=(r.score==null||!Number.isFinite(val)?0:Math.max(0,Math.min(100,val)))+"%";
  const signalDate=x.marketDate||"未知";
  txt("commandAsOf","最新已收盤 "+signalDate+(x.weekend?"｜今日休市":"｜非即時交易訊號"));
  let dayLabel=x.weekend?"休市日：下個交易日的盤前參考":x.today===signalDate?"最近資料日：已完成的現貨市場評估":"最近資料日：非即時盤中訊號";
@@ -68,7 +69,11 @@ function draw(data,diag){
  const reasons=$("commandReasons");if(reasons){reasons.replaceChildren();let flags=Array.isArray(d.flags)?d.flags:[];
   if(!flags.length&&r.score<60){flags=[{code:"BELOW_GATE",title:"分數未達60",severity:"caution"}];if(breadth<45)flags.push({code:"LOW_BREADTH",title:"當日廣度偏弱",severity:"caution"});}
   if(!flags.length)flags=[{code:"NO_EXTRA_VETO",title:"暫無主要附加警訊",severity:"info"}];
-  for(const f of flags.slice(0,5)){const chip=document.createElement("span");chip.className="command-chip "+(f.severity||"info");chip.textContent=f.title||String(f.code||"");reasons.appendChild(chip)}
+  for(const f of flags.slice(0,3)){const chip=document.createElement("span");chip.className="command-chip "+(f.severity||"info");chip.textContent=f.title||String(f.code||"");reasons.appendChild(chip)}
+  if(flags.length>3){const more=document.createElement("span");more.className="command-chip more";more.textContent="＋"+(flags.length-3)+" 項風險";reasons.appendChild(more)}
+  const full=$("commandFullFlags");if(full){full.replaceChildren();for(const f of flags){const row=document.createElement("div");row.className="full-flag";
+   const bold=document.createElement("strong");bold.textContent=f.title||String(f.code||"");row.appendChild(bold);
+   if(f.detail){const detail=document.createElement("span");detail.textContent=f.detail;row.appendChild(detail)}full.appendChild(row)}}
  }
  txt("commandLogic",x.diag?"已核對市場廣度、波動、前高和反轉監測；僅原始 Risk Score 曾參與既有進場回測。":"目前顯示經核對的原始收盤 Risk Score；延伸市場診斷尚未同步，暫不推測其他指標。");
  const btn=$("commandPrimaryLink");
