@@ -1,0 +1,283 @@
+{
+  "version": "MARKET_DIRECTION_MODEL_RESEARCH_ONLY_V1",
+  "createdAt": "2026-10-11T10:19:51.059765+08:00",
+  "sourceDates": {
+    "start": "2023-10-11",
+    "end": "2026-10-08",
+    "n": 728
+  },
+  "features": [
+    "originalScore",
+    "ret5",
+    "ret20",
+    "ma20Gap",
+    "breadthToday",
+    "breadth5",
+    "breadthChange5",
+    "foreignSigned",
+    "vol20",
+    "closePosition",
+    "scoreChange5",
+    "indexDrawdown20"
+  ],
+  "label": "Future ^TWII close D+H > close D; not a stock-specific profit label",
+  "splits": {
+    "train": [
+      "2023-10-11",
+      "2024-12-31"
+    ],
+    "validation": [
+      "2025-01-01",
+      "2025-12-31"
+    ],
+    "holdout": [
+      "2026-01-01",
+      "2026-10-08"
+    ]
+  },
+  "purging": "Require training label exit strictly before evaluation fold starts, and evaluation labels exit within each fold",
+  "candidates": [
+    "CONSTANT",
+    "SCORE_ONLY",
+    "L2_REGULARIZED",
+    "L2_STANDARD",
+    "FOREST_SHALLOW"
+  ],
+  "horizonModels": {
+    "5": {
+      "trainSamples": 275,
+      "validationSamples": 238,
+      "holdoutSamples": 180,
+      "selectedOn2025Only": "L2_REGULARIZED",
+      "selected2025BrierImprovementVsScore": -0.00093,
+      "selected2026BrierImprovementVsScore": -0.00065,
+      "qualifiedForAdvisory": false,
+      "models": {
+        "CONSTANT": {
+          "validation": {
+            "n": 238,
+            "positiveRatePct": 63.45,
+            "brier": 0.23208,
+            "constantBrier": 0.23208,
+            "auc": 0.5,
+            "logLoss": 0.65688,
+            "brierLiftOverConstant": 0.0
+          },
+          "holdout": {
+            "n": 180,
+            "positiveRatePct": 65.56,
+            "brier": 0.22658,
+            "constantBrier": 0.22658,
+            "auc": 0.5,
+            "logLoss": 0.64562,
+            "brierLiftOverConstant": 0.0
+          }
+        },
+        "SCORE_ONLY": {
+          "validation": {
+            "n": 238,
+            "positiveRatePct": 63.45,
+            "brier": 0.23212,
+            "constantBrier": 0.23208,
+            "auc": 0.4988,
+            "logLoss": 0.65696,
+            "brierLiftOverConstant": -3e-05
+          },
+          "holdout": {
+            "n": 180,
+            "positiveRatePct": 65.56,
+            "brier": 0.22663,
+            "constantBrier": 0.22658,
+            "auc": 0.4791,
+            "logLoss": 0.64572,
+            "brierLiftOverConstant": -5e-05
+          }
+        },
+        "L2_REGULARIZED": {
+          "validation": {
+            "n": 238,
+            "positiveRatePct": 63.45,
+            "brier": 0.23305,
+            "constantBrier": 0.23208,
+            "auc": 0.4962,
+            "logLoss": 0.65912,
+            "brierLiftOverConstant": -0.00097
+          },
+          "holdout": {
+            "n": 180,
+            "positiveRatePct": 65.56,
+            "brier": 0.22728,
+            "constantBrier": 0.22658,
+            "auc": 0.525,
+            "logLoss": 0.64707,
+            "brierLiftOverConstant": -0.0007
+          }
+        },
+        "L2_STANDARD": {
+          "validation": {
+            "n": 238,
+            "positiveRatePct": 63.45,
+            "brier": 0.23417,
+            "constantBrier": 0.23208,
+            "auc": 0.4927,
+            "logLoss": 0.66177,
+            "brierLiftOverConstant": -0.00209
+          },
+          "holdout": {
+            "n": 180,
+            "positiveRatePct": 65.56,
+            "brier": 0.22717,
+            "constantBrier": 0.22658,
+            "auc": 0.5321,
+            "logLoss": 0.64708,
+            "brierLiftOverConstant": -0.0006
+          }
+        },
+        "FOREST_SHALLOW": {
+          "validation": {
+            "n": 238,
+            "positiveRatePct": 63.45,
+            "brier": 0.23343,
+            "constantBrier": 0.23208,
+            "auc": 0.5105,
+            "logLoss": 0.66015,
+            "brierLiftOverConstant": -0.00135
+          },
+          "holdout": {
+            "n": 180,
+            "positiveRatePct": 65.56,
+            "brier": 0.22551,
+            "constantBrier": 0.22658,
+            "auc": 0.5406,
+            "logLoss": 0.64337,
+            "brierLiftOverConstant": 0.00107
+          }
+        }
+      }
+    },
+    "10": {
+      "trainSamples": 270,
+      "validationSamples": 233,
+      "holdoutSamples": 175,
+      "selectedOn2025Only": "FOREST_SHALLOW",
+      "selected2025BrierImprovementVsScore": 0.0016,
+      "selected2026BrierImprovementVsScore": 0.00316,
+      "qualifiedForAdvisory": false,
+      "models": {
+        "CONSTANT": {
+          "validation": {
+            "n": 233,
+            "positiveRatePct": 66.95,
+            "brier": 0.22151,
+            "constantBrier": 0.22151,
+            "auc": 0.5,
+            "logLoss": 0.63508,
+            "brierLiftOverConstant": 0.0
+          },
+          "holdout": {
+            "n": 175,
+            "positiveRatePct": 69.71,
+            "brier": 0.2115,
+            "constantBrier": 0.2115,
+            "auc": 0.5,
+            "logLoss": 0.61412,
+            "brierLiftOverConstant": 0.0
+          }
+        },
+        "SCORE_ONLY": {
+          "validation": {
+            "n": 233,
+            "positiveRatePct": 66.95,
+            "brier": 0.22096,
+            "constantBrier": 0.22151,
+            "auc": 0.572,
+            "logLoss": 0.63383,
+            "brierLiftOverConstant": 0.00054
+          },
+          "holdout": {
+            "n": 175,
+            "positiveRatePct": 69.71,
+            "brier": 0.21374,
+            "constantBrier": 0.2115,
+            "auc": 0.4748,
+            "logLoss": 0.61907,
+            "brierLiftOverConstant": -0.00223
+          }
+        },
+        "L2_REGULARIZED": {
+          "validation": {
+            "n": 233,
+            "positiveRatePct": 66.95,
+            "brier": 0.24979,
+            "constantBrier": 0.22151,
+            "auc": 0.3623,
+            "logLoss": 0.70232,
+            "brierLiftOverConstant": -0.02828
+          },
+          "holdout": {
+            "n": 175,
+            "positiveRatePct": 69.71,
+            "brier": 0.21621,
+            "constantBrier": 0.2115,
+            "auc": 0.4671,
+            "logLoss": 0.62633,
+            "brierLiftOverConstant": -0.00471
+          }
+        },
+        "L2_STANDARD": {
+          "validation": {
+            "n": 233,
+            "positiveRatePct": 66.95,
+            "brier": 0.27074,
+            "constantBrier": 0.22151,
+            "auc": 0.3442,
+            "logLoss": 0.75891,
+            "brierLiftOverConstant": -0.04924
+          },
+          "holdout": {
+            "n": 175,
+            "positiveRatePct": 69.71,
+            "brier": 0.2191,
+            "constantBrier": 0.2115,
+            "auc": 0.4516,
+            "logLoss": 0.63378,
+            "brierLiftOverConstant": -0.00759
+          }
+        },
+        "FOREST_SHALLOW": {
+          "validation": {
+            "n": 233,
+            "positiveRatePct": 66.95,
+            "brier": 0.21936,
+            "constantBrier": 0.22151,
+            "auc": 0.5448,
+            "logLoss": 0.62984,
+            "brierLiftOverConstant": 0.00214
+          },
+          "holdout": {
+            "n": 175,
+            "positiveRatePct": 69.71,
+            "brier": 0.21058,
+            "constantBrier": 0.2115,
+            "auc": 0.5396,
+            "logLoss": 0.61168,
+            "brierLiftOverConstant": 0.00092
+          }
+        }
+      }
+    }
+  },
+  "operationalStatus": "RESEARCH_ONLY",
+  "limitations": [
+    "Three years / 728 sessions are too few for robust high-dimensional regime prediction",
+    "Original Risk Score already optimized on historical G research; model must beat it before use",
+    "Only next 5/10 session TWII direction, not A/D/F/G stock entry profit or next-open execution",
+    "Overlapping 5/10 day targets are serially dependent; row counts are not independent trials",
+    "Current stock universe bias does not directly affect index label but remains in stock strategy studies",
+    "2026 was studied before, so chronological holdout is not pristine independent blind test",
+    "No live AI recommendation unless 2025 validation and 2026 5D holdout both beat SCORE_ONLY Brier by >0.01 absolute",
+    "Use as supporting evidence only, never directly override original Risk Score gates"
+  ],
+  "advisoryEligible": false,
+  "decision": "DO_NOT_DEPLOY_ML; old score and transparent risk flags remain primary"
+}
