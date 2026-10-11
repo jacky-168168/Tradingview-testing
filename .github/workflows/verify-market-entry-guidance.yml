@@ -36,7 +36,7 @@ jobs:
           assert z['priorHigh60']==110 and z['priorHigh120']==110
           print('PASS: prior 60/120 high excludes current session, leaves original risk score untouched')
           PY
-      - name: Parse index inline JavaScript and confirm separate G advisory
+      - name: Parse unified market decision and enforce no duplicate advisory
         run: |
           node - <<'JS'
           const fs=require('fs');
@@ -45,6 +45,9 @@ jobs:
           const inline=blocks.map(b=>b[1]).filter(Boolean);
           if(!inline.length)throw Error('No inline script found');
           inline.forEach(code=>new Function(code));
-          ['marketEntryAdvisor','marketEntryGuidance','renderMarketEntry','distHigh120Pct','Strong Bottom Reversal'].forEach(k=>{if(!html.includes(k))throw Error('Missing '+k)});
-          console.log('PASS: advisory UI parses and keeps G/F/F2 rule changes out of this edit');
+          ['marketCommand','commandStatus','commandBreadth','commandScore','commandStrategyEvidence','Strong Bottom Reversal'].forEach(k=>{if(!html.includes(k))throw Error('Missing '+k)});
+          for(const k of ['id="entryPlaybook"','id="marketEntryAdvisor"','盤中 VWAP','G 同步率'])if(html.includes(k))throw Error('Old duplicate or unavailable field '+k);
+          if((html.match(/id="marketCommand"/g)||[]).length!==1)throw Error('Require exactly one main market decision');
+          console.log('PASS: one market decision, full market evidence, no unlicensed intraday placeholder');
           JS
+          node tw-stock-dashboard/tests/test_entry_playbook.js
