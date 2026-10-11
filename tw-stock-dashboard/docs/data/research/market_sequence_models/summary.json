@@ -1,0 +1,389 @@
+{
+  "version": "TWSE_BREADTH_SEQUENCE_OOS_2026_10_V1",
+  "createdAt": "2026-10-11T12:19:00.108877+08:00",
+  "officialRows": 728,
+  "verifiedExtraYears": [],
+  "dates": [
+    "2023-10-11",
+    "2026-10-08"
+  ],
+  "snapshot": "At 08:59 D+1, use only facts finalized by close D; no true 09:00 intraday data is present",
+  "windowDays": 14,
+  "features": [
+    "riskScore",
+    "breadth",
+    "dayReturn",
+    "ret5",
+    "ret20",
+    "foreignSignedLog",
+    "ma20Gap",
+    "closePosition",
+    "indexRvol",
+    "oversold",
+    "overbought"
+  ],
+  "seedList": [
+    11,
+    29
+  ],
+  "tasks": {
+    "NEXT_BREADTH_MAJORITY": {
+      "sizes": {
+        "train": 286,
+        "validation": 242,
+        "holdout": 184
+      },
+      "trainBaseRatePct": 48.95,
+      "models": {
+        "BASE_RATE": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 46.69,
+            "brier": 0.24942,
+            "balancedAccuracyPct": 50.0,
+            "logLoss": 0.69198,
+            "auc": 0.5
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 44.57,
+            "brier": 0.24897,
+            "balancedAccuracyPct": 50.0,
+            "logLoss": 0.69109,
+            "auc": 0.5
+          }
+        },
+        "RISK_SCORE_LOGIT": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 46.69,
+            "brier": 0.24961,
+            "balancedAccuracyPct": 50.0,
+            "logLoss": 0.69237,
+            "auc": 0.4825
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 44.57,
+            "brier": 0.2489,
+            "balancedAccuracyPct": 50.0,
+            "logLoss": 0.69095,
+            "auc": 0.516
+          }
+        },
+        "TABULAR_LOGIT": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 46.69,
+            "brier": 0.26101,
+            "balancedAccuracyPct": 51.02,
+            "logLoss": 0.71715,
+            "auc": 0.5067
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 44.57,
+            "brier": 0.26686,
+            "balancedAccuracyPct": 50.39,
+            "logLoss": 0.73528,
+            "auc": 0.5251
+          }
+        },
+        "SHALLOW_TREE": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 46.69,
+            "brier": 0.25989,
+            "balancedAccuracyPct": 52.74,
+            "logLoss": 0.7147,
+            "auc": 0.5244
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 44.57,
+            "brier": 0.27162,
+            "balancedAccuracyPct": 50.87,
+            "logLoss": 0.74252,
+            "auc": 0.4987
+          }
+        },
+        "RNN": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 46.69,
+            "brier": 0.24741,
+            "balancedAccuracyPct": 55.95,
+            "logLoss": 0.68808,
+            "auc": 0.5539
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 44.57,
+            "brier": 0.24977,
+            "balancedAccuracyPct": 53.81,
+            "logLoss": 0.69316,
+            "auc": 0.5465
+          }
+        },
+        "GRU": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 46.69,
+            "brier": 0.24708,
+            "balancedAccuracyPct": 53.41,
+            "logLoss": 0.68729,
+            "auc": 0.5616
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 44.57,
+            "brier": 0.24577,
+            "balancedAccuracyPct": 48.34,
+            "logLoss": 0.68462,
+            "auc": 0.546
+          }
+        },
+        "TCN": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 46.69,
+            "brier": 0.24808,
+            "balancedAccuracyPct": 54.52,
+            "logLoss": 0.68945,
+            "auc": 0.5468
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 44.57,
+            "brier": 0.24829,
+            "balancedAccuracyPct": 51.04,
+            "logLoss": 0.68991,
+            "auc": 0.5326
+          }
+        }
+      },
+      "modelSelectedOn2025Only": "GRU",
+      "selectedValidationBrierAdvantageVsRiskScore": 0.00253,
+      "selected2026BrierAdvantageVsRiskScore": 0.00313,
+      "deepTraining": {
+        "RNN": {
+          "selectedSeedOn2025": 11,
+          "bestEpoch": 7,
+          "validationBrierBySeed": {
+            "11": 0.24741,
+            "29": 0.25133
+          }
+        },
+        "GRU": {
+          "selectedSeedOn2025": 29,
+          "bestEpoch": 3,
+          "validationBrierBySeed": {
+            "29": 0.24708,
+            "11": 0.2518
+          }
+        },
+        "TCN": {
+          "selectedSeedOn2025": 29,
+          "bestEpoch": 6,
+          "validationBrierBySeed": {
+            "29": 0.24808,
+            "11": 0.24948
+          }
+        }
+      },
+      "researchGateAccepted": false
+    },
+    "NEXT_INDEX_UP": {
+      "sizes": {
+        "train": 286,
+        "validation": 242,
+        "holdout": 184
+      },
+      "trainBaseRatePct": 59.09,
+      "models": {
+        "BASE_RATE": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 56.2,
+            "brier": 0.24699,
+            "balancedAccuracyPct": 50.0,
+            "logLoss": 0.68716,
+            "auc": 0.5
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 55.98,
+            "brier": 0.24739,
+            "balancedAccuracyPct": 50.0,
+            "logLoss": 0.68797,
+            "auc": 0.5
+          }
+        },
+        "RISK_SCORE_LOGIT": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 56.2,
+            "brier": 0.24825,
+            "balancedAccuracyPct": 50.0,
+            "logLoss": 0.68978,
+            "auc": 0.4743
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 55.98,
+            "brier": 0.24455,
+            "balancedAccuracyPct": 50.0,
+            "logLoss": 0.6821,
+            "auc": 0.5967
+          }
+        },
+        "TABULAR_LOGIT": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 56.2,
+            "brier": 0.25555,
+            "balancedAccuracyPct": 49.94,
+            "logLoss": 0.70664,
+            "auc": 0.4802
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 55.98,
+            "brier": 0.24825,
+            "balancedAccuracyPct": 55.54,
+            "logLoss": 0.69014,
+            "auc": 0.5677
+          }
+        },
+        "SHALLOW_TREE": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 56.2,
+            "brier": 0.25861,
+            "balancedAccuracyPct": 51.29,
+            "logLoss": 0.7143,
+            "auc": 0.5324
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 55.98,
+            "brier": 0.2419,
+            "balancedAccuracyPct": 54.75,
+            "logLoss": 0.67798,
+            "auc": 0.5931
+          }
+        },
+        "RNN": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 56.2,
+            "brier": 0.24799,
+            "balancedAccuracyPct": 50.94,
+            "logLoss": 0.68921,
+            "auc": 0.512
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 55.98,
+            "brier": 0.25092,
+            "balancedAccuracyPct": 50.0,
+            "logLoss": 0.69544,
+            "auc": 0.4624
+          }
+        },
+        "GRU": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 56.2,
+            "brier": 0.24575,
+            "balancedAccuracyPct": 52.72,
+            "logLoss": 0.68466,
+            "auc": 0.5334
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 55.98,
+            "brier": 0.24565,
+            "balancedAccuracyPct": 52.33,
+            "logLoss": 0.68446,
+            "auc": 0.5542
+          }
+        },
+        "TCN": {
+          "validation": {
+            "n": 242,
+            "majorityUpPct": 56.2,
+            "brier": 0.24647,
+            "balancedAccuracyPct": 49.63,
+            "logLoss": 0.68608,
+            "auc": 0.5144
+          },
+          "holdout": {
+            "n": 184,
+            "majorityUpPct": 55.98,
+            "brier": 0.24829,
+            "balancedAccuracyPct": 48.54,
+            "logLoss": 0.68974,
+            "auc": 0.4594
+          }
+        }
+      },
+      "modelSelectedOn2025Only": "GRU",
+      "selectedValidationBrierAdvantageVsRiskScore": 0.0025,
+      "selected2026BrierAdvantageVsRiskScore": -0.0011,
+      "deepTraining": {
+        "RNN": {
+          "selectedSeedOn2025": 11,
+          "bestEpoch": 1,
+          "validationBrierBySeed": {
+            "11": 0.24799,
+            "29": 0.25016
+          }
+        },
+        "GRU": {
+          "selectedSeedOn2025": 29,
+          "bestEpoch": 3,
+          "validationBrierBySeed": {
+            "29": 0.24575,
+            "11": 0.24742
+          }
+        },
+        "TCN": {
+          "selectedSeedOn2025": 29,
+          "bestEpoch": 1,
+          "validationBrierBySeed": {
+            "29": 0.24647,
+            "11": 0.24774
+          }
+        }
+      },
+      "researchGateAccepted": false
+    }
+  },
+  "validationPolicy": "2025 used only for model/epoch selection; 2026 chronologically held out, NOT pristine because previous studies inspected 2026",
+  "candidateModels": [
+    "BASE_RATE",
+    "RISK_SCORE_LOGIT",
+    "TABULAR_LOGIT",
+    "SHALLOW_TREE",
+    "RNN",
+    "GRU",
+    "TCN"
+  ],
+  "intentionallyNotImplemented": {
+    "TFT": "Complex multi-horizon model needs larger official history and verified known-future covariates; too much overfit risk with a single short TWII series",
+    "DRL": "Requires executable market environment, stocks, action sizing, costs, and rewards; not suitable as direct classifier of next-day stock breadth"
+  },
+  "limitations": [
+    "All same-day breadth and foreigners are observed AFTER session close D, not during 09:00 of D",
+    "Windowed daily data are serially correlated; n is NOT number of independent experiments",
+    "Historical breadth covers TWSE listed stocks, not TPEx OTC",
+    "No 9:00 exchange feed or historical intraday preview exists: only 08:59 proxy predictions",
+    "2026 outcomes have been viewed before and are NOT pristine blind holdout",
+    "Benchmark has no 09:00 stock transaction fill, cost, slippage or executable returns",
+    "Small RNN/GRU/TCN are real fitted networks but not proof of stock trading edge",
+    "Supplementary probability does not replace official Risk Score or F/F2/G market gate"
+  ],
+  "deployment": "NEVER_USE_AS_LIVE_BUY_SIGNAL: market breadth and index direction are not tested individual-stock executable payoffs",
+  "elapsedSec": 4.32
+}
