@@ -1,0 +1,60 @@
+name: 2025-2026 GRU vs Risk Score on A D F G Stock Returns
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/research/market_stock_ml_oos.py'
+      - '.github/workflows/market-stock-ml-oos.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: market-stock-ml-oos
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deterministic chronological ML dependencies
+        run: |
+          pip install numpy scikit-learn
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Verify anti-lookahead and join original stock baskets to ML dates
+        run: |
+          python -m py_compile tw-stock-dashboard/research/market_stock_ml_oos.py
+          python -u tw-stock-dashboard/research/market_stock_ml_oos.py
+      - name: Check model probabilities and full cohort accounting
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('tw-stock-dashboard/docs/data/research/market_stock_ml_oos')
+          q=json.loads((p/'summary.json').read_text())
+          z=json.loads((p/'dated_predictions_2025_2026.json').read_text())
+          assert len(q['results'])==4*4*2*12, len(q['results'])
+          assert q['marketRows']>=728
+          assert q['training']['holdoutSamples']>150
+          assert all(0<=v['GRU']<=1 and 0<=v['riskLogit']<=1 for v in z['dates'].values())
+          assert all(v['signalReturn']['n']<=v['allAvailableSignals'] for v in q['results'])
+          assert all('daily' not in k.lower() for x in q['results'] for k in x['exitSampledOneBasketCash'])
+          print('PASS: score vs GRU with next-open executable archived basket, no future-date leakage')
+          PY
+      - name: Publish independently auditable stock outcome report
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/market_stock_ml_oos/
+          if git diff --cached --quiet; then echo "NO_RESEARCH_CHANGE";exit 0; fi
+          git commit -m 'research: publish official-market GRU versus Score on stock Top3 outcomes'
+          for i in 1 2 3 4 5 6; do
+            if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi
+            git rebase --abort || true
+            sleep $((i*5))
+          done
+          exit 1
