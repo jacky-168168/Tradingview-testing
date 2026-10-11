@@ -225,6 +225,7 @@ jobs:
       - name: Verify homepage decision controls, JS syntax and source alignment
         run: |
           node --check tw-stock-dashboard/docs/market-command.js
+          python -u tw-stock-dashboard/tests/test_market_homepage_layout.py
           node - <<'JS'
           const assert=require('assert'),fs=require('fs'),r=require('./tw-stock-dashboard/docs/market-command.js');
           assert.equal(r.fallback({score:46}).level,'STOP');
