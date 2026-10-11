@@ -1,0 +1,60 @@
+name: Backfill 2015-2023 Verified TWSE Market History
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/collect_extended_market_year.py'
+      - '.github/workflows/backfill-extended-market-history.yml'
+  workflow_dispatch:
+    inputs:
+      max_days:
+        description: 'Maximum missing sessions fetched per year'
+        required: false
+        default: '280'
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: extended-official-years-${{ github.ref }}-${{ github.run_id }}
+  cancel-in-progress: false
+jobs:
+  backfill:
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        year: [2015,2016,2017,2018,2019,2020,2021,2022,2023]
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install numpy pandas pyarrow requests
+      - name: Fetch strictly dated TWSE historical breadth and foreign
+        run: |
+          PYTHONPATH=tw-stock-dashboard/src python -u tw-stock-dashboard/src/collect_extended_market_year.py --year ${{ matrix.year }} --max-days ${{ inputs.max_days || '280' }}
+      - name: Preserve every success and failure audit
+        if: always()
+        env:
+          YEAR: ${{ matrix.year }}
+        run: |
+          set -euo pipefail
+          FILE="tw-stock-dashboard/docs/data/research/market_history_extended/years/${YEAR}.json"
+          if [ ! -s "$FILE" ]; then
+            echo "ERROR no verifiable checkpoint for year $YEAR";exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f "$FILE"
+          if git diff --cached --quiet; then echo "NO_HISTORY_CHANGES $YEAR";exit 0; fi
+          git commit -m "data: backfill date-verified TWSE market history $YEAR"
+          for i in 1 2 3 4 5 6 7 8 9; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              echo "PUBLISHED_YEAR $YEAR";exit 0
+            fi
+            git rebase --abort || true
+            sleep $((i*4))
+          done
+          echo "ERROR cannot publish year $YEAR";exit 1
