@@ -1,0 +1,86 @@
+name: Retry Date-Locked TWSE History with Throttling
+on:
+  workflow_run:
+    workflows: ["Backfill 2015-2023 Verified TWSE Market History"]
+    types: [completed]
+  schedule:
+    - cron: '13 18 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: extended-official-history-throttled-retry
+  cancel-in-progress: false
+jobs:
+  year:
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        year: [2023,2022,2021,2020,2019,2018,2017,2016,2015]
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install numpy pandas pyarrow requests
+      - name: Retry TWSE dated reports with slower 2.5s per session and persisted checkpoint
+        env:
+          YEAR: ${{ matrix.year }}
+        run: |
+          set -euo pipefail
+          FILE="tw-stock-dashboard/docs/data/research/market_history_extended/years/$YEAR.json"
+          for pass in 1 2; do
+            if [ -s "$FILE" ]; then
+              if python -c "import json,sys;sys.exit(0 if json.load(open(sys.argv[1]))['coverage']['complete'] else 1)" "$FILE"; then
+                echo "ALREADY_COMPLETE $YEAR";break
+              fi
+            fi
+            echo "RETRY $YEAR pass=$pass"
+            PYTHONPATH=tw-stock-dashboard/src python -u tw-stock-dashboard/src/collect_extended_market_year.py --year "$YEAR" --max-days 280 --delay 2.5 --timeout 18
+            if [ "$pass" = 1 ]; then sleep 90; fi
+          done
+      - name: Publish successes and source errors with no imputation
+        if: always()
+        env:
+          YEAR: ${{ matrix.year }}
+        run: |
+          set -euo pipefail
+          FILE="tw-stock-dashboard/docs/data/research/market_history_extended/years/$YEAR.json"
+          if [ ! -s "$FILE" ]; then echo "NO_CHECKPOINT $YEAR";exit 1; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f "$FILE"
+          if git diff --cached --quiet; then echo "NO_CHANGES $YEAR";exit 0; fi
+          git commit -m "data: TWSE slow source retry $YEAR"
+          for i in 1 2 3 4 5 6 7 8; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              echo "PUBLISHED_YEAR $YEAR";exit 0
+            fi
+            git rebase --abort || true
+            sleep $((i*4))
+          done
+          exit 1
+  summary:
+    needs: [year]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - run: |
+          git pull --ff-only origin main
+          python -u tw-stock-dashboard/research/inspect_extended_history.py
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/market_history_extended/summary.json
+          git commit -m 'data: publish complete versus partial extended official TWSE market coverage'
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi
+            git rebase --abort || true
+            sleep $((i*7))
+          done
+          exit 1
