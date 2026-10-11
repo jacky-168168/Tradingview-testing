@@ -82,7 +82,7 @@ function strength(score){
 }
 function draw(data,diag){
  const panel=$("marketCommand");if(!panel)return;
- const r=data?.risk||{},val=Number(r.score),x=evaluate(r,diag),pre=marketPremarket(r,currentPremarket),post=pre?null:postOpenState(r),d=pre||post||x.decision,info=x.diag?.marketHealth||{};
+ const r=data?.risk||{},val=Number(r.score),x=evaluate(r,diag),pre=marketPremarket(r,currentPremarket),post=pre?null:postOpenState(r),d=pre?{...x.decision,...pre}:post?{...x.decision,...post}:x.decision,info=x.diag?.marketHealth||{};
  panel.dataset.level=d.level;panel.dataset.premarket=pre?"true":"false";panel.className="market-command cmd-"+d.level.toLowerCase();
  txt("commandStatus",d.headline);
  txt("commandAction",d.action);
