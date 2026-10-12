@@ -25,7 +25,8 @@ for(const model of ["F","F2"]){const node={textContent:""};describe(model,blocke
 const modeJs=part("function applyTableMode(){","function simpleMetric(");
 function table(model,simple){
  const stockTable={classList:{toggle(){}},tHead:{innerHTML:""}},layoutToggle={textContent:"",setAttribute(){}},tableHint={textContent:""},badge={textContent:""},panel={classList:{toggle(){}}};
- const document={getElementById:id=>id==="repeatPanel"?panel:id==="modeBadge"?badge:null};
+ const officialTable={classList:{toggle(){}},tHead:{innerHTML:""}};
+ const document={getElementById:id=>id==="repeatPanel"?panel:id==="modeBadge"?badge:id==="officialStockTable"?officialTable:null};
  const original='<tr>'+Array.from({length:22},(_,i)=>'<th>原始'+i+'</th>').join("")+'</tr>';
  const nOriginal='<tr>'+Array.from({length:10},(_,i)=>'<th>N'+i+'</th>').join("")+'</tr>';
  const simpleHead='<tr><th>排名</th><th>股票／題材</th><th>強度</th><th>現價／漲跌</th></tr>';
