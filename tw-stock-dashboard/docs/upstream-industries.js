@@ -75,12 +75,17 @@ function select(code,updateHistory=true){
 }
 function load(){
  $("status").textContent="正在讀取已核對之官方產業上游資料…";
- fetch("./data/industry_upstream/latest.json?v="+Date.now(),{cache:"no-store"}).then(async r=>{
-  if(!r.ok)throw new Error("產業上游資料尚未發布（HTTP "+r.status+"）");
-  return r.json();
- }).then(d=>{
-  if(d.schema!=="tw-upstream-industries-v2"||!d.coverage||!Array.isArray(d.industries)||d.industries.length<5||d.coverage.verifiedCompanyPages<500)
-   throw new Error("資料版本或官方核對涵蓋率不符");
+ const primary="./data/industry_upstream/latest.json?v="+Date.now();
+ const backup="https://raw.githubusercontent.com/jacky-168168/Tradingview-testing/main/tw-stock-dashboard/docs/data/industry_upstream/latest.json?v="+Date.now();
+ async function getVerified(url){
+  const r=await fetch(url,{cache:"no-store"});
+  if(!r.ok)throw new Error("資料尚未發布（HTTP "+r.status+"）");
+  const d=await r.json();
+  if(d.schema!=="tw-upstream-industries-v2"||!d.coverage||!Array.isArray(d.industries)||d.industries.length<9||d.coverage.verifiedCompanyPages<500||!d.industries.some(x=>x.code==="CPO"&&x.stockCount>0))
+   throw new Error("CPO 上游研究分類及官方分類資料版本未同步");
+  return d;
+ }
+ getVerified(primary).catch(async ()=>{const d=await getVerified(backup);d._fromLatestGitHub=true;return d;}).then(d=>{
   const markets=d.industries.some(s=>(s.subgroups||[]).some(g=>(g.stocks||[]).some(codeOK)));
   if(!markets)throw new Error("沒有有效上市櫃上游股票，拒絕顯示不完整資料");
   state.data=d;
@@ -91,7 +96,7 @@ function load(){
   if(!wafer||!wafer.stocks.some(x=>x.code==="6488"&&x.basis==="independent_industry_material"))throw new Error("環球晶與矽晶圓材料分類尚未完成核對");
   const warn=d.coverage.verifiedRatioPct<90||age>7;
   $("status").classList.toggle("warn",warn);
-  $("status").textContent="資料日 "+dated+"｜已核對公司 "+n(d.coverage.verifiedCompanyPages,0)+"/"+n(d.coverage.marketStocks,0)+"｜上游採櫃買中心各產業階段；半導體用矽晶圓供應商另據工研院 ITIS 延伸分類，均可點股票查看來源。"+(warn?" ⚠ 部分公司分類未取得或資料日期較舊；未確認的股票不計入，不能視為全市場完整覆蓋。":"");
+  $("status").textContent=(d._fromLatestGitHub?"已從 GitHub 主分支補齊最新分類｜":"")+"資料日 "+dated+"｜已核對公司 "+n(d.coverage.verifiedCompanyPages,0)+"/"+n(d.coverage.marketStocks,0)+"｜上游採櫃買中心各產業階段；半導體用矽晶圓供應商另據工研院 ITIS 延伸分類，均可點股票查看來源。"+(warn?" ⚠ 部分公司分類未取得或資料日期較舊；未確認的股票不計入，不能視為全市場完整覆蓋。":"");
   const requested=new URLSearchParams(location.search).get("industry");
   const current=categories().find(x=>x.code===requested);
   select(current?current.code:"all",false);
