@@ -80,12 +80,12 @@ class UpstreamIndustryTests(unittest.TestCase):
         self.assertEqual(g["stocks"][0]["basis"],"tpex_official")
     def test_comm_active_passive_and_uncertain_not_automatically_guessed(self):
         stocks=[sample("3081","聯亞","上櫃"),sample("3026","禾伸堂"),
-                sample("3491","昇達科","上櫃"),sample("2327","國巨*"),
+                sample("2476","鉅祥"),sample("2327","國巨*"),
                 sample("6284","佳邦","上櫃")]
         m={
          "3081":[{"industry":"通信網路","subCategory":"主/被動元件"}],
          "3026":[{"industry":"通信網路","subCategory":"主/被動元件"},{"industry":"被動元件","subCategory":"電容器"}],
-         "3491":[{"industry":"通信網路","subCategory":"主/被動元件"}],
+         "2476":[{"industry":"通信網路","subCategory":"主/被動元件"}],
          "2327":[{"industry":"被動元件","subCategory":"電阻器"},{"industry":"被動元件","subCategory":"電容器"}],
          "6284":[{"industry":"通信網路","subCategory":"主/被動元件"}]
         }
@@ -98,15 +98,24 @@ class UpstreamIndustryTests(unittest.TestCase):
         pending=groups["待核對（官方混合分類）"]
         self.assertEqual({z["code"] for z in active["stocks"]},{"3081"})
         self.assertEqual({z["code"] for z in passive["stocks"]},{"3026","2327","6284"})
-        self.assertEqual({z["code"] for z in pending["stocks"]},{"3491"})
+        self.assertEqual({z["code"] for z in pending["stocks"]},{"2476"})
         y=next(z for z in passive["stocks"] if z["code"]=="2327")
         self.assertEqual(y["basis"],"tpex_cross_industry")
         self.assertIn("被動元件產業本身屬中游",y["roleNote"])
         self.assertTrue(y["source"].endswith("stk_code=2327"))
         self.assertEqual(p["coverage"]["distinctUpstreamStocks"],5)
+    def test_passive_microwave_supplier_and_active_laser_packager(self):
+        stocks=[sample("3491","昇達科","上櫃"),sample("3152","璟德","上櫃"),sample("3450","聯鈞")]
+        m={x["code"]:[{"industry":"通信網路","subCategory":"主/被動元件"}] for x in stocks}
+        comm=next(x for x in compile_map(stocks,m,"2026-10-12")["industries"] if x["code"]=="I000")
+        p=next(g for g in comm["subgroups"] if g["name"].startswith("被動元件"))
+        a=next(g for g in comm["subgroups"] if g["name"].startswith("主動元件"))
+        self.assertEqual({z["code"] for z in p["stocks"]},{"3491","3152"})
+        self.assertEqual({z["code"] for z in a["stocks"]},{"3450"})
+        self.assertTrue(all(z["basis"]=="company_product_verified" for z in p["stocks"]+a["stocks"]))
     def test_communications_component_without_verified_product_stays_pending(self):
-        stocks=[sample("3450","聯鈞")]
-        m={"3450":[{"industry":"通信網路","subCategory":"主/被動元件"}]}
+        stocks=[sample("6470","宇智","上櫃")]
+        m={"6470":[{"industry":"通信網路","subCategory":"主/被動元件"}]}
         comm=next(x for x in compile_map(stocks,m,"2026-10-12")["industries"] if x["code"]=="I000")
         self.assertEqual(next(g["count"] for g in comm["subgroups"] if g["name"].startswith("待核對")),1)
     def test_yageo_cannot_be_added_without_official_j000_proof(self):
