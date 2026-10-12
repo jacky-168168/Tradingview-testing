@@ -251,7 +251,7 @@ def compile_map(stocks,memberships,data_date):
             matches[("CPO",group)]={
                 "classification":"CPO 上游光學零件研究名單（非官方類股）",
                 "basis":"cpo_industry_research","source":evidence,
-                "roleNote":role+" CPO 技術供應鏈與特定客戶訂單／營收貢獻是兩回事。"}
+                "roleNote":role+" 相關產品不等於已取得CPO客戶訂單，也不等於已認列CPO營收。"}
         for (sid,segment),meta in sorted(matches.items()):
             upstream_stocks.add((market,code));entries_count+=1
             basis_counts[meta["basis"]]+=1
