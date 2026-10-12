@@ -13,6 +13,7 @@ on:
       - 'tw-stock-dashboard/docs/data/research/market_ml_audit/**'
       - 'tw-stock-dashboard/docs/site-access.js'
       - 'tw-stock-dashboard/docs/stock-selection.js'
+      - 'tw-stock-dashboard/docs/upstream-industries.js'
       - 'tw-stock-dashboard/docs/backtest-g-panel.js'
       - 'tw-stock-dashboard/docs/data/backtest_g/*.json'
       - 'tw-stock-dashboard/docs/data/research/etf_history/**'
@@ -45,6 +46,7 @@ jobs:
       - name: Verify single market decision card, historical research and no VWAP placeholder
         run: |
           node tw-stock-dashboard/tests/test_entry_playbook.js
+          node tw-stock-dashboard/tests/test_upstream_ui.cjs
           PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p test_market_homepage_layout.py -v
           python - <<'PY'
           import json
