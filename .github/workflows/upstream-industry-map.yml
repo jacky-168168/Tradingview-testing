@@ -46,6 +46,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p test_upstream_industries.py -v
           node --check docs/upstream-industries.js
+          node tests/test_upstream_ui.cjs
       - name: Build sector and upstream stock list from dated full-market archive
         working-directory: tw-stock-dashboard
         run: python -u src/upstream_industries.py
@@ -57,10 +58,20 @@ jobs:
           p=Path('tw-stock-dashboard/docs/data/industry_upstream/latest.json')
           s=Path('tw-stock-dashboard/docs/data/stocks/latest.json')
           a=json.loads(p.read_text());b=json.loads(s.read_text())
-          assert a['schema']=='tw-upstream-industries-v1' and a['dataDate']==b['dataDate']
+          assert a['schema']=='tw-upstream-industries-v2' and a['dataDate']==b['dataDate']
           assert a['coverage']['verifiedCompanyPages']>=500 and a['coverage']['marketStocks']>=1000
           assert a['coverage']['distinctUpstreamStocks']>30
           assert len(a['industries'])==8
+          semi=next(z for z in a['industries'] if z['code']=='D000')
+          wafer=next(g for g in semi['subgroups'] if '半導體用矽晶圓' in g['name'])
+          assert {'6488','3532','6182','3016'}.issubset({r['code'] for r in wafer['stocks']}), 'silicon wafer supplier audit incomplete'
+          assert all(r['basis']=='independent_industry_material' and 'itis.org.tw' in r['source'] for r in wafer['stocks'])
+          assert not any(r['code']=='2330' for g in semi['subgroups'] for r in g['stocks']), 'fab erroneously classified as upstream'
+          solar=next(z for z in a['industries'] if z['code']=='A100')
+          paste=next(g for g in solar['subgroups'] if '太陽能材料' in g['name'])
+          k=next((r for r in paste['stocks'] if r['code']=='4760'),None)
+          assert k and '非純太陽能股' in k['roleNote'] and k['basis']=='tpex_official', 'solar paste role missing'
+          assert all(r.get('source') for sec in a['industries'] for group in sec['subgroups'] for r in group['stocks']), 'uncited company upstream placement'
           assert all(z['source'].startswith('https://ic.tpex.org.tw/introduce.php?ic=') for z in a['industries'])
           assert all(x['market'] in ('上市','上櫃') and x['code'].isdigit() and len(x['code'])==4 for sector in a['industries'] for part in sector['subgroups'] for x in part['stocks'])
           print('PASS dated upstream stock map',a['dataDate'],a['coverage'])
