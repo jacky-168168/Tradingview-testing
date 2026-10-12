@@ -27,7 +27,7 @@ F:"F 固定大盤濾網＝D 技術強勢＋Risk Score≥60 放行；唯一例外
 F2:"F2 動態大盤濾網＝D 技術強勢＋Risk Score≥60 進場、≥55 維持已開啟狀態｜Strong Bottom Reversal 可例外放行｜Top Reversal Attempt / Strong Top Reversal 或 Extreme Overbought 阻擋｜目前大盤分數："+score+"｜濾網："+(f2g.allowed?"放行":"阻擋")+"（"+(f2g.reason||"尚未分析")+"）。"
 };
 var live=MODEL==="G"?currentLiveG():null;
-if(live){var cov=live.coverage||{};gNote.textContent="🟠 G 盤中重新選股｜"+live.asOfDate+"｜更新 "+live.publishedAt+"｜全上市櫃即時有效報價 "+(cov.valid||0)+"/"+(cov.total||0)+"｜3D／18D 當日突破尚未收盤確認；法人、SAR 不提供假盤中數據，原版盤後G榜單未改動。";return;}
+if(live){var cov=live.coverage||{};gNote.textContent="🟠 G 盤中重新選股｜"+live.asOfDate+"｜更新 "+live.publishedAt+"｜全上市櫃即時有效報價 "+(cov.valid||0)+"/"+(cov.total||0)+"｜3D／18D 當日突破尚未收盤確認；部分股票以五檔中間價估算（現價標≈），非實際成交價；法人、SAR 不提供假盤中數據，原版盤後G榜單未改動。";return;}
 gNote.textContent=MODEL==="G Pro"?"G Pro：只檢查原G Top3，要求20D動能前25%、均線斜率前20%、成交額前25%、過去10天至少2次進原G Top20、相對量≥1.3、EMA20＞EMA60、收盤在EMA20上方且距離≤15%。未過則不選；此為嚴格選股，非回測勝率保證。":(MODEL==="G"||MODEL==="G Pro")?(gs?"G：最新完整日K "+gs.dataDate+"｜3D＋18D 前高雙突破｜前10日原版 G Top20 持續度加分（最高7分）｜可用歷史 "+(gs.pocketSnapshotsFound||0)+"/10"+(gs.pocketWarmup?"｜持續度建檔中":"")+"｜當日未取得有效盤中重選時僅更新原榜單現價；非 BOTTOM／TOP 觸發":"⚠ 尚未產生每日 G 訊號，請按「GitHub 更新」執行 full 完整更新；不會把舊的 2026 回測清單冒充今日名單。"):(notes[MODEL]||"尚未設定模型說明");
 }
 var N_ARCHIVE=null,N_SUMMARY=null,N_LOADING=false;
@@ -112,7 +112,7 @@ renderModelNote();
 }else{count.textContent=MODEL==="A"?xs.length+" 檔":xs.length+" 檔｜嚴格 "+strict+" 檔";renderModelNote()}
 if(!xs.length){tb.innerHTML='<tr><td colspan="'+(isG?20:18)+'" style="text-align:center;padding:40px">'+(MODEL==="G Pro"?"原G Top3 今日無股票通過 G Pro 嚴格條件，正常空訊號。":isG?(gs?"此交易日沒有通過 G 雙突破的股票，屬正常空訊號；不會改用回測舊清單。":"⚠ G 每日資料尚未更新，請執行 GitHub 完整更新。"):"尚無資料")+'</td></tr>';applyTableMode();return}
 tb.innerHTML=xs.map(function(x,i){
-var cp=x.currentPrice!=null?N(x.currentPrice):N(x.close),chg=x.currentPct!=null?' <span class="'+C(x.currentPct)+'">('+(Number(x.currentPct)>=0?"+":"")+N(x.currentPct)+'%)</span>':"";
+var cp=(live&&/midpoint|one-sided/.test(x.intradayPriceSource||"")?"≈":"")+(x.currentPrice!=null?N(x.currentPrice):N(x.close)),chg=x.currentPct!=null?' <span class="'+C(x.currentPct)+'">('+(Number(x.currentPct)>=0?"+":"")+N(x.currentPct)+'%)</span>':"";
 var extra=isG?'<td>'+N(x.gScore)+'</td><td title="加分 +'+N(x.gExtra)+'"><b>'+N((x.persistence||{}).strength,1)+'</b> <span class="sub">+'+N(x.gExtra)+'</span></td><td>'+(x.gPast10==null?"—":x.gPast10)+'/10 <span class="sub">連'+(x.gStreak||0)+'天</span></td><td><b>'+(x.gBreak3?"✓":"—")+' 3D / '+(x.gBreak18?"✓":"—")+' 18D</b></td>':"";
 return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+tvStockLink(x)+'</td><td>'+esc(x.market)+'</td><td class="theme" title="'+esc(x.theme||"")+'">'+esc(x.theme||"—")+'</td><td class="score">'+N(x.total,1)+'</td>'+extra+'<td class="sar">'+esc(x.sarText||"—")+'</td><td>'+cp+chg+'</td><td>'+N(x.capitalB)+'</td><td>'+N(x.turnoverB)+'</td><td class="'+C(x.foreignToday)+'">'+N(x.foreignToday,0)+'</td><td class="'+C(x.trustToday)+'">'+N(x.trustToday,0)+'</td><td class="'+C(x.rs20)+'">'+P(x.rs20)+'</td><td>'+N(x.rvol)+'</td><td class="'+C(x.ret5)+'">'+P(x.ret5)+'</td><td class="'+C(x.ret20)+'">'+P(x.ret20)+'</td><td class="'+C(x.breakoutPct)+'">'+P(x.breakoutPct)+'</td><td class="'+C(x.ma20Slope)+'">'+P(x.ma20Slope)+'</td><td>'+esc(x.signal||"")+'</td></tr>'
 }).join("");applyTableMode()
