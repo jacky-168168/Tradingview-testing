@@ -28,7 +28,11 @@ function nav(){
 }
 function row(s){
  const tags=(s.models||[]).filter(x=>["G","G Pro","D","F","F2","A"].includes(x)).slice(0,3).map(m=>'<span class="tag">'+esc(m)+'</span>').join("");
- return '<tr><td class="stock-cell"><a href="'+esc(tv(s))+'" target="_blank" rel="noopener noreferrer">'+esc(s.code)+' '+esc(s.name)+'</a><small>'+esc(s.market)+' · '+esc(marketStock(s))+'</small></td>'+
+ const url=String(s.source||""),trusted=/^https:\/\/(ic\.tpex\.org\.tw|www\.itis\.org\.tw)\//.test(url);
+ const evidence=trusted?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">分類來源 ↗</a>':"";
+ const note=s.roleNote||"";
+ const role='<small>'+esc(s.classification||"")+"｜"+evidence+'</small>'+(s.basis==="independent_industry_material"?'<small class="stock-note">晶圓材料供應商，非晶圓代工廠</small>':"")+(s.code==="4760"?'<small class="stock-note">'+esc(note)+' <a href="https://ampletec.com.tw/about.asp" target="_blank" rel="noopener noreferrer">公司說明 ↗</a></small>':"");
+ return '<tr><td class="stock-cell"><a href="'+esc(tv(s))+'" target="_blank" rel="noopener noreferrer">'+esc(s.code)+' '+esc(s.name)+'</a><small>'+esc(s.market)+' · '+esc(marketStock(s))+'</small>'+role+'</td>'+
  '<td class="numeric">'+n(s.close)+'</td><td class="numeric '+signed(s.ret5)+'">'+pct(s.ret5)+'</td><td class="numeric '+signed(s.ret20)+'">'+pct(s.ret20)+'</td>'+
  '<td class="optional numeric">'+n(s.momentumScore,1)+'</td><td class="optional">'+(tags||'<span class="sub">—</span>')+'</td></tr>';
 }
@@ -75,7 +79,7 @@ function load(){
   if(!r.ok)throw new Error("產業上游資料尚未發布（HTTP "+r.status+"）");
   return r.json();
  }).then(d=>{
-  if(d.schema!=="tw-upstream-industries-v1"||!d.coverage||!Array.isArray(d.industries)||d.industries.length<5||d.coverage.verifiedCompanyPages<500)
+  if(d.schema!=="tw-upstream-industries-v2"||!d.coverage||!Array.isArray(d.industries)||d.industries.length<5||d.coverage.verifiedCompanyPages<500)
    throw new Error("資料版本或官方核對涵蓋率不符");
   const markets=d.industries.some(s=>(s.subgroups||[]).some(g=>(g.stocks||[]).some(codeOK)));
   if(!markets)throw new Error("沒有有效上市櫃上游股票，拒絕顯示不完整資料");
@@ -83,9 +87,11 @@ function load(){
 
   const dated=fmtDate(d.dataDate),today=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   const age=Math.floor((Date.parse(today+"T12:00:00+08:00")-Date.parse(dated+"T12:00:00+08:00"))/86400000);
+  const wafer=d.industries.find(s=>s.code==="D000")?.subgroups?.find(g=>g.name.includes("半導體用矽晶圓"));
+  if(!wafer||!wafer.stocks.some(x=>x.code==="6488"&&x.basis==="independent_industry_material"))throw new Error("環球晶與矽晶圓材料分類尚未完成核對");
   const warn=d.coverage.verifiedRatioPct<90||age>7;
   $("status").classList.toggle("warn",warn);
-  $("status").textContent="資料日 "+dated+"｜已核對公司 "+n(d.coverage.verifiedCompanyPages,0)+"/"+n(d.coverage.marketStocks,0)+"｜上游分類採櫃買中心官方產業價值鏈，非自行由股價推論。"+(warn?" ⚠ 部分公司分類未取得或資料日期較舊；未確認的股票不計入，不能視為全市場完整覆蓋。":"");
+  $("status").textContent="資料日 "+dated+"｜已核對公司 "+n(d.coverage.verifiedCompanyPages,0)+"/"+n(d.coverage.marketStocks,0)+"｜上游採櫃買中心各產業階段；半導體用矽晶圓供應商另據工研院 ITIS 延伸分類，均可點股票查看來源。"+(warn?" ⚠ 部分公司分類未取得或資料日期較舊；未確認的股票不計入，不能視為全市場完整覆蓋。":"");
   const requested=new URLSearchParams(location.search).get("industry");
   const current=categories().find(x=>x.code===requested);
   select(current?current.code:"all",false);
