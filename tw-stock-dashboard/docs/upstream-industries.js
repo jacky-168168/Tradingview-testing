@@ -28,10 +28,10 @@ function nav(){
 }
 function row(s){
  const tags=(s.models||[]).filter(x=>["G","G Pro","D","F","F2","A"].includes(x)).slice(0,3).map(m=>'<span class="tag">'+esc(m)+'</span>').join("");
- const url=String(s.source||""),trusted=/^https:\/\/(ic\.tpex\.org\.tw|www\.itis\.org\.tw)\//.test(url);
- const evidence=trusted?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">分類來源 ↗</a>':"";
+ const url=String(s.source||""),trusted=/^https:\/\/(ic\.tpex\.org\.tw|www\.itis\.org\.tw|www\.lmoc\.com\.tw|www\.truelight\.com\.tw|www\.apacoe\.com\.tw|www\.luxnetcorp\.com\.tw|www\.inpaq\.com\.tw)\//.test(url);
+ const evidence=trusted?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">核對依據 ↗</a>':"";
  const note=s.roleNote||"";
- const role='<small>'+esc(s.classification||"")+"｜"+evidence+'</small>'+(s.basis==="independent_industry_material"?'<small class="stock-note">晶圓材料供應商，非晶圓代工廠</small>':"")+(s.code==="4760"?'<small class="stock-note">'+esc(note)+' <a href="https://ampletec.com.tw/about.asp" target="_blank" rel="noopener noreferrer">公司說明 ↗</a></small>':"");
+ const role='<small>'+esc(s.classification||"")+"｜"+evidence+'</small>'+(s.basis==="independent_industry_material"?'<small class="stock-note">晶圓材料供應商，非晶圓代工廠</small>':"")+(s.code==="4760"?'<small class="stock-note">'+esc(note)+' <a href="https://ampletec.com.tw/about.asp" target="_blank" rel="noopener noreferrer">公司說明 ↗</a></small>':s.code==="2327"?'<small class="stock-note">'+esc(note)+'</small>':"");
  return '<tr><td class="stock-cell"><a href="'+esc(tv(s))+'" target="_blank" rel="noopener noreferrer">'+esc(s.code)+' '+esc(s.name)+'</a><small>'+esc(s.market)+' · '+esc(marketStock(s))+'</small>'+role+'</td>'+
  '<td class="numeric">'+n(s.close)+'</td><td class="numeric '+signed(s.ret5)+'">'+pct(s.ret5)+'</td><td class="numeric '+signed(s.ret20)+'">'+pct(s.ret20)+'</td>'+
  '<td class="optional numeric">'+n(s.momentumScore,1)+'</td><td class="optional">'+(tags||'<span class="sub">—</span>')+'</td></tr>';
