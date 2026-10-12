@@ -17,7 +17,7 @@ function filterBar(){var bar=document.getElementById("themeFilterBar");if(!bar)r
 function applyTableMode(){
  var isN=MODEL==="N",simple=TABLE_COMPACT;
  stockTable.classList.toggle("compact",simple);stockTable.classList.toggle("simple-mode",simple);
- stockTable.tHead.innerHTML=simple?(isN?N_SIMPLE_HEAD:STOCK_SIMPLE_HEAD):(isN?N_TABLE_HEAD:NORMAL_TABLE_HEAD);
+ stockTable.tHead.innerHTML=simple?(isN?N_SIMPLE_HEAD:STOCK_SIMPLE_HEAD):(isN?N_TABLE_HEAD:(MODEL==="G"||MODEL==="G Pro"?NORMAL_G_TABLE_HEAD:NORMAL_NON_G_TABLE_HEAD));
  layoutToggle.textContent=simple?"▤ 詳細模式":"▥ 簡單模式";
  document.getElementById("modeBadge").textContent=simple?"簡單模式":"詳細模式";
  layoutToggle.setAttribute("aria-pressed",simple?"true":"false");
@@ -49,6 +49,8 @@ gNote.textContent=MODEL==="G Pro"?"G Pro：只檢查原G Top3，要求20D動能�
 }
 var N_ARCHIVE=null,N_SUMMARY=null,N_LOADING=false;
 var NORMAL_TABLE_HEAD=document.getElementById("stockTable").tHead.innerHTML;
+var NORMAL_G_TABLE_HEAD=NORMAL_TABLE_HEAD.replace("外資買超","外資買賣超").replace("投信買超","投信買賣超");
+var NORMAL_NON_G_TABLE_HEAD=NORMAL_TABLE_HEAD.replace(/<th class="g-only">[\s\S]*?<\/th>/g,"");
 var N_TABLE_HEAD='<tr><th>Rank</th><th>股票</th><th>市場</th><th>收盤價</th><th>EPS 累計年增</th><th>月營收 YoY</th><th>RS 全市場分位</th><th>距 52 週高點</th><th>成長動能分</th><th>EPS／營收最早可用日</th></tr>';
 function toggleNView(show){
  stockTable.classList.toggle("stock-n-table",show);
