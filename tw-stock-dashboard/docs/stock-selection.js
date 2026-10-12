@@ -183,8 +183,19 @@ function renderOfficialG(){
  if(!selected.length){body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="text-align:center;padding:25px">'+(THEME_FILTER?"此正式榜單沒有「"+esc(THEME_FILTER)+"」題材":"該交易日沒有正式 G 入選股票")+'</td></tr>';return}
  body.innerHTML=selected.map(function(pair){var x=pair.stock,i=pair.rank-1;return TABLE_COMPACT?renderSimpleStock(x,i,true,null,true):renderOfficialDetailedRow(x,i)}).join("");
 }
+function updateGReportOverview(){
+ var nav=document.getElementById("gReportIntro");if(!nav||MODEL!=="G")return;
+ var date=String(DATA&&DATA.dataDate||""),g=DATA&&DATA.gSelection||null,official=DATA&&DATA.models&&DATA.models.G;
+ var verified=!!(date&&g&&g.dataDate===date&&Array.isArray(official));
+ var live=currentLiveG(),r=typeof REPEAT_DATA!=="undefined"?REPEAT_DATA:null,rg=r&&r.models&&r.models.G;
+ var repeatReady=!!(rg&&r.referenceDate===date);
+ document.getElementById("gReportIntroDate").textContent="最近正式交易日 "+(date||"未提供")+"｜三份清單各有獨立資料日期；保留既有全部欄位與原始排序。盤中資料只在有效時顯示，不能代替盤後正式清單。";
+ document.getElementById("gQuickRepeat").textContent=repeatReady?(rg.stocks||[]).length+" 檔重複上榜｜統計至 "+date:rg?"統計檔案待與正式日期同步":"正在讀取歷史快照";
+ document.getElementById("gQuickLive").textContent=live?live.rows.length+" 檔暫估｜"+(live.asOfDate||"今日")+" 有效": "目前無有效盤中榜單";
+ document.getElementById("gQuickOfficial").textContent=verified?official.length+" 檔正式｜"+date:"正式資料待同步";
+}
 function renderTable(){
-var isDualG=MODEL==="G";document.getElementById("gIntradayHeading").style.display=isDualG?"":"none";document.getElementById("gOfficialPanel").style.display=isDualG?"":"none";
+var isDualG=MODEL==="G";document.body.classList.toggle("g-report-mode",isDualG);document.getElementById("gIntradayHeading").style.display=isDualG?"":"none";document.getElementById("gOfficialPanel").style.display=isDualG?"":"none";if(isDualG)updateGReportOverview();
 var rp=document.getElementById("repeatPanel");if(rp)rp.style.display=MODEL==="L"?"none":"";if(MODEL!=="L"&&typeof renderRepeatPanel==="function")renderRepeatPanel(MODEL,DATA);
 filterBar();
 var live=MODEL==="G"?currentLiveG():null,xs=MODEL==="G"?(live?live.rows:[]):(DATA&&DATA.models&&DATA.models[MODEL]||[]),isG=(MODEL==="G"||MODEL==="G Pro"),gs=live?live.selection:(DATA&&DATA.gSelection||null);
