@@ -78,6 +78,40 @@ class UpstreamIndustryTests(unittest.TestCase):
         self.assertIn("非純太陽能股",g["stocks"][0]["roleNote"])
         self.assertIn("非",g["note"])
         self.assertEqual(g["stocks"][0]["basis"],"tpex_official")
+    def test_comm_active_passive_and_uncertain_not_automatically_guessed(self):
+        stocks=[sample("3081","聯亞","上櫃"),sample("3026","禾伸堂"),
+                sample("3491","昇達科","上櫃"),sample("2327","國巨*"),
+                sample("6284","佳邦","上櫃")]
+        m={
+         "3081":[{"industry":"通信網路","subCategory":"主/被動元件"}],
+         "3026":[{"industry":"通信網路","subCategory":"主/被動元件"},{"industry":"被動元件","subCategory":"電容器"}],
+         "3491":[{"industry":"通信網路","subCategory":"主/被動元件"}],
+         "2327":[{"industry":"被動元件","subCategory":"電阻器"},{"industry":"被動元件","subCategory":"電容器"}],
+         "6284":[{"industry":"通信網路","subCategory":"主/被動元件"}]
+        }
+        p=compile_map(stocks,m,"2026-10-12")
+        comm=next(x for x in p["industries"] if x["code"]=="I000")
+        groups={g["name"]:g for g in comm["subgroups"]}
+        self.assertNotIn("主／被動元件",groups)
+        active=groups["主動元件（光主動／晶片）"]
+        passive=groups["被動元件（電阻電容／濾波等）"]
+        pending=groups["待核對（官方混合分類）"]
+        self.assertEqual({z["code"] for z in active["stocks"]},{"3081"})
+        self.assertEqual({z["code"] for z in passive["stocks"]},{"3026","2327","6284"})
+        self.assertEqual({z["code"] for z in pending["stocks"]},{"3491"})
+        y=next(z for z in passive["stocks"] if z["code"]=="2327")
+        self.assertEqual(y["basis"],"tpex_cross_industry")
+        self.assertIn("被動元件產業本身屬中游",y["roleNote"])
+        self.assertTrue(y["source"].endswith("stk_code=2327"))
+        self.assertEqual(p["coverage"]["distinctUpstreamStocks"],5)
+    def test_communications_component_without_verified_product_stays_pending(self):
+        stocks=[sample("3450","聯鈞")]
+        m={"3450":[{"industry":"通信網路","subCategory":"主/被動元件"}]}
+        comm=next(x for x in compile_map(stocks,m,"2026-10-12")["industries"] if x["code"]=="I000")
+        self.assertEqual(next(g["count"] for g in comm["subgroups"] if g["name"].startswith("待核對")),1)
+    def test_yageo_cannot_be_added_without_official_j000_proof(self):
+        with self.assertRaisesRegex(RuntimeError,"missing TPEx J000"):
+            compile_map([sample("2327","國巨*")],{"2327":[]}, "2026-10-12")
     def test_bad_html_with_no_arrow_never_assumed_upstream(self):
         self.assertEqual(read_memberships("<html>半導體 晶圓製造 IP設計</html>"),[])
     def test_all_mapped_sectors_have_unique_official_source(self):
