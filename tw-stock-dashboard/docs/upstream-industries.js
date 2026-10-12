@@ -28,7 +28,7 @@ function nav(){
 }
 function row(s){
  const tags=(s.models||[]).filter(x=>["G","G Pro","D","F","F2","A"].includes(x)).slice(0,3).map(m=>'<span class="tag">'+esc(m)+'</span>').join("");
- const url=String(s.source||""),trusted=/^https:\/\/(ic\.tpex\.org\.tw|www\.itis\.org\.tw|www\.lmoc\.com\.tw|www\.truelight\.com\.tw|www\.apacoe\.com\.tw|www\.luxnetcorp\.com\.tw|www\.inpaq\.com\.tw)\//.test(url);
+ const url=String(s.source||""),trusted=/^https:\/\/(ic\.tpex\.org\.tw|www\.itis\.org\.tw|www\.lmoc\.com\.tw|www\.truelight\.com\.tw|www\.apacoe\.com\.tw|www\.luxnetcorp\.com\.tw|www\.inpaq\.com\.tw|www\.umt-tw\.com|www\.acxc\.com\.tw|www\.unictron\.com|www\.elaser\.com\.tw)\//.test(url);
  const evidence=trusted?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">核對依據 ↗</a>':"";
  const note=s.roleNote||"";
  const role='<small>'+esc(s.classification||"")+"｜"+evidence+'</small>'+(s.basis==="independent_industry_material"?'<small class="stock-note">晶圓材料供應商，非晶圓代工廠</small>':"")+(s.code==="4760"?'<small class="stock-note">'+esc(note)+' <a href="https://ampletec.com.tw/about.asp" target="_blank" rel="noopener noreferrer">公司說明 ↗</a></small>':s.code==="2327"?'<small class="stock-note">'+esc(note)+'</small>':"");
