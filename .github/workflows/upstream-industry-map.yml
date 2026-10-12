@@ -61,7 +61,15 @@ jobs:
           assert a['schema']=='tw-upstream-industries-v2' and a['dataDate']==b['dataDate']
           assert a['coverage']['verifiedCompanyPages']>=500 and a['coverage']['marketStocks']>=1000
           assert a['coverage']['distinctUpstreamStocks']>30
-          assert len(a['industries'])==8
+          assert len(a['industries'])==9
+          cpo=next(x for x in a['industries'] if x['code']=='CPO')
+          assert cpo['name']=='CPO／矽光子' and cpo['stockCount']>=7 and len(cpo['subgroups'])==3
+          assert 'trendforce.com.tw' in cpo['source'], 'CPO must be independent research, not fake TPEx industry'
+          cpo_codes={x['code'] for g in cpo['subgroups'] for x in g['stocks']}
+          assert {'3081','3163','3363','6442','4977','3450','4979'}.issubset(cpo_codes),f'Missing CPO core suppliers: {cpo_codes}'
+          assert not {'2330','2317','2327'} & cpo_codes, 'Foundry / system OEM / unrelated passive stocks are not CPO optical upstream'
+          assert all(x['basis']=='cpo_industry_research' and x.get('source','').startswith('https://') for g in cpo['subgroups'] for x in g['stocks'])
+          print('PASS CPO research optical upstream',cpo['stockCount'],cpo_codes)
           semi=next(z for z in a['industries'] if z['code']=='D000')
           wafer=next(g for g in semi['subgroups'] if '半導體用矽晶圓' in g['name'])
           assert {'6488','3532','6182','3016'}.issubset({r['code'] for r in wafer['stocks']}), 'silicon wafer supplier audit incomplete'
@@ -85,7 +93,7 @@ jobs:
           y=next(x for x in c['被動元件（電阻電容／濾波等）']['stocks'] if x['code']=='2327')
           assert y['basis']=='tpex_cross_industry' and '中游' in y['roleNote'] and y['source'].endswith('stk_code=2327')
           print('PASS communication main-passive split',len(active),len(passive),len(pending),'Yageo J000 midstream')
-          assert all(z['source'].startswith('https://ic.tpex.org.tw/introduce.php?ic=') for z in a['industries'])
+          assert all(z['source'].startswith('https://ic.tpex.org.tw/introduce.php?ic=') for z in a['industries'] if z['code']!='CPO')
           assert all(x['market'] in ('上市','上櫃') and x['code'].isdigit() and len(x['code'])==4 for sector in a['industries'] for part in sector['subgroups'] for x in part['stocks'])
           print('PASS dated upstream stock map',a['dataDate'],a['coverage'])
           PY

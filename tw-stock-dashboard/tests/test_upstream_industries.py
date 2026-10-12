@@ -121,10 +121,30 @@ class UpstreamIndustryTests(unittest.TestCase):
     def test_yageo_cannot_be_added_without_official_j000_proof(self):
         with self.assertRaisesRegex(RuntimeError,"missing TPEx J000"):
             compile_map([sample("2327","國巨*")],{"2327":[]}, "2026-10-12")
+    def test_cpo_research_separate_ninth_sector_does_not_mislabel_fabs_or_switch_systems(self):
+        stocks=[sample("3081","聯亞","上櫃"),sample("3163","波若威","上櫃"),sample("3363","上詮","上櫃"),
+                sample("4977","眾達-KY","上櫃"),sample("2330","台積電"),sample("2317","鴻海")]
+        membership={z["code"]:[] for z in stocks}
+        result=compile_map(stocks,membership,"2026-10-12")
+        sector=next(x for x in result["industries"] if x["code"]=="CPO")
+        self.assertIn("CPO",sector["name"])
+        self.assertEqual(len(sector["subgroups"]),3)
+        groups={g["name"]:g for g in sector["subgroups"]}
+        self.assertEqual({x["code"] for x in groups["InP／GaAs 磊晶及雷射材料（核心上游）"]["stocks"]},{"3081"})
+        self.assertEqual({x["code"] for x in groups["FAU／光纖陣列與精密耦合（核心上游）"]["stocks"]},{"3163","3363"})
+        self.assertEqual({x["code"] for x in groups["外部雷射 ELS／光主動元件（上游供應）"]["stocks"]},{"4977"})
+        self.assertEqual(result["coverage"]["classifiedBySource"]["cpo_industry_research"],4)
+        self.assertEqual(result["audit"]["cpoResearchSource"],"https://www.trendforce.com.tw/presscenter/news/20260727-13150.html")
+        self.assertEqual(sector["stockCount"],4)
+        self.assertNotIn("2330",{z["code"] for g in sector["subgroups"] for z in g["stocks"]})
+        self.assertNotIn("2317",{z["code"] for g in sector["subgroups"] for z in g["stocks"]})
+        self.assertTrue(all(x["basis"]=="cpo_industry_research" and x["source"].startswith("https://") and "不等於" in x["roleNote"] for g in sector["subgroups"] for x in g["stocks"]))
     def test_bad_html_with_no_arrow_never_assumed_upstream(self):
         self.assertEqual(read_memberships("<html>半導體 晶圓製造 IP設計</html>"),[])
     def test_all_mapped_sectors_have_unique_official_source(self):
-        self.assertEqual(len(INDUSTRIES),8)
-        self.assertEqual(len({i["code"] for i in INDUSTRIES}),8)
-        self.assertTrue(all(i["groups"] and i["keys"] for i in INDUSTRIES))
+        self.assertEqual(len(INDUSTRIES),9)
+        self.assertEqual(len({i["code"] for i in INDUSTRIES}),9)
+        self.assertTrue(all(i["groups"] for i in INDUSTRIES))
+        self.assertTrue(all(i["keys"] for i in INDUSTRIES if i["code"]!="CPO"))
+        self.assertFalse(next(i for i in INDUSTRIES if i["code"]=="CPO")["keys"],"CPO must not masquerade as an official TPEx sector")
 if __name__=="__main__":unittest.main()

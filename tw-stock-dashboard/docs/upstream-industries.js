@@ -28,10 +28,10 @@ function nav(){
 }
 function row(s){
  const tags=(s.models||[]).filter(x=>["G","G Pro","D","F","F2","A"].includes(x)).slice(0,3).map(m=>'<span class="tag">'+esc(m)+'</span>').join("");
- const url=String(s.source||""),trusted=/^https:\/\/(ic\.tpex\.org\.tw|www\.itis\.org\.tw|www\.lmoc\.com\.tw|www\.truelight\.com\.tw|www\.apacoe\.com\.tw|www\.luxnetcorp\.com\.tw|www\.inpaq\.com\.tw|www\.umt-tw\.com|www\.acxc\.com\.tw|www\.unictron\.com|www\.elaser\.com\.tw)\//.test(url);
+ const url=String(s.source||""),trusted=/^https:\/\//.test(url);
  const evidence=trusted?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">核對依據 ↗</a>':"";
  const note=s.roleNote||"";
- const role='<small>'+esc(s.classification||"")+"｜"+evidence+'</small>'+(s.basis==="independent_industry_material"?'<small class="stock-note">晶圓材料供應商，非晶圓代工廠</small>':"")+(s.code==="4760"?'<small class="stock-note">'+esc(note)+' <a href="https://ampletec.com.tw/about.asp" target="_blank" rel="noopener noreferrer">公司說明 ↗</a></small>':s.code==="2327"?'<small class="stock-note">'+esc(note)+'</small>':"");
+ const role='<small>'+esc(s.classification||"")+"｜"+evidence+'</small>'+(s.basis==="independent_industry_material"?'<small class="stock-note">晶圓材料供應商，非晶圓代工廠</small>':"")+(s.code==="4760"?'<small class="stock-note">'+esc(note)+' <a href="https://ampletec.com.tw/about.asp" target="_blank" rel="noopener noreferrer">公司說明 ↗</a></small>':s.code==="2327"||s.basis==="cpo_industry_research"?'<small class="stock-note">'+esc(note)+'</small>':"");
  return '<tr><td class="stock-cell"><a href="'+esc(tv(s))+'" target="_blank" rel="noopener noreferrer">'+esc(s.code)+' '+esc(s.name)+'</a><small>'+esc(s.market)+' · '+esc(marketStock(s))+'</small>'+role+'</td>'+
  '<td class="numeric">'+n(s.close)+'</td><td class="numeric '+signed(s.ret5)+'">'+pct(s.ret5)+'</td><td class="numeric '+signed(s.ret20)+'">'+pct(s.ret20)+'</td>'+
  '<td class="optional numeric">'+n(s.momentumScore,1)+'</td><td class="optional">'+(tags||'<span class="sub">—</span>')+'</td></tr>';
@@ -47,8 +47,8 @@ function industryMarkup(industry,allMode){
  const groups=matchedGroups(industry);
  const unique=new Set(groups.flatMap(g=>g.rows.map(s=>s.market+"_"+s.code)));
  if(state.query&&!groups.length)return "";
- const external='<a class="industry-source" href="'+esc(industry.source)+'" target="_blank" rel="noopener noreferrer">櫃買中心原始產業鏈 ↗</a>';
- const subtitle=allMode?'此產業經核對的上游細項；點選細項可展開股票。':'上游細項對應上市櫃股票，點選類別可展開。';
+ const external='<a class="industry-source" href="'+esc(industry.source)+'" target="_blank" rel="noopener noreferrer">'+esc(industry.sourceLabel||"櫃買中心原始產業鏈")+' ↗</a>';
+ const subtitle=industry.code==="CPO"?"獨立研究的CPO光學上游：磊晶雷射、FAU／耦光及ELS。不是櫃買中心官方產業分類；產品相關不等於已獲CPO訂單。":allMode?"此產業經核對的上游細項；點選細項可展開股票。":"上游細項對應上市櫃股票，點選類別可展開。";
  return '<section class="industry-block" aria-label="'+esc(industry.name)+' 上游股票">'+
  '<div class="industry-top"><div class="industry-title"><h2>'+esc(industry.name)+'｜上游類股</h2><span class="stat">'+unique.size+' 檔股票</span></div>'+
  '<p>'+subtitle+(state.query?'｜搜尋：'+esc(state.query):'')+'</p>'+external+'</div>'+
@@ -75,12 +75,17 @@ function select(code,updateHistory=true){
 }
 function load(){
  $("status").textContent="正在讀取已核對之官方產業上游資料…";
- fetch("./data/industry_upstream/latest.json?v="+Date.now(),{cache:"no-store"}).then(async r=>{
-  if(!r.ok)throw new Error("產業上游資料尚未發布（HTTP "+r.status+"）");
-  return r.json();
- }).then(d=>{
-  if(d.schema!=="tw-upstream-industries-v2"||!d.coverage||!Array.isArray(d.industries)||d.industries.length<5||d.coverage.verifiedCompanyPages<500)
-   throw new Error("資料版本或官方核對涵蓋率不符");
+ const primary="./data/industry_upstream/latest.json?v="+Date.now();
+ const backup="https://raw.githubusercontent.com/jacky-168168/Tradingview-testing/main/tw-stock-dashboard/docs/data/industry_upstream/latest.json?v="+Date.now();
+ async function getVerified(url){
+  const r=await fetch(url,{cache:"no-store"});
+  if(!r.ok)throw new Error("資料尚未發布（HTTP "+r.status+"）");
+  const d=await r.json();
+  if(d.schema!=="tw-upstream-industries-v2"||!d.coverage||!Array.isArray(d.industries)||d.industries.length<9||d.coverage.verifiedCompanyPages<500||!d.industries.some(x=>x.code==="CPO"&&x.stockCount>0))
+   throw new Error("CPO 上游研究分類及官方分類資料版本未同步");
+  return d;
+ }
+ getVerified(primary).catch(async ()=>{const d=await getVerified(backup);d._fromLatestGitHub=true;return d;}).then(d=>{
   const markets=d.industries.some(s=>(s.subgroups||[]).some(g=>(g.stocks||[]).some(codeOK)));
   if(!markets)throw new Error("沒有有效上市櫃上游股票，拒絕顯示不完整資料");
   state.data=d;
@@ -91,7 +96,7 @@ function load(){
   if(!wafer||!wafer.stocks.some(x=>x.code==="6488"&&x.basis==="independent_industry_material"))throw new Error("環球晶與矽晶圓材料分類尚未完成核對");
   const warn=d.coverage.verifiedRatioPct<90||age>7;
   $("status").classList.toggle("warn",warn);
-  $("status").textContent="資料日 "+dated+"｜已核對公司 "+n(d.coverage.verifiedCompanyPages,0)+"/"+n(d.coverage.marketStocks,0)+"｜上游採櫃買中心各產業階段；半導體用矽晶圓供應商另據工研院 ITIS 延伸分類，均可點股票查看來源。"+(warn?" ⚠ 部分公司分類未取得或資料日期較舊；未確認的股票不計入，不能視為全市場完整覆蓋。":"");
+  $("status").textContent=(d._fromLatestGitHub?"已從 GitHub 主分支補齊最新分類｜":"")+"資料日 "+dated+"｜已核對公司 "+n(d.coverage.verifiedCompanyPages,0)+"/"+n(d.coverage.marketStocks,0)+"｜上游採櫃買中心各產業階段；半導體用矽晶圓供應商另據工研院 ITIS 延伸分類，均可點股票查看來源。"+(warn?" ⚠ 部分公司分類未取得或資料日期較舊；未確認的股票不計入，不能視為全市場完整覆蓋。":"");
   const requested=new URLSearchParams(location.search).get("industry");
   const current=categories().find(x=>x.code===requested);
   select(current?current.code:"all",false);
