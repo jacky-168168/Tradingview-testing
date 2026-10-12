@@ -21,6 +21,30 @@ USER_AGENT={"User-Agent":"Mozilla/5.0 (compatible; tw-stock-dashboard upstream i
 WAFER_MATERIAL_SOURCE="https://www.itis.org.tw/NetReport_Detail.aspx?rpno=613160445"
 WAFER_MATERIALS={"6488":"環球晶","3532":"台勝科","6182":"合晶","3016":"嘉晶"}
 SOLAR_MATERIAL_SOURCE="https://ampletec.com.tw/about.asp"
+# CPO is NOT a TPEx official industry code. This is a separate EVIDENCE-BASED
+# thematic supply-chain upstream directory; avoid conflating any optical-module
+# business with a confirmed Nvidia/Broadcom CPO order or with a pure-play revenue.
+CPO_SOURCE="https://www.trendforce.com.tw/presscenter/news/20260727-13150.html"
+CPO_GROUPS=[
+    "InP／GaAs 磊晶及雷射材料（核心上游）",
+    "FAU／光纖陣列與精密耦合（核心上游）",
+    "外部雷射 ELS／光主動元件（上游供應）",
+]
+CPO_EVIDENCE={
+    # Codes -> group, product relationship, cited public information.
+    "3081":(CPO_GROUPS[0],"磷化銦光通訊雷射／檢光磊晶片；提供光源材料，不代表直接取得CPO訂單。","https://www.lmoc.com.tw/index.php?i=1&id=282&lang=cht&option=module&task=dfile"),
+    "2455":(CPO_GROUPS[0],"三五族磊晶／光通訊 InP；屬光源材料上游，CPO客戶訂單須另行查證。","https://www.skis.com.tw/Report/education/KNW20260826.html"),
+    "4991":(CPO_GROUPS[0],"InP／GaAs 三五族光電半導體製程；屬光源技術上游，非直接量產訂單證明。","https://www.skis.com.tw/Report/education/KNW20260826.html"),
+    "4971":(CPO_GROUPS[0],"磷化銦光電材料與基板；依供應鏈延伸研究，營收占比未確認。","https://money.udn.com/money/story/5612/9526606"),
+    "3363":(CPO_GROUPS[1],"CPO用FAU光纖陣列、耦光對位與高密度光連接；公司法說產品路線。","https://finmoconf.diveinvest.net/presentation/691c7285bab52fb5c8f0575f"),
+    "3163":(CPO_GROUPS[1],"CPO平台光纖配線、FAU及光纖套件；產品已在公司法說揭露。","https://finmoconf.diveinvest.net/presentation/69b01a86bab52fb5c8bbe2c4"),
+    "6442":(CPO_GROUPS[1],"高芯數光纖、CPO-ELS與FAU；部分透過轉投資公司布局，勿等同母公司所有產品已量產。","https://finmoconf.diveinvest.net/presentation/6a26cf94bab52fb5c81f8213"),
+    "3234":(CPO_GROUPS[2],"光主動雷射、VCSEL及光偵測器；CPO相容光源供應鏈，直接客戶關係未確認。","https://www.truelight.com.tw/products/optical-communication/"),
+    "3450":(CPO_GROUPS[2],"雷射二極體封裝及外置雷射光學次組件；屬CPO相關光源供應環節。","https://www.elaser.com.tw/sp2-4.htm"),
+    "4979":(CPO_GROUPS[2],"光通訊 CW laser、主動晶粒及光學模組；按公開產業研究作為上游觀察，非證實直接CPO供應。","https://www.luxnetcorp.com.tw/news"),
+    "4977":(CPO_GROUPS[2],"外置雷射ELSFP封裝及光收發器；公司公開資訊提及CPO相關產品布局。","https://www.moneydj.com/KMDJ/news/newsviewer.aspx?a=41a8b048-81d8-4b07-bc14-0c0998fa88b9"),
+}
+
 PASSIVE_INDUSTRY_SOURCE="https://ic.tpex.org.tw/introduce.php?ic=J000"
 COMM_SOURCE="https://ic.tpex.org.tw/introduce.php?ic=I000"
 # A distinct active/passive product split of TPEx communication "主/被動元件".
@@ -88,6 +112,7 @@ INDUSTRIES=[
    ("太陽能材料（跨產業應用）",["材料"]),("矽晶圓／矽晶片",["矽晶圓/矽晶片","矽晶圓","矽晶片"])]},
  {"name":"電動車輛","code":"A300","keys":["電動車輛產業","電動車產業"],"groups":[
    ("鋰電池材料",["鋰電池材料"])]},
+ {"name":"CPO／矽光子","code":"CPO","keys":[],"groups":[(g,[]) for g in CPO_GROUPS]},
 ]
 def normalize(s):
     s=str(s or "").strip()
@@ -147,9 +172,11 @@ def compile_map(stocks,memberships,data_date):
     groups={}
     for spec in INDUSTRIES:
         groups[spec["code"]]={"name":spec["name"],"code":spec["code"],
-            "source":SOURCE+"introduce.php?ic="+spec["code"],"subgroups":{}}
+            "source":CPO_SOURCE if spec["code"]=="CPO" else SOURCE+"introduce.php?ic="+spec["code"],
+            "sourceLabel":"CPO 產業供應鏈研究（非櫃買官方產業碼）" if spec["code"]=="CPO" else "櫃買中心原始產業鏈",
+            "subgroups":{}}
     covered=0;upstream_stocks=set();entries_count=0
-    published_materials=set();basis_counts={"tpex_official":0,"independent_industry_material":0,"tpex_cross_industry":0,"company_product_verified":0,"tpex_ambiguous":0}
+    published_materials=set();basis_counts={"tpex_official":0,"independent_industry_material":0,"tpex_cross_industry":0,"company_product_verified":0,"tpex_ambiguous":0,"cpo_industry_research":0}
     for x in stocks:
         code=str(x.get("code") or "").strip();market=x.get("market")
         if market not in ("上市","上櫃") or not re.fullmatch(r"[0-9]{4}",code):continue
@@ -218,6 +245,13 @@ def compile_map(stocks,memberships,data_date):
                 "source":WAFER_MATERIAL_SOURCE,
                 "roleNote":"工研院 ITIS 列為晶圓廠的半導體矽晶圓／磊晶材料供應商；與太陽能矽晶片、晶圓代工製程分層不同。"}
             published_materials.add(code)
+        # An independent CPO thematic map (not a TPEx official classification).
+        if code in CPO_EVIDENCE:
+            group,role,evidence=CPO_EVIDENCE[code]
+            matches[("CPO",group)]={
+                "classification":"CPO 上游光學零件研究名單（非官方類股）",
+                "basis":"cpo_industry_research","source":evidence,
+                "roleNote":role+" CPO 技術供應鏈與特定客戶訂單／營收貢獻是兩回事。"}
         for (sid,segment),meta in sorted(matches.items()):
             upstream_stocks.add((market,code));entries_count+=1
             basis_counts[meta["basis"]]+=1
@@ -241,6 +275,7 @@ def compile_map(stocks,memberships,data_date):
             comm=spec["code"]=="I000" and key in (COMM_ACTIVE,COMM_PASSIVE,COMM_PENDING)
             extended=spec["code"]=="D000" and key.startswith("半導體用矽晶圓")
             solar=spec["code"]=="A100" and key.startswith("太陽能材料")
+            cpo=spec["code"]=="CPO"
             note=("另依工研院 ITIS 矽晶圓材料研究補充。此為晶圓廠『材料供應鏈上游』，不同於櫃買中心以 IP／IC 設計為上游的製造流程分層。"
                   if extended else "櫃買中心將太陽能漿料等材料列在此上游；公司可能跨足其他領域，並非太陽能營收比重排名。" if solar else "")
             if comm:
@@ -248,20 +283,23 @@ def compile_map(stocks,memberships,data_date):
                       "國巨補列為通信設備上游，但屬被動元件產業中游。"
                       if key!=COMM_PENDING else
                       "官方原始『主／被動元件』是合併分類；產品未獲證實者保留待核對，不會猜測。")
+            if cpo:note="CPO／矽光子研究補充的光學零件上游；不等於櫃買中心官方產業鏈、CPO 客戶認證、實際訂單或主要營收。"+"此頁不把晶圓代工或交換器系統廠混作元件上游。"
             child.append({"name":key,"count":len(items),"stocks":items,"source":WAFER_MATERIAL_SOURCE if extended else item["source"],"note":note,
-                          "classification":"獨立研究延伸上游材料" if extended else "櫃買中心官方上游"})
+                          "classification":"CPO 研究上游" if cpo else "獨立研究延伸上游材料" if extended else "櫃買中心官方上游"})
         item["subgroups"]=child
         item["stockCount"]=len({(z["market"],z["code"]) for g in child for z in g["stocks"]})
         sectors.append(item)
     valid=len([x for x in stocks if x.get("market") in ("上市","上櫃")])
     return {"schema":"tw-upstream-industries-v2","dataDate":data_date,
         "generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),
-        "source":"TPEx official company_chain.php & introduce.php, ITIS wafer materials research, dated full-market stock diagnostics",
-        "method":"TPEx sector and explicit upstream stage; named ITIS semiconductor wafer material suppliers; communication mixed active/passive split via additional official J000 manufacturing membership and company product filings. Unverified remains pending. Passive-components industry midstream suppliers can be communications equipment upstream.",
+        "source":"TPEx industry value chains; ITIS semiconductor wafer research; curated CPO optical upstream evidence; dated full-market stock diagnostics",
+        "method":"Eight TPEx industry chain upstream classifications, ITIS silicon wafer materials, and a ninth independent CPO optical-components upstream research category (NOT an official TPEx sector nor proof of named customer orders).",
         "coverage":{"marketStocks":valid,"verifiedCompanyPages":covered,"verifiedRatioPct":round(100*covered/valid,1) if valid else 0,
                     "distinctUpstreamStocks":len(upstream_stocks),"upstreamMemberships":entries_count,"industries":len(sectors),
                     "classifiedBySource":basis_counts},
-        "audit":{"stageReferences":{i["code"]:SOURCE+"introduce.php?ic="+i["code"] for i in INDUSTRIES},
+        "audit":{"stageReferences":{i["code"]:SOURCE+"introduce.php?ic="+i["code"] for i in INDUSTRIES if i["code"]!="CPO"},
+                 "cpoResearchSource":CPO_SOURCE,
+                 "cpoCodes":sorted(CPO_EVIDENCE),
                  "extendedMaterials":sorted(published_materials),
                  "materialsReference":WAFER_MATERIAL_SOURCE,
                  "solarConductivePasteReference":SOLAR_MATERIAL_SOURCE,
@@ -285,6 +323,9 @@ def main():
     result=compile_map(stocks,entries,date)
     result["coverage"]["failedCompanyPages"]=len(fail)
     print("Upstream coverage",json.dumps(result["coverage"],ensure_ascii=False),flush=True)
+    if "CPO" not in {z["code"] for z in result["industries"]}:raise RuntimeError("Missing standalone CPO research classification")
+    if "3081" in ids and not any(x["code"]=="3081" for g in next(z for z in result["industries"] if z["code"]=="CPO")["subgroups"] for x in g["stocks"]):
+        raise RuntimeError("CPO upstream optical laser supplier 3081 missing")
     if "2327" in ids:
         sector=next(i for i in result["industries"] if i["code"]=="I000")
         passive=next(g for g in sector["subgroups"] if g["name"]==COMM_PASSIVE)
