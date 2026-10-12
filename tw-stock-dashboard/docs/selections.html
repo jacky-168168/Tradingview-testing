@@ -78,7 +78,7 @@
 </header>
 <div id="staleWarning" class="warning stale" role="status">⚠ 最近交易日的資料尚未更新。</div>
 <div class="card toolbar"><div class="tabs"><button id="tabG" class="tab primary on">🚀 G 強勢股（預設）</button><button id="tabGPro" class="tab">💎 G Pro 嚴格強勢</button><button id="tabD" class="tab">D 技術強勢</button><button id="tabF" class="tab">F 固定濾網</button><button id="tabF2" class="tab">F2 動態濾網</button><button id="tabA" class="tab">A 原始多因子</button><button id="tabN" class="tab" type="button">🅽 N 成長動能</button></div><div style="text-align:right"><div><strong id="modelTitle">G 雙突破＋強勢持續度排行</strong> <span id="count" class="badge">0 檔</span> <button id="layoutToggle" class="btn" type="button" aria-pressed="true">▤ 完整欄位</button></div><div id="meta" class="sub">載入中...</div></div></div>
-<div id="gNote" class="sub" role="status" aria-live="polite" style="margin:9px 3px 0;color:#34568b;font-weight:700;line-height:1.8">G 使用最新完整日 K 計算；盤中只更新現價，尚未計算 BOTTOM／TOP 交易觸發。</div>
+<div id="gNote" class="sub" role="status" aria-live="polite" style="margin:9px 3px 0;color:#34568b;font-weight:700;line-height:1.8">G 盤中會檢查上市＋上櫃當日報價，取得完整有效樣本才重新排序；盤中屬暫估，盤後 G 正式榜單另外保留。</div>
 <section id="repeatPanel" class="card repeat-panel" aria-label="近兩個月重複上榜股票">
   <div class="repeat-header">
     <div class="repeat-heading">
@@ -115,7 +115,7 @@
   </div>
   <p class="sub n-disclaimer">資料日期以研究檔案為準；N 的最新歷史排行不是今日即時選股。要更新 N 必須重新執行完整基本面與模型研究，不能只按頁面「重新載入」。</p>
 </section>
-<div class="footer">G 預設：當日收盤雙突破＋過去10交易日強勢持續度；最新現價由盤中快刷更新。僅供量化研究與交易輔助，不構成投資建議。</div>
+<div class="footer">G 預設：收盤正式雙突破＋過去10交易日強勢持續度；交易時段另提供未完成日 K 的盤中暫估全市場排行，實際更新依 GitHub Actions 與報價可用性。僅供量化研究與交易輔助，不構成投資建議。</div>
 </div>
 <script src="./repeat-rankings.js"></script>
 <script src="./stock-selection.js"></script>
