@@ -16,6 +16,7 @@ function themeButton(theme){var t=String(theme||"").trim();return t?'<button typ
 function filterBar(){var bar=document.getElementById("themeFilterBar");if(!bar)return;bar.hidden=!THEME_FILTER;document.getElementById("themeFilterLabel").textContent=THEME_FILTER?"🔎 題材："+THEME_FILTER+"（同時篩選排行及重複上榜）":""}
 function applyTableMode(){
  var isN=MODEL==="N",simple=TABLE_COMPACT;
+ var official=document.getElementById("officialStockTable");official.classList.toggle("compact",simple);official.classList.toggle("simple-mode",simple);official.tHead.innerHTML=simple?STOCK_SIMPLE_HEAD:NORMAL_G_TABLE_HEAD.replace("現價 / 收盤","正式收盤價");
  stockTable.classList.toggle("compact",simple);stockTable.classList.toggle("simple-mode",simple);
  stockTable.tHead.innerHTML=simple?(isN?N_SIMPLE_HEAD:STOCK_SIMPLE_HEAD):(isN?N_TABLE_HEAD:(MODEL==="G"||MODEL==="G Pro"?NORMAL_G_TABLE_HEAD:NORMAL_NON_G_TABLE_HEAD));
  layoutToggle.textContent=simple?"▤ 詳細模式":"▥ 簡單模式";
@@ -27,10 +28,11 @@ function applyTableMode(){
  filterBar();
 }
 function simpleMetric(name,value){return '<div><dt>'+esc(name)+'</dt><dd>'+value+'</dd></div>'}
-function renderSimpleStock(x,i,isG,live){
- var theme=x.theme||"",key=String(x.market||"")+"|"+String(x.code||""),open=EXPANDED_STOCK===key;
- var px=(live&&/midpoint|one-sided/.test(x.intradayPriceSource||"")?"≈":"")+(x.currentPrice!=null?N(x.currentPrice):N(x.close));
- var pct=x.currentPct==null?'<span class="simple-secondary">漲跌未提供</span>':'<span class="simple-pct '+C(x.currentPct)+'">'+(Number(x.currentPct)>=0?"+":"")+N(x.currentPct)+'%</span>';
+function renderSimpleStock(x,i,isG,live,official){
+ var theme=x.theme||"",key=(official?"official|":"")+String(x.market||"")+"|"+String(x.code||""),open=EXPANDED_STOCK===key;
+ var px=official?N(x.close):(live&&/midpoint|one-sided/.test(x.intradayPriceSource||"")?"≈":"")+(x.currentPrice!=null?N(x.currentPrice):N(x.close));
+ var pctSource=official?x.dayRet:x.currentPct;
+ var pct=pctSource==null?'<span class="simple-secondary">漲跌未提供</span>':'<span class="simple-pct '+C(pctSource)+'">'+(Number(pctSource)>=0?"+":"")+N(pctSource)+'%</span>';
  var strength=isG?'<b>10日 '+(x.gPast10==null?"—":esc(x.gPast10))+'/10</b>':'<b>總分 '+N(x.total,1)+'</b>';
  var cells=[simpleMetric("市場",esc(x.market||"—")),simpleMetric("總分",N(x.total,1)),simpleMetric("SAR",esc(x.sarText||"—")),simpleMetric("題材",esc(theme||"—")),simpleMetric("外資買賣超",N(x.foreignToday,0)),simpleMetric("投信買賣超",N(x.trustToday,0)),simpleMetric("RS20",P(x.rs20)),simpleMetric("RVOL",N(x.rvol)),simpleMetric("5D",P(x.ret5)),simpleMetric("20D",P(x.ret20)),simpleMetric("股本",N(x.capitalB)),simpleMetric("成交額",N(x.turnoverB)),simpleMetric("距20日高",P(x.breakoutPct)),simpleMetric("MA20斜率",P(x.ma20Slope)),simpleMetric("訊號",esc(x.signal||"—"))];
  if(isG){cells.splice(2,0,simpleMetric("原G分",N(x.gScore)),simpleMetric("持續度",N((x.persistence||{}).strength,1)),simpleMetric("3D／18D",(x.gBreak3?"✓":"—")+"／"+(x.gBreak18?"✓":"—")))}
