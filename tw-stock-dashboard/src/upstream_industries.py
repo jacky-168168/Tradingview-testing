@@ -31,6 +31,7 @@ COMM_ACTIVE_EVIDENCE={
     "3234":("雷射、VCSEL 與光偵測器（主動）","https://www.truelight.com.tw/products/optical-communication/"),
     "4908":("光收發模組（光主動）","https://www.apacoe.com.tw/files/111%E5%B9%B4%E8%82%A1%E6%9D%B1%E6%9C%83%E5%B9%B4%E5%A0%B1.pdf"),
     "4979":("光通訊主動晶粒及光收發模組","https://www.luxnetcorp.com.tw/news"),
+    "3450":("光通訊雷射二極體 VCSEL、FP／DFB 及檢光器封裝（光主動）","https://www.elaser.com.tw/sp2-4.htm"),
 }
 # Independent product disclosures for communication passive/filters. TPEx J000
 # memberships are preferred when available; these are supplemental evidence.
