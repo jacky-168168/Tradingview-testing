@@ -27,7 +27,7 @@ F:"F 固定大盤濾網＝D 技術強勢＋Risk Score≥60 放行；唯一例外
 F2:"F2 動態大盤濾網＝D 技術強勢＋Risk Score≥60 進場、≥55 維持已開啟狀態｜Strong Bottom Reversal 可例外放行｜Top Reversal Attempt / Strong Top Reversal 或 Extreme Overbought 阻擋｜目前大盤分數："+score+"｜濾網："+(f2g.allowed?"放行":"阻擋")+"（"+(f2g.reason||"尚未分析")+"）。"
 };
 var live=MODEL==="G"?currentLiveG():null;
-if(live){var cov=live.coverage||{};gNote.textContent="🟠 G 盤中重新選股｜"+live.asOfDate+"｜更新 "+live.publishedAt+"｜全上市櫃即時有效報價 "+(cov.valid||0)+"/"+(cov.total||0)+"｜3D／18D 當日突破尚未收盤確認；部分股票以五檔中間價估算（現價標≈），非實際成交價；法人、SAR 不提供假盤中數據，原版盤後G榜單未改動。";return;}
+if(live){var cov=live.coverage||{},ps=live.quotePriceSources||{},proxy=(ps["bid-ask-midpoint"]||0)+(ps["one-sided-high-bid"]||0)+(ps["one-sided-low-ask"]||0);gNote.textContent="🟠 G 盤中重新選股｜"+live.asOfDate+"｜更新 "+live.publishedAt+"｜全上市櫃即時有效報價 "+(cov.valid||0)+"/"+(cov.total||0)+"（其中 "+proxy+" 檔使用買賣委託價暫估）｜3D／18D 當日突破尚未收盤確認；現價標≈者不是實際成交價；法人、SAR 不提供假盤中數據，原版盤後G榜單未改動。";return;}
 gNote.textContent=MODEL==="G Pro"?"G Pro：只檢查原G Top3，要求20D動能前25%、均線斜率前20%、成交額前25%、過去10天至少2次進原G Top20、相對量≥1.3、EMA20＞EMA60、收盤在EMA20上方且距離≤15%。未過則不選；此為嚴格選股，非回測勝率保證。":(MODEL==="G"||MODEL==="G Pro")?(gs?"G：最新完整日K "+gs.dataDate+"｜3D＋18D 前高雙突破｜前10日原版 G Top20 持續度加分（最高7分）｜可用歷史 "+(gs.pocketSnapshotsFound||0)+"/10"+(gs.pocketWarmup?"｜持續度建檔中":"")+"｜當日未取得有效盤中重選時僅更新原榜單現價；非 BOTTOM／TOP 觸發":"⚠ 尚未產生每日 G 訊號，請按「GitHub 更新」執行 full 完整更新；不會把舊的 2026 回測清單冒充今日名單。"):(notes[MODEL]||"尚未設定模型說明");
 }
 var N_ARCHIVE=null,N_SUMMARY=null,N_LOADING=false;
