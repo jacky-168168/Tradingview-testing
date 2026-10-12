@@ -136,9 +136,10 @@ function renderOfficialG(){
  body.innerHTML=selected.map(function(pair){var x=pair.stock,i=pair.rank-1;return TABLE_COMPACT?renderSimpleStock(x,i,true,null,true):renderOfficialDetailedRow(x,i)}).join("");
 }
 function renderTable(){
+var isDualG=MODEL==="G";document.getElementById("gIntradayHeading").style.display=isDualG?"":"none";document.getElementById("gOfficialPanel").style.display=isDualG?"":"none";
 if(typeof renderRepeatPanel==="function")renderRepeatPanel(MODEL,DATA);
 filterBar();
-var live=MODEL==="G"?currentLiveG():null,xs=live?live.rows:(DATA&&DATA.models&&DATA.models[MODEL]||[]),isG=(MODEL==="G"||MODEL==="G Pro"),gs=live?live.selection:(DATA&&DATA.gSelection||null);
+var live=MODEL==="G"?currentLiveG():null,xs=MODEL==="G"?(live?live.rows:[]):(DATA&&DATA.models&&DATA.models[MODEL]||[]),isG=(MODEL==="G"||MODEL==="G Pro"),gs=live?live.selection:(DATA&&DATA.gSelection||null);
 if(MODEL==="N"){
  tabG.classList.remove("on");tabGPro.classList.remove("on");tabD.classList.remove("on");tabF.classList.remove("on");tabF2.classList.remove("on");tabA.classList.remove("on");tabN.classList.add("on");
  toggleNView(true);
@@ -149,11 +150,11 @@ if(MODEL==="N"){
 tabN.classList.remove("on");if(stockTable.classList.contains("stock-n-table"))toggleNView(false);
 tabG.classList.toggle("on",MODEL==="G");tabGPro.classList.toggle("on",MODEL==="G Pro");tabD.classList.toggle("on",MODEL==="D");tabF.classList.toggle("on",MODEL==="F");tabF2.classList.toggle("on",MODEL==="F2");tabA.classList.toggle("on",MODEL==="A");
 
-modelTitle.textContent=MODEL==="G Pro"?"G Pro 嚴格強勢突破排行":live?"🟠 G 盤中暫估｜重新篩選排行":isG?"G 雙突破＋強勢持續度排行":MODEL==="D"?"D 主模型排行":MODEL==="F"?"F 固定濾網排行":MODEL==="F2"?"F2 動態濾網排行":"A 備用模型排行";
+modelTitle.textContent=MODEL==="G"?"G 強勢股｜盤中＋盤後雙榜單":MODEL==="G Pro"?"G Pro 嚴格強勢突破排行":isG?"G 雙突破＋強勢持續度排行":MODEL==="D"?"D 主模型排行":MODEL==="F"?"F 固定濾網排行":MODEL==="F2"?"F2 動態濾網排行":"A 備用模型排行";
 var strict=xs.filter(function(x){return x.strictPass===true}).length;
 if(isG){
 var candidates=MODEL==="G Pro"?3:gs&&gs.doubleBreakCandidates;
-count.textContent=MODEL==="G Pro"?xs.length+" 檔｜原G Top3 嚴格確認":xs.length+" 檔｜"+(live?"盤中暫估｜":"")+"雙突破候選 "+(candidates==null?"—":candidates)+" 檔";
+count.textContent=MODEL==="G"?"盤中 "+xs.length+" 檔｜盤後 "+(DATA&&DATA.models&&Array.isArray(DATA.models.G)?DATA.models.G.length:0)+" 檔":xs.length+" 檔｜原G Top3 嚴格確認";
 renderModelNote();
 }else{count.textContent=MODEL==="A"?xs.length+" 檔":xs.length+" 檔｜嚴格 "+strict+" 檔";renderModelNote()}
 var selectedRows=xs.map(function(stock,i){return {stock:stock,rank:i+1}}).filter(function(pair){return !THEME_FILTER||String(pair.stock.theme||"").trim()===THEME_FILTER});
