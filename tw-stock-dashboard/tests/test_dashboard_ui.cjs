@@ -71,4 +71,14 @@ assert(script.includes('if(MODEL==="G")renderOfficialG();applyTableMode()'),"Off
 assert(script.includes('closest("#tb tr.simple-stock-row,#officialTb tr.simple-stock-row")'),"Both simple-mode tables must support row expansion");
 for(const key of ["tabG","tabA","tabD","tabF","tabF2"]){assert(html.includes('id="'+key+'"'),key+" toggle missing")}
 assert(script.includes("'+tvStockLink(x)+'</td>"),"All models must render clickable stock name through shared row");
+// G report refactor is presentation only: three separate dated lists retain original data IDs and headers.
+assert(html.includes('id="gReportIntro"')&&html.includes('class="g-report-nav"'),"Report heading and three-way navigation required");
+for(const id of ["gQuickRepeat","gQuickLive","gQuickOfficial"])assert(html.includes('id="'+id+'"'),id+" report status missing");
+assert(html.indexOf('id="gReportIntro"')<html.indexOf('id="repeatPanel"'),"Report intro must precede G sections");
+assert(html.includes('href="#repeatPanel"')&&html.includes('href="#gIntradayHeading"')&&html.includes('href="#gOfficialPanel"'),"All three G sections must be directly reachable");
+assert(script.includes('updateGReportOverview()')&&script.includes('g-report-mode'),"Dated report mode must be enabled for G only");
+assert(html.includes('id="officialTb"')&&html.includes('id="repeatRows"')&&html.includes('id="tb"'),"Original datasets and render targets unchanged");
+for(const label of ["原 G 分","前10日入選","3D/18D","外資買超","投信買超","RS20","20D"])assert(html.includes(label),"Original detailed G field lost: "+label);
+const repeatSource=fs.readFileSync(path.resolve(__dirname,"../docs/repeat-rankings.js"),"utf8");
+assert(repeatSource.includes('updateGReportOverview()'),"Report repeat count must refresh after asynchronous archive load");
 console.log("PASS: TradingView links, strategy notes, mobile 4-column mode, all detailed columns, G theme filters and repeats");

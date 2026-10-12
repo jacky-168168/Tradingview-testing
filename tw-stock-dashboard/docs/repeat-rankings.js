@@ -90,7 +90,7 @@ async function refreshRepeatArchive(){
        throw Error("歷史統計檔案尚未通過完整性檢查");
    REPEAT_DATA=fresh;REPEAT_LOAD_ERROR="";
   }catch(err){REPEAT_DATA=null;REPEAT_LOAD_ERROR=err.message||String(err)}
-  finally{REPEAT_FETCHING=null;if(typeof MODEL!=="undefined")renderRepeatPanel(MODEL,typeof DATA==="undefined"?null:DATA)}
+  finally{REPEAT_FETCHING=null;if(typeof MODEL!=="undefined")renderRepeatPanel(MODEL,typeof DATA==="undefined"?null:DATA);if(typeof updateGReportOverview==="function")updateGReportOverview()}
  })();
  return REPEAT_FETCHING;
 }
