@@ -5,7 +5,7 @@ const assert=require("assert"),fs=require("fs"),path=require("path");
 const root=path.resolve(__dirname,".."),base=path.join(root,"docs");
 const model=require(path.join(base,"market-command.js"));
 const html=fs.readFileSync(path.join(base,"index.html"),"utf8");
-const latest=JSON.parse(fs.readFileSync(path.join(base,"data/latest.json"),"utf8"));
+const latest=JSON.parse(fs.readFileSync(path.join(base,"data/daily/2026-10-08.json"),"utf8"));
 const future=JSON.parse(fs.readFileSync(path.join(base,"data/futures/latest.json"),"utf8"));
 const begin=html.indexOf("function sameContractTX(f)"),end=html.indexOf("function renderOpeningPreview(){",begin);
 assert(begin>0&&end>begin,"Original same-contract daily/overnight rule must still be present");
