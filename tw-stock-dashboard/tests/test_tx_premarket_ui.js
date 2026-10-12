@@ -44,4 +44,19 @@ assert.strictEqual(model.postOpenState({...latest.risk,date:"2026-10-12"},at(9,0
 assert(html.includes('id="commandCashReference"'),"Keep official 46 visibly separate");
 assert(html.includes("MarketCommand.applyPremarket(x)"),"Completed overnight preview must reach top hero");
 assert(html.includes("m>=510&&m<540"),"Preview refresh before 09:00");
+// At 16:51 on Monday 10/12, 10/08 is a HISTORICAL score, not today's STOP/READY.
+const oldAtClose=model.evaluate(latest.risk,latest.marketIntelligence,at(16,51));
+assert.strictEqual(oldAtClose.stale,true);
+assert.strictEqual(oldAtClose.closePending,true);
+assert.strictEqual(oldAtClose.decision.level,"UNKNOWN");
+assert(oldAtClose.decision.headline.includes("資料尚未更新"));
+const beforeOpen=model.evaluate(latest.risk,latest.marketIntelligence,at(8,58));
+assert.strictEqual(beforeOpen.stale,false,"Prior complete cash session remains the valid preopen baseline");
+const pendingAtNine=model.postOpenState(latest.risk,at(9,0));
+assert(pendingAtNine&&pendingAtNine.level==="WAIT");
+const pendingAtTwo=model.postOpenState(latest.risk,at(14,0));
+assert(pendingAtTwo&&pendingAtTwo.level==="WAIT");
+assert.strictEqual(model.postOpenState(latest.risk,at(14,30)),null);
+const validToday=model.evaluate({...latest.risk,date:"2026-10-12"},null,at(16,51));
+assert.strictEqual(validToday.stale,false,"Matching official cash date is current");
 console.log("PASS 2026-10-12 08:58 official cash46 and completed-night -1.305 -> provisional31; stale/mismatch/realtime and positive-buy guardrails");
