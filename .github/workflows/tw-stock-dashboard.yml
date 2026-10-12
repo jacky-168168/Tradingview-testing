@@ -24,6 +24,11 @@ on:
     - cron: '30 4 * * 1-5'
     - cron: '0 5 * * 1-5'
     - cron: '25 5 * * 1-5'
+    # Official BFI82U institutional flow may be published after the close.
+    # Multiple independent full retries allow the site to recover the same day.
+    - cron: '10 7 * * 1-5'
+    - cron: '40 7 * * 1-5'
+    - cron: '20 8 * * 1-5'
     - cron: '30 10 * * 1-5'
     - cron: '30 13 * * 1-5'
 
@@ -58,12 +63,15 @@ jobs:
               TW_HOUR="$(TZ=Asia/Taipei date +%H%M)"
               TW_WEEKDAY="$(TZ=Asia/Taipei date +%u)"
               if [ "$TW_WEEKDAY" -le 5 ] && [ "$TW_HOUR" -ge 0900 ] && [ "$TW_HOUR" -lt 1345 ]; then MODE="intraday"; else MODE="full"; fi
-            else
-              HM="$(date -u +%H:%M)"
-              case "$HM" in
-                01:00|01:15|02:30|03:30|04:30|05:00|05:25) MODE="intraday" ;;
+            elif [ "${{ github.event_name }}" = "schedule" ]; then
+              # GitHub cron execution may be delayed: use the SCHEDULED slot,
+              # never the actual runner start time to choose intraday vs full.
+              case "${{ github.event.schedule }}" in
+                '0 1 * * 1-5'|'15 1 * * 1-5'|'30 2 * * 1-5'|'30 3 * * 1-5'|'30 4 * * 1-5'|'0 5 * * 1-5'|'25 5 * * 1-5') MODE="intraday" ;;
                 *) MODE="full" ;;
               esac
+            else
+              MODE="full"
             fi
           fi
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
