@@ -43,13 +43,16 @@ def parse_mis(payload,date,now):
         if stamp:
             at=datetime.fromtimestamp(stamp/1000,TZ)
             if at.date()!=now.date() or at>now+timedelta(minutes=10):continue
-        price=number(row.get("z"));high=number(row.get("h"));low=number(row.get("l"))
+        price=number(row.get("z"));fallback=False
+        if price is None or price<=0:
+            price=number(row.get("pz"));fallback=True
+        high=number(row.get("h"));low=number(row.get("l"))
         op=number(row.get("o"));lots=number(row.get("v"));prev=number(row.get("y"))
         if any(x is None or x<=0 for x in (price,high,low,op,lots,prev)):continue
         if not low<=price<=high or not low<=op<=high:continue
         if abs(price/prev-1)>.12:continue
         result[(market,code)]={"price":price,"open":op,"high":high,"low":low,
-                               "volume":round(lots*1000),"previousClose":prev,"time":tm}
+                               "volume":round(lots*1000),"previousClose":prev,"time":tm,"previousTradeFallback":fallback}
     return result
 
 def session():
@@ -159,7 +162,7 @@ def main():
         payload={"asOfDate":today,"publishedAt":datetime.now(TZ).isoformat(timespec="seconds"),
                  "sourceCloseDate":source,"quality":"intraday-provisional-allmarket",
                  "quoteSource":"TWSE MIS same-day listed+OTC quote batches; cumulative lots × 1000 shares",
-                 "coverage":coverage,"historicalBarCoverage":len(history),"historyRejected":rejected,
+                 "coverage":coverage,"fallbackPreviousTradePrices":sum(q.get("previousTradeFallback",False) for q in quotes.values()),"historicalBarCoverage":len(history),"historyRejected":rejected,
                  "market20Reference":"previous completed cash-market return (not live index)",
                  "rows":rows,"selection":meta}
         OUTPUT.parent.mkdir(parents=True,exist_ok=True)
