@@ -36,6 +36,9 @@ COMM_ACTIVE_EVIDENCE={
 # memberships are preferred when available; these are supplemental evidence.
 COMM_PASSIVE_EVIDENCE={
     "6284":("射頻濾波器、電感及磁珠","https://www.inpaq.com.tw/events-01.php?eventsID=174&secureChk=75cd6dd7a655fac1b503e18d9474dafc"),
+    "3491":("微波、毫米波被動元件及濾波器","https://www.umt-tw.com/tw/about.php"),
+    "3152":("高頻濾波器、巴倫、耦合器與射頻前端被動元件","https://www.acxc.com.tw/intro"),
+    "6792":("壓電／天線及線路保護元件，含無線通訊被動零件","https://www.unictron.com/wp-content/uploads/2026/05/114%E5%B9%B4%E5%BA%A6%E5%B9%B4%E5%A0%B1%E4%B8%AD%E6%96%87.pdf"),
 }
 # Optically passive transport/fiber is not the same as RLC, and must not be
 # inferred solely from a generic TPEx "communication equipment" label.
