@@ -113,6 +113,28 @@ function renderNTable(){
  else if(!chosen)nLearned.textContent="已選擇模型 "+selected+"，但目前沒有已發布的 Top1 交易訊號。";
  else nLearned.textContent=leaderDate+"｜"+chosen.code+" "+chosen.name+"｜模型預估淨報酬 "+P(chosen.predictedNetPct,2)+"｜候選 "+chosen.candidatesRanked+" 檔｜EPS 年增 "+P(chosen.epsYtdGrowthPct,1)+"，營收年增 "+P(chosen.revenueYoYPct,1)+"｜這是歷史研究結果，不是今日買進建議。";
 }
+function renderOfficialDetailedRow(x,i){
+var cp=N(x.close),chg=x.dayRet==null?"":' <span class="'+C(x.dayRet)+'">('+(Number(x.dayRet)>=0?"+":"")+N(x.dayRet)+'%)</span>';
+var isG=true;
+var extra=isG?'<td>'+N(x.gScore)+'</td><td title="加分 +'+N(x.gExtra)+'"><b>'+N((x.persistence||{}).strength,1)+'</b> <span class="sub">+'+N(x.gExtra)+'</span></td><td>'+(x.gPast10==null?"—":x.gPast10)+'/10 <span class="sub">連'+(x.gStreak||0)+'天</span></td><td><b>'+(x.gBreak3?"✓":"—")+' 3D / '+(x.gBreak18?"✓":"—")+' 18D</b></td>':"";
+return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+tvStockLink(x)+'</td><td>'+esc(x.market)+'</td><td class="theme" title="'+esc(x.theme||"")+'">'+themeButton(x.theme)+'</td><td class="score">'+N(x.total,1)+'</td>'+extra+'<td class="sar">'+esc(x.sarText||"—")+'</td><td>'+cp+chg+'</td><td>'+N(x.capitalB)+'</td><td>'+N(x.turnoverB)+'</td><td class="'+C(x.foreignToday)+'">'+N(x.foreignToday,0)+'</td><td class="'+C(x.trustToday)+'">'+N(x.trustToday,0)+'</td><td class="'+C(x.rs20)+'">'+P(x.rs20)+'</td><td>'+N(x.rvol)+'</td><td class="'+C(x.ret5)+'">'+P(x.ret5)+'</td><td class="'+C(x.ret20)+'">'+P(x.ret20)+'</td><td class="'+C(x.breakoutPct)+'">'+P(x.breakoutPct)+'</td><td class="'+C(x.ma20Slope)+'">'+P(x.ma20Slope)+'</td><td>'+esc(x.signal||"")+'</td></tr>'
+
+}
+function renderOfficialG(){
+ if(MODEL!=="G")return;
+ var status=document.getElementById("gOfficialStatus"),number=document.getElementById("gOfficialCount"),body=document.getElementById("officialTb");
+ var source=DATA&&DATA.dataDate,selection=DATA&&DATA.gSelection,full=DATA&&DATA.models&&DATA.models.G;
+ var verified=Array.isArray(full)&&!!source&&!!selection&&selection.dataDate===source;
+ var lg=currentLiveG(),liveStatus=document.getElementById("gIntradayStatus"),liveCount=document.getElementById("gIntradayCount");
+ if(lg){liveStatus.textContent="盤中資料日 "+lg.asOfDate+"｜更新 "+lg.publishedAt+"｜全市場有效報價 "+(lg.coverage&&lg.coverage.valid||0)+"/"+(lg.coverage&&lg.coverage.total||0)+"｜未完成日K，訊號僅供暫估";liveCount.textContent=lg.rows.length+" 檔"}
+ else{var st=G_INTRADAY_STATUS,reason=st&&st.asOfDate===taipeiDate()&&st.status==="unavailable"?"｜"+(st.message||"來源未就緒"):"";liveStatus.textContent="目前沒有可用的當日盤中暫估榜單（休市、尚未更新或超過有效時間）"+reason+"；不使用前一日正式榜冒充盤中訊號";liveCount.textContent="尚無有效盤中榜"}
+ if(!verified){status.textContent="⚠ 最近正式 G 選股尚未完成或日期不一致，不能將盤中價格當作盤後正式訊號";number.textContent="資料未就緒";body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="padding:25px;text-align:center">正式 G 資料尚未同步，請等待盤後完整更新。</td></tr>';return}
+ var selected=full.map(function(stock,i){return {stock:stock,rank:i+1}}).filter(function(pair){return !THEME_FILTER||String(pair.stock.theme||"").trim()===THEME_FILTER});
+ status.textContent="正式訊號日 "+source+"｜依已完成日K計算，顯示該日真正收盤價與當日漲跌幅；當日盤中快刷不改變正式名單";
+ number.textContent=selected.length+"/"+full.length+" 檔"+(THEME_FILTER?"｜"+THEME_FILTER:"");
+ if(!selected.length){body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="text-align:center;padding:25px">'+(THEME_FILTER?"此正式榜單沒有「"+esc(THEME_FILTER)+"」題材":"該交易日沒有正式 G 入選股票")+'</td></tr>';return}
+ body.innerHTML=selected.map(function(pair){var x=pair.stock,i=pair.rank-1;return TABLE_COMPACT?renderSimpleStock(x,i,true,null,true):renderOfficialDetailedRow(x,i)}).join("");
+}
 function renderTable(){
 if(typeof renderRepeatPanel==="function")renderRepeatPanel(MODEL,DATA);
 filterBar();
