@@ -30,6 +30,17 @@
 @media(max-width:1180px){.site-nav{align-items:flex-start;justify-content:flex-start}.site-nav-group{width:100%}.site-nav-secondary{border-top:1px dashed #e8edf3;padding-top:10px}}
 @media(max-width:650px){.wrap{padding:12px}.site-head{padding:13px}.site-head-top{flex-direction:column;gap:10px}.site-head h1{font-size:21px}.site-head-description{font-size:11px}.site-head-utility{width:100%;justify-content:flex-start}.site-head-utility .btn{flex:1}.site-head-meta{font-size:10px;line-height:1.75}.site-nav{gap:10px}.site-nav-group{display:block}.site-nav-label{display:block;margin:0 0 7px}.site-nav-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.site-nav-links .btn{min-width:0;white-space:normal;text-align:center;font-size:11px;padding:9px 6px}.site-nav .nav-compact{display:none}}
 @media(max-width:375px){.site-nav-links{grid-template-columns:1fr 1fr}.site-head h1{font-size:19px}.site-nav-links .btn{font-size:10px}}
+
+/* Home upstream directory entry: all groups link to the independent TPEx-classified page. */
+.upstream-portal{margin:14px 0 16px;padding:17px 19px;background:#fff;border:1px solid #dce6f3;border-radius:15px;box-shadow:0 3px 15px #102a4606}
+.upstream-portal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.upstream-portal h2{font-size:18px;margin:0;color:#173f6c}
+.upstream-portal p{color:#64748b;margin:6px 0 0;font-size:11px;line-height:1.75}
+.upstream-portal .upstream-open{color:#1d4ed8;font-size:12px;font-weight:900;background:#eff6ff;border:1px solid #bfdbfe;padding:9px 11px;border-radius:9px;text-decoration:none}
+.upstream-industry-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:13px}
+.upstream-industry-links a{background:#f8fbff;border:1px solid #e2eaf5;padding:10px 11px;font-size:12px;font-weight:800;border-radius:9px;color:#294768;text-decoration:none;text-align:center}
+.upstream-industry-links a:hover{background:#e9f3ff;border-color:#bfdbfe;color:#1d4ed8}
+@media(max-width:700px){.upstream-portal{padding:14px 12px}.upstream-industry-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.upstream-portal h2{font-size:16px}.upstream-industry-links a{font-size:11px;padding:11px 6px}}
 </style>
 <script src="./site-access.js"></script>
 <link rel="stylesheet" href="./market-command.css">
@@ -64,10 +75,27 @@
       <div class="site-nav-links">
         <a class="btn" href="./history.html">🗂 歷史快照</a>
         <a class="btn" href="./bubbles.html">🫧 資金泡泡</a>
+        <a class="btn" href="./upstream.html">🧩 產業上游類股</a>
       </div>
     </div>
   </nav>
 </header>
+<section class="upstream-portal" aria-label="產業鏈上游股票分類入口">
+  <div class="upstream-portal-head">
+    <div><h2>🧩 產業上游類股｜分產業找股票</h2><p>點選產業，查看官方產業鏈的上游細項，以及各類別對應的上市櫃股票。股價與漲幅以最後完整交易日為準。</p></div>
+    <a class="upstream-open" href="./upstream.html">查看完整上游產業地圖 →</a>
+  </div>
+  <nav class="upstream-industry-links" aria-label="上游產業快速連結">
+    <a href="./upstream.html?industry=D000">半導體</a>
+    <a href="./upstream.html?industry=L000">PCB／材料</a>
+    <a href="./upstream.html?industry=I000">通信網路</a>
+    <a href="./upstream.html?industry=F000">電腦與週邊</a>
+    <a href="./upstream.html?industry=K000">連接器</a>
+    <a href="./upstream.html?industry=3000">汽車零組件</a>
+    <a href="./upstream.html?industry=A100">太陽能</a>
+    <a href="./upstream.html?industry=A300">電動車</a>
+  </nav>
+</section>
 <section id="marketCommand" class="market-command cmd-unknown" aria-label="大盤是否適合進場：盤後決策總覽">
   <div class="cmd-main">
     <div class="cmd-top">
