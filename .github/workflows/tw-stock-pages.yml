@@ -13,6 +13,7 @@ on:
       - 'tw-stock-dashboard/docs/data/research/market_ml_audit/**'
       - 'tw-stock-dashboard/docs/site-access.js'
       - 'tw-stock-dashboard/docs/stock-selection.js'
+      - 'tw-stock-dashboard/docs/g-theme-leaders.js'
       - 'tw-stock-dashboard/docs/upstream-industries.js'
       - 'tw-stock-dashboard/docs/backtest-g-panel.js'
       - 'tw-stock-dashboard/docs/data/backtest_g/*.json'
@@ -47,6 +48,29 @@ jobs:
         run: |
           node tw-stock-dashboard/tests/test_entry_playbook.js
           node tw-stock-dashboard/tests/test_upstream_ui.cjs
+          node - <<'JS'
+          const fs=require('fs'),assert=require('assert');
+          const root='tw-stock-dashboard/docs/';
+          const js=fs.readFileSync(root+'g-theme-leaders.js','utf8');
+          const html=fs.readFileSync(root+'selections.html','utf8');
+          const main=fs.readFileSync(root+'stock-selection.js','utf8');
+          const {gLeaderStats,gLeaderSplit,gLeaderCard}=new Function(js+';return {gLeaderStats,gLeaderSplit,gLeaderCard}').call(null);
+          assert(html.includes('id="gSectorLeaderPanel"')&&html.includes('src="./g-theme-leaders.js"'));
+          assert(html.indexOf('src="./g-theme-leaders.js"')<html.indexOf('src="./stock-selection.js"'));
+          assert(main.includes('ensureGThemeCatalog();renderGThemeLeaders()'));
+          assert.deepStrictEqual(gLeaderSplit('光通訊設備(如光纖電纜、光傳輸設備)、電阻器'),['光通訊設備(如光纖電纜、光傳輸設備)','電阻器']);
+          const stocks=Array.from({length:20},(_,i)=>({code:String(i+1).padStart(4,'0'),market:'上市',name:'測試'+i,
+            subIndustry:i<6?'被動元件':'其他',theme:i<6?'電感器':'其他'}));
+          const catalog={industries:[{code:'CPO',subgroups:[{stocks:stocks.slice(0,6).map(({code})=>({code}))}]}]};
+          const qualified=gLeaderStats(stocks,catalog).leaders;
+          assert(qualified.some(x=>x.name==='CPO'&&x.count===6));
+          assert(qualified.some(x=>x.name==='被動元件'&&x.count===6));
+          assert(gLeaderCard({date:'2026-10-12',rows:stocks,live:false},catalog).includes('CPO｜盤後最強入榜類股'));
+          const notQualified=stocks.map((x,i)=>i===5?{...x,subIndustry:'其他',theme:'其他'}:x);
+          assert(!gLeaderStats(notQualified,catalog).leaders.some(x=>x.name==='被動元件'));
+          assert.equal(gLeaderStats(stocks.slice(0,5),catalog).leaders.length,0);
+          console.log('PASS G concentration threshold >=6/20, catalog CPO, dedupe and mobile HTML wiring');
+          JS
           PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p test_market_homepage_layout.py -v
           python - <<'PY'
           import json
