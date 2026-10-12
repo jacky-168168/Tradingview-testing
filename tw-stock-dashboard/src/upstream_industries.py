@@ -15,12 +15,45 @@ SOURCE="https://ic.tpex.org.tw/"
 OUT=DATA_DIR/"industry_upstream"/"latest.json"
 CACHE=CACHE_DIR/"upstream_company"
 USER_AGENT={"User-Agent":"Mozilla/5.0 (compatible; tw-stock-dashboard upstream industry research)","Accept-Language":"zh-TW,zh;q=0.9"}
+# A second, independently cited supply-chain definition: semiconductor-grade wafer MATERIAL
+# suppliers to fabs. TPEx's chip-design->wafer fabrication flow instead labels the
+# separate stage "晶圓製造" as midstream. Do not misclassify all fabs as material suppliers.
+WAFER_MATERIAL_SOURCE="https://www.itis.org.tw/NetReport_Detail.aspx?rpno=613160445"
+WAFER_MATERIALS={"6488":"環球晶","3532":"台勝科","6182":"合晶","3016":"嘉晶"}
+SOLAR_MATERIAL_SOURCE="https://ampletec.com.tw/about.asp"
+PASSIVE_INDUSTRY_SOURCE="https://ic.tpex.org.tw/introduce.php?ic=J000"
+COMM_SOURCE="https://ic.tpex.org.tw/introduce.php?ic=I000"
+# A distinct active/passive product split of TPEx communication "主/被動元件".
+# Do NOT infer active vs passive from that parent TPEx label alone.
+# Active optical lasers / PD chips, independently verified product disclosures:
+COMM_ACTIVE_EVIDENCE={
+    "3081":("光通訊雷射及光偵測磊晶片（主動）","https://www.lmoc.com.tw/index.php?i=1&id=282&lang=cht&option=module&task=dfile"),
+    "3234":("雷射、VCSEL 與光偵測器（主動）","https://www.truelight.com.tw/products/optical-communication/"),
+    "4908":("光收發模組（光主動）","https://www.apacoe.com.tw/files/111%E5%B9%B4%E8%82%A1%E6%9D%B1%E6%9C%83%E5%B9%B4%E5%A0%B1.pdf"),
+    "4979":("光通訊主動晶粒及光收發模組","https://www.luxnetcorp.com.tw/news"),
+    "3450":("光通訊雷射二極體 VCSEL、FP／DFB 及檢光器封裝（光主動）","https://www.elaser.com.tw/sp2-4.htm"),
+}
+# Independent product disclosures for communication passive/filters. TPEx J000
+# memberships are preferred when available; these are supplemental evidence.
+COMM_PASSIVE_EVIDENCE={
+    "6284":("射頻濾波器、電感及磁珠","https://www.inpaq.com.tw/events-01.php?eventsID=174&secureChk=75cd6dd7a655fac1b503e18d9474dafc"),
+    "3491":("微波、毫米波被動元件及濾波器","https://www.umt-tw.com/tw/about.php"),
+    "3152":("高頻濾波器、巴倫、耦合器與射頻前端被動元件","https://www.acxc.com.tw/intro"),
+    "6792":("壓電／天線及線路保護元件，含無線通訊被動零件","https://www.unictron.com/wp-content/uploads/2026/05/114%E5%B9%B4%E5%BA%A6%E5%B9%B4%E5%A0%B1%E4%B8%AD%E6%96%87.pdf"),
+}
+# Optically passive transport/fiber is not the same as RLC, and must not be
+# inferred solely from a generic TPEx "communication equipment" label.
+COMM_PASSIVE_STAGES={"電阻器","電容器","電感器","濾波器、振盪器"}
+COMM_PENDING="待核對（官方混合分類）"
+COMM_ACTIVE="主動元件（光主動／晶片）"
+COMM_PASSIVE="被動元件（電阻電容／濾波等）"
 # Verified upstream segment vocabulary from TPEx official "產業價值鏈資訊平台" industry charts.
 # IMPORTANT: These are NOT the TWSE top-level industry labels.
 INDUSTRIES=[
  {"name":"半導體","code":"D000","keys":["半導體"],"groups":[
    ("IP設計／IC設計代工",["IP設計/IC設計代工服務","IP設計/IC設計","IP設計","IC設計代工服務"]),
-   ("IC 設計",["IC設計","消費性IC","微控制器IC","電源管理IC","平面顯示器控制IC","平面顯示器驅動IC","影像感測IC","類比IC","數位IC","記憶體IC","通訊IC","射頻IC","驅動IC","ASIC","網路IC"])]},
+   ("IC 設計",["IC設計","消費性IC","微控制器IC","電源管理IC","平面顯示器控制IC","平面顯示器驅動IC","影像感測IC","類比IC","數位IC","記憶體IC","通訊IC","射頻IC","驅動IC","ASIC","網路IC"]),
+   ("半導體用矽晶圓／磊晶材料（延伸上游）",[])]},
  {"name":"印刷電路板（PCB）","code":"L000","keys":["印刷電路板"],"groups":[
    ("玻璃纖維／玻纖布",["玻璃纖維/玻纖布","玻璃纖維","玻纖布"]),
    ("環氧樹脂",["環氧樹脂"]),("酚醛樹脂",["酚醛樹脂"]),
@@ -28,7 +61,7 @@ INDUSTRIES=[
    ("製程與檢測設備",["生產製程及檢測設備"])]},
  {"name":"通信網路","code":"I000","keys":["通信網路"],"groups":[
    ("網路 IC",["網路IC"]),("微處理器",["微處理器"]),("記憶體",["記憶體"]),
-   ("主／被動元件",["主/被動元件","主被動元件"]),
+   (COMM_ACTIVE,[]),(COMM_PASSIVE,[]),(COMM_PENDING,[]),
    ("印刷電路板",["印刷電路板"]),
    ("塑膠／金屬機殼",["塑膠/金屬機殼","塑膠/金屬機殼及散熱片"]),
    ("網路線材",["線材","網路線材"]),("其他通訊零組件",["其他零組件"])]},
@@ -52,7 +85,7 @@ INDUSTRIES=[
    ("鋁合金鋼圈",["鋁合金鋼圈"]),("引擎蓋",["引擎蓋"]),
    ("保險桿",["保險桿"]),("其他汽車零配件",["其他"])]},
  {"name":"太陽能","code":"A100","keys":["太陽能產業"],"groups":[
-   ("太陽能材料",["材料"]),("矽晶圓／矽晶片",["矽晶圓/矽晶片","矽晶圓","矽晶片"])]},
+   ("太陽能材料（跨產業應用）",["材料"]),("矽晶圓／矽晶片",["矽晶圓/矽晶片","矽晶圓","矽晶片"])]},
  {"name":"電動車輛","code":"A300","keys":["電動車輛產業","電動車產業"],"groups":[
    ("鋰電池材料",["鋰電池材料"])]},
 ]
@@ -104,13 +137,10 @@ def fetch_company(code):
 
 def stage_group(definition,subcategory):
     name=normalize(subcategory)
-    # Strict exact stage matching (not substring): avoid treating PCB production or IC fabrication as upstream.
+    # Match only documented upstream stage labels exactly, never guesses such as
+    # "other IC" or unrelated wafer-fab stages just because text contains "IC".
     for group,labels in definition["groups"]:
-        if name in {normalize(x) for x in labels}:return group
-    # IP and varied named IC-design subclasses are upstream of semiconductor production.
-    if definition["code"]=="D000":
-        if (name.endswith("IC") and not name.startswith(("IC封裝","IC通路","IC模組","IC載板","IC晶圓"))) or name.endswith("IC設計"):
-            return "IC 設計"
+        if name and name in {normalize(x) for x in labels}:return group
     return None
 
 def compile_map(stocks,memberships,data_date):
@@ -119,47 +149,125 @@ def compile_map(stocks,memberships,data_date):
         groups[spec["code"]]={"name":spec["name"],"code":spec["code"],
             "source":SOURCE+"introduce.php?ic="+spec["code"],"subgroups":{}}
     covered=0;upstream_stocks=set();entries_count=0
+    published_materials=set();basis_counts={"tpex_official":0,"independent_industry_material":0,"tpex_cross_industry":0,"company_product_verified":0,"tpex_ambiguous":0}
     for x in stocks:
         code=str(x.get("code") or "").strip();market=x.get("market")
         if market not in ("上市","上櫃") or not re.fullmatch(r"[0-9]{4}",code):continue
         source=memberships.get(code)
         if source is None:continue
         covered+=1
-        matches=set()
+        matches={}
         for entry in source:
             sector=normalize(entry.get("industry",""))
             for spec in INDUSTRIES:
                 if sector not in [normalize(k) for k in spec["keys"]]:continue
                 group=stage_group(spec,entry.get("subCategory",""))
-                if group:matches.add((spec["code"],group))
-        for sid,segment in sorted(matches):
+                if group:
+                    matches[(spec["code"],group)]={
+                        "classification":"櫃買中心上游階段","basis":"tpex_official",
+                        "source":SOURCE+"company_chain.php?stk_code="+code,
+                        "roleNote":"官方產業鏈列名；不代表該產品是公司主要營收來源。"}
+        # Separate communications active and passive only with actual product
+        # evidence. TPEx I000 parent "主/被動元件" itself is non-discriminating.
+        communication=any(normalize(e.get("industry"))=="通信網路"
+            and normalize(e.get("subCategory"))=="主被動元件" for e in source)
+        j_passive=[e["subCategory"] for e in source if normalize(e.get("industry"))=="被動元件"
+            and normalize(e.get("subCategory")) in {normalize(t) for t in COMM_PASSIVE_STAGES}]
+        product_groups={}
+        if communication:
+            if j_passive:
+                product_groups[COMM_PASSIVE]={
+                    "classification":"通信設備上游：被動元件製造供應商",
+                    "basis":"tpex_cross_industry",
+                    "source":SOURCE+"company_chain.php?stk_code="+code,
+                    "roleNote":"櫃買中心同時列通信網路『主／被動』及被動元件製造段："+
+                         "、".join(j_passive)+"。對通信設備是上游供應商，對被動元件產業本身屬中游。"}
+            if code in COMM_PASSIVE_EVIDENCE:
+                p,u=COMM_PASSIVE_EVIDENCE[code]
+                product_groups[COMM_PASSIVE]={"classification":"通信設備上游：被動零組件",
+                     "basis":"company_product_verified","source":u,
+                     "roleNote":p+"；依公司產品揭露歸類，非官方『主／被動』自動判定。"}
+            if code in COMM_ACTIVE_EVIDENCE:
+                p,u=COMM_ACTIVE_EVIDENCE[code]
+                product_groups[COMM_ACTIVE]={"classification":"通信設備上游：光主動零組件",
+                     "basis":"company_product_verified","source":u,
+                     "roleNote":p+"；依公司產品／年報揭露歸類。"}
+            if not product_groups:
+                product_groups[COMM_PENDING]={"classification":"官方通信網路：主／被動未拆分",
+                    "basis":"tpex_ambiguous","source":SOURCE+"company_chain.php?stk_code="+code,
+                    "roleNote":"公司列入官方通信網路上游混合欄位，但尚未有足夠產品證據區分主動／被動，避免誤判。"}
+        # YAGEO is officially TPEx "被動元件" MIDSTREAM even though not registered
+        # as an I000 component. For communications end-equipment it is an UPSTREAM
+        # supplier. Label this independent cross-chain supplementation explicitly.
+        if code=="2327":
+            if normalize(x.get("name","")).replace("*","")!="國巨":
+                raise RuntimeError("YAGEO 2327 name mismatch")
+            if not j_passive:
+                raise RuntimeError("YAGEO missing TPEx J000 passive manufacturing chain; refuse inferred inclusion")
+            product_groups[COMM_PASSIVE]={"classification":"通信設備上游（跨產業補列）；被動元件產業中游",
+                "basis":"tpex_cross_industry","source":SOURCE+"company_chain.php?stk_code=2327",
+                "roleNote":"國巨產品含電阻、電容、電感、濾波器。為通信設備上游供應商，但在被動元件產業本身屬中游製造商，不是其材料上游。"}
+        for group,meta in product_groups.items():
+            matches[("I000",group)]=meta
+        if code in WAFER_MATERIALS:
+            expected=WAFER_MATERIALS[code]
+            if normalize(expected) not in normalize(x.get("name")):
+                raise RuntimeError(f"Silicon wafer material code/name conflict for {code}: {x.get('name')!r}")
+            matches[("D000","半導體用矽晶圓／磊晶材料（延伸上游）")]={
+                "classification":"半導體材料供應鏈（延伸）","basis":"independent_industry_material",
+                "source":WAFER_MATERIAL_SOURCE,
+                "roleNote":"工研院 ITIS 列為晶圓廠的半導體矽晶圓／磊晶材料供應商；與太陽能矽晶片、晶圓代工製程分層不同。"}
+            published_materials.add(code)
+        for (sid,segment),meta in sorted(matches.items()):
             upstream_stocks.add((market,code));entries_count+=1
+            basis_counts[meta["basis"]]+=1
             row={k:x.get(k) for k in ("code","name","market","industry","close","ret5","ret20","momentumScore","turnoverB","models")}
             row["models"]=row.get("models") or []
+            row.update(meta)
+            if code=="4760" and sid=="A100":
+                row["roleNote"]="勤凱：官方太陽能材料上游供應商，官網確認太陽能電池背銀導電漿用途；亦供應被動元件與IC封裝，非純太陽能股。"
+                row["extraSource"]=SOLAR_MATERIAL_SOURCE
             groups[sid]["subgroups"].setdefault(segment,[]).append(row)
     sectors=[]
     for spec in INDUSTRIES:
-        row=groups[spec["code"]]
-        child=[]
+        item=groups[spec["code"]];child=[]
         for key,_ in spec["groups"]:
             seen=set();items=[]
-            for x in row["subgroups"].get(key,[]):
+            for x in item["subgroups"].get(key,[]):
                 token=(x["market"],x["code"])
                 if token in seen:continue
                 seen.add(token);items.append(x)
             items.sort(key=lambda x:(-(float(x["momentumScore"]) if x["momentumScore"] is not None else -999),x["code"]))
-            child.append({"name":key,"count":len(items),"stocks":items})
-        row["subgroups"]=child
-        row["stockCount"]=len({(z["market"],z["code"]) for g in child for z in g["stocks"]})
-        sectors.append(row)
+            comm=spec["code"]=="I000" and key in (COMM_ACTIVE,COMM_PASSIVE,COMM_PENDING)
+            extended=spec["code"]=="D000" and key.startswith("半導體用矽晶圓")
+            solar=spec["code"]=="A100" and key.startswith("太陽能材料")
+            note=("另依工研院 ITIS 矽晶圓材料研究補充。此為晶圓廠『材料供應鏈上游』，不同於櫃買中心以 IP／IC 設計為上游的製造流程分層。"
+                  if extended else "櫃買中心將太陽能漿料等材料列在此上游；公司可能跨足其他領域，並非太陽能營收比重排名。" if solar else "")
+            if comm:
+                note=("依公開產品與櫃買中心被動元件產業鏈交叉核對，區分光主動元件及電子被動元件。"
+                      "國巨補列為通信設備上游，但屬被動元件產業中游。"
+                      if key!=COMM_PENDING else
+                      "官方原始『主／被動元件』是合併分類；產品未獲證實者保留待核對，不會猜測。")
+            child.append({"name":key,"count":len(items),"stocks":items,"source":WAFER_MATERIAL_SOURCE if extended else item["source"],"note":note,
+                          "classification":"獨立研究延伸上游材料" if extended else "櫃買中心官方上游"})
+        item["subgroups"]=child
+        item["stockCount"]=len({(z["market"],z["code"]) for g in child for z in g["stocks"]})
+        sectors.append(item)
     valid=len([x for x in stocks if x.get("market") in ("上市","上櫃")])
-    return {"schema":"tw-upstream-industries-v1","dataDate":data_date,
+    return {"schema":"tw-upstream-industries-v2","dataDate":data_date,
         "generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),
-        "source":"TPEx official company_chain.php & introduce.php; local complete-session stock diagnostic snapshot",
-        "method":"Company must match a TPEx company-chain sector AND an explicitly identified upstream subcategory. Inexact or unverified stages are excluded; stocks may appear in several industries.",
+        "source":"TPEx official company_chain.php & introduce.php, ITIS wafer materials research, dated full-market stock diagnostics",
+        "method":"TPEx sector and explicit upstream stage; named ITIS semiconductor wafer material suppliers; communication mixed active/passive split via additional official J000 manufacturing membership and company product filings. Unverified remains pending. Passive-components industry midstream suppliers can be communications equipment upstream.",
         "coverage":{"marketStocks":valid,"verifiedCompanyPages":covered,"verifiedRatioPct":round(100*covered/valid,1) if valid else 0,
-                    "distinctUpstreamStocks":len(upstream_stocks),"upstreamMemberships":entries_count,"industries":len(sectors)},
+                    "distinctUpstreamStocks":len(upstream_stocks),"upstreamMemberships":entries_count,"industries":len(sectors),
+                    "classifiedBySource":basis_counts},
+        "audit":{"stageReferences":{i["code"]:SOURCE+"introduce.php?ic="+i["code"] for i in INDUSTRIES},
+                 "extendedMaterials":sorted(published_materials),
+                 "materialsReference":WAFER_MATERIAL_SOURCE,
+                 "solarConductivePasteReference":SOLAR_MATERIAL_SOURCE,
+                 "qualification":"TPEx official category is a value-chain ROLE, not stock principal-business or segment revenue share."},
         "industries":sectors}
+
 def main():
     inp=DATA_DIR/"stocks"/"latest.json"
     data=json.loads(inp.read_text(encoding="utf-8"))
@@ -177,6 +285,12 @@ def main():
     result=compile_map(stocks,entries,date)
     result["coverage"]["failedCompanyPages"]=len(fail)
     print("Upstream coverage",json.dumps(result["coverage"],ensure_ascii=False),flush=True)
+    if "2327" in ids:
+        sector=next(i for i in result["industries"] if i["code"]=="I000")
+        passive=next(g for g in sector["subgroups"] if g["name"]==COMM_PASSIVE)
+        assert any(z["code"]=="2327" and z["basis"]=="tpex_cross_industry" for z in passive["stocks"]), "YAGEO missing verified communications passive supply"
+    if "6488" in ids and "6488" not in result["audit"]["extendedMaterials"]:
+        raise RuntimeError("GlobalWafers 6488 MUST appear in semiconductor-grade material suppliers")
     if result["coverage"]["verifiedCompanyPages"]<max(500,int(len(ids)*.5)) or result["coverage"]["distinctUpstreamStocks"]<30:
         raise RuntimeError("Insufficient official company-chain coverage; refuse to publish misleading zero-sector data")
     OUT.parent.mkdir(parents=True,exist_ok=True)

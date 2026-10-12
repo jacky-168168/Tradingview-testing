@@ -46,6 +46,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p test_upstream_industries.py -v
           node --check docs/upstream-industries.js
+          node tests/test_upstream_ui.cjs
       - name: Build sector and upstream stock list from dated full-market archive
         working-directory: tw-stock-dashboard
         run: python -u src/upstream_industries.py
@@ -57,10 +58,33 @@ jobs:
           p=Path('tw-stock-dashboard/docs/data/industry_upstream/latest.json')
           s=Path('tw-stock-dashboard/docs/data/stocks/latest.json')
           a=json.loads(p.read_text());b=json.loads(s.read_text())
-          assert a['schema']=='tw-upstream-industries-v1' and a['dataDate']==b['dataDate']
+          assert a['schema']=='tw-upstream-industries-v2' and a['dataDate']==b['dataDate']
           assert a['coverage']['verifiedCompanyPages']>=500 and a['coverage']['marketStocks']>=1000
           assert a['coverage']['distinctUpstreamStocks']>30
           assert len(a['industries'])==8
+          semi=next(z for z in a['industries'] if z['code']=='D000')
+          wafer=next(g for g in semi['subgroups'] if '半導體用矽晶圓' in g['name'])
+          assert {'6488','3532','6182','3016'}.issubset({r['code'] for r in wafer['stocks']}), 'silicon wafer supplier audit incomplete'
+          assert all(r['basis']=='independent_industry_material' and 'itis.org.tw' in r['source'] for r in wafer['stocks'])
+          assert not any(r['code']=='2330' for g in semi['subgroups'] for r in g['stocks']), 'fab erroneously classified as upstream'
+          solar=next(z for z in a['industries'] if z['code']=='A100')
+          paste=next(g for g in solar['subgroups'] if '太陽能材料' in g['name'])
+          k=next((r for r in paste['stocks'] if r['code']=='4760'),None)
+          assert k and '非純太陽能股' in k['roleNote'] and k['basis']=='tpex_official', 'solar paste role missing'
+          assert all(r.get('source') for sec in a['industries'] for group in sec['subgroups'] for r in group['stocks']), 'uncited company upstream placement'
+          comm=next(z for z in a['industries'] if z['code']=='I000')
+          c={g['name']:g for g in comm['subgroups']}
+          assert '主動元件（光主動／晶片）' in c and '被動元件（電阻電容／濾波等）' in c and '待核對（官方混合分類）' in c
+          assert not any(g['name']=='主／被動元件' for g in comm['subgroups'])
+          active={x['code'] for x in c['主動元件（光主動／晶片）']['stocks']}
+          passive={x['code'] for x in c['被動元件（電阻電容／濾波等）']['stocks']}
+          pending={x['code'] for x in c['待核對（官方混合分類）']['stocks']}
+          assert {'3081','3234','4908','4979','3450'}.issubset(active), f'optical active suppliers missing: {active}'
+          assert {'2327','3026','2478','3221','3491','3152','6284'}.issubset(passive), f'passive suppliers missing: {passive}'
+          assert not ({'2327','3081','3491'} & pending), 'verified products must not be pending'
+          y=next(x for x in c['被動元件（電阻電容／濾波等）']['stocks'] if x['code']=='2327')
+          assert y['basis']=='tpex_cross_industry' and '中游' in y['roleNote'] and y['source'].endswith('stk_code=2327')
+          print('PASS communication main-passive split',len(active),len(passive),len(pending),'Yageo J000 midstream')
           assert all(z['source'].startswith('https://ic.tpex.org.tw/introduce.php?ic=') for z in a['industries'])
           assert all(x['market'] in ('上市','上櫃') and x['code'].isdigit() and len(x['code'])==4 for sector in a['industries'] for part in sector['subgroups'] for x in part['stocks'])
           print('PASS dated upstream stock map',a['dataDate'],a['coverage'])
