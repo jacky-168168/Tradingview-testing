@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>台股量化｜產業鏈上游類股地圖</title>
+<style>
+:root{--bg:#f4f6f9;--surface:#fff;--text:#1d293e;--muted:#64748b;--line:#e1e7ef;--blue:#2563eb;--red:#dc2626;--green:#059669}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}.wrap{max-width:1320px;margin:auto;padding:22px}
+.header{background:var(--surface);border:1px solid var(--line);padding:20px;border-radius:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+h1{font-size:25px;margin:0;line-height:1.4}.sub{color:var(--muted);font-size:12px;line-height:1.75;margin:7px 0 0}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;padding:10px 13px;font-size:12px;font-weight:850;color:#334155;border-radius:9px;cursor:pointer}
+.btn.primary{background:#2563eb;color:white;border-color:#2563eb}.btn:hover{background:#eef4ff;text-decoration:none}.btn.primary:hover{background:#1d4ed8}
+.status{margin:16px 0;padding:12px 15px;background:#eff6ff;border:1px solid #c6dbff;border-radius:11px;font-size:12px;color:#1d4ed8;line-height:1.8}
+.status.warn{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:16px 0}.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px}
+.kpi span{display:block;font-size:11px;color:var(--muted)}.kpi strong{display:block;font-size:22px;margin-top:5px}
+.toolbar{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px;margin:15px 0}
+.toolbar input{flex:1;min-width:0;padding:11px;border:1px solid #cdd8e8;border-radius:8px;font:inherit;font-size:14px}.toolbar .btn{flex-shrink:0}
+.layout{display:grid;grid-template-columns:minmax(220px,285px) minmax(0,1fr);gap:15px;align-items:start}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 3px 15px #142e4405}
+.sidebar{padding:13px;position:sticky;top:10px}.sidebar h2{font-size:14px;margin:4px 7px 10px}
+.industry-nav{display:grid;gap:5px}.industry-button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;color:#334155;font-size:13px;font-weight:800;cursor:pointer}
+.industry-button:hover,.industry-button[aria-current="true"]{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.industry-button em{font-style:normal;color:#64748b;background:#f1f5f9;padding:3px 7px;border-radius:7px;font-size:11px}
+.results{min-width:0}.industry-top{padding:20px;border-bottom:1px solid var(--line)}
+.industry-title{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.industry-title h2{margin:0;font-size:22px}.industry-title .stat{background:#dbeafe;color:#1d4ed8;padding:6px 9px;border-radius:8px;font-size:12px;font-weight:850}
+.industry-top p{color:var(--muted);font-size:12px;line-height:1.8;margin:10px 0 0}
+.industry-source{display:inline-flex;align-items:center;gap:3px;margin-top:10px;font-size:12px;font-weight:800}
+.groups{padding:13px;display:grid;gap:12px}.group{border:1px solid #e2e8f0;border-radius:11px;overflow:hidden}
+.group summary{cursor:pointer;list-style:none;background:#f8fafc;padding:13px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.group summary::-webkit-details-marker{display:none}.group summary::after{content:"⌄";font-weight:900;color:#64748b}
+.group[open] summary::after{content:"⌃"}.group-name{font-size:15px;font-weight:900;color:#29476d}
+.group-count{font-size:11px;color:#64748b;background:white;padding:4px 8px;border-radius:8px;border:1px solid #e2e8f0}
+.stock-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}.stock-table th,.stock-table td{padding:12px 11px;border-bottom:1px solid #eef2f7;text-align:left;font-size:12px}
+.stock-table th{background:#f1f5fb;color:#64748b;font-size:11px;font-weight:800}.stock-table tbody tr:nth-child(even){background:#fcfdff}
+.stock-cell a{font-weight:900}.stock-cell small{display:block;margin-top:3px;color:#64748b;font-size:10px}
+.numeric{text-align:right!important;white-space:nowrap}.positive{color:var(--red);font-weight:800}.negative{color:var(--green);font-weight:800}
+.tag{display:inline-block;font-size:10px;background:#e9f1ff;color:#1d4ed8;border-radius:6px;padding:2px 5px;margin-right:4px}
+.notice{margin-top:15px;color:#64748b;font-size:12px;line-height:1.85;padding:14px;background:#fff;border:1px solid var(--line);border-radius:11px}
+.empty{padding:25px 13px;color:#64748b;font-size:12px;text-align:center;line-height:1.8}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static}.industry-nav{display:flex;overflow-x:auto;gap:8px;padding-bottom:4px}.industry-button{width:auto;white-space:nowrap;flex-shrink:0}.sidebar h2{font-size:13px}}
+@media(max-width:600px){.wrap{padding:12px}.header{padding:15px}h1{font-size:21px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi strong{font-size:19px}.toolbar{flex-wrap:wrap}.toolbar input{flex-basis:100%}.industry-top{padding:15px}.industry-title h2{font-size:19px}.groups{padding:8px}.stock-table th,.stock-table td{padding:10px 5px;font-size:11px}.stock-table .optional{display:none}.stock-table th:nth-child(1){width:42%}.stock-table th:nth-child(2){width:18%}.stock-table th:nth-child(3),.stock-table th:nth-child(4){width:20%}}
+</style>
+<script src="./site-access.js"></script>
+</head>
+<body>
+<div class="wrap">
+<header class="header">
+  <div><h1>🧩 產業鏈上游類股地圖</h1><p class="sub">依照產業 → 上游細項 → 上市／上櫃股票分開檢視，點選股票直接開啟 TradingView。</p></div>
+  <nav class="actions"><a class="btn primary" href="./index.html">🏠 返回主頁</a><a class="btn" href="./selections.html">📋 選股排行</a><a class="btn" href="./stocks.html">🔬 個股體檢</a><button id="reload" class="btn" type="button">↻ 更新資料</button></nav>
+</header>
+<div id="status" class="status" role="status" aria-live="polite">正在讀取櫃買中心產業價值鏈與全市場股票資料…</div>
+<section class="kpis" aria-label="產業鏈資料涵蓋統計">
+  <div class="kpi"><span>已核對產業鏈</span><strong id="sectorCount">—</strong></div>
+  <div class="kpi"><span>上游股票（不重複）</span><strong id="stocksCount">—</strong></div>
+  <div class="kpi"><span>上游子分類對應筆數</span><strong id="membershipCount">—</strong></div>
+  <div class="kpi"><span>公司產業鏈取得率</span><strong id="coverageCount">—</strong></div>
+</section>
+<div class="toolbar"><input type="search" id="search" aria-label="搜尋產業、上游細項或股票" placeholder="搜尋：半導體、銅箔、CPO相關零組件、2330…" autocomplete="off"><button id="clear" type="button" class="btn">清除</button></div>
+<div class="layout">
+  <aside class="card sidebar"><h2>產業類別</h2><nav id="industryNav" class="industry-nav" aria-label="上游產業分類選單"></nav></aside>
+  <section id="results" class="card results" aria-live="polite"><div class="empty">選擇左側產業，檢視其上游子類別與股票。</div></section>
+</div>
+<div class="notice">資料口徑：櫃買中心 <a href="https://ic.tpex.org.tw/ic_report_index.php" target="_blank" rel="noopener noreferrer">產業價值鏈資訊平台</a>（公司所屬產業鏈、各產業上游環節）與本站最新完整日K個股快照。只納入有明確上游歸類的上市櫃股票，沒有經過上游核對的不自動歸類。公司可能同時屬於多個產業或細項，因此細項股票數加總可能大於不重複股票數。股價和報酬是<strong>資料日收盤</strong>，不是盤中即時價格；產業鏈歸類不代表該業務是公司的主要營收來源，也不構成投資建議。</div>
+</div>
+<script src="./upstream-industries.js"></script>
+</body>
+</html>
