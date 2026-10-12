@@ -1,0 +1,74 @@
+{
+  "version": "L_WKD_933_LT40_REV_GROWTH_V1",
+  "asOf": "2026-10-12",
+  "start": "2023-10-01",
+  "weeks": [
+    1,
+    2,
+    3
+  ],
+  "entry": "signal week's completed closing signal -> next week's first OPEN",
+  "exit": "end of week 1/2/3 after signal (only completed future weeks)",
+  "feeAndTaxPct": 0.585,
+  "priceBasis": "Yahoo adjusted historical daily closes and adjusted next-week opens",
+  "universe": "currently listed TWSE+TPEx including historic price records (survivorship bias possible)",
+  "fundamentals": "Official MOPS revised historic monthly revenue with conservative 16th availability proxy (not immutable as-reported archive)",
+  "filters": "completed weekly KD(9,3,3) golden cross where both K and D <40; released latest MoM>0 OR YoY>0",
+  "fullUniverse": 1982,
+  "stockPriceCoverage": 1976,
+  "stocksWithTrades": 1827,
+  "statistics": {
+    "all": {
+      "1": {
+        "n": 9797,
+        "winRatePct": 38.03,
+        "avgNetPct": -0.454,
+        "medianNetPct": -0.848,
+        "avgProfitPct": 3.944,
+        "avgLossPct": -3.154
+      },
+      "2": {
+        "n": 9471,
+        "winRatePct": 41.96,
+        "avgNetPct": 0.029,
+        "medianNetPct": -0.83,
+        "avgProfitPct": 5.896,
+        "avgLossPct": -4.213
+      },
+      "3": {
+        "n": 9298,
+        "winRatePct": 42.94,
+        "avgNetPct": 0.376,
+        "medianNetPct": -0.904,
+        "avgProfitPct": 7.588,
+        "avgLossPct": -5.052
+      }
+    },
+    "2026": {
+      "1": {
+        "n": 2876,
+        "winRatePct": 37.73,
+        "avgNetPct": -0.347,
+        "medianNetPct": -0.943,
+        "avgProfitPct": 4.786,
+        "avgLossPct": -3.457
+      },
+      "2": {
+        "n": 2762,
+        "winRatePct": 43.08,
+        "avgNetPct": 0.447,
+        "medianNetPct": -0.867,
+        "avgProfitPct": 6.988,
+        "avgLossPct": -4.504
+      },
+      "3": {
+        "n": 2654,
+        "winRatePct": 42.28,
+        "avgNetPct": 1.163,
+        "medianNetPct": -0.909,
+        "avgProfitPct": 9.567,
+        "avgLossPct": -4.992
+      }
+    }
+  }
+}
