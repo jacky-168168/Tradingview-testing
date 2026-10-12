@@ -11,14 +11,16 @@ var VIEW_PREF="",THEME_FILTER="",EXPANDED_STOCK="";
 try{VIEW_PREF=localStorage.getItem("tw_selection_view_v1")||""}catch(_){}
 TABLE_COMPACT=VIEW_PREF==="simple"?true:VIEW_PREF==="detail"?false:window.matchMedia("(max-width:760px)").matches;
 var STOCK_SIMPLE_HEAD='<tr><th>排名</th><th>股票／題材</th><th>強度</th><th>現價／漲跌</th></tr>';
+var L_SIMPLE_HEAD='<tr><th>排名</th><th>股票／題材</th><th>週K／週D</th><th>訊號收盤</th></tr>';
+var L_TABLE_HEAD='<tr><th>Rank</th><th>股票</th><th>市場</th><th>題材</th><th>週K</th><th>週D</th><th>交叉日期</th><th>收盤價</th><th>最新營收月份</th><th>營收 MoM</th><th>營收 YoY</th><th>營收可用日</th></tr>';
 var N_SIMPLE_HEAD='<tr><th>排名</th><th>股票</th><th>成長分數</th><th>收盤價</th></tr>';
 function themeButton(theme){var t=String(theme||"").trim();return t?'<button type="button" class="theme-pick" data-theme="'+esc(t)+'" aria-pressed="'+(THEME_FILTER===t?'true':'false')+'" title="篩選 '+esc(t)+' 題材">'+esc(t)+'</button>':'<span class="simple-secondary">題材未分類</span>'}
 function filterBar(){var bar=document.getElementById("themeFilterBar");if(!bar)return;bar.hidden=!THEME_FILTER;document.getElementById("themeFilterLabel").textContent=THEME_FILTER?"🔎 題材："+THEME_FILTER+"（同時篩選排行及重複上榜）":""}
 function applyTableMode(){
- var isN=MODEL==="N",simple=TABLE_COMPACT;
+ var isN=MODEL==="N",isL=MODEL==="L",simple=TABLE_COMPACT;
  var official=document.getElementById("officialStockTable");official.classList.toggle("compact",simple);official.classList.toggle("simple-mode",simple);official.tHead.innerHTML=simple?STOCK_SIMPLE_HEAD:NORMAL_G_TABLE_HEAD.replace("現價 / 收盤","正式收盤價");
  stockTable.classList.toggle("compact",simple);stockTable.classList.toggle("simple-mode",simple);
- stockTable.tHead.innerHTML=simple?(isN?N_SIMPLE_HEAD:STOCK_SIMPLE_HEAD):(isN?N_TABLE_HEAD:(MODEL==="G"||MODEL==="G Pro"?NORMAL_G_TABLE_HEAD:NORMAL_NON_G_TABLE_HEAD));
+ stockTable.tHead.innerHTML=simple?(isN?N_SIMPLE_HEAD:isL?L_SIMPLE_HEAD:STOCK_SIMPLE_HEAD):(isN?N_TABLE_HEAD:isL?L_TABLE_HEAD:(MODEL==="G"||MODEL==="G Pro"?NORMAL_G_TABLE_HEAD:NORMAL_NON_G_TABLE_HEAD));
  layoutToggle.textContent=simple?"▤ 詳細模式":"▥ 簡單模式";
  document.getElementById("modeBadge").textContent=simple?"簡單模式":"詳細模式";
  layoutToggle.setAttribute("aria-pressed",simple?"true":"false");
@@ -113,6 +115,52 @@ function renderNTable(){
  else if(!chosen)nLearned.textContent="已選擇模型 "+selected+"，但目前沒有已發布的 Top1 交易訊號。";
  else nLearned.textContent=leaderDate+"｜"+chosen.code+" "+chosen.name+"｜模型預估淨報酬 "+P(chosen.predictedNetPct,2)+"｜候選 "+chosen.candidatesRanked+" 檔｜EPS 年增 "+P(chosen.epsYtdGrowthPct,1)+"，營收年增 "+P(chosen.revenueYoYPct,1)+"｜這是歷史研究結果，不是今日買進建議。";
 }
+var L_ARCHIVE=null,L_SUMMARY=null,L_LOADING=false;
+async function loadLArchive(){
+ if(L_LOADING)return;L_LOADING=true;
+ try{
+  var root="./data/research/l_weekly_kd/";
+  var response=await Promise.all(["latest","summary"].map(async function(kind){
+   var r=await fetch(root+kind+".json?v="+Date.now(),{cache:"no-store"});
+   if(!r.ok)throw new Error(kind+" 尚未完成 ("+r.status+")");
+   return r.json();
+  }));
+  if(response[0]?.selection?.version!==response[1]?.version||response[0].selection.state!=="ready"||!response[1].statistics)throw new Error("L 訊號／回測版本或資料狀態不一致");
+  L_ARCHIVE=response[0];L_SUMMARY=response[1];
+ }catch(err){
+  L_ARCHIVE=null;L_SUMMARY=null;
+  if(MODEL==="L")lStatus.textContent="⚠ L 尚無經驗證的週KD＋營收選股資料："+err.message+"。不以 G／其他模型名單代替。";
+ }finally{L_LOADING=false;if(MODEL==="L"&&L_ARCHIVE)renderLTable()}
+}
+function renderLStats(){
+ var area=document.getElementById("lStats"),stats=L_SUMMARY?.statistics?.[document.getElementById("lScope").value];
+ if(!stats){area.textContent="完整回測數據尚未發布";return}
+ area.innerHTML=[1,2,3].map(function(h){
+  var z=stats[String(h)]||{},p=z.avgNetPct;
+  return '<div class="l-stats-card"><div class="l-h">'+h+'W｜'+(z.n||0)+' 筆</div><strong class="'+(p==null?"":C(p))+'">'+(p==null?"—":(p>=0?"+":"")+N(p,2)+"%")+'</strong><small>勝率 '+P(z.winRatePct,1)+'</small><small>中位數 '+P(z.medianNetPct,2)+'</small><small>賺錢平均 '+P(z.avgProfitPct,2)+'<br>賠錢平均 '+P(z.avgLossPct,2)+'</small></div>'
+ }).join("");
+}
+function renderLTable(){
+ if(MODEL!=="L")return;applyTableMode();
+ modelTitle.textContent="L｜週KD<40黃金交叉＋已公告月營收增加";
+ var area=document.getElementById("lPanel");area.style.display="block";
+ if(!L_ARCHIVE||!L_SUMMARY){
+  count.textContent="等待回測";tb.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:12)+'" style="text-align:center;padding:24px">L 獨立全市場週KD與 MOPS 營收資料尚未發布，暫不顯示其他策略的股票。</td></tr>';
+  document.getElementById("lStats").textContent="回測數據讀取中";if(!L_LOADING)void loadLArchive();return;
+ }
+ var z=L_ARCHIVE.selection,rows=Array.isArray(L_ARCHIVE.rows)?L_ARCHIVE.rows:[],mainDate=String(DATA?.dataDate||"");
+ if(mainDate&&L_ARCHIVE.asOf>mainDate){lStatus.textContent="⚠ L 研究資料日晚於網站正式資料日，暫停展示。";count.textContent="資料日期不符";tb.innerHTML="";return}
+ lStatus.textContent="L 週線訊號週 "+z.signalWeek+"｜全市場 "+z.marketUniverse+" 檔｜有效週K "+z.weeklyCovered+" 檔｜KD金叉<40 "+z.crossoverCount+" 檔｜營收正成長 "+z.strictCandidates+" 檔｜行情截至 "+L_ARCHIVE.asOf+"；不把未完成週線當金叉。";
+ var selected=rows.filter(function(x){return !THEME_FILTER||String(x.theme||"").trim()===THEME_FILTER});
+ count.textContent=selected.length+"／"+z.strictCandidates+" 檔（Top20）";
+ gNote.textContent="L 規則：週KD(9,3,3)前週K≤D、本週K>D，且K<40與D<40；最新已公告月營收MoM>0%或YoY>0%其中一項成立。獨立選股，不加入G或大盤門檻。";
+ renderLStats();
+ tb.innerHTML=selected.map(function(x,i){
+  var name=tvStockLink(x),th=themeButton(x.theme),kd=N(x.weekK,1)+"／"+N(x.weekD,1);
+  if(TABLE_COMPACT)return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+name+'<div>'+th+'</div><span class="simple-secondary">金叉 '+esc(x.signalDate)+'</span></td><td class="score">'+kd+'<span class="simple-secondary">MoM '+P(x.revenueMoMPct,1)+' / YoY '+P(x.revenueYoYPct,1)+'</span></td><td>'+N(x.close)+'</td></tr>';
+  return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+name+'</td><td>'+esc(x.market)+'</td><td>'+th+'</td><td class="score">'+N(x.weekK,2)+'</td><td class="score">'+N(x.weekD,2)+'</td><td>'+esc(x.signalDate)+'</td><td>'+N(x.close)+'</td><td>'+esc(x.revenueFiscal)+'</td><td class="'+C(x.revenueMoMPct)+'">'+P(x.revenueMoMPct,2)+'</td><td class="'+C(x.revenueYoYPct)+'">'+P(x.revenueYoYPct,2)+'</td><td>'+esc(x.revenueAvailableFrom)+'</td></tr>';
+ }).join("")||'<tr><td colspan="'+(TABLE_COMPACT?4:12)+'" style="text-align:center;padding:26px">這個完成的交易週沒有同時符合 KD 金叉低於40及已公告營收正成長的股票。</td></tr>';
+}
 function renderOfficialDetailedRow(x,i){
 var cp=N(x.close),chg=x.dayRet==null?"":' <span class="'+C(x.dayRet)+'">('+(Number(x.dayRet)>=0?"+":"")+N(x.dayRet)+'%)</span>';
 var isG=true;
@@ -137,10 +185,12 @@ function renderOfficialG(){
 }
 function renderTable(){
 var isDualG=MODEL==="G";document.getElementById("gIntradayHeading").style.display=isDualG?"":"none";document.getElementById("gOfficialPanel").style.display=isDualG?"":"none";
-if(typeof renderRepeatPanel==="function")renderRepeatPanel(MODEL,DATA);
+var rp=document.getElementById("repeatPanel");if(rp)rp.style.display=MODEL==="L"?"none":"";if(MODEL!=="L"&&typeof renderRepeatPanel==="function")renderRepeatPanel(MODEL,DATA);
 filterBar();
 var live=MODEL==="G"?currentLiveG():null,xs=MODEL==="G"?(live?live.rows:[]):(DATA&&DATA.models&&DATA.models[MODEL]||[]),isG=(MODEL==="G"||MODEL==="G Pro"),gs=live?live.selection:(DATA&&DATA.gSelection||null);
-if(MODEL==="N"){
+if(MODEL==="L"){["tabG","tabGPro","tabD","tabF","tabF2","tabA","tabN"].forEach(function(id){document.getElementById(id).classList.remove("on")});tabL.classList.add("on");toggleNView(false);renderLTable();return;}
+ document.getElementById("lPanel").style.display="none";tabL.classList.remove("on");
+ if(MODEL==="N"){
  tabG.classList.remove("on");tabGPro.classList.remove("on");tabD.classList.remove("on");tabF.classList.remove("on");tabF2.classList.remove("on");tabA.classList.remove("on");tabN.classList.add("on");
  toggleNView(true);
  modelTitle.textContent="N｜基本面 × 成長動能排行";count.textContent="讀取中";
@@ -178,8 +228,8 @@ window.addEventListener("resize",function(){if(VIEW_PREF)return;var want=window.
 tabG.onclick=function(){switchRanking("G")};tabGPro.onclick=function(){switchRanking("G Pro")};
 tabD.onclick=function(){switchRanking("D")};tabF.onclick=function(){switchRanking("F")};
 tabF2.onclick=function(){switchRanking("F2")};tabA.onclick=function(){switchRanking("A")};
-tabN.onclick=function(){switchRanking("N")};
+tabN.onclick=function(){switchRanking("N")};tabL.onclick=function(){switchRanking("L")};document.getElementById("lScope").onchange=function(){if(MODEL==="L")renderLStats()};
 var incoming=decodeURIComponent(location.hash.slice(1));
-if(["G","G Pro","D","F","F2","A","N"].includes(incoming))MODEL=incoming;
-window.addEventListener("hashchange",function(){var value=decodeURIComponent(location.hash.slice(1));if(["G","G Pro","D","F","F2","A","N"].includes(value)){MODEL=value;THEME_FILTER="";EXPANDED_STOCK="";renderTable()}});
+if(["G","G Pro","D","F","F2","A","N","L"].includes(incoming))MODEL=incoming;
+window.addEventListener("hashchange",function(){var value=decodeURIComponent(location.hash.slice(1));if(["G","G Pro","D","F","F2","A","N","L"].includes(value)){MODEL=value;THEME_FILTER="";EXPANDED_STOCK="";renderTable()}});
 reload.onclick=load;load();setInterval(load,90000);

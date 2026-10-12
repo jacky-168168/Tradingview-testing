@@ -1,0 +1,89 @@
+name: L Weekly KD and Revenue 1W-3W Forward Audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/l_weekly_kd.py'
+      - 'tw-stock-dashboard/tests/test_l_weekly_kd.py'
+      - '.github/workflows/l-weekly-kd.yml'
+  schedule:
+    - cron: '30 9 * * 5'
+    - cron: '30 9 * * 1'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: l-weekly-kd-research
+  cancel-in-progress: false
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install scientific requirements
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Verify L no-lookahead and completed-week handling
+        working-directory: tw-stock-dashboard
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m py_compile src/l_weekly_kd.py
+          python -m unittest discover -s tests -p 'test_l_weekly_kd.py' -v
+      - name: Three-year TWSE plus TPEx weekly KD and revenue forward test
+        working-directory: tw-stock-dashboard
+        run: python -u src/l_weekly_kd.py
+      - name: Publish verified and reproducible L statistics
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=Path("tw-stock-dashboard/docs/data/research/l_weekly_kd")
+          s=json.loads((d/"summary.json").read_text())
+          p=json.loads((d/"latest.json").read_text())
+          t=json.loads((d/"trades.json").read_text())
+          assert s["version"]==p["selection"]["version"] and s["statistics"]["all"]["1"]["n"]==sum(z["horizon"]==1 for z in t)
+          assert s["stockPriceCoverage"]>500 and s["fullUniverse"]>1000
+          assert all(z["revenueAvailableFrom"]<=z["signalDate"] and z["entryDate"]>z["signalDate"] and z["exitDate"]>=z["entryDate"] for z in t)
+          assert p["selection"]["state"]=="ready"
+          print("PASS",s["asOf"],s["stockPriceCoverage"],"stocks; historical completed-week trades",len(t),s["statistics"])
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/l_weekly_kd/
+          if ! git diff --cached --quiet; then
+            git commit -m 'data: publish L weekly KD and revenue forward 1W 2W 3W'
+            ok=0
+            for i in 1 2 3 4 5; do
+              git pull --rebase -X theirs origin main || { git rebase --abort || true; sleep $((i*9)); continue; }
+              if git push origin HEAD:main; then ok=1; break; fi
+              sleep $((i*9))
+            done
+            [ "$ok" -eq 1 ] || exit 1
+          fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload updated L site and results
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - name: Deploy L ranking with verified statistics
+        id: deployment
+        uses: actions/deploy-pages@v4
