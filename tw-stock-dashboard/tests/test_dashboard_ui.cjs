@@ -30,7 +30,8 @@ function table(model,simple){
  const nOriginal='<tr>'+Array.from({length:10},(_,i)=>'<th>N'+i+'</th>').join("")+'</tr>';
  const simpleHead='<tr><th>排名</th><th>股票／題材</th><th>強度</th><th>現價／漲跌</th></tr>';
  const nSimple='<tr><th>排名</th><th>股票</th><th>成長分數</th><th>收盤價</th></tr>';
- new Function("MODEL","TABLE_COMPACT","stockTable","layoutToggle","tableHint","document","N_SIMPLE_HEAD","STOCK_SIMPLE_HEAD","N_TABLE_HEAD","NORMAL_TABLE_HEAD","filterBar",modeJs+"applyTableMode()")(model,simple,stockTable,layoutToggle,tableHint,document,nSimple,simpleHead,nOriginal,original,()=>{});
+ const nongOriginal='<tr>'+Array.from({length:18},(_,i)=>'<th>非G'+i+'</th>').join("")+'</tr>';
+ new Function("MODEL","TABLE_COMPACT","stockTable","layoutToggle","tableHint","document","N_SIMPLE_HEAD","STOCK_SIMPLE_HEAD","N_TABLE_HEAD","NORMAL_G_TABLE_HEAD","NORMAL_NON_G_TABLE_HEAD","filterBar",modeJs+"applyTableMode()")(model,simple,stockTable,layoutToggle,tableHint,document,nSimple,simpleHead,nOriginal,original,nongOriginal,()=>{});
  return {html:stockTable.tHead.innerHTML,label:layoutToggle.textContent,badge:badge.textContent,hint:tableHint.textContent};
 }
 const sg=table("G",true);assert.equal((sg.html.match(/<th>/g)||[]).length,4,"Simple mobile G should show exactly four columns");
@@ -38,7 +39,7 @@ assert(sg.html.includes("股票／題材")&&sg.html.includes("現價／漲跌"))
 assert.equal(sg.label,"▤ 詳細模式");
 const dg=table("G",false);assert.equal((dg.html.match(/<th>/g)||[]).length,22,"Detailed G must retain all 22 columns, including 3D/18D and RVOL");
 assert.equal(dg.badge,"詳細模式");assert.equal(dg.label,"▥ 簡單模式");
-assert.equal((table("D",false).html.match(/<th>/g)||[]).length,22,"All original table headers remain in detailed D");
+assert.equal((table("D",false).html.match(/<th>/g)||[]).length,18,"Detailed D must match its 18 data columns, without G-only placeholders");
 assert.equal((table("N",true).html.match(/<th>/g)||[]).length,4,"N simple view has four columns");
 assert.equal((table("N",false).html.match(/<th>/g)||[]).length,10,"N detailed view retains ten columns");
 const simpleJs=part("function simpleMetric(","function renderModelNote(){");
