@@ -16,6 +16,7 @@ function themeButton(theme){var t=String(theme||"").trim();return t?'<button typ
 function filterBar(){var bar=document.getElementById("themeFilterBar");if(!bar)return;bar.hidden=!THEME_FILTER;document.getElementById("themeFilterLabel").textContent=THEME_FILTER?"🔎 題材："+THEME_FILTER+"（同時篩選排行及重複上榜）":""}
 function applyTableMode(){
  var isN=MODEL==="N",simple=TABLE_COMPACT;
+ var official=document.getElementById("officialStockTable");official.classList.toggle("compact",simple);official.classList.toggle("simple-mode",simple);official.tHead.innerHTML=simple?STOCK_SIMPLE_HEAD:NORMAL_G_TABLE_HEAD.replace("現價 / 收盤","正式收盤價");
  stockTable.classList.toggle("compact",simple);stockTable.classList.toggle("simple-mode",simple);
  stockTable.tHead.innerHTML=simple?(isN?N_SIMPLE_HEAD:STOCK_SIMPLE_HEAD):(isN?N_TABLE_HEAD:(MODEL==="G"||MODEL==="G Pro"?NORMAL_G_TABLE_HEAD:NORMAL_NON_G_TABLE_HEAD));
  layoutToggle.textContent=simple?"▤ 詳細模式":"▥ 簡單模式";
@@ -27,10 +28,11 @@ function applyTableMode(){
  filterBar();
 }
 function simpleMetric(name,value){return '<div><dt>'+esc(name)+'</dt><dd>'+value+'</dd></div>'}
-function renderSimpleStock(x,i,isG,live){
- var theme=x.theme||"",key=String(x.market||"")+"|"+String(x.code||""),open=EXPANDED_STOCK===key;
- var px=(live&&/midpoint|one-sided/.test(x.intradayPriceSource||"")?"≈":"")+(x.currentPrice!=null?N(x.currentPrice):N(x.close));
- var pct=x.currentPct==null?'<span class="simple-secondary">漲跌未提供</span>':'<span class="simple-pct '+C(x.currentPct)+'">'+(Number(x.currentPct)>=0?"+":"")+N(x.currentPct)+'%</span>';
+function renderSimpleStock(x,i,isG,live,official){
+ var theme=x.theme||"",key=(official?"official|":"")+String(x.market||"")+"|"+String(x.code||""),open=EXPANDED_STOCK===key;
+ var px=official?N(x.close):(live&&/midpoint|one-sided/.test(x.intradayPriceSource||"")?"≈":"")+(x.currentPrice!=null?N(x.currentPrice):N(x.close));
+ var pctSource=official?x.dayRet:x.currentPct;
+ var pct=pctSource==null?'<span class="simple-secondary">漲跌未提供</span>':'<span class="simple-pct '+C(pctSource)+'">'+(Number(pctSource)>=0?"+":"")+N(pctSource)+'%</span>';
  var strength=isG?'<b>10日 '+(x.gPast10==null?"—":esc(x.gPast10))+'/10</b>':'<b>總分 '+N(x.total,1)+'</b>';
  var cells=[simpleMetric("市場",esc(x.market||"—")),simpleMetric("總分",N(x.total,1)),simpleMetric("SAR",esc(x.sarText||"—")),simpleMetric("題材",esc(theme||"—")),simpleMetric("外資買賣超",N(x.foreignToday,0)),simpleMetric("投信買賣超",N(x.trustToday,0)),simpleMetric("RS20",P(x.rs20)),simpleMetric("RVOL",N(x.rvol)),simpleMetric("5D",P(x.ret5)),simpleMetric("20D",P(x.ret20)),simpleMetric("股本",N(x.capitalB)),simpleMetric("成交額",N(x.turnoverB)),simpleMetric("距20日高",P(x.breakoutPct)),simpleMetric("MA20斜率",P(x.ma20Slope)),simpleMetric("訊號",esc(x.signal||"—"))];
  if(isG){cells.splice(2,0,simpleMetric("原G分",N(x.gScore)),simpleMetric("持續度",N((x.persistence||{}).strength,1)),simpleMetric("3D／18D",(x.gBreak3?"✓":"—")+"／"+(x.gBreak18?"✓":"—")))}
@@ -111,10 +113,33 @@ function renderNTable(){
  else if(!chosen)nLearned.textContent="已選擇模型 "+selected+"，但目前沒有已發布的 Top1 交易訊號。";
  else nLearned.textContent=leaderDate+"｜"+chosen.code+" "+chosen.name+"｜模型預估淨報酬 "+P(chosen.predictedNetPct,2)+"｜候選 "+chosen.candidatesRanked+" 檔｜EPS 年增 "+P(chosen.epsYtdGrowthPct,1)+"，營收年增 "+P(chosen.revenueYoYPct,1)+"｜這是歷史研究結果，不是今日買進建議。";
 }
+function renderOfficialDetailedRow(x,i){
+var cp=N(x.close),chg=x.dayRet==null?"":' <span class="'+C(x.dayRet)+'">('+(Number(x.dayRet)>=0?"+":"")+N(x.dayRet)+'%)</span>';
+var isG=true;
+var extra=isG?'<td>'+N(x.gScore)+'</td><td title="加分 +'+N(x.gExtra)+'"><b>'+N((x.persistence||{}).strength,1)+'</b> <span class="sub">+'+N(x.gExtra)+'</span></td><td>'+(x.gPast10==null?"—":x.gPast10)+'/10 <span class="sub">連'+(x.gStreak||0)+'天</span></td><td><b>'+(x.gBreak3?"✓":"—")+' 3D / '+(x.gBreak18?"✓":"—")+' 18D</b></td>':"";
+return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+tvStockLink(x)+'</td><td>'+esc(x.market)+'</td><td class="theme" title="'+esc(x.theme||"")+'">'+themeButton(x.theme)+'</td><td class="score">'+N(x.total,1)+'</td>'+extra+'<td class="sar">'+esc(x.sarText||"—")+'</td><td>'+cp+chg+'</td><td>'+N(x.capitalB)+'</td><td>'+N(x.turnoverB)+'</td><td class="'+C(x.foreignToday)+'">'+N(x.foreignToday,0)+'</td><td class="'+C(x.trustToday)+'">'+N(x.trustToday,0)+'</td><td class="'+C(x.rs20)+'">'+P(x.rs20)+'</td><td>'+N(x.rvol)+'</td><td class="'+C(x.ret5)+'">'+P(x.ret5)+'</td><td class="'+C(x.ret20)+'">'+P(x.ret20)+'</td><td class="'+C(x.breakoutPct)+'">'+P(x.breakoutPct)+'</td><td class="'+C(x.ma20Slope)+'">'+P(x.ma20Slope)+'</td><td>'+esc(x.signal||"")+'</td></tr>'
+
+}
+function renderOfficialG(){
+ if(MODEL!=="G")return;
+ var status=document.getElementById("gOfficialStatus"),number=document.getElementById("gOfficialCount"),body=document.getElementById("officialTb");
+ var source=DATA&&DATA.dataDate,selection=DATA&&DATA.gSelection,full=DATA&&DATA.models&&DATA.models.G;
+ var verified=Array.isArray(full)&&!!source&&!!selection&&selection.dataDate===source;
+ var lg=currentLiveG(),liveStatus=document.getElementById("gIntradayStatus"),liveCount=document.getElementById("gIntradayCount");
+ if(lg){liveStatus.textContent="盤中資料日 "+lg.asOfDate+"｜更新 "+lg.publishedAt+"｜全市場有效報價 "+(lg.coverage&&lg.coverage.valid||0)+"/"+(lg.coverage&&lg.coverage.total||0)+"｜未完成日K，訊號僅供暫估";liveCount.textContent=lg.rows.length+" 檔"}
+ else{var st=G_INTRADAY_STATUS,reason=st&&st.asOfDate===taipeiDate()&&st.status==="unavailable"?"｜"+(st.message||"來源未就緒"):"";liveStatus.textContent="目前沒有可用的當日盤中暫估榜單（休市、尚未更新或超過有效時間）"+reason+"；不使用前一日正式榜冒充盤中訊號";liveCount.textContent="尚無有效盤中榜"}
+ if(!verified){status.textContent="⚠ 最近正式 G 選股尚未完成或日期不一致，不能將盤中價格當作盤後正式訊號";number.textContent="資料未就緒";body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="padding:25px;text-align:center">正式 G 資料尚未同步，請等待盤後完整更新。</td></tr>';return}
+ var selected=full.map(function(stock,i){return {stock:stock,rank:i+1}}).filter(function(pair){return !THEME_FILTER||String(pair.stock.theme||"").trim()===THEME_FILTER});
+ status.textContent="正式訊號日 "+source+"｜依已完成日K計算，顯示該日真正收盤價與當日漲跌幅；當日盤中快刷不改變正式名單";
+ number.textContent=selected.length+"/"+full.length+" 檔"+(THEME_FILTER?"｜"+THEME_FILTER:"");
+ if(!selected.length){body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="text-align:center;padding:25px">'+(THEME_FILTER?"此正式榜單沒有「"+esc(THEME_FILTER)+"」題材":"該交易日沒有正式 G 入選股票")+'</td></tr>';return}
+ body.innerHTML=selected.map(function(pair){var x=pair.stock,i=pair.rank-1;return TABLE_COMPACT?renderSimpleStock(x,i,true,null,true):renderOfficialDetailedRow(x,i)}).join("");
+}
 function renderTable(){
+var isDualG=MODEL==="G";document.getElementById("gIntradayHeading").style.display=isDualG?"":"none";document.getElementById("gOfficialPanel").style.display=isDualG?"":"none";
 if(typeof renderRepeatPanel==="function")renderRepeatPanel(MODEL,DATA);
 filterBar();
-var live=MODEL==="G"?currentLiveG():null,xs=live?live.rows:(DATA&&DATA.models&&DATA.models[MODEL]||[]),isG=(MODEL==="G"||MODEL==="G Pro"),gs=live?live.selection:(DATA&&DATA.gSelection||null);
+var live=MODEL==="G"?currentLiveG():null,xs=MODEL==="G"?(live?live.rows:[]):(DATA&&DATA.models&&DATA.models[MODEL]||[]),isG=(MODEL==="G"||MODEL==="G Pro"),gs=live?live.selection:(DATA&&DATA.gSelection||null);
 if(MODEL==="N"){
  tabG.classList.remove("on");tabGPro.classList.remove("on");tabD.classList.remove("on");tabF.classList.remove("on");tabF2.classList.remove("on");tabA.classList.remove("on");tabN.classList.add("on");
  toggleNView(true);
@@ -125,30 +150,30 @@ if(MODEL==="N"){
 tabN.classList.remove("on");if(stockTable.classList.contains("stock-n-table"))toggleNView(false);
 tabG.classList.toggle("on",MODEL==="G");tabGPro.classList.toggle("on",MODEL==="G Pro");tabD.classList.toggle("on",MODEL==="D");tabF.classList.toggle("on",MODEL==="F");tabF2.classList.toggle("on",MODEL==="F2");tabA.classList.toggle("on",MODEL==="A");
 
-modelTitle.textContent=MODEL==="G Pro"?"G Pro 嚴格強勢突破排行":live?"🟠 G 盤中暫估｜重新篩選排行":isG?"G 雙突破＋強勢持續度排行":MODEL==="D"?"D 主模型排行":MODEL==="F"?"F 固定濾網排行":MODEL==="F2"?"F2 動態濾網排行":"A 備用模型排行";
+modelTitle.textContent=MODEL==="G"?"G 強勢股｜盤中＋盤後雙榜單":MODEL==="G Pro"?"G Pro 嚴格強勢突破排行":isG?"G 雙突破＋強勢持續度排行":MODEL==="D"?"D 主模型排行":MODEL==="F"?"F 固定濾網排行":MODEL==="F2"?"F2 動態濾網排行":"A 備用模型排行";
 var strict=xs.filter(function(x){return x.strictPass===true}).length;
 if(isG){
 var candidates=MODEL==="G Pro"?3:gs&&gs.doubleBreakCandidates;
-count.textContent=MODEL==="G Pro"?xs.length+" 檔｜原G Top3 嚴格確認":xs.length+" 檔｜"+(live?"盤中暫估｜":"")+"雙突破候選 "+(candidates==null?"—":candidates)+" 檔";
+count.textContent=MODEL==="G"?"盤中 "+xs.length+" 檔｜盤後 "+(DATA&&DATA.models&&Array.isArray(DATA.models.G)?DATA.models.G.length:0)+" 檔":xs.length+" 檔｜原G Top3 嚴格確認";
 renderModelNote();
 }else{count.textContent=MODEL==="A"?xs.length+" 檔":xs.length+" 檔｜嚴格 "+strict+" 檔";renderModelNote()}
 var selectedRows=xs.map(function(stock,i){return {stock:stock,rank:i+1}}).filter(function(pair){return !THEME_FILTER||String(pair.stock.theme||"").trim()===THEME_FILTER});
 if(THEME_FILTER)count.textContent+="｜題材 "+THEME_FILTER+" "+selectedRows.length+" 檔";
-if(!selectedRows.length&&THEME_FILTER){tb.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:isG?22:18)+'" style="padding:24px;text-align:center">此模型沒有「'+esc(THEME_FILTER)+'」題材的上榜股票。可點上方清除篩選。</td></tr>';applyTableMode();return;}
-if(!xs.length){tb.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:isG?22:18)+'" style="text-align:center;padding:40px">'+(MODEL==="G Pro"?"原G Top3 今日無股票通過 G Pro 嚴格條件，正常空訊號。":isG?(gs?"此交易日沒有通過 G 雙突破的股票，屬正常空訊號；不會改用回測舊清單。":"⚠ G 每日資料尚未更新，請執行 GitHub 完整更新。"):"尚無資料")+'</td></tr>';applyTableMode();return}
+if(!selectedRows.length&&THEME_FILTER){tb.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:isG?22:18)+'" style="padding:24px;text-align:center">此盤中榜單沒有「'+esc(THEME_FILTER)+'」題材的上榜股票。可點上方清除篩選。</td></tr>';if(MODEL==="G")renderOfficialG();applyTableMode();return;}
+if(!xs.length){tb.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:isG?22:18)+'" style="text-align:center;padding:40px">'+(MODEL==="G Pro"?"原G Top3 今日無股票通過 G Pro 嚴格條件，正常空訊號。":isG?(MODEL==="G"?"目前沒有有效的當日盤中暫估榜單；下方正式榜單仍可查看。":(gs?"此交易日沒有通過 G 雙突破的股票，屬正常空訊號。":"⚠ G 正式資料尚未更新。")):"尚無資料")+'</td></tr>';if(MODEL==="G")renderOfficialG();applyTableMode();return}
 tb.innerHTML=selectedRows.map(function(pair){var x=pair.stock,i=pair.rank-1;
 if(TABLE_COMPACT)return renderSimpleStock(x,i,isG,live);
 var cp=(live&&/midpoint|one-sided/.test(x.intradayPriceSource||"")?"≈":"")+(x.currentPrice!=null?N(x.currentPrice):N(x.close)),chg=x.currentPct!=null?' <span class="'+C(x.currentPct)+'">('+(Number(x.currentPct)>=0?"+":"")+N(x.currentPct)+'%)</span>':"";
 var extra=isG?'<td>'+N(x.gScore)+'</td><td title="加分 +'+N(x.gExtra)+'"><b>'+N((x.persistence||{}).strength,1)+'</b> <span class="sub">+'+N(x.gExtra)+'</span></td><td>'+(x.gPast10==null?"—":x.gPast10)+'/10 <span class="sub">連'+(x.gStreak||0)+'天</span></td><td><b>'+(x.gBreak3?"✓":"—")+' 3D / '+(x.gBreak18?"✓":"—")+' 18D</b></td>':"";
 return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+tvStockLink(x)+'</td><td>'+esc(x.market)+'</td><td class="theme" title="'+esc(x.theme||"")+'">'+themeButton(x.theme)+'</td><td class="score">'+N(x.total,1)+'</td>'+extra+'<td class="sar">'+esc(x.sarText||"—")+'</td><td>'+cp+chg+'</td><td>'+N(x.capitalB)+'</td><td>'+N(x.turnoverB)+'</td><td class="'+C(x.foreignToday)+'">'+N(x.foreignToday,0)+'</td><td class="'+C(x.trustToday)+'">'+N(x.trustToday,0)+'</td><td class="'+C(x.rs20)+'">'+P(x.rs20)+'</td><td>'+N(x.rvol)+'</td><td class="'+C(x.ret5)+'">'+P(x.ret5)+'</td><td class="'+C(x.ret20)+'">'+P(x.ret20)+'</td><td class="'+C(x.breakoutPct)+'">'+P(x.breakoutPct)+'</td><td class="'+C(x.ma20Slope)+'">'+P(x.ma20Slope)+'</td><td>'+esc(x.signal||"")+'</td></tr>'
-}).join("");applyTableMode()
+}).join("");if(MODEL==="G")renderOfficialG();applyTableMode()
 }
 function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";var lg=MODEL==="G"?currentLiveG():null;if(lg)s+=" ｜ 🟠 G當日盤中重新選股 "+lg.publishedAt+" (全市場 "+(lg.coverage&&lg.coverage.valid||0)+"/"+(lg.coverage&&lg.coverage.total||0)+")";else if(MODEL==="G"&&G_INTRADAY_STATUS&&G_INTRADAY_STATUS.asOfDate===taipeiDate()&&G_INTRADAY_STATUS.status==="unavailable")s+=" ｜ ⚠ G盤中重選未完成："+G_INTRADAY_STATUS.message;s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);meta.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),isStale=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5);staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent="⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
 async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();var gs=await Promise.all(["./data/g_intraday/latest.json","./data/g_intraday/status.json"].map(async function(p){try{var q=await fetch(p+"?"+Date.now(),{cache:"no-store"});return q.ok?await q.json():null}catch(_){return null}}));G_INTRADAY=gs[0];G_INTRADAY_STATUS=gs[1];renderTable();renderMeta();if(typeof refreshRepeatArchive==="function")refreshRepeatArchive()}catch(e){meta.textContent="載入失敗："+e.message;tb.innerHTML='<tr><td colspan="18" style="text-align:center;padding:40px;color:#dc2626">資料載入失敗，請稍後重新載入</td></tr>'}finally{loading.classList.remove("show")}}
 function switchRanking(name){MODEL=name;THEME_FILTER="";EXPANDED_STOCK="";history.replaceState(null,"",location.pathname+location.search+"#"+encodeURIComponent(name));renderTable()}
 layoutToggle.onclick=function(){TABLE_COMPACT=!TABLE_COMPACT;VIEW_PREF=TABLE_COMPACT?"simple":"detail";try{localStorage.setItem("tw_selection_view_v1",VIEW_PREF)}catch(_){}renderTable()};
-document.addEventListener("click",function(e){var b=e.target.closest(".theme-pick");if(b){var t=b.getAttribute("data-theme")||"";THEME_FILTER=THEME_FILTER===t?"":t;EXPANDED_STOCK="";renderTable();return}if(e.target.closest("#clearThemeFilter")){THEME_FILTER="";renderTable();return}var tr=e.target.closest("#tb tr.simple-stock-row");if(tr&&!e.target.closest("a,button")){var k=tr.getAttribute("data-key");EXPANDED_STOCK=EXPANDED_STOCK===k?"":k;renderTable()}});
-document.addEventListener("keydown",function(e){if(e.key!=="Enter"&&e.key!==" ")return;var tr=e.target.closest("#tb tr.simple-stock-row");if(tr&&e.target===tr){e.preventDefault();var k=tr.getAttribute("data-key");EXPANDED_STOCK=EXPANDED_STOCK===k?"":k;renderTable();var match=Array.from(document.querySelectorAll("#tb tr.simple-stock-row")).find(function(x){return x.getAttribute("data-key")===k});if(match)match.focus()}});
+document.addEventListener("click",function(e){var b=e.target.closest(".theme-pick");if(b){var t=b.getAttribute("data-theme")||"";THEME_FILTER=THEME_FILTER===t?"":t;EXPANDED_STOCK="";renderTable();return}if(e.target.closest("#clearThemeFilter")){THEME_FILTER="";renderTable();return}var tr=e.target.closest("#tb tr.simple-stock-row,#officialTb tr.simple-stock-row");if(tr&&!e.target.closest("a,button")){var k=tr.getAttribute("data-key");EXPANDED_STOCK=EXPANDED_STOCK===k?"":k;renderTable()}});
+document.addEventListener("keydown",function(e){if(e.key!=="Enter"&&e.key!==" ")return;var tr=e.target.closest("#tb tr.simple-stock-row,#officialTb tr.simple-stock-row");if(tr&&e.target===tr){e.preventDefault();var k=tr.getAttribute("data-key");EXPANDED_STOCK=EXPANDED_STOCK===k?"":k;renderTable();var match=Array.from(document.querySelectorAll("#tb tr.simple-stock-row,#officialTb tr.simple-stock-row")).find(function(x){return x.getAttribute("data-key")===k});if(match)match.focus()}});
 window.addEventListener("resize",function(){if(VIEW_PREF)return;var want=window.matchMedia("(max-width:760px)").matches;if(want!==TABLE_COMPACT){TABLE_COMPACT=want;renderTable()}});
 tabG.onclick=function(){switchRanking("G")};tabGPro.onclick=function(){switchRanking("G Pro")};
 tabD.onclick=function(){switchRanking("D")};tabF.onclick=function(){switchRanking("F")};

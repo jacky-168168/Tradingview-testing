@@ -25,7 +25,8 @@ for(const model of ["F","F2"]){const node={textContent:""};describe(model,blocke
 const modeJs=part("function applyTableMode(){","function simpleMetric(");
 function table(model,simple){
  const stockTable={classList:{toggle(){}},tHead:{innerHTML:""}},layoutToggle={textContent:"",setAttribute(){}},tableHint={textContent:""},badge={textContent:""},panel={classList:{toggle(){}}};
- const document={getElementById:id=>id==="repeatPanel"?panel:id==="modeBadge"?badge:null};
+ const officialTable={classList:{toggle(){}},tHead:{innerHTML:""}};
+ const document={getElementById:id=>id==="repeatPanel"?panel:id==="modeBadge"?badge:id==="officialStockTable"?officialTable:null};
  const original='<tr>'+Array.from({length:22},(_,i)=>'<th>原始'+i+'</th>').join("")+'</tr>';
  const nOriginal='<tr>'+Array.from({length:10},(_,i)=>'<th>N'+i+'</th>').join("")+'</tr>';
  const simpleHead='<tr><th>排名</th><th>股票／題材</th><th>強度</th><th>現價／漲跌</th></tr>';
@@ -56,6 +57,18 @@ assert(script.includes('THEME_FILTER')&&script.includes("selectedRows"),"G theme
 assert(html.includes('id="clearThemeFilter"')&&html.includes('id="modeBadge"'),"Theme filter bar and mode label required");
 const repeatJs=fs.readFileSync(path.resolve(__dirname,"../docs/repeat-rankings.js"),"utf8");new Function(repeatJs);
 assert(repeatJs.includes("allRepeated.filter")&&repeatJs.includes("themeButton(s.theme"),"Repeat table must also support exact theme filters");
+// G intraday and official snapshots must coexist, never re-label stale official prices as intraday.
+assert(html.includes('id="gIntradayHeading"')&&html.includes('id="gOfficialPanel"')&&html.includes('id="officialStockTable"')&&html.includes('id="officialTb"'),"Independent intraday and official G panels are required");
+assert(html.indexOf('id="repeatPanel"')<html.indexOf('id="gIntradayHeading"')&&html.indexOf('id="gIntradayHeading"')<html.indexOf('id="gOfficialPanel"'),"Repeated rankings must precede intraday and official panels");
+const officialFn=part("function renderOfficialG(){","function renderTable(){");
+assert(officialFn.includes('selection.dataDate===source'),"Official G selection date must match completed market date");
+assert(officialFn.includes('full=DATA&&DATA.models&&DATA.models.G'),"Official list must use frozen daily models.G");
+assert(officialFn.includes('renderOfficialDetailedRow(x,i)'),"Official detail must not use intraday prices");
+assert(script.includes('official?N(x.close)'),"Official simple-mode prices must use historic close, never currentPrice");
+assert(script.includes('x.dayRet==null'),"Official detailed change must be original day change");
+assert(script.includes('MODEL==="G"?(live?live.rows:[])'),"Missing live G must not substitute prior formal G");
+assert(script.includes('if(MODEL==="G")renderOfficialG();applyTableMode()'),"Official table must render with and without valid live list");
+assert(script.includes('closest("#tb tr.simple-stock-row,#officialTb tr.simple-stock-row")'),"Both simple-mode tables must support row expansion");
 for(const key of ["tabG","tabA","tabD","tabF","tabF2"]){assert(html.includes('id="'+key+'"'),key+" toggle missing")}
 assert(script.includes("'+tvStockLink(x)+'</td>"),"All models must render clickable stock name through shared row");
 console.log("PASS: TradingView links, strategy notes, mobile 4-column mode, all detailed columns, G theme filters and repeats");

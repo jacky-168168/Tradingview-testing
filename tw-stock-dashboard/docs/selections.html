@@ -86,6 +86,38 @@
 .repeat-stock-meta{display:block;margin-top:2px;font-size:10px;line-height:1.45;color:#64748b}
 .repeat-stock-meta .repeat-live,.repeat-stock-meta .repeat-backfilled{font-size:9px;padding:2px 4px}
 @media(max-width:650px){#stockTable.simple-mode th,#stockTable.simple-mode td{padding:9px 4px;font-size:11px}#stockTable.simple-mode .simple-stock-name{font-size:11px}#stockTable.simple-mode .simple-price{font-size:11px}#repeatPanel.repeat-simple #repeatTable th,#repeatPanel.repeat-simple #repeatTable td{padding:8px 4px;font-size:10px}}
+
+/* Independent G intraday and completed-session cards; same responsive 4-column mode. */
+.g-session-panel{margin-top:14px}.g-session-head{padding:13px 15px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.g-session-head h2{font-size:17px;margin:0;font-weight:900;line-height:1.4}
+.g-session-head .sub{font-size:11px;line-height:1.65;margin-top:5px;color:#475569}
+.g-session-count{font-size:11px;color:#475569;background:#eef2f7;border-radius:8px;padding:6px 9px;font-weight:900}
+.g-session-head.intraday{border-left:4px solid #f59e0b}
+.g-session-head.official{border-left:4px solid #2563eb}
+.g-session-head.official h2{color:#1d4ed8}
+#officialStockTable{table-layout:auto}
+#officialStockTable th:first-child,#officialStockTable td:first-child{position:sticky;left:0;z-index:4;min-width:32px;width:32px;background:#fff}
+#officialStockTable th:nth-child(2),#officialStockTable td:nth-child(2){position:sticky;left:32px;z-index:4;min-width:110px;max-width:135px;background:#fff}
+#officialStockTable th:first-child,#officialStockTable th:nth-child(2){background:#fafbfc;z-index:6}
+#officialStockTable tbody tr:hover td:first-child,#officialStockTable tbody tr:hover td:nth-child(2){background:#f8fafc}
+#officialStockTable .stock{font-weight:900;max-width:130px;overflow:hidden;text-overflow:ellipsis}
+#officialStockTable.simple-mode{table-layout:fixed;width:100%;white-space:normal}
+#officialStockTable.simple-mode th,#officialStockTable.simple-mode td{position:static!important;z-index:auto!important;min-width:0!important;max-width:none!important;padding:10px 6px;vertical-align:middle;background:transparent;font-size:12px}
+#officialStockTable.simple-mode th{background:#f8fafc;font-size:10px;white-space:nowrap}
+#officialStockTable.simple-mode th:nth-child(1){width:9%}
+#officialStockTable.simple-mode th:nth-child(2){width:43%}
+#officialStockTable.simple-mode th:nth-child(3){width:23%}
+#officialStockTable.simple-mode th:nth-child(4){width:25%;text-align:right}
+#officialStockTable.simple-mode td:nth-child(4){text-align:right}
+#officialStockTable.simple-mode .stock{max-width:none;overflow:visible;white-space:normal;line-height:1.45}
+#officialStockTable.simple-mode tr.simple-detail-row td{background:#f8fafc!important;padding:10px!important}
+#officialStockTable.compact th,#officialStockTable.compact td{padding:6px 5px;font-size:10px}
+@media(max-width:650px){
+#officialStockTable.simple-mode th,#officialStockTable.simple-mode td{padding:9px 4px;font-size:11px}
+#officialStockTable.simple-mode .simple-stock-name{font-size:11px}
+#officialStockTable.simple-mode .simple-price{font-size:11px}
+.g-session-head{padding:11px 12px}.g-session-head h2{font-size:16px}
+}
 </style>
 <script src="./site-access.js"></script>
 </head>
@@ -134,7 +166,20 @@
     <button id="repeatExpand" class="btn" type="button" onclick="toggleRepeatList()" style="display:none">展開全部</button>
   </div>
 </section>
+<section id="gIntradayHeading" class="g-session-panel" aria-label="G 盤中暫估榜單">
+  <header class="card g-session-head intraday">
+    <div><h2>🟠 G｜盤中暫估選股</h2><p id="gIntradayStatus" class="sub" role="status">正在檢查當日盤中 G 選股資料…</p></div>
+    <span id="gIntradayCount" class="g-session-count">載入中</span>
+  </header>
+</section>
 <div id="tableHint">手機預設簡單模式，顯示股票、題材、強度及現價；切換詳細模式可查看全部欄位。</div><div class="card table-card"><div class="scroll"><table id="stockTable" class="compact"><thead><tr><th>Rank</th><th>股票</th><th>市場</th><th>題材</th><th>總分</th><th class="g-only">原 G 分</th><th class="g-only">持續度</th><th class="g-only">前10日入選</th><th class="g-only">3D/18D</th><th>SAR</th><th>現價 / 收盤</th><th>股本</th><th>成交額</th><th>外資買超</th><th>投信買超</th><th>RS20</th><th>RVOL</th><th>5D</th><th>20D</th><th>距20日高</th><th>MA20斜率</th><th>訊號</th></tr></thead><tbody id="tb"><tr><td colspan="18" style="text-align:center;padding:40px;color:#7b8494">載入中...</td></tr></tbody></table></div></div>
+<section id="gOfficialPanel" class="g-session-panel" aria-label="G 盤後正式榜單">
+  <header class="card g-session-head official">
+    <div><h2>🔵 G｜盤後正式選股</h2><p id="gOfficialStatus" class="sub" role="status">正在讀取最近已完成交易日的正式 G 選股資料…</p></div>
+    <span id="gOfficialCount" class="g-session-count">載入中</span>
+  </header>
+  <div class="card table-card"><div class="scroll"><table id="officialStockTable" class="compact"><thead><tr><th>Rank</th><th>股票</th><th>市場</th><th>題材</th><th>總分</th><th class="g-only">原 G 分</th><th class="g-only">持續度</th><th class="g-only">前10日入選</th><th class="g-only">3D/18D</th><th>SAR</th><th>現價 / 收盤</th><th>股本</th><th>成交額</th><th>外資買超</th><th>投信買超</th><th>RS20</th><th>RVOL</th><th>5D</th><th>20D</th><th>距20日高</th><th>MA20斜率</th><th>訊號</th></tr></thead><tbody id="officialTb"><tr><td colspan="18" style="text-align:center;padding:40px;color:#7b8494">載入正式資料中…</td></tr></tbody></table></div></div>
+</section>
 <section id="nPanel" class="card box" style="display:none;margin-top:12px" aria-label="N CANSLIM成長動能選股">
   <div class="n-summary-head">
     <div>
