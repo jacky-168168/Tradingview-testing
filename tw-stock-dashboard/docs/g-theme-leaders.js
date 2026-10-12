@@ -30,8 +30,8 @@ function gLeaderStats(rows,catalog){
    var g=groups.get(name);g.kind=Math.min(g.kind,priority);g.count++;g.stocks.push({code:code,name:String(stock.name||""),market:String(stock.market||"")});
   });
  });
- var sorted=Array.from(groups.values()).filter(function(g){return g.count>6}).sort(function(a,b){return b.count-a.count||a.kind-b.kind||a.name.localeCompare(b.name,"zh-Hant")});
- return {leaders:sorted,listed:seen.size,slots:20,threshold:"超過30%（至少7/20）"};
+ var sorted=Array.from(groups.values()).filter(function(g){return g.count>=6}).sort(function(a,b){return b.count-a.count||a.kind-b.kind||a.name.localeCompare(b.name,"zh-Hant")});
+ return {leaders:sorted,listed:seen.size,slots:20,threshold:"達30%（至少6/20）"};
 }
 function gLeaderStockLink(stock){
  var code=String(stock.code||""),exchange=stock.market==="上市"?"TWSE":stock.market==="上櫃"?"TPEX":"";
@@ -45,7 +45,7 @@ function gLeaderCard(entry,catalog){
  var cpoNote=stats.leaders.some(function(x){return x.name==="CPO"})?'<div class="g-sector-source">CPO 按現有「上游類股」的 CPO／矽光子研究名單辨識；不代表已取得 CPO 訂單或營收。</div>':"";
  return '<article class="g-sector-leader-card '+(entry.live?"is-live":"is-official")+'"><div class="g-sector-leader-head"><span class="g-sector-context">'+(entry.live?"🟠 盤中暫估":"🔵 盤後正式")+'｜'+gLeaderEscape(entry.date)+'</span><span class="g-sector-ratio">前20名 '+top.count+'/20 · '+(top.count*5)+'%</span></div>'+
  '<div class="g-sector-main"><span aria-hidden="true">🏆</span><strong>'+gLeaderEscape(top.name)+'｜'+(entry.live?"盤中":"盤後")+'最強入榜類股</strong></div>'+
- '<p class="g-sector-desc">G Top20 中有 '+top.count+' 檔屬於「'+gLeaderEscape(top.name)+'」，占比 '+(top.count*5)+'%，超過 30% 提醒門檻。'+(entry.live?"此為未收盤暫估，仍可能變動。":"此為已完成日K正式排名。")+'</p>'+
+ '<p class="g-sector-desc">G Top20 中有 '+top.count+' 檔屬於「'+gLeaderEscape(top.name)+'」，占比 '+(top.count*5)+'%，達到 30% 提醒門檻。'+(entry.live?"此為未收盤暫估，仍可能變動。":"此為已完成日K正式排名。")+'</p>'+
  '<details class="g-sector-members"><summary>查看 '+top.count+' 檔入榜股票</summary><div class="g-sector-stock-list">'+top.stocks.map(function(x){return '<span>'+gLeaderStockLink(x)+'</span>'}).join("")+'</div></details>'+
  other+cpoNote+'</article>';
 }
@@ -61,7 +61,7 @@ function renderGThemeLeaders(){
  var cards=items.map(function(item){return gLeaderCard(item,G_LEADER_CATALOG)}).filter(Boolean);
  if(!cards.length){hideGThemeLeaders();return}
  panel.hidden=false;
- panel.innerHTML='<div class="g-sector-title">🔥 G Top20｜強勢類股集中提醒 <span>相同類股占前20名超過30%才顯示</span></div>'+
+ panel.innerHTML='<div class="g-sector-title">🔥 G Top20｜強勢類股集中提醒 <span>相同類股占前20名達30%才顯示</span></div>'+
  '<div class="g-sector-cards">'+cards.join("")+'</div>'+
  '<div class="g-sector-foot">依原始 G 排名（不受下方題材篩選影響）；每檔股票在同一類股僅計一次。入榜集中度 ≠ 全市場漲幅排名、買進訊號或資金流入證據。'+(G_LEADER_CATALOG?'分類資料：'+gLeaderEscape(G_LEADER_CATALOG.dataDate||"最近更新"):'產業類股資料載入中；先依選股欄位判斷。')+'</div>';
 }
