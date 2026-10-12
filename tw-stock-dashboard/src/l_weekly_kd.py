@@ -40,7 +40,7 @@ def weekly_bars(frame):
     if q.empty:return pd.DataFrame()
     q["adjopen"]=q.open*(q.adjclose/q.close).where((q.adjclose>0)&(q.close>0),1)
     q["week"]=q.date.dt.to_period("W-FRI")
-    w=q.groupby("week",sort=True).agg(signalDate=("date","last"),open=("open","first"),adjopen=("adjopen","first"),high=("high","max"),low=("low","min"),close=("close","last"),adjclose=("adjclose","last"),volume=("volume","sum"))
+    w=q.groupby("week",sort=True).agg(entryDate=("date","first"),signalDate=("date","last"),open=("open","first"),adjopen=("adjopen","first"),high=("high","max"),low=("low","min"),close=("close","last"),adjclose=("adjclose","last"),volume=("volume","sum"))
     hi=w.high.rolling(9,min_periods=9).max();lo=w.low.rolling(9,min_periods=9).min()
     rsv=100*(w.close-lo)/(hi-lo).replace(0,np.nan)
     k=50.;d=50.;ks=[];ds=[]
@@ -52,6 +52,7 @@ def weekly_bars(frame):
     w["golden"]=(w.K.shift(1)<=w.D.shift(1))&(w.K>w.D)&w.K.notna()&w.D.notna()
     w["strict40"]=w.golden&(w.K<40)&(w.D<40)
     w["signalDate"]=w.signalDate.dt.strftime("%Y-%m-%d")
+    w["entryDate"]=w.entryDate.dt.strftime("%Y-%m-%d")
     return w
 
 def read_revenue(data_dir=DATA_DIR):
@@ -106,9 +107,10 @@ def select_current(universe,histories,market_date,now=None,limit=20,archive=None
     status["publishedTop"]=min(limit,len(out))
     return out[:limit],status
 
-def trades_for_stock(info,weekly,archive,market_date):
+def trades_for_stock(info,weekly,archive,market_date,now=None):
     rows=[]
-    eligible=weekly.index[weekly.index<=pd.Timestamp(market_date).to_period("W-FRI")]
+    last=last_completed_week(now or datetime.now(ZoneInfo("Asia/Taipei")),market_date)
+    eligible=weekly.index[weekly.index<=last]
     w=weekly.loc[eligible]
     if len(w)<26:return rows
     for i in range(25,len(w)):
@@ -121,12 +123,12 @@ def trades_for_stock(info,weekly,archive,market_date):
             # Signal at Friday close; enter NEXT trading week's first opening price,
             # exit end of week number horizon. Exclude incomplete forward weeks.
             # A partial/trading-halt week with no bars is NOT a valid horizon.
-            if i+horizon>=len(w):continue
+            if i+horizon>=len(w) or (w.index[i+horizon].ordinal-period.ordinal)!=horizon or (w.index[i+1].ordinal-period.ordinal)!=1:continue
             target=w.iloc[i+horizon];entry=w.iloc[i+1]
             a=finite(entry.adjopen);b=finite(target.adjclose)
             if a is None or b is None or a<=0 or b<=0:continue
             gross=(b/a-1)*100
-            rows.append({**p,"horizon":horizon,"entryDate":str(entry["signalDate"]),"exitDate":str(target["signalDate"]),
+            rows.append({**p,"horizon":horizon,"entryDate":str(entry["entryDate"]),"exitDate":str(target["signalDate"]),
                          "grossPct":round(gross,4),"netPct":round(gross-COST_PCT,4)})
     return rows
 
