@@ -29,6 +29,9 @@ def number(value):
         return x if pd.notna(x) else None
     except (TypeError,ValueError):return None
 
+def top_book_price(v):
+    return number(str(v or "").split("_")[0])
+
 def parse_mis(payload,date,now):
     """Return checked same-day quotes keyed by (listed/OTC, 4-digit code)."""
     result={}
@@ -43,16 +46,25 @@ def parse_mis(payload,date,now):
         if stamp:
             at=datetime.fromtimestamp(stamp/1000,TZ)
             if at.date()!=now.date() or at>now+timedelta(minutes=10):continue
-        price=number(row.get("z"));fallback=False
+        price=number(row.get("z"));source="last-trade"
         if price is None or price<=0:
-            price=number(row.get("pz"));fallback=True
+            price=number(row.get("pz"));source="previous-trade"
         high=number(row.get("h"));low=number(row.get("l"))
         op=number(row.get("o"));lots=number(row.get("v"));prev=number(row.get("y"))
-        if any(x is None or x<=0 for x in (price,high,low,op,lots,prev)):continue
-        if not low<=price<=high or not low<=op<=high:continue
+        if any(x is None or x<=0 for x in (high,low,op,lots,prev)):continue
+        if not low<=op<=high:continue
+        if price is None or price<=0:
+            bid=top_book_price(row.get("b"));ask=top_book_price(row.get("a"))
+            if bid and ask and bid>0 and ask>=bid and (ask-bid)/((ask+bid)/2)<=.012:
+                price=round((bid+ask)/2,4);source="bid-ask-midpoint"
+            elif bid and bid>0 and abs(bid-high)/high<.001:
+                price=bid;source="one-sided-high-bid"
+            elif ask and ask>0 and abs(ask-low)/low<.001:
+                price=ask;source="one-sided-low-ask"
+        if price is None or price<=0 or not low<=price<=high:continue
         if abs(price/prev-1)>.12:continue
         result[(market,code)]={"price":price,"open":op,"high":high,"low":low,
-                               "volume":round(lots*1000),"previousClose":prev,"time":tm,"previousTradeFallback":fallback}
+                               "volume":round(lots*1000),"previousClose":prev,"time":tm,"priceSource":source}
     return result
 
 def session():
@@ -74,7 +86,7 @@ def query_batch(batch,today,now):
             payload=r.json();parsed=parse_mis(payload,today,now)
             if len(parsed)<len(batch)*.4:
                 raw=payload.get("msgArray") or []
-                sample=[{k:x.get(k) for k in ("c","ex","d","t","z","o","h","l","v","y")} for x in raw[:3]]
+                sample=[{k:x.get(k) for k in ("c","ex","d","t","z","pz","a","b","o","h","l","v","y")} for x in raw[:3]]
                 print("MIS_LOW_COVERAGE",str(batch[0]),"requested",len(batch),"returned",len(raw),"accepted",len(parsed),"sample",json.dumps(sample,ensure_ascii=False),flush=True)
             return parsed
         except (requests.RequestException,ValueError,KeyError) as e:
@@ -152,17 +164,18 @@ def main():
             row["foreignToday"]=None
             row["trustToday"]=None
             row["currentPrice"]=row["close"]
+            row["intradayPriceSource"]=quotes.get((row["market"],row["code"]),{}).get("priceSource","unknown")
             q=quotes.get((row["market"],row["code"]))
             row["currentPct"]=round((row["close"]/q["previousClose"]-1)*100,2) if q else None
             row["signal"]="🟠 盤中暫估｜"+str(row.get("signal") or "")
         meta["pocketSnapshotsFound"]=found
         meta["pocketWarmup"]=found<min(10,len(calendar)-1)
         meta["isProvisional"]=True
-        meta["note"]="盤中依當日未完成日K、全市場同日成交價與累積成交量重選，非正式G日K訊號；法人及SAR不視為當日盤中已確認。"
+        meta["note"]="盤中依未完成日K、當日累積成交量與即時交易所報價重選。個別未揭示成交價時以經價差篩選的買賣中間價估算，非實際成交價；非正式G日K訊號，法人及SAR均未確認。"
         payload={"asOfDate":today,"publishedAt":datetime.now(TZ).isoformat(timespec="seconds"),
                  "sourceCloseDate":source,"quality":"intraday-provisional-allmarket",
-                 "quoteSource":"TWSE MIS same-day listed+OTC quote batches; cumulative lots × 1000 shares",
-                 "coverage":coverage,"fallbackPreviousTradePrices":sum(q.get("previousTradeFallback",False) for q in quotes.values()),"historicalBarCoverage":len(history),"historyRejected":rejected,
+                 "quoteSource":"TWSE MIS same-day listed+OTC; trade price if available, otherwise validated order-book midpoint proxy; cumulative lots × 1000 shares",
+                 "coverage":coverage,"quotePriceSources":{kind:sum(q.get("priceSource")==kind for q in quotes.values()) for kind in ("last-trade","previous-trade","bid-ask-midpoint","one-sided-high-bid","one-sided-low-ask")},"historicalBarCoverage":len(history),"historyRejected":rejected,
                  "market20Reference":"previous completed cash-market return (not live index)",
                  "rows":rows,"selection":meta}
         OUTPUT.parent.mkdir(parents=True,exist_ok=True)
