@@ -33,23 +33,23 @@ function renderRepeatPanel(model,data){
  }
  var x=REPEAT_DATA.models&&REPEAT_DATA.models[model];
  if(!x){state.textContent="⚠ 無此選股模型的歷史統計。";size.textContent="—";rows.innerHTML="";toggle.style.display="none";return}
- var total=x.totalObservedDays==null?(x.snapshotDays||0):x.totalObservedDays,repeated=x.stocks||[],uptodate=data&&data.dataDate===REPEAT_DATA.referenceDate;
+ var total=x.totalObservedDays==null?(x.snapshotDays||0):x.totalObservedDays,allRepeated=x.stocks||[],repeated=(typeof THEME_FILTER!=="undefined"&&THEME_FILTER)?allRepeated.filter(function(s){return String(s.theme||s.subIndustry||"").trim()===THEME_FILTER}):allRepeated,uptodate=data&&data.dataDate===REPEAT_DATA.referenceDate;
  var rebuilt=x.reconstructedDays||0,frozen=x.snapshotDays||0,usingRebuild=rebuilt>0;
  var earlier=(x.firstCovered||x.firstSnapshot)&&((x.firstCovered||x.firstSnapshot)>REPEAT_DATA.windowStart);
  coverage.textContent="統計區間 "+REPEAT_DATA.windowStart+" ～ "+REPEAT_DATA.referenceDate+
   "｜"+model+" 正式封存 "+frozen+" 日"+(usingRebuild?"＋歷史回推 "+rebuilt+" 日":"")+
   "｜最早可用 "+(x.firstCovered||x.firstSnapshot||"尚未建立");
- size.textContent=repeated.length+" 檔重複上榜";
+ size.textContent=repeated.length+(typeof THEME_FILTER!=="undefined"&&THEME_FILTER?"／"+allRepeated.length:"")+" 檔重複上榜";
  state.className="repeat-status"+(total<2||earlier||!uptodate?" repeat-attention":"");
  if(total<2)state.textContent="⚠ "+model+" 目前只覆蓋 "+total+" 個榜單日期（正式 "+frozen+"、回推 "+rebuilt+"），不足以確認重複入選。";
- else if(!repeated.length)state.textContent="目前在已涵蓋的 "+total+" 個榜單日期內，尚無同一股票出現至少2次。"+
+ else if(!repeated.length)state.textContent=(typeof THEME_FILTER!=="undefined"&&THEME_FILTER?"「"+THEME_FILTER+"」題材在此統計區間沒有重複上榜股票。":"目前在已涵蓋的 "+total+" 個榜單日期內，尚無同一股票出現至少2次。")+
    (earlier?" 資料尚未覆蓋完整兩個月，不能視為完整回溯結果。":"");
  else state.textContent="同一股票在不同交易日的 Top20 上榜≥2次；"+
   (earlier?"目前歷史不足整整兩個月，以下是已保存日期內的實際次數。":"近兩個月內每個已保存日期只計1次。");
  if(usingRebuild)state.textContent+=" ⚠ 內含按原G條件逐日回推的研究榜單，不是當時網站實際公布的歷史名單；原有正式快照優先，並有上市存活者與歷史K線版本差異。";
  if(!uptodate&&data)state.textContent+=" ⚠ 最新選股日期與此統計檔案不同，請等待同步更新（未混算）。";
  if(!repeated.length){
-  rows.innerHTML='<tr><td colspan="16" class="repeat-empty">'+(total<2?"歷史日期不足，暫無可驗證的重複上榜股票。":"沒有至少2次上榜的標的。")+'</td></tr>';
+  rows.innerHTML='<tr><td colspan="16" class="repeat-empty">'+(typeof THEME_FILTER!=="undefined"&&THEME_FILTER?"「"+repeatSafe(THEME_FILTER)+"」題材沒有重複上榜股票。":total<2?"歷史日期不足，暫無可驗證的重複上榜股票。":"沒有至少2次上榜的標的。")+'</td></tr>';
   toggle.style.display="none";return;
  }
  var all=REPEAT_EXPANDED?repeated:repeated.slice(0,15);
@@ -58,9 +58,9 @@ function renderRepeatPanel(model,data){
   var evidence=(s.reconstructedCount||0)>0?' <span class="repeat-backfilled" title="含 '+s.reconstructedCount+' 次歷史行情回推，非原始正式封存">含回推</span>':"";
   return '<tr>'+
    '<td><b>'+(i+1)+'</b></td>'+
-   '<td class="stock">'+repeatTradingview(s)+(s.onReferenceDate?' <span class="repeat-live">最新在榜</span>':'')+evidence+'</td>'+
+   '<td class="stock">'+repeatTradingview(s)+'<span class="repeat-stock-meta">'+(typeof themeButton==="function"?themeButton(s.theme||s.subIndustry):repeatSafe(s.theme||s.subIndustry||"—"))+(s.onReferenceDate?' <span class="repeat-live">最新在榜</span>':'')+evidence+'</span></td>'+
    '<td>'+repeatSafe(s.market||"—")+'</td>'+
-   '<td class="theme" title="'+repeatSafe(s.theme||s.subIndustry||"")+'">'+repeatSafe(s.theme||s.subIndustry||"—")+'</td>'+
+   '<td class="theme" title="'+repeatSafe(s.theme||s.subIndustry||"")+'">'+(typeof themeButton==="function"?themeButton(s.theme||s.subIndustry):repeatSafe(s.theme||s.subIndustry||"—"))+'</td>'+
    '<td class="repeat-frequency"><strong>'+repeatSafe(s.count)+'</strong> 次</td>'+
    '<td>'+repeatSafe(s.lastSeen||"—")+'</td>'+
    '<td>'+repeatSafe(s.previousSeen||"—")+'</td>'+
