@@ -53,6 +53,27 @@ class MarketHomepageLayout(unittest.TestCase):
             self.assertIn(item,self.dom.ids)
         self.assertNotIn('id="marketAdvanced" open',self.html)
         self.assertNotIn('id="txfDetails" open',self.html)
+    def test_single_upstream_entry_is_in_top_navigation_only(self):
+        from html.parser import HTMLParser
+        class NavigationLinks(HTMLParser):
+            def __init__(self):
+                super().__init__();self.stack=[];self.upstream=[]
+            def handle_starttag(self,tag,attrs):
+                props=dict(attrs);self.stack.append((tag,props))
+                if tag=="a" and props.get("href")=="./upstream.html":
+                    self.upstream.append(tuple(self.stack))
+            def handle_endtag(self,tag):
+                if self.stack:
+                    self.stack.pop()
+        links=NavigationLinks();links.feed(self.html)
+        self.assertEqual(len(links.upstream),1,"Home should have exactly one upstream entry")
+        self.assertTrue(any(x[0]=="nav" and x[1].get("class")=="site-nav" for x in links.upstream[0]),
+                        "Upstream entry must be in the top navigation")
+        self.assertIn('>🧩 上游類股</a>',self.html)
+        self.assertNotIn('class="upstream-portal"',self.html)
+        self.assertNotIn('upstream-industry-links',self.html)
+        self.assertNotIn('href="./upstream.html?industry=',self.html)
+        self.assertTrue((HTML.parent/"upstream.html").is_file(),"The linked detail page must remain intact")
     def test_layout_responsive_and_accessible(self):
         for marker in ("market-brief-grid","brief-card","cmd-metrics","advanced-content","@media(max-width:650px)","@media(max-width:980px)"):
             self.assertIn(marker,self.css)
