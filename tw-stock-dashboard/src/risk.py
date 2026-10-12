@@ -1,5 +1,5 @@
 from __future__ import annotations
-import math,re,requests
+import math,re,time,requests
 import numpy as np,pandas as pd
 UA={"User-Agent":"Mozilla/5.0 tw-stock-dashboard/3.0","Accept":"application/json"}
 
@@ -8,14 +8,27 @@ def _num(v):
     except:return 0.0
 
 def _report(trade_date,path,params):
-    """Never mix today's floating latest API data with an older Yahoo ^TWII bar."""
+    """Pin TWSE reports to the requested trading session; wait for delayed BFI82U.
+    A missing report is never silently treated as zero foreign flow or yesterday's data.
+    """
     if not isinstance(trade_date,str) or len(trade_date)!=10 or trade_date[4]!="-" or trade_date[7]!="-":
         raise ValueError("Explicit ISO trading date required for Risk Score")
     requested=trade_date.replace("-","")
-    r=requests.get("https://www.twse.com.tw/rwd/zh/"+path,params={"response":"json",**params},headers=UA,timeout=25)
-    r.raise_for_status();data=r.json()
-    if data.get("stat")!="OK":raise RuntimeError("TWSE report not ready for "+trade_date+": "+str(data.get("stat")))
-    # The report must belong to requested session. No implicit 'latest' fallback.
+    url="https://www.twse.com.tw/rwd/zh/"+path
+    attempts=4 if path=="fund/BFI82U" else 1
+    for attempt in range(attempts):
+        try:
+            r=requests.get(url,params={"response":"json",**params},headers=UA,timeout=25)
+            r.raise_for_status();data=r.json()
+        except requests.RequestException as exc:
+            if attempt==attempts-1:raise
+            print(f"TWSE transient error on {path} {trade_date}: {type(exc).__name__}, retry {attempt+1}/{attempts-1}",flush=True)
+        else:
+            if data.get("stat")=="OK":break
+            if attempt==attempts-1:raise RuntimeError("TWSE report not ready for "+trade_date+": "+str(data.get("stat")))
+            print(f"TWSE {path} {trade_date} not published yet: {data.get('stat')}; retry {attempt+1}/{attempts-1}",flush=True)
+        time.sleep(6*(attempt+1))
+    # Never silently accept an earlier trading session as today's official report.
     reported=str(data.get("date") or "")
     if reported:
         compact=re.sub(r"[^0-9]","",reported)
