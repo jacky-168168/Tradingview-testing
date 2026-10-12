@@ -69,7 +69,7 @@ function marketPremarket(r,x,now=new Date()){
   source:"已完成TX夜盤，非08:58即時報價"};
 }
 function postOpenState(r,now=new Date()){
- const t=taipeiParts(now);if(!r?.date||r.date===t.date||t.minute<540||t.minute>810)return null;
+ const t=taipeiParts(now);if(!r?.date||r.date===t.date||t.minute<540||t.minute>=870)return null;
  const weekday=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Taipei",weekday:"short"}).format(now);
  if(weekday==="Sat"||weekday==="Sun"||t.minute>=14*60+30)return null;
  return {level:"WAIT",headline:"🟡 現貨已開盤｜等待今日盤勢確認",
