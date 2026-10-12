@@ -112,7 +112,7 @@ jobs:
             git commit -m "Update TW stock dashboard (${{ steps.mode.outputs.mode }})"
             ok=0
             for i in 1 2 3 4 5; do
-              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*10)); continue; }
+              git pull --rebase -X theirs origin main || { git rebase --abort || true; sleep $((i*10)); continue; }
               if git push origin HEAD:main; then ok=1; break; fi
               sleep $((i*10))
             done
