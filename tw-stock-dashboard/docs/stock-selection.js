@@ -195,7 +195,7 @@ function updateGReportOverview(){
  document.getElementById("gQuickOfficial").textContent=verified?official.length+" 檔正式｜"+date:"正式資料待同步";
 }
 function renderTable(){
-var isDualG=MODEL==="G";document.body.classList.toggle("g-report-mode",isDualG);document.getElementById("gIntradayHeading").style.display=isDualG?"":"none";document.getElementById("gOfficialPanel").style.display=isDualG?"":"none";if(isDualG)updateGReportOverview();
+var isDualG=MODEL==="G";document.body.classList.toggle("g-report-mode",isDualG);document.getElementById("gIntradayHeading").style.display=isDualG?"":"none";document.getElementById("gOfficialPanel").style.display=isDualG?"":"none";if(isDualG){updateGReportOverview();ensureGThemeCatalog();renderGThemeLeaders()}else hideGThemeLeaders();
 var rp=document.getElementById("repeatPanel");if(rp)rp.style.display=MODEL==="L"?"none":"";if(MODEL!=="L"&&typeof renderRepeatPanel==="function")renderRepeatPanel(MODEL,DATA);
 filterBar();
 var live=MODEL==="G"?currentLiveG():null,xs=MODEL==="G"?(live?live.rows:[]):(DATA&&DATA.models&&DATA.models[MODEL]||[]),isG=(MODEL==="G"||MODEL==="G Pro"),gs=live?live.selection:(DATA&&DATA.gSelection||null);
