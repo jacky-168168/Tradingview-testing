@@ -141,6 +141,8 @@ def main():
         enrich_chain(rows)
         for row in rows:
             row["sarText"]="未確認（正式日K）"
+            row["foreignToday"]=None
+            row["trustToday"]=None
             row["currentPrice"]=row["close"]
             q=quotes.get((row["market"],row["code"]))
             row["currentPct"]=round((row["close"]/q["previousClose"]-1)*100,2) if q else None
