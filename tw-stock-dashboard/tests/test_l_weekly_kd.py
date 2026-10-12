@@ -42,7 +42,7 @@ class WeeklyKDL(unittest.TestCase):
              "adjopen":[100.]*len(weeks),"adjclose":[100.]*len(weeks),
              "volume":[1000]*len(weeks),"K":[25.]*len(weeks),"D":[20.]*len(weeks),
              "strict40":[False]*len(weeks)},index=weeks)
-        signal=pd.Period("2026-10-03/2026-10-09",freq="W-FRI")
+        signal=pd.Period("2026-10-09",freq="W-FRI")
         self.assertIn(signal,w.index)
         w.loc[signal,"strict40"]=True
         t=trades_for_stock(self.info,w,Archive("2026-09-16"),"2026-10-12",now=self.now("2026-10-12T18:00:00"))
