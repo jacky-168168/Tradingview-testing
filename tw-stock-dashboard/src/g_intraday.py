@@ -68,7 +68,12 @@ def query_batch(batch,today,now):
         try:
             r=session().get(QUOTE,params={"ex_ch":"|".join(channels),"json":1,"delay":0,"_":int(time.time()*1000)},
                             timeout=22);r.raise_for_status()
-            return parse_mis(r.json(),today,now)
+            payload=r.json();parsed=parse_mis(payload,today,now)
+            if len(parsed)<len(batch)*.4:
+                raw=payload.get("msgArray") or []
+                sample=[{k:x.get(k) for k in ("c","ex","d","t","z","o","h","l","v","y")} for x in raw[:3]]
+                print("MIS_LOW_COVERAGE",str(batch[0]),"requested",len(batch),"returned",len(raw),"accepted",len(parsed),"sample",json.dumps(sample,ensure_ascii=False),flush=True)
+            return parsed
         except (requests.RequestException,ValueError,KeyError) as e:
             last=e;time.sleep(attempt+.5)
     print("MIS_BATCH_FAILED",len(batch),repr(last),file=sys.stderr,flush=True)
