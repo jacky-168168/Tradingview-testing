@@ -19,6 +19,7 @@ function applyTableMode(){
  stockTable.classList.toggle("compact",simple);stockTable.classList.toggle("simple-mode",simple);
  stockTable.tHead.innerHTML=simple?(isN?N_SIMPLE_HEAD:STOCK_SIMPLE_HEAD):(isN?N_TABLE_HEAD:NORMAL_TABLE_HEAD);
  layoutToggle.textContent=simple?"▤ 詳細模式":"▥ 簡單模式";
+ document.getElementById("modeBadge").textContent=simple?"簡單模式":"詳細模式";
  layoutToggle.setAttribute("aria-pressed",simple?"true":"false");
  layoutToggle.setAttribute("aria-label",simple?"切換詳細模式，顯示全部欄位":"切換簡單模式，無需左右滑動");
  document.getElementById("repeatPanel").classList.toggle("repeat-simple",simple);
@@ -83,7 +84,7 @@ function renderNTable(){
  applyTableMode();
  if(!N_ARCHIVE||!N_SUMMARY){
   nStatus.textContent="⏳ 正在讀取 N 成長動能歷史排行…";
-  tb.innerHTML='<tr><td colspan="10" style="text-align:center;padding:28px">載入 N 歷史選股資料中…</td></tr>';
+  tb.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:10)+'" style="text-align:center;padding:28px">載入 N 歷史選股資料中…</td></tr>';
   count.textContent="讀取中";loadNArchive();return;
  }
  var raw=N_ARCHIVE.signalTop3||{},days=Object.keys(raw).sort(),last=days.length?days[days.length-1]:null;
@@ -132,7 +133,7 @@ renderModelNote();
 var selectedRows=xs.map(function(stock,i){return {stock:stock,rank:i+1}}).filter(function(pair){return !THEME_FILTER||String(pair.stock.theme||"").trim()===THEME_FILTER});
 if(THEME_FILTER)count.textContent+="｜題材 "+THEME_FILTER+" "+selectedRows.length+" 檔";
 if(!selectedRows.length&&THEME_FILTER){tb.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:isG?22:18)+'" style="padding:24px;text-align:center">此模型沒有「'+esc(THEME_FILTER)+'」題材的上榜股票。可點上方清除篩選。</td></tr>';applyTableMode();return;}
-if(!xs.length){tb.innerHTML='<tr><td colspan="'+(isG?20:18)+'" style="text-align:center;padding:40px">'+(MODEL==="G Pro"?"原G Top3 今日無股票通過 G Pro 嚴格條件，正常空訊號。":isG?(gs?"此交易日沒有通過 G 雙突破的股票，屬正常空訊號；不會改用回測舊清單。":"⚠ G 每日資料尚未更新，請執行 GitHub 完整更新。"):"尚無資料")+'</td></tr>';applyTableMode();return}
+if(!xs.length){tb.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:isG?22:18)+'" style="text-align:center;padding:40px">'+(MODEL==="G Pro"?"原G Top3 今日無股票通過 G Pro 嚴格條件，正常空訊號。":isG?(gs?"此交易日沒有通過 G 雙突破的股票，屬正常空訊號；不會改用回測舊清單。":"⚠ G 每日資料尚未更新，請執行 GitHub 完整更新。"):"尚無資料")+'</td></tr>';applyTableMode();return}
 tb.innerHTML=selectedRows.map(function(pair){var x=pair.stock,i=pair.rank-1;
 if(TABLE_COMPACT)return renderSimpleStock(x,i,isG,live);
 var cp=(live&&/midpoint|one-sided/.test(x.intradayPriceSource||"")?"≈":"")+(x.currentPrice!=null?N(x.currentPrice):N(x.close)),chg=x.currentPct!=null?' <span class="'+C(x.currentPct)+'">('+(Number(x.currentPct)>=0?"+":"")+N(x.currentPct)+'%)</span>':"";
