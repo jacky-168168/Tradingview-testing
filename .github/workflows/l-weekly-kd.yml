@@ -12,12 +12,17 @@ on:
     - cron: '30 9 * * 1'
 permissions:
   contents: write
+  pages: write
+  id-token: write
 concurrency:
   group: l-weekly-kd-research
   cancel-in-progress: false
 jobs:
   backtest:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
@@ -72,3 +77,13 @@ jobs:
             done
             [ "$ok" -eq 1 ] || exit 1
           fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload updated L site and results
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - name: Deploy L ranking with verified statistics
+        id: deployment
+        uses: actions/deploy-pages@v4
