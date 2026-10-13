@@ -53,10 +53,20 @@ class TestGPersistence(unittest.TestCase):
         self.assertEqual(audit["newTrades"]["n"],3)
         self.assertEqual(audit["overlappingSignalsSuppressed"],3)
     def test_segmentation_uses_prior_only(self):
-        rows=[{"persistence":{"past10Top20":p},"ret10":r} for p,r in [(0,3),(1,-2),(3,4),(4,6),(10,-1)]]
+        rows=[{"persistence":{"past10Top20":p},"ret10":r} for p,r in [(0,3),(1,-2),(3,4),(4,6),(6,8),(7,-3),(9,2),(10,-1)]]
         out=pocket_segment_stats(rows,10)
-        self.assertEqual(out["fresh"]["n"],1)
-        self.assertEqual(out["emerging_1_3"]["n"],2)
-        self.assertEqual(out["persistent_4plus"]["n"],2)
+        self.assertEqual(list(out),["fresh","repeat_1_3","repeat_4_6","repeat_7_9","repeat_10_plus"])
+        self.assertEqual([x["n"] for x in out.values()],[1,2,2,2,1])
+        self.assertEqual(out["fresh"]["avgGross"],3)
+        self.assertEqual(out["repeat_1_3"]["win"],50)
+        self.assertEqual(out["repeat_4_6"]["avgGross"],7)
+        self.assertEqual(out["repeat_7_9"]["avgGross"],-0.5)
+        self.assertEqual(out["repeat_10_plus"]["win"],0)
+    def test_bucket_boundaries_and_missing_returns(self):
+        rows=[{"persistence":{"past10Top20":p},"ret5":p/2} for p in range(11)]
+        rows += [{"persistence":{"past10Top20":6},"ret5":None},{"persistence":{"past10Top20":None},"ret5":99}]
+        out=pocket_segment_stats(rows,5)
+        self.assertEqual([x["n"] for x in out.values()],[1,3,3,3,1])
+        self.assertEqual(sum(x["n"] for x in out.values()),11)
 
 if __name__=="__main__":unittest.main()
