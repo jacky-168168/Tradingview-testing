@@ -167,6 +167,11 @@ function download(name,content,mime){
 function localNow(){
  const d=new Date(),z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,16);
 }
+if(typeof document.addEventListener==="function")document.addEventListener("tw:discord-import",function(ev){
+ const batch=ev?.detail;
+ if(!Array.isArray(batch)||batch.length===0)return;
+ doImport(JSON.stringify(batch.slice(0,500)));
+});
 $("manualTime").value=localNow();
 $("importText").addEventListener("click",()=>doImport($("inputEvents").value));
 $("fileEvents").addEventListener("change",async ev=>{
