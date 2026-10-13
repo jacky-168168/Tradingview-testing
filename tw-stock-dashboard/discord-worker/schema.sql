@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS discord_signals (
  symbol TEXT NOT NULL,
  signal TEXT NOT NULL CHECK (signal IN ('BOTTOM','TOP')),
  variant TEXT NOT NULL CHECK (variant IN ('SS','NORMAL')),
+ trend_gt_70 INTEGER NOT NULL DEFAULT 0 CHECK (trend_gt_70 IN (0,1)),
  price REAL NOT NULL CHECK (price > 0),
  timeframe TEXT,
  time_ms INTEGER NOT NULL
