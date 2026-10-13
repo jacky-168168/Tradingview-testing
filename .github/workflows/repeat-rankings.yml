@@ -49,7 +49,12 @@ jobs:
           if(a.models['G Pro'].snapshotDays!==idx.filter(z=>a.savedDates.includes(z.date)&&z.gProCount!=null).length)throw Error('G Pro snapshot count mismatch');
           if(a.version==='TWO_CALENDAR_MONTHS_FROZEN_PLUS_RECONSTRUCTED_G_V2'){
             const b=JSON.parse(fs.readFileSync(root+'data/research/g_history_reconstruction_2m/history.json','utf8'));
-            if(b.version!=='G_LIVE_DOUBLE_PERSIST_HISTORICAL_RECONSTRUCTION_V1'||b.referenceDate<a.referenceDate)throw Error('Backfill audit missing or outdated');
+            if(b.version!=='G_LIVE_DOUBLE_PERSIST_HISTORICAL_RECONSTRUCTION_V1'||b.referenceDate>a.referenceDate)throw Error('Backfill audit source version invalid or uses future observations');
+            const reconstructedDays=b.days||{},rebuiltKeys=Object.keys(reconstructedDays);
+            if(rebuiltKeys.some(d=>d>b.referenceDate))throw Error('Backfill contains records after its own reference date');
+            const frozenGDays=new Set(idx.filter(x=>a.savedDates.includes(x.date)&&x.gCount!=null).map(x=>x.date));
+            const expectedBackfilled=rebuiltKeys.filter(d=>d>=a.windowStart&&d<=a.referenceDate&&!frozenGDays.has(d));
+            if(expectedBackfilled.length!==a.models.G.reconstructedDays)throw Error('Backfill G reconstructed date count does not match provenance audit');
             if(a.models.G.reconstructedDays<30||a.models.G.snapshotDays<1)throw Error('Missing reconstructed and genuine G two-month dated coverage');
             if(a.models['G Pro'].reconstructedDays)throw Error('G Pro MUST remain genuine archival observations');
           }
