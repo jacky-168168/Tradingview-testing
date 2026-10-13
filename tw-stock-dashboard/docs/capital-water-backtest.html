@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>台股量化｜逆向資金水位三年回測</title><script src="./site-access.js"></script>
+<style>
+:root{--bg:#f4f6fa;--ink:#182237;--muted:#65758c;--line:#e2e8f0;--blue:#2563eb;--green:#15803d;--red:#b91c1c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 -apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif}.wrap{max-width:1250px;margin:auto;padding:16px}
+h1{font-size:26px;margin:0}h2{font-size:17px;margin:0 0 9px}h3{font-size:13px;margin:0 0 5px}.sub{color:var(--muted);font-size:12px}.nav{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.nav a{font-size:12px;font-weight:800;border:1px solid var(--line);border-radius:9px;background:#fff;text-decoration:none;color:var(--blue);padding:8px 11px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;margin-top:13px;box-shadow:0 2px 12px #33415506}.warn{padding:12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;color:#884f13;font-size:12px;line-height:1.85}
+.filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.filters label{font-size:12px;font-weight:850;color:#475569}.filters select{width:100%;display:block;margin-top:5px;padding:9px 10px;border:1px solid #ced9e6;border-radius:8px;background:#fff;color:#172033;font-size:13px;min-height:42px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.kpi{background:#f8fafc;border:1px solid #e8ecf2;padding:12px;border-radius:10px;min-width:0}
+.kpi span{display:block;font-size:11px;color:#64748b;font-weight:800}.kpi strong{font-size:24px;font-weight:950;display:block;margin-top:4px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.kpi small{font-size:11px;color:#64748b}
+.good{color:var(--green)}.bad{color:var(--red)}.scroller{overflow:auto}table{width:100%;min-width:720px;border-collapse:collapse}th,td{text-align:right;font-size:12px;border-bottom:1px solid #e9eef5;padding:10px 8px;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:#64748b;background:#f8fafc}tr.active{background:#eff6ff}tr[data-model]{cursor:pointer}tr[data-model]:hover{background:#e4f1ff}
+.legend{font-size:11px;display:flex;gap:12px;flex-wrap:wrap;color:#64748b;margin:6px 0}.legend b{color:#0f172a}
+.chart{display:block;width:100%;height:285px;background:#fcfdff;border:1px solid #dce5ef;border-radius:10px}
+details{border:1px solid #e2e8f0;border-radius:10px;padding:12px;margin-top:10px;background:#fbfdff}summary{font-weight:900;cursor:pointer}.detail{font-size:12px;color:#526177;line-height:1.9}
+a{color:var(--blue)}#status{font-size:12px;color:#536880}#alert{font-size:12px;color:#9a3412}
+@media(max-width:860px){.filters,.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.wrap{padding:9px}.card{padding:13px;margin-top:9px}h1{font-size:21px}.kpi{padding:10px}.kpi strong{font-size:21px}.filters{gap:7px}.chart{height:235px}}
+</style></head>
+<body><div class="wrap">
+<header><h1>💹 逆向資金水位｜三年回測</h1><div class="sub">大盤越漲現金越多、跌深預留較多買進額度——實證比較固定持股與逆向再平衡。</div><nav class="nav"><a href="./index.html">⌂ 主頁</a><a href="./position-sizing.html">💰 資金配置儀表板</a><a href="./backtest.html">📈 回測中心</a><a href="./market-methodology.html">研究方法</a></nav></header>
+<section class="card"><div class="warn"><b>研究限制：</b>標的是「加權指數價格」，不是可直接成交的 ETF 或包含股息的總報酬指數；持現金收益假設為 0。使用前一個完整交易日收盤訊號，下一個交易日收盤調整。已按模擬 ETF 買賣佣金、賣出交易稅及滑價扣成本。2026 年獨立呈現，但並非完全沒被研究者看過的盲測。沒有模擬 G 選股、Bottom/Top、期貨槓桿或實際零股成交。</div><p id="status" role="status">載入 2023～2026 歷史大盤資料中…</p></section>
+<section class="card"><h2>01｜回測條件</h2><div class="filters">
+<label>驗證期間<select id="period"><option value="holdout_2026">2026 年（時序保留測試）</option><option value="train_2024_2025">2024/04～2025/12</option><option value="whole">完整期（2024/04～2026/10）</option></select></label>
+<label>再平衡觸發差距<select id="band"><option value="0.05">5 個百分點（現行V2）</option><option value="0.10" selected>10 個百分點（減少交易）</option><option value="0.15">15 個百分點（低週轉）</option></select></label>
+<label>模擬交易成本<select id="cost"><option value="1" selected>含券商費用、ETF稅與滑價</option><option value="0">無交易成本（診斷）</option><option value="2">成本加倍（壓力測試）</option></select></label>
+<label>曲線顯示<select id="selected"><option value="original_gate">逆向 V2 + Risk 60 限制</option><option value="original_v2">逆向 V2 純水位</option><option value="fixed_40">固定 40% 股票</option><option value="fixed_60">固定 60% 股票</option><option value="buy_hold">指數 100% 滿倉</option></select></label>
+</div><p class="sub" style="margin-top:11px">初始資金新臺幣 100 萬。每段期間各自以 100 萬重啟帳戶；結果不能跨期直接相加。比較交易成本時，績效會重新完整計算。</p></section>
+<section class="card"><h2>02｜選擇策略的績效</h2><div class="kpis">
+<div class="kpi"><span>累積報酬</span><strong id="ret">—</strong><small id="final">期末資產 —</small></div>
+<div class="kpi"><span>最大回撤</span><strong id="dd">—</strong><small>高點至低點最大損失比例</small></div>
+<div class="kpi"><span>期間平均股票水位</span><strong id="exp">—</strong><small>其餘為假設零利息現金</small></div>
+<div class="kpi"><span>調整次數／費用</span><strong id="trades">—</strong><small id="fees">—</small></div>
+</div></section>
+<section class="card"><h2>03｜完整策略比較</h2><div class="sub">點選表格列可切換曲線。所有策略在相同期間、相同成本假設下評估。</div><div class="scroller"><table><thead><tr><th>策略名稱</th><th>累積報酬</th><th>年化</th><th>最大回撤</th><th>平均持股</th><th>調整次數</th><th>總交易成本</th><th>Sharpe*</th></tr></thead><tbody id="comparison"><tr><td colspan="8">計算中…</td></tr></tbody></table></div><p class="sub">*Sharpe 使用每日收盤資產變化、無風險利率 0；只作同一回測中的粗略比較。</p></section>
+<section class="card"><h2>04｜每日資金曲線</h2><div class="legend"><span><b>藍線</b> 所選資金配置</span><span><b>灰線</b> 100% 加權指數</span><span>本圖每一種策略都扣除相同交易成本假設。</span></div><svg id="chart" class="chart" viewBox="0 0 1000 285" preserveAspectRatio="none" role="img" aria-label="每日帳戶資產淨值比較"></svg><p class="sub" id="chartNote">等待資料。</p></section>
+<section class="card"><h2>05｜這個模型值得保留嗎？</h2><div id="evidence" class="detail">載入研究摘要中…</div><details><summary>查看正式 V2 水位門檻、交易規則與風險限制</summary><div class="detail"><p>逆向水位：距最近120個交易日最高「收盤價」下跌小於2%→股票30%；跌2～5%→40%；跌5～10%→50%；跌10～15%→65%；跌超過15%→80%。相對 MA20 高於 7%，水位上限 25%。這些是尚未證明最優的研究門檻，不是方舟閉源公式。主頁即時研究水位參考的120日前高可能是「盤中最高價」，本回測因完整歷史僅有指數收盤，所以使用120日最高收盤；兩者不能完全當作一樣。</p>
+<p>V2+Risk60：只有在上一個完整交易日的大盤 Risk Score≥60 且沒有明確頂部反轉警訊，才可以增加股票部位；不能買時不會強制把原有部位賣光，仍可依水位降低部位。新增水位交易至少與現有持股比例相差指定 5/10/15 個百分點才執行。</p>
+<p>買入費率 0.1425% 佣金 + 0.10% 滑價；賣出費率再加上 0.10% ETF 交易稅。未計配息、追蹤誤差、個別證券之零股手續費最低收費、現金利息、通膨、選擇權及融資利息。這是加權指數曝險情境回測，不是歷史真實 ETF 損益。</p></div></details>
+<div class="nav"><a target="_blank" rel="noopener noreferrer" href="./data/research/capital_water_backtest/summary.json">📄 下載機器可讀研究結果</a><a target="_blank" rel="noopener noreferrer" href="./data/research/g_regime_3y/market_risk_daily.json">歷史大盤 Risk Score 與價格</a><a target="_blank" rel="noopener noreferrer" href="./data/research/market_intelligence/history_delta.json">新交易日補充資料</a></div></section>
+<p class="sub">資料截止 2026/10/13（若原始資料日後新增，此頁重新載入也會依新檔重算）；版本 V1，靜態 GitHub Pages 自動計算；不提供自動交易功能。</p>
+</div><script src="./capital-water-backtest-engine.js"></script>
+<script>
+(function(){"use strict";const $=id=>document.getElementById(id),fmt=(v,n=2)=>Number.isFinite(Number(v))?Number(v).toLocaleString("zh-TW",{minimumFractionDigits:n,maximumFractionDigits:n}):"—",eng=window.CapitalWaterBacktest,models=["buy_hold","fixed_60","fixed_40","original_v2","original_gate"];let data=null;
+const windows={train_2024_2025:{start:"2024-04-15",end:"2025-12-31"},holdout_2026:{start:"2026-01-01",end:"2026-10-13"},whole:{start:"2024-04-15",end:"2026-10-13"}};
+function drawSVG(curve,baseline){
+ const svg=$("chart"),NS="http://www.w3.org/2000/svg";svg.replaceChildren();if(!curve?.series.length)return;
+ const points=[...curve.series.map(d=>d.equity),...baseline.series.map(d=>d.equity),1000000],lo=Math.min(...points)*.96,hi=Math.max(...points)*1.04,n=curve.series.length,px=i=>55+i*910/Math.max(n-1,1),py=x=>250-(x-lo)/(hi-lo)*210;
+ const node=(tag,attrs,text)=>{const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs||{}))e.setAttribute(k,v);if(text!=null)e.textContent=text;svg.append(e);return e};
+ for(let k=0;k<4;k++){const val=hi-(hi-lo)*k/3,y=py(val);node("line",{x1:54,y1:y,x2:968,y2:y,stroke:"#e2e8f0","stroke-width":1});node("text",{x:4,y:y+4,"font-size":13,fill:"#64748b"},Math.round(val/10000)+"萬")}
+ const path=(series)=>series.map((x,i)=>(i?"L":"M")+px(i).toFixed(1)+","+py(x.equity).toFixed(1)).join(" ");
+ node("path",{d:path(baseline.series),fill:"none",stroke:"#94a3b8","stroke-width":2.2,"stroke-linejoin":"round"});node("path",{d:path(curve.series),fill:"none",stroke:"#2563eb","stroke-width":3.1,"stroke-linejoin":"round"});
+ node("text",{x:55,y:276,fill:"#64748b","font-size":13},curve.start);node("text",{x:870,y:276,fill:"#64748b","font-size":13},curve.end);
+ $("chartNote").textContent=fmt(curve.final,0)+" 元 vs 滿倉 "+fmt(baseline.final,0)+" 元；帳戶淨值以當日收盤價逐日計算，期間以 100 萬重新起算。";
+}
+function evaluate(){
+ if(!data)return;
+ const win=windows[$("period").value],band=Number($("band").value),multiple=Number($("cost").value),opts={...win,band,buyFee:eng.DEFAULT_COST.buy*multiple,sellFee:eng.DEFAULT_COST.sell*multiple};
+ const result=new Map(models.map(id=>[id,eng.simulate(data,id,opts)])),sel=$("selected").value,now=result.get(sel),base=result.get("buy_hold");
+ $("ret").textContent=(now.totalReturn>=0?"+":"")+fmt(now.totalReturn,2)+"%";$("ret").className=now.totalReturn>=0?"good":"bad";$("final").textContent="期末資產 "+fmt(now.final,0)+" 元";
+ $("dd").textContent="-"+fmt(now.maxDrawdown,2)+"%";$("exp").textContent=fmt(now.meanExposure,1)+"%";$("trades").textContent=now.tradeCount+" 次";$("fees").textContent="模擬交易成本 "+fmt(now.fees,0)+" 元";
+ const tbody=$("comparison");tbody.replaceChildren();for(const id of models){
+  const x=result.get(id),tr=document.createElement("tr");tr.dataset.model=id;if(id===sel)tr.className="active";for(const val of [x.label,(x.totalReturn>=0?"+":"")+fmt(x.totalReturn,2)+"%",fmt(x.cagr,2)+"%","-"+fmt(x.maxDrawdown,2)+"%",fmt(x.meanExposure,1)+"%",x.tradeCount,fmt(x.fees,0)+"元",fmt(x.sharpe,2)]){
+   const td=document.createElement("td");td.textContent=String(val);tr.append(td)
+  }tr.onclick=()=>{$("selected").value=id;evaluate()};tbody.append(tr);
+ }
+ drawSVG(now,base);
+ const gate=result.get("original_gate"),v2=result.get("original_v2"),forty=result.get("fixed_40"),sixty=result.get("fixed_60");
+ $("evidence").textContent="這一期：逆向 V2 累積報酬 "+fmt(v2.totalReturn)+"%、最大回撤 "+fmt(v2.maxDrawdown)+"%；加上 Risk Score 低分不加倉，報酬 "+fmt(gate.totalReturn)+"%、最大回撤 "+fmt(gate.maxDrawdown)+"%。固定40%及60%的報酬分別為 "+fmt(forty.totalReturn)+"% 和 "+fmt(sixty.totalReturn)+"%。高持股通常在單邊上漲期間較有利；Risk 限制可能降低風險也會錯過反彈。不能僅根據此段歷史決定最佳比例。";
+}
+async function load(){
+ try{
+ const paths=["./data/research/g_regime_3y/market_risk_daily.json","./data/research/market_intelligence/history_delta.json"],files=await Promise.all(paths.map(async u=>{const r=await fetch(u+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error(u+" HTTP "+r.status);return r.json()}));
+ data=eng.mergeSeries(files[0],files[1]);const a=data[0],b=data.at(-1);
+ $("status").textContent="已核實 "+data.length+" 個市場交易日｜資料範圍 "+a.date+"～"+b.date+"｜按前日已知訊號、次日收盤再平衡。";
+ evaluate();
+ }catch(err){$("status").textContent="歷史資料無法完整核實："+err.message;}}
+for(const id of ["period","band","cost","selected"])$(id).addEventListener("change",evaluate);load();
+})();
+</script></body></html>
