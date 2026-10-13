@@ -18,8 +18,8 @@ function render(){
  const unique=new Map();
  for(const e of latest){
   const k=[e.channelId,e.symbol,e.signal,e.price,Math.floor(e.time/60000)].join("|");
-  if(!unique.has(k))unique.set(k,{...e,variants:new Set([e.variant])});
-  else unique.get(k).variants.add(e.variant);
+  if(!unique.has(k))unique.set(k,{...e,variants:new Set([e.variant]),trendGt70:e.signal==="BOTTOM"&&(e.variant==="SS"||e.trendGt70===true)});
+  else {const prior=unique.get(k);prior.variants.add(e.variant);prior.trendGt70=prior.trendGt70||(e.signal==="BOTTOM"&&(e.variant==="SS"||e.trendGt70===true));}
  }
  const groups=[...unique.values()].sort((a,b)=>b.time-a.time),ready=groups.filter(e=>e.timeframe==="2");
  $("discordCount").textContent=groups.length+" 組／已核實 2 分鐘 "+ready.length+" 組";
@@ -28,7 +28,7 @@ function render(){
   const signal=e.variants.has("SS")&&e.variants.has("NORMAL")?"SS＋一般 "+e.signal:e.variants.has("SS")?"SS "+e.signal:e.signal;
   const d=new Date(e.time).toLocaleString("zh-TW",{timeZone:"Asia/Taipei",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false});
   const tf=e.timeframe==="2"?"2 分（已確認）":e.timeframe==="5"?"5 分":"週期未核實";
-  return '<tr><td>'+esc(d)+'</td><td>'+esc(e.channel)+'</td><td><b>'+esc(e.symbol)+'</b></td><td class="'+(e.signal==="BOTTOM"?"green":"red")+'">'+esc(signal)+'</td><td class="num">'+esc(e.price)+'</td><td>'+esc(tf)+'</td><td class="orange">Trend 未提供</td></tr>';
+  return '<tr><td>'+esc(d)+'</td><td>'+esc(e.channel)+'</td><td><b>'+esc(e.symbol)+'</b></td><td class="'+(e.signal==="BOTTOM"?"green":"red")+'">'+esc(signal)+'</td><td class="num">'+esc(e.price)+'</td><td>'+esc(tf)+'</td><td class="orange">'+(e.trendGt70?"Trend >70 已確認":"Trend 未確認")+'</td></tr>';
  }).join(""):'<tr><td colspan="7">未收到任何可解析的訊號。可以先核對 Discord Bot 權限、頻道是否有新訊息，以及後端同步狀態。</td></tr>';
 }
 async function refresh(){
@@ -63,11 +63,13 @@ $("discordImport").addEventListener("click",()=>{
  const unique=new Map();
  for(const e of records){
   const key=[e.time,e.symbol,e.signal,e.price].join("|");
-  if(!unique.has(key))unique.set(key,{time:e.time,symbol:e.symbol,signal:e.signal,price:e.price,trend:e.trend??null,g:null,timeframe:"2"});
+  const pass=e.signal==="BOTTOM"&&(e.variant==="SS"||e.trendGt70===true);
+  if(!unique.has(key))unique.set(key,{time:e.time,symbol:e.symbol,signal:e.signal,price:e.price,trend:null,trendGt70:pass,g:null,timeframe:"2"});
+  else if(pass)unique.get(key).trendGt70=true;
  }
  if(typeof CustomEvent==="undefined"){message("此瀏覽器不支援匯入事件");return}
  document.dispatchEvent(new CustomEvent("tw:discord-import",{detail:[...unique.values()]}));
- message("已提交 "+unique.size+" 筆 2 分鐘事件至紙上模擬。Discord 未提供 Trend，B/C 策略不會擅自放行。");
+ message("已提交 "+unique.size+" 筆 2 分鐘事件。SS Bottom 代表 Trend >70，普通 Bottom 不會自動當成 Trend >70。");
 });
 try{const stored=localStorage.getItem("tw-discord-worker-base-v1");if(stored)$("discordWorker").value=stored}catch(e){}
 render();
