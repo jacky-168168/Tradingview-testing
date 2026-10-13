@@ -37,7 +37,7 @@ a{color:var(--blue)}#status{font-size:12px;color:#536880}#alert{font-size:12px;c
 <p>V2+Risk60：只有在上一個完整交易日的大盤 Risk Score≥60 且沒有明確頂部反轉警訊，才可以增加股票部位；不能買時不會強制把原有部位賣光，仍可依水位降低部位。新增水位交易至少與現有持股比例相差指定 5/10/15 個百分點才執行。</p>
 <p>買入費率 0.1425% 佣金 + 0.10% 滑價；賣出費率再加上 0.10% ETF 交易稅。未計配息、追蹤誤差、個別證券之零股手續費最低收費、現金利息、通膨、選擇權及融資利息。這是加權指數曝險情境回測，不是歷史真實 ETF 損益。</p></div></details>
 <div class="nav"><a target="_blank" rel="noopener noreferrer" href="./data/research/capital_water_backtest/summary.json">📄 下載機器可讀研究結果</a><a target="_blank" rel="noopener noreferrer" href="./data/research/g_regime_3y/market_risk_daily.json">歷史大盤 Risk Score 與價格</a><a target="_blank" rel="noopener noreferrer" href="./data/research/market_intelligence/history_delta.json">新交易日補充資料</a></div></section>
-<p class="sub">資料截止 2026/10/13（若原始資料日後新增，此頁重新載入也會依新檔重算）；版本 V1，靜態 GitHub Pages 自動計算；不提供自動交易功能。</p>
+<p class="sub">本次研究績效評估固定截止 2026/10/13；即使歷史資料後續增加，回測期間也不會自動延長。需要延長時，須重新計算、核對並更新研究版本。版本 V1；不提供自動交易功能。</p>
 </div><script src="./capital-water-backtest-engine.js"></script>
 <script>
 (function(){"use strict";const $=id=>document.getElementById(id),fmt=(v,n=2)=>Number.isFinite(Number(v))?Number(v).toLocaleString("zh-TW",{minimumFractionDigits:n,maximumFractionDigits:n}):"—",eng=window.CapitalWaterBacktest,models=["buy_hold","fixed_60","fixed_40","original_v2","original_gate"];let data=null;
@@ -71,7 +71,7 @@ async function load(){
  try{
  const paths=["./data/research/g_regime_3y/market_risk_daily.json","./data/research/market_intelligence/history_delta.json"],files=await Promise.all(paths.map(async u=>{const r=await fetch(u+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error(u+" HTTP "+r.status);return r.json()}));
  data=eng.mergeSeries(files[0],files[1]);const a=data[0],b=data.at(-1);
- $("status").textContent="已核實 "+data.length+" 個市場交易日｜資料範圍 "+a.date+"～"+b.date+"｜按前日已知訊號、次日收盤再平衡。";
+ $("status").textContent="已核實 "+data.length+" 個市場交易日｜載入歷史 "+a.date+"～"+b.date+"｜本版績效固定評估至 2026-10-13｜前日訊號、次日收盤再平衡。";
  evaluate();
  }catch(err){$("status").textContent="歷史資料無法完整核實："+err.message;}}
 for(const id of ["period","band","cost","selected"])$(id).addEventListener("change",evaluate);load();
