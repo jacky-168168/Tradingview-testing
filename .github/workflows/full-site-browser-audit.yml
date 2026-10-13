@@ -1,0 +1,32 @@
+name: Full Website Browser Audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [audit/full-site-e2e-2026-10-13]
+permissions:
+  contents: read
+jobs:
+  all-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install test browser
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Serve exact local Pages files
+        run: |
+          python3 -m http.server 8765 --directory tw-stock-dashboard/docs > /tmp/tw-full-site-http.log 2>&1 &
+          sleep 2
+      - name: Audit 23 pages desktop and mobile, verify core interactions
+        run: node tw-stock-dashboard/tests/test_full_site_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-site-audit-results
+          path: /tmp/full_site_browser_audit.json
+          if-no-files-found: ignore
