@@ -1303,5 +1303,5 @@ alertcondition(strongBottom,"★★★ 強勢 BOTTOM","{{ticker}} 強勢 BOTTOM�
 grpBridge="Dashboard JSON Bridge"
 bridgeOn=input.bool(true,"啟用 Bottom/Top JSON 快訊",group=grpBridge)
 if bridgeOn and barstate.isconfirmed and (bottomEv or topEv)
-    string bridgeMsg='{"time":'+str.tostring(time)+',"symbol":"'+syminfo.tickerid+'","signal":"'+(bottomEv?"BOTTOM":"TOP")+'","price":'+str.tostring(close,format.mintick)+',"trend":'+str.tostring(strongTrendScore,"#.##")+',"timeframe":"'+timeframe.period+'"}'
+    string bridgeMsg='{"time":'+str.tostring(time_close)+',"symbol":"'+syminfo.tickerid+'","signal":"'+(bottomEv?"BOTTOM":"TOP")+'","price":'+str.tostring(close,format.mintick)+',"trend":'+str.tostring(strongTrendScore,"#.##")+',"timeframe":"'+timeframe.period+'"}'
     alert(bridgeMsg,alert.freq_once_per_bar_close)
