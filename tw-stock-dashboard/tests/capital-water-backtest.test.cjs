@@ -8,7 +8,7 @@ test("merge refuses fake/missing data and sorts distinct dates",()=>{
  assert.ok(x[0].date<x.at(-1).date);
 });
 test("model is countercyclical when the same previous high is fixed",()=>{
- const r=mock(130);r[129].index=100;
+ const r=mock(130);for(let i=0;i<129;i++)r[i].index=100;r[129].index=100;
  let x=e.targetAt(r,129,"original_v2");
  assert.equal(x.target,30);
  r[129].index=94;
@@ -51,7 +51,7 @@ test("higher trade band reduces churn for oscillating target",()=>{
  assert.ok(a.tradeCount>=b.tradeCount);
 });
 test("missing warmup excludes observations rather than retroactively inventing highs",()=>{
- const r=mock(180),z=e.simulate(r,"long_250",{start:r[130].date,end:r[175].date});
+ const r=mock(180);
  assert.throws(()=>e.targetAt(r,130,"badmodel"));
- assert.equal(z.tradingDays,0);
+ assert.throws(()=>e.simulate(r,"long_250",{start:r[130].date,end:r[175].date}),/Insufficient rolling-history warmup/);
 });
