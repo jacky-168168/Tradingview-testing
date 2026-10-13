@@ -58,14 +58,14 @@ summary{cursor:pointer;font-weight:900;font-size:13px}details p{font-size:12px;c
 <body><div class="wrap">
 <header><div><div class="eyebrow">台股量化 · 資產風險與分批控制</div><h1>💰 股票／ETF 資金配置儀表板</h1><div class="sub">從「可不可以買」進一步計算「最多多少、首批多少、什麼時候不能加碼」。</div></div>
 <nav><a href="./index.html">⌂ 返回大盤主頁</a><a href="./selections.html">📋 G 選股</a><a href="./trade-plan.html">🧮 詳細分批計算</a></nav></header>
-<section class="card hero" aria-label="大盤資金概況"><div class="head"><div><div class="eyebrow">01 / 大盤資金水位</div><h2>先確認總資金能承擔多少股票曝險</h2></div><button id="refreshData" class="button" type="button">↻ 更新大盤資料</button></div>
+<section class="card hero" aria-label="大盤資金概況"><div class="head"><div><div class="eyebrow">01 / 逆向價格位階 × 獨立風控</div><h2>漲多留現金、跌深預備布局；是否能買另看風控</h2></div><button id="refreshData" class="button" type="button">↻ 更新大盤資料</button></div>
 <div id="dataStatus" class="sub" role="status">載入 GitHub 收盤資料中…</div>
 <div class="grid" style="margin-top:12px">
-<div class="kpi accent"><label>市場研究持股水位</label><strong id="marketTarget">—</strong><div class="strip"><span id="allocationFill" style="width:0%"></span></div></div>
-<div class="kpi"><label>現金保留比例</label><strong id="marketReserve">—</strong><small>未經歷史回測的研究模型</small></div>
+<div class="kpi accent"><label>逆向預備股票水位</label><strong id="marketTarget">—</strong><div class="strip"><span id="allocationFill" style="width:0%"></span></div></div>
+<div class="kpi"><label>逆向準備現金比例</label><strong id="marketReserve">—</strong><small>未經歷史回測的研究模型</small></div>
 <div class="kpi"><label>現有持股市值</label><strong id="invested">—</strong><small>依你下方的持股輸入</small></div>
-<div class="kpi"><label>市場剩餘可配置額度</label><strong id="remainingMarket">—</strong><small>不等同於今日能直接買進</small></div>
-</div><p id="marketDate" class="section-note">等待有日期的大盤資料。</p></section>
+<div class="kpi"><label>尚待配置的預備額度</label><strong id="remainingMarket">—</strong><small>不等同於今日能直接買進</small></div>
+</div><p id="marketDate" class="section-note">等待有日期的大盤資料。</p><p id="marketNote" class="section-note">逆向配置僅是預留資金的方向，不表示立即低接。</p></section>
 <section class="card"><div class="head"><div><div class="eyebrow">02 / 投資組合</div><h2>你目前有多少可動用資金？</h2></div><div class="flex"><button id="addHolding" class="button primary" type="button">＋ 新增持股</button><button id="clearHoldings" class="button red" type="button">清除持股</button></div></div>
 <div class="fields three">
 <label class="field">資產總額（元）<input id="capital" type="number" min="1000" step="10000" value="1000000" inputmode="numeric"></label>
@@ -121,7 +121,7 @@ summary{cursor:pointer;font-weight:900;font-size:13px}details p{font-size:12px;c
 <p id="feedback" role="status" class="section-note">所有資金與持股均只在目前瀏覽器畫面計算，不會上傳網站或寫進 GitHub。</p>
 </section>
 <section class="card"><details><summary>公式說明、價值區限制與風險揭露</summary>
-<p>總帳戶股票額度＝總資金×當前動態市場股票水位；單檔可配置上限＝「大盤剩餘額度、單檔類型上限、同族群剩餘額度、正2集中額度、單筆不利波動風險預算換算上限」五者最小值，扣除現有同檔曝險。每筆參考風險預算約為資產 0.3–0.6%，依標的類型而異。模型屬自訂未回測起始值，非方舟程式碼。</p>
+<p>逆向水位依大盤相對前120日高點的跌幅階梯決定：越接近高點，保留現金越高；跌深則提高預備股票配置。但真正買進仍由大盤 Risk Score 與 Bottom／SS Bottom 控制。這些是自訂的研究參數，並非方舟公開公式。</p><p>總帳戶預備股票額度＝總資金×當前逆向價格預備水位；單檔可配置上限＝「大盤剩餘額度、單檔類型上限、同族群剩餘額度、正2集中額度、單筆不利波動風險預算換算上限」五者最小值，扣除現有同檔曝險。每筆參考風險預算約為資產 0.3–0.6%，依標的類型而異。模型屬自訂未回測起始值，非方舟程式碼。</p>
 <p>用股票價格的 60 日均線 Z-score 只可描述相對位置，沒有企業內在價值；ETF 應另外檢視淨值、折溢價、指數成分與費用率。CPO、電子股票和科技 ETF 的「重複曝險」目前以同產業標籤作保守代理，不是成分股加權相關係數。正2 ETF 的風險也不能簡化為兩倍固定收益，仍有波動耗損與追蹤誤差。</p>
 <p>所有建議都是資料日對齊的研究額度，不代表實際可成交價格。若沒有確認 Bottom 或 ETF 的人工訊號、或 Risk Score 低於既有進場門檻，本頁只允許情境試算，不出現實際首批買進股數。借鏡市場曝險、風險預算與價格位階概念，但不是方舟的閉源算法，也沒有暗示任何歷史超額績效。</p>
 </details></section>
