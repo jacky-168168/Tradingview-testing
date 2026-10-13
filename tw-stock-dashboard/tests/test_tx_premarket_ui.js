@@ -1,18 +1,26 @@
-/* Regression: real dated 2026/10/08 TAIFEX paired night, next trade day 10/12.
- * Never call a completed night price the actual 08:58 tick.
+/* Regression: pinned 10/08 risk snapshot plus a SYNTHETIC 10/08 paired TX
+ * night scenario (-1.305%) and separate current, real TX publication checks.
+ * Never confuse a completed night with a live 08:58 quote.
  */
 const assert=require("assert"),fs=require("fs"),path=require("path");
 const root=path.resolve(__dirname,".."),base=path.join(root,"docs");
 const model=require(path.join(base,"market-command.js"));
 const html=fs.readFileSync(path.join(base,"index.html"),"utf8");
 const latest=JSON.parse(fs.readFileSync(path.join(base,"data/daily/2026-10-08.json"),"utf8"));
-const future=JSON.parse(fs.readFileSync(path.join(base,"data/futures/latest.json"),"utf8"));
+const publishedFutures=JSON.parse(fs.readFileSync(path.join(base,"data/futures/latest.json"),"utf8"));
+assert.strictEqual(publishedFutures.quality,"paired-day-night");
+assert.strictEqual(publishedFutures.day.date,publishedFutures.asOfDate.replace(/-/g,""));
+assert.strictEqual(publishedFutures.night.date,publishedFutures.day.date);
+assert.strictEqual(publishedFutures.night.contract,publishedFutures.day.contract);
+const future={asOfDate:"2026-10-08",contract:"202610",quality:"paired-day-night",
+ day:{date:"20261008",contract:"202610",close:10000},
+ night:{date:"20261008",contract:"202610",close:9869.5,reportQueryDate:"2026-10-12"}};
 const begin=html.indexOf("function sameContractTX(f)"),end=html.indexOf("function renderOpeningPreview(){",begin);
 assert(begin>0&&end>begin,"Original same-contract daily/overnight rule must still be present");
 const extract=new Function(html.slice(begin,end)+"\nreturn {sameContractTX,overnightPreviewModel};");
 const fns=extract();
 const c=fns.sameContractTX(future);
-assert(c,"2026-10-08 should contain genuine same-month TX day+completed night");
+assert(c,"Synthetic fixture must pair 10/08 same-contract TX day and night");
 assert.strictEqual(future.asOfDate,"2026-10-08");
 assert.strictEqual(future.night.reportQueryDate,"2026-10-12");
 assert(Math.abs(c.pct-(-1.305))<.01,c.pct);
@@ -59,4 +67,4 @@ assert(pendingAtTwo&&pendingAtTwo.level==="WAIT");
 assert.strictEqual(model.postOpenState(latest.risk,at(14,30)),null);
 const validToday=model.evaluate({...latest.risk,date:"2026-10-12"},null,at(16,51));
 assert.strictEqual(validToday.stale,false,"Matching official cash date is current");
-console.log("PASS 2026-10-12 08:58 official cash46 and completed-night -1.305 -> provisional31; stale/mismatch/realtime and positive-buy guardrails");
+console.log("PASS pinned cash risk46 + synthetic TX -1.305 -> preopen31; live futures date parity, stale/mismatch and positive-buy guardrails");
