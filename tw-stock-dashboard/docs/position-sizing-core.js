@@ -107,7 +107,7 @@ function size(input,market){
  const firstShares=canBuy?Math.floor(firstPotential/price):0;
  const remaining=Math.max(0,limit-first),maxShares=Math.floor(limit/price);
  const riskAtMax=limit*stressPct;
- const rest=1-pct,ladderWeights=pct>0?[pct,rest*.4,rest*.35,rest*.25]:[.25,.25,.25,.25],ladder=ladderWeights.map((fraction,i)=>{
+ const rest=1-pct,ladderWeights=zone==="hot"?[0,0,0,0]:pct>0?[pct,rest*.4,rest*.35,rest*.25]:[0,0,0,0],ladder=ladderWeights.map((fraction,i)=>{
   const budget=cash(limit*fraction),drop=atr!==null&&atr>0?Math.max(2,Math.min(8,atr*1.1)):kind==="leveraged-etf"?7:4;
   return {step:i+1,referencePrice:Math.max(.01,price*Math.pow(1-drop/100,i)),budget,purpose:i===0?"首次進場":i===1?"二批候補":i===2?"三批候補":"末批備援",trigger:i===0?"必須先有交易訊號":"必須有新 Bottom 訊號且跌幅達門檻",dropPct:drop};
  });
