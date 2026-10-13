@@ -1,0 +1,197 @@
+{
+  "title": "TWSE credit trading vs Taiwan Weighted Index preliminary 23-session audit",
+  "createdAt": "2026-10-13",
+  "source": {
+    "screenshot": "User-provided 證券進出行情 screenshot 2026-10-13 (manual transcription)",
+    "indexArchive": "tw-stock-dashboard/docs/data/research/g_regime_3y/market_risk_daily.json",
+    "indexSHA": "6b30b6c3f498f6f89ef6951e6ccfd9ed24c013a7",
+    "indexLatest": "tw-stock-dashboard/docs/data/research/market_intelligence/history_delta.json",
+    "indexDeltaSHA": "f919457824b87c6cc8eaca2ff12b5ed94cc5c482",
+    "officialReference": "https://www.twse.com.tw/zh/trading/margin/mi-margn.html",
+    "officialReportExample": "https://www.twse.com.tw/exchangeReport/MI_MARGN?response=html&selectType=MS",
+    "indexCloseCheck": "23/23 match independently archived TAIEX closing price to NT$ 0.05"
+  },
+  "coverage": {
+    "n": 23,
+    "dates": [
+      "2026-09-08",
+      "2026-10-13"
+    ],
+    "scope": "TWSE listed credit data only; not TWSE+TPEx; missing maintenance history"
+  },
+  "rules": {
+    "sameDay": "Descriptive only. Margin data were not public at TAIEX close.",
+    "nextDay": "Use T credit figures only after evening publication to correlate T+1 close-vs-T close return.",
+    "next5": "5 overlapping daily sessions forward close return; apparent p values understate dependence.",
+    "multipleComparisons": "12 exploratory Pearson tests, conservative Bonferroni threshold 0.00417; none qualify."
+  },
+  "metrics": [
+    {
+      "field": "margin_delta_100m_twd",
+      "name": "融資增減（億元）",
+      "horizonTradingDays": 0,
+      "n": 23,
+      "rPearson": 0.405,
+      "pValueApproxFromStudentT": 0.055,
+      "pBonferroniUpperBound": 0.66,
+      "isPredictiveCandidate": false,
+      "validated": false
+    },
+    {
+      "field": "margin_delta_100m_twd",
+      "name": "融資增減（億元）",
+      "horizonTradingDays": 1,
+      "n": 22,
+      "rPearson": 0.0354,
+      "pValueApproxFromStudentT": 0.873,
+      "pBonferroniUpperBound": 1,
+      "isPredictiveCandidate": true,
+      "validated": false
+    },
+    {
+      "field": "margin_delta_100m_twd",
+      "name": "融資增減（億元）",
+      "horizonTradingDays": 5,
+      "n": 18,
+      "rPearson": 0.1417,
+      "pValueApproxFromStudentT": 0.575,
+      "pBonferroniUpperBound": 1,
+      "isPredictiveCandidate": true,
+      "validated": false
+    },
+    {
+      "field": "short_delta_lots",
+      "name": "融券增減（張）",
+      "horizonTradingDays": 0,
+      "n": 23,
+      "rPearson": -0.0774,
+      "pValueApproxFromStudentT": 0.725,
+      "pBonferroniUpperBound": 1,
+      "isPredictiveCandidate": false,
+      "validated": false
+    },
+    {
+      "field": "short_delta_lots",
+      "name": "融券增減（張）",
+      "horizonTradingDays": 1,
+      "n": 22,
+      "rPearson": 0.3056,
+      "pValueApproxFromStudentT": 0.167,
+      "pBonferroniUpperBound": 1,
+      "isPredictiveCandidate": true,
+      "validated": false
+    },
+    {
+      "field": "short_delta_lots",
+      "name": "融券增減（張）",
+      "horizonTradingDays": 5,
+      "n": 18,
+      "rPearson": 0.4592,
+      "pValueApproxFromStudentT": 0.055,
+      "pBonferroniUpperBound": 0.66,
+      "isPredictiveCandidate": true,
+      "validated": false
+    },
+    {
+      "field": "margin_maintenance_pct",
+      "name": "融資維持率（%）",
+      "horizonTradingDays": 0,
+      "n": 23,
+      "rPearson": 0.3169,
+      "pValueApproxFromStudentT": 0.141,
+      "pBonferroniUpperBound": 1,
+      "isPredictiveCandidate": false,
+      "validated": false
+    },
+    {
+      "field": "margin_maintenance_pct",
+      "name": "融資維持率（%）",
+      "horizonTradingDays": 1,
+      "n": 22,
+      "rPearson": -0.1303,
+      "pValueApproxFromStudentT": 0.564,
+      "pBonferroniUpperBound": 1,
+      "isPredictiveCandidate": true,
+      "validated": false
+    },
+    {
+      "field": "margin_maintenance_pct",
+      "name": "融資維持率（%）",
+      "horizonTradingDays": 5,
+      "n": 18,
+      "rPearson": -0.4409,
+      "pValueApproxFromStudentT": 0.067,
+      "pBonferroniUpperBound": 0.804,
+      "isPredictiveCandidate": true,
+      "validated": false
+    },
+    {
+      "field": "short_margin_ratio_pct",
+      "name": "券資比（%）",
+      "horizonTradingDays": 0,
+      "n": 23,
+      "rPearson": 0.3862,
+      "pValueApproxFromStudentT": 0.069,
+      "pBonferroniUpperBound": 0.8280000000000001,
+      "isPredictiveCandidate": false,
+      "validated": false
+    },
+    {
+      "field": "short_margin_ratio_pct",
+      "name": "券資比（%）",
+      "horizonTradingDays": 1,
+      "n": 22,
+      "rPearson": 0.4686,
+      "pValueApproxFromStudentT": 0.028,
+      "pBonferroniUpperBound": 0.336,
+      "isPredictiveCandidate": true,
+      "validated": false
+    },
+    {
+      "field": "short_margin_ratio_pct",
+      "name": "券資比（%）",
+      "horizonTradingDays": 5,
+      "n": 18,
+      "rPearson": -0.1005,
+      "pValueApproxFromStudentT": 0.692,
+      "pBonferroniUpperBound": 1,
+      "isPredictiveCandidate": true,
+      "validated": false
+    }
+  ],
+  "reconciliationWarnings": [
+    {
+      "date": "2026-09-17",
+      "field": "short_delta_lots",
+      "snapshot": 18904,
+      "adjacentDifference": 19240
+    },
+    {
+      "date": "2026-09-21",
+      "field": "short_delta_lots",
+      "snapshot": 8619,
+      "adjacentDifference": 8617
+    },
+    {
+      "date": "2026-10-01",
+      "field": "margin_delta_100m_twd",
+      "snapshot": 75.7,
+      "adjacentDifference": 76.15
+    },
+    {
+      "date": "2026-10-01",
+      "field": "short_delta_lots",
+      "snapshot": -1972,
+      "adjacentDifference": -1974
+    },
+    {
+      "date": "2026-10-12",
+      "field": "short_delta_lots",
+      "snapshot": 4243,
+      "adjacentDifference": 4240
+    }
+  ],
+  "decision": "DO_NOT_DEPLOY_INTO_SCORE_OR_EXPOSURE",
+  "reason": "23 sessions provide no reliable out-of-sample or robust cost-adjusted next-session predictive evidence. Only observed same-day margin-flow association (r≈0.405), non-actionable after-hours. Best nominal next-day ratio association is not significant after 12-test correction.",
+  "nextStep": "Official TWSE MI_MARGN historical backfill over 2023-2026 followed by expanding walk-forward 2026 holdout, multiple-testing controls, regime adjustment and comparison against existing Risk Score + countercyclical exposure."
+}
