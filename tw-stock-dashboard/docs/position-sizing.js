@@ -78,6 +78,7 @@ function recalc(){
  $("invested").textContent=money(x.invested);
  $("remainingMarket").textContent=money(x.marketLeft);
  $("maxPosition").textContent=money(x.limit);
+ $("remainingBudget").textContent=money(x.remaining);
  $("maxShares").textContent=number(x.maxShares)+" 股";
  $("budgetRisk").textContent=money(x.riskMoney);
  $("stress").textContent=number(x.stressPct*100,1)+"%";
