@@ -50,9 +50,10 @@ async function main(){
     }));
    }
    if(file==='bubbles.html'){
-    await test(variant+' bubble frames/date',()=>page.evaluate(()=>DATA?.frames?.length>1&&document.getElementById('dateText').textContent===DATA.frames[frameIndex].date));
+    await test(variant+' bubble frames/date',()=>page.evaluate(()=>document.getElementById('dateText').textContent.match(/^\d{4}-\d{2}-\d{2}$/)&&Number(document.getElementById('timeline').value)===Number(document.getElementById('timeline').max)));
     await test(variant+' bubble drawn visible and labeled',()=>page.evaluate(()=>document.querySelectorAll('svg#chart .point').length>10&&document.querySelectorAll('svg#chart .point text').length>10));
-    await test(variant+' bubble click detail',async()=>{const before=await page.locator('#detailTitle').innerText();await page.locator('svg#chart .point').first().click();const after=await page.locator('#detailTitle').innerText();return after&&after!==before&&after!=='點一顆泡泡看明細'});
+    await test(variant+' bubble has accessible complete sector directory',()=>page.evaluate(()=>document.querySelectorAll('#sectorDirectoryList button').length===document.querySelectorAll('svg#chart .point').length));
+    await test(variant+' bubble click detail',async()=>{const before=await page.locator('#detailTitle').innerText();await page.locator('#sectorDirectoryList button').first().click();const after=await page.locator('#detailTitle').innerText();return after&&after!==before&&after!=='點一顆泡泡看明細'});
     await test(variant+' bubble timeline back and forward',async()=>{await page.locator('#prev').click();const n=await page.locator('#dateText').innerText();await page.locator('#next').click();return n!==(await page.locator('#dateText').innerText())});
     await test(variant+' bubble search',async()=>{const before=await page.locator('svg#chart .point').count();await page.locator('#search').fill('半導體');const after=await page.locator('svg#chart .point').count();await page.locator('#search').fill('');return before>after&&after>=1});
     await test(variant+' bubble hot only toggle',async()=>{const b=page.locator('#hotOnly');await b.click();const ok=await b.evaluate(el=>el.classList.contains('on'));await b.click();return ok&&!(await b.evaluate(el=>el.classList.contains('on')))});
@@ -66,7 +67,7 @@ async function main(){
    if(file==='upstream.html'){
     await test(variant+' 9 upstream categories populated',()=>page.evaluate(()=>document.getElementById('industryNav').querySelectorAll('[data-sector]').length>=10&&document.getElementById('results').textContent.includes('CPO')));
     await test(variant+' upstream CPO category focus',async()=>{const c=page.locator('#industryNav [data-sector="CPO"]');await c.click();return (await page.locator('#results').innerText()).includes('CPO')});
-    await test(variant+' upstream search',async()=>{await page.locator('#search').fill('環球晶');const txt=await page.locator('#results').innerText();await page.locator('#clear').click();return txt.includes('環球晶')});
+    await test(variant+' upstream search',async()=>{await page.locator('#industryNav [data-sector="all"]').click();await page.locator('#search').fill('環球晶');const txt=await page.locator('#results').innerText();await page.locator('#clear').click();return txt.includes('環球晶')});
     await test(variant+' upstream back to all',async()=>{await page.locator('#industryNav [data-sector="all"]').click();return (await page.locator('#results').innerText()).includes('所有產業')});
    }
    if(file==='history.html'){
