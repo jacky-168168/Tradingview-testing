@@ -20,7 +20,7 @@ async function main(){
    const x=document.getElementById('officialTb').querySelectorAll('tr').length;
    return MODEL==='G'&&DATA.gSelection.dataDate===DATA.dataDate&&x===DATA.models.G.length&&x<=20;
   }));
-  await check(page,tag+' 3 G report jump links',async()=>page.locator('.g-report-jump').count()===3);
+  await check(page,tag+' 3 G report jump links',async()=>(await page.locator('.g-report-jump').count())===3);
   await check(page,tag+' official market and date status',async()=> (await page.locator('#gOfficialStatus').innerText()).includes('正式訊號日'));
   await check(page,tag+' G Top20 sector summary contains accurate source note or hidden',async()=>page.evaluate(()=>{
    const p=document.querySelector('#gSectorLeaderPanel');return p.hidden||p.textContent.includes('Top20');
@@ -36,10 +36,21 @@ async function main(){
    if(!await btn.isVisible())return before<=15;
    await btn.click();const after=await page.locator('#repeatRows tr').count();await btn.click();return after>=before&&await page.locator('#repeatRows tr').count()===before;
   });
+  await check(page,tag+' multi-value theme tokens are separated for filtering',async()=>page.evaluate(()=>{
+    const t={theme:'電阻器、電感器',subIndustry:'被動元件'};
+    const html=themeButton(t.theme);
+    return stockHasTheme(t,'電感器')&&stockHasTheme(t,'被動元件')&&!stockHasTheme(t,'太陽能')&&html.includes('data-theme="電感器"')&&html.includes('data-theme="電阻器"');
+  }));
+  await check(page,tag+' no false stale signal wording for N',async()=>page.evaluate(()=>{
+    const old=MODEL;MODEL='N';N_ARCHIVE={version:'v',signalTop3:{'2026-10-08':[]}};N_SUMMARY={version:'v',baseUniverse:1800,selected:null};
+    renderNTable();const msg=document.getElementById('nStatus').textContent;
+    MODEL=old;N_ARCHIVE=null;N_SUMMARY=null;renderTable();
+    return msg.includes('N 歷史訊號日期落後')&&!msg.includes('資料晚於其他策略');
+  }));
   await check(page,tag+' G filter then clear',async()=>{
    const btn=page.locator('#officialTb .theme-pick').first();if(!await btn.count())return false;
    await btn.click();const shown=await page.locator('#themeFilterBar').isVisible();
-   await page.locator('#clearThemeFilter').click();return shown&&!(await page.locator('#themeFilterBar').isVisible())&&await page.locator('#officialTb tr').count()===20;
+   await page.locator('#clearThemeFilter').click();return shown&&!(await page.locator('#themeFilterBar').isVisible())&&(await page.locator('#officialTb tr').count())===20;
   });
   await check(page,tag+' layout simple/detail toggles',async()=>{
    const old=await page.locator('#modeBadge').innerText();
@@ -65,6 +76,19 @@ async function main(){
     return page.evaluate(m=>MODEL===m&&document.getElementById('count').textContent.length>0,m);
    });
   }
+  await check(page,tag+' CPO leadership banner 6/20 and source trace',async()=>page.evaluate(()=>{
+    const real=DATA.models.G,codes=Array.from(gLeaderCpoCodes(G_LEADER_CATALOG||{}));
+    if(codes.length<6)return false;
+    DATA.models.G=real.map((x,i)=>i<6?{...x,code:codes[i],name:'CPO稽核'+i}:x);
+    renderGThemeLeaders();const alert=document.getElementById('gSectorLeaderPanel').textContent;
+    DATA.models.G=real;renderGThemeLeaders();
+    return alert.includes('CPO｜盤後最強入榜類股')&&alert.includes('6/20')&&alert.includes('30%');
+  }));
+  await check(page,tag+' expired or stale G intraday never replaces official listing',async()=>page.evaluate(()=>{
+    const old=G_INTRADAY;const today=taipeiDate();
+    G_INTRADAY={quality:'intraday-provisional-allmarket',asOfDate:today,sourceCloseDate:DATA.dataDate,publishedAt:'2026-01-01T09:00:00+08:00',rows:[DATA.models.G[0]]};
+    const ok=currentLiveG()===null;G_INTRADAY=old;return ok;
+  }));
   await check(page,tag+' no runtime exception',async()=>errs.length===0?true:JSON.stringify(errs));
   await check(page,tag+' no 4xx/5xx for assets',async()=>badHttp.length===0?true:JSON.stringify(badHttp));
   await ctx.close();
