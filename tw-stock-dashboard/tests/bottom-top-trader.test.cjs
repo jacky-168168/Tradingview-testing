@@ -41,6 +41,20 @@ test("Without new PRICE observation C does not invent a ladder fill",()=>{
  const x=execute("C",[event("BOTTOM",60,82),event("TOP",62,0,2)]);
  assert.doesNotMatch(x.rows,/分批加碼/);
 });
+test("SS Bottom admits B strategy with unknown numeric Trend",()=>{
+ const x=execute("B",[event("BOTTOM",324,null,0,{trendGt70:true}),event("TOP",332,null,1)]);
+ assert.match(x.rows,/模擬買進/);assert.match(x.rows,/模擬出場/);
+ assert.match(x.rows,/SS >70/);
+});
+test("ordinary Bottom without numeric Trend does not pass B strategy",()=>{
+ const x=execute("B",[event("BOTTOM",52,null)]);
+ assert.match(x.rows,/缺少 Trend 或 SS 確認/);assert.doesNotMatch(x.rows,/模擬買進/);
+});
+test("SS Bottom does not prove stronger custom Trend > 75",()=>{
+ const x=execute("C",[event("BOTTOM",324,null,0,{trendGt70:true})],{trendMin:"75"});
+ assert.match(x.rows,/不足以確認大於目前設定 75/);
+ assert.doesNotMatch(x.rows,/模擬買進/);
+});
 test("Bridge Pine retains original independent signal equations",()=>{
  const s=fs.readFileSync(path.join(__dirname,"../docs/pine/Extreme_Reversal_Hunter_Dashboard_JSON_Bridge.pine"),"utf8");
  assert.match(s,/bottomEv=barstate\.isconfirmed and extCooled and fearRecent/);
