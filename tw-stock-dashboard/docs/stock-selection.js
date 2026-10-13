@@ -188,7 +188,7 @@ function renderOfficialG(){
  var verified=Array.isArray(full)&&!!source&&!!selection&&selection.dataDate===source;
  var lg=currentLiveG(),liveStatus=document.getElementById("gIntradayStatus"),liveCount=document.getElementById("gIntradayCount");
  if(lg){liveStatus.textContent="盤中資料日 "+lg.asOfDate+"｜更新 "+lg.publishedAt+"｜全市場有效報價 "+(lg.coverage&&lg.coverage.valid||0)+"/"+(lg.coverage&&lg.coverage.total||0)+"｜未完成日K，訊號僅供暫估";liveCount.textContent=lg.rows.length+" 檔"}
- else{var st=G_INTRADAY_STATUS,reason=st&&st.asOfDate===taipeiDate()&&st.status==="unavailable"?"｜"+(st.message||"來源未就緒"):"";liveStatus.textContent="目前沒有可用的當日盤中暫估榜單（休市、尚未更新或超過有效時間）"+reason+"；不使用前一日正式榜冒充盤中訊號";liveCount.textContent="尚無有效盤中榜"}
+ else{var st=G_INTRADAY_STATUS,reason=st&&st.asOfDate===taipeiDate()&&st.status==="unavailable"?"｜⚠ 今日更新失敗："+(st.message||"來源未就緒"):"",old=G_INTRADAY&&G_INTRADAY.asOfDate===taipeiDate()?"｜當日最後發布 "+G_INTRADAY.publishedAt+"，但已超過有效時間":"";liveStatus.textContent="目前沒有可用的今日 G 盤中榜單"+reason+old+"｜預定每個交易日 09:00～13:30 每30分鐘更新；頁面每90秒自動同步（GitHub排程可能延遲）｜不拿前一日榜單冒充今日盤中";liveCount.textContent="尚無有效盤中榜"}
  if(!verified){status.textContent="⚠ 最近正式 G 選股尚未完成或日期不一致，不能將盤中價格當作盤後正式訊號";number.textContent="資料未就緒";body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="padding:25px;text-align:center">正式 G 資料尚未同步，請等待盤後完整更新。</td></tr>';return}
  var selected=full.map(function(stock,i){return {stock:stock,rank:i+1}}).filter(function(pair){return !THEME_FILTER||stockHasTheme(pair.stock,THEME_FILTER)});
  status.textContent="正式訊號日 "+source+"｜依已完成日K計算，顯示該日真正收盤價與當日漲跌幅；當日盤中快刷不改變正式名單";
