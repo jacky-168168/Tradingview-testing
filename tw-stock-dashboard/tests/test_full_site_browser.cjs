@@ -25,7 +25,11 @@ async function visit(ctx,file,variant,delay=600){
  await test(variant+' '+file+' HTTP success',async()=>(await page.locator('body').count())===1&&!(await page.locator('body').innerText()).includes('404 File not found'));
  await test(variant+' '+file+' no JS exception',async()=>jsErrors.length?{ok:false,jsErrors}:true);
  await test(variant+' '+file+' no local asset 4xx',async()=>httpErrors.length?{ok:false,httpErrors}:true);
- if(variant==='mobile')await test('mobile '+file+' no body overflow',async()=>page.evaluate(()=>({ok:document.documentElement.scrollWidth<=window.innerWidth+12,scroll:document.documentElement.scrollWidth,width:window.innerWidth})));
+ if(variant==='mobile')await test('mobile '+file+' no body overflow',async()=>page.evaluate(()=>{
+ const width=window.innerWidth,scroll=document.documentElement.scrollWidth;
+ const offenders=[...document.querySelectorAll('body *')].filter(el=>{const r=el.getBoundingClientRect();return r.right>width+12&&r.width>0}).sort((a,b)=>b.getBoundingClientRect().right-a.getBoundingClientRect().right).slice(0,12).map(el=>({tag:el.tagName,id:el.id,cls:String(el.className?.baseVal||el.className||'').slice(0,85),x:Math.round(el.getBoundingClientRect().x),r:Math.round(el.getBoundingClientRect().right),width:Math.round(el.getBoundingClientRect().width)}));
+ return {ok:scroll<=width+12,scroll,width,offenders};
+}));
  return {page,jsErrors,httpErrors};
 }
 async function main(){
@@ -53,7 +57,7 @@ async function main(){
     await test(variant+' bubble frames/date',()=>page.evaluate(()=>document.getElementById('dateText').textContent.match(/^\d{4}-\d{2}-\d{2}$/)&&Number(document.getElementById('timeline').value)===Number(document.getElementById('timeline').max)));
     await test(variant+' bubble drawn visible and labeled',()=>page.evaluate(()=>document.querySelectorAll('svg#chart .point').length>10&&document.querySelectorAll('svg#chart .point text').length>10));
     await test(variant+' bubble has accessible complete sector directory',()=>page.evaluate(()=>document.querySelectorAll('#sectorDirectoryList button').length===document.querySelectorAll('svg#chart .point').length));
-    await test(variant+' bubble click detail',async()=>{const before=await page.locator('#detailTitle').innerText();await page.locator('#sectorDirectoryList button').first().click();const after=await page.locator('#detailTitle').innerText();return after&&after!==before&&after!=='點一顆泡泡看明細'});
+    await test(variant+' bubble click detail',async()=>{const before=await page.locator('#detailTitle').innerText();await page.locator('#sectorDirectory').evaluate(n=>n.open=true);await page.locator('#sectorDirectoryList button').first().click();const after=await page.locator('#detailTitle').innerText();return after&&after!==before&&after!=='點一顆泡泡看明細'});
     await test(variant+' bubble timeline back and forward',async()=>{await page.locator('#prev').click();const n=await page.locator('#dateText').innerText();await page.locator('#next').click();return n!==(await page.locator('#dateText').innerText())});
     await test(variant+' bubble search',async()=>{const before=await page.locator('svg#chart .point').count();await page.locator('#search').fill('半導體');const after=await page.locator('svg#chart .point').count();await page.locator('#search').fill('');return before>after&&after>=1});
     await test(variant+' bubble hot only toggle',async()=>{const b=page.locator('#hotOnly');await b.click();const ok=await b.evaluate(el=>el.classList.contains('on'));await b.click();return ok&&!(await b.evaluate(el=>el.classList.contains('on')))});
