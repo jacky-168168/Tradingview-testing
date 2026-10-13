@@ -54,6 +54,7 @@ function applySymbol(code){
 function input(){
  let zone={ready:false,count:0};
  try{zone=C.parseSeries($("history").value,$("price").value)}catch(e){zone={ready:false,reason:e.message,count:0,error:true}}
+ if(zone.ready&&zone.dated&&zone.lastDay!==$("priceDate").value)zone={ready:false,count:zone.count,reason:"歷史收盤最後一天需與參考價格日期一致；不可用舊位階配今天股價。"};
  const histHas=String($("history").value).trim().length>0;
  const zoneName=zone.ready?zone.label:histHas?(zone.reason||"資料不足"):"未核實（可貼60日收盤價）";
  $("zone").textContent=zoneName;
@@ -70,7 +71,7 @@ function recalc(){
  const {f,zone}=input();
  current=C.size(f,market);
  const x=current;
- if(!x.valid){$("decision").textContent="資料未備齊";$("decisionText").textContent=x.reason;return}
+ if(!x.valid){$("decision").textContent="資料未備齊";$("decisionText").textContent=x.reason;for(const id of ["marketTarget","marketReserve","invested","remainingMarket","maxPosition","maxShares","budgetRisk","stress","riskLoss","firstBudget","firstShares","remainingBudget"])$(id).textContent="—";$("ladderRows").replaceChildren();$("limitRows").replaceChildren();$("warnings").textContent=x.reason;return}
  const fill=$("allocationFill");fill.style.width=(market.valid?market.target:0)+"%";
  $("marketDate").textContent=market.valid?"大盤資料 "+market.date+(market.stale?"｜已過期":"｜有日期")+"｜前120日高點回落 "+number(market.drawdown,2)+"%｜Risk "+market.risk+"/100":"大盤資料不足";
  $("marketTarget").textContent=market.valid?market.target+"%":"—";
@@ -122,7 +123,7 @@ async function load(){
   DATA=await response.json();market=D.calculateContrarian(DATA);
   codes();$("dataStatus").textContent="已讀取 "+DATA.dataDate+" 大盤與 G 選股資料；本工具不取即時報價。";
   recalc();
- }catch(e){$("dataStatus").textContent="資料讀取失敗："+e.message;message("無法載入正式市場資料，暫停資金水位與買入試算",true)}
+ }catch(e){DATA=null;market={valid:false,stale:true,risk:null,target:null};$("dataStatus").textContent="資料讀取失敗："+e.message;message("無法載入正式市場資料，暫停資金水位與買入試算",true);recalc()}
 }
 for(const id of ["capital","otherHeld","kind","sector","price","priceDate","atr","ret20","signal","entryConfirmed","history","symbol"])$(id).addEventListener("input",recalc);
 $("symbol").addEventListener("change",()=>applySymbol($("symbol").value));
