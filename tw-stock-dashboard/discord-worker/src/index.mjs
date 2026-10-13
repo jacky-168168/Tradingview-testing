@@ -57,8 +57,10 @@ export async function pollOne(env,ch,fetchImpl=fetch){
   }
   if(!covered)throw Error("Discord backlog exceeds 1500 messages; cursor not advanced");
   all.sort((a,b)=>BigInt(a.id)<BigInt(b.id)?-1:BigInt(a.id)>BigInt(b.id)?1:0);
+  const allowedAuthors=new Set(String(env.ALLOWED_AUTHOR_IDS||"").split(",").map(x=>x.trim()).filter(Boolean));
   const inserts=[];
   for(const msg of all){
+    if(allowedAuthors.size&&!allowedAuthors.has(String(msg.author?.id||"")))continue;
     for(const s of parseDiscordMessage(msg,ch)){
       inserts.push(env.DB.prepare("INSERT OR IGNORE INTO discord_signals(id,discord_message_id,channel_id,source,symbol,signal,variant,trend_gt_70,price,timeframe,time_ms) VALUES(?,?,?,?,?,?,?,?,?,?,?)").bind(s.id,s.discord_message_id,s.channel_id,s.source,s.symbol,s.signal,s.variant,s.trend_gt_70?1:0,s.price,s.timeframe,s.time));
     }
