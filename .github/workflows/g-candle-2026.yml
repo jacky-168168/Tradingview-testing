@@ -35,6 +35,11 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m unittest discover -s tests -p 'test_g_persistence.py' -v
+      - name: Test G stage lifecycle: historical Top20, no lookahead, censored horizons
+        working-directory: tw-stock-dashboard
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -p 'test_g_lifecycle.py' -v
       - name: Run G_BROAD vs G_CANDLE vs G_TRIGGER 2026 backtest
         working-directory: tw-stock-dashboard
         run: python src/backtest_candle.py --start 2026-01-01 --end 2026-10-07
