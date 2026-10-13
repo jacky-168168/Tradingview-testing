@@ -72,9 +72,10 @@ function recalc(){
  const x=current;
  if(!x.valid){$("decision").textContent="資料未備齊";$("decisionText").textContent=x.reason;return}
  const fill=$("allocationFill");fill.style.width=(market.valid?market.target:0)+"%";
- $("marketDate").textContent=market.valid?"大盤資料 "+market.date+(market.stale?"｜已過期":"｜有日期")+"｜正式 Risk "+market.risk+"/100":"大盤資料不足";
+ $("marketDate").textContent=market.valid?"大盤資料 "+market.date+(market.stale?"｜已過期":"｜有日期")+"｜前120日高點回落 "+number(market.drawdown,2)+"%｜Risk "+market.risk+"/100":"大盤資料不足";
  $("marketTarget").textContent=market.valid?market.target+"%":"—";
  $("marketReserve").textContent=market.valid?100-market.target+"%":"—";
+ $("marketNote").textContent=market.valid?"逆向預備水位，不代表今日可下單；"+(market.allowedNew?"大盤風控符合一般新倉最低門檻。":"目前大盤風控不允許一般新倉。"):"無法根據市場跌幅建立預備水位。";
  $("invested").textContent=money(x.invested);
  $("remainingMarket").textContent=money(x.marketLeft);
  $("maxPosition").textContent=money(x.limit);
@@ -118,7 +119,7 @@ async function load(){
  try{
   const response=await fetch("./data/latest.json?v="+Date.now(),{cache:"no-store"});
   if(!response.ok)throw Error("資料下載 HTTP "+response.status);
-  DATA=await response.json();market=D.calculate(DATA);
+  DATA=await response.json();market=D.calculateContrarian(DATA);
   codes();$("dataStatus").textContent="已讀取 "+DATA.dataDate+" 大盤與 G 選股資料；本工具不取即時報價。";
   recalc();
  }catch(e){$("dataStatus").textContent="資料讀取失敗："+e.message;message("無法載入正式市場資料，暫停資金水位與買入試算",true)}
