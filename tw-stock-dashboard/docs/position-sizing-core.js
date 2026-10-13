@@ -90,8 +90,8 @@ function size(input,market){
  const confirmed=f.entryConfirmed===true;
  const pDate=String(f.priceDate||""),nowTW=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
  const priceDated=/^\d{4}-\d\d-\d\d$/.test(pDate)&&pDate>=String(market?.date||"")&&pDate<=nowTW;
- if(!priceDated)reasons.push("未核實參考股價日期，須晚於或等於大盤資料日且不能是未來日期");
  const reasons=[];
+ if(!priceDated)reasons.push("未核實參考股價日期，須晚於或等於大盤資料日且不能是未來日期");
  if(targetPct===null)reasons.push("大盤水位尚未建立");
  if(dataStale)reasons.push("正式大盤資料過期或不足");
  if(riskOff)reasons.push("原始 Risk Score 低於 60；一般新倉不開放");
