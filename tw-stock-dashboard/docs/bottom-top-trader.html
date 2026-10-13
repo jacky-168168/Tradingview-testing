@@ -42,7 +42,7 @@ details{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}summar
 <button class="btn danger" id="discordDisconnect">中斷</button>
 </div>
 <div id="discordStatus" class="note" style="margin-top:10px" role="status">尚未連接 Cloudflare Worker。請先完成部署；不能直接把 Discord Bot Token 填在此頁。</div>
-<p class="sub"><strong id="discordCount">尚未連線</strong>｜未驗證警示週期的訊號僅顯示、不當作 2 分鐘交易訊號。Discord 原文沒有 Trend 分數，B/C 策略暫時會因 Trend 缺值而略過進場。</p>
+<p class="sub"><strong id="discordCount">尚未連線</strong>｜未驗證警示週期的訊號僅顯示、不當作 2 分鐘交易訊號。SS Bottom 表示 Bottom 且 Trend &gt;70，可以通過預設 B/C 進場過濾；普通 Bottom 未知是否超過 70。沒有實際 Trend 數字時，不會假設分數是 80 或 90。</p>
 <div class="scroll"><table><thead><tr><th>接收時間（台灣）</th><th>來源</th><th>股票</th><th>訊號</th><th class="num">價格</th><th>訊號週期</th><th>Trend</th></tr></thead><tbody id="discordRows"><tr><td colspan="7">尚未連線</td></tr></tbody></table></div>
 </section>
 <section class="card"><h2>01｜策略與資金參數</h2>
@@ -61,7 +61,7 @@ details{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}summar
 <p class="sub">此版先以現股、不融資估算；每筆僅按可用現金與單檔限額配置。C 的預算切成固定批次。訊號價近似入場／出場只是事件價格分析，不代表下一根 K 實際成交，無法當作正式策略回測。</p></section>
 <div class="grid">
 <section class="card"><h2>02｜匯入 Bottom/Top 訊號</h2>
-<p class="sub">每行一筆 JSON，或 CSV，需包含時間、股票、訊號、價格；Trend 值對 B/C 必填。也可以貼上 TradingView alert() 產生的 JSON 訊息。</p>
+<p class="sub">每行一筆 JSON，或 CSV，需包含時間、股票、訊號、價格；B/C 可使用數值 Trend &gt;70，或 Discord SS Bottom 提供的已確認 Trend &gt;70 標記。也可以貼上 TradingView alert() 產生的 JSON 訊息。</p>
 <textarea id="inputEvents" spellcheck="false" placeholder='{"time":1791853200000,"symbol":"TWSE:1802","signal":"BOTTOM","price":57.6,"trend":82,"timeframe":"2"}'></textarea>
 <div class="toolbar" style="margin-top:10px"><button class="btn primary" id="importText">匯入上方資料</button><label class="btn" style="cursor:pointer">選擇 CSV / JSON 檔案<input id="fileEvents" type="file" accept=".json,.jsonl,.csv,.txt" style="display:none"></label><button class="btn" id="exportEvents">匯出訊號</button><button class="btn danger" id="clearEvents">清空訊號</button></div>
 <div id="importStatus" class="sub" role="status" style="margin-top:8px">未連接即時報價或 TradingView webhook；匯入資料保存在此裝置，不會自動同步到 GitHub。</div>
