@@ -96,6 +96,7 @@ function render(){
  put("expAsOf",calc.valid?"資料日 "+calc.date+"｜"+calc.age:"資料不完整");
  put("expHeadline",!calc.valid?"資料不足，暫停計算":calc.stale?"資料待更新｜不作今日新倉建議":calc.target<=30?"防守水位｜控制新增風險":calc.target<60?"審慎水位｜保留加碼現金":"趨勢水位｜仍需等個股訊號");
  put("expTarget",calc.valid?pc(calc.target):"—");
+ const fill=byId("expStockFill");if(fill)fill.style.width=(calc.valid?calc.target:0)+"%";
  put("expCash",calc.valid?pc(100-calc.target):"—");
  put("expComposite",calc.valid?calc.score.toFixed(1)+"/100":"—");
  put("expAllowed",calc.valid?fmt(plan.limit)+" 元":"—");
