@@ -48,6 +48,7 @@ jobs:
         run: |
           node tw-stock-dashboard/tests/test_entry_playbook.js
           node tw-stock-dashboard/tests/test_upstream_ui.cjs
+          node tw-stock-dashboard/tests/test_intraday_schedule.cjs
           node - <<'JS'
           const fs=require('fs'),assert=require('assert');
           const root='tw-stock-dashboard/docs/';
