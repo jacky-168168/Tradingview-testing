@@ -39,6 +39,8 @@ def lifecycle_audit(trades,dates,pockets,horizon=10,lookback=10):
         if i+horizon>=len(dates):
             censored+=1;continue
         code=t["code"]
+        observed_prior=sum(code in pockets[k] for k in range(max(0,i-lookback),i))
+        if int(p)!=observed_prior:raise ValueError(f"cohort mismatch {code} {d}: stored {p} vs source {observed_prior}")
         if code in last_entry and i<last_entry[code]+horizon:
             ignored+=1;continue
         last_entry[code]=i
