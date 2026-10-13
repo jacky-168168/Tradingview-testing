@@ -25,6 +25,7 @@ function norm(raw){
  const tf=String(raw.timeframe??raw.tf??raw.interval??"").trim().toLowerCase();
  const tv=raw.trend??raw.trendScore??raw.trend_score;
  const trend=tv==null||String(tv).trim()===""?null:Number(tv);
+ const trendGt70=raw.trendGt70===true||raw.trend_gt_70===true||raw.trend_gt_70===1;
  const gv=raw.g??raw.in_g??raw.gSelected??null;
  const g=gv==null||String(gv).trim()===""?null:([true,1,"1","TRUE","YES","Y","是","G"].includes(typeof gv==="string"?gv.trim().toUpperCase():gv)?true:false);
  if(!Number.isFinite(t)||t<946684800000||t>Date.now()+86400000)throw Error("時間格式須為 Unix 毫秒或 ISO 時區時間");
@@ -33,7 +34,7 @@ function norm(raw){
  if(!Number.isFinite(p)||p<=0||p>10000000)throw Error("價格無效");
  if(tf!=="2"&&tf!=="2m"&&tf!=="120s")throw Error("時間週期必須為 2 分鐘");
  if(trend!==null&&(!Number.isFinite(trend)||trend<0||trend>100))throw Error("Trend 需為 0～100");
- return {time:t,symbol:s,signal:ty,price:p,trend,g,timeframe:"2"};
+ return {time:t,symbol:s,signal:ty,price:p,trend,trendGt70:ty==="BOTTOM"&&trendGt70,g,timeframe:"2"};
 }
 function csvRows(s){
  let out=[],row=[],cell="",quoted=false;
@@ -59,8 +60,8 @@ function extract(raw){
 function addEvents(raw){
  let values=extract(raw);if(values.length>10000)throw Error("每次至多匯入一萬列");
  let rejected=[],added=0,dups=0;
- let unique=new Set(events.map(e=>[e.time,e.symbol,e.signal,e.price].join("|")));
- values.forEach((row,i)=>{try{let e=norm(row),k=[e.time,e.symbol,e.signal,e.price].join("|");if(unique.has(k)){dups++;return}unique.add(k);events.push(e);added++}catch(err){if(rejected.length<5)rejected.push("第 "+(i+1)+" 筆："+err.message)}});
+ let unique=new Map(events.map((e,i)=>[[e.time,e.symbol,e.signal,e.price].join("|"),i]));
+ values.forEach((row,i)=>{try{let e=norm(row),k=[e.time,e.symbol,e.signal,e.price].join("|");if(unique.has(k)){let old=events[unique.get(k)];old.trendGt70=old.trendGt70||e.trendGt70;if(old.trend===null&&e.trend!==null)old.trend=e.trend;if(old.g!==true&&e.g===true)old.g=true;dups++;return}unique.set(k,events.length);events.push(e);added++}catch(err){if(rejected.length<5)rejected.push("第 "+(i+1)+" 筆："+err.message)}});
  events.sort((a,b)=>a.time-b.time||({"TOP":0,"PRICE":1,"BOTTOM":2}[a.signal]-{"TOP":0,"PRICE":1,"BOTTOM":2}[b.signal]));
  if(events.length>20000){events=events.slice(-20000);rejected.push("訊號已超上限，只保留最近 20,000 筆")}
  return {added,dups,rejected};
@@ -69,7 +70,7 @@ function conf(){
  return {strategy:$("strategy").value,initial:val("capital",1000,1e11),risk:val("riskCap",1,100)/100,minTrend:val("trendMin",0,100),maxLayers:Math.round(val("batches",2,15)),dip:val("dip",.1,30)/100,unit:Number($("unit").value),fee:.001425*val("discount",.1,10)/10,tax:val("tax",.01,1)/100,stop:val("stopPct",1,80)/100,useStop:$("useStop").checked,requireG:$("requireG").checked};
 }
 function trade(e,p,action,why,qty=0,pnl=null){
- log.push({time:e.time,symbol:e.symbol,signal:e.signal,price:e.price,trend:e.trend,action,why,qty,pnl});
+ log.push({time:e.time,symbol:e.symbol,signal:e.signal,price:e.price,trend:e.trend,trendGt70:e.trendGt70===true,action,why,qty,pnl});
 }
 function calc(){
  const c=conf();cash=c.initial;log=[];portfolio={};closed=[];
@@ -121,7 +122,7 @@ function calc(){
   }
   if(e.signal!=="BOTTOM"){trade(e,null,"觀察","無部位，PRICE 只作為價格觀測");continue}
   if(state.closedAt===e.time){trade(e,null,"略過","本根已 TOP 出場，不在同根反手");blocked++;continue}
-  if(c.strategy!=="A"&&(e.trend===null||e.trend<=c.minTrend)){trade(e,null,"略過",e.trend===null?"缺少 Trend 值，不當作符合門檻":"Trend "+e.trend+" 未嚴格大於 "+c.minTrend);blocked++;continue}
+  if(c.strategy!=="A"&&!((e.trend!==null&&e.trend>c.minTrend)||(e.trendGt70===true&&c.minTrend<=70))){trade(e,null,"略過",e.trend===null?(e.trendGt70?"SS 只證明 Trend > 70，不足以確認大於目前設定 "+c.minTrend:"缺少 Trend 或 SS 確認，無法通過門檻"):"Trend "+e.trend+" 未嚴格大於 "+c.minTrend);blocked++;continue}
   if(c.requireG&&e.g!==true){trade(e,null,"略過","未確認在 G 股票池");blocked++;continue}
   enter(e,null,1);
  }
@@ -148,7 +149,7 @@ function render(){
   return '<tr><td><b>'+esc(sym)+'</b></td><td>'+(p?'持倉 '+p.layers+' 批':'觀察中')+'</td><td class="num">'+(p?money(p.qty):"—")+'</td><td class="num">'+(p?px(p.invested/p.qty):"—")+'</td><td class="num">'+px(mark)+'</td><td class="num '+(floating!=null?(floating>=0?"green":"red"):"")+'">'+(floating==null?"—":money(floating))+'</td><td>'+esc(next)+'</td></tr>';
  }).join(""):'<tr><td colspan="7">目前沒有確認訊號，請先匯入事件。</td></tr>';
  $("signalRows").innerHTML=log.length?log.slice(-500).reverse().map(t=>
-  '<tr><td>'+dt(t.time)+'</td><td>'+esc(t.symbol)+'</td><td>'+esc(t.signal)+'</td><td class="num">'+px(t.price)+'</td><td class="num">'+(t.trend===null?"—":px(t.trend))+'</td><td><b>'+esc(t.action)+'</b><div class="sub">'+esc(t.why)+'</div></td><td class="num '+(t.pnl===null?"":t.pnl>=0?"green":"red")+'">'+(t.pnl===null?"—":money(t.pnl))+'</td></tr>'
+  '<tr><td>'+dt(t.time)+'</td><td>'+esc(t.symbol)+'</td><td>'+esc(t.signal)+'</td><td class="num">'+px(t.price)+'</td><td class="num">'+(t.trend===null?(t.trendGt70?"SS >70":"—"):px(t.trend))+'</td><td><b>'+esc(t.action)+'</b><div class="sub">'+esc(t.why)+'</div></td><td class="num '+(t.pnl===null?"":t.pnl>=0?"green":"red")+'">'+(t.pnl===null?"—":money(t.pnl))+'</td></tr>'
  ).join(""):'<tr><td colspan="7">尚無已確認的 Bottom / Top / PRICE 事件。</td></tr>';
  $("banner").textContent=events.length?'已匯入 '+events.length+' 筆 2 分鐘事件；目前為 '+({A:"A Bottom 直接進場",B:"B Bottom + Trend > "+c.minTrend,C:"C Bottom + Trend > "+c.minTrend+"＋分批加碼"}[c.strategy])+'。模擬使用事件價格，不是可成交的歷史回測。':'尚未匯入交易事件，沒有可驗證的 Bottom/Top 買點；不會自動產生假訊號。';
  $("banner").className="note "+(events.length?"good":"warn");
@@ -190,8 +191,8 @@ fields.forEach(id=>$(id).addEventListener("input",render));
 $("clearEvents").addEventListener("click",()=>{if(!confirm("確定清除本裝置這份訊號紀錄？此動作無法復原。"))return;events=[];render();showMessage("已清空本機訊號，不影響 GitHub。")});
 $("exportEvents").addEventListener("click",()=>download("bottom_top_events.json",JSON.stringify(events,null,2),"application/json;charset=utf-8"));
 $("exportTrades").addEventListener("click",()=>{
- const hdr=["time","symbol","signal","price","trend","action","note","qty","estimated_pnl"];
- const lines=[hdr.join(",")].concat(log.map(x=>[new Date(x.time).toISOString(),x.symbol,x.signal,x.price,x.trend??"",x.action,x.why,x.qty,x.pnl??""].map(csvEscape).join(",")));
+ const hdr=["time","symbol","signal","price","trend","trend_gt_70","action","note","qty","estimated_pnl"];
+ const lines=[hdr.join(",")].concat(log.map(x=>[new Date(x.time).toISOString(),x.symbol,x.signal,x.price,x.trend??"",x.trendGt70===true?1:0,x.action,x.why,x.qty,x.pnl??""].map(csvEscape).join(",")));
  download("bottom_top_paper_trades.csv","\ufeff"+lines.join("\r\n"),"text/csv;charset=utf-8");
 });
 $("copyPine").addEventListener("click",()=>{
