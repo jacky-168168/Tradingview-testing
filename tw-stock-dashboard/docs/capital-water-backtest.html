@@ -73,7 +73,7 @@ async function load(){
  data=eng.mergeSeries(files[0],files[1]);const a=data[0],b=data.at(-1);
  $("status").textContent="已核實 "+data.length+" 個市場交易日｜資料範圍 "+a.date+"～"+b.date+"｜按前日已知訊號、次日收盤再平衡。";
  evaluate();
- }catch(err){$("status").textContent="歷史資料無法完整核實："+err.message;$("alert").textContent="";}}
+ }catch(err){$("status").textContent="歷史資料無法完整核實："+err.message;}}
 for(const id of ["period","band","cost","selected"])$(id).addEventListener("change",evaluate);load();
 })();
 </script></body></html>
