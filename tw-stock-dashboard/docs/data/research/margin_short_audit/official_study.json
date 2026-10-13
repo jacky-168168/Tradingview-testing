@@ -1,0 +1,140 @@
+{
+  "asOf": "2026-10-13",
+  "scope": "TWSE-listed credit totals, evening release, revised historical report, not point-in-time vintages",
+  "marketSessions": 730,
+  "officialRows": 730,
+  "coverage": [
+    {
+      "name": "train2023_2025",
+      "officialRows": 543,
+      "marketSessions": 543,
+      "ratio": 1
+    },
+    {
+      "name": "oos2026",
+      "officialRows": 187,
+      "marketSessions": 187,
+      "ratio": 1
+    }
+  ],
+  "completeEnough": true,
+  "features": [
+    {
+      "feature": "margin_delta_100m_twd",
+      "horizon": 1,
+      "segments": [
+        {
+          "window": "train2023_2025",
+          "n": 543,
+          "r": -0.10149
+        },
+        {
+          "window": "oos2026",
+          "n": 186,
+          "r": -0.03113
+        }
+      ],
+      "qualifiedForRiskScore": false,
+      "reason": "No unadjusted correlation alone can authorize promotion; full transaction-cost portfolio replay and multiple-comparison correction required."
+    },
+    {
+      "feature": "margin_delta_100m_twd",
+      "horizon": 5,
+      "segments": [
+        {
+          "window": "train2023_2025",
+          "n": 543,
+          "r": -0.13065
+        },
+        {
+          "window": "oos2026",
+          "n": 182,
+          "r": -0.2018
+        }
+      ],
+      "qualifiedForRiskScore": false,
+      "reason": "No unadjusted correlation alone can authorize promotion; full transaction-cost portfolio replay and multiple-comparison correction required."
+    },
+    {
+      "feature": "short_delta_lots",
+      "horizon": 1,
+      "segments": [
+        {
+          "window": "train2023_2025",
+          "n": 543,
+          "r": 0.0381
+        },
+        {
+          "window": "oos2026",
+          "n": 186,
+          "r": 0.05087
+        }
+      ],
+      "qualifiedForRiskScore": false,
+      "reason": "No unadjusted correlation alone can authorize promotion; full transaction-cost portfolio replay and multiple-comparison correction required."
+    },
+    {
+      "feature": "short_delta_lots",
+      "horizon": 5,
+      "segments": [
+        {
+          "window": "train2023_2025",
+          "n": 543,
+          "r": 0.01249
+        },
+        {
+          "window": "oos2026",
+          "n": 182,
+          "r": 0.07209
+        }
+      ],
+      "qualifiedForRiskScore": false,
+      "reason": "No unadjusted correlation alone can authorize promotion; full transaction-cost portfolio replay and multiple-comparison correction required."
+    },
+    {
+      "feature": "short_margin_ratio_pct",
+      "horizon": 1,
+      "segments": [
+        {
+          "window": "train2023_2025",
+          "n": 543,
+          "r": 0.05221
+        },
+        {
+          "window": "oos2026",
+          "n": 186,
+          "r": 0.06519
+        }
+      ],
+      "qualifiedForRiskScore": false,
+      "reason": "No unadjusted correlation alone can authorize promotion; full transaction-cost portfolio replay and multiple-comparison correction required."
+    },
+    {
+      "feature": "short_margin_ratio_pct",
+      "horizon": 5,
+      "segments": [
+        {
+          "window": "train2023_2025",
+          "n": 543,
+          "r": 0.11919
+        },
+        {
+          "window": "oos2026",
+          "n": 182,
+          "r": 0.01648
+        }
+      ],
+      "qualifiedForRiskScore": false,
+      "reason": "No unadjusted correlation alone can authorize promotion; full transaction-cost portfolio replay and multiple-comparison correction required."
+    }
+  ],
+  "decision": "RESEARCH_ONLY_NO_RISK_WEIGHT_CHANGE",
+  "problems": [
+    "No historical margin-maintenance percentages in official market credit summary.",
+    "End-of-day credit reports are published after TAIEX close, therefore same-day trades would leak future information.",
+    "Reconstructed historic figures may reflect next-day revisions; not certified as point-in-time data.",
+    "Overlapping future 5-day returns invalidate naive IID t-tests.",
+    "Any production factor must improve out-of-sample net risk/reward beyond original Risk Score and inverse allocation."
+  ],
+  "source": "https://www.twse.com.tw/zh/trading/margin/mi-margn.html"
+}
