@@ -174,8 +174,10 @@ $("fileEvents").addEventListener("change",async ev=>{
  try{doImport(await f.text())}catch(err){showMessage("讀檔失敗："+err.message)}finally{ev.target.value=""}
 });
 document.querySelectorAll("button[data-signal]").forEach(b=>b.addEventListener("click",()=>{
- const t=$("manualTime").value,p=Number($("manualPrice").value),trend=Number($("manualTrend").value),symbol=$("manualSymbol").value.trim(),sig=b.dataset.signal;
- const obj={time:new Date(t).toISOString(),symbol,signal:sig,price:p,trend:sig==="BOTTOM"?trend:null,timeframe:"2",g:$("manualG").value==="unknown"?null:$("manualG").value==="yes"};
+ const t=$("manualTime").value,p=Number($("manualPrice").value),trend=$("manualTrend").value.trim()===""?null:Number($("manualTrend").value),symbol=$("manualSymbol").value.trim(),sig=b.dataset.signal;
+ if(!t){showMessage("請選擇事件時間。");return}
+ let iso;try{iso=new Date(t).toISOString()}catch(err){showMessage("無效事件時間。");return}
+ const obj={time:iso,symbol,signal:sig,price:p,trend:sig==="BOTTOM"?trend:null,timeframe:"2",g:$("manualG").value==="unknown"?null:$("manualG").value==="yes"};
  try{let result=addEvents(JSON.stringify([obj]));render();showMessage("已人工加入 "+result.added+" 筆 "+sig+"，請確認訊號原本確實在 TradingView 收盤成立。")}
  catch(err){showMessage("人工事件無效："+err.message)}
 }));
