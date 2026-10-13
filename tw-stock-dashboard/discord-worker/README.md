@@ -27,7 +27,7 @@
    - `DISCORD_BOT_TOKEN`：從 Discord Developer Portal → Bot 取得，**僅填 Cloudflare Secrets**。
    - `DASHBOARD_READ_TOKEN`：自行產生獨立、至少 32 個隨機字元的密鑰，給使用者登入網頁讀取事件。
    - `SYNC_TOKEN`：另一組不相同的獨立密鑰，給管理者手動發起同步。
-6. Worker 一般環境變數 `ALLOWED_ORIGIN` 預設是 `https://jacky-168168.github.io`；`CHANNELS_CONFIG` 已填入上述兩個頻道。**只有在確認 #day-trading 確實全部是 2 分鐘訊號後**，才把該頻道的 `timeframe` 由 `null` 改成 `"2"`。
+6. Worker 一般環境變數 `ALLOWED_ORIGIN` 預設是 `https://jacky-168168.github.io`；`CHANNELS_CONFIG` 已填入上述兩個頻道。也建議設定 `ALLOWED_AUTHOR_IDS` 為原始 Alert bot 的用戶 ID，以阻擋其他使用者冒充訊號。**只有在確認 #day-trading 確實全部是 2 分鐘訊號後**，才把該頻道的 `timeframe` 由 `null` 改成 `"2"`。
 7. Discord Bot 必須可以看見上述頻道、具備 View Channels + Read Message History，並在 Discord Developer Portal 啟用 Message Content Intent。如果兩個頻道不在同一個伺服器，Bot 需要分別加入。
 8. Workers 的 Cron 設定為 `* * * * *`：每分鐘抓取 Discord 最新文字，存入 D1。此為**分鐘級輪詢**而非秒級訊號。
 9. 網頁端開發分支 `docs/bottom-top-trader.html` 的「Discord 自動訊號匯入」輸入 Worker HTTPS 網址和 **DASHBOARD_READ_TOKEN**，按連接 Worker；網頁只保留 Worker URL，**不把 Token 寫入 localStorage**。
@@ -43,7 +43,7 @@
 ## 限制與風控
 
 - 第一次同步抓最近 100 則 Discord 訊息，後續保存每個頻道的 Snowflake 游標；每分鐘最多向前分頁 1500 則新訊息，若超過上限則不前進游標，需人工排查。Discord API 429 或 Worker 執行延遲，可能使訊號延後。
-- 目前僅以訊息格式解析，**尚未加入 Alert bot 作者 ID 白名單**；不要讓未受信任者在警報頻道發送相同格式假訊號。
+- 支援環境變數 `ALLOWED_AUTHOR_IDS`：設定為來源 Alert bot 的 Discord User ID（多個 ID 用半形逗號分隔）後，僅讀取這些作者的訊息。**目前尚未取得原 Alert bot 的 ID，預設不限制作者**；正式使用前建議開啟白名單，避免有人在頻道發送假訊號。
 - 未提供完整 Trend 數值時，SS 只代表 >70；普通 Bottom 不代表 ≤70，也不表示一定 >70。
 - `#day-trading` 的時間框架仍待核對；不會因為有 SS 就自行當作 2 分鐘 K。
 - 網頁上的交易績效是事件價格的紙上模擬，非可成交的實際回測；沒有串接券商下單。
