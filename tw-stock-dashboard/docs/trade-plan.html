@@ -139,6 +139,7 @@ function render(){
  el("stats").innerHTML=metrics.map(function(x){return '<div class="stat"><span>'+x[0]+'</span><strong>'+x[1]+'</strong></div>'}).join("");
  var warnings=[];
  if(rows.some(function(r){return r.qty===0}))warnings.push("至少一批無法按股數單位買進，調低單位或提高預算。");
+ if(stopLoss>capital*.02)warnings.push("你設定的單檔可承受損失達總可動用資金的 "+(stopLoss/capital*100).toFixed(2)+"%，已超過 2% 的示例提醒線，建議重新檢查總帳戶風險。");
  if(count&&pnl< -stopLoss)warnings.push("按現價假設平倉已超出你設定的單檔損失預算；此價格只是風控試算，跳空可能超損。");
  if(ratio<1&&borrow>0){var maintenance=owned*current/borrow*100;if(maintenance<140)warnings.push("估算擔保維持率 "+maintenance.toFixed(1)+"% 已接近／低於示例警戒區，應依券商實際追繳制度處理。")}
  if(!warnings.length)warnings.push("已計入自備資金上限與假設買賣手續費／賣出稅；請用實際成交確認每一筆。");
