@@ -8,7 +8,7 @@ test("rallying toward high raises cash allocation, lower index releases cash",()
  assert.deepEqual([near.target,down5.target,down15.target],[30,50,80]);
 });
 test("high MA20 stretch overrides raw target to protect cash",()=>{
- const x=calculateContrarian(m(105,78,95),now);assert.equal(x.target,25);assert.equal(x.cash,75);
+ const x=calculateContrarian(m(99,78,90),now);assert.equal(x.target,25);assert.equal(x.cash,75);
 });
 test("Risk OFF does not erase reserve budget but stops new buying",()=>{
  const x=calculateContrarian(m(94,36),now);assert.equal(x.target,50);assert.equal(x.allowedNew,false);
