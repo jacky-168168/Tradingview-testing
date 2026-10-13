@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>台股量化｜Bottom / Top 分批交易雷達</title>
+<script src="./site-access.js"></script>
+<style>
+:root{--bg:#f3f6fb;--card:white;--text:#17263c;--muted:#64748b;--line:#dce4ef;--blue:#2563eb;--green:#087f5b;--red:#c24147;--orange:#b45309}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif;line-height:1.55;font-size:13px}
+.wrap{max-width:1380px;margin:auto;padding:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:12px 0;padding:17px;box-shadow:0 2px 12px #13254305}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1{font-size:25px;line-height:1.3;margin:0}h2{font-size:17px;margin:0 0 10px}h3{font-size:14px;margin:9px 0}.sub{font-size:11px;color:var(--muted)}.muted{color:var(--muted)}p{margin:6px 0}
+nav,.toolbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.btn,nav a{border:1px solid var(--line);color:var(--text);background:#fff;border-radius:9px;padding:8px 11px;text-decoration:none;font-size:12px;font-weight:800;cursor:pointer}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.danger{color:var(--red)}.btn:focus-visible,nav a:focus-visible{outline:2px solid #93c5fd}
+.tag{font-size:11px;font-weight:800;border-radius:99px;padding:4px 9px;background:#e9eeff;color:#1e40af;display:inline-flex}.tag.warn{background:#fff4dc;color:#9a3412}
+.hero{background:linear-gradient(125deg,#ebf3ff,#fff 66%)}.overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.metric{background:#f8fafc;border:1px solid #edf1f6;border-radius:12px;padding:12px;min-width:0}.metric span{display:block;color:var(--muted);font-size:11px}.metric b{font-size:23px;display:block;margin-top:3px;word-wrap:break-word}
+.grid{display:grid;grid-template-columns:1.3fr 1fr;gap:13px}.inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+label{display:block;font-size:11px;font-weight:800;color:#4c5d74}input,select,textarea{display:block;width:100%;margin-top:4px;border:1px solid #cbd5e1;border-radius:9px;padding:9px;color:var(--text);background:#fff;font:inherit;min-width:0}
+textarea{min-height:138px;resize:vertical;font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}
+select{font-size:13px}.checkline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:11px 0}.checkline label{display:flex;align-items:center;gap:6px;font-size:12px}.checkline input{width:auto;margin:0}
+.note{background:#f1f5f9;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:12px;line-height:1.7}.note.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+.note.good{background:#f0fdf4;border-color:#a7f3d0;color:#047857}
+.scroll{overflow:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;min-width:700px}th,td{text-align:left;padding:9px;border-bottom:1px solid #eef2f6;font-size:11px}th{background:#f8fafc;color:var(--muted);position:sticky;top:0}td.num,th.num{text-align:right}.green{color:var(--green);font-weight:850}.red{color:var(--red);font-weight:850}.orange{color:var(--orange);font-weight:800}
+#stockRows td,#tradeRows td,#signalRows td{vertical-align:top}
+details{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}summary{cursor:pointer;font-weight:800}code{background:#f1f5f9;border-radius:5px;padding:2px 5px}pre{white-space:pre-wrap;word-wrap:break-word;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:10px;font-size:11px;line-height:1.6}
+@media(max-width:940px){.grid{grid-template-columns:1fr}.inputs{grid-template-columns:repeat(2,minmax(0,1fr))}.overview{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.wrap{padding:10px}.card{padding:12px;margin:9px 0}h1{font-size:21px}.metric b{font-size:19px}.inputs{gap:9px}.toolbar .btn{flex:1;min-width:90px}nav a{padding:7px 9px}}
+</style></head>
+<body><main class="wrap">
+<header class="card"><div><h1>🎯 Bottom / Top 交易雷達</h1><p class="sub">2 分鐘 K · 原版極端反轉訊號 · Trend &gt;70 只過濾進場 · TOP 無條件判斷出場</p></div><nav><a href="./index.html">🏠 主頁</a><a href="./selections.html">📋 G 選股</a><a href="./trade-plan.html">🧮 資金階梯</a><a href="./backtest.html">📈 回測</a></nav></header>
+<section class="card hero"><div class="toolbar"><span class="tag">原始 Bottom/Top 規則</span><span class="tag warn">模擬訊號簿｜非即時券商資料</span></div>
+<p>使用你的原版 Pine 已確認收盤的 Bottom/Top 訊號做事件輸入，不重新猜測 Bottom、Top 的計算結果。進場採 A 原版、B Trend&gt;70、C Trend&gt;70＋分批加碼，全部在 Top 結束多單。C 的額外買入必須有新的價格觀測事件，不會虛構回測成交。</p>
+<div id="banner" class="note warn" role="status">尚無交易訊號。請匯入 TradingView 訊號 JSON/CSV 或手動輸入；沒有資料時不顯示假買點。</div></section>
+<section class="card"><h2>01｜策略與資金參數</h2>
+<div class="inputs">
+<label>比較策略<select id="strategy"><option value="A">A｜Bottom 直接進場</option><option value="B" selected>B｜Bottom + Trend &gt; 70</option><option value="C">C｜Bottom + Trend &gt; 70＋階梯加碼</option></select></label>
+<label>起始可用資金（元）<input id="capital" type="number" value="1000000" min="1000" step="1000"></label>
+<label>單檔最高資金占比（%）<input id="riskCap" type="number" value="20" min="1" max="100"></label>
+<label>趨勢門檻（嚴格大於）<input id="trendMin" type="number" value="70" min="0" max="100" step="1"></label>
+<label>C 分批最多買入次數<input id="batches" type="number" value="5" min="2" max="15"></label>
+<label>C 每次再跌幅（%）<input id="dip" type="number" value="3" min="0.1" max="30" step="0.1"></label>
+<label>股數單位<select id="unit"><option value="1">零股（1 股）</option><option value="1000">整張（1000 股）</option></select></label>
+<label>券商手續費折數<input id="discount" type="number" value="6" min="0.1" max="10" step="0.1"></label>
+<label>賣出稅（%）<select id="tax"><option value="0.3">股票 0.3%</option><option value="0.1">ETF 0.1%（依標的確認）</option></select></label>
+<label>緊急停損幅度（%）<input id="stopPct" type="number" value="12" min="1" max="80" step="0.5"></label>
+</div><div class="checkline"><label><input type="checkbox" id="useStop">啟用獨立緊急停損（非原版 Top 出場）</label><label><input type="checkbox" id="requireG">只交易標記為 G 入選的訊號</label></div>
+<p class="sub">此版先以現股、不融資估算；每筆僅按可用現金與單檔限額配置。C 的預算切成固定批次。訊號價近似入場／出場只是事件價格分析，不代表下一根 K 實際成交，無法當作正式策略回測。</p></section>
+<div class="grid">
+<section class="card"><h2>02｜匯入 Bottom/Top 訊號</h2>
+<p class="sub">每行一筆 JSON，或 CSV，需包含時間、股票、訊號、價格；Trend 值對 B/C 必填。也可以貼上 TradingView alert() 產生的 JSON 訊息。</p>
+<textarea id="inputEvents" spellcheck="false" placeholder='{"time":1791853200000,"symbol":"TWSE:1802","signal":"BOTTOM","price":57.6,"trend":82,"timeframe":"2"}'></textarea>
+<div class="toolbar" style="margin-top:10px"><button class="btn primary" id="importText">匯入上方資料</button><label class="btn" style="cursor:pointer">選擇 CSV / JSON 檔案<input id="fileEvents" type="file" accept=".json,.jsonl,.csv,.txt" style="display:none"></label><button class="btn" id="exportEvents">匯出訊號</button><button class="btn danger" id="clearEvents">清空訊號</button></div>
+<div id="importStatus" class="sub" role="status" style="margin-top:8px">未連接即時報價或 TradingView webhook；匯入資料保存在此裝置，不會自動同步到 GitHub。</div>
+<details><summary>查看訊號格式與計算時機</summary>
+<pre id="formatExample">{"time":1791853200000,"symbol":"TWSE:1802","signal":"BOTTOM","price":57.6,"trend":82,"timeframe":"2","g":true}
+{"time":1791853320000,"symbol":"TWSE:1802","signal":"PRICE","price":55.9,"timeframe":"2"}
+{"time":1791853440000,"symbol":"TWSE:1802","signal":"TOP","price":59.3,"timeframe":"2"}</pre>
+<p class="sub"><b>BOTTOM</b>：原始訊號收盤確認；<b>TOP</b>：不需要 Trend 就能出場；<b>PRICE</b>：僅作 C 模型加碼與風控的後續觀測，不代表 Bottom；<b>g</b>：須由可信的 G 榜單確認，缺值不當作入選。有效資料必須是 2 分鐘週期；未附 timeframe 則視為未核實週期，會拒絕輸入。時間需為 Unix 毫秒或含時區的 ISO 格式。</p>
+</details></section>
+<section class="card"><h2>03｜新增單筆已確認事件</h2>
+<div class="inputs">
+<label>股票代碼<input id="manualSymbol" value="TWSE:1802" maxlength="36"></label>
+<label>事件時間（本地時間）<input id="manualTime" type="datetime-local"></label>
+<label>觀測／訊號價格<input id="manualPrice" type="number" min="0.01" step="0.01" value="57.6"></label>
+<label>Trend (0～100)<input id="manualTrend" type="number" min="0" max="100" step="1" value="75"></label>
+<label>G 榜單確認<select id="manualG"><option value="unknown">未核對</option><option value="yes">已確認 G 入選</option><option value="no">未入選 G</option></select></label>
+</div>
+<div class="toolbar" style="margin-top:10px"><button class="btn primary" data-signal="BOTTOM">＋ Bottom</button><button class="btn" data-signal="PRICE">＋ 價格觀測</button><button class="btn danger" data-signal="TOP">＋ Top 出場</button></div>
+<p class="sub">手動事件必須來自你已確認的 TradingView 訊號；只寫一個 Bottom 不代表指標真的觸發。Trend 必須採已完成的上一根日 K 分數，不可使用未確認日線資料。</p></section>
+</div>
+<section class="card"><h2>04｜策略模擬摘要</h2><div class="overview" id="metrics"></div><p class="sub">只計匯入事件價之紙上假設交易，不含滑價／融資／最低手續費、成交可得性或同根內高低價路徑；請勿將此處數字視為真實回測績效。</p></section>
+<section class="card"><h2>05｜目前觀察與持倉</h2><div class="scroll"><table><thead><tr><th>股票</th><th>部位狀態</th><th class="num">股數</th><th class="num">均價（含買費）</th><th class="num">最近事件價</th><th class="num">示意浮動損益</th><th>下一個動作</th></tr></thead><tbody id="stockRows"><tr><td colspan="7">尚無資料</td></tr></tbody></table></div></section>
+<section class="card"><h2>06｜事件與紙上決策紀錄</h2><div class="toolbar" style="margin:5px 0 10px"><button class="btn" id="exportTrades">匯出模擬交易 CSV</button><button class="btn" id="copyPine">複製 TradingView 橋接設定說明</button><a class="btn" href="https://www.tradingview.com/" target="_blank" rel="noopener noreferrer">開啟 TradingView ↗</a></div><div class="scroll"><table><thead><tr><th>時間</th><th>股票</th><th>訊號</th><th class="num">價位</th><th class="num">Trend</th><th>處置／原因</th><th class="num">模擬損益</th></tr></thead><tbody id="signalRows"><tr><td colspan="7">尚無資料</td></tr></tbody></table></div></section>
+<section class="card"><h2>07｜指標對照與使用限制</h2>
+<details open><summary>原始指標進出場邏輯（直接保留）</summary><p>Bottom = 已確認 K + 冷卻期通過 + 近期恐慌 (WVF) + 下跌極端動能 + 動能回升 + 反彈壓力門檻 + 選定盤態／時段；Top = 已確認 K + 冷卻期通過 + 貪婪尖峰 (GVF) + 上漲極端動能 + 動能走弱 + 回跌壓力 + 選定盤態／時段。Trend Score 使用上一根已完成日線，僅用在 B/C 的進場。</p></details>
+<details><summary>TOP、C 模型加碼與停損優先順序</summary><p>同一事件如有 Top，先平倉，不補倉。若啟用緊急停損，觀測價格觸及限制則退出；之後才考慮 C 模型單次一批加碼。對每筆價格事件最多增加一批，不在沒有報價的時間段虛構成交。原始 Pine 會在訊號確認後使用下一根 K 開盤進場；本頁僅作訊號價紙上比較，兩者不能視為同一績效。</p></details>
+<details><summary>為何本頁沒有直接自動刷新 2 分鐘訊號？</summary><p>GitHub Pages 是靜態網站，沒有受驗證的台股 2 分鐘 OHLCV 歷史源或 TradingView webhook 接收端。要做真正即時訊號，需要合規的行情來源／伺服器計算原始指標，或 TradingView alert → 有權限驗證的接收服務 → 前端 JSON。完成前不能冒充盤中自動交易雷達。此處先以原版 Pine 訊號 JSON/CSV 驅動。</p></details>
+</section>
+<div class="sub" style="text-align:center;margin:16px 0">研究用途，不自動下單；GitHub Pages 的前端存取密碼不能保護公開儲存的檔案，請勿在網站上傳或貼出券商帳號等機敏資料。</div>
+</main><script src="./bottom-top-trader.js"></script></body></html>
