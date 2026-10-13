@@ -33,7 +33,7 @@ function renderRepeatPanel(model,data){
  }
  var x=REPEAT_DATA.models&&REPEAT_DATA.models[model];
  if(!x){state.textContent="⚠ 無此選股模型的歷史統計。";size.textContent="—";rows.innerHTML="";toggle.style.display="none";return}
- var total=x.totalObservedDays==null?(x.snapshotDays||0):x.totalObservedDays,allRepeated=x.stocks||[],repeated=(typeof THEME_FILTER!=="undefined"&&THEME_FILTER)?allRepeated.filter(function(s){return String(s.theme||s.subIndustry||"").trim()===THEME_FILTER}):allRepeated,uptodate=data&&data.dataDate===REPEAT_DATA.referenceDate;
+ var total=x.totalObservedDays==null?(x.snapshotDays||0):x.totalObservedDays,allRepeated=x.stocks||[],repeated=(typeof THEME_FILTER!=="undefined"&&THEME_FILTER)?allRepeated.filter(function(s){return (typeof stockHasTheme==="function"?stockHasTheme(s,THEME_FILTER):String(s.theme||s.subIndustry||"").trim()===THEME_FILTER)}):allRepeated,uptodate=data&&data.dataDate===REPEAT_DATA.referenceDate;
  var rebuilt=x.reconstructedDays||0,frozen=x.snapshotDays||0,usingRebuild=rebuilt>0;
  var earlier=(x.firstCovered||x.firstSnapshot)&&((x.firstCovered||x.firstSnapshot)>REPEAT_DATA.windowStart);
  coverage.textContent="統計區間 "+REPEAT_DATA.windowStart+" ～ "+REPEAT_DATA.referenceDate+

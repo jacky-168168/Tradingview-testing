@@ -1,0 +1,33 @@
+name: Audit Stock Selections Browser
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/docs/selections.html'
+      - 'tw-stock-dashboard/docs/stock-selection.js'
+      - 'tw-stock-dashboard/docs/repeat-rankings.js'
+      - 'tw-stock-dashboard/docs/g-theme-leaders.js'
+      - 'tw-stock-dashboard/docs/data/rolling-repeats.json'
+      - 'tw-stock-dashboard/tests/test_selections_browser.cjs'
+      - '.github/workflows/audit-selections-browser.yml'
+permissions:
+  contents: read
+jobs:
+  browser-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install headless browser
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Start deterministic local build
+        run: |
+          python3 -m http.server 8765 --directory tw-stock-dashboard/docs > /tmp/selections-http.log 2>&1 &
+          sleep 2
+      - name: Audit desktop + mobile all selection modes
+        run: node tw-stock-dashboard/tests/test_selections_browser.cjs
