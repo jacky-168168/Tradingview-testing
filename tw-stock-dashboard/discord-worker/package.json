@@ -1,0 +1,16 @@
+{
+  "name": "tw-stock-discord-signals",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --test-scheduled",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create tw-stock-discord-events",
+    "db:apply": "wrangler d1 execute tw-stock-discord-events --remote --file=./schema.sql",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
