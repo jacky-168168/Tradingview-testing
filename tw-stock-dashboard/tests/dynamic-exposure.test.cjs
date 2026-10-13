@@ -1,5 +1,5 @@
 const test=require("node:test"),assert=require("node:assert/strict");
-const {calculate,sizePlan,ageStatus,candidateList}=require("../docs/dynamic-exposure.js");
+const {calculate,sizePlan,holdingGuidance,ageStatus,candidateList}=require("../docs/dynamic-exposure.js");
 const at=(date,hour=17)=>new Date(date+"T"+String(hour).padStart(2,"0")+":00:00+08:00");
 const mk=(score=70)=>({dataDate:"2026-10-12",risk:{date:"2026-10-12",score,breadth:55,index:21500,ma20:21000,foreign:100,topState:"⚪ Normal",bottomState:"⚪ Inactive"},marketIntelligence:{asOf:"2026-10-12",riskScore:score,marketHealth:{volatilityHistoryPercentile:30,indexBreadthDivergence:false}}});
 test("fully sourced factors sum to 100 and produce reasonable allocation",()=>{
@@ -53,4 +53,32 @@ test("no candidate selected does not fabricate quantity or trade",()=>{
 test("G model candidates remain opt-in, only known codes",()=>{
  const data={models:{G:[{code:"2340",name:"A"},{code:"2340",name:"Duplicate"},{code:"2002",name:"B"},{code:"N/A"}]}};
  assert.deepEqual(candidateList(data).map(s=>s.code),["2340","2002"]);
+});
+
+test("holding 500k versus 400k capital target displays over-allocation without forced sell",()=>{
+ const market={valid:true,date:"2026-10-13",stale:false,risk:36,target:40,allowedNew:false};
+ const plan=sizePlan(market,{capital:1000000,held:500000,stocks:5});
+ const g=holdingGuidance(market,plan);
+ assert.equal(plan.excess,100000);assert.equal(plan.headroom,0);
+ assert.equal(g.tone,"over");assert.equal(g.gap,"超出 100,000 元");
+ assert.equal(g.actualExposure,"50.0%");assert.equal(g.cashUninvested,"500,000 元");assert.equal(g.todayBudget,"0 元");
+ assert.match(g.next,/不代表需要立刻賣出/);assert.match(g.next,/一般新倉暫停/);
+});
+test("below target explains spare future allocation without granting a buy",()=>{
+ const m={valid:true,stale:false,risk:36,target:40,allowedNew:false};
+ const g=holdingGuidance(m,sizePlan(m,{capital:1000000,held:300000}));
+ assert.equal(g.gap,"還差 100,000 元");assert.equal(g.todayBudget,"0 元");
+ assert.match(g.next,/不是今天一定要買入/);
+});
+test("up-to-date risk-ON still requires individual entry signal",()=>{
+ const m={valid:true,stale:false,risk:75,target:60,allowedNew:true};
+ const g=holdingGuidance(m,sizePlan(m,{capital:1000000,held:400000}));
+ assert.equal(g.todayBudget,"0 元");assert.match(g.next,/Bottom／SS Bottom/);
+});
+test("expired or invalid market never tells users to trade",()=>{
+ const m={valid:true,stale:true,risk:75,target:40,allowedNew:false};
+ const stale=holdingGuidance(m,sizePlan(m,{capital:1000000,held:300000}));
+ assert.match(stale.next,/資料未更新/);assert.equal(stale.todayBudget,"0 元");
+ const invalid=holdingGuidance({valid:false},sizePlan({valid:false},{capital:1000000,held:0}));
+ assert.equal(invalid.tone,"invalid");assert.equal(invalid.todayBudget,"0 元");
 });
