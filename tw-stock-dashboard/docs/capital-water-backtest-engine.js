@@ -86,6 +86,7 @@ function simulate(rows,model,params={}){
   series.push({date:day.date,index:price,equity:Math.round(equity),stock:Math.round(stock),cash:Math.round(cash),allocation:Math.round((stock/equity||0)*1000)/10,target:s.target,signalDrawdown:s.drawdown===null?null:Math.round(s.drawdown*100)/100,signalScore:s.score,gate:!!gate,action,fees:Math.round(dayCost)});
   lastPrice=price;prevEquity=equity;
  }
+ if(!series.length)throw Error("Insufficient rolling-history warmup in requested evaluation window");
  const last=series.at(-1),initial=Number(params.initialCapital||1000000);
  const annual=days>=30?(Math.pow(last.equity/initial,252/Math.max(1,days-1))-1)*100:null,profit=(last.equity/initial-1)*100;
  const mean=returns.reduce((a,b)=>a+b,0)/Math.max(1,returns.length);
