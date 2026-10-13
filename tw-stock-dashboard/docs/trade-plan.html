@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>台股量化｜分批交易計畫</title>
+<script src="./site-access.js"></script>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--txt:#172033;--sub:#68778c;--line:#e3e8f1;--blue:#2563eb;--green:#047857;--red:#b91c1c;--orange:#b45309}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
+.wrap{max-width:1330px;margin:auto;padding:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 2px 10px #10182806}
+h1{font-size:26px;line-height:1.35;margin:0}h2{font-size:17px;margin:0 0 9px}p{margin:6px 0}.muted{font-size:12px;color:var(--sub)}.small{font-size:11px;color:var(--sub)}
+header{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}.links{display:flex;flex-wrap:wrap;gap:8px}.links a,.btn{color:var(--txt);text-decoration:none;border:1px solid var(--line);background:#fff;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}.btn:hover,.links a:hover{border-color:#93c5fd}
+.hero{background:linear-gradient(125deg,#eff6ff,#fff 60%)}.headline{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-flex;padding:3px 8px;border-radius:99px;background:#e0e7ff;color:#3730a3;font-size:11px;font-weight:850}.tag.orange{background:#fef3c7;color:#92400e}
+.controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}.field span{font-size:12px;font-weight:850;color:#475569}
+input,select{width:100%;min-width:0;padding:10px 11px;color:var(--txt);background:#fff;border:1px solid #cbd5e1;border-radius:9px;font:inherit;font-size:14px}
+input:focus-visible,select:focus-visible{outline:2px solid #93c5fd}.checks{display:flex;gap:10px;flex-wrap:wrap;margin:13px 0 3px}
+.check{display:inline-flex;gap:6px;align-items:center;padding:7px 10px;background:#f8fafc;border:1px solid var(--line);border-radius:9px;font-size:12px;font-weight:750}
+.check input{width:auto}.actionbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.stat{padding:12px;background:#f8fafc;border:1px solid #eef2f6;border-radius:12px;min-width:0}
+.stat span{display:block;font-size:11px;color:var(--sub);font-weight:750}.stat strong{display:block;font-size:21px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}.alert{padding:12px 14px;border-radius:11px;background:#fff7ed;color:#9a3412;font-size:12px;font-weight:750;line-height:1.8}
+.alert.ok{color:#166534;background:#f0fdf4}.alert.stop{background:#fef2f2;color:#991b1b}
+.scroll{overflow-x:auto}.scroll table{border-collapse:collapse;width:100%;min-width:760px;white-space:nowrap}
+th,td{padding:9px 8px;border-bottom:1px solid #eef1f5;text-align:right;font-size:12px}
+th{background:#f8fafc;color:#667085;position:sticky;top:0}td:first-child,th:first-child{text-align:left}
+tr.active{background:#eff6ff}tr:last-child td{border-bottom:none}.good{color:var(--green)}.bad{color:var(--red)}.warning{color:var(--orange)}
+.sliderow{display:flex;gap:12px;align-items:center}.sliderow input{padding:0;flex:1;accent-color:var(--blue)}
+.scenarios{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.scenario{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:11px}.scenario b{display:block;font-size:17px}
+details{border-top:1px solid var(--line);padding:10px 0}summary{cursor:pointer;font-weight:850}.steps{padding-left:20px;color:#334155;font-size:13px;line-height:1.9}
+.footer{text-align:center;margin:16px auto 10px;max-width:930px}
+@media(max-width:1000px){.controls{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.wrap{padding:11px}h1{font-size:21px}.card{padding:13px;margin:11px 0}.controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat strong{font-size:18px}.links{width:100%}.field span{font-size:11px}.scenario b{font-size:15px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="card">
+  <div><h1>🧭 分批交易計畫</h1><p class="muted">均值回歸 × G 強勢回撤 × Bottom/Trend 檢核｜可操作的資金階梯試算</p></div>
+  <nav class="links"><a href="./index.html">🏠 主頁</a><a href="./selections.html">📋 G 選股</a><a href="./backtest.html">📈 回測中心</a></nav>
+</header>
+<section class="card hero">
+  <div class="headline"><span class="tag">研究版 v1</span><span class="tag orange">非即時行情／不自動下單</span></div>
+  <h2 style="margin-top:12px">把「買不到最低點」變成可控的買進計畫</h2>
+  <p>圖片中可驗證的核心，是下跌分段承接、控制每段資金、價格回到平均成本附近時分批出場。本頁將「未揭露的加碼比例、出場門檻」做成可調參數，<strong>不是宣稱還原作者的精確公式</strong>。</p>
+</section>
+<section class="card" aria-label="建立進出場計畫">
+  <h2>01｜設定股票與分批規則</h2>
+  <div class="controls">
+    <label class="field"><span>股票代碼／名稱</span><input id="stock" value="台玻 1802" maxlength="40"></label>
+    <label class="field"><span>第一筆參考價（元）</span><input id="start" type="number" min="0.01" step="0.01" value="76.9"></label>
+    <label class="field"><span>目前股價（手動輸入）</span><input id="current" type="number" min="0.01" step="0.01" value="57.6"></label>
+    <label class="field"><span>總可動用資金（元）</span><input id="capital" type="number" min="1000" step="1000" value="1000000"></label>
+    <label class="field"><span>單檔資金上限（%）</span><input id="allocation" type="number" min="1" max="100" step="1" value="30"></label>
+    <label class="field"><span>總共分幾批</span><input id="layers" type="number" min="2" max="25" step="1" value="10"></label>
+    <label class="field"><span>每段跌幅（%）</span><input id="gap" type="number" min="0.5" max="30" step="0.1" value="4.5"></label>
+    <label class="field"><span>各批資金配置</span><select id="weight"><option value="equal">等額投入</option><option value="rising">後段遞增（1.2 倍）</option></select></label>
+    <label class="field"><span>買進股數單位</span><select id="unit"><option value="1">1 股（含零股）</option><option value="1000">1000 股（整張）</option></select></label>
+    <label class="field"><span>交易類型</span><select id="cashratio"><option value="1">現股（100%自備）</option><option value="0.4">融資試算（40%自備）</option></select></label>
+    <label class="field"><span>券商手續費折數</span><input id="discount" type="number" min="0.1" max="10" step="0.1" value="6"></label>
+    <label class="field"><span>賣出交易稅（%）</span><select id="tax"><option value="0.3">一般股票 0.3%</option><option value="0.1">ETF 0.1%（依適用標的）</option></select></label>
+    <label class="field"><span>第一段停利：成本 +%</span><input id="tp1" type="number" min="0" max="100" step="0.5" value="3"></label>
+    <label class="field"><span>第二段停利：成本 +%</span><input id="tp2" type="number" min="0" max="100" step="0.5" value="7"></label>
+    <label class="field"><span>單檔最多可承受損失（%預算）</span><input id="loss" type="number" min="1" max="100" value="12"></label>
+    <label class="field"><span>融資預估持有天數</span><input id="days" type="number" min="0" max="3650" value="15"></label>
+  </div>
+  <p class="small">融資模式假設自備 40%、借款 60%，另以年息 6% 粗估利息；實際融資成數、利率、追繳規則與手續費須以券商為準。零股的最低手續費依券商不同，此處沒有計入。</p>
+  <div class="actionbar"><button class="btn primary" id="sample">載入台玻案例近似路徑</button><button class="btn" id="save">💾 儲存至此裝置</button><button class="btn" id="restore">讀取本機計畫</button><button class="btn" id="reset">還原初始設定</button><button class="btn" id="csv">⬇ 匯出階梯 CSV</button></div>
+  <p id="storageStatus" class="small" role="status">僅在此瀏覽器本機試算；未與券商帳戶或即時行情連接。</p>
+</section>
+<section class="card" aria-label="交易訊號檢核">
+  <h2>02｜下單前的訊號檢核（人工填寫）</h2>
+  <div class="controls">
+    <label class="field"><span>策略</span><select id="strategy"><option value="original">A｜原作者：分批均值回歸</option><option value="bottom">B｜Bottom 訊號後分批</option><option value="trend">C｜Bottom ＋ Trend &gt; 70</option><option value="g">D｜G 選股後逢回承接</option></select></label>
+    <label class="field"><span>大盤狀態（手動）</span><select id="market"><option value="unknown">尚未核對</option><option value="on">Risk ON</option><option value="neutral">中立／謹慎</option><option value="off">Risk OFF</option></select></label>
+  </div>
+  <div class="checks"><label class="check"><input type="checkbox" id="hasBottom">已確認 Bottom</label><label class="check"><input type="checkbox" id="hasTrend">已確認 Trend &gt; 70</label><label class="check"><input type="checkbox" id="hasG">在 G 候選名單</label><label class="check"><input type="checkbox" id="riskAccepted">已檢查事件／財務風險</label></div>
+  <div id="signal" class="alert">尚未完成訊號檢核。</div>
+</section>
+<section class="card" aria-label="模擬持倉">
+  <h2>03｜試算目前已成交批數</h2>
+  <div class="sliderow"><input type="range" id="filled" min="0" max="10" value="0"><strong id="filledLabel" style="min-width:90px">0 / 10 批</strong></div>
+  <p class="small">拖動代表「假設前 N 批全部在計畫價成交」，並非實際已成交。價格跳空、成交量、滑價可能令實盤無法照表成交。</p>
+  <div class="stats" id="stats" aria-live="polite"></div>
+  <div id="riskAlert" class="alert" style="margin-top:12px"></div>
+</section>
+<div class="grid">
+  <section class="card">
+    <h2>04｜逐段買進階梯</h2>
+    <div class="scroll"><table><thead><tr><th>批次</th><th>掛買價</th><th>距首次</th><th>本批股數</th><th>本批自備金</th><th>累計均價</th><th>累計自備金</th><th>狀態</th></tr></thead><tbody id="ladder"></tbody></table></div>
+  </section>
+  <section class="card">
+    <h2>05｜出場與壓力測試</h2>
+    <div id="exit" class="alert">請先模擬至少一批成交。</div>
+    <h2 style="margin-top:19px">假設現價再變動</h2><div id="scenarios" class="scenarios"></div>
+    <p class="small">浮動損益為「假設全部平倉」的粗估稅費後金額，融資另含估算利息；未含滑價、最低手續費與可能的追繳處分費。</p>
+  </section>
+</div>
+<section class="card">
+  <h2>06｜原作者邏輯與建議改造</h2>
+  <details open><summary>A｜圖片能直接支持的操作</summary><ol class="steps"><li>接受無法準確抄底，價格走低時分段建倉。</li><li>分批間距與投入資金要足夠細緻，避免過早用完預算。</li><li>等價格不再持續走弱、出現均值回歸，視情況獲利出場。</li><li>另一組交易以多檔短線、較小報酬和高週轉累積獲利；不可和長線攤平績效混算。</li></ol></details>
+  <details><summary>B｜為什麼不能直接照抄</summary><ol class="steps"><li>原圖沒有完整公佈加碼公式、總帳戶曲線、未平倉浮虧及最終停損規則。</li><li>圖上約 16% 的融資報酬率是自備資金口徑，不代表股價同幅上漲。</li><li>反彈並非必然；下跌趨勢若伴隨基本面惡化，「攤低成本」無法降低總經濟損失。</li></ol></details>
+  <details><summary>C｜我建議的量化改良</summary><ol class="steps"><li>先由 G 股票池與大盤風險決定「誰值得觀察」，避免盲目對所有跌勢加碼。</li><li>進場時可選原版、Bottom、Bottom+Trend 70 三組做平行回測，不先宣稱某組最好。</li><li>以個股預算、最多批數、停止加碼條件、整體停損金額四層限制資金風險。</li><li>出場可分為成本+3%減碼與+7%出清（預設只是待驗證的測試值），並比較 Top 出場版本。</li></ol></details>
+</section>
+<p class="footer muted">研究／紙上模擬工具，不執行交易、不取得即時券商報價。自訂參數和圖片作者的原始策略不同，必須經歷史樣本、成本、最大回撤及樣本外驗證後才能評估有效性。</p>
+</div>
+<script>
+(function(){
+"use strict";
+var ids=["stock","start","current","capital","allocation","layers","gap","weight","unit","cashratio","discount","tax","tp1","tp2","loss","days","strategy","market","hasBottom","hasTrend","hasG","riskAccepted","filled"];
+function el(id){return document.getElementById(id)}
+function num(id,lo,hi){var n=Number(el(id).value);return Number.isFinite(n)?Math.min(hi,Math.max(lo,n)):lo}
+function money(n){return Number.isFinite(n)?Math.round(n).toLocaleString("zh-TW"):"—"}
+function price(n){return Number.isFinite(n)&&n>0?n.toLocaleString("zh-TW",{maximumFractionDigits:3}):"—"}
+function sign(n){return (n>=0?"+":"")+money(n)}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(m){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]})}
+var rows=[];
+function render(){
+ var start=num("start",.01,1000000),current=num("current",.01,1000000),capital=num("capital",1000,1e12),allocation=num("allocation",1,100)/100,layers=Math.round(num("layers",2,25)),gap=num("gap",.5,30)/100;
+ var ratio=num("cashratio",.4,1),fee=.001425*num("discount",.1,10)/10,tax=num("tax",.01,1)/100,days=num("days",0,3650),tp1=num("tp1",0,100)/100,tp2=num("tp2",0,100)/100,limit=capital*allocation;
+ var unit=num("unit",1,1000),rising=el("weight").value==="rising",weights=Array.from({length:layers},function(_,i){return rising?Math.pow(1.2,i):1}),ws=weights.reduce(function(a,b){return a+b},0);
+ var qtySum=0,nominalSum=0,eqSum=0,loanSum=0;rows=[];
+ for(var i=0;i<layers;i++){
+  var p=start*Math.pow(1-gap,i),share=limit*weights[i]/ws,qty=Math.floor(share/(p*(ratio+fee))/unit)*unit,nominal=qty*p,feeBuy=nominal*fee,own=nominal*ratio+feeBuy,loan=nominal*(1-ratio);
+  qtySum+=qty;nominalSum+=nominal;eqSum+=own;loanSum+=loan;
+  rows.push({n:i+1,p:p,qty:qty,own:own,loan:loan,nominal:nominal,avg:qtySum?nominalSum/qtySum:0,cum:qtySum,equity:eqSum,borrow:loanSum});
+ }
+ el("filled").max=layers;var count=Math.min(Math.round(num("filled",0,layers)),layers);el("filled").value=count;el("filledLabel").textContent=count+" / "+layers+" 批";
+ var body=rows.map(function(r,i){return '<tr class="'+(i<count?"active":"")+'"><td>第 '+r.n+' 批</td><td>'+price(r.p)+'</td><td>'+(100*(r.p/start-1)).toFixed(1)+'%</td><td>'+money(r.qty)+'</td><td>'+money(r.own)+'</td><td>'+price(r.avg)+'</td><td>'+money(r.equity)+'</td><td>'+(i<count?"模擬已買":r.qty>0?"待命":"資金不足")+'</td></tr>'}).join("");
+ el("ladder").innerHTML=body;
+ var filledRows=rows.slice(0,count),owned=filledRows.reduce(function(a,r){return a+r.qty},0),principal=filledRows.reduce(function(a,r){return a+r.own},0),borrow=filledRows.reduce(function(a,r){return a+r.loan},0),nominal=filledRows.reduce(function(a,r){return a+r.nominal},0),interest=borrow*.06*days/365;
+ var avg=owned?nominal/owned:0,sellCost=fee+tax,breakEven=owned?(principal+borrow+interest)/(owned*(1-sellCost)):0;
+ function valueAt(p){return owned*p*(1-sellCost)-borrow-principal-interest}
+ var pnl=valueAt(current),roc=principal?pnl/principal*100:0,stopLoss=limit*num("loss",1,100)/100,stopPrice=owned?Math.max(0,(principal+borrow+interest-stopLoss)/(owned*(1-sellCost))):0;
+ var metrics=[["已模擬股數",money(owned)+" 股"],["持倉均價",price(avg)+" 元"],["自備資金占用",money(principal)+" 元"],["預算剩餘",money(Math.max(0,limit-principal))+" 元"],["假設全賣損益",count?sign(pnl)+" 元":"—"],["自備金報酬率",count?roc.toFixed(2)+"%":"—"],["損益兩平價",count?price(breakEven)+" 元":"—"],["估算融資借款",money(borrow)+" 元"]];
+ el("stats").innerHTML=metrics.map(function(x){return '<div class="stat"><span>'+x[0]+'</span><strong>'+x[1]+'</strong></div>'}).join("");
+ var warnings=[];
+ if(rows.some(function(r){return r.qty===0}))warnings.push("至少一批無法按股數單位買進，調低單位或提高預算。");
+ if(count&&pnl< -stopLoss)warnings.push("按現價假設平倉已超出你設定的單檔損失預算；此價格只是風控試算，跳空可能超損。");
+ if(ratio<1&&borrow>0){var maintenance=owned*current/borrow*100;if(maintenance<140)warnings.push("估算擔保維持率 "+maintenance.toFixed(1)+"% 已接近／低於示例警戒區，應依券商實際追繳制度處理。")}
+ if(!warnings.length)warnings.push("已計入自備資金上限與假設買賣手續費／賣出稅；請用實際成交確認每一筆。");
+ el("riskAlert").className="alert"+(warnings.length===1&&warnings[0].startsWith("已計入")?" ok":"");
+ el("riskAlert").textContent=warnings.join(" ");
+ el("exit").innerHTML=count?("<strong>損益兩平：</strong>"+price(breakEven)+" 元<br><strong>第一段目標：</strong>"+price(Math.max(breakEven,avg*(1+tp1)))+" 元（建議模擬先減碼 50%）<br><strong>第二段目標：</strong>"+price(Math.max(breakEven,avg*(1+tp2)))+" 元（剩餘部位）<br><strong>單檔損失預算：</strong>"+money(stopLoss)+" 元<br><strong>對應風控價格：</strong>"+price(stopPrice)+" 元（是假設可在此價全部成交的理論值）"):"尚未模擬成交，拖動上方批數後才會計算實際部位的出場參考價。";
+ el("scenarios").innerHTML=[0,-10,-20,-30,-40].map(function(s){var pp=current*(1+s/100),v=valueAt(pp);return '<div class="scenario"><span class="small">股價 '+(s===0?"不變":s+"%")+' → '+price(pp)+'</span><b class="'+(v<0?"bad":"good")+'">'+(count?sign(v)+" 元":"尚未成交")+'</b><span class="small">'+(count?(v/principal*100).toFixed(2)+"% 自備金":"—")+'</span></div>'}).join("");
+ var strategy=el("strategy").value,market=el("market").value,reason=[];
+ if(market==="off")reason.push("大盤 Risk OFF：建議暫停新增部位，並先檢查既有風險。");
+ if(market==="unknown")reason.push("大盤狀態尚未核對。");
+ if(strategy==="bottom"&&!el("hasBottom").checked)reason.push("B 策略必須先有 Bottom。");
+ if(strategy==="trend"&&(!el("hasBottom").checked||!el("hasTrend").checked))reason.push("C 策略需要 Bottom 且 Trend > 70。");
+ if(strategy==="g"&&!el("hasG").checked)reason.push("D 策略需要先進入 G 觀察名單。");
+ if(!el("riskAccepted").checked)reason.push("尚未確認重大事件與財報惡化風險。");
+ var s=el("signal");s.className="alert"+(market==="off"?" stop":reason.length?"":" ok");
+ s.textContent=reason.length?reason.join(" "):"人工勾選條件已齊全：僅表示通過檢核，可以查看價格階梯；不是經回測驗證的買進指令。";
+}
+function downloadCSV(){
+ var header=["批次","預計買價","本批股數","本批自備金","累計均價","累計自備金"];var content=[header.join(",")].concat(rows.map(function(r){return [r.n,r.p.toFixed(3),r.qty,r.own.toFixed(0),r.avg.toFixed(3),r.equity.toFixed(0)].join(",")}));
+ var blob=new Blob(["\ufeff"+content.join("\r\n")],{type:"text/csv;charset=utf-8"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="ladder-plan-"+new Date().toISOString().slice(0,10)+".csv";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},500);
+}
+var defaults={};ids.forEach(function(id){var e=el(id);defaults[id]=e.type==="checkbox"?e.checked:e.value;e.addEventListener("input",render);e.addEventListener("change",render)});
+el("sample").onclick=function(){Object.assign(el("start"),{value:"76.9"});el("current").value="57.6";el("layers").value="16";el("gap").value="3.6";el("cashratio").value="0.4";el("capital").value="3000000";el("allocation").value="40";el("weight").value="rising";el("unit").value="1000";el("filled").value="12";el("stock").value="台玻 1802（示範）";el("storageStatus").textContent="已載入台玻近似下跌路徑，並非作者原始每筆成交。";render()};
+el("save").onclick=function(){var data={};ids.forEach(function(id){var e=el(id);data[id]=e.type==="checkbox"?e.checked:e.value});try{localStorage.setItem("tw-ladder-playbook-v1",JSON.stringify(data));el("storageStatus").textContent="已儲存在此瀏覽器，其他裝置不會同步。"}catch(e){el("storageStatus").textContent="此瀏覽器無法儲存："+e.message}};
+el("restore").onclick=function(){try{var d=JSON.parse(localStorage.getItem("tw-ladder-playbook-v1")||"null");if(!d)throw new Error("尚未儲存");ids.forEach(function(id){if(!Object.prototype.hasOwnProperty.call(d,id))return;var e=el(id);if(e.type==="checkbox")e.checked=Boolean(d[id]);else e.value=String(d[id])});render();el("storageStatus").textContent="已讀取本機設定。"}catch(e){el("storageStatus").textContent="無法讀取："+e.message}};
+el("reset").onclick=function(){ids.forEach(function(id){var e=el(id);if(e.type==="checkbox")e.checked=defaults[id];else e.value=defaults[id]});render();el("storageStatus").textContent="已還原預設參數（本機儲存紀錄未刪除）。"};
+el("csv").onclick=downloadCSV;
+var qs=new URLSearchParams(location.search),code=qs.get("stock"),p=Number(qs.get("price"));if(code)el("stock").value=code.slice(0,40);if(Number.isFinite(p)&&p>0&&p<1e6){el("start").value=p;el("current").value=p}
+render();
+})();
+</script>
+</body></html>
