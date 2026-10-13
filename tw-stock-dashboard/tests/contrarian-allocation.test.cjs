@@ -31,3 +31,7 @@ test("missing historical high does not convert score into made-up valuation",()=
 test("price midpoint is informational proxy, not a proprietary ARK formula",()=>{
  const x=calculateContrarian(m(97),now);assert.ok(x.method.includes("跌幅"));assert.ok(x.source.includes("前120日高點"));
 });
+
+test("new price high above previous 120-day high still prepares cash, not invalid",()=>{
+ const x=calculateContrarian(m(103,75,100),now);assert.equal(x.valid,true);assert.equal(x.drawdown,0);assert.equal(x.target,30);
+});
