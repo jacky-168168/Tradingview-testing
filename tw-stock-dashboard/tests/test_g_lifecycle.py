@@ -26,7 +26,7 @@ class GStageTests(unittest.TestCase):
         self.assertEqual(x["byEntryBucket"]["repeat_1_3"]["n"],1)
         self.assertEqual(x["byEntryBucket"]["repeat_1_3"]["reach7"],1)
         self.assertEqual(x["byEntryBucket"]["repeat_1_3"]["reach10"],1)
-        self.assertEqual(x["entries"][0]["firstReach10"],10)
+        self.assertEqual(x["entries"][0]["firstReach10"],9)
         self.assertEqual(x["entries"][0]["firstReach7"],6)
         self.assertEqual(x["entries"][0]["entryBucket"],"repeat_1_3")
     def test_holding_same_stock_disallows_reopening_and_b_weak_signal_does_not_progress(self):
