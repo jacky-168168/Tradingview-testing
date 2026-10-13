@@ -22,7 +22,7 @@ async function visit(ctx,file,variant,delay=600){
  page.on('pageerror',e=>jsErrors.push(e.message));
  page.on('response',r=>{if(r.status()>=400&&r.url().startsWith(BASE))httpErrors.push({url:r.url().split('?')[0].slice(BASE.length),code:r.status()})});
  await page.goto(BASE+file,{waitUntil:'domcontentloaded',timeout:28000});await page.waitForTimeout(delay);
- await test(variant+' '+file+' HTTP success',async()=>page.locator('body').count()===1&&!(await page.locator('body').innerText()).includes('404 File not found'));
+ await test(variant+' '+file+' HTTP success',async()=>(await page.locator('body').count())===1&&!(await page.locator('body').innerText()).includes('404 File not found'));
  await test(variant+' '+file+' no JS exception',async()=>jsErrors.length?{ok:false,jsErrors}:true);
  await test(variant+' '+file+' no local asset 4xx',async()=>httpErrors.length?{ok:false,httpErrors}:true);
  if(variant==='mobile')await test('mobile '+file+' no body overflow',async()=>page.evaluate(()=>({ok:document.documentElement.scrollWidth<=window.innerWidth+12,scroll:document.documentElement.scrollWidth,width:window.innerWidth})));
