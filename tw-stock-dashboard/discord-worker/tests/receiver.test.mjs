@@ -22,7 +22,7 @@ class MemoryDB {
      return {success:true};
     },
     async all(){
-     if(query.includes("FROM discord_signals"))return {results:[...db.signals].map(([id,a])=>({id,channel_id:a[2],source:a[3],symbol:a[4],signal:a[5],variant:a[6],price:a[7],timeframe:a[8],time_ms:a[9]}))};
+     if(query.includes("FROM discord_signals"))return {results:[...db.signals].map(([id,a])=>({id,channel_id:a[2],source:a[3],symbol:a[4],signal:a[5],variant:a[6],trend_gt_70:a[7],price:a[8],timeframe:a[9],time_ms:a[10]}))};
      if(query.includes("FROM discord_cursor"))return {results:[...db.cursor].map(([channel_id,s])=>({channel_id,...s}))};
      return {results:[]};
     }
@@ -44,6 +44,7 @@ test("normal and SS duplicates remain different records for UI grouping",()=>{
  assert.deepEqual(signals.map(x=>x.variant),["SS","NORMAL","NORMAL"]);
  assert.deepEqual(signals.map(x=>x.signal),["BOTTOM","BOTTOM","TOP"]);
  assert.equal(signals[0].timeframe,null);
+ assert.deepEqual(signals.map(x=>x.trend_gt_70),[true,false,false]);
 });
 test("parse embedded messages and suppress duplicate text+embed rows",()=>{
  const m=message("1559418059410907999","2492 SS bottom alert triggered, price: 382.5");
@@ -64,6 +65,7 @@ test("poll keeps durable cursor, stores signals and replays idempotently",async(
  const r=await pollOne(env,channel,mockFetch(rows));
  assert.equal(r.signals,2);
  assert.equal(db.signals.size,2);
+ assert.equal(db.signals.get(channel.id+":1559418059410907999:0")[7],1);
  assert.equal(db.cursor.get(channel.id).last_message_id,"1559418059410907999");
  await pollOne(env,channel,mockFetch(rows));
  assert.equal(db.signals.size,2);
