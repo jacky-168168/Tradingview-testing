@@ -47,11 +47,13 @@ def repeat_audit(trades,calendar,horizon):
 
 def pocket_segment_stats(trades,horizon):
     """Conditional returns by PREVIOUS pocket frequency, not same-day or future rank."""
-    groups={"fresh":[],"emerging_1_3":[],"persistent_4plus":[]}
+    groups={"fresh":[],"repeat_1_3":[],"repeat_4_6":[],"repeat_7_9":[],"repeat_10_plus":[]}
     for row in trades:
         r=row.get(f"ret{horizon}");p=(row.get("persistence") or {}).get("past10Top20")
         if r is None or p is None:continue
-        key="fresh" if p==0 else "emerging_1_3" if p<=3 else "persistent_4plus"
+        p=int(p)
+        if p<0:continue
+        key="fresh" if p==0 else "repeat_1_3" if p<=3 else "repeat_4_6" if p<=6 else "repeat_7_9" if p<=9 else "repeat_10_plus"
         groups[key].append(float(r))
     result={}
     for k,rs in groups.items():
