@@ -1,4 +1,4 @@
-/** Parse existing Alert bot text; do not invent Trend or timeframe. */
+/** Parse existing Alert bot text; SS BOTTOM proves Trend > 70 but does NOT provide a numeric score or timeframe. */
 export function parseDiscordMessage(message, channel) {
   if (!message || !/^\d+$/.test(String(message.id ?? ""))) return [];
   const time = Date.parse(String(message.timestamp || ""));
@@ -23,7 +23,7 @@ export function parseDiscordMessage(message, channel) {
       id:String(channel.id)+":"+String(message.id)+":"+out.length,
       discord_message_id:String(message.id),channel_id:String(channel.id),
       source:String(channel.name),timeframe:channel.timeframe || null,
-      symbol,signal,variant,price,time
+      symbol,signal,variant,price,time,trend_gt_70:signal==="BOTTOM"&&variant==="SS"
     });
   }
   return out;
