@@ -52,7 +52,7 @@ test("dated history rejects descending date and duplicate day",()=>{
  assert.throws(()=>core.parseSeries("2026-10-10,10\n2026-10-09,11",10),/由舊到新/);
 });
 test("hot technical zone prevents all initial tranche at that price",()=>{
- const x=core.size({...base,zone:"hot"},market);assert.equal(x.firstShares,0);
+ const x=core.size({...base,zone:"hot"},market);assert.equal(x.firstShares,0);assert.ok(x.ladder.every(p=>p.budget===0));
 });
 test("cash planning is capped by free market headroom",()=>{
  const positions=[{code:"TW-OTHER",type:"broad-etf",group:"market",value:680000}];
