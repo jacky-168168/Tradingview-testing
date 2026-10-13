@@ -98,16 +98,24 @@ def run():
  failures=load(STATUS,{}).get("failed",{})
  todo=[x for x in days if x not in stored][:args.max_days]
  completed=0
+ consecutive_failures=0
  for i,day in enumerate(todo):
   try:
-   got=get_day(day);stored[day]=got;failures.pop(day,None);completed+=1
+   got=get_day(day);stored[day]=got;failures.pop(day,None);completed+=1;consecutive_failures=0
   except Exception as e:
    failures[day]=str(e)[:390]
+   consecutive_failures+=1
    print("FAILED",day,failures[day],file=sys.stderr)
   if (i+1)%20==0 or i==len(todo)-1:
    existing["rows"]=[stored[k] for k in sorted(stored)]
    save(TARGET,existing)
    save(STATUS,{"requestedPeriod":[args.from_date,args.to_date],"calendarSessions":len(days),"fetchedOfficial":len(stored),"remainingMissing":sum(d not in stored for d in days),"lastBatchAttempted":i+1,"lastBatchCompleted":completed,"failed":failures})
+  if consecutive_failures>=10:
+   print("STOP: ten consecutive official response failures; leave archive incomplete rather than guessing",file=sys.stderr)
+   existing["rows"]=[stored[k] for k in sorted(stored)]
+   save(TARGET,existing)
+   save(STATUS,{"requestedPeriod":[args.from_date,args.to_date],"calendarSessions":len(days),"fetchedOfficial":len(stored),"remainingMissing":sum(d not in stored for d in days),"failed":failures,"stoppedBecause":"10 consecutive official API failures"})
+   break
   if i<len(todo)-1:time.sleep(args.delay)
  print(json.dumps({"tradingDays":len(days),"officialRows":len(stored),"remaining":sum(d not in stored for d in days),"attempted":len(todo),"completed":completed},ensure_ascii=False))
 if __name__=="__main__":run()
