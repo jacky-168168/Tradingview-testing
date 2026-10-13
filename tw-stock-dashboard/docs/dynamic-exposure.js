@@ -94,7 +94,7 @@ function sizePlan(result,opts={}){
  const firstPct=ret20!==null&&ret20>=25?10:ret20!==null&&ret20>=15?15:atr!==null&&atr>=8?10:atr!==null&&atr>=5?15:25;
  const firstBudget=Math.min(headroom,perStock*firstPct/100);
  const shares=price!==null&&price>0?Math.floor(firstBudget/price):null;
- const canBuy=result?.valid===true&&!result.stale&&headroom>0&&Boolean(stock)&&shares!==null&&shares>0;
+ const canBuy=result?.valid===true&&!result.stale&&result?.risk>=60&&result?.allowedNew!==false&&headroom>0&&Boolean(stock)&&shares!==null&&shares>0;
  return {capital,held,stocks,limit,headroom,excess,reserve,perStock,volFactor,firstPct,firstBudget,shares,lots:shares===null?null:Math.floor(shares/1000),price,atr,ret20,canBuy};
 }
 function byId(id){return document.getElementById(id)}
@@ -115,24 +115,26 @@ function selectOptions(data){
 }
 function render(){
  if(!current)return;
- const calc=calculate(current),selection=byId("expStock")?.value;
+ const calc=calculate(current),contra=calculateContrarian(current),selection=byId("expStock")?.value;
  selected=candidateList(current).find(s=>String(s.code)===selection)||null;
- const plan=sizePlan(calc,{capital:byId("expCapital")?.value,held:byId("expHeld")?.value,stocks:byId("expSlots")?.value,stock:selected});
- const card=byId("dynamicExposure");if(card){card.dataset.status=!calc.valid||calc.stale?"paused":calc.target<40?"defensive":calc.target>=65?"risk-on":"neutral";}
- put("expAsOf",calc.valid?"資料日 "+calc.date+"｜"+calc.age:"資料不完整");
- put("expHeadline",!calc.valid?"資料不足，暫停計算":calc.stale?"資料待更新｜不作今日新倉建議":calc.target<=30?"防守水位｜控制新增風險":calc.target<60?"審慎水位｜保留加碼現金":"趨勢水位｜仍需等個股訊號");
- put("expTarget",calc.valid?pc(calc.target):"—");
- const fill=byId("expStockFill");if(fill)fill.style.width=(calc.valid?calc.target:0)+"%";
- put("expCash",calc.valid?pc(100-calc.target):"—");
+ const plan=sizePlan(contra,{capital:byId("expCapital")?.value,held:byId("expHeld")?.value,stocks:byId("expSlots")?.value,stock:selected});
+ const card=byId("dynamicExposure");if(card)card.dataset.status=!contra.valid||contra.stale||!contra.allowedNew?"paused":contra.target<=30?"defensive":contra.target>=65?"risk-on":"neutral";
+ put("expAsOf",contra.valid?"資料日 "+contra.date+"｜"+contra.age:"資料不完整");
+ put("expHeadline",!contra.valid?"缺少前高或收盤資料":contra.stale?"正式資料過期｜僅供歷史試算":contra.allowedNew?"逆向預備配置｜請另確認個股進場訊號":"逆向預備配置｜目前一般新倉仍暫停");
+ put("expTarget",contra.valid?pc(contra.target):"—");
+ const fill=byId("expStockFill");if(fill)fill.style.width=(contra.valid?contra.target:0)+"%";
+ put("expCash",contra.valid?pc(contra.cash):"—");
  put("expComposite",calc.valid?calc.score.toFixed(1)+"/100":"—");
- put("expAllowed",calc.valid?fmt(plan.limit)+" 元":"—");
- put("expFree",calc.valid?fmt(plan.headroom)+" 元":"—");
- put("expReserve",calc.valid?fmt(plan.reserve)+" 元":"—");
- put("expFirst",!selected?"先選 G 榜標的":!calc.valid?"暫停":!plan.canBuy?"不可作今日新倉":fmt(plan.firstBudget)+" 元");
- put("expShares",!selected||plan.shares===null?"—":fmt(plan.shares)+" 股｜整張 "+fmt(plan.lots));
- put("expSub",!selected?"單檔以 G 榜最近資料計算，沒有足夠資料不推測價值區。":String(selected.code)+" "+String(selected.name||"")+"｜參考價 "+(plan.price===null?"缺值":plan.price.toFixed(2))+"｜20日漲幅 "+(plan.ret20===null?"未知":plan.ret20.toFixed(1)+"%")+"｜ATR "+(plan.atr===null?"未知":plan.atr.toFixed(1)+"%")+"｜本批比例 "+plan.firstPct+"%");
+ put("expRiskGate",contra.valid?(contra.allowedNew?"可等待個股訊號":"暫停一般新倉"):"等待資料");
+ put("expDrawdown",contra.valid?"距前120日高點 "+contra.drawdown.toFixed(2)+"%｜距MA20 "+(contra.aboveMA===null?"未知":contra.aboveMA.toFixed(2)+"%"):"缺少大盤價格位階");
+ put("expAllowed",contra.valid?fmt(plan.limit)+" 元":"—");
+ put("expFree",contra.valid?fmt(plan.headroom)+" 元":"—");
+ put("expReserve",contra.valid?fmt(plan.reserve)+" 元":"—");
+ put("expFirst",!selected?"先選 G 榜標的":!contra.valid?"暫停":!plan.canBuy?"今日暫停":fmt(plan.firstBudget)+" 元（預算）");
+ put("expShares",!selected||!plan.canBuy||plan.shares===null?"—":fmt(plan.shares)+" 股｜整張 "+fmt(plan.lots));
+ put("expSub",!selected?"個股技術資料不足時不推定價值區；首頁不會把預算當作 Bottom 進場許可。":String(selected.code)+" "+String(selected.name||"")+"｜參考價 "+(plan.price===null?"缺值":plan.price.toFixed(2))+"｜20日漲幅 "+(plan.ret20===null?"未知":plan.ret20.toFixed(1)+"%")+"｜ATR "+(plan.atr===null?"未知":plan.atr.toFixed(1)+"%")+"｜假設首批 "+plan.firstPct+"%；仍須核實進場訊號。");
  const status=byId("expStatus");
- if(status)status.textContent=!calc.valid?calc.reason:calc.stale?"⚠ "+calc.reason:plan.excess>0?"⚠ 目前投入已超過此模型水位 "+fmt(plan.excess)+" 元。僅提醒重新評估，不自動賣出。":calc.risk<60?"⚠ 正式 Risk Score 低於 60。水位只做資產壓力情境，仍須遵守既有大盤進場閘門。":"獨立資金管理試算，不代表即時行情、進場保證或已回測績效。";
+ if(status)status.textContent=!contra.valid?contra.reason:contra.stale?"⚠ 資料過期："+contra.reason:!contra.allowedNew?"⚠ 跌深可以提高預備配置，但 Risk Score "+contra.risk+" 不允許一般新倉。"+contra.reason:plan.excess>0?"⚠ 現有配置超過逆向預備水位 "+fmt(plan.excess)+" 元，不代表應立即賣出。":"注意：目前為價格位階與資金上限情境，並未驗證個股 SS Bottom 或 ETF 價值區，不能直接下單。";
  const root=byId("expFactors");
  if(root){
   root.replaceChildren();
@@ -148,7 +150,7 @@ function render(){
   }else root.textContent="缺少可核對資料；不以缺值補假分數。";
  }
  const explain=byId("expExplain");
- if(explain)explain.textContent=calc.valid?"五因子加權 "+calc.score.toFixed(1)+" 分 → 原始水位 "+calc.raw+"% → 套用風險上限 "+calc.cap+"% → 參考持股 "+calc.target+"%。資料涵蓋 "+calc.coverage+"% 權重。"+(calc.flags.length?" 風險提醒："+calc.flags.join(" "):"")+" 未經獨立回測，不修改 G／F2 邏輯。":calc.reason;
+ if(explain)explain.textContent=contra.valid?"逆向價格位階："+contra.method+" 目前距120日高點 "+contra.drawdown.toFixed(2)+"%，準備股票水位 "+contra.target+"%、保留現金 "+contra.cash+"%。五因子順勢風控屬獨立的參考診斷"+(calc.valid?"（分數 "+calc.score.toFixed(1)+"、舊風控水位 "+calc.target+"%）":"（資料不足）")+"，不當成方舟演算法；風險開倉資格仍依原始 Risk Score 與 Bottom 訊號。未經獨立回測。":contra.reason;
 }
 function refresh(data){current=data||null;selectOptions(current);render()}
 function init(){
