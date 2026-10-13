@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/wrangler.json",
+  "name": "tw-stock-discord-signals",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-10-13",
+  "triggers": {
+    "crons": [
+      "* * * * *"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tw-stock-discord-events",
+      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+    }
+  ],
+  "vars": {
+    "ALLOWED_ORIGIN": "https://jacky-168168.github.io",
+    "CHANNELS_CONFIG": "[{\"id\":\"1540171776418390038\",\"name\":\"day-trading\",\"timeframe\":null},{\"id\":\"1541319920007254066\",\"name\":\"5-min小波段通知\",\"timeframe\":\"5\"}]"
+  }
+}
