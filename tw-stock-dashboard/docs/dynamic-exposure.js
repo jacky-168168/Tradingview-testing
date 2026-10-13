@@ -56,6 +56,32 @@ function calculate(data,now=new Date()){
  const target=Math.min(raw,cap),fresh=ageStatus(date,now);
  return {valid:true,stale:fresh.stale,age:fresh.label,date,score:Math.round(composite*10)/10,target,raw,cap,weight,coverage:weight,flags,factors,risk,source:"已確認同日收盤資料",reason:fresh.stale?"本交易日風控資料尚未更新，只顯示歷史水位，不給今日新增部位許可。":""};
 }
+
+/** Countercyclical drawdown budget, independent of directional Risk Score.
+ * NOT ARK proprietary formula: preceding 120-session high drawdown is a price proxy, not intrinsic value.
+ * Defines a preparation allocation only, NOT permission to buy.
+ */
+function calculateContrarian(data,now=new Date()){
+ const r=data?.risk||{},health=data?.marketIntelligence?.asOf===r.date?data?.marketIntelligence?.marketHealth:null;
+ const date=String(r.date||""),risk=finite(r.score),index=finite(r.index),high=finite(r.priorHigh120);
+ const closeHighDist=index!==null&&index>0&&high!==null&&high>0?(index/high-1)*100:finite(health?.distancePrior120HighPct);
+ if(risk===null||risk<0||risk>100||!/^\d{4}-\d\d-\d\d$/.test(date)||closeHighDist===null||closeHighDist>1||closeHighDist< -100)
+   return {valid:false,stale:true,target:null,date,risk,reason:"缺少可核實的大盤價格或前120日高點，不以 Risk Score 倒數假造低估位階。"};
+ const drawdown=clamp(-closeHighDist,0,100),ma20=finite(r.ma20),aboveMA=ma20!==null&&ma20>0&&index!==null?(index/ma20-1)*100:null;
+ const tiers=[{limit:2,pct:30},{limit:5,pct:40},{limit:10,pct:50},{limit:15,pct:65},{limit:Infinity,pct:80}];
+ const tier=tiers.find(t=>drawdown<t.limit),raw=tier.pct;
+ const overheating=aboveMA!==null&&aboveMA>=7;
+ const target=overheating?Math.min(raw,25):raw;
+ const freshness=ageStatus(date,now),riskOff=risk<60,top=String(r.topState||"");
+ const topVeto=top.includes("Strong Top Reversal")||top.includes("Top Reversal Attempt");
+ const allowedNew=!freshness.stale&&!riskOff&&!topVeto;
+ const reasons=[];
+ if(overheating)reasons.push("大盤高於 MA20 ≥7%，額外降低預備持股比例。");
+ if(riskOff)reasons.push("Risk Score <60，僅預留逢低布局資金，不開放一般新倉。");
+ if(topVeto)reasons.push("大盤已確認頂部反轉警訊，停止一般新倉。");
+ if(freshness.stale)reasons.push("大盤資料過期，只能查看歷史情境。");
+ return {valid:true,date,stale:freshness.stale,age:freshness.label,risk,target,cash:100-target,drawdown:Math.round(drawdown*100)/100,aboveMA:aboveMA===null?null:Math.round(aboveMA*100)/100,source:high!==null?"現貨指數與資料庫前120日高點":"一致日期的大盤診斷前高距離",raw,allowedNew,reasons,reason:reasons.join(" "),method:"跌幅 <2%→30%；2–5%→40%；5–10%→50%；10–15%→65%；≥15%→80%。若較MA20高≥7%，水位上限25%。"};
+}
 function sizePlan(result,opts={}){
  const capital=clamp(finite(opts.capital)??1000000,0,1e10),held=clamp(finite(opts.held)??0,0,1e10),stocks=clamp(Math.round(finite(opts.stocks)??5),1,30);
  const percent=result?.valid?result.target:0,limit=capital*percent/100,headroom=Math.max(0,limit-held),excess=Math.max(0,held-limit),reserve=Math.max(0,capital-limit);
@@ -129,7 +155,7 @@ function init(){
  if(typeof document==="undefined"||!byId("dynamicExposure"))return;
  for(const id of ["expCapital","expHeld","expSlots","expStock"]){const el=byId(id);if(el)el.addEventListener("input",render)}
 }
-const api={calculate,sizePlan,ageStatus,elapsedTradingDays,candidateList,refresh,init};
+const api={calculate,calculateContrarian,sizePlan,ageStatus,elapsedTradingDays,candidateList,refresh,init};
 scope.DynamicExposure=api;
 if(typeof module!=="undefined"&&module.exports)module.exports=api;
 })(typeof window!=="undefined"?window:typeof globalThis!=="undefined"?globalThis:{});
