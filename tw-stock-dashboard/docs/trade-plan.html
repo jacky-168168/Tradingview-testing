@@ -74,9 +74,10 @@ details{border-top:1px solid var(--line);padding:10px 0}summary{cursor:pointer;f
   <h2>02｜下單前的訊號檢核（人工填寫）</h2>
   <div class="controls">
     <label class="field"><span>策略</span><select id="strategy"><option value="original">A｜原作者：分批均值回歸</option><option value="bottom">B｜Bottom 訊號後分批</option><option value="trend">C｜Bottom ＋ Trend &gt; 70</option><option value="g">D｜G 選股後逢回承接</option></select></label>
+    <label class="field"><span>出場優先條件</span><select id="exitStyle"><option value="target">均價 +% 分批停利</option><option value="top">TOP 訊號優先減碼（手動）</option></select></label>
     <label class="field"><span>大盤狀態（手動）</span><select id="market"><option value="unknown">尚未核對</option><option value="on">Risk ON</option><option value="neutral">中立／謹慎</option><option value="off">Risk OFF</option></select></label>
   </div>
-  <div class="checks"><label class="check"><input type="checkbox" id="hasBottom">已確認 Bottom</label><label class="check"><input type="checkbox" id="hasTrend">已確認 Trend &gt; 70</label><label class="check"><input type="checkbox" id="hasG">在 G 候選名單</label><label class="check"><input type="checkbox" id="riskAccepted">已檢查事件／財務風險</label></div>
+  <div class="checks"><label class="check"><input type="checkbox" id="hasBottom">已確認 Bottom</label><label class="check"><input type="checkbox" id="hasTrend">已確認 Trend &gt; 70</label><label class="check"><input type="checkbox" id="hasG">在 G 候選名單</label><label class="check"><input type="checkbox" id="hasTop">已確認 TOP（出場）</label><label class="check"><input type="checkbox" id="riskAccepted">已檢查事件／財務風險</label></div>
   <div id="signal" class="alert">尚未完成訊號檢核。</div>
 </section>
 <section class="card" aria-label="模擬持倉">
@@ -109,7 +110,7 @@ details{border-top:1px solid var(--line);padding:10px 0}summary{cursor:pointer;f
 <script>
 (function(){
 "use strict";
-var ids=["stock","start","current","capital","allocation","layers","gap","weight","unit","cashratio","discount","tax","tp1","tp2","loss","days","strategy","market","hasBottom","hasTrend","hasG","riskAccepted","filled"];
+var ids=["stock","start","current","capital","allocation","layers","gap","weight","unit","cashratio","discount","tax","tp1","tp2","loss","days","strategy","market","exitStyle","hasBottom","hasTrend","hasG","hasTop","riskAccepted","filled"];
 function el(id){return document.getElementById(id)}
 function num(id,lo,hi){var n=Number(el(id).value);return Number.isFinite(n)?Math.min(hi,Math.max(lo,n)):lo}
 function money(n){return Number.isFinite(n)?Math.round(n).toLocaleString("zh-TW"):"—"}
@@ -144,6 +145,7 @@ function render(){
  el("riskAlert").className="alert"+(warnings.length===1&&warnings[0].startsWith("已計入")?" ok":"");
  el("riskAlert").textContent=warnings.join(" ");
  el("exit").innerHTML=count?("<strong>損益兩平：</strong>"+price(breakEven)+" 元<br><strong>第一段目標：</strong>"+price(Math.max(breakEven,avg*(1+tp1)))+" 元（建議模擬先減碼 50%）<br><strong>第二段目標：</strong>"+price(Math.max(breakEven,avg*(1+tp2)))+" 元（剩餘部位）<br><strong>單檔損失預算：</strong>"+money(stopLoss)+" 元<br><strong>對應風控價格：</strong>"+price(stopPrice)+" 元（是假設可在此價全部成交的理論值）"):"尚未模擬成交，拖動上方批數後才會計算實際部位的出場參考價。";
+ if(count&&el("exitStyle").value==="top")el("exit").innerHTML += "<br><strong>TOP 出場：</strong>"+(el("hasTop").checked?"已手動確認 TOP，請檢視出場機會與實際風險。":"尚未出現／尚未確認 TOP，保留風控及原計畫的退出規則。");
  el("scenarios").innerHTML=[0,-10,-20,-30,-40].map(function(s){var pp=current*(1+s/100),v=valueAt(pp);return '<div class="scenario"><span class="small">股價 '+(s===0?"不變":s+"%")+' → '+price(pp)+'</span><b class="'+(v<0?"bad":"good")+'">'+(count?sign(v)+" 元":"尚未成交")+'</b><span class="small">'+(count?(v/principal*100).toFixed(2)+"% 自備金":"—")+'</span></div>'}).join("");
  var strategy=el("strategy").value,market=el("market").value,reason=[];
  if(market==="off")reason.push("大盤 Risk OFF：建議暫停新增部位，並先檢查既有風險。");
@@ -160,7 +162,7 @@ function downloadCSV(){
  var blob=new Blob(["\ufeff"+content.join("\r\n")],{type:"text/csv;charset=utf-8"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="ladder-plan-"+new Date().toISOString().slice(0,10)+".csv";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},500);
 }
 var defaults={};ids.forEach(function(id){var e=el(id);defaults[id]=e.type==="checkbox"?e.checked:e.value;e.addEventListener("input",render);e.addEventListener("change",render)});
-el("sample").onclick=function(){Object.assign(el("start"),{value:"76.9"});el("current").value="57.6";el("layers").value="16";el("gap").value="3.6";el("cashratio").value="0.4";el("capital").value="3000000";el("allocation").value="40";el("weight").value="rising";el("unit").value="1000";el("filled").value="12";el("stock").value="台玻 1802（示範）";el("storageStatus").textContent="已載入台玻近似下跌路徑，並非作者原始每筆成交。";render()};
+el("sample").onclick=function(){Object.assign(el("start"),{value:"76.9"});el("current").value="57.6";el("layers").value="16";el("gap").value="3.6";el("cashratio").value="0.4";el("capital").value="3000000";el("allocation").value="40";el("weight").value="rising";el("unit").value="1000";el("filled").max="16";el("filled").value="12";el("stock").value="台玻 1802（示範）";el("storageStatus").textContent="已載入台玻近似下跌路徑，並非作者原始每筆成交。";render()};
 el("save").onclick=function(){var data={};ids.forEach(function(id){var e=el(id);data[id]=e.type==="checkbox"?e.checked:e.value});try{localStorage.setItem("tw-ladder-playbook-v1",JSON.stringify(data));el("storageStatus").textContent="已儲存在此瀏覽器，其他裝置不會同步。"}catch(e){el("storageStatus").textContent="此瀏覽器無法儲存："+e.message}};
 el("restore").onclick=function(){try{var d=JSON.parse(localStorage.getItem("tw-ladder-playbook-v1")||"null");if(!d)throw new Error("尚未儲存");ids.forEach(function(id){if(!Object.prototype.hasOwnProperty.call(d,id))return;var e=el(id);if(e.type==="checkbox")e.checked=Boolean(d[id]);else e.value=String(d[id])});render();el("storageStatus").textContent="已讀取本機設定。"}catch(e){el("storageStatus").textContent="無法讀取："+e.message}};
 el("reset").onclick=function(){ids.forEach(function(id){var e=el(id);if(e.type==="checkbox")e.checked=defaults[id];else e.value=defaults[id]});render();el("storageStatus").textContent="已還原預設參數（本機儲存紀錄未刪除）。"};
