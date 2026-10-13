@@ -1,0 +1,1307 @@
+//@version=6
+
+indicator("Extreme Reversal Hunter + TP SL | Dashboard JSON Bridge",overlay=true,max_labels_count=500,max_lines_count=500,max_bars_back=5000)
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 時段標示
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+grpS="時段標示"
+
+sessTime=input.session("0900-1000","標示時段",group=grpS)
+
+sessTz=input.string("Asia/Taipei","時區設定",group=grpS)
+
+sessCol=input.color(color.new(#3a86ff,85),"標示底色",group=grpS)
+
+showSess=input.bool(true,"顯示時段背景",group=grpS)
+
+inSession=not na(time(timeframe.period,sessTime,sessTz))
+
+bgcolor(showSess and inSession?sessCol:na,title="時段標示背景")
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 交易時段限制
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+grpT="交易時段限制"
+
+enableSessionFilter=input.bool(true,"僅於指定時段內進場",group=grpT)
+
+tradeDirection=input.string("多空都做","交易方向",options=["多空都做","僅作多","僅作空"],group=grpT)
+
+tradeSession1=input.session("0900-0930","時段1",group=grpT)
+
+tradeSession2=input.session("1030-1100","時段2",group=grpT)
+
+tradeSession3=input.session("1330-1400","時段3",group=grpT)
+
+longDirOK=tradeDirection!="僅作空"
+
+shortDirOK=tradeDirection!="僅作多"
+
+inSession1=not na(time(timeframe.period,tradeSession1,sessTz))
+
+inSession2=not na(time(timeframe.period,tradeSession2,sessTz))
+
+inSession3=not na(time(timeframe.period,tradeSession3,sessTz))
+
+inTradeSession=inSession1 or inSession2 or inSession3
+
+sessionOK=not enableSessionFilter or inTradeSession
+
+tradeSessIdx=inSession1?1:inSession2?2:inSession3?3:0
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 盤態濾網
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+grpR="盤態濾網（盤整／趨勢判斷）"
+
+regimeMethod=input.string("Choppiness Index","判斷方法",options=["Choppiness Index","ADX"],group=grpR)
+
+chopLen=input.int(14,"盤整指標週期",minval=5,group=grpR)
+
+chopChoppyTh=input.float(61.8,"盤整門檻（CHOP以上）",group=grpR)
+
+chopTrendTh=input.float(38.2,"趨勢門檻（CHOP以下）",group=grpR)
+
+adxLen=input.int(14,"ADX週期",minval=5,group=grpR)
+
+adxSmooth=input.int(14,"ADX平滑值",minval=5,group=grpR)
+
+adxTrendTh=input.float(25,"ADX趨勢門檻",group=grpR)
+
+gateSignals=input.bool(false,"僅於盤整盤態顯示訊號",group=grpR)
+
+showRegimeBg=input.bool(false,"盤態背景",group=grpR)
+
+tr_=ta.tr(true)
+
+chopRange=ta.highest(high,chopLen)-ta.lowest(low,chopLen)
+
+chopVal=chopRange>0?100*math.log10(math.sum(tr_,chopLen)/chopRange)/math.log10(chopLen):50
+
+[diPlus,diMinus,adxVal]=ta.dmi(adxLen,adxSmooth)
+
+isChoppy=regimeMethod=="Choppiness Index"?chopVal>=chopChoppyTh:adxVal<adxTrendTh
+
+isTrending=regimeMethod=="Choppiness Index"?chopVal<=chopTrendTh:adxVal>=adxTrendTh
+
+regimeLabel=isTrending?"趨勢":isChoppy?"盤整":"中性"
+
+regimeVal=regimeMethod=="Choppiness Index"?chopVal:adxVal
+
+bgcolor(showRegimeBg and isChoppy?color.new(#00a89d,92):showRegimeBg and isTrending?color.new(#e8365f,94):na,title="盤態背景")
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 恐慌指標
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+grpF="恐慌指標"
+
+wvfLen=input.int(40,"恐慌回溯期",minval=5,group=grpF)
+
+thLen=input.int(400,"自適應門檻視窗（K棒數）",minval=50,maxval=480,group=grpF)
+
+thPct=input.int(90,"恐慌尖峰百分位",minval=70,maxval=99,group=grpF)
+
+showFearBg=input.bool(true,"圖表上色顯示恐慌",group=grpF)
+
+hiC=ta.highest(close,wvfLen)
+
+wvf=hiC>0?(hiC-low)/hiC*100:0.0
+
+var array<float> wvfHist=array.new<float>()
+
+if barstate.isconfirmed
+
+    wvfHist.push(wvf)
+
+    if wvfHist.size()>thLen
+
+        wvfHist.shift()
+
+fearTh=wvfHist.size()>=50?array.percentile_linear_interpolation(wvfHist,thPct):na
+
+fearHot=not na(fearTh) and wvf>=fearTh
+
+fearX=not na(fearTh) and wvf>=fearTh*1.15
+
+loC=ta.lowest(close,wvfLen)
+
+gvf=loC>0?(high-loC)/loC*100:0.0
+
+var array<float> gvfHist=array.new<float>()
+
+alsoTops=true
+
+if barstate.isconfirmed and alsoTops
+
+    gvfHist.push(gvf)
+
+    if gvfHist.size()>thLen
+
+        gvfHist.shift()
+
+greedTh=alsoTops and gvfHist.size()>=50?array.percentile_linear_interpolation(gvfHist,thPct):na
+
+greedHot=not na(greedTh) and gvf>=greedTh
+
+bullCol=#00a89d
+
+bearCol=#e8365f
+
+goldCol=#d99b1e
+
+silvCol=#5c6b80
+
+bgcolor(showFearBg and fearHot?color.new(bearCol,fearX?82:90):showFearBg and greedHot?color.new(goldCol,92):na,title="恐慌染色")
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 底部偵測
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+grpB="底部偵測"
+
+extMom=input.float(2,"最小下跌動能（ATR倍數）",step=0.25,minval=0.5,group=grpB)
+
+minPress=input.float(0.6,"最小反彈壓力值",step=0.05,minval=0.1,maxval=0.95,group=grpB)
+
+extVolZ=input.float(1.5,"成交量高潮（Z分數）",step=0.25,group=grpB)
+
+cooldown=input.int(8,"冷卻期（K棒數）",minval=2,group=grpB)
+
+settleN=input.int(15,"標記結算週期（K棒數）",minval=5,maxval=60,group=grpB)
+
+keepExt=input.int(100,"保留標記數量",minval=4,maxval=500,group=grpB)
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 新增：強勢股雷達 Trend Score（只新增，不改原訊號邏輯）
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+grpST="強勢 BOTTOM"
+strongTrendTF=input.timeframe("D","趨勢計算週期",group=grpST)
+strongTrendTh=input.float(70,"強勢 BOTTOM 趨勢門檻",minval=0,maxval=100,step=1,group=grpST)
+showStrongBottom=input.bool(true,"顯示強勢 BOTTOM 訊號",group=grpST)
+showStrongTrendPanel=input.bool(true,"顯示 Trend 分數小表格",group=grpST)
+
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// TP / SL 風控設定
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+grpTP="TP / SL 風控設定"
+
+enableTPSL=input.bool(true,"啟用 TP / SL",group=grpTP)
+
+slMethod=input.string("ATR倍數","停損計算方式",options=["ATR倍數","區間高低點+緩衝","固定百分比","反向訊號出場（BOTTOM↔TOP）"],group=grpTP)
+
+atrStopMult=input.float(2,"ATR停損倍數",step=0.25,minval=0.5,group=grpTP)
+
+rangeLookback=input.int(20,"區間高低點回溯K棒數",minval=5,group=grpTP)
+
+rangeBufAtr=input.float(0.3,"區間停損緩衝（ATR倍數）",step=0.1,minval=0,group=grpTP)
+
+fixedPct=input.float(3.0,"固定停損百分比（%）",step=0.5,minval=0.1,group=grpTP)
+
+showTPSLLabels=input.bool(true,"顯示 TP / SL 標籤",group=grpTP)
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// TP R 倍數
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+grpTPR="TP R 倍數"
+
+enableTP1=input.bool(true,"啟用 TP1",group=grpTPR)
+
+tp1R=input.float(1.5,"TP1 R",minval=0.1,step=0.1,group=grpTPR)
+
+enableTP2=input.bool(true,"啟用 TP2",group=grpTPR)
+
+tp2R=input.float(2.5,"TP2 R",minval=0.1,step=0.1,group=grpTPR)
+
+enableTP3=input.bool(true,"啟用 TP3",group=grpTPR)
+
+tp3R=input.float(3.0,"TP3 R",minval=0.1,step=0.1,group=grpTPR)
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// TP1 後風控
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+grpTrail="TP1 後風控"
+
+enableBE=input.bool(true,"TP1後 SL 移至保本",group=grpTrail)
+
+enableTrailing=input.bool(false,"TP1後啟用 ATR Trailing",group=grpTrail)
+
+trailingATRMult=input.float(1.5,"Trailing ATR 倍數",minval=0.1,step=0.1,group=grpTrail)
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// R值統計設定
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+grpR2="R值命中統計"
+
+rrTimeout=input.int(80,"R值判定逾時K棒數",minval=10,group=grpR2)
+
+cap=300
+
+minN=15
+
+shrinkK=10
+
+zConf=1.645
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 共用計算
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+atrV=ta.atr(14)
+
+rsiV=ta.rsi(close,14)
+
+volSd=ta.stdev(volume,50)
+
+volZ=na(volSd) or volSd==0?0.0:(volume-ta.sma(volume,50))/volSd
+
+f_rep(string s,int n)=>
+
+    out=""
+
+    if n>0
+
+        for i=1 to n
+
+            out+=s
+
+    out
+
+fw(float p)=>str.tostring(p*100,"#")+"%"
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 新增：強勢股雷達 V6 趨勢分數
+// 以「上一根已完成日K」計算，2分/5分圖不會因盤中日K未完成而重繪
+// 總分100：EMA結構30 + 10日動能15 + 20日低點漲幅20 + 區間位置15 + 持續性10 + SAR10
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+f_stClamp(float v,float lo,float hi)=>math.max(lo,math.min(hi,v))
+f_stDailyBaseScore()=>
+    e20=ta.ema(close,20)
+    e60=ta.ema(close,60)
+    above20=close>e20
+    above60=close>e60
+    bullStack=e20>e60
+    e20Up=e20>e20[5]
+    e60Up=e60>e60[5]
+    ret10=close[10]>0?(close/close[10]-1)*100:0.0
+    lo20=ta.lowest(low,20)
+    hi20=ta.highest(high,20)
+    riseLow=lo20>0?(close/lo20-1)*100:0.0
+    pos20=hi20>lo20?(close-lo20)/(hi20-lo20)*100:50.0
+    persist=ta.sma(close>e60?1.0:0.0,10)*100
+    emaScore=(above20?5.0:0)+(above60?5.0:0)+(bullStack?8.0:0)+(e20Up?6.0:0)+(e60Up?6.0:0)
+    retScore=15*f_stClamp(ret10/30,0,1)
+    lowScore=20*f_stClamp(riseLow/35,0,1)
+    posScore=pos20>=85?15.0:pos20>=70?12.0:pos20>=55?8.0:pos20>=40?4.0:0.0
+    persistScore=10*f_stClamp((persist-40)/40,0,1)
+    emaScore+retScore+lowScore+posScore+persistScore
+f_stSarBull()=>
+    s=ta.sar(0.02,0.02,0.20)
+    s<close
+f_stSarBars()=>
+    b=f_stSarBull()
+    flip=b!=b[1]
+    nz(ta.barssince(flip),0)+1
+stDailyBase=request.security(syminfo.tickerid,strongTrendTF,f_stDailyBaseScore()[1],gaps=barmerge.gaps_off,lookahead=barmerge.lookahead_on)
+stSarBull=request.security(syminfo.tickerid,strongTrendTF,f_stSarBull()[1],gaps=barmerge.gaps_off,lookahead=barmerge.lookahead_on)
+stSarBars=request.security(syminfo.tickerid,strongTrendTF,f_stSarBars()[1],gaps=barmerge.gaps_off,lookahead=barmerge.lookahead_on)
+stSarScore=stSarBull?10.0:stSarBars<=2?5.0:0.0
+strongTrendScore=math.min(100.0,nz(stDailyBase)+stSarScore)
+strongTrendText=strongTrendScore>=95?"頂級":strongTrendScore>=85?"極強":strongTrendScore>=75?"強勢":strongTrendScore>=65?"偏強":strongTrendScore>=55?"普通":"弱勢"
+strongTrendCol=strongTrendScore>=85?color.lime:strongTrendScore>=75?color.aqua:strongTrendScore>=65?color.yellow:strongTrendScore>=55?color.white:color.red
+
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// Snapback Pressure
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+baseMA=ta.sma(close,200)
+
+xD=atrV>0?(close-baseMA)/atrV:0
+
+var float sNeg=0.0
+
+var float sPos=0.0
+
+sNeg:=xD<-1?sNeg+(-xD-1):sNeg*0.6
+
+sPos:=xD>1?sPos+(xD-1):sPos*0.6
+
+pressUp=1.0-math.exp(-sNeg/6.0)
+
+pressDn=1.0-math.exp(-sPos/6.0)
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// Divergence
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+dvL=ta.pivotlow(low,3,3)
+
+dvH=ta.pivothigh(high,3,3)
+
+var float dvLoPx=na
+
+var float dvLoRsi=na
+
+var float dvHiPx=na
+
+var float dvHiRsi=na
+
+bool bullDiv=false
+
+bool bearDiv=false
+
+if not na(dvL)
+
+    if not na(dvLoPx) and dvL<dvLoPx and rsiV[3]>dvLoRsi
+
+        bullDiv:=true
+
+    dvLoPx:=dvL
+
+    dvLoRsi:=rsiV[3]
+
+if not na(dvH)
+
+    if not na(dvHiPx) and dvH>dvHiPx and rsiV[3]<dvHiRsi
+
+        bearDiv:=true
+
+    dvHiPx:=dvH
+
+    dvHiRsi:=rsiV[3]
+
+divRecentB=ta.barssince(bullDiv)<=5
+
+divRecentS=ta.barssince(bearDiv)<=5
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// Bottom / Top Engine
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+m5=atrV>0?(close-close[5])/atrV:0
+
+arrivedDn=ta.lowest(m5,3)<=-extMom
+
+arrivedUp=ta.highest(m5,3)>=extMom
+
+climaxZ=ta.highest(volZ,5)
+
+wickLo=(high-low)>0 and (math.min(close,open)-low)>=(high-low)*0.4
+
+wickHi=(high-low)>0 and (high-math.max(close,open))>=(high-low)*0.4
+
+fearRecent=fearHot or fearHot[1] or fearHot[2]
+
+var int lastExtBar=-10000
+
+extCooled=bar_index-lastExtBar>=cooldown
+
+regimeOK=not gateSignals or isChoppy
+
+bottomEv=barstate.isconfirmed and extCooled and fearRecent and arrivedDn and m5>m5[1] and pressUp>=minPress and regimeOK and sessionOK and longDirOK
+
+topEv=barstate.isconfirmed and alsoTops and extCooled and greedHot and arrivedUp and m5<m5[1] and pressDn>=minPress and regimeOK and sessionOK and shortDirOK
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 新增：Trend > 70 + 原本 BOTTOM = 強勢 BOTTOM
+// 注意：完全不改 bottomEv，只額外多一個訊號
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+strongBottom=bottomEv and strongTrendScore>strongTrendTh
+
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// Grade
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+int gradeN=0
+
+if bottomEv or topEv
+
+    lastExtBar:=bar_index
+
+    gradeN:=1+((bottomEv?fearX:gvf>=nz(greedTh)*1.15)?1:0)+(climaxZ>=extVolZ?1:0)+((bottomEv?wickLo:wickHi)?1:0)+((bottomEv?divRecentB:divRecentS)?1:0)+((bottomEv?pressUp:pressDn)>=0.65?1:0)
+
+isCapit=gradeN>=5
+if showStrongBottom and strongBottom
+    label.new(bar_index,low-atrV*0.35,"★★★ 強勢 BOTTOM\nTrend "+str.tostring(strongTrendScore,"#")+"/100",style=label.style_label_up,color=color.new(#00e676,0),textcolor=color.black,size=size.small)
+
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 歷史統計
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+var array<float> h10=array.new<float>()
+
+var array<float> h30=array.new<float>()
+
+pushF(array<float> a,float v)=>
+
+    a.push(v)
+
+    if a.size()>cap
+
+        a.shift()
+
+statsOf(array<float> a)=>
+
+    int n=a.size()
+
+    float pS_=0.5
+
+    float wLB=0.5
+
+    if n>0
+
+        int w=0
+
+        for i=0 to n-1
+
+            if a.get(i)>0
+
+                w+=1
+
+        float pHat=w*1.0/n
+
+        pS_:=(pHat*n+0.5*shrinkK)/(n+shrinkK)
+
+        wLB:=(pHat+zConf*zConf/(2*n)-zConf*math.sqrt(math.max(pHat*(1-pHat)/n+zConf*zConf/(4*n*n),0.0)))/(1+zConf*zConf/n)
+
+    [pS_,wLB,n]
+
+if barstate.isconfirmed and bar_index>30
+
+    if bottomEv[10]
+
+        pushF(h10,close/close[10]-1)
+
+    if bottomEv[30]
+
+        pushF(h30,close/close[30]-1)
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 訊號標記
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+var array<label> exDone=array.new<label>()
+
+var array<label> exPend=array.new<label>()
+
+var array<int> exBar=array.new<int>()
+
+var array<int> exDir=array.new<int>()
+
+var array<float> exPx=array.new<float>()
+
+//if bottomEv or topEv
+
+    //[p10s,w10s,n10s]=statsOf(h10)
+
+    ///exl=label.new(bar_index,bottomEv?low:high,(isCapit?"★ 恐慌 ":"")+(bottomEv?"底部 ":"頭部 ")+f_rep("★",math.min(6,gradeN)),style=bottomEv?label.style_label_up:label.style_label_down,color=color.new(isCapit?goldCol:bottomEv?bullCol:bearCol,5),textcolor=bottomEv?#06222b:#2b0612,size=size.small,tooltip=(bottomEv?"恐慌式候選 — 恐慌尖峰、下跌動能耗竭、反彈壓力已充能":"上方耗竭候選 — 鏡射邏輯")+"\n恐慌值 "+str.tostring(wvf,"#.#")+" 對比門檻 "+str.tostring(nz(fearTh),"#.#")+" · 壓力 "+fw(bottomEv?pressUp:pressDn)+"\n動能 "+str.tostring(m5,"#.#")+" ATR · 高潮Z值 "+str.tostring(climaxZ,"#.#")+(n10s>=minN?"\n歷史10根K棒後上漲機率："+fw(p10s)+" ×"+str.tostring(n10s):"")+"\n盤態："+regimeLabel+"（"+str.tostring(regimeVal,"#.#")+"）")
+
+    //exPend.push(exl)
+
+    //exBar.push(bar_index)
+
+    //exDir.push(bottomEv?1:-1)
+
+    //exPx.push(close)
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 標記結算
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+if barstate.isconfirmed and exPend.size()>0
+
+    while exPend.size()>0 and bar_index-exBar.get(0)>=settleN
+
+        exl=exPend.shift()
+
+        exBar.shift()
+
+        xd=exDir.shift()
+
+        xp=exPx.shift()
+
+        xr=(close/xp-1)*xd
+
+        if xr>0
+
+            label.set_color(exl,color.new(xd==1?bullCol:bearCol,0))
+
+            label.set_textcolor(exl,xd==1?#06222b:#ffffff)
+
+        else
+
+            label.set_color(exl,color.new(silvCol,45))
+
+            label.set_textcolor(exl,color.new(#eef2f7,15))
+
+        exDone.push(exl)
+
+        while exDone.size()>keepExt
+
+            label.delete(exDone.shift())
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// TP / SL 核心系統
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+var int activeDir=0
+
+var int activeBar=na
+
+var float activeEntry=na
+
+var float activeSL=na
+
+var float activeTP1=na
+
+var float activeTP2=na
+
+var float activeTP3=na
+
+var float activeRisk=na
+
+var bool activeTP1Hit=false
+
+var bool activeTP2Hit=false
+
+var bool activeTP3Hit=false
+
+var bool activeSLHit=false
+
+var float activeTrailSL=na
+
+newLong=bottomEv and enableTPSL
+
+newShort=topEv and enableTPSL
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 反向訊號出場（停損計算方式＝反向訊號出場時）：
+
+// 進場BOTTOM(LONG)遇TOP出場，進場TOP(SHORT)遇BOTTOM出場
+
+// 需在新倉位覆寫 active* 變數之前計算，才能抓到舊倉位的方向/價位
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sigExitMethod=slMethod=="反向訊號出場（BOTTOM↔TOP）"
+
+sigExitLong=sigExitMethod and activeDir==1 and newShort
+
+sigExitShort=sigExitMethod and activeDir==-1 and newLong
+
+sigExit=sigExitLong or sigExitShort
+
+float sigExitR=sigExit and activeRisk>0?((close-activeEntry)*activeDir)/activeRisk:na
+
+int sigExitBars=sigExit?bar_index-activeBar:na
+
+var int sigExitLongCount=0
+
+var int sigExitLongWin=0
+
+var float sigExitLongRSum=0.0
+
+var int sigExitLongBarsSum=0
+
+var int sigExitShortCount=0
+
+var int sigExitShortWin=0
+
+var float sigExitShortRSum=0.0
+
+var int sigExitShortBarsSum=0
+
+if sigExit
+
+    if sigExitLong
+
+        sigExitLongCount+=1
+
+        sigExitLongRSum+=sigExitR
+
+        sigExitLongBarsSum+=sigExitBars
+
+        if sigExitR>0
+
+            sigExitLongWin+=1
+
+    else
+
+        sigExitShortCount+=1
+
+        sigExitShortRSum+=sigExitR
+
+        sigExitShortBarsSum+=sigExitBars
+
+        if sigExitR>0
+
+            sigExitShortWin+=1
+
+    // 出場標籤已併入下方「TP / SL 標籤」區塊的新倉位標籤，避免與進場標籤重疊
+
+if newLong or newShort
+
+    int newDir=newLong?1:-1
+
+    float newEntry=close
+
+    float newStop=na
+
+    newStop:=switch slMethod
+
+        "ATR倍數"=>newDir==1?newEntry-atrV*atrStopMult:newEntry+atrV*atrStopMult
+
+        "固定百分比"=>newDir==1?newEntry*(1-fixedPct/100):newEntry*(1+fixedPct/100)
+
+        "反向訊號出場（BOTTOM↔TOP）"=>newDir==1?newEntry-atrV*atrStopMult:newEntry+atrV*atrStopMult
+
+        =>newDir==1?ta.lowest(low,rangeLookback)-atrV*rangeBufAtr:ta.highest(high,rangeLookback)+atrV*rangeBufAtr
+
+    float newRisk=newDir==1?newEntry-newStop:newStop-newEntry
+
+    if newRisk>syminfo.mintick
+
+        activeDir:=newDir
+
+        activeBar:=bar_index
+
+        activeEntry:=newEntry
+
+        activeSL:=newStop
+
+        activeRisk:=newRisk
+
+        activeTP1:=enableTP1?(newDir==1?newEntry+newRisk*tp1R:newEntry-newRisk*tp1R):na
+
+        activeTP2:=enableTP2?(newDir==1?newEntry+newRisk*tp2R:newEntry-newRisk*tp2R):na
+
+        activeTP3:=enableTP3?(newDir==1?newEntry+newRisk*tp3R:newEntry-newRisk*tp3R):na
+
+        activeTP1Hit:=false
+
+        activeTP2Hit:=false
+
+        activeTP3Hit:=false
+
+        activeSLHit:=false
+
+        activeTrailSL:=newStop
+
+    else if sigExit
+
+        // 反向訊號出場但新倉位風險不合法（極端情況），仍需把舊倉位平掉
+
+        if showTPSLLabels
+
+            label.new(bar_index,activeDir==1?high:low,"反向訊號出場",style=activeDir==1?label.style_label_down:label.style_label_up,color=color.new(silvCol,10),textcolor=color.white,size=size.small)
+
+        activeDir:=0
+
+        activeBar:=na
+
+        activeEntry:=na
+
+        activeSL:=na
+
+        activeTP1:=na
+
+        activeTP2:=na
+
+        activeTP3:=na
+
+        activeRisk:=na
+
+        activeTP1Hit:=false
+
+        activeTP2Hit:=false
+
+        activeTP3Hit:=false
+
+        activeSLHit:=false
+
+        activeTrailSL:=na
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// TP / SL 逐K棒追蹤
+
+// 註：當「停損計算方式」＝反向訊號出場時，價格觸及 activeSL 不會直接平倉，
+
+// 只作為 TP1/2/3 的風險基準；真正的出場只由上方反向訊號（sigExit）或 TP3 觸發。
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+if activeDir!=0 and bar_index>activeBar
+
+    if activeDir==1
+
+        if not activeTP1Hit and enableTP1 and high>=activeTP1
+
+            activeTP1Hit:=true
+
+        if not activeTP2Hit and enableTP2 and high>=activeTP2
+
+            activeTP2Hit:=true
+
+        if not activeTP3Hit and enableTP3 and high>=activeTP3
+
+            activeTP3Hit:=true
+
+        if enableBE and activeTP1Hit
+
+            activeSL:=math.max(activeSL,activeEntry)
+
+        if enableTrailing and activeTP1Hit
+
+            activeTrailSL:=math.max(nz(activeTrailSL,activeSL),close-atrV*trailingATRMult)
+
+            activeSL:=math.max(activeSL,activeTrailSL)
+
+        if not sigExitMethod and low<=activeSL
+
+            activeSLHit:=true
+
+    else
+
+        if not activeTP1Hit and enableTP1 and low<=activeTP1
+
+            activeTP1Hit:=true
+
+        if not activeTP2Hit and enableTP2 and low<=activeTP2
+
+            activeTP2Hit:=true
+
+        if not activeTP3Hit and enableTP3 and low<=activeTP3
+
+            activeTP3Hit:=true
+
+        if enableBE and activeTP1Hit
+
+            activeSL:=math.min(activeSL,activeEntry)
+
+        if enableTrailing and activeTP1Hit
+
+            activeTrailSL:=math.min(nz(activeTrailSL,activeSL),close+atrV*trailingATRMult)
+
+            activeSL:=math.min(activeSL,activeTrailSL)
+
+        if not sigExitMethod and high>=activeSL
+
+            activeSLHit:=true
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 完成 TP3 或 SL 後清除交易
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+exitTrade=activeDir!=0 and (activeSLHit or activeTP3Hit)
+
+if exitTrade
+
+    activeDir:=0
+
+    activeBar:=na
+
+    activeEntry:=na
+
+    activeSL:=na
+
+    activeTP1:=na
+
+    activeTP2:=na
+
+    activeTP3:=na
+
+    activeRisk:=na
+
+    activeTP1Hit:=false
+
+    activeTP2Hit:=false
+
+    activeTP3Hit:=false
+
+    activeSLHit:=false
+
+    activeTrailSL:=na
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// TP / SL 線
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+plot(activeDir!=0?activeEntry:na,"Entry",color=color.white,linewidth=2,style=plot.style_linebr)
+
+plot(activeDir!=0?activeSL:na,"SL",color=bearCol,linewidth=2,style=plot.style_linebr)
+
+plot(activeDir!=0 and enableTP1 and not activeTP1Hit?activeTP1:na,"TP1",color=bullCol,linewidth=1,style=plot.style_linebr)
+
+plot(activeDir!=0 and enableTP2 and not activeTP2Hit?activeTP2:na,"TP2",color=bullCol,linewidth=1,style=plot.style_linebr)
+
+plot(activeDir!=0 and enableTP3 and not activeTP3Hit?activeTP3:na,"TP3",color=goldCol,linewidth=2,style=plot.style_linebr)
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// TP / SL 標籤
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+if newLong and enableTPSL and showTPSLLabels
+
+    flipInfo=sigExitShort?"反向出場\n———\n":""
+
+    label.new(bar_index,low,flipInfo+(isCapit?"★★ ":"")+"底部\n進場 "+str.tostring(close,format.mintick)+"\nSL "+str.tostring(activeSL,format.mintick)+(enableTP1?"\nTP1 "+str.tostring(activeTP1,format.mintick):"")+(enableTP2?"\nTP2 "+str.tostring(activeTP2,format.mintick):"")+(enableTP3?"\nTP3 "+str.tostring(activeTP3,format.mintick):""),style=label.style_label_up,color=color.new(bullCol,10),textcolor=color.white,size=size.small)
+
+if newShort and enableTPSL and showTPSLLabels
+
+    flipInfo=sigExitLong?"反向出場\n———\n":""
+
+    label.new(bar_index,high,flipInfo+(isCapit?"★★ ":"")+"頂部\n進場 "+str.tostring(close,format.mintick)+"\nSL "+str.tostring(activeSL,format.mintick)+(enableTP1?"\nTP1 "+str.tostring(activeTP1,format.mintick):"")+(enableTP2?"\nTP2 "+str.tostring(activeTP2,format.mintick):"")+(enableTP3?"\nTP3 "+str.tostring(activeTP3,format.mintick):""),style=label.style_label_down,color=color.new(bearCol,10),textcolor=color.white,size=size.small)
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// TP / SL 勝率統計
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// 依照目前 SL 計算方式與目前啟用的 TP1 / TP2 / TP3 分別統計勝率。
+
+// 勝利 = 目標 TP 在 SL 前先命中；同一根 K 同時碰到時，保守地先判 SL。
+
+// （反向訊號出場法此處仍以 ATR 停損作為風險基準來估算歷史勝率，供參考）
+
+var int longTP1Win=0
+
+var int longTP1Loss=0
+
+var int longTP2Win=0
+
+var int longTP2Loss=0
+
+var int longTP3Win=0
+
+var int longTP3Loss=0
+
+var int shortTP1Win=0
+
+var int shortTP1Loss=0
+
+var int shortTP2Win=0
+
+var int shortTP2Loss=0
+
+var int shortTP3Win=0
+
+var int shortTP3Loss=0
+
+var array<float> rrStop=array.new<float>()
+
+var array<float> rrTP1=array.new<float>()
+
+var array<float> rrTP2=array.new<float>()
+
+var array<float> rrTP3=array.new<float>()
+
+var array<int> rrBar=array.new<int>()
+
+var array<int> rrDir=array.new<int>()
+
+var array<int> rrS1=array.new<int>()
+
+var array<int> rrS2=array.new<int>()
+
+var array<int> rrS3=array.new<int>()
+
+if (bottomEv or topEv) and enableTPSL
+
+    int tradeDir=bottomEv?1:-1
+
+    float tradeEntry=close
+
+    float tradeStop=switch slMethod
+
+        "ATR倍數"=>tradeDir==1?tradeEntry-atrV*atrStopMult:tradeEntry+atrV*atrStopMult
+
+        "固定百分比"=>tradeDir==1?tradeEntry*(1-fixedPct/100):tradeEntry*(1+fixedPct/100)
+
+        "反向訊號出場（BOTTOM↔TOP）"=>tradeDir==1?tradeEntry-atrV*atrStopMult:tradeEntry+atrV*atrStopMult
+
+        =>tradeDir==1?ta.lowest(low,rangeLookback)-atrV*rangeBufAtr:ta.highest(high,rangeLookback)+atrV*rangeBufAtr
+
+    float tradeRisk=tradeDir==1?tradeEntry-tradeStop:tradeStop-tradeEntry
+
+    if tradeRisk>syminfo.mintick
+
+        rrStop.push(tradeStop)
+
+        rrTP1.push(enableTP1?(tradeDir==1?tradeEntry+tradeRisk*tp1R:tradeEntry-tradeRisk*tp1R):na)
+
+        rrTP2.push(enableTP2?(tradeDir==1?tradeEntry+tradeRisk*tp2R:tradeEntry-tradeRisk*tp2R):na)
+
+        rrTP3.push(enableTP3?(tradeDir==1?tradeEntry+tradeRisk*tp3R:tradeEntry-tradeRisk*tp3R):na)
+
+        rrBar.push(bar_index)
+
+        rrDir.push(tradeDir)
+
+        rrS1.push(enableTP1?0:2)
+
+        rrS2.push(enableTP2?0:2)
+
+        rrS3.push(enableTP3?0:2)
+
+if barstate.isconfirmed and rrStop.size()>0
+    for i=rrStop.size()-1 to 0
+
+        int dir=rrDir.get(i)
+
+        float stop=rrStop.get(i)
+
+        int s1=rrS1.get(i)
+
+        int s2=rrS2.get(i)
+
+        int s3=rrS3.get(i)
+
+        if dir==1
+
+            if low<=stop
+
+                if s1==0
+
+                    s1:=-1
+
+                if s2==0
+
+                    s2:=-1
+
+                if s3==0
+
+                    s3:=-1
+
+            else
+
+                if s1==0 and high>=rrTP1.get(i)
+
+                    s1:=1
+
+                if s2==0 and high>=rrTP2.get(i)
+
+                    s2:=1
+
+                if s3==0 and high>=rrTP3.get(i)
+
+                    s3:=1
+
+        else
+
+            if high>=stop
+
+                if s1==0
+
+                    s1:=-1
+
+                if s2==0
+
+                    s2:=-1
+
+                if s3==0
+
+                    s3:=-1
+
+            else
+
+                if s1==0 and low<=rrTP1.get(i)
+
+                    s1:=1
+
+                if s2==0 and low<=rrTP2.get(i)
+
+                    s2:=1
+
+                if s3==0 and low<=rrTP3.get(i)
+
+                    s3:=1
+
+        if bar_index-rrBar.get(i)>=rrTimeout
+
+            if s1==0
+
+                s1:=-1
+
+            if s2==0
+
+                s2:=-1
+
+            if s3==0
+
+                s3:=-1
+
+        rrS1.set(i,s1)
+
+        rrS2.set(i,s2)
+
+        rrS3.set(i,s3)
+
+        if s1!=0 and s2!=0 and s3!=0
+
+            if dir==1
+
+                if enableTP1
+
+                    if s1==1
+
+                        longTP1Win+=1
+
+                    else
+
+                        longTP1Loss+=1
+
+                if enableTP2
+
+                    if s2==1
+
+                        longTP2Win+=1
+
+                    else
+
+                        longTP2Loss+=1
+
+                if enableTP3
+
+                    if s3==1
+
+                        longTP3Win+=1
+
+                    else
+
+                        longTP3Loss+=1
+
+            else
+
+                if enableTP1
+
+                    if s1==1
+
+                        shortTP1Win+=1
+
+                    else
+
+                        shortTP1Loss+=1
+
+                if enableTP2
+
+                    if s2==1
+
+                        shortTP2Win+=1
+
+                    else
+
+                        shortTP2Loss+=1
+
+                if enableTP3
+
+                    if s3==1
+
+                        shortTP3Win+=1
+
+                    else
+
+                        shortTP3Loss+=1
+
+            rrStop.remove(i)
+
+            rrTP1.remove(i)
+
+            rrTP2.remove(i)
+
+            rrTP3.remove(i)
+
+            rrBar.remove(i)
+
+            rrDir.remove(i)
+
+            rrS1.remove(i)
+
+            rrS2.remove(i)
+
+            rrS3.remove(i)
+
+// Dashboard
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+showDash=true
+
+dashPos="Top Right"
+
+dashSize="Normal"
+
+dashBg=color.new(#171207,8)
+
+dashFrame=color.new(#1ec3d9,15)
+
+dashGrid=color.new(#d99b1e,80)
+
+dashMuteTxt=#cd7eb8d9
+
+dashBodyTxt=color.new(#eef2f7,5)
+
+dPos=dashPos=="Top Left"?position.top_left:dashPos=="Bottom Right"?position.bottom_right:dashPos=="Bottom Left"?position.bottom_left:position.top_right
+
+bodySize=dashSize=="Tiny"?size.tiny:dashSize=="Normal"?size.normal:dashSize=="Large"?size.large:size.small
+
+headSize=dashSize=="Tiny"?size.small:dashSize=="Large"?size.large:dashSize=="Normal"?size.normal:size.small
+
+var table tb=table.new(dPos,2,5,bgcolor=dashBg,frame_color=dashFrame,frame_width=1,border_color=dashGrid,border_width=1)
+
+if showDash and barstate.islast
+
+    [p10,w10,n10]=statsOf(h10)
+
+    [p30,w30,n30]=statsOf(h30)
+
+    fearRatio=not na(fearTh) and fearTh>0?wvf/fearTh:0.0
+
+    fMag=math.min(5,int(fearRatio*3.4))
+
+    longTP1WR=(longTP1Win+longTP1Loss)>0?longTP1Win*100.0/(longTP1Win+longTP1Loss):na
+
+    longTP2WR=(longTP2Win+longTP2Loss)>0?longTP2Win*100.0/(longTP2Win+longTP2Loss):na
+
+    longTP3WR=(longTP3Win+longTP3Loss)>0?longTP3Win*100.0/(longTP3Win+longTP3Loss):na
+
+    shortTP1WR=(shortTP1Win+shortTP1Loss)>0?shortTP1Win*100.0/(shortTP1Win+shortTP1Loss):na
+
+    shortTP2WR=(shortTP2Win+shortTP2Loss)>0?shortTP2Win*100.0/(shortTP2Win+shortTP2Loss):na
+
+    shortTP3WR=(shortTP3Win+shortTP3Loss)>0?shortTP3Win*100.0/(shortTP3Win+shortTP3Loss):na
+
+    longTPText=(enableTP1?"TP1 "+(na(longTP1WR)?"N/A":str.tostring(longTP1WR,"#.#")+"%"):"")+
+
+      (enableTP1 and enableTP2?" | ":"")+
+
+      (enableTP2?"TP2 "+(na(longTP2WR)?"N/A":str.tostring(longTP2WR,"#.#")+"%"):"")+
+
+      ((enableTP1 or enableTP2) and enableTP3?" | ":"")+
+
+      (enableTP3?"TP3 "+(na(longTP3WR)?"N/A":str.tostring(longTP3WR,"#.#")+"%"):"")+
+
+      (sigExitLongCount>0?" | 反向出場 "+str.tostring(sigExitLongWin*100.0/sigExitLongCount,"#.#")+"%":"")
+
+    shortTPText=(enableTP1?"TP1 "+(na(shortTP1WR)?"N/A":str.tostring(shortTP1WR,"#.#")+"%"):"")+
+
+      (enableTP1 and enableTP2?" | ":"")+
+
+      (enableTP2?"TP2 "+(na(shortTP2WR)?"N/A":str.tostring(shortTP2WR,"#.#")+"%"):"")+
+
+      ((enableTP1 or enableTP2) and enableTP3?" | ":"")+
+
+      (enableTP3?"TP3 "+(na(shortTP3WR)?"N/A":str.tostring(shortTP3WR,"#.#")+"%"):"")+
+
+      (sigExitShortCount>0?" | 反向出場 "+str.tostring(sigExitShortWin*100.0/sigExitShortCount,"#.#")+"%":"")
+
+    table.cell(tb,0,0,"恐慌指標",text_color=dashMuteTxt,text_size=headSize,text_halign=text.align_left)
+
+    table.cell(tb,1,0,(fearHot?(fearX?"極端 ":"飆升 "):"平靜 ")+f_rep("▮",math.max(fMag,0)),text_color=fearHot?bearCol:dashBodyTxt,text_size=bodySize)
+
+    table.cell(tb,0,1,"反彈壓力",text_color=dashMuteTxt,text_size=headSize,text_halign=text.align_left)
+
+    table.cell(tb,1,1,pressUp<0.1?"放鬆":"蓄積中 ▲ "+fw(pressUp),text_color=pressUp>=minPress?goldCol:dashBodyTxt,text_size=bodySize)
+
+    table.cell(tb,0,2,"底部 TP 勝率",text_color=dashMuteTxt,text_size=headSize,text_halign=text.align_left)
+
+    table.cell(tb,1,2,longTPText==""?"N/A":longTPText,text_color=bullCol,text_size=bodySize)
+
+    table.cell(tb,0,3,"頭部 TP 勝率",text_color=dashMuteTxt,text_size=headSize,text_halign=text.align_left)
+
+    table.cell(tb,1,3,shortTPText==""?"N/A":shortTPText,text_color=bearCol,text_size=bodySize)
+
+    table.cell(tb,0,4,"盤態",text_color=dashMuteTxt,text_size=headSize,text_halign=text.align_left)
+
+    table.cell(tb,1,4,regimeLabel+" "+str.tostring(regimeVal,"#.#"),text_color=isChoppy?bullCol:isTrending?bearCol:dashBodyTxt,text_size=bodySize)
+
+// Alerts
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+alertcondition(bottomEv,"底部訊號",'{"content":"{{ticker}} bottom alert triggered, price: {{close}}"}')
+
+alertcondition(topEv,"頭部訊號",'{"content":"{{ticker}} top alert triggered, price: {{close}}"}')
+
+alertcondition(newLong,"LONG TP/SL 啟動","{{ticker}} LONG TP/SL activated, entry: {{close}}")
+
+alertcondition(newShort,"SHORT TP/SL 啟動","{{ticker}} SHORT TP/SL activated, entry: {{close}}")
+
+alertcondition(activeTP1Hit and not activeTP1Hit[1],"TP1 命中","{{ticker}} TP1 triggered, price: {{close}}")
+
+alertcondition(activeTP2Hit and not activeTP2Hit[1],"TP2 命中","{{ticker}} TP2 triggered, price: {{close}}")
+
+alertcondition(activeTP3Hit and not activeTP3Hit[1],"TP3 命中","{{ticker}} TP3 triggered, price: {{close}}")
+
+alertcondition(activeSLHit and not activeSLHit[1],"SL 命中","{{ticker}} SL triggered, price: {{close}}")
+
+alertcondition(sigExitLong,"反向訊號出場（LONG→SHORT）","{{ticker}} 出現頭部訊號，多單出場，出場價 {{close}}")
+
+alertcondition(sigExitShort,"反向訊號出場（SHORT→LONG）","{{ticker}} 出現底部訊號，空單出場，出場價 {{close}}")
+
+alertcondition(strongBottom,"★★★ 強勢 BOTTOM","{{ticker}} 強勢 BOTTOM｜Trend > 70｜價格 {{close}}")
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Trading Dashboard JSON Bridge（不修改原始 BOTTOM/TOP 判定）
+// 在 TradingView 設定：Any alert() function call；搭配 2 分鐘圖使用。
+// signal=原始 bottomEv/topEv；Trend=上一根已完成日K計算的 strongTrendScore。
+// alert JSON 可從通知/記錄複製，貼到 bottom-top-trader.html 匯入。
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+grpBridge="Dashboard JSON Bridge"
+bridgeOn=input.bool(true,"啟用 Bottom/Top JSON 快訊",group=grpBridge)
+if bridgeOn and barstate.isconfirmed and (bottomEv or topEv)
+    string bridgeMsg='{"time":'+str.tostring(time)+',"symbol":"'+syminfo.tickerid+'","signal":"'+(bottomEv?"BOTTOM":"TOP")+'","price":'+str.tostring(close,format.mintick)+',"trend":'+str.tostring(strongTrendScore,"#.##")+',"timeframe":"'+timeframe.period+'"}'
+    alert(bridgeMsg,alert.freq_once_per_bar_close)
