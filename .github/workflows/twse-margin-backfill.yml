@@ -1,0 +1,54 @@
+name: TWSE credit history backfill (research only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/twse-margin-backfill.yml'
+  schedule:
+    - cron: '15 15 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      max_days:
+        description: 'Max official trading days to fetch (1-800)'
+        default: '150'
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: twse-credit-backfill-research
+  cancel-in-progress: false
+jobs:
+  gather-official-history:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate margin and credit parsers
+        run: |
+          python -m unittest discover -s tw-stock-dashboard/tests -p 'test_margin_short_backfill.py' -v
+          node --test tw-stock-dashboard/tests/margin-short-research.test.cjs
+      - name: Fetch and checkpoint up to 150 official trading days
+        run: |
+          python tw-stock-dashboard/scripts/backfill_margin_short.py --from-date 2023-10-11 --to-date 2026-10-13 --max-days "$MAX_DAYS" --delay 1.4
+        env:
+          MAX_DAYS: ${{ inputs.max_days || '150' }}
+      - name: Commit only research archival data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/margin_short_audit/official_twse_history.json tw-stock-dashboard/docs/data/research/margin_short_audit/fetch_status.json
+          if git diff --cached --quiet; then
+            echo "No changes to official research archive"
+            exit 0
+          fi
+          git commit -m "research: checkpoint verified official TWSE credit history"
+          git pull --rebase origin main
+          git push origin HEAD:main
