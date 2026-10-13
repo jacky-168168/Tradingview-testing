@@ -60,7 +60,7 @@ export async function pollOne(env,ch,fetchImpl=fetch){
   const inserts=[];
   for(const msg of all){
     for(const s of parseDiscordMessage(msg,ch)){
-      inserts.push(env.DB.prepare("INSERT OR IGNORE INTO discord_signals(id,discord_message_id,channel_id,source,symbol,signal,variant,price,timeframe,time_ms) VALUES(?,?,?,?,?,?,?,?,?,?)").bind(s.id,s.discord_message_id,s.channel_id,s.source,s.symbol,s.signal,s.variant,s.price,s.timeframe,s.time));
+      inserts.push(env.DB.prepare("INSERT OR IGNORE INTO discord_signals(id,discord_message_id,channel_id,source,symbol,signal,variant,trend_gt_70,price,timeframe,time_ms) VALUES(?,?,?,?,?,?,?,?,?,?,?)").bind(s.id,s.discord_message_id,s.channel_id,s.source,s.symbol,s.signal,s.variant,s.trend_gt_70?1:0,s.price,s.timeframe,s.time));
     }
   }
   // Partial successful batches are safe to retry because of the unique signal ID.
@@ -99,9 +99,9 @@ const app={
     if(!await auth(request,env.DASHBOARD_READ_TOKEN))return json({error:"Unauthorized"},401,headers);
     const lim=Math.max(1,Math.min(500,Math.floor(Number(url.searchParams.get("limit"))||100)));
     const sinceRaw=Number(url.searchParams.get("since")),since=sinceRaw>0?Math.min(Date.now(),Math.max(Date.now()-90*86400000,sinceRaw)):Date.now()-7*86400000;
-    const {results}=await env.DB.prepare("SELECT id,channel_id,source,symbol,signal,variant,price,timeframe,time_ms FROM discord_signals WHERE time_ms>=? ORDER BY time_ms DESC, id DESC LIMIT ?").bind(since,lim).all();
+    const {results}=await env.DB.prepare("SELECT id,channel_id,source,symbol,signal,variant,trend_gt_70,price,timeframe,time_ms FROM discord_signals WHERE time_ms>=? ORDER BY time_ms DESC, id DESC LIMIT ?").bind(since,lim).all();
     const chan=readChannelMap(env);
-    const events=(results||[]).map(r=>({id:r.id,channel:r.source,channelId:r.channel_id,symbol:r.symbol,signal:r.signal,variant:r.variant,price:r.price,time:r.time_ms,trend:null,g:null,timeframe:chan.has(r.channel_id)?chan.get(r.channel_id).timeframe:r.timeframe}));
+    const events=(results||[]).map(r=>({id:r.id,channel:r.source,channelId:r.channel_id,symbol:r.symbol,signal:r.signal,variant:r.variant,trendGt70: r.trend_gt_70===1,price:r.price,time:r.time_ms,trend:null,g:null,timeframe:chan.has(r.channel_id)?chan.get(r.channel_id).timeframe:r.timeframe}));
     return json({asOf:Date.now(),count:events.length,events},200,headers);
   }
   if(url.pathname==="/api/status" && request.method==="GET"){
