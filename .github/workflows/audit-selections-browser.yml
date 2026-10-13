@@ -1,8 +1,15 @@
 name: Audit Stock Selections Browser
 on:
   workflow_dispatch:
-  push:
-    branches: [audit/selections-end-to-end-2026-10]
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/docs/selections.html'
+      - 'tw-stock-dashboard/docs/stock-selection.js'
+      - 'tw-stock-dashboard/docs/repeat-rankings.js'
+      - 'tw-stock-dashboard/docs/g-theme-leaders.js'
+      - 'tw-stock-dashboard/docs/data/rolling-repeats.json'
+      - 'tw-stock-dashboard/tests/test_selections_browser.cjs'
+      - '.github/workflows/audit-selections-browser.yml'
 permissions:
   contents: read
 jobs:
