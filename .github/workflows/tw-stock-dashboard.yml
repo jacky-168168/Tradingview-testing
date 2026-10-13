@@ -17,13 +17,11 @@ on:
       - 'tw-stock-dashboard/docs/*.html'
       - '.github/workflows/tw-stock-dashboard.yml'
   schedule:
-    - cron: '0 1 * * 1-5'
-    - cron: '15 1 * * 1-5'
-    - cron: '30 2 * * 1-5'
-    - cron: '30 3 * * 1-5'
-    - cron: '30 4 * * 1-5'
-    - cron: '0 5 * * 1-5'
-    - cron: '25 5 * * 1-5'
+    # Every 30 minutes on weekday TW trading sessions: 09:00, 09:30,
+    # 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30 Taipei.
+    # Actions schedules are best-effort: runner may start late; g_intraday.py
+    # checks actual local session time and fails closed instead of faking quotes.
+    - cron: '0,30 1-5 * * 1-5'
     # Official BFI82U institutional flow may be published after the close.
     # Multiple independent full retries allow the site to recover the same day.
     - cron: '10 7 * * 1-5'
@@ -67,7 +65,7 @@ jobs:
               # GitHub cron execution may be delayed: use the SCHEDULED slot,
               # never the actual runner start time to choose intraday vs full.
               case "${{ github.event.schedule }}" in
-                '0 1 * * 1-5'|'15 1 * * 1-5'|'30 2 * * 1-5'|'30 3 * * 1-5'|'30 4 * * 1-5'|'0 5 * * 1-5'|'25 5 * * 1-5') MODE="intraday" ;;
+                '0,30 1-5 * * 1-5') MODE="intraday" ;;
                 *) MODE="full" ;;
               esac
             else
