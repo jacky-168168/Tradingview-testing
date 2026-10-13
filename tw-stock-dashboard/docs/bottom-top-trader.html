@@ -28,6 +28,23 @@ details{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}summar
 <section class="card hero"><div class="toolbar"><span class="tag">原始 Bottom/Top 規則</span><span class="tag warn">模擬訊號簿｜非即時券商資料</span></div>
 <p>使用你的原版 Pine 已確認收盤的 Bottom/Top 訊號做事件輸入，不重新猜測 Bottom、Top 的計算結果。進場採 A 原版、B Trend&gt;70、C Trend&gt;70＋分批加碼，全部在 Top 結束多單。C 的額外買入必須有新的價格觀測事件，不會虛構回測成交。</p>
 <div id="banner" class="note warn" role="status">尚無交易訊號。請匯入 TradingView 訊號 JSON/CSV 或手動輸入；沒有資料時不顯示假買點。</div></section>
+<section class="card" id="discordFeed" aria-label="Discord 兩頻道接收器">
+<div class="toolbar"><h2 style="margin:0">📡 Discord 自動訊號匯入</h2><span class="tag warn">雲端服務部署後啟用</span></div>
+<p class="sub">接收 <b>#day-trading</b> 與 <b>#5-min小波段通知</b>，分別保留訊號時間、股票代碼、Bottom/Top、SS 標記與價格。後端每分鐘檢查 Discord，網頁開啟時每分鐘讀取一次資料。</p>
+<div class="inputs">
+<label>Cloudflare Worker HTTPS 網址<input id="discordWorker" placeholder="https://tw-stock-discord-signals.你的帳號.workers.dev" autocapitalize="off"></label>
+<label>網站唯讀存取金鑰<input id="discordReadToken" type="password" placeholder="貼上 DASHBOARD_READ_TOKEN（不會儲存）" autocomplete="off"></label>
+</div>
+<div class="toolbar" style="margin-top:10px">
+<button class="btn primary" id="discordConnect">連接 Worker</button>
+<button class="btn" id="discordRefresh">立即更新</button>
+<button class="btn" id="discordImport" disabled>將已核實 2 分鐘事件加入紙上模擬</button>
+<button class="btn danger" id="discordDisconnect">中斷</button>
+</div>
+<div id="discordStatus" class="note" style="margin-top:10px" role="status">尚未連接 Cloudflare Worker。請先完成部署；不能直接把 Discord Bot Token 填在此頁。</div>
+<p class="sub"><strong id="discordCount">尚未連線</strong>｜未驗證警示週期的訊號僅顯示、不當作 2 分鐘交易訊號。Discord 原文沒有 Trend 分數，B/C 策略暫時會因 Trend 缺值而略過進場。</p>
+<div class="scroll"><table><thead><tr><th>接收時間（台灣）</th><th>來源</th><th>股票</th><th>訊號</th><th class="num">價格</th><th>訊號週期</th><th>Trend</th></tr></thead><tbody id="discordRows"><tr><td colspan="7">尚未連線</td></tr></tbody></table></div>
+</section>
 <section class="card"><h2>01｜策略與資金參數</h2>
 <div class="inputs">
 <label>比較策略<select id="strategy"><option value="A">A｜Bottom 直接進場</option><option value="B" selected>B｜Bottom + Trend &gt; 70</option><option value="C">C｜Bottom + Trend &gt; 70＋階梯加碼</option></select></label>
@@ -74,4 +91,4 @@ details{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}summar
 <details><summary>為何本頁沒有直接自動刷新 2 分鐘訊號？</summary><p>GitHub Pages 是靜態網站，沒有受驗證的台股 2 分鐘 OHLCV 歷史源或 TradingView webhook 接收端。要做真正即時訊號，需要合規的行情來源／伺服器計算原始指標，或 TradingView alert → 有權限驗證的接收服務 → 前端 JSON。完成前不能冒充盤中自動交易雷達。此處先以原版 Pine 訊號 JSON/CSV 驅動。</p></details>
 </section>
 <div class="sub" style="text-align:center;margin:16px 0">研究用途，不自動下單；GitHub Pages 的前端存取密碼不能保護公開儲存的檔案，請勿在網站上傳或貼出券商帳號等機敏資料。</div>
-</main><script src="./bottom-top-trader.js"></script></body></html>
+</main><script src="./bottom-top-trader.js"></script><script src="./discord-signal-feed.js"></script></body></html>
