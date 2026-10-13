@@ -130,16 +130,18 @@
     <div class="exp-value"><small>符合風控時的參考首批預算</small><strong id="expFirst">請先選股</strong></div>
     <div class="exp-value"><small>預估股數（包含零股）</small><strong id="expShares">—</strong></div>
   </div>
+  <div id="expHoldingGuide" class="exp-guide" data-tone="neutral" role="status" aria-live="polite">
+    <div class="exp-guide-head"><span id="expGuideHeading">輸入已投入金額，查看配置狀態</span><strong id="expGapAmount">—</strong></div>
+    <div class="exp-guide-numbers">
+      <span>實際股票部位 <strong id="expActualExposure">—</strong></span>
+      <span>估計尚未投入資金 <strong id="expActualCash">—</strong></span>
+      <span>目前可執行新倉 <strong id="expTodayBudget">—</strong></span>
+    </div>
+    <p id="expNextStep">等待資料與投入金額。</p>
+  </div>
+  <div class="exp-actions"><a href="./position-sizing.html">查看每檔持股與資金配置 →</a><a href="./trade-plan.html">分批買進試算 →</a></div>
   <p id="expSub" class="exp-small">選股資料未載入；個股試算只使用 G 榜既有的價格、20日報酬與 ATR，這些不是企業估值。</p>
-  <p id="expStatus" class="exp-status" role="status">資料未同步，暫停今日新倉建議。</p>
-  <details class="exp-details">
-    <summary>查看逆向價格區間、五項輔助診斷與研究來源</summary>
-    <div id="expFactors" class="exp-factor-grid">資料載入中…</div>
-    <p id="expExplain" class="exp-small">資料未到齊。</p>
-    <p class="exp-small"><strong>逆向準備水位：</strong>前120日高點回落 &lt;2%→股票30%、2–5%→40%、5–10%→50%、10–15%→65%、≥15%→80%；若指數高於MA20達7%，則股票水位上限25%。以上是未回測的自訂價格階梯，不是企業估值。<strong>獨立風險評估：</strong>正式 Risk Score 40%、上漲家數20%、MA20趨勢15%、波動分位15%、外資10%；這五項只做風險診斷，不能混同方舟水位。大盤 Risk Score低於60，即使跌深也不允許一般新倉。個股先按波動調整單檔預算，再依 20日漲幅及 ATR 降低首批比例，<strong>不能將技術過熱誤認為基本面高估。</strong></p>
-    <div class="exp-links"><a href="https://play.google.com/store/apps/details?id=com.galaxy.ark" target="_blank" rel="noopener noreferrer">方舟：產品功能參考</a><a href="https://naaim.org/programs/naaim-exposure-index/" target="_blank" rel="noopener noreferrer">NAAIM：市場曝險</a><a href="https://www.aaii.com/journal/article/535756-gauging-the-strength-of-market-trends-with-the-ad-line" target="_blank" rel="noopener noreferrer">AAII：市場廣度</a><a href="./position-sizing.html"><strong>進入完整股票／ETF 資金配置儀表板 →</strong></a><a href="./trade-plan.html">開啟完整分批計算器 →</a></div>
-    <p class="exp-small">本模型權重與資金上限為自主設計的未回測參數，供研究與配置計算；不是方舟原版、不是 AI 預測、不是投資建議。總資金和已投入金額只存在目前網頁輸入中，不會提交到 GitHub。</p>
-  </details>
+
 </section>
 
 <div class="market-brief-grid" aria-label="大盤重要補充訊號">
