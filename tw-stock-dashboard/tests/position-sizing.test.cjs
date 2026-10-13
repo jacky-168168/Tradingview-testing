@@ -1,7 +1,7 @@
 const test=require("node:test"),assert=require("node:assert/strict");
 const core=require("../docs/position-sizing-core.js");
 const market={valid:true,stale:false,risk:75,date:"2026-10-13",target:70};
-const base={capital:1e6,otherHeld:0,code:"2340",type:"stock",group:"technology",price:100,atrPct:5,zone:"normal",signal:"ss",entryConfirmed:true,positions:[],historyValidated:true,priceDate:"2026-10-13"};
+const base={capital:1e6,otherHeld:0,code:"2340",type:"stock",group:"technology",price:100,priceDate:"2026-10-13",atrPct:5,zone:"normal",signal:"ss",entryConfirmed:true,positions:[],historyValidated:true,priceDate:"2026-10-13"};
 test("risk budget, class and market caps all enter the minimum",()=>{
  const x=core.size(base,market);
  assert.equal(x.valid,true);assert.equal(x.limit,40000);
@@ -67,4 +67,16 @@ test("conservative grouping is proxy, not constituent correlation",()=>{
  assert.equal(core.guessGroup({industry:"半導體業"}),"technology");
  assert.equal(core.guessGroup({industry:"金融保險"}),"finance");
  assert.equal(core.guessGroup({industry:"食品業"}),"other");
+});
+
+test("market top veto separately blocks new entry even when Risk Score looks acceptable",()=>{
+ const x=core.size(base,{...market,allowedNew:false});
+ assert.equal(x.canBuy,false);assert.equal(x.first,0);
+});
+test("price without a known fresh date is shown only as potential sizing",()=>{
+ const x=core.size({...base,priceDate:""},market);assert.equal(x.priceDated,false);assert.equal(x.canBuy,false);assert.equal(x.first,0);
+});
+test("known leveraged ETF cannot bypass caps by manual stock type",()=>{
+ const x=core.size({...base,code:"00675L",group:"other",type:"stock"},market);
+ assert.equal(x.kind,"leveraged-etf");assert.equal(x.group,"market");
 });
