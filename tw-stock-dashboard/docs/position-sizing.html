@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light"><title>台股量化｜股票與 ETF 資金配置儀表板</title>
+<script src="./site-access.js"></script>
+<style>
+:root{--bg:#f3f6fb;--ink:#16243c;--muted:#66768d;--line:#dce5f0;--brand:#2563eb;--warn:#975a16;--ok:#047857;--bad:#be123c}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 -apple-system,BlinkMacSystemFont,"Noto Sans TC","Segoe UI",sans-serif}
+.wrap{max-width:1260px;margin:0 auto;padding:18px}h1,h2,h3{line-height:1.35}h1{margin:0;font-size:26px}h2{margin:0;font-size:17px}h3{margin:0;font-size:14px}
+.sub{color:var(--muted);font-size:12px}.eyebrow{font-size:11px;font-weight:900;letter-spacing:.05em;color:#516785}
+header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:12px}
+nav{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+nav a,.button{appearance:none;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;border:1px solid #d9e2ef;border-radius:9px;background:white;color:#263b57;font-size:12px;font-weight:850;cursor:pointer;line-height:1.4;min-height:39px}
+nav a:hover,.button:hover{border-color:#7cb1fa}.button.primary{background:#2563eb;border-color:#2563eb;color:#fff}.button.red{background:#fff7f7;color:#a21640}
+.card{border:1px solid var(--line);background:#fff;border-radius:15px;padding:18px;margin:12px 0;box-shadow:0 3px 14px rgba(19,42,80,.035)}
+.hero{background:linear-gradient(112deg,#ecf4ff,#fff 66%);border-color:#c9defb}
+.hero p{margin:7px 0 0;color:#546a86;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{border:1px solid #e4eaf2;border-radius:12px;background:#f7f9fd;padding:12px;min-width:0}
+.kpi label{display:block;color:#66768d;font-size:11px;font-weight:850}
+.kpi strong{display:block;font-size:24px;font-weight:950;line-height:1.35;margin-top:5px;overflow-wrap:anywhere}
+.kpi small{display:block;color:#66768d;font-size:11px;margin-top:4px;line-height:1.5}
+.kpi.accent{background:#eff6ff;border-color:#bfdbfe}
+.kpi.accent strong{color:#1d4ed8}
+.strip{background:#edf2f8;border-radius:99px;height:9px;overflow:hidden;margin-top:9px}
+.strip span{height:100%;display:block;background:#2563eb;transition:width .2s}
+label.field, .holding-row label{display:flex;min-width:0;flex-direction:column;gap:5px;font-size:12px;font-weight:850;color:#3d5271}
+label.field>input,label.field>select,label.field>textarea,.holding-row input,.holding-row select{font:inherit;font-size:14px;color:#18283d;border:1px solid #d5dfea;border-radius:9px;padding:10px;background:#fff;min-height:43px;width:100%;min-width:0}
+label.field>textarea{min-height:110px;resize:vertical;font-family:ui-monospace,monospace;font-size:12px}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #bfdbfe;outline-offset:1px}
+.fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:12px}
+.fields.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.check{display:flex;gap:8px;align-items:center;padding:11px 12px;border-radius:11px;background:#eff6ff;color:#224877;font-size:12px;font-weight:850}
+.check input{width:18px;height:18px;accent-color:#2563eb}
+.info{background:#f8fafc;border-left:3px solid #94a3b8;padding:11px 12px;font-size:12px;color:#475569;border-radius:7px;margin:11px 0 0}
+.head{display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px}
+.holding-row{display:grid;grid-template-columns:1.05fr 1.3fr 1.15fr 1fr auto;align-items:end;gap:9px;padding:11px 0;border-bottom:1px dashed #e4eaf2}
+.holding-row .remove{padding:11px;border-radius:8px;color:#a21a41;background:#fff;border:1px solid #efc9d2;font-size:12px;font-weight:900;cursor:pointer;min-height:44px}
+.results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:12px}
+.results .kpi strong{font-size:23px}
+.section-note{font-size:12px;color:#60718a;margin:10px 0;line-height:1.8}
+.decision{border-radius:12px;background:#fff4e9;border:1px solid #f5d0a8;padding:13px 16px;margin-top:13px}
+.decision h3{font-size:17px;color:#9a3412}.decision p{margin:5px 0 0;color:#80502b;font-size:12px}
+.limit-row{display:flex;justify-content:space-between;gap:9px;align-items:baseline;padding:7px 0;border-bottom:1px solid #edf1f7;font-size:12px}
+.limit-row strong{font-size:13px}
+.table-scroll{max-width:100%;overflow:auto}table{width:100%;border-collapse:collapse;min-width:610px}
+th,td{padding:9px;text-align:left;white-space:nowrap;border-bottom:1px solid #eaf0f6;font-size:12px}
+th{color:#64748b;background:#f7f9fc;font-weight:900}
+.warn-item{padding:8px 0;color:#94500f;font-size:12px;border-bottom:1px dotted #e9edf1}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:13px}.flex{display:flex;gap:8px;flex-wrap:wrap}
+details{border:1px solid #e4e9f1;border-radius:11px;padding:12px;background:#fbfcfe;margin:10px 0}
+summary{cursor:pointer;font-weight:900;font-size:13px}details p{font-size:12px;color:#64748b;line-height:1.85}
+.footer{font-size:11px;line-height:1.7;color:#64748b;padding:14px 3px;text-align:center}
+#feedback[data-error="1"]{color:#be123c}
+@media(max-width:1000px){.grid,.fields{grid-template-columns:repeat(2,minmax(0,1fr))}.holding-row{grid-template-columns:repeat(2,minmax(0,1fr))}.holding-row .remove{grid-column:span 2}}
+@media(max-width:680px){.wrap{padding:10px}.card{padding:14px;margin:9px 0}h1{font-size:22px}.grid{gap:7px}.kpi{padding:9px}.kpi strong{font-size:21px}.fields,.fields.three{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.results{grid-template-columns:repeat(2,minmax(0,1fr))}.results .kpi strong{font-size:19px}.twocol{grid-template-columns:1fr}nav a{flex:1;min-width:0}.holding-row{gap:7px}.holding-row label{font-size:11px}.section-note{font-size:11px}}
+@media(max-width:365px){.grid,.fields,.fields.three,.results{grid-template-columns:1fr 1fr}.kpi strong{font-size:18px}.holding-row{grid-template-columns:1fr 1fr}}
+</style></head>
+<body><div class="wrap">
+<header><div><div class="eyebrow">台股量化 · 資產風險與分批控制</div><h1>💰 股票／ETF 資金配置儀表板</h1><div class="sub">從「可不可以買」進一步計算「最多多少、首批多少、什麼時候不能加碼」。</div></div>
+<nav><a href="./index.html">⌂ 返回大盤主頁</a><a href="./selections.html">📋 G 選股</a><a href="./trade-plan.html">🧮 詳細分批計算</a></nav></header>
+<section class="card hero" aria-label="大盤資金概況"><div class="head"><div><div class="eyebrow">01 / 逆向價格位階 × 獨立風控</div><h2>漲多留現金、跌深預備布局；是否能買另看風控</h2></div><button id="refreshData" class="button" type="button">↻ 更新大盤資料</button></div>
+<div id="dataStatus" class="sub" role="status">載入 GitHub 收盤資料中…</div>
+<div class="grid" style="margin-top:12px">
+<div class="kpi accent"><label>逆向預備股票水位</label><strong id="marketTarget">—</strong><div class="strip"><span id="allocationFill" style="width:0%"></span></div></div>
+<div class="kpi"><label>逆向準備現金比例</label><strong id="marketReserve">—</strong><small>未經歷史回測的研究模型</small></div>
+<div class="kpi"><label>現有持股市值</label><strong id="invested">—</strong><small>依你下方的持股輸入</small></div>
+<div class="kpi"><label>尚待配置的預備額度</label><strong id="remainingMarket">—</strong><small>不等同於今日能直接買進</small></div>
+</div><p id="marketDate" class="section-note">等待有日期的大盤資料。</p><p id="marketNote" class="section-note">逆向配置僅是預留資金的方向，不表示立即低接。</p></section>
+<section class="card"><div class="head"><div><div class="eyebrow">02 / 投資組合</div><h2>你目前有多少可動用資金？</h2></div><div class="flex"><button id="addHolding" class="button primary" type="button">＋ 新增持股</button><button id="clearHoldings" class="button red" type="button">清除持股</button></div></div>
+<div class="fields three">
+<label class="field">資產總額（元）<input id="capital" type="number" min="1000" step="10000" value="1000000" inputmode="numeric"></label>
+<label class="field">其他未分類已投入（元）<input id="otherHeld" type="number" min="0" step="1000" value="0" inputmode="numeric"></label>
+<div class="info" style="margin-top:0">以目前投入市值估算，包含融資或正2時請輸入實際部位市值，不要只填保證金。</div>
+</div>
+<div id="holdings" aria-label="現有持股清單"></div>
+<p id="holdingTotal" class="section-note">尚未輸入現有持股。</p><p id="groupRisk" class="section-note">選擇標的後顯示同類風險。</p>
+</section>
+<section class="card"><div class="eyebrow">03 / 股票、ETF 與價格位階</div><h2>你想買哪一檔？</h2><div class="fields">
+<label class="field">快速選擇 ETF／G 強勢股<select id="presets"><option value="">載入中…</option></select></label>
+<label class="field">股票代碼（自訂可輸入）<input id="symbol" placeholder="0052、0056、00675L、2330" autocomplete="off"></label>
+<label class="field">標的類型<select id="kind">
+<option value="stock">一般股票</option><option value="broad-etf">廣泛分散 ETF</option><option value="sector-etf">產業／集中 ETF</option><option value="leveraged-etf">正 2／槓桿 ETF</option></select></label>
+<label class="field">主要重疊風險族群<select id="sector"><option value="technology">科技／半導體</option><option value="dividend">高股息</option><option value="finance">金融</option><option value="market">廣泛市場</option><option value="other" selected>其他／未知</option></select></label>
+<label class="field">參考買入股價（元）<input id="price" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="請提供可核實股價"></label>
+<label class="field">參考股價資料日<input id="priceDate" type="date"></label>
+<label class="field">ATR 占價格百分比（%）<input id="atr" type="number" min="0.01" max="100" step="0.1" inputmode="decimal" placeholder="例如 4.5"></label>
+<label class="field">近20日報酬（%）<input id="ret20" type="number" min="-100" max="1000" step="0.1" inputmode="decimal" placeholder="可留空"></label>
+</div>
+<div id="name" class="info">可先從 G 榜或 ETF 範例清單挑選；ETF 價格若未建立資料來源，不會憑空補最新價。</div>
+<details><summary>選用｜貼上至少 60 個交易日收盤價，檢查價格相對位階</summary>
+<p>每行一筆，依日期從舊到新輸入，例如 <code>2026-07-01,100</code> 或單純 <code>100</code>。這個 Z-score 僅是技術價格位階，無法代替 ETF 的淨值、折溢價與基本面估值；不會冒充方舟專有的「價值區」。</p>
+<label class="field">歷史每日收盤價<textarea id="history" spellcheck="false" placeholder="2026-07-01,50.0&#10;2026-07-02,50.2&#10;...（至少 60 筆）"></textarea></label>
+</details>
+<div class="grid" style="margin-top:10px"><div class="kpi"><label>相對價格位階</label><strong id="zone" style="font-size:17px">未核實</strong><small id="zoneDetail">輸入歷史價格後才可判斷。</small></div>
+<div class="kpi"><label>額度壓力測試幅度</label><strong id="stress">—</strong><small>ATR × 類型倍數，或保守預設</small></div>
+<div class="kpi"><label>單筆風險預算</label><strong id="budgetRisk">—</strong><small>股價跳空可能超過預估</small></div>
+<div class="kpi"><label>配置上限壓力損失</label><strong id="riskLoss">—</strong><small>不等同最壞實際虧損</small></div></div></section>
+<section class="card"><div class="eyebrow">04 / 入場訊號</div><h2>進場條件是否真的符合？</h2>
+<div class="fields three">
+<label class="field">進場依據<select id="signal"><option value="none">尚未有進場訊號</option><option value="bottom">Bottom（原版）</option><option value="ss">SS Bottom（Bottom + Trend > 70）</option><option value="manual">ETF 位階等其他人工訊號</option></select></label>
+<label class="check"><input id="entryConfirmed" type="checkbox"> 我已自行確認訊號與時間週期，並同意這只是紙上試算。</label>
+<div class="info" style="margin-top:0">Top 訊號屬出場提示，與 Trend 無關。沒有 SS 就不能假設 Trend 超過 70。</div></div>
+<div class="decision"><h3 id="decision">暫不建立新倉</h3><p id="decisionText">等待完整市場資料與進場訊號。</p></div></section>
+<section class="card"><div class="eyebrow">05 / 建議配置量</div><h2>單檔上限、首批與後續分批</h2>
+<div class="results">
+<div class="kpi accent"><label>單檔可規劃資金上限</label><strong id="maxPosition">—</strong><small>所有風控約束取最小值</small></div>
+<div class="kpi"><label>單檔最大預估股數</label><strong id="maxShares">—</strong></div>
+<div class="kpi accent"><label>符合全部條件後的首批金額</label><strong id="firstBudget">—</strong><small id="firstPct">尚未計算</small></div>
+<div class="kpi"><label>符合條件後的首批股數</label><strong id="firstShares">—</strong></div>
+<div class="kpi"><label>首批後待用配置額度</label><strong id="remainingBudget">—</strong></div>
+<div class="kpi"><label>股價與加碼風險</label><strong style="font-size:15px">不順勢攤平</strong><small>加碼需再見 Bottom 且達價格跌幅條件</small></div>
+</div>
+<div class="twocol" style="margin-top:15px">
+<div><h3>哪一項限制住買入金額？</h3><div id="limitRows">讀取中…</div></div>
+<div><h3>集中度、槓桿與資料提醒</h3><div id="warnings" aria-live="polite">選股後顯示。</div></div>
+</div>
+<h3 style="margin:17px 0 7px">四階價格／資金計畫（僅為情境，不是預掛單）</h3>
+<div class="table-scroll"><table><thead><tr><th>批次</th><th>情境觸價</th><th>該批預算</th><th>粗估股數</th><th>必要條件</th></tr></thead><tbody id="ladderRows"><tr><td colspan="5">等待試算資料</td></tr></tbody></table></div>
+<p id="ladderNote" class="section-note">分批僅供資金分配研究；沒有價格走勢和委託紀錄，不能當作成交回測。</p>
+<div class="flex"><button class="button primary" id="copyPlan" type="button">複製試算摘要</button><a class="button" href="./bottom-top-trader.html">查看 Bottom/Top 事件模擬 →</a></div>
+<p id="feedback" role="status" class="section-note">所有資金與持股均只在目前瀏覽器畫面計算，不會上傳網站或寫進 GitHub。</p>
+</section>
+<section class="card"><details><summary>公式說明、價值區限制與風險揭露</summary>
+<p>逆向水位依大盤相對前120日高點的跌幅階梯決定：越接近高點，保留現金越高；跌深則提高預備股票配置。但真正買進仍由大盤 Risk Score 與 Bottom／SS Bottom 控制。這些是自訂的研究參數，並非方舟公開公式。</p><p>總帳戶預備股票額度＝總資金×當前逆向價格預備水位；單檔可配置上限＝「大盤剩餘額度、單檔類型上限、同族群剩餘額度、正2集中額度、單筆不利波動風險預算換算上限」五者最小值，扣除現有同檔曝險。每筆參考風險預算約為資產 0.3–0.6%，依標的類型而異。模型屬自訂未回測起始值，非方舟程式碼。</p>
+<p>用股票價格的 60 日均線 Z-score 只可描述相對位置，沒有企業內在價值；ETF 應另外檢視淨值、折溢價、指數成分與費用率。CPO、電子股票和科技 ETF 的「重複曝險」目前以同產業標籤作保守代理，不是成分股加權相關係數。正2 ETF 的風險也不能簡化為兩倍固定收益，仍有波動耗損與追蹤誤差。</p>
+<p>所有建議都是資料日對齊的研究額度，不代表實際可成交價格。若沒有確認 Bottom 或 ETF 的人工訊號、或 Risk Score 低於既有進場門檻，本頁只允許情境試算，不出現實際首批買進股數。借鏡市場曝險、風險預算與價格位階概念，但不是方舟的閉源算法，也沒有暗示任何歷史超額績效。</p>
+</details></section>
+<div class="footer">台股量化｜資金配置 V1 · GitHub Pages 本機瀏覽器試算 · 非券商委託、不保證成交、不構成投資建議。</div>
+</div><script src="./dynamic-exposure.js"></script><script src="./position-sizing-core.js"></script><script src="./position-sizing.js"></script></body></html>

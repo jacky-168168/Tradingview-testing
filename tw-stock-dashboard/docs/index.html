@@ -61,6 +61,7 @@
         <a class="btn" href="./stocks.html">🔬 個股量化體檢</a>
         <a class="btn" href="./backtest.html">📈 回測中心 <span class="nav-compact">／Edge</span></a>
         <a class="btn" href="./bottom-top-trader.html">🎯 Bottom/Top 交易雷達</a>
+        <a class="btn" href="./position-sizing.html">💰 資金配置儀表板</a>
         <a class="btn" href="./trade-plan.html">🧮 分批資金計算</a>
       </div>
     </div>
@@ -105,15 +106,16 @@
 </section>
 <section id="dynamicExposure" class="dynamic-exposure" data-status="paused" aria-label="動態資金水位與單檔分批試算">
   <div class="exp-head">
-    <div><div class="exp-eyebrow">資金控管實驗室 · 五因子透明模型 V1</div><h2 class="exp-title" style="margin:5px 0 3px">💰 今天該配置多少資金？</h2><p class="exp-help">借鏡市場曝險與位階計算方法，使用本站現有大盤資料；<strong>不是方舟專有演算法，也不是原本 Risk Score。</strong></p></div>
+    <div><div class="exp-eyebrow">資金控管實驗室 · 逆向價格位階 V2＋獨立風控</div><h2 class="exp-title" style="margin:5px 0 3px">💰 今天該配置多少資金？</h2><p class="exp-help">依前120日高點回落幅度預留布局資金：<strong>越接近高點，現金越多；跌深後，預備股票水位提高。</strong>進場仍受獨立 Risk Score 與個股訊號約束；不是方舟閉源演算法。</p></div>
     <span id="expAsOf" class="exp-date" role="status">正在核對大盤資料日期…</span>
   </div>
   <div class="exp-overview" aria-label="資金水位摘要">
-    <div class="exp-kpi hero"><label>參考股票持有水位</label><strong id="expTarget">—</strong><div class="exp-bar-duo" aria-hidden="true"><i id="expStockFill" style="width:0%"></i></div><small id="expHeadline">正在核對數據…</small></div>
-    <div class="exp-kpi"><label>建議保留現金</label><strong id="expCash">—</strong><small>不代表應立即清倉或加碼</small></div>
-    <div class="exp-kpi"><label>本模型綜合分數</label><strong id="expComposite">—</strong><small>獨立於原始 Risk Score</small></div>
-    <div class="exp-kpi"><label>資料與訊號</label><strong style="font-size:15px;white-space:normal">收盤資料</strong><small>沒有即時成交，也不提供自動買賣</small></div>
+    <div class="exp-kpi hero"><label>逆向布局預備股票水位</label><strong id="expTarget">—</strong><div class="exp-bar-duo" aria-hidden="true"><i id="expStockFill" style="width:0%"></i></div><small id="expHeadline">正在核對數據…</small></div>
+    <div class="exp-kpi"><label>逆向現金保留水位</label><strong id="expCash">—</strong><small>不代表應立即清倉或加碼</small></div>
+    <div class="exp-kpi"><label>獨立五因子風控分數</label><strong id="expComposite">—</strong><small>獨立於原始 Risk Score</small></div>
+    <div class="exp-kpi"><label>目前大盤風控開倉資格</label><strong id="expRiskGate" style="font-size:15px;white-space:normal">核對中…</strong><small>沒有即時成交，且需再確認個股訊號</small></div>
   </div>
+  <p id="expDrawdown" class="exp-small">核對前120日高點與 MA20 位階中…</p>
   <div class="exp-controls">
     <div class="exp-control"><label for="expCapital">可投資總資金（元）</label><input id="expCapital" type="number" min="1000" max="1000000000" value="1000000" step="10000" inputmode="numeric"></div>
     <div class="exp-control"><label for="expHeld">目前已投入（元）</label><input id="expHeld" type="number" min="0" max="1000000000" value="0" step="10000" inputmode="numeric"></div>
@@ -121,20 +123,20 @@
     <div class="exp-control"><label for="expStock">選擇 G 候選個股</label><select id="expStock"><option value="">等待 G 榜載入</option></select></div>
   </div>
   <div class="exp-results" aria-label="動態資金與單檔買入額">
-    <div class="exp-value"><small>股票總水位上限（試算）</small><strong id="expAllowed">—</strong></div>
-    <div class="exp-value"><small>尚可配置的額度</small><strong id="expFree">—</strong></div>
+    <div class="exp-value"><small>預備股票總水位（試算）</small><strong id="expAllowed">—</strong></div>
+    <div class="exp-value"><small>尚待配置的預備額度</small><strong id="expFree">—</strong></div>
     <div class="exp-value"><small>保留現金預算</small><strong id="expReserve">—</strong></div>
-    <div class="exp-value"><small>選中個股首批額度</small><strong id="expFirst">請先選股</strong></div>
+    <div class="exp-value"><small>符合風控時的參考首批預算</small><strong id="expFirst">請先選股</strong></div>
     <div class="exp-value"><small>預估股數（包含零股）</small><strong id="expShares">—</strong></div>
   </div>
   <p id="expSub" class="exp-small">選股資料未載入；個股試算只使用 G 榜既有的價格、20日報酬與 ATR，這些不是企業估值。</p>
   <p id="expStatus" class="exp-status" role="status">資料未同步，暫停今日新倉建議。</p>
   <details class="exp-details">
-    <summary>查看五項權重、限縮原因、計算方式與研究來源</summary>
+    <summary>查看逆向價格區間、五項輔助診斷與研究來源</summary>
     <div id="expFactors" class="exp-factor-grid">資料載入中…</div>
     <p id="expExplain" class="exp-small">資料未到齊。</p>
-    <p class="exp-small"><strong>權重：</strong>正式 Risk Score 40%、漲跌家數 20%、MA20 趨勢 15%、波動歷史分位 15%、外資流向 10%；資料缺漏超過 15% 權重即停止計算。市場 Risk Score 低於 60 時，此工具只能作為歷史持股水位情境，不會解禁原本的大盤進場限制。個股先按波動調整單檔預算，再依 20日漲幅及 ATR 降低首批比例，<strong>不能將技術過熱誤認為基本面高估。</strong></p>
-    <div class="exp-links"><a href="https://play.google.com/store/apps/details?id=com.galaxy.ark" target="_blank" rel="noopener noreferrer">方舟：產品功能參考</a><a href="https://naaim.org/programs/naaim-exposure-index/" target="_blank" rel="noopener noreferrer">NAAIM：市場曝險</a><a href="https://www.aaii.com/journal/article/535756-gauging-the-strength-of-market-trends-with-the-ad-line" target="_blank" rel="noopener noreferrer">AAII：市場廣度</a><a href="./trade-plan.html">開啟完整分批計算器 →</a></div>
+    <p class="exp-small"><strong>逆向準備水位：</strong>前120日高點回落 &lt;2%→股票30%、2–5%→40%、5–10%→50%、10–15%→65%、≥15%→80%；若指數高於MA20達7%，則股票水位上限25%。以上是未回測的自訂價格階梯，不是企業估值。<strong>獨立風險評估：</strong>正式 Risk Score 40%、上漲家數20%、MA20趨勢15%、波動分位15%、外資10%；這五項只做風險診斷，不能混同方舟水位。大盤 Risk Score低於60，即使跌深也不允許一般新倉。個股先按波動調整單檔預算，再依 20日漲幅及 ATR 降低首批比例，<strong>不能將技術過熱誤認為基本面高估。</strong></p>
+    <div class="exp-links"><a href="https://play.google.com/store/apps/details?id=com.galaxy.ark" target="_blank" rel="noopener noreferrer">方舟：產品功能參考</a><a href="https://naaim.org/programs/naaim-exposure-index/" target="_blank" rel="noopener noreferrer">NAAIM：市場曝險</a><a href="https://www.aaii.com/journal/article/535756-gauging-the-strength-of-market-trends-with-the-ad-line" target="_blank" rel="noopener noreferrer">AAII：市場廣度</a><a href="./position-sizing.html"><strong>進入完整股票／ETF 資金配置儀表板 →</strong></a><a href="./trade-plan.html">開啟完整分批計算器 →</a></div>
     <p class="exp-small">本模型權重與資金上限為自主設計的未回測參數，供研究與配置計算；不是方舟原版、不是 AI 預測、不是投資建議。總資金和已投入金額只存在目前網頁輸入中，不會提交到 GitHub。</p>
   </details>
 </section>
