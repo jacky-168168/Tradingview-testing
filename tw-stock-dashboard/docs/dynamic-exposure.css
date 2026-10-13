@@ -1,0 +1,39 @@
+/* Dynamic capital exposure: on-home decision support, compact on mobile. */
+.dynamic-exposure{margin-top:14px;padding:19px 21px;background:#fff;border:1px solid #dfe5ef;border-left:5px solid #64748b;border-radius:15px;box-shadow:0 3px 12px rgba(15,23,42,.025);color:#172033}
+.dynamic-exposure[data-status=paused]{border-left-color:#d97706}.dynamic-exposure[data-status=defensive]{border-left-color:#dc2626}.dynamic-exposure[data-status=risk-on]{border-left-color:#059669}
+.exp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.exp-eyebrow{font-size:11px;font-weight:900;letter-spacing:.025em;color:#64748b}
+.exp-title{font-size:20px;line-height:1.35;font-weight:950;margin:4px 0 2px}
+.exp-help{font-size:11px;line-height:1.7;color:#64748b;margin:4px 0 0}
+.exp-date{font-size:11px;line-height:1.6;color:#64748b;background:#f8fafc;border:1px solid #e2e8f0;padding:5px 8px;border-radius:8px;font-weight:800}
+.exp-overview{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:9px;margin-top:13px}
+.exp-kpi{border:1px solid #e8edf3;border-radius:10px;padding:11px 13px;background:#f8fafc;min-width:0}
+.exp-kpi label{display:block;color:#64748b;font-size:11px;font-weight:850}
+.exp-kpi strong{display:block;font-size:22px;line-height:1.35;margin-top:5px;letter-spacing:-.01em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.exp-kpi.hero strong{font-size:33px}
+.exp-kpi small{display:block;color:#64748b;font-size:10px;line-height:1.55;margin-top:4px}
+.exp-bar-duo{display:flex;width:100%;height:8px;overflow:hidden;border-radius:50px;background:#e2e8f0;margin-top:9px}
+.exp-bar-duo i{height:100%;background:#2563eb;display:block;transition:width .2s}
+.exp-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:15px}
+.exp-control{min-width:0}.exp-control label{display:block;font-size:11px;color:#475569;font-weight:850;margin:0 0 6px}
+.exp-control input,.exp-control select{width:100%;min-width:0;border:1px solid #dce3ed;border-radius:9px;background:#fff;padding:10px 11px;font-size:14px;font-weight:750;color:#172033;min-height:40px}
+.exp-control input:focus-visible,.exp-control select:focus-visible{outline:3px solid #bfdbfe;outline-offset:1px}
+.exp-results{margin-top:13px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.exp-value{padding:10px;border:1px solid #e8edf3;border-radius:9px;min-width:0}
+.exp-value small{display:block;font-size:10px;line-height:1.6;color:#64748b}
+.exp-value strong{display:block;margin-top:2px;font-size:15px;line-height:1.5;font-weight:900;overflow-wrap:anywhere}
+.exp-small{font-size:11px;color:#64748b;line-height:1.75;margin:10px 0 0}
+.exp-status{font-size:12px;font-weight:800;color:#92400e;line-height:1.75;margin-top:11px}
+.exp-details{border-top:1px solid #e8edf3;margin-top:14px;padding-top:10px}
+.exp-details summary{font-size:12px;font-weight:900;cursor:pointer;color:#334155;list-style:auto}
+.exp-factor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 22px;margin:13px 0}
+.exp-factor{display:grid;grid-template-columns:minmax(105px,1.6fr) minmax(40px,2fr) 55px;gap:8px;align-items:center}
+.exp-factor span{font-size:11px;font-weight:800;color:#475569}
+.exp-bar{width:100%;height:7px;background:#e2e8f0;border-radius:10px;overflow:hidden}
+.exp-bar i{height:100%;display:block;background:#64748b;border-radius:10px}
+.exp-factor strong{font-size:11px;color:#334155;text-align:right;font-variant-numeric:tabular-nums}
+.exp-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.exp-links a{font-size:11px;color:#2563eb;font-weight:800;text-decoration:underline;text-underline-offset:2px}
+@media(max-width:1080px){.exp-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.exp-results{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.dynamic-exposure{padding:13px;margin-top:12px}.exp-title{font-size:18px}.exp-overview{gap:7px}.exp-kpi{padding:10px}.exp-kpi.hero strong{font-size:28px}.exp-kpi strong{font-size:19px}.exp-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.exp-results{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.exp-value strong{font-size:14px}.exp-factor-grid{grid-template-columns:1fr}.exp-factor{grid-template-columns:minmax(98px,1.4fr) minmax(40px,2fr) 55px}}
+@media(max-width:390px){.exp-overview{grid-template-columns:1fr 1fr}.exp-kpi label{font-size:10px}.exp-kpi.hero strong{font-size:26px}.exp-value strong{font-size:13px}}
