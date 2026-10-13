@@ -65,7 +65,7 @@ function calculateContrarian(data,now=new Date()){
  const r=data?.risk||{},health=data?.marketIntelligence?.asOf===r.date?data?.marketIntelligence?.marketHealth:null;
  const date=String(r.date||""),risk=finite(r.score),index=finite(r.index),high=finite(r.priorHigh120);
  const closeHighDist=index!==null&&index>0&&high!==null&&high>0?(index/high-1)*100:finite(health?.distancePrior120HighPct);
- if(risk===null||risk<0||risk>100||!/^\d{4}-\d\d-\d\d$/.test(date)||closeHighDist===null||closeHighDist>1||closeHighDist< -100)
+ if(risk===null||risk<0||risk>100||!/^\d{4}-\d\d-\d\d$/.test(date)||closeHighDist===null||closeHighDist>25||closeHighDist< -100)
    return {valid:false,stale:true,target:null,date,risk,reason:"缺少可核實的大盤價格或前120日高點，不以 Risk Score 倒數假造低估位階。"};
  const drawdown=clamp(-closeHighDist,0,100),ma20=finite(r.ma20),aboveMA=ma20!==null&&ma20>0&&index!==null?(index/ma20-1)*100:null;
  const tiers=[{limit:2,pct:30},{limit:5,pct:40},{limit:10,pct:50},{limit:15,pct:65},{limit:Infinity,pct:80}];
