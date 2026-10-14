@@ -1,0 +1,42 @@
+name: TW Stock Quality Watchdog
+on:
+  workflow_run:
+    workflows:
+      - 'TW Stock Python CI'
+      - 'Full Website Browser Audit'
+      - 'TW Stock Pages'
+      - 'TW Stock Dashboard'
+      - 'G Intraday Health Monitor'
+    types: [completed]
+  schedule:
+    # Check a missed daily CI or weekly browser audit independently, 21:00 Taipei.
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/monitor/qa_workflow_watchdog.py'
+      - '.github/monitor/test_qa_workflow_watchdog.py'
+      - '.github/workflows/tw-stock-quality-watchdog.yml'
+permissions:
+  contents: read
+  actions: read
+  issues: write
+concurrency:
+  group: tw-stock-quality-watchdog
+  cancel-in-progress: false
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Regression-test missed-runs and workflow health detection
+        run: python -m unittest discover -s .github/monitor -p 'test_qa_workflow_watchdog.py' -v
+      - name: Create deduplicated alert Issues or resolve recovered incidents
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/monitor/qa_workflow_watchdog.py
