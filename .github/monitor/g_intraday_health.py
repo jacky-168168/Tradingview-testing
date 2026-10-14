@@ -66,7 +66,7 @@ def find_issue():
 def issue_message(now,s):
     return ("**監控時間：** "+now.astimezone(TZ).isoformat(timespec="seconds")+"\n\n**最後成功榜單：** "+str(s["publishedAt"])+
             f"（{s['ageMinutes']} 分鐘前，{s['rows']} 檔）\n\n**異常項目：**\n"+ "\n".join("- "+e for e in s["errors"])+
-            f"\n\n[盤中網頁]({BASE}/../../jacky-168168.github.io/Tradingview-testing/selections.html) · [Actions]({BASE}/actions/workflows/tw-stock-dashboard.yml) · [JSON]({BASE}/blob/main/tw-stock-dashboard/docs/data/g_intraday/latest.json)\n\n此問題會自動補跑並在驗證恢復後關閉。<!-- monitor:g-intraday-health -->")
+            f"\n\n[盤中網頁](https://jacky-168168.github.io/Tradingview-testing/selections.html) · [Actions]({BASE}/actions/workflows/tw-stock-dashboard.yml) · [JSON]({BASE}/blob/main/tw-stock-dashboard/docs/data/g_intraday/latest.json)\n\n此問題會自動補跑並在驗證恢復後關閉。<!-- monitor:g-intraday-health -->")
 def last_retry(number):
     comments=request(f"/issues/{number}/comments?per_page=100")
     stamps=[parse(c.get("created_at")) for c in comments if "AUTO_RECOVERY" in c.get("body","")]
