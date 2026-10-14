@@ -27,7 +27,7 @@ class PublishedResearchIntegrity(unittest.TestCase):
         self.assertEqual(summary["riskCoverage"],coverage["riskScoredDays"])
         self.assertEqual(summary["signalSessions"],coverage["tradingDays"])
         self.assertEqual(len(summary["models"]),32)
-        self.assertEqual(set(x["horizon"] for x in summary["models"]),{1,3,5,20})
+        self.assertEqual(set(x["horizon"] for x in summary["models"]),{1,5,10,20})
         # Current archive has zero independently matched TX after-hours reports.
         # Any positive assertion would misrepresent an unverified futures filter.
         if summary["txNightCoverage"]==0:
