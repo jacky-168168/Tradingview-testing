@@ -1,6 +1,17 @@
 name: Full Website Browser Audit
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/docs/*.html'
+      - 'tw-stock-dashboard/docs/*.js'
+      - 'tw-stock-dashboard/docs/*.css'
+      - 'tw-stock-dashboard/tests/test_full_site_browser.cjs'
+      - '.github/workflows/full-site-browser-audit.yml'
+  schedule:
+    # Weekly full desktop and mobile audit, Saturday 19:00 Taiwan.
+    - cron: '0 11 * * 6'
   pull_request:
     paths:
       - 'tw-stock-dashboard/docs/*.html'
