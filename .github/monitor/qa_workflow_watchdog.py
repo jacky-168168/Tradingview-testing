@@ -1,8 +1,10 @@
 """Independent GitHub Actions QA watchdog. Posts deduplicated assigned issues."""
 from __future__ import annotations
-import json,os,sys
+import json,os,sys,base64
 from datetime import datetime,timezone
 from urllib.request import Request,urlopen
+from zoneinfo import ZoneInfo
+from g_intraday_health import CLOSED_2026
 ROOT="https://api.github.com/repos/jacky-168168/Tradingview-testing"
 WORKFLOWS={
  "TW Stock Python CI":"tw-stock-ci.yml",
@@ -68,6 +70,20 @@ def run_event(event):
         publish(name,"工作流程執行失敗，請核對失敗 Job 的完整日誌。",entry.get("id"),entry.get("html_url"))
     elif state=="success":publish(name,None)
     else:print("QA_IGNORED",name,state)
+def eod_health(now,data):
+    local=now.astimezone(ZoneInfo("Asia/Taipei"))
+    if local.weekday()>=5 or (local.year==2026 and local.strftime("%m-%d") in CLOSED_2026):return None
+    day=local.date().isoformat()
+    if not isinstance(data,dict):return "最新盤後 JSON 無法讀取"
+    if data.get("dataDate")!=day:return "盤後正式資料尚未發布當日 "+day+"（目前資料日 "+str(data.get("dataDate"))+"）"
+    if (data.get("risk") or {}).get("date")!=day:return "Risk Score 正式資料日期與盤後日期不一致"
+    if (data.get("gSelection") or {}).get("dataDate")!=day:return "G 正式模型資料日期與盤後日期不一致"
+    models=data.get("models") or {}
+    if not isinstance(models.get("G"),list) or any(m not in models for m in ("A","D","F","F2")):return "正式 A/D/F/F2/G 模型資料缺失"
+    return None
+def load_official_snapshot():
+    source=req("/contents/tw-stock-dashboard/docs/data/latest.json?ref=main")
+    return json.loads(base64.b64decode(source["content"]).decode("utf-8"))
 def daily(now):
     for name,wid in SCHEDULES.items():
         latest=req("/actions/workflows/"+WORKFLOWS[name]+"/runs?per_page=5").get("workflow_runs",[])
@@ -76,6 +92,11 @@ def daily(now):
         if overdue:publish(name,overdue,newest.get("id") if newest else None,newest.get("html_url") if newest else None)
         elif newest and newest.get("conclusion")=="failure":publish(name,"最近一次測試失敗且尚未有新的成功紀錄。",newest.get("id"),newest.get("html_url"))
         elif newest and newest.get("conclusion")=="success":publish(name,None)
+    try:
+        reason=eod_health(now,load_official_snapshot())
+    except Exception as error:reason="正式資料無法讀取："+repr(error)[:260]
+    if reason:publish("TW Stock Dashboard EOD Freshness",reason)
+    else:publish("TW Stock Dashboard EOD Freshness",None)
 def main():
     event_name=os.getenv("GITHUB_EVENT_NAME","")
     event_path=os.getenv("GITHUB_EVENT_PATH")
