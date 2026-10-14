@@ -1,5 +1,6 @@
 var DATA=null,MODEL="G",TABLE_COMPACT=false,G_INTRADAY=null,G_INTRADAY_STATUS=null;
-function currentLiveG(){var g=G_INTRADAY;if(!g||g.quality!=="intraday-provisional-allmarket"||!Array.isArray(g.rows)||g.asOfDate!==taipeiDate())return null;if(String(DATA&&DATA.dataDate||"")>=g.asOfDate||!g.sourceCloseDate||g.sourceCloseDate!==DATA.dataDate)return null;var age=Date.now()-new Date(g.publishedAt).getTime();if(!Number.isFinite(age)||age<0||age>110*60*1000)return null;return g;}
+function currentLiveG(){var g=G_INTRADAY;if(!g||g.quality!=="intraday-provisional-allmarket"||!Array.isArray(g.rows)||g.asOfDate!==taipeiDate())return null;var cashDate=String(DATA&&DATA.dataDate||"");if(!g.sourceCloseDate||g.sourceCloseDate>=g.asOfDate||(cashDate!==g.sourceCloseDate&&cashDate!==g.asOfDate))return null;var age=Date.now()-new Date(g.publishedAt).getTime();if(!Number.isFinite(age)||age< -5*60*1000)return null;return g;}
+function gSnapshotNotice(g){if(!g)return "";var age=Date.now()-new Date(g.publishedAt).getTime(),mins=Math.floor(age/60000);if(age>110*60000)return "｜⚠ 超過110分鐘未成功更新（"+mins+"分鐘前），只保留今日舊快照，不能視為即時訊號";var twHour=Number(new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Taipei",hour:"2-digit",hourCycle:"h23"}).format(new Date()));return twHour>=14?"｜⚠ 今日盤中已結束，僅保留盤中快照":"";}
 function recentGAttemptFailure(g){var st=G_INTRADAY_STATUS;return !!(st&&g&&st.asOfDate===g.asOfDate&&st.status==="unavailable"&&Date.parse(st.checkedAt)>Date.parse(g.publishedAt));}
 function N(x,n){if(x==null||x==="")return "--";var v=Number(x);return Number.isFinite(v)?v.toFixed(n==null?2:n):"--"}
 function P(x,n){return Number.isFinite(Number(x))?N(x,n==null?2:n)+"%":"--"}
@@ -62,7 +63,7 @@ F:"F 固定大盤濾網＝D 技術強勢＋Risk Score≥60 放行；唯一例外
 F2:"F2 動態大盤濾網＝D 技術強勢＋Risk Score≥60 進場、≥55 維持已開啟狀態｜Strong Bottom Reversal 可例外放行｜Top Reversal Attempt / Strong Top Reversal 或 Extreme Overbought 阻擋｜目前大盤分數："+score+"｜濾網："+(f2g.allowed?"放行":"阻擋")+"（"+(f2g.reason||"尚未分析")+"）。"
 };
 var live=MODEL==="G"?currentLiveG():null;
-if(live){var cov=live.coverage||{},ps=live.quotePriceSources||{},proxy=(ps["bid-ask-midpoint"]||0)+(ps["one-sided-high-bid"]||0)+(ps["one-sided-low-ask"]||0);gNote.textContent="🟠 G 盤中重新選股｜"+live.asOfDate+"｜更新 "+live.publishedAt+"｜全上市櫃即時有效報價 "+(cov.valid||0)+"/"+(cov.total||0)+"（其中 "+proxy+" 檔使用買賣委託價暫估、"+(cov.noTrade||0)+" 檔尚未成交僅列入母體）｜3D／18D 當日突破尚未收盤確認；現價標≈者不是實際成交價；法人、SAR 不提供假盤中數據，原版盤後G榜單未改動。"+(recentGAttemptFailure(live)?"｜⚠ 最新一輪盤中重選失敗，暫保留此前已驗證且未過期的榜單":"");return;}
+if(live){var cov=live.coverage||{},ps=live.quotePriceSources||{},proxy=(ps["bid-ask-midpoint"]||0)+(ps["one-sided-high-bid"]||0)+(ps["one-sided-low-ask"]||0);gNote.textContent="🟠 G 盤中重新選股｜"+live.asOfDate+"｜更新 "+live.publishedAt+"｜全上市櫃即時有效報價 "+(cov.valid||0)+"/"+(cov.total||0)+"（其中 "+proxy+" 檔使用買賣委託價暫估、"+(cov.noTrade||0)+" 檔尚未成交僅列入母體）｜3D／18D 當日突破尚未收盤確認；現價標≈者不是實際成交價；法人、SAR 不提供假盤中數據，原版盤後G榜單未改動。"+gSnapshotNotice(live)+(recentGAttemptFailure(live)?"｜⚠ 最新一輪盤中重選失敗，暫保留當日最後有效榜單":"");return;}
 gNote.textContent=MODEL==="G Pro"?"G Pro：只檢查原G Top3，要求20D動能前25%、均線斜率前20%、成交額前25%、過去10天至少2次進原G Top20、相對量≥1.3、EMA20＞EMA60、收盤在EMA20上方且距離≤15%。未過則不選；此為嚴格選股，非回測勝率保證。":(MODEL==="G"||MODEL==="G Pro")?(gs?"G：最新完整日K "+gs.dataDate+"｜3D＋18D 前高雙突破｜前10日原版 G Top20 持續度加分（最高7分）｜可用歷史 "+(gs.pocketSnapshotsFound||0)+"/10"+(gs.pocketWarmup?"｜持續度建檔中":"")+"｜當日未取得有效盤中重選時僅更新原榜單現價；非 BOTTOM／TOP 觸發":"⚠ 尚未產生每日 G 訊號，請按「GitHub 更新」執行 full 完整更新；不會把舊的 2026 回測清單冒充今日名單。"):(notes[MODEL]||"尚未設定模型說明");
 }
 var N_ARCHIVE=null,N_SUMMARY=null,N_LOADING=false;
@@ -188,7 +189,7 @@ function renderOfficialG(){
  var source=DATA&&DATA.dataDate,selection=DATA&&DATA.gSelection,full=DATA&&DATA.models&&DATA.models.G;
  var verified=Array.isArray(full)&&!!source&&!!selection&&selection.dataDate===source;
  var lg=currentLiveG(),liveStatus=document.getElementById("gIntradayStatus"),liveCount=document.getElementById("gIntradayCount");
- if(lg){liveStatus.textContent="盤中資料日 "+lg.asOfDate+"｜更新 "+lg.publishedAt+"｜全市場有效報價 "+(lg.coverage&&lg.coverage.valid||0)+"/"+(lg.coverage&&lg.coverage.total||0)+"｜未成交參考樣本 "+(lg.coverage&&lg.coverage.noTrade||0)+" 檔（不會入選）｜未完成日K，訊號僅供暫估"+(recentGAttemptFailure(lg)?"｜⚠ 最新一次更新失敗，保留前次有效快照":"");liveCount.textContent=lg.rows.length+" 檔"}
+ if(lg){liveStatus.textContent="盤中資料日 "+lg.asOfDate+"｜更新 "+lg.publishedAt+"｜全市場有效報價 "+(lg.coverage&&lg.coverage.valid||0)+"/"+(lg.coverage&&lg.coverage.total||0)+"｜未成交參考樣本 "+(lg.coverage&&lg.coverage.noTrade||0)+" 檔（不會入選）｜未完成日K，訊號僅供暫估"+gSnapshotNotice(lg)+(recentGAttemptFailure(lg)?"｜⚠ 最新一次更新失敗，保留前次有效快照":"");liveCount.textContent=lg.rows.length+" 檔"}
  else{var st=G_INTRADAY_STATUS,reason=st&&st.asOfDate===taipeiDate()&&st.status==="unavailable"?"｜⚠ 今日更新失敗："+(st.message||"來源未就緒"):"",old=G_INTRADAY&&G_INTRADAY.asOfDate===taipeiDate()?"｜當日最後發布 "+G_INTRADAY.publishedAt+"，但已超過有效時間":"";liveStatus.textContent="目前沒有可用的今日 G 盤中榜單"+reason+old+"｜預定每個交易日 09:00～13:30 每30分鐘更新；頁面每90秒自動同步（GitHub排程可能延遲）｜不拿前一日榜單冒充今日盤中";liveCount.textContent="尚無有效盤中榜"}
  if(!verified){status.textContent="⚠ 最近正式 G 選股尚未完成或日期不一致，不能將盤中價格當作盤後正式訊號";number.textContent="資料未就緒";body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="padding:25px;text-align:center">正式 G 資料尚未同步，請等待盤後完整更新。</td></tr>';return}
  var selected=full.map(function(stock,i){return {stock:stock,rank:i+1}}).filter(function(pair){return !THEME_FILTER||stockHasTheme(pair.stock,THEME_FILTER)});
@@ -205,7 +206,7 @@ function updateGReportOverview(){
  var repeatReady=!!(rg&&r.referenceDate===date);
  document.getElementById("gReportIntroDate").textContent="最近正式交易日 "+(date||"未提供")+"｜三份清單各有獨立資料日期；保留既有全部欄位與原始排序。盤中資料只在有效時顯示，不能代替盤後正式清單。";
  document.getElementById("gQuickRepeat").textContent=repeatReady?(rg.stocks||[]).length+" 檔重複上榜｜統計至 "+date:rg?"統計檔案待與正式日期同步":"正在讀取歷史快照";
- document.getElementById("gQuickLive").textContent=live?live.rows.length+" 檔暫估｜"+(live.asOfDate||"今日")+" 有效": "目前無有效盤中榜單";
+ document.getElementById("gQuickLive").textContent=live?live.rows.length+" 檔｜"+(gSnapshotNotice(live)?"僅供參考":"暫估")+"｜"+(live.asOfDate||"今日"): "目前無有效盤中榜單";
  document.getElementById("gQuickOfficial").textContent=verified?official.length+" 檔正式｜"+date:"正式資料待同步";
 }
 function renderTable(){
