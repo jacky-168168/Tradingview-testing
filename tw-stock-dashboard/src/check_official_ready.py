@@ -9,6 +9,12 @@ TZ=ZoneInfo("Asia/Taipei")
 def ready_for_close(day,check=_report):
     try:
         r=check(day,"fund/BFI82U",{"dayDate":day.replace("-",""),"type":"day"})
+        reported="".join(x for x in str(r.get("date") or "") if x.isdigit())
+        expected=day.replace("-","")
+        roc=str(int(day[:4])-1911)+day[5:7]+day[8:10]
+        if not reported or expected not in reported and roc not in reported:
+            print("OFFICIAL_DATE_UNVERIFIED",day,reported,flush=True)
+            return False
         data=r.get("data") or []
         return any(row and "外資及陸資" in str(row[0]) and len(row)>1 for row in data)
     except Exception as ex:
