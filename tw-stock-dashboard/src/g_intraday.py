@@ -46,9 +46,7 @@ def parse_mis(payload,date,now):
         if stamp:
             at=datetime.fromtimestamp(stamp/1000,TZ)
             if at.date()!=now.date() or at>now+timedelta(minutes=10):continue
-        price=number(row.get("z"));source="last-trade"
-        if price is None or price<=0:
-            price=number(row.get("pz"));source="previous-trade"
+        last_trade=number(row.get("z"));previous_trade=number(row.get("pz"))
         high=number(row.get("h"));low=number(row.get("l"))
         op=number(row.get("o"));lots=number(row.get("v"));prev=number(row.get("y"))
         if prev is None or prev<=0:continue
@@ -63,7 +61,15 @@ def parse_mis(payload,date,now):
             continue
         if any(x is None or x<=0 for x in (high,low,op,lots)):continue
         if not low<=op<=high:continue
-        if price is None or price<=0:
+        # The latest/previous matched trade can lag a moving intraday OHLC
+        # snapshot. Try each only when it fits TODAY'S observed range; then
+        # fall through to bounded order-book inference instead of discarding
+        # the entire stock despite a valid live quote.
+        price=None;source="unknown"
+        for candidate,label in ((last_trade,"last-trade"),(previous_trade,"previous-trade")):
+            if candidate is not None and low<=candidate<=high:
+                price=candidate;source=label;break
+        if price is None:
             bid=top_book_price(row.get("b"));ask=top_book_price(row.get("a"))
             if bid and ask and bid>0 and ask>=bid and (ask-bid)/((ask+bid)/2)<=.012:
                 price=round((bid+ask)/2,4);source="bid-ask-midpoint"
@@ -129,6 +135,20 @@ def fetch_quotes(universe,today,now):
     return out,{"total":len(items),"valid":len(out),"traded":sum(traded.values()),"noTrade":sum(no_trade.values()),
                 "exchange":{m:{"valid":got[m],"total":need[m],"coverage":coverage[m],"traded":traded[m],"noTrade":no_trade[m]} for m in need}}
 
+def fetch_quotes_with_retries(universe,today,now,attempts=3,pause=50):
+    """Retry failed whole-market coverage during the opening auction.
+    Keep both-market safeguards; never use old-day quotes as replacements.
+    """
+    for n in range(attempts):
+        try:return fetch_quotes(universe,today,datetime.now(TZ))
+        except RuntimeError as exc:
+            if "全市場同日有效即時報價不足" not in str(exc):raise
+            remaining=(datetime.now(TZ).replace(hour=13,minute=42,second=0)-datetime.now(TZ)).total_seconds()
+            if n==attempts-1 or remaining<pause+15:raise
+            print("G_QUOTE_COVERAGE_RETRY",n+1,attempts,str(exc),"wait",pause,flush=True)
+            time.sleep(pause)
+    raise RuntimeError("全市場報價重試未完成")
+
 def make_intraday_frame(history,quote,today):
     if history is None or history.empty:return None
     h=history.loc[history.date.astype(str)<today].copy().sort_values("date").drop_duplicates("date",keep="last").tail(130)
@@ -163,7 +183,7 @@ def main():
         if benchmark.empty:raise RuntimeError("找不到已完成交易日的大盤交易日曆")
         calendar=sorted(set(str(x) for x in benchmark.date if str(x)<today and str(x).startswith(today[:4])))
         if not calendar or calendar[-1]!=source:raise RuntimeError("大盤已完成交易日與正式快照日期不吻合")
-        quotes,coverage=fetch_quotes(universe,today,now)
+        quotes,coverage=fetch_quotes_with_retries(universe,today,now)
         history={};rejected=0
         for stock in universe:
             key=(stock["market"],stock["code"]);q=quotes.get(key)
