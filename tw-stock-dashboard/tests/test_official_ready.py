@@ -1,6 +1,14 @@
 import unittest
-from check_official_ready import ready_for_close
+from datetime import datetime
+from zoneinfo import ZoneInfo
+from check_official_ready import ready_for_close,after_official_cutoff
 class OfficialPublicationReadinessTests(unittest.TestCase):
+    def test_official_1730_local_cutoff(self):
+        tz=ZoneInfo("Asia/Taipei")
+        self.assertFalse(after_official_cutoff(datetime(2026,10,15,17,29,59,tzinfo=tz)))
+        self.assertTrue(after_official_cutoff(datetime(2026,10,15,17,30,tzinfo=tz)))
+        self.assertTrue(after_official_cutoff(datetime(2026,10,15,19,30,tzinfo=tz)))
+        self.assertFalse(after_official_cutoff(datetime(2026,10,17,18,0,tzinfo=tz)))
     def test_matching_real_institution_record_allows_publish(self):
         def fetch(day,path,params):
             self.assertEqual(day,"2026-10-14")

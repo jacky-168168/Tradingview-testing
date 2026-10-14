@@ -30,12 +30,11 @@ on:
     # Independent late-morning/afternoon recovery slots to reduce empty windows
     # when an on-the-hour GitHub scheduler event is dropped.
     - cron: '20 3-5 * * 1-5'
-    # Official BFI82U institutional flow may be published after the close.
-    # Multiple independent full retries allow the site to recover the same day.
-    - cron: '10 7 * * 1-5'
-    - cron: '40 7 * * 1-5'
-    - cron: '20 8 * * 1-5'
-    - cron: '30 10 * * 1-5'
+    # Official G selections only AFTER 17:30 Asia/Taipei, with recovery.
+    # 17:30 / 18:00 / 18:30 / 19:30 / 21:30 local time.
+    - cron: '30 9 * * 1-5'
+    - cron: '0,30 10 * * 1-5'
+    - cron: '30 11 * * 1-5'
     - cron: '30 13 * * 1-5'
 
 permissions:

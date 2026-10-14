@@ -20,16 +20,19 @@ def ready_for_close(day,check=_report):
     except Exception as ex:
         print("CLOSE_DATA_DEFERRED",str(ex)[:320],flush=True)
         return False
+def after_official_cutoff(now):
+    """Enforce 17:30 Taipei earliest publication even on push/manual full."""
+    local=now.astimezone(TZ)
+    return local.weekday()<5 and local.time()>=time(17,30)
 def main():
     now=datetime.now(TZ);today=now.date().isoformat();event=os.getenv("GITHUB_EVENT_NAME","")
-    # A push during the closing auction should only test/deploy frontend.
-    # Scheduled retries at 15:40 onwards probe official date-pinned BFI82U.
+    # Strict earliest-publication time applies to schedule, manual and push.
     if now.weekday()>=5:
         ok=True;why="weekend: pipeline will freeze last completed trading day"
-    elif now.time()<time(15,30):
-        ok=False;why="official daily flow not expected before 15:30 Taipei"
+    elif not after_official_cutoff(now):
+        ok=False;why="official G daily publication begins at 17:30 Taipei"
     else:
-        ok=ready_for_close(today);why="dated BFI82U ready" if ok else "dated BFI82U not published"
+        ok=ready_for_close(today);why="dated BFI82U ready after 17:30" if ok else "dated BFI82U not published"
     with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as file:
         file.write("ready="+str(ok).lower()+"\n")
     print(json.dumps({"date":today,"event":event,"fullUpdateReady":ok,"reason":why},ensure_ascii=False),flush=True)
