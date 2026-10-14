@@ -15,6 +15,8 @@ on:
       - 'tw-stock-dashboard/docs/data/research/market_ml_audit/**'
       - 'tw-stock-dashboard/docs/site-access.js'
       - 'tw-stock-dashboard/docs/stock-selection.js'
+      - 'tw-stock-dashboard/docs/g-rank-export.js'
+      - 'tw-stock-dashboard/tests/test_g_rank_export.cjs'
       - 'tw-stock-dashboard/docs/g-theme-leaders.js'
       - 'tw-stock-dashboard/docs/upstream-industries.js'
       - 'tw-stock-dashboard/docs/backtest-g-panel.js'
@@ -51,6 +53,8 @@ jobs:
           node tw-stock-dashboard/tests/test_entry_playbook.js
           node tw-stock-dashboard/tests/test_upstream_ui.cjs
           node tw-stock-dashboard/tests/test_intraday_schedule.cjs
+          node --check tw-stock-dashboard/docs/g-rank-export.js
+          node tw-stock-dashboard/tests/test_g_rank_export.cjs
           node - <<'JS'
           const fs=require('fs'),assert=require('assert');
           const root='tw-stock-dashboard/docs/';
