@@ -4,6 +4,19 @@ on:
     paths:
       - 'tw-stock-dashboard/**'
       - '.github/workflows/tw-stock-*.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/**'
+      - 'tw-stock-dashboard/tests/**'
+      - 'tw-stock-dashboard/docs/*.js'
+      - 'tw-stock-dashboard/docs/*.html'
+      - 'tw-stock-dashboard/requirements.txt'
+      - '.github/monitor/**'
+      - '.github/workflows/tw-stock-*.yml'
+  schedule:
+    # Daily regression independently checks main, not just open PRs. 20:00 Taipei.
+    - cron: '0 12 * * *'
   workflow_dispatch:
 permissions:
   contents: read
@@ -26,6 +39,18 @@ jobs:
           node --check tw-stock-dashboard/docs/backtest-g-panel.js
           node tw-stock-dashboard/tests/test_backtest_ui.cjs
           node tw-stock-dashboard/tests/test_dashboard_ui.cjs
+      - name: Validate all first-party browser JavaScript syntax
+        run: |
+          for js in tw-stock-dashboard/docs/*.js; do node --check "$js"; done
+      - name: Test ranking, premarket, repeat, portfolio, and other standalone UI modules
+        run: |
+          node --test tw-stock-dashboard/tests/*.test.cjs
+          node tw-stock-dashboard/tests/test_dashboard_ui.cjs
+          node tw-stock-dashboard/tests/test_g_rank_export.cjs
+          node tw-stock-dashboard/tests/test_intraday_schedule.cjs
+          node tw-stock-dashboard/tests/test_entry_playbook.js
+          node tw-stock-dashboard/tests/test_upstream_ui.cjs
+          node tw-stock-dashboard/tests/test_tx_premarket_ui.js
       - name: Compile Python
         working-directory: tw-stock-dashboard
         run: python -m compileall -q src tests
@@ -34,3 +59,7 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Validate 3-year official risk, G and G Pro published evidence
+        run: PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_published_research_integrity.py' -v
+      - name: Verify watchdog own tests
+        run: python -m unittest discover -s .github/monitor -p 'test_*.py' -v
