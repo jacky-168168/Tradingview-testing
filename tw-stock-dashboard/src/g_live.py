@@ -73,7 +73,7 @@ def prior_pockets(data_dir,year_calendar,day,lookback=10):
         except (ValueError,TypeError,OSError):out.append({})
     return out,found
 
-def select(universe,histories,market_days,asof,inst=None,previous_pockets=None,known_metrics=None,market_ret20=0.):
+def select(universe,histories,market_days,asof,inst=None,previous_pockets=None,known_metrics=None,market_ret20=0.,intraday=False):
     """Returns (top20, original_top20_snapshot, metadata). Never substitutes D for G."""
     days=sorted(set(str(d)[:10] for d in market_days if str(d)[:4]==asof[:4] and str(d)[:10]<=asof))
     if not days or days[-1]!=asof:raise ValueError("G benchmark calendar does not contain selected market date")
@@ -88,7 +88,7 @@ def select(universe,histories,market_days,asof,inst=None,previous_pockets=None,k
         if m is None:continue
         close=_float(m.get("close"));volume=_float(m.get("volume"));ret20=_float(m.get("ret20"));slope=_float(m.get("ma20Slope"));atr=_float(m.get("atrPct"));br=_float(m.get("breakoutPct"))
         low=_float(pd.to_numeric(h.low.iloc[-20:],errors="coerce").min());high=_float(pd.to_numeric(h.high.iloc[-20:],errors="coerce").max())
-        if any(z is None for z in (close,volume,ret20,slope,atr,br,low,high)) or close<=0 or volume<=0 or low<=0:continue
+        if any(z is None for z in (close,volume,ret20,slope,atr,br,low,high)) or close<=0 or volume<0 or (volume==0 and not intraday) or low<=0:continue
         cap=_float(s.get("capitalB")) or 0.
         if cap<=0:continue
         turn=close*volume/100_000_000
@@ -108,7 +108,8 @@ def select(universe,histories,market_days,asof,inst=None,previous_pockets=None,k
     for raw,percentile in zip(FEATURES,PCTS):df[percentile]=df[raw].rank(pct=True,method="average")*100
     strong=[]
     for r in df.to_dict("records"):
-        if not g_eligible(r):continue
+        # Nontraded same-day peers affect percentiles but may not become signals.
+        if (intraday and r["volume"]<=0) or not g_eligible(r):continue
         r["baselineScore"]=g_score(r)
         strong.append(r)
     qualified=[]
