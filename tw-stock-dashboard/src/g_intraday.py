@@ -51,7 +51,17 @@ def parse_mis(payload,date,now):
             price=number(row.get("pz"));source="previous-trade"
         high=number(row.get("h"));low=number(row.get("l"))
         op=number(row.get("o"));lots=number(row.get("v"));prev=number(row.get("y"))
-        if any(x is None or x<=0 for x in (high,low,op,lots,prev)):continue
+        if prev is None or prev<=0:continue
+        # MIS also returns same-day quotes for stocks which have not traded yet.
+        # An official reference close + NO OHLC/volume means flat zero turnover,
+        # NOT a trade at yesterday's price. Such names belong in percentile peers,
+        # but can NEVER pass the live G candidate filter.
+        untraded=(lots is None or lots==0) and all(v is None or v<=0 for v in (op,high,low))
+        if untraded:
+            result[(market,code)]={"price":prev,"open":prev,"high":prev,"low":prev,
+                                   "volume":0,"previousClose":prev,"time":tm,"priceSource":"no-trade-prevclose"}
+            continue
+        if any(x is None or x<=0 for x in (high,low,op,lots)):continue
         if not low<=op<=high:continue
         if price is None or price<=0:
             bid=top_book_price(row.get("b"));ask=top_book_price(row.get("a"))
@@ -78,21 +88,26 @@ def session():
 
 def query_batch(batch,today,now):
     channels=["tse_" + code + ".tw" if market=="上市" else "otc_" + code + ".tw" for market,code in batch]
-    last=None
-    for attempt in range(2):
+    merged={};errors=[]
+    # MIS intermittently drops items from a successful HTTP 200. A partial
+    # payload must not be mistaken for a complete exchange response.
+    for attempt in range(3):
         try:
             r=session().get(QUOTE,params={"ex_ch":"|".join(channels),"json":1,"delay":0,"_":int(time.time()*1000)},
                             timeout=22);r.raise_for_status()
             payload=r.json();parsed=parse_mis(payload,today,now)
-            if len(parsed)<len(batch)*.4:
+            merged.update(parsed)
+            if len(merged)>=len(batch)*.82:break
+            if attempt==2 or len(merged)<len(batch)*.4:
                 raw=payload.get("msgArray") or []
                 sample=[{k:x.get(k) for k in ("c","ex","d","t","z","pz","a","b","o","h","l","v","y")} for x in raw[:3]]
-                print("MIS_LOW_COVERAGE",str(batch[0]),"requested",len(batch),"returned",len(raw),"accepted",len(parsed),"sample",json.dumps(sample,ensure_ascii=False),flush=True)
-            return parsed
+                print("MIS_PARTIAL_COVERAGE",str(batch[0]),"requested",len(batch),"returned",len(raw),"accepted",len(merged),"sample",json.dumps(sample,ensure_ascii=False),flush=True)
         except (requests.RequestException,ValueError,KeyError) as e:
-            last=e;time.sleep(attempt+.5)
-    print("MIS_BATCH_FAILED",len(batch),repr(last),file=sys.stderr,flush=True)
-    return {}
+            errors.append(repr(e))
+        if attempt<2:time.sleep(.4*(attempt+1))
+    if errors and len(merged)<len(batch)*.4:
+        print("MIS_BATCH_ERRORS",str(batch[0]),len(batch),errors,file=sys.stderr,flush=True)
+    return merged
 
 def fetch_quotes(universe,today,now):
     items=list(dict.fromkeys((row["market"],row["code"]) for row in universe if row.get("market") in ("上市","上櫃")))
@@ -104,10 +119,15 @@ def fetch_quotes(universe,today,now):
     need={m:sum(x[0]==m for x in items) for m in ("上市","上櫃")}
     got={m:sum(x[0]==m for x in out) for m in need}
     coverage={m:round(got[m]/need[m],4) if need[m] else 0 for m in need}
-    # No selection from a biased subset of the two exchanges.
+    no_trade={m:sum(market==m and q["priceSource"]=="no-trade-prevclose" for (market,_),q in out.items()) for m in need}
+    traded={m:got[m]-no_trade[m] for m in need}
+    detail="上市 "+str(got["上市"])+"/"+str(need["上市"])+"（當日未成交 "+str(no_trade["上市"])+"）、上櫃 "+str(got["上櫃"])+"/"+str(need["上櫃"])+"（當日未成交 "+str(no_trade["上櫃"])+"）"
+    # Still require broad SAME-DAY MIS coverage from BOTH exchanges: a missing
+    # or stale quote is never filled from Yahoo's previous close.
     if len(out)<1000 or len(out)/max(1,len(items))<.65 or min(coverage.values())<.60:
-        raise RuntimeError("全市場同日有效即時報價不足，不發布偏樣本G排行；上市 "+str(got["上市"])+"/"+str(need["上市"])+"、上櫃 "+str(got["上櫃"])+"/"+str(need["上櫃"]))
-    return out,{"total":len(items),"valid":len(out),"exchange":{m:{"valid":got[m],"total":need[m],"coverage":coverage[m]} for m in need}}
+        raise RuntimeError("全市場同日有效即時報價不足，不發布偏樣本G排行；"+detail)
+    return out,{"total":len(items),"valid":len(out),"traded":sum(traded.values()),"noTrade":sum(no_trade.values()),
+                "exchange":{m:{"valid":got[m],"total":need[m],"coverage":coverage[m],"traded":traded[m],"noTrade":no_trade[m]} for m in need}}
 
 def make_intraday_frame(history,quote,today):
     if history is None or history.empty:return None
@@ -157,7 +177,7 @@ def main():
         if len(history)<1000 or historical<.60:raise RuntimeError("具完整歷史K線的當日股票樣本不足："+str(len(history))+"/"+str(len(universe)))
         calendar.append(today)
         pockets,found=prior_pockets(DATA_DIR,calendar,today)
-        rows,snapshot,meta=select_g(universe,history,calendar,today,previous_pockets=pockets,market_ret20=number(base.get("benchmarkRet20")) or 0)
+        rows,snapshot,meta=select_g(universe,history,calendar,today,previous_pockets=pockets,market_ret20=number(base.get("benchmarkRet20")) or 0,intraday=True)
         enrich_chain(rows)
         for row in rows:
             row["sarText"]="未確認（正式日K）"
@@ -171,11 +191,11 @@ def main():
         meta["pocketSnapshotsFound"]=found
         meta["pocketWarmup"]=found<min(10,len(calendar)-1)
         meta["isProvisional"]=True
-        meta["note"]="盤中依未完成日K、當日累積成交量與即時交易所報價重選。個別未揭示成交價時以經價差篩選的買賣中間價估算，非實際成交價；非正式G日K訊號，法人及SAR均未確認。"
+        meta["note"]="盤中依未完成日K、當日累積成交量與當日MIS報價重選。當日未成交股票以核對過的昨收價及0成交量納入排名母體，不得入選G；無成交價但有買賣揭示者以經價差篩選的中間價估算。非正式G日K訊號，法人及SAR均未確認。"
         payload={"asOfDate":today,"publishedAt":datetime.now(TZ).isoformat(timespec="seconds"),
                  "sourceCloseDate":source,"quality":"intraday-provisional-allmarket",
                  "quoteSource":"TWSE MIS same-day listed+OTC; trade price if available, otherwise validated order-book midpoint proxy; cumulative lots × 1000 shares",
-                 "coverage":coverage,"quotePriceSources":{kind:sum(q.get("priceSource")==kind for q in quotes.values()) for kind in ("last-trade","previous-trade","bid-ask-midpoint","one-sided-high-bid","one-sided-low-ask")},"historicalBarCoverage":len(history),"historyRejected":rejected,
+                 "coverage":coverage,"quotePriceSources":{kind:sum(q.get("priceSource")==kind for q in quotes.values()) for kind in ("last-trade","previous-trade","bid-ask-midpoint","one-sided-high-bid","one-sided-low-ask","no-trade-prevclose")},"historicalBarCoverage":len(history),"historyRejected":rejected,
                  "market20Reference":"previous completed cash-market return (not live index)",
                  "rows":rows,"selection":meta}
         OUTPUT.parent.mkdir(parents=True,exist_ok=True)
