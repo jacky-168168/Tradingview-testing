@@ -1,0 +1,38 @@
+name: G Intraday Health Monitor
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/monitor/g_intraday_health.py'
+      - '.github/monitor/test_g_intraday_health.py'
+      - '.github/workflows/g-intraday-health.yml'
+  workflow_run:
+    workflows: ['TW Stock Dashboard']
+    types: [completed]
+  schedule:
+    # Taiwan 09:50, then 10:05, 10:20 ... 13:35 on trading weekdays.
+    - cron: '50 1 * * 1-5'
+    - cron: '5,20,35,50 2-5 * * 1-5'
+permissions:
+  contents: read
+  actions: write
+  issues: write
+concurrency:
+  group: g-intraday-health-watchdog
+  cancel-in-progress: false
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test freshness, live coverage, missing schedule and holidays
+        run: python -m unittest discover -s .github/monitor -p 'test_g_intraday_health.py' -v
+      - name: Check live dashboard and recover when stale
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/monitor/g_intraday_health.py
