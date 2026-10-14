@@ -22,6 +22,14 @@ class TestIntradayQuoteIntegrity(unittest.TestCase):
     def test_stale_no_trade_is_not_carried_forward(self):
         row={"c":"1234","ex":"otc","d":"20261013","t":"13:30:00","y":"100","o":"-","h":"-","l":"-","v":"-"}
         self.assertEqual(parse_mis({"msgArray":[row]},DAY,NOW),{})
+    def test_lagging_trade_falls_back_to_verified_book_midpoint(self):
+        row={"c":"1234","ex":"otc","d":"20261014","t":"09:30:00","y":"100","z":"107","pz":"95","o":"101","h":"103","l":"100","v":"100","b":"102_10","a":"102.2_20"}
+        q=parse_mis({"msgArray":[row]},DAY,NOW)[("上櫃","1234")]
+        self.assertEqual(q["priceSource"],"bid-ask-midpoint")
+        self.assertAlmostEqual(q["price"],102.1)
+    def test_invalid_or_stale_trade_without_book_cannot_enter_market(self):
+        row={"c":"1234","ex":"otc","d":"20261014","t":"09:30:00","y":"100","z":"107","pz":"95","o":"101","h":"103","l":"100","v":"100"}
+        self.assertEqual(parse_mis({"msgArray":[row]},DAY,NOW),{})
     def test_actually_traded_quote_retains_volume(self):
         row={"c":"1234","ex":"tse","d":"20261014","t":"09:30:00","y":"100","z":"102","o":"101","h":"103","l":"100","v":"135"}
         q=parse_mis({"msgArray":[row]},DAY,NOW)[("上市","1234")]
