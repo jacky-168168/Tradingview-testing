@@ -14,6 +14,15 @@ import risk,yahoo_cache
 from backtest import _portfolio_stats,_has_unadjusted_scale_jump,effective_backtest_end
 from bubbles import classify as bubble_classify
 
+from pipeline import mask_unverified_institutional_values
+class MissingInstitutionDisplayTests(unittest.TestCase):
+    def test_missing_otc_is_null_but_official_zero_is_real_zero(self):
+        models={"G":[{"market":"上櫃","code":"1569","foreignToday":0,"trustToday":0},{"market":"上市","code":"6834","foreignToday":0,"trustToday":0}]}
+        mask_unverified_institutional_values(models,{"上市_6834":{"foreign":0,"trust":0}})
+        a,b=models["G"]
+        self.assertIsNone(a["foreignToday"]);self.assertIsNone(a["trustToday"])
+        self.assertEqual(b["foreignToday"],0);self.assertEqual(b["trustToday"],0)
+
 class CoreTests(unittest.TestCase):
     def frame(self,n=100):
         x=np.arange(n,dtype=float);c=50+x*.35+np.sin(x/5);o=c-.2;h=c+1.2;l=c-1.0;v=1_000_000+x*10000
