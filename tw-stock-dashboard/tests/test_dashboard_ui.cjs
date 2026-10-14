@@ -36,7 +36,9 @@ function table(model,simple){
  return {html:stockTable.tHead.innerHTML,label:layoutToggle.textContent,badge:badge.textContent,hint:tableHint.textContent};
 }
 const sg=table("G",true);assert.equal((sg.html.match(/<th>/g)||[]).length,4,"Simple mobile G should show exactly four columns");
-assert(sg.html.includes("股票／題材")&&sg.html.includes("現價／漲跌"));assert.equal(sg.badge,"簡單模式");
+assert(sg.html.includes("股票／題材")&&sg.html.includes("現價／漲跌")&&sg.html.includes("<th>近10日入榜</th>"));assert.equal(sg.badge,"簡單模式");
+assert(table("G Pro",true).html.includes("<th>近10日入榜</th>"),"G Pro also displays previous-10-day entry frequency");
+assert(table("D",true).html.includes("<th>強度</th>"),"D and other non-G strategies retain their score column");
 assert.equal(sg.label,"▤ 詳細模式");
 const dg=table("G",false);assert.equal((dg.html.match(/<th>/g)||[]).length,22,"Detailed G must retain all 22 columns, including 3D/18D and RVOL");
 assert.equal(dg.badge,"詳細模式");assert.equal(dg.label,"▥ 簡單模式");
@@ -49,8 +51,13 @@ const N=x=>x==null?"--":Number(x).toFixed(2),P=x=>N(x)+"%",C=x=>Number(x)>=0?"po
 const simple=new Function("x","EXPANDED_STOCK","themeButton","tvStockLink","esc","N","P","C",simpleJs+"return renderSimpleStock(x,0,true,null)");
 const sample={code:"3624",name:"光頡",market:"上市",theme:"CPO",gPast10:10,sarText:"多27根K",currentPrice:173,currentPct:-1.14};
 const render=(expanded)=>simple(sample,expanded?"上市|3624":"",x=>'<button class="theme-pick" data-theme="'+x+'">'+x+'</button>',x=>x.code+" "+x.name,esc,N,P,C);
-assert(render(false).includes("3624 光頡")&&render(false).includes("10日 10/10")&&render(false).includes('data-theme="CPO"'));
+assert(render(false).includes("3624 光頡")&&render(false).includes("10/10 次")&&render(false).includes('data-theme="CPO"'));
 assert.equal((render(false).match(/<td/g)||[]).length,4,"Simple view should render only four initial table cells");
+assert(render(false).includes("多27根K"),"Official SAR value remains unchanged");
+const intraday={...sample,gPast10:2,sarText:"未確認（正式日K）"};
+const interim=simple(intraday,"",x=>x,x=>x.code+" "+x.name,esc,N,P,C);
+assert(interim.includes("2/10 次")&&interim.includes("SAR 待確認"),"Intraday compact view clearly labels frequency and SAR");
+assert(!interim.includes("未確認（正式日K）"),"Intraday compact label is human-readable");
 assert(render(true).includes("simple-detail-grid")&&render(true).includes("外資買賣超"),"Tap to expand details");
 assert(script.includes('localStorage.setItem("tw_selection_view_v1"'),"Manual mode choice must persist");
 assert(script.includes('THEME_FILTER')&&script.includes("selectedRows"),"G theme ranking filter missing");

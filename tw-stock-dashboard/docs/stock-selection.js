@@ -33,15 +33,15 @@ function themeButton(theme){
 function filterBar(){var bar=document.getElementById("themeFilterBar");if(!bar)return;bar.hidden=!THEME_FILTER;document.getElementById("themeFilterLabel").textContent=THEME_FILTER?"🔎 題材："+THEME_FILTER+"（同時篩選排行及重複上榜）":""}
 function applyTableMode(){
  var isN=MODEL==="N",isL=MODEL==="L",simple=TABLE_COMPACT;
- var official=document.getElementById("officialStockTable");official.classList.toggle("compact",simple);official.classList.toggle("simple-mode",simple);official.tHead.innerHTML=simple?STOCK_SIMPLE_HEAD:NORMAL_G_TABLE_HEAD.replace("現價 / 收盤","正式收盤價");
+ var official=document.getElementById("officialStockTable");official.classList.toggle("compact",simple);official.classList.toggle("simple-mode",simple);official.tHead.innerHTML=simple?STOCK_SIMPLE_HEAD.replace("<th>強度</th>","<th>近10日入榜</th>"):NORMAL_G_TABLE_HEAD.replace("現價 / 收盤","正式收盤價");
  stockTable.classList.toggle("compact",simple);stockTable.classList.toggle("simple-mode",simple);
- stockTable.tHead.innerHTML=simple?(isN?N_SIMPLE_HEAD:isL?L_SIMPLE_HEAD:STOCK_SIMPLE_HEAD):(isN?N_TABLE_HEAD:isL?L_TABLE_HEAD:(MODEL==="G"||MODEL==="G Pro"?NORMAL_G_TABLE_HEAD:NORMAL_NON_G_TABLE_HEAD));
+ stockTable.tHead.innerHTML=simple?(isN?N_SIMPLE_HEAD:isL?L_SIMPLE_HEAD:(MODEL==="G"||MODEL==="G Pro"?STOCK_SIMPLE_HEAD.replace("<th>強度</th>","<th>近10日入榜</th>"):STOCK_SIMPLE_HEAD)):(isN?N_TABLE_HEAD:isL?L_TABLE_HEAD:(MODEL==="G"||MODEL==="G Pro"?NORMAL_G_TABLE_HEAD:NORMAL_NON_G_TABLE_HEAD));
  layoutToggle.textContent=simple?"▤ 詳細模式":"▥ 簡單模式";
  document.getElementById("modeBadge").textContent=simple?"簡單模式":"詳細模式";
  layoutToggle.setAttribute("aria-pressed",simple?"true":"false");
  layoutToggle.setAttribute("aria-label",simple?"切換詳細模式，顯示全部欄位":"切換簡單模式，無需左右滑動");
  document.getElementById("repeatPanel").classList.toggle("repeat-simple",simple);
- tableHint.textContent=simple?(isN?"N 簡單模式：基本面歷史訊號，不是即時選股。":"簡單模式：股票＋題材、10日入選／SAR、現價及漲跌幅；點選股票以外的空白位置可展開明細，點題材可篩選。"):"詳細模式：顯示所有原始欄位，可左右捲動；點題材可篩選。";
+ tableHint.textContent=simple?(isN?"N 簡單模式：基本面歷史訊號，不是即時選股。":(MODEL==="G"||MODEL==="G Pro"?"G 簡單模式：近10日入榜只統計前10個已完成交易日，不含今天；「SAR 待確認」表示等待正式收盤日K，並非G盤中選股未通過。點空白處展開明細、點題材篩選。":"簡單模式：股票＋題材、總分／SAR、現價及漲跌幅；點股票以外空白處可展開明細，點題材可篩選。")):"詳細模式：顯示所有原始欄位，可左右捲動；點題材可篩選。";
  filterBar();
 }
 function simpleMetric(name,value){return '<div><dt>'+esc(name)+'</dt><dd>'+value+'</dd></div>'}
@@ -50,10 +50,11 @@ function renderSimpleStock(x,i,isG,live,official){
  var px=official?N(x.close):(live&&/midpoint|one-sided/.test(x.intradayPriceSource||"")?"≈":"")+(x.currentPrice!=null?N(x.currentPrice):N(x.close));
  var pctSource=official?x.dayRet:x.currentPct;
  var pct=pctSource==null?'<span class="simple-secondary">漲跌未提供</span>':'<span class="simple-pct '+C(pctSource)+'">'+(Number(pctSource)>=0?"+":"")+N(pctSource)+'%</span>';
- var strength=isG?'<b>10日 '+(x.gPast10==null?"—":esc(x.gPast10))+'/10</b>':'<b>總分 '+N(x.total,1)+'</b>';
+ var strength=isG?'<b>'+(x.gPast10==null?"—":esc(x.gPast10)+'/10 次')+'</b>':'<b>總分 '+N(x.total,1)+'</b>';
+ var sarLabel=isG&&x.sarText==="未確認（正式日K）"?"SAR 待確認":(x.sarText||"—");
  var cells=[simpleMetric("市場",esc(x.market||"—")),simpleMetric("總分",N(x.total,1)),simpleMetric("SAR",esc(x.sarText||"—")),simpleMetric("題材",esc(theme||"—")),simpleMetric("外資買賣超",N(x.foreignToday,0)),simpleMetric("投信買賣超",N(x.trustToday,0)),simpleMetric("RS20",P(x.rs20)),simpleMetric("RVOL",N(x.rvol)),simpleMetric("5D",P(x.ret5)),simpleMetric("20D",P(x.ret20)),simpleMetric("股本",N(x.capitalB)),simpleMetric("成交額",N(x.turnoverB)),simpleMetric("距20日高",P(x.breakoutPct)),simpleMetric("MA20斜率",P(x.ma20Slope)),simpleMetric("訊號",esc(x.signal||"—"))];
  if(isG){cells.splice(2,0,simpleMetric("原G分",N(x.gScore)),simpleMetric("持續度",N((x.persistence||{}).strength,1)),simpleMetric("3D／18D",(x.gBreak3?"✓":"—")+"／"+(x.gBreak18?"✓":"—")))}
- return '<tr class="simple-stock-row" tabindex="0" aria-expanded="'+(open?"true":"false")+'" data-key="'+esc(key)+'"><td><b>'+(i+1)+'</b></td><td class="stock"><span class="simple-stock-name">'+tvStockLink(x)+'</span><span class="simple-stock-theme">'+themeButton(theme)+'</span></td><td>'+strength+'<span class="simple-secondary simple-sar">'+esc(x.sarText||"—")+'</span></td><td><span class="simple-price">'+esc(px)+'</span>'+pct+'</td></tr>'+(open?'<tr class="simple-detail-row"><td colspan="4"><dl class="simple-detail-grid">'+cells.join("")+'</dl></td></tr>':"");
+ return '<tr class="simple-stock-row" tabindex="0" aria-expanded="'+(open?"true":"false")+'" data-key="'+esc(key)+'"><td><b>'+(i+1)+'</b></td><td class="stock"><span class="simple-stock-name">'+tvStockLink(x)+'</span><span class="simple-stock-theme">'+themeButton(theme)+'</span></td><td>'+strength+'<span class="simple-secondary simple-sar">'+esc(sarLabel)+'</span></td><td><span class="simple-price">'+esc(px)+'</span>'+pct+'</td></tr>'+(open?'<tr class="simple-detail-row"><td colspan="4"><dl class="simple-detail-grid">'+cells.join("")+'</dl></td></tr>':"");
 }
 function renderModelNote(){
 var r=DATA&&DATA.risk||{},score=r.score==null?"—":r.score,fg=r.fGate||{},f2g=r.f2Gate||{},gs=DATA&&DATA.gSelection||null,notes={

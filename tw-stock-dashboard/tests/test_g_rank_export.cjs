@@ -7,7 +7,7 @@ assert(html.includes('src="./stock-selection.js"'),'selection JS missing');
 assert(html.indexOf('src="./stock-selection.js"')<html.indexOf('src="./g-rank-export.js"'),'export loaded before ranking data');
 const day='2026-10-14',live={asOfDate:day,publishedAt:day+'T13:30:00+08:00',rows:[{code:'6834'}]};
 function makeTable(simple){
- const headers=simple?['排名','股票／題材','強度','現價／漲跌']:['Rank','股票','市場','題材','總分','正式收盤價'];
+ const headers=simple?['排名','股票／題材','近10日入榜','現價／漲跌']:['Rank','股票','市場','題材','總分','正式收盤價'];
  const cells=simple?['1','6834 天二科技 光通訊','99.7','68.3 +4.2%']:['1','6834 天二科技','上市','光通訊','99.7','68.3'];
  return {classList:{contains:x=>simple&&x==='simple-mode'},tHead:{rows:[{cells:headers.map(innerText=>({innerText}))}]},tBodies:[{rows:[{cells:cells.map(innerText=>({innerText,colSpan:1})),classList:{contains:()=>false}},{cells:[{innerText:'expand',colSpan:4}],classList:{contains:()=>true}}]}]};
 }
