@@ -13,13 +13,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 4
     steps:
-      - name: Disable stale auto-failing legacy workflow registration
+      - name: Retire verified ghost workflow IDs
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          gh api --method PUT "repos/$GITHUB_REPOSITORY/actions/workflows/378367390/disable"
-          STATE="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/378367390" --jq '.state')"
-          echo "Legacy G candle workflow state: $STATE"
-          test "$STATE" = "disabled_manually"
-          echo "Independent manual backtest preserved as g-candle-study-on-demand.yml"
+          for ID in 383973572 384048122; do
+            STATE="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/$ID" --jq '.state')"
+            echo "Workflow $ID was: $STATE"
+            if [ "$STATE" = "active" ]; then
+              gh api --method PUT "repos/$GITHUB_REPOSITORY/actions/workflows/$ID/disable"
+              STATE="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/$ID" --jq '.state')"
+            fi
+            echo "Workflow $ID now: $STATE"
+            if [ "$STATE" != "disabled_manually" ] && [ "$STATE" != "deleted" ]; then
+              echo "::error::Ghost workflow $ID remains active with unwanted push checks"
+              exit 1
+            fi
+          done
+          echo "Disabling only the two legacy/duplicate candle workflows; all published research remains intact"
