@@ -27,6 +27,9 @@ on:
     # Early MIS often has incomplete OHLCV even when the exchange is open.
     - cron: '15,45 1 * * 1-5'
     - cron: '15 2 * * 1-5'
+    # Independent late-morning/afternoon recovery slots to reduce empty windows
+    # when an on-the-hour GitHub scheduler event is dropped.
+    - cron: '20 3-5 * * 1-5'
     # Official BFI82U institutional flow may be published after the close.
     # Multiple independent full retries allow the site to recover the same day.
     - cron: '10 7 * * 1-5'
@@ -43,12 +46,13 @@ permissions:
 # Isolate intraday scans from long-running full-history builds. Without this,
 # full backfills can queue a 09:00 scan until after market close.
 concurrency:
-  group: ${{ ((github.event_name == 'schedule' && (github.event.schedule == '0,30 1-5 * * 1-5' || github.event.schedule == '15,45 1 * * 1-5' || github.event.schedule == '15 2 * * 1-5')) || (github.event_name == 'workflow_dispatch' && inputs.mode == 'intraday')) && 'tw-stock-dashboard-intraday' || 'tw-stock-dashboard-full' }}
+  group: ${{ ((github.event_name == 'schedule' && (github.event.schedule == '0,30 1-5 * * 1-5' || github.event.schedule == '15,45 1 * * 1-5' || github.event.schedule == '15 2 * * 1-5' || github.event.schedule == '20 3-5 * * 1-5')) || (github.event_name == 'workflow_dispatch' && inputs.mode == 'intraday')) && 'tw-stock-dashboard-intraday' || 'tw-stock-dashboard-full' }}
   cancel-in-progress: false
 
 jobs:
   build:
-    if: github.actor != 'github-actions[bot]'
+    # Scheduled runs must not be silently skipped if the actor is rewritten.
+    # GITHUB_TOKEN commits already avoid recursively triggering push workflows.
     runs-on: ubuntu-latest
     timeout-minutes: 330
     steps:
@@ -72,7 +76,7 @@ jobs:
               # GitHub cron execution may be delayed: use the SCHEDULED slot,
               # never the actual runner start time to choose intraday vs full.
               case "${{ github.event.schedule }}" in
-                '0,30 1-5 * * 1-5'|'15,45 1 * * 1-5'|'15 2 * * 1-5') MODE="intraday" ;;
+                '0,30 1-5 * * 1-5'|'15,45 1 * * 1-5'|'15 2 * * 1-5'|'20 3-5 * * 1-5') MODE="intraday" ;;
                 *) MODE="full" ;;
               esac
             else
