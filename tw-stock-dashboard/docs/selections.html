@@ -125,6 +125,7 @@
 .g-session-head.intraday{border-left:4px solid #f59e0b}
 .g-session-head.official{border-left:4px solid #2563eb}
 .g-session-head.official h2{color:#1d4ed8}
+.g-session-action{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap}.g-export-btn{font-size:12px;font-weight:850;padding:8px 11px!important;color:#1e3a5f;background:#fff;border:1px solid #cbd5e1;border-radius:9px;cursor:pointer;white-space:nowrap}.g-export-btn:hover{background:#eff6ff;border-color:#8ab6ef}.g-export-btn:disabled{opacity:.55;cursor:wait}@media(max-width:650px){.g-session-action{width:100%;justify-content:flex-end}.g-export-btn{padding:7px 10px!important;font-size:12px}}
 .l-research-panel{margin:12px 0;padding:15px}.l-research-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px}.l-research-head h2{margin:0;font-size:17px}.l-research-head span{font-size:11px;line-height:1.7;color:#64748b}.l-stats-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:13px 0}.l-stats-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px}.l-stats-card strong{font-size:18px}.l-stats-card small{display:block;line-height:1.7;color:#64748b;font-size:11px}.l-stats-card .l-h{color:#2563eb;font-weight:900;font-size:13px}.l-research-panel .sub{line-height:1.75}@media(max-width:650px){.l-research-panel{padding:11px}.l-stats-grid{gap:6px}.l-stats-card{padding:8px 5px}.l-stats-card strong{font-size:15px}.l-stats-card small{font-size:10px}}
 #officialStockTable{table-layout:auto}
 #officialStockTable th:first-child,#officialStockTable td:first-child{position:sticky;left:0;z-index:4;min-width:32px;width:32px;background:#fff}
@@ -273,14 +274,14 @@ body.g-report-mode .g-report-mobile-tip{display:block;font-size:11px;color:#7180
 <section id="gIntradayHeading" class="g-session-panel" aria-label="G 盤中暫估榜單">
   <header class="card g-session-head intraday">
     <div><h2>02｜G 盤中選股 <span class="sub">暫估訊號</span></h2><p id="gIntradayStatus" class="sub" role="status">正在檢查當日盤中 G 選股資料…</p></div>
-    <span id="gIntradayCount" class="g-session-count">載入中</span>
+    <div class="g-session-action"><span id="gIntradayCount" class="g-session-count">載入中</span><button id="gExportIntraday" class="btn g-export-btn" type="button" aria-label="下載目前盤中 G 選股榜單圖片" title="將目前可見的盤中排名下載成 PNG 圖片">📷 下載圖片</button></div>
   </header>
 </section>
 <section id="lPanel" class="card l-research-panel" style="display:none" aria-label="L 週KD金叉及營收回測"><div class="l-research-head"><h2>🟢 L｜週KD(9,3,3) 金叉＋營收成長</h2><span>以「週K、週D均低於40」為條件；最新已公告月營收 MoM＞0% 或 YoY＞0%</span></div><p id="lStatus" class="sub" role="status">正在核對 L 每週正式訊號與歷史營收…</p><div class="l-research-head"><strong>訊號後 1W／2W／3W 淨報酬</strong><select id="lScope" class="btn" aria-label="L 回測期間"><option value="2026">2026 年訊號</option><option value="all">2023 至今全部訊號</option></select></div><div id="lStats" class="l-stats-grid"></div><p class="sub">回測：訊號週收盤確認，下一週首個交易日開盤買進，持有至第1／2／3個已完成交易週收盤；報酬已扣雙邊手續費與賣出交易稅共0.585%，未含滑價。最新官方 MOPS 歷史修訂值以次月16日為保守可用日，並非當年不可變公布快照；目前上市股票池可能有存活者偏誤。1W／2W／3W 是三種獨立持有期，不是預測未來。</p></section><div id="tableHint">手機預設簡單模式，顯示股票、題材、強度及現價；切換詳細模式可查看全部欄位。</div><div class="card table-card"><div class="scroll"><table id="stockTable" class="compact"><thead><tr><th>Rank</th><th>股票</th><th>市場</th><th>題材</th><th>總分</th><th class="g-only">原 G 分</th><th class="g-only">持續度</th><th class="g-only">前10日入選</th><th class="g-only">3D/18D</th><th>SAR</th><th>現價 / 收盤</th><th>股本</th><th>成交額</th><th>外資買超</th><th>投信買超</th><th>RS20</th><th>RVOL</th><th>5D</th><th>20D</th><th>距20日高</th><th>MA20斜率</th><th>訊號</th></tr></thead><tbody id="tb"><tr><td colspan="18" style="text-align:center;padding:40px;color:#7b8494">載入中...</td></tr></tbody></table></div></div>
 <section id="gOfficialPanel" class="g-session-panel" aria-label="G 盤後正式榜單">
   <header class="card g-session-head official">
     <div><h2>03｜G 盤後選股 <span class="sub">正式名單</span></h2><p id="gOfficialStatus" class="sub" role="status">正在讀取最近已完成交易日的正式 G 選股資料…</p></div>
-    <span id="gOfficialCount" class="g-session-count">載入中</span>
+    <div class="g-session-action"><span id="gOfficialCount" class="g-session-count">載入中</span><button id="gExportOfficial" class="btn g-export-btn" type="button" aria-label="下載目前盤後 G 正式選股榜單圖片" title="將目前可見的盤後排名下載成 PNG 圖片">📷 下載圖片</button></div>
   </header>
   <div class="card table-card"><div class="scroll"><table id="officialStockTable" class="compact"><thead><tr><th>Rank</th><th>股票</th><th>市場</th><th>題材</th><th>總分</th><th class="g-only">原 G 分</th><th class="g-only">持續度</th><th class="g-only">前10日入選</th><th class="g-only">3D/18D</th><th>SAR</th><th>現價 / 收盤</th><th>股本</th><th>成交額</th><th>外資買超</th><th>投信買超</th><th>RS20</th><th>RVOL</th><th>5D</th><th>20D</th><th>距20日高</th><th>MA20斜率</th><th>訊號</th></tr></thead><tbody id="officialTb"><tr><td colspan="18" style="text-align:center;padding:40px;color:#7b8494">載入正式資料中…</td></tr></tbody></table></div></div>
 </section>
@@ -304,4 +305,5 @@ body.g-report-mode .g-report-mobile-tip{display:block;font-size:11px;color:#7180
 <script src="./repeat-rankings.js"></script>
 <script src="./g-theme-leaders.js"></script>
 <script src="./stock-selection.js"></script>
+<script src="./g-rank-export.js"></script>
 </body></html>
