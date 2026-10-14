@@ -99,6 +99,10 @@ jobs:
         if: steps.mode.outputs.mode == 'full'
         working-directory: tw-stock-dashboard
         run: python src/pipeline.py
+      - name: Verify no-trade quote and G ranking safety
+        if: steps.mode.outputs.mode == 'intraday'
+        working-directory: tw-stock-dashboard
+        run: PYTHONPATH=src python -m unittest discover -s tests -p 'test_intraday_quote_integrity.py' -v
       - name: Fast intraday Top20 price refresh
         if: steps.mode.outputs.mode == 'intraday'
         working-directory: tw-stock-dashboard
