@@ -1,0 +1,60 @@
+/* Chinese Risk Score sentiment gauge — a presentation of existing cash-market scores, not a new trading factor. */
+.sentiment-hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,.8fr);gap:18px;align-items:stretch}
+.sentiment-main{min-width:0;padding:8px 8px 3px}
+.sentiment-eyebrow{font-size:12px;font-weight:850;color:#64748b;letter-spacing:.06em}
+.sentiment-title{font-size:clamp(20px,2.3vw,29px);font-weight:950;line-height:1.35;margin:7px 0 4px;color:#142238}
+.sentiment-sub{color:#64748b;font-size:12px;line-height:1.7;max-width:700px;margin:0}
+.sentiment-dial-shell{margin:3px auto 0;width:100%;max-width:675px}
+.sentiment-dial{width:100%;height:auto;display:block;overflow:visible;font-family:inherit}
+.sentiment-gauge-caption{text-align:center;font-size:13px;font-weight:900;color:#334155;margin:-4px 0 0}
+.sentiment-label-detail{text-align:center;color:#64748b;font-size:11px;line-height:1.7;margin:4px auto 0;max-width:630px}
+.sentiment-meta{display:flex;align-items:center;gap:7px 13px;flex-wrap:wrap;justify-content:center;margin-top:8px;font-size:11px;color:#64748b}
+.sentiment-meta strong{color:#1e293b}
+.sentiment-side{min-width:0;border-left:1px solid #e4e9f2;padding:10px 4px 5px 21px;display:flex;flex-direction:column}
+.sentiment-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:100px;background:#f1f4f8;margin-bottom:8px}
+.sentiment-tabs button{border:0;border-radius:100px;background:transparent;padding:9px 6px;color:#64748b;font-size:12px;font-weight:850;cursor:pointer}
+.sentiment-tabs button.active{color:#1d4ed8;background:white;box-shadow:0 1px 8px rgba(15,23,42,.11)}
+.sentiment-tabs button:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.sentiment-history{flex:1;min-height:242px}
+.sentiment-history-row{display:flex;align-items:center;justify-content:space-between;gap:9px;border-bottom:1px dashed #e3e8f0;padding:11px 0}
+.sentiment-history-row:last-child{border-bottom:0}
+.sentiment-history-row>div{min-width:0;display:flex;flex-direction:column;gap:3px}
+.sentiment-history-title{font-size:12px;color:#64748b;font-weight:700}
+.sentiment-history-row strong{font-size:13px;color:#1f2937}
+.sentiment-history-row small{font-size:10px;color:#94a3b8}
+.sentiment-history-score{display:flex;width:42px;height:42px;border-radius:50%;align-items:center;justify-content:center;font-size:16px;font-weight:900;font-variant-numeric:tabular-nums;border:1px solid #e2e8f0;flex-shrink:0;background:#f8fafc}
+.sentiment-history-score.zone-0{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.sentiment-history-score.zone-1{background:#ffedd5;color:#9a3412;border-color:#fdba74}
+.sentiment-history-score.zone-2{background:#f1f5f9;color:#475569;border-color:#cbd5e1}
+.sentiment-history-score.zone-3{background:#ecfdf5;color:#047857;border-color:#a7f3d0}
+.sentiment-history-score.zone-4{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
+.sentiment-empty{font-size:12px;color:#64748b;line-height:1.7}
+.sentiment-updated{font-size:11px;color:#64748b;text-align:right;margin-top:10px}
+.sentiment-source-details{border:1px solid #e5eaf3;background:#f8fafc;border-radius:10px;margin-top:12px}
+.sentiment-source-details>summary{cursor:pointer;padding:11px 13px;font-size:12px;color:#475569;font-weight:850}
+.sentiment-source-details>.cmd-main{padding:4px 13px 15px}
+.sentiment-source-details .cmd-score{background:white}
+.market-command .cmd-trade-guide{margin-top:12px}
+.home-focus{margin-top:16px}
+.home-focus-title{font-size:19px;color:#1e293b;font-weight:950;letter-spacing:.01em;margin:0 0 10px}
+.home-focus-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;align-items:stretch}
+.home-focus-grid>.insight{padding:17px 18px;min-width:0}
+.home-focus-grid .insight-head{align-items:start}
+.home-focus-grid .insight-title{font-size:17px}
+.home-focus-grid .insight .sub{line-height:1.7}
+.home-g-summary{display:flex;flex-direction:column;gap:10px}
+.home-g-status{font-size:11px;line-height:1.65;color:#64748b}
+.home-g-stock{border-top:1px solid #edf2f7;padding-top:10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center}
+.home-g-stock a{font-size:13px;font-weight:900;text-decoration:none;color:#1d4ed8}
+.home-g-stock a:hover{text-decoration:underline}
+.home-g-stock small{display:block;font-size:10px;color:#64748b;line-height:1.6;overflow-wrap:anywhere;margin-top:3px}
+.home-g-stock strong{font-size:18px;font-variant-numeric:tabular-nums;color:#0f172a}
+.home-g-stock strong small{font-size:10px;font-weight:700;text-align:right}
+.home-focus-link{display:inline-flex;align-items:center;margin-top:auto;padding-top:11px;color:#1d4ed8;font-size:12px;font-weight:850;text-decoration:none}
+.home-focus-link:hover{text-decoration:underline}
+.home-focus-grid .rows{margin-top:9px}
+.home-focus-grid .row{line-height:1.5}
+.home-source-note{font-size:10px;color:#64748b;line-height:1.65;margin-top:8px}
+@media(max-width:1100px){.sentiment-hero{grid-template-columns:minmax(0,1.2fr) minmax(250px,.85fr)}.home-focus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-focus-grid>.insight:last-child{grid-column:span 2}}
+@media(max-width:760px){.sentiment-hero{grid-template-columns:1fr;gap:2px}.sentiment-main{padding:5px 0 1px}.sentiment-side{border-left:0;border-top:1px solid #edf1f6;padding:12px 0 0}.sentiment-history{min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.sentiment-history-row{padding:10px 0}.sentiment-history-row strong{font-size:12px}.sentiment-updated{text-align:left}.home-focus-grid{grid-template-columns:1fr}.home-focus-grid>.insight:last-child{grid-column:auto}}
+@media(max-width:440px){.sentiment-title{font-size:21px}.sentiment-sub{font-size:11px}.sentiment-dial-shell{margin:8px -5px 0;width:calc(100% + 10px)}.sentiment-history-score{width:35px;height:35px;font-size:13px}.sentiment-history{gap:0 8px}.sentiment-history-title{font-size:11px}.sentiment-history-row small{font-size:9px}.sentiment-label-detail{font-size:10px}.home-focus-title{font-size:17px}}
