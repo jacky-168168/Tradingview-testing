@@ -33,9 +33,11 @@
 
 </style>
 <script src="./site-access.js"></script>
+<link rel="stylesheet" href="./market-sentiment.css?v=20261015-ui-v1">
 <link rel="stylesheet" href="./market-command.css?v=20261015-score-guide-r4">
 <link rel="stylesheet" href="./dynamic-exposure.css">
-<script src="./market-command.js?v=20261015-score-guide-r5"></script>
+<script src="./market-command.js?v=20261015-score-guide-r6"></script>
+<script src="./market-sentiment.js?v=20261015-ui-v1"></script>
 <script src="./dynamic-exposure.js"></script>
 </head>
 <body>
@@ -77,7 +79,29 @@
     </div>
   </nav>
 </header>
-<section id="marketCommand" class="market-command cmd-unknown" aria-label="大盤是否適合進場：盤後決策總覽">
+<section id="marketCommand" class="market-command cmd-unknown" aria-label="大盤風險情緒與操作方向">
+ <section id="sentimentPanel" class="sentiment-hero" aria-label="大盤情緒儀表板">
+  <div class="sentiment-main">
+   <div class="sentiment-eyebrow">MARKET RISK｜台股市場</div>
+   <h2 class="sentiment-title">大盤情緒儀表板</h2>
+   <p class="sentiment-sub">原有大盤風控分數的視覺化呈現，從保守到積極一眼掌握市場風險。</p>
+   <div id="sentimentGauge" class="sentiment-dial-shell" aria-live="polite">正在取得大盤分數…</div>
+   <div id="sentimentCurrentState" class="sentiment-gauge-caption" role="status">資料待更新</div>
+   <div class="sentiment-meta"><strong id="sentimentScoreSource">核對正式風控資料中…</strong><span id="sentimentAsOf"></span></div>
+   <p id="sentimentExplanation" class="sentiment-label-detail">這是原有 Risk Score 的呈現，不是另一個恐懼與貪婪指數。</p>
+  </div>
+  <aside class="sentiment-side" aria-label="大盤歷史分數比較">
+   <div class="sentiment-tabs" role="tablist" aria-label="歷史比較方式">
+    <button type="button" role="tab" data-sentiment-tab="overview" aria-selected="true" class="active">總覽</button>
+    <button type="button" role="tab" data-sentiment-tab="timeline" aria-selected="false">時間軸</button>
+   </div>
+   <div id="sentimentHistory" class="sentiment-history" aria-live="polite"><p class="sentiment-empty">歷史分數載入中…</p></div>
+   <small id="sentimentUpdated" class="sentiment-updated">最新資料時間核對中…</small>
+   <small class="home-source-note">依最新正式交易日回推；「3天／5天／一週前」以日曆天計，休市時取該日或之前最近有效交易日。</small>
+  </aside>
+ </section>
+ <details class="sentiment-source-details" id="commandSourceDetails">
+  <summary>查看原始風控分數、今日進場狀態與盤前基準</summary>
   <div class="cmd-main">
     <div class="cmd-top">
       <div class="cmd-eyebrow">市場進場總覽 · 現貨正式分數＋盤前期貨情境</div>
@@ -89,6 +113,7 @@
       <div class="cmd-score-main"><span id="commandScore">—</span><span class="cmd-score-units">/100</span></div>
       <div id="commandScoreDescription" class="cmd-score-label">原始 Risk Score<br>沒有混入 AI 預測</div><div id="commandCashReference" class="cmd-cash-reference" hidden aria-live="polite"></div><div class="cmd-score-track" aria-hidden="true"><span id="commandScoreFill" class="cmd-score-fill"></span></div><div class="cmd-score-extra" aria-label="分數刻度：0、60為一般基準、80為強勢、100"><span>0</span><span>60</span><span>80</span><span>100</span></div>    </div>
   </div>
+ </details>
 
   <section class="cmd-trade-guide" id="commandTradeGuide" data-tone="wait" aria-label="依當前分數解讀與操作建議">
     <div class="cmd-trade-guide-label">🧭 分數解讀與操作方向 <span id="commandGuideSource">等待有效資料</span></div>
@@ -119,6 +144,27 @@
     <div class="cmd-validated-strategy"><strong>G／D 策略歷史檢驗</strong><span id="commandStrategyEvidence">正在核對 G 20 日／D 10 日歷史淨報酬…</span><small>2026 年資料曾被先前研究檢視；以下為歷史訊號平均淨報酬，非即時買點或帳戶複利。</small><a href="./data/research/market_entry_playbook/report.md" target="_blank" rel="noopener">查看完整回測與限制 ↗</a></div>
     <div class="cmd-research"><span id="commandAi">機器學習回測狀態核對中…</span><a href="./data/research/market_ml_audit/summary.json" target="_blank" rel="noopener">AI 驗證</a><a href="./data/research/market_intelligence/latest.json" target="_blank" rel="noopener">風險依據</a><a href="./market-methodology.html">書籍／GitHub／研究說明</a></div>
   </details>
+</section>
+<section id="homeFocus" class="home-focus" aria-label="今日法人動向、G 選股與熱門題材">
+ <h2 class="home-focus-title">市場焦點｜法人、強勢股與題材</h2>
+ <div class="home-focus-grid">
+  <article class="card insight">
+   <div class="insight-head"><div class="insight-title">🏦 法人動向</div></div>
+   <div id="instSource" class="sub"></div><div id="instCoverage" class="sub" role="status" style="margin-top:9px;line-height:1.7"></div>
+   <div class="rows"><div class="buy"><b>外資、投信同買 ▲</b></div><div id="buyRows"></div><div class="sell" style="margin-top:9px"><b>外資、投信同賣 ▼</b></div><div id="sellRows"></div></div>
+  </article>
+  <article class="card insight home-g-summary" aria-label="最新盤後 G 正式榜前三名">
+   <div class="insight-head"><div class="insight-title">🚀 G 選股摘要</div></div>
+   <div id="homeGStatus" class="home-g-status">正在核對 G 正式資料…</div>
+   <div id="homeGRows"></div>
+   <a class="home-focus-link" href="./selections.html">查看全部 G 盤中／盤後排名 →</a>
+  </article>
+  <article class="card insight">
+   <div class="insight-head"><div class="insight-title">🔥 熱門題材與族群</div></div>
+   <div id="themeSource" class="sub"></div><div id="themeRows" class="rows"></div>
+   <a class="home-focus-link" href="./bubbles.html">查看類股資金泡泡 →</a>
+  </article>
+ </div>
 </section>
 <section id="dynamicExposure" class="dynamic-exposure" data-status="paused" aria-label="動態資金水位與單檔分批試算">
   <div class="exp-head">
@@ -204,12 +250,6 @@
  </div>
 </details>
 <div id="staleWarning" class="warning stale">⚠ 完整市場資料已超過 20 小時未更新，請檢查 GitHub Actions。</div>
-<details class="insights-disclosure" id="secondaryInsights" open><summary><span>🏦 法人動向與熱門題材</span><span class="insight-summary-note">預設展開 · 點擊可收合</span></summary>
-<div class="insights">
-<div class="card insight"><div class="insight-head"><div class="insight-title">🏦 法人動向</div><div id="instSource" class="sub"></div></div><div id="instCoverage" class="sub" role="status" style="margin-top:10px;line-height:1.7;color:#92400e;font-weight:750"></div><div class="rows"><div class="buy"><b>同買 ▲</b></div><div id="buyRows"></div><div class="sell" style="margin-top:8px"><b>同賣 ▼</b></div><div id="sellRows"></div></div></div>
-<div class="card insight"><div class="insight-head"><div class="insight-title">🔥 題材熱度</div><div id="themeSource" class="sub"></div></div><div id="themeRows" class="rows"></div></div>
-</div>
-</details>
 <div class="footer">大盤與法人資訊取自最近資料日，非即時交易建議。G、G Pro、D、F、F2、A、N 選股表請由上方「選股排行」進入。</div>
 </div>
 <script>
@@ -301,14 +341,24 @@ async function loadFutures(){
  renderOpeningPreview();
 }
 
-function renderPanels(){var p=DATA&&DATA.panels||{},f=p.institutionFlow||{buy:[],sell:[]};buyRows.innerHTML=(f.buy||[]).map(panelRow).join("")||'<div class="sub">--</div>';sellRows.innerHTML=(f.sell||[]).map(panelRow).join("")||'<div class="sub">--</div>';instSource.textContent=p.institutionSource||"";var limited=/上櫃暫為0|TWSE T86/.test(String(p.institutionSource||""));document.getElementById("instCoverage").textContent=limited?"⚠ 本榜單主要使用上市公司法人資料；上櫃買賣超尚未完整納入，缺少資料不代表零買賣超。請勿據此當作全市場排行。":"";var hs=p.topicHeat||[];themeRows.innerHTML=hs.length?hs.map(function(x){return '<div class="row"><span><b>'+esc(x.theme)+'</b></span><span class="'+C(x.avgRet)+'">'+(Number(x.avgRet)>=0?"+":"")+N(x.avgRet)+'%</span></div>'}).join(""):'<div class="sub">--</div>';themeSource.textContent=p.topicSource||""}
+function renderHomeG(){
+ const status=document.getElementById("homeGStatus"),box=document.getElementById("homeGRows"),list=DATA?.models?.G,date=String(DATA?.dataDate||""),official=DATA?.gSelection;
+ if(!status||!box)return;box.replaceChildren();
+ if(!Array.isArray(list)||!date||official?.dataDate!==date){status.textContent="⚠ 最新正式榜單尚未完成日期驗證，不顯示舊訊號。";return}
+ status.textContent="正式資料日 "+date+"｜"+list.length+" 檔｜僅顯示前三名，非盤中即時買點。";
+ for(const x of list.slice(0,3)){const row=document.createElement("div");row.className="home-g-stock";const left=document.createElement("div"),a=document.createElement("a"),theme=document.createElement("small"),score=document.createElement("strong"),suffix=document.createElement("small");
+ const code=String(x.code||"").trim(),ex=x.market==="上櫃"?"TPEX":"TWSE";a.textContent=code+" "+String(x.name||"");a.href="https://www.tradingview.com/chart/?symbol="+encodeURIComponent(ex+":"+code);a.target="_blank";a.rel="noopener noreferrer";
+ theme.textContent=String(x.theme||"題材未分類").split(/[、,，]/).slice(0,2).join("、");score.textContent=Number.isFinite(Number(x.total))?Number(x.total).toFixed(1):"—";suffix.textContent="總分／100";
+ left.append(a,theme);score.appendChild(suffix);row.append(left,score);box.appendChild(row);}
+}
+function renderPanels(){var p=DATA&&DATA.panels||{},f=p.institutionFlow||{buy:[],sell:[]};buyRows.innerHTML=(f.buy||[]).map(panelRow).join("")||'<div class="sub">--</div>';sellRows.innerHTML=(f.sell||[]).map(panelRow).join("")||'<div class="sub">--</div>';instSource.textContent=p.institutionSource||"";var quality=DATA&&DATA.institutionQuality||{},valid=quality.status==="complete"&&quality.date===DATA.dataDate&&quality.missingRanked===0;document.getElementById("instCoverage").textContent=valid?"✅ 官方上市 "+quality.listedRows+" 筆／上櫃 "+quality.otcRows+" 筆；榜單法人缺漏 0 檔。":"⚠ 法人完整性未經當日驗證，請勿將缺值視為零。";var hs=p.topicHeat||[];themeRows.innerHTML=hs.length?hs.map(function(x){return '<div class="row"><span><b>'+esc(x.theme)+'</b></span><span class="'+C(x.avgRet)+'">'+(Number(x.avgRet)>=0?"+":"")+N(x.avgRet)+'%</span></div>'}).join(""):'<div class="sub">--</div>';themeSource.textContent=p.topicSource||""}
 function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);var freshness=MarketCommand.evaluate(DATA.risk||{},DATA.marketIntelligence||null);marketMeta.textContent="最新資料日 "+(DATA.dataDate||"--")+(freshness.stale?" ｜ ⚠ 今日正式資料待同步":" ｜ 官方現貨盤後資料，非即時交易建議");var more=document.getElementById("marketMetaDetails");if(more)more.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),ageWarning=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5),isStale=freshness.stale||ageWarning;staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent=freshness.stale?"⚠ 今日大盤正式分數尚未同步，最新完整資料日為 "+(last.d||"未知")+"；目前分數只能看歷史，不能當作今日新倉許可。若遇交易所休市，請等下個交易日更新。":"⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
 async function loadIntradayMarketBreadth(){
  try{const res=await fetch("./data/g_intraday/latest.json?v="+Date.now(),{cache:"no-store"});if(!res.ok)throw new Error("No published live G quotes");
    const snap=await res.json();if(window.MarketCommand)MarketCommand.applyIntraday(snap);
  }catch(_){if(window.MarketCommand)MarketCommand.applyIntraday(null)}
 }
-async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();MarketCommand.refresh(DATA);DynamicExposure.refresh(DATA);MarketCommand.checkMl();renderPanels();renderMeta();await loadFutures();await loadIntradayMarketBreadth()}catch(e){marketMeta.textContent="市場資料載入失敗："+e.message;futuresSub.textContent="市場資料暫時不可用，請稍後重新載入。"}finally{loading.classList.remove("show")}}
+async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();MarketCommand.refresh(DATA);DynamicExposure.refresh(DATA);MarketCommand.checkMl();renderPanels();renderHomeG();renderMeta();await loadFutures();await loadIntradayMarketBreadth()}catch(e){marketMeta.textContent="市場資料載入失敗："+e.message;futuresSub.textContent="市場資料暫時不可用，請稍後重新載入。"}finally{loading.classList.remove("show")}}
 // At 08:30–08:59 revisit the latest COMPLETED exchange session; this
 // is not a live 08:58 quote stream. At 09:00 retire the provisional view.
 setInterval(function(){
@@ -328,7 +378,7 @@ document.getElementById("txfLiveChart").addEventListener("toggle",function(){
  script.textContent=JSON.stringify({autosize:true,symbol:"TAIFEX:TXF1!",interval:"15",timezone:"Asia/Taipei",theme:"light",locale:"zh_TW",style:"1",hide_side_toolbar:true,hide_top_toolbar:false,allow_symbol_change:false,save_image:false,withdateranges:false});
  sh.appendChild(script);
 });
-DynamicExposure.init();// Refresh both the live data and dashboard JavaScript. Merely calling load()
+MarketSentiment.mount();DynamicExposure.init();// Refresh both the live data and dashboard JavaScript. Merely calling load()
 // kept stale scripts active in open mobile tabs after Pages deployments.
 reload.onclick=()=>{const url=new URL(location.href);url.searchParams.set("appRefresh",String(Date.now()));location.replace(url.toString())};load();setInterval(load,90000);
 </script>
