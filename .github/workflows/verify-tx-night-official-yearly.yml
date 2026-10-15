@@ -1,0 +1,44 @@
+name: Verify TX Night 3Y Against Official TAIFEX Annual ZIP
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/scripts/verify_tx_night_official_yearly.py'
+      - '.github/workflows/verify-tx-night-official-yearly.yml'
+permissions:
+  contents: write
+concurrency:
+  group: verify-tx-night-official-yearly
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install
+        run: python -m pip install requests
+      - name: Compare independent official TAIFEX 2023-2025 ZIP to 3Y FinMind TX pairs
+        run: python tw-stock-dashboard/scripts/verify_tx_night_official_yearly.py
+      - name: Preserve reconciliation and detect any mismatches
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/tx_night_regime_3y/official_yearly_reconciliation.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research: cross-check 2023-25 TX daily and overnight closes against official TAIFEX yearly ZIPs"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Fail if official prices mismatch
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('tw-stock-dashboard/docs/data/research/tx_night_regime_3y/official_yearly_reconciliation.json'))
+          if d['status']!='VERIFIED_OFFICIAL_YEARLY_AGREEMENT':
+              raise SystemExit("TX official audit incomplete/mismatch: "+d['status']+" "+str(d.get('errors')))
+          PY
