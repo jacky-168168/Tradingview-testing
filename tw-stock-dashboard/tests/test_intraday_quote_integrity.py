@@ -3,7 +3,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from unittest.mock import patch
 import pandas as pd
-from g_intraday import parse_mis,make_intraday_frame
+from g_intraday import parse_mis,make_intraday_frame,provisional_breadth
 from g_live import select
 
 DAY="2026-10-14"
@@ -19,6 +19,20 @@ class TestIntradayQuoteIntegrity(unittest.TestCase):
         intraday=make_intraday_frame(prior,q,DAY)
         self.assertEqual(len(intraday),61)
         self.assertEqual(intraday.volume.iloc[-1],0)
+    def test_breadth_excludes_orderbook_proxy_and_no_trade(self):
+        quotes={
+          ("上市","1001"):{"priceSource":"last-trade","price":103.,"previousClose":100.,"volume":10000},
+          ("上市","1002"):{"priceSource":"previous-trade","price":98.,"previousClose":100.,"volume":10000},
+          ("上市","1003"):{"priceSource":"no-trade-prevclose","price":100.,"previousClose":100.,"volume":0},
+          ("上櫃","2001"):{"priceSource":"last-trade","price":97.,"previousClose":100.,"volume":10000},
+          ("上櫃","2002"):{"priceSource":"bid-ask-midpoint","price":101.,"previousClose":100.,"volume":10000}
+        }
+        b=provisional_breadth(quotes)
+        self.assertEqual(b["quality"],"verified-trade-only")
+        self.assertEqual(b["total"]["sample"],3)
+        self.assertEqual((b["total"]["up"],b["total"]["down"],b["total"]["flat"]),(1,2,0))
+        self.assertAlmostEqual(b["total"]["upPct"],33.3)
+        self.assertEqual(b["exchange"]["上櫃"]["sample"],1)
     def test_stale_no_trade_is_not_carried_forward(self):
         row={"c":"1234","ex":"otc","d":"20261013","t":"13:30:00","y":"100","o":"-","h":"-","l":"-","v":"-"}
         self.assertEqual(parse_mis({"msgArray":[row]},DAY,NOW),{})

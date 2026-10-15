@@ -135,6 +135,23 @@ def fetch_quotes(universe,today,now):
     return out,{"total":len(items),"valid":len(out),"traded":sum(traded.values()),"noTrade":sum(no_trade.values()),
                 "exchange":{m:{"valid":got[m],"total":need[m],"coverage":coverage[m],"traded":traded[m],"noTrade":no_trade[m]} for m in need}}
 
+def provisional_breadth(quotes):
+    """Intraday SAME-DAY trade-only market breadth. Never count reference-close
+    no-trade peers or bid/ask proxy prices as actual advancing issues."""
+    markets={"上市":{"up":0,"down":0,"flat":0},"上櫃":{"up":0,"down":0,"flat":0}}
+    for (market,code),q in quotes.items():
+        if market not in markets or q.get("priceSource") not in ("last-trade","previous-trade"):continue
+        price=number(q.get("price"));prev=number(q.get("previousClose"))
+        if price is None or prev is None or prev<=0 or q.get("volume",0)<=0:continue
+        change=price/prev-1
+        direction="up" if change>0.000001 else "down" if change< -0.000001 else "flat"
+        markets[market][direction]+=1
+    total={field:sum(m[field] for m in markets.values()) for field in ("up","down","flat")}
+    for m in [total,*markets.values()]:
+        n=sum(m.values());m["sample"]=n;m["upPct"]=round(m["up"]/n*100,1) if n else None
+    return {"quality":"verified-trade-only","source":"TWSE MIS today trade prices vs prior official reference; proxy and untraded excluded",
+            "total":total,"exchange":markets}
+
 def fetch_quotes_with_retries(universe,today,now,attempts=3,pause=50):
     """Retry failed whole-market coverage during the opening auction.
     Keep both-market safeguards; never use old-day quotes as replacements.
@@ -215,7 +232,7 @@ def main():
         payload={"asOfDate":today,"publishedAt":datetime.now(TZ).isoformat(timespec="seconds"),
                  "sourceCloseDate":source,"quality":"intraday-provisional-allmarket",
                  "quoteSource":"TWSE MIS same-day listed+OTC; trade price if available, otherwise validated order-book midpoint proxy; cumulative lots × 1000 shares",
-                 "coverage":coverage,"quotePriceSources":{kind:sum(q.get("priceSource")==kind for q in quotes.values()) for kind in ("last-trade","previous-trade","bid-ask-midpoint","one-sided-high-bid","one-sided-low-ask","no-trade-prevclose")},"historicalBarCoverage":len(history),"historyRejected":rejected,
+                 "coverage":coverage,"marketBreadth":provisional_breadth(quotes),"quotePriceSources":{kind:sum(q.get("priceSource")==kind for q in quotes.values()) for kind in ("last-trade","previous-trade","bid-ask-midpoint","one-sided-high-bid","one-sided-low-ask","no-trade-prevclose")},"historicalBarCoverage":len(history),"historyRejected":rejected,
                  "market20Reference":"previous completed cash-market return (not live index)",
                  "rows":rows,"selection":meta}
         OUTPUT.parent.mkdir(parents=True,exist_ok=True)
