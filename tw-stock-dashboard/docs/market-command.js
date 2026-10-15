@@ -136,10 +136,10 @@ function strength(score){
 function scoreBand(score){
  const n=Number(score);
  if(score==null||!Number.isFinite(n)||n<0||n>100)return null;
- if(n>=80)return {band:"80～100",label:"強勢偏多",title:"擇優評估，仍不追高",body:"市場條件較有利；仍須確認 G／D 或 Bottom 買點、停損與部位，不能只看高分就滿倉。",tone:"ready"};
- if(n>=60)return {band:"60～79",label:"偏多、條件式觀察",title:"有條件評估小部位",body:"趨勢相對有利，但只在個股訊號成立、量價與風險可控時才考慮試單；不代表必須買進。",tone:"ready"};
- if(n>=50)return {band:"50～59",label:"中性觀望",title:"觀望為主，暫緩積極新倉",body:"尚未達一般趨勢進場參考門檻 60 分；優先等待大盤與個股止跌／轉強，不急於追價。",tone:"wait"};
- return {band:"0～49",label:"風險偏高",title:"避免一般新倉，先控管曝險",body:"市場環境偏弱，優先檢查持倉風險與停損；超跌反轉要另外確認，不能因分數低就抄底。",tone:"stop"};
+ if(n>=75)return {band:"75～100",label:"強勢偏多",title:"擇優評估，仍不追高",body:"市場條件較有利；仍須確認 G／D 或 Bottom 買點、停損與部位，不能只看高分就滿倉。",tone:"ready"};
+ if(n>=60)return {band:"60～74",label:"偏多觀察",title:"有條件評估小部位",body:"趨勢相對有利，但只在個股訊號成立、量價與風險可控時才考慮試單；不代表必須買進。",tone:"ready"};
+ if(n>=45)return {band:"45～59",label:"中性觀望",title:"觀望為主，暫緩積極新倉",body:"尚未達一般趨勢進場參考門檻 60 分；優先等待大盤與個股止跌／轉強，不急於追價。",tone:"wait"};
+ return n>=25?{band:"25～44",label:"風險偏高",title:"避免一般新倉，先控管曝險",body:"市場偏弱，觀察能否持續止跌，不建議因反彈就積極加碼。",tone:"stop"}:{band:"0～24",label:"極高風險",title:"先控管曝險，超跌不代表底部",body:"極高風險是市場環境分類，不等於恐慌指標；若屬超跌觀察，仍須獨立確認 Bottom。",tone:"stop"};
 }
 function scoreGuidance(score,{reference=false,level="WAIT",historical=false}={}){
  const band=scoreBand(score);
@@ -213,7 +213,7 @@ function draw(data,diag){
  const reference=!!(pre||post?.baseline);
  const currentScore=pre?Number(pre.score):post?.baseline?Number(post.baseline.score):x.stale||post?null:r.score==null?null:Number(r.score);
  drawScoreGuide({officialScore:r.score,officialDate:r.date,currentScore,reference,level:d.level,date:x.today});
- if(scope.MarketSentiment)scope.MarketSentiment.render({officialScore:r.score,officialDate:r.date,currentScore,reference,stale:x.stale,post:!!post,updated:data?.generatedAt});
+ if(scope.MarketSentiment)scope.MarketSentiment.render({officialScore:r.score,officialDate:r.date,currentScore,reference,stale:x.stale,post:!!post,updated:data?.generatedAt,risk:r});
  const btn=$("commandPrimaryLink");
  if(btn){btn.href="./selections.html";btn.textContent=d.level==="READY"?"查看 G／D 強勢股候選 →":d.level==="REVERSAL"?"查看個股 Bottom 反轉候選 →":"查看選股名單（僅觀察） →";}
 }
