@@ -33,7 +33,7 @@
 
 </style>
 <script src="./site-access.js"></script>
-<link rel="stylesheet" href="./market-sentiment.css?v=20261016-risk-v2">
+<link rel="stylesheet" href="./market-sentiment.css?v=20261016-risk-v3">
 <link rel="stylesheet" href="./market-command.css?v=20261015-score-guide-r4">
 <link rel="stylesheet" href="./dynamic-exposure.css">
 <script src="./market-command.js?v=20261016-risk-v2"></script>
@@ -139,8 +139,8 @@
       <div class="cmd-trade-guide-band"><strong>75～100｜強勢偏多</strong><span>市場環境較有利；可擇優評估符合 G／D 與停損條件的個股，但仍避免追高或滿倉。</span></div>
       <div class="cmd-trade-guide-band"><strong>60～74｜偏多觀察</strong><span>趨勢相對有利；先確認個股訊號、量價與風險，才考慮小部位試單，不是自動買進。</span></div>
       <div class="cmd-trade-guide-band"><strong>45～59｜中性觀望</strong><span>一般趨勢策略優先觀望，等待大盤與個股確認，暫緩積極增加新倉。</span></div>
-      <div class="cmd-trade-guide-band"><strong>25～44｜風險偏高</strong><span>避免追價，評估曝險並等待市場止跌。</span></div>
-      <div class="cmd-trade-guide-band"><strong>0～24｜極高風險</strong><span>優先控管持倉；超跌觀察不等於 Bottom 反轉已確認。</span></div>
+      <div class="cmd-trade-guide-band"><strong>25～44｜偏空觀察</strong><span>避免追價，評估曝險並等待市場止跌。</span></div>
+      <div class="cmd-trade-guide-band"><strong>0～24｜極度偏空</strong><span>優先控管持倉；超跌觀察不等於 Bottom 反轉已確認。</span></div>
       <small>盤前基準＝昨收 Risk Score＋同月台指期夜盤調整；尚未經獨立績效回測，分數不代表勝率或買賣保證。</small>
     </details>
   </section>
@@ -309,7 +309,7 @@ function overnightPreviewModel(r,f,today,minutes){
  const pct=cmp.pct;
  const adjustment=MarketCommand.txScoreDelta(pct);
  const score=Math.max(0,Math.min(100,base+adjustment));
- const tier=score>=75?"偏多":score>=60?"風險偏低":score>=45?"中性觀察":"風險偏高";
+ const tier=score>=75?"偏多":score>=60?"風險偏低":score>=45?"中性觀望":score>=25?"偏空觀察":"極度偏空";
  const caution=pct<=-1?"⛔ 盤前建議暫緩新倉":pct<=-0.5?"⚠ 盤前減少積極追價":pct>=0.5?"🟡 夜盤偏多，仍待現貨開盤確認":"🟡 夜盤變動有限，待開盤確認";
  return {valid:true,base,score,adjustment,pct,points:cmp.points,tier,caution,nextDate,sourceDate:cashDate,gate:r.f2Gate?.reason||"尚未分析"};
 }
