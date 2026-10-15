@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'tw-stock-dashboard/scripts/probe_tx_annual_history.py'
+      - 'tw-stock-dashboard/scripts/audit_tx_yearly_zip.py'
       - 'tw-stock-dashboard/src/research_tx_overlay_3y.py'
       - '.github/workflows/research-tx-overlay-audit.yml'
 permissions:
@@ -22,3 +23,5 @@ jobs:
         run: pip install requests beautifulsoup4
       - name: Inspect official TAIFEX annual CSV ZIP sources
         run: python tw-stock-dashboard/scripts/probe_tx_annual_history.py
+      - name: Verify availability of official 2025 yearly ZIP
+        run: python tw-stock-dashboard/scripts/audit_tx_yearly_zip.py
