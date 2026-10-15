@@ -1,5 +1,5 @@
 from __future__ import annotations
-import json,time
+import json,time,math
 from concurrent.futures import ThreadPoolExecutor,as_completed
 import requests
 from config import CACHE_DIR,REQUEST_TIMEOUT
@@ -58,12 +58,18 @@ def parse_tpex(j,date):
                 return float(v)
             foreign=strict_num(row[10]);trust=strict_num(row[13]);dealer=strict_num(row[22]);total=strict_num(row[23])
             # Financial integrity: drop partial/corrupt rows rather than inventing a zero.
-            if abs(foreign+trust+dealer-total)>0.01:continue
+            if not all(math.isfinite(n) for n in (foreign,trust,dealer,total)) or abs(foreign+trust+dealer-total)>0.01:continue
         except (ValueError,TypeError):continue
         out[f"上櫃_{code}"]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total}
     return out
 
-def fetch_day(date,retries=3):
+def coverage_ratio(rows,expected_keys,market):
+    keys={k for k in (expected_keys or set()) if k.startswith(market+"_")}
+    if not keys:return 1.0
+    return len(keys.intersection(rows))/len(keys)
+
+def fetch_day(date,retries=3,expected_keys=None):
+    """Fetch date-matched TWSE + TPEx. Incomplete caches are NEVER silently accepted."""
     DIR.mkdir(parents=True,exist_ok=True);p=DIR/f"{date}.json";cached={}
     if p.exists():
         try:
@@ -72,34 +78,43 @@ def fetch_day(date,retries=3):
         except (OSError,ValueError):pass
     listed={k:v for k,v in cached.items() if k.startswith("上市_")}
     otc={k:v for k,v in cached.items() if k.startswith("上櫃_")}
+    expected=set(expected_keys) if expected_keys is not None else None
     errors=[]
-    # Old caches contained only TWSE; keep them and backfill TPEx without re-fetching TWSE.
-    if not listed:
+    def adequate(rows,market,floor):
+        if len(rows)<floor:return False
+        return expected is None or coverage_ratio(rows,expected,market)>=0.80
+    if not adequate(listed,"上市",1):
         url=f"https://www.twse.com.tw/rwd/zh/fund/T86?date={date.replace('-','')}&selectType=ALLBUT0999&response=json"
-        last="empty T86"
+        last="empty, wrong-date or incomplete TWSE T86"
         for n in range(retries):
             try:
-                res=requests.get(url,headers=UA,timeout=REQUEST_TIMEOUT);res.raise_for_status()
-                listed=parse_twse(res.json())
-                if listed:break
+                res=requests.get(url,headers=UA,timeout=REQUEST_TIMEOUT);res.raise_for_status();payload=res.json()
+                reported=str(payload.get("date") or "").strip()
+                if reported and reported not in (date,date.replace("-",""),date.replace("-","/")):
+                    last="TWSE response date mismatch: "+reported
+                else:
+                    fresh=parse_twse(payload)
+                    if adequate(fresh,"上市",1):
+                        listed=fresh;break
             except Exception as e:last=str(e)
             if n+1<retries:time.sleep(1+n)
-        if not listed:errors.append("TWSE: "+last)
-    if not otc:
+        if not adequate(listed,"上市",1):errors.append("TWSE: "+last)
+    if not adequate(otc,"上櫃",200):
         y,m,d=map(int,date.split("-"));roc=f"{y-1911:03d}/{m:02d}/{d:02d}"
         params={"type":"Daily","sect":"EW","date":roc,"id":"","response":"json"}
         last="empty, wrong-date or incomplete TPEx report"
         for n in range(retries):
             try:
                 res=requests.get(TPEX_FLOW_URL,params=params,headers=UA,timeout=REQUEST_TIMEOUT);res.raise_for_status()
-                data=parse_tpex(res.json(),date)
-                # A few rows is a truncated official report, not a successful market snapshot.
-                if len(data)>=200:otc=data;break
+                fresh=parse_tpex(res.json(),date)
+                if adequate(fresh,"上櫃",200):
+                    otc=fresh;break
             except Exception as e:last=str(e)
             if n+1<retries:time.sleep(1+n)
-        if not otc:errors.append("TPEx: "+last)
+        if not adequate(otc,"上櫃",200):errors.append("TPEx: "+last)
     merged={**listed,**otc}
-    if merged and merged!=cached:p.write_text(json.dumps(merged,ensure_ascii=False),encoding="utf-8")
+    # Persist only complete responses; do not poison future runs with truncated data.
+    if not errors and merged and merged!=cached:p.write_text(json.dumps(merged,ensure_ascii=False),encoding="utf-8")
     return date,merged,"; ".join(errors) if errors else None
 
 def fetch_many(dates,workers=4):
