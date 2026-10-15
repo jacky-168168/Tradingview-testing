@@ -24,6 +24,12 @@ const snapshot={dataDate:'2026-10-14',risk:{date:'2026-10-14',score:70,breadth:7
  assert.equal(element('commandScore').textContent,'—','No valid night data must never inherit stale primary 70');
  app.applyFutures(futures);
  assert.equal(element('commandScore').textContent,'55','PUBLISHED PAGE MUST RENDER 55/100 at 09:28');
+ assert.match(element('commandGuideTitle').textContent,/暫緩新倉.*55/,'The main page must show a visible action for 55');
+ assert.match(element('commandGuideText').textContent,/風險警示/);
+ assert.equal(element('commandTradeGuide').dataset.tone,'stop');
+ assert.equal(element('commandGuideCompare').children.length,2,'Show prior 70 and today 55 side by side');
+ assert.equal(element('commandGuideCompare').children[0].children[1].textContent,'70/100');
+ assert.equal(element('commandGuideCompare').children[1].children[1].textContent,'55/100');
  assert.match(element('commandScoreDescription').textContent,/昨收＋夜盤/);
  assert.match(element('commandCashReference').textContent,/70\/100/);
  assert.match(element('commandCashReference').textContent,/-15 分/);
@@ -43,7 +49,17 @@ const snapshot={dataDate:'2026-10-14',risk:{date:'2026-10-14',score:70,breadth:7
  assert.equal(element('commandScore').textContent,'55','Restoring dated futures restores baseline');
  await app.refresh({dataDate:'2026-10-15',risk:{date:'2026-10-15',score:44,breadth:30}});
  assert.equal(element('commandScore').textContent,'44','Verified same-day official close replaces TX baseline');
+ assert.match(element('commandGuideTitle').textContent,/避免一般新倉/,'Risk score 44 means risk-off'); // fallback gate is STOP
+ assert.equal(element('commandGuideCompare').hidden,true,'Historic/premarket comparison hidden for confirmed official close');
+ for(const [score,band] of [[0,'0～44'],[44,'0～44'],[45,'45～59'],[55,'45～59'],[59,'45～59'],[60,'60～79'],[70,'60～79'],[79,'60～79'],[80,'80～100'],[100,'80～100']])
+  assert.equal(app.scoreBand(score).band,band,'Risk band threshold '+score);
+ assert.match(app.scoreGuidance(70,{level:'READY'}).title,/小部位/,'Yesterday 70 is conditional, not all-in');
+ assert.match(app.scoreGuidance(55,{reference:true,level:'STOP'}).title,/暫緩新倉/);
+ assert.match(app.scoreGuidance(85,{reference:true,level:'WAIT'}).text,/未經獨立回測/,'Unvalidated TX baseline must never authorize high-score auto buys');
  assert.match(html,/<script src="\.\/market-command\.js\?v=[^"]+"><\/script>/,'Versioned script prevents stale cache');
+ for(const label of ['80～100｜強勢偏多','60～79｜偏多、條件式觀察','45～59｜中性觀望','0～44｜風險偏高'])
+  assert(html.includes(label),'Visible homepage score bands: '+label);
+ assert(html.includes('id="commandGuideTitle"')&&html.includes('id="commandGuideCompare"'),'Homepage must include an always-visible score guidance action');
  assert(html.includes('url.searchParams.set("appRefresh",String(Date.now()))'),'Reload must refresh script, not only JSON');
  console.log('PASS REAL rendered hero 10/15 09:28:55/100, yesterday70 history, no stale 75.5%, recovery after mismatches, live 134-sample protection');
 })().catch(e=>{console.error(e);process.exitCode=1});
