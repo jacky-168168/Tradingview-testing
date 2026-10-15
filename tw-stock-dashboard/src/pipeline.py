@@ -188,7 +188,7 @@ def backfill_stock_profiles_once(market_date):
 
 def mask_unverified_institutional_values(models,official_rows):
     """Display missing per-stock institutional records as unknown, never 0 buys/sells.
-    Scores are deliberately unchanged until official TPEx date-matched data is integrated.
+    Missing rows stay unknown; verified TWSE/TPEx data participates in normal scoring.
     """
     for group in models.values():
         for row in group:
@@ -276,8 +276,8 @@ def main():
     flow=institution_flow(inst,names);heat=topic_heat(market_date)
     payload={"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"benchmarkRet20":round(mkt20,4),"universeCount":len(eligible),
              "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d,"F":f,"F2":f2,"G":g,"G Pro":g_pro},"gProSelection":g_pro_selection,"gSelection":g_selection,"gPocketBaseline":g_pocket_baseline,"risk":{**risk,"fGate":gate,"f2Gate":gate2},"marketIntelligence":intelligence,
-             "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86（上市）／TPEx 上櫃逐檔法人資料尚未接入（缺值顯示 --）","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
-             "candidateCounts":candidate_counts,"strictCandidateCounts":strict_candidate_counts,"phase":"github-python-v8-g-default","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上櫃逐檔法人資料尚未接入，缺值顯示 -- 而非買賣超 0；既有模型計分仍依 V12.2 沒有來源時 0 分口徑，不能視為法人資料完整。","正式選股 D/F/F2 固定保留 Top20 候選：嚴格通過 D 的股票優先，不足 20 才用高分且流動性合格的候補補齊；候補會明確標示。回測實際進場仍只使用嚴格通過 D 的 Rank1~3。","G 預設模型：G_DOUBLE_PERSIST，先使用全市場強勢候選，再要求 3D/18D 前一完整 K 棒高點雙突破，最後按過去10交易日的原 G 雙突破 Top20 入選紀錄加分。首次上線歷史資料未滿10天時仍正常選股但不填補假歷史。","G 今日選股只根據完整更新的日 K 資料，盤中只更新選中股票的最新價格，不會把回測歷史 Top20 偽裝成今日選股。"]}
+             "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86（上市）／TPEx dailyTrade（上櫃）；同日官方逐檔資料，缺值顯示 --","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
+             "candidateCounts":candidate_counts,"strictCandidateCounts":strict_candidate_counts,"phase":"github-python-v8-g-default","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上市、上櫃逐檔法人資料分別取自 TWSE T86 與 TPEx dailyTrade；當日未取得則顯示 -- 而非 0，且不得把缺值當作已驗證的買賣超。","正式選股 D/F/F2 固定保留 Top20 候選：嚴格通過 D 的股票優先，不足 20 才用高分且流動性合格的候補補齊；候補會明確標示。回測實際進場仍只使用嚴格通過 D 的 Rank1~3。","G 預設模型：G_DOUBLE_PERSIST，先使用全市場強勢候選，再要求 3D/18D 前一完整 K 棒高點雙突破，最後按過去10交易日的原 G 雙突破 Top20 入選紀錄加分。首次上線歷史資料未滿10天時仍正常選股但不填補假歷史。","G 今日選股只根據完整更新的日 K 資料，盤中只更新選中股票的最新價格，不會把回測歷史 Top20 偽裝成今日選股。"]}
     DATA_DIR.mkdir(parents=True,exist_ok=True);body=json.dumps(payload,ensure_ascii=False,indent=2);LATEST_JSON.write_text(body,encoding="utf-8")
     publish_market_intelligence(risk,DATA_DIR,intelligence)
     profile=write_snapshot(DATA_DIR,universe,histories,market_date,mkt20,inst,payload["models"],payload["generatedAt"])
