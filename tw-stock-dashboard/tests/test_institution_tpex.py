@@ -45,6 +45,33 @@ class TPExFlowTests(unittest.TestCase):
                 req.reset_mock()
                 _,again,err=fetch_day("2026-10-15",retries=1)
                 self.assertEqual(again,m);self.assertIsNone(err);req.assert_not_called()
+    def test_partial_market_cache_is_refetched_not_published(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p=Path(tmp)/"2026-10-15.json"
+            cached={f"上市_{i}":{"foreign":0,"trust":0} for i in range(2000,2100)}
+            cached.update({f"上櫃_{i}":{"foreign":0,"trust":0} for i in range(3000,3220)})
+            p.write_text(json.dumps(cached),encoding="utf-8")
+            expected=set(cached)|{f"上櫃_{i}" for i in range(3220,3600)}
+            fake=Mock();fake.json.return_value=report(*(row(i) for i in range(3000,3220)))
+            with patch.object(institution,"DIR",Path(tmp)),patch.object(institution.requests,"get",return_value=fake) as req:
+                date,rows,err=fetch_day("2026-10-15",expected_keys=expected,retries=1)
+            self.assertIn("TPEx",err);self.assertEqual(req.call_count,1)
+            self.assertEqual(json.loads(p.read_text(encoding="utf-8")),cached)
+    def test_incomplete_cache_recovers_from_full_official_report(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p=Path(tmp)/"2026-10-15.json"
+            cached={f"上市_{i}":{"foreign":0,"trust":0} for i in range(2000,2100)}
+            cached.update({f"上櫃_{i}":{"foreign":0,"trust":0} for i in range(3000,3220)})
+            p.write_text(json.dumps(cached),encoding="utf-8")
+            expected=set(cached)|{f"上櫃_{i}" for i in range(3220,3600)}
+            fake=Mock();fake.json.return_value=report(*(row(i) for i in range(3000,3600)))
+            with patch.object(institution,"DIR",Path(tmp)),patch.object(institution.requests,"get",return_value=fake):
+                _,rows,err=fetch_day("2026-10-15",expected_keys=expected,retries=1)
+            self.assertIsNone(err);self.assertEqual(len([k for k in rows if k.startswith("上櫃_")]),600)
+            self.assertIn("上櫃_3500",json.loads(p.read_text(encoding="utf-8")))
+    def test_nonfinite_official_flow_is_rejected(self):
+        nan=row("3265");nan[10]="NaN"
+        self.assertNotIn("上櫃_3265",parse_tpex(report(nan),"2026-10-15"))
     def test_failed_tpex_does_not_make_missing_flow_zero(self):
         with tempfile.TemporaryDirectory() as tmp:
             p=Path(tmp)/"2026-10-15.json";p.write_text(json.dumps({"上市_2330":{"foreign":0,"trust":0}}),encoding="utf-8")
