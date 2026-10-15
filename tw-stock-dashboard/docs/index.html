@@ -100,8 +100,7 @@
    <small class="home-source-note">依最新正式交易日回推；「3天／5天／一週前」以日曆天計，休市時取該日或之前最近有效交易日。</small>
   </aside>
  </section>
- <details class="sentiment-source-details" id="commandSourceDetails">
-  <summary>查看原始風控分數、今日進場狀態與盤前基準</summary>
+ <div class="sentiment-source-details" id="commandSourceDetails" aria-label="原始風控分數與盤前風險狀態">
   <div class="cmd-main">
     <div class="cmd-top">
       <div class="cmd-eyebrow">市場進場總覽 · 現貨正式分數＋盤前期貨情境</div>
@@ -113,7 +112,7 @@
       <div class="cmd-score-main"><span id="commandScore">—</span><span class="cmd-score-units">/100</span></div>
       <div id="commandScoreDescription" class="cmd-score-label">原始 Risk Score<br>沒有混入 AI 預測</div><div id="commandCashReference" class="cmd-cash-reference" hidden aria-live="polite"></div><div class="cmd-score-track" aria-hidden="true"><span id="commandScoreFill" class="cmd-score-fill"></span></div><div class="cmd-score-extra" aria-label="分數刻度：0、60為一般基準、80為強勢、100"><span>0</span><span>60</span><span>80</span><span>100</span></div>    </div>
   </div>
- </details>
+ </div>
 
   <section class="cmd-trade-guide" id="commandTradeGuide" data-tone="wait" aria-label="依當前分數解讀與操作建議">
     <div class="cmd-trade-guide-label">🧭 分數解讀與操作方向 <span id="commandGuideSource">等待有效資料</span></div>
@@ -145,7 +144,9 @@
     <div class="cmd-research"><span id="commandAi">機器學習回測狀態核對中…</span><a href="./data/research/market_ml_audit/summary.json" target="_blank" rel="noopener">AI 驗證</a><a href="./data/research/market_intelligence/latest.json" target="_blank" rel="noopener">風險依據</a><a href="./market-methodology.html">書籍／GitHub／研究說明</a></div>
   </details>
 </section>
-<section id="homeFocus" class="home-focus" aria-label="今日法人動向、G 選股與熱門題材">
+<details class="insights-disclosure home-insights-disclosure" id="secondaryInsights" open>
+ <summary><span>市場焦點｜法人、G 選股與題材</span><span class="insight-summary-note">預設展開 · 點擊收合</span></summary>
+ <section id="homeFocus" class="home-focus" aria-label="今日法人動向、G 選股與熱門題材">
  <h2 class="home-focus-title">市場焦點｜法人、強勢股與題材</h2>
  <div class="home-focus-grid">
   <article class="card insight">
@@ -166,6 +167,7 @@
   </article>
  </div>
 </section>
+</details>
 <section id="dynamicExposure" class="dynamic-exposure" data-status="paused" aria-label="動態資金水位與單檔分批試算">
   <div class="exp-head">
     <div><div class="exp-eyebrow">資金控管實驗室 · 逆向價格位階 V2＋獨立風控</div><h2 class="exp-title" style="margin:5px 0 3px">💰 今天該配置多少資金？</h2><p class="exp-help">依前120日高點回落幅度預留布局資金：<strong>越接近高點，現金越多；跌深後，預備股票水位提高。</strong>進場仍受獨立 Risk Score 與個股訊號約束；不是方舟閉源演算法。</p></div>
