@@ -35,7 +35,7 @@
 <script src="./site-access.js"></script>
 <link rel="stylesheet" href="./market-command.css">
 <link rel="stylesheet" href="./dynamic-exposure.css">
-<script src="./market-command.js"></script>
+<script src="./market-command.js?v=20261015-55-score-r3"></script>
 <script src="./dynamic-exposure.js"></script>
 </head>
 <body>
@@ -314,6 +314,8 @@ document.getElementById("txfLiveChart").addEventListener("toggle",function(){
  script.textContent=JSON.stringify({autosize:true,symbol:"TAIFEX:TXF1!",interval:"15",timezone:"Asia/Taipei",theme:"light",locale:"zh_TW",style:"1",hide_side_toolbar:true,hide_top_toolbar:false,allow_symbol_change:false,save_image:false,withdateranges:false});
  sh.appendChild(script);
 });
-DynamicExposure.init();reload.onclick=load;load();setInterval(load,90000);
+DynamicExposure.init();// Refresh both the live data and dashboard JavaScript. Merely calling load()
+// kept stale scripts active in open mobile tabs after Pages deployments.
+reload.onclick=()=>{const url=new URL(location.href);url.searchParams.set("appRefresh",String(Date.now()));location.replace(url.toString())};load();setInterval(load,90000);
 </script>
 </body></html>
