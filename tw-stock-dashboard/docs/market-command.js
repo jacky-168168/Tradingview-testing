@@ -1,5 +1,6 @@
 /* Market Command Center: transparent on-screen guidance; NEVER overrides live A/D/F/F2/G selectors.
- * Published official Risk Score is the ONLY primary score. No AI predictions are treated as buy permission.
+ * The previous official cash close + verified same-month TX night provides a DISPLAY-ONLY
+ * reference score until the new official daily score is published. This does not change any strategy gate.
  */
 (function(scope){
 "use strict";
@@ -73,7 +74,7 @@ function marketPremarket(r,x,now=new Date()){
   deltaLabel:(adjust>0?"+":"")+adjust,referenceDate:r.date,targetDate:t.date,
   source:"已完成TX夜盤，非08:58即時報價"};
 }
-// The published 70-point Risk Score belongs to the PREVIOUS close, not today's cash session.
+// The published cash Risk Score belongs to its dated close, not the next cash session.
 // Night risk and verified same-day trade breadth are advisory only: no fake live Risk Score.
 function overnightRisk(f,r,now=new Date()){
  const t=taipeiParts(now),day=f?.day||{},night=f?.night||{},date=String(f?.asOfDate||""),compact=date.replace(/-/g,"");
@@ -168,7 +169,7 @@ function draw(data,diag){
    const bold=document.createElement("strong");bold.textContent=f.title||String(f.code||"");row.appendChild(bold);
    if(f.detail){const detail=document.createElement("span");detail.textContent=f.detail;row.appendChild(detail)}full.appendChild(row)}}
  }
- txt("commandLogic",x.stale?"交易日已進入收盤後，但官方收盤資料尚未完整同步；僅顯示上次已核對分數，不改動 F／F2／G 原始策略或補入推測法人數值。":pre?"盤前情境 "+pre.base+" "+pre.deltaLabel+" = "+pre.score+"/100。"+pre.source+"，調整規則尚未通過獨立回測；正式 F／F2／G 仍用現貨分數。":post?.baseline?"今天的盤前基準＝昨收正式 "+post.baseline.base+" 分 "+(post.baseline.delta>=0?"+":"")+post.baseline.delta+" 分（已完成 TX 夜盤）。此分數在今日開盤後仍顯示作固定基準；另以當日成交廣度警示風險，不回寫盤後正式 Risk Score、F／F2／G 選股，且期貨扣分規則未經獨立回測。":post?"只將今天的 MIS 實際成交廣度及前一晚官方台指期作風險警示；昨日 Risk Score 不具今日即時效力。":x.diag?"已核對市場廣度、波動、前高和反轉監測；僅原始 Risk Score 曾參與既有進場回測。":"目前顯示經核對的原始收盤 Risk Score；延伸市場診斷尚未同步，暫不推測其他指標。");
+ txt("commandLogic",post?.baseline?"今日參考基準＝昨日正式 "+post.baseline.base+" 分 "+(post.baseline.delta>=0?"+":"")+post.baseline.delta+" 分，根據對應今日的同月台指期夜盤調整，故為 "+post.baseline.score+"/100；基準不會因日內價格波動變動，今日現貨廣度另以警示表示，不修改正式 F／F2／G，調整門檻尚未獨立回測。":x.stale?"交易日已進入收盤後，但官方收盤資料尚未完整同步；僅顯示上次已核對分數，不改動 F／F2／G 原始策略或補入推測法人數值。":pre?"盤前情境 "+pre.base+" "+pre.deltaLabel+" = "+pre.score+"/100。"+pre.source+"，調整規則尚未通過獨立回測；正式 F／F2／G 仍用現貨分數。":post?"今日現貨資料尚未齊全，前一交易日現貨分數不自動放行新倉。":post?"只將今天的 MIS 實際成交廣度及前一晚官方台指期作風險警示；昨日 Risk Score 不具今日即時效力。":x.diag?"已核對市場廣度、波動、前高和反轉監測；僅原始 Risk Score 曾參與既有進場回測。":"目前顯示經核對的原始收盤 Risk Score；延伸市場診斷尚未同步，暫不推測其他指標。");
  const btn=$("commandPrimaryLink");
  if(btn){btn.href="./selections.html";btn.textContent=d.level==="READY"?"查看 G／D 強勢股候選 →":d.level==="REVERSAL"?"查看個股 Bottom 反轉候選 →":"查看選股名單（僅觀察） →";}
 }
