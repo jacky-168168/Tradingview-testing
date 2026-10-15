@@ -80,6 +80,13 @@ def eod_health(now,data):
     if (data.get("gSelection") or {}).get("dataDate")!=day:return "G 正式模型資料日期與盤後日期不一致"
     models=data.get("models") or {}
     if not isinstance(models.get("G"),list) or any(m not in models for m in ("A","D","F","F2")):return "正式 A/D/F/F2/G 模型資料缺失"
+    quality=data.get("institutionQuality") or {}
+    if quality.get("status")!="complete" or quality.get("date")!=day:
+        return "正式榜單缺少當日上市／上櫃官方法人完整性驗證"
+    if quality.get("missingRanked",1)!=0:return "正式榜單仍有 "+str(quality.get("missingRanked"))+" 檔法人資料缺漏"
+    coverage=quality.get("marketCoverage") or {}
+    if any(float(coverage.get(market) or 0)<.80 for market in ("上市","上櫃")):
+        return "上市／上櫃法人資料覆蓋率不足 80%"
     return None
 def load_official_snapshot():
     source=req("/contents/tw-stock-dashboard/docs/data/latest.json?ref=main")
@@ -89,7 +96,7 @@ def eod_watch(now):
     Called also by workflow_run events, so does not depend on GitHub cron.
     """
     local=now.astimezone(ZoneInfo("Asia/Taipei"))
-    if local.weekday()>=5 or (local.year==2026 and local.strftime("%m-%d") in CLOSED_2026) or not time(18,0)<=local.time()<time(23,30):
+    if local.weekday()>=5 or (local.year==2026 and local.strftime("%m-%d") in CLOSED_2026) or not time(18,0)<=local.time()<time(23,50):
         return
     try:
         reason=eod_health(now,load_official_snapshot())

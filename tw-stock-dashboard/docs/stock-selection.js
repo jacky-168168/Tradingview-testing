@@ -194,7 +194,9 @@ function renderOfficialG(){
  else{var st=G_INTRADAY_STATUS,reason=st&&st.asOfDate===taipeiDate()&&st.status==="unavailable"?"｜⚠ 今日更新失敗："+(st.message||"來源未就緒"):"",old=G_INTRADAY&&G_INTRADAY.asOfDate===taipeiDate()?"｜當日最後發布 "+G_INTRADAY.publishedAt+"，但已超過有效時間":"";liveStatus.textContent="目前沒有可用的今日 G 盤中榜單"+reason+old+"｜預定每個交易日 09:00～13:30 每30分鐘更新；頁面每90秒自動同步（GitHub排程可能延遲）｜不拿前一日榜單冒充今日盤中";liveCount.textContent="尚無有效盤中榜"}
  if(!verified){status.textContent="⚠ 最近正式 G 選股尚未完成或日期不一致，不能將盤中價格當作盤後正式訊號";number.textContent="資料未就緒";body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="padding:25px;text-align:center">正式 G 資料尚未同步，請等待盤後完整更新。</td></tr>';return}
  var selected=full.map(function(stock,i){return {stock:stock,rank:i+1}}).filter(function(pair){return !THEME_FILTER||stockHasTheme(pair.stock,THEME_FILTER)});
- status.textContent="正式訊號日 "+source+"｜依已完成日K計算，顯示該日真正收盤價與當日漲跌幅；當日盤中快刷不改變正式名單";
+ var iq=DATA&&DATA.institutionQuality,iqGood=iq&&iq.status==="complete"&&iq.date===source&&iq.missingRanked===0;
+ var iqText=iqGood?"｜✅ 官方籌碼已驗證：上市 "+iq.listedRows+" 筆、上櫃 "+iq.otcRows+" 筆，榜單缺漏 0 筆":"｜⚠ 籌碼完整性尚未驗證，請核對 GitHub 更新狀態";
+ status.textContent="正式訊號日 "+source+"｜依已完成日K計算；盤中快刷不改變正式名單"+iqText;
  number.textContent=selected.length+"/"+full.length+" 檔"+(THEME_FILTER?"｜"+THEME_FILTER:"");
  if(!selected.length){body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="text-align:center;padding:25px">'+(THEME_FILTER?"此正式榜單沒有「"+esc(THEME_FILTER)+"」題材":"該交易日沒有正式 G 入選股票")+'</td></tr>';return}
  body.innerHTML=selected.map(function(pair){var x=pair.stock,i=pair.rank-1;return TABLE_COMPACT?renderSimpleStock(x,i,true,null,true):renderOfficialDetailedRow(x,i)}).join("");
