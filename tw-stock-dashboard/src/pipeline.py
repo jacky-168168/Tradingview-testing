@@ -217,7 +217,15 @@ def main():
     histories,errors=update_many([(x["code"],x["market"]) for x in universe],start,now)
     risk=build_risk(idx,RISK_ON,RISK_STRONG,RISK_OFF);mkt20=float(risk.get("ret20",0) or 0)
     intelligence=build_market_intelligence(risk,DATA_DIR)
-    _,inst,insterr=fetch_day(market_date);names={f'{x["market"]}_{x["code"]}':x["name"] for x in universe}
+    expected_institution={f'{x["market"]}_{x["code"]}' for x in universe}
+    _,inst,insterr=fetch_day(market_date,expected_keys=expected_institution)
+    # Reject incomplete official feeds before they affect scores; the workflow watchdog retries.
+    if insterr:raise RuntimeError("INSTITUTION_OFFICIAL_SOURCE_INCOMPLETE "+str(insterr))
+    from institution import coverage_ratio
+    institution_coverage={market:round(coverage_ratio(inst,expected_institution,market),4) for market in ("上市","上櫃")}
+    if min(institution_coverage.values())<.80:
+        raise RuntimeError("INSTITUTION_COVERAGE_LOW "+json.dumps(institution_coverage,ensure_ascii=False))
+    names={f'{x["market"]}_{x["code"]}':x["name"] for x in universe}
     a=[];d_strict=[];d_backup=[];known_g_metrics={}
     for s in eligible:
         h=histories.get(to_symbol(s["code"],s["market"]));m=calc_metrics(h.tail(75)) if h is not None and len(h)>=60 else None
@@ -272,11 +280,21 @@ def main():
     f2=[{**x,"model":"F2","marketGate":gate2["reason"],"signal":f2sig if x.get("strictPass") else "🟡 F2候補"} for x in f2src]
     candidate_counts["F"]=len(f);candidate_counts["F2"]=len(f2);candidate_counts["G"]=g_selection["doubleBreakCandidates"];candidate_counts["G Pro"]=len(g_pro)
     strict_candidate_counts["F"]=sum(bool(x.get("strictPass")) for x in f);strict_candidate_counts["F2"]=sum(bool(x.get("strictPass")) for x in f2);strict_candidate_counts["G"]=len(g);strict_candidate_counts["G Pro"]=len(g_pro)
+    # All published A/D/G ranked candidates must have *official, date-matched* cash flows.
+    # In particular, never publish a high-scoring G candidate with synthetic zero flow.
+    ranked_keys={str(x.get("market") or "")+"_"+str(x.get("code") or "") for group in (a,d,g) for x in group}
+    missing_ranked=sorted(ranked_keys.difference(inst))
+    if missing_ranked:
+        # Re-fetch even a superficially "complete" 80% cache; next full retry recomputes scores.
+        try:fetch_day(market_date,expected_keys=expected_institution,force_refresh=True)
+        except Exception as exc:print("INSTITUTION_FORCED_RETRY_FAILED",repr(exc),file=sys.stderr)
+        raise RuntimeError("INSTITUTION_RANKED_STOCKS_MISSING "+",".join(missing_ranked[:30]))
+    institution_quality={"status":"complete","date":market_date,"listedRows":sum(k.startswith("上市_") for k in inst),"otcRows":sum(k.startswith("上櫃_") for k in inst),"marketCoverage":institution_coverage,"rankedValidated":len(ranked_keys),"missingRanked":0,"source":"TWSE T86 / TPEx dailyTrade"}
     mask_unverified_institutional_values({"A":a,"D":d,"F":f,"F2":f2,"G":g,"G Pro":g_pro},inst)
     flow=institution_flow(inst,names);heat=topic_heat(market_date)
     payload={"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"benchmarkRet20":round(mkt20,4),"universeCount":len(eligible),
              "historyOk":len(histories)-len(errors),"historyErrors":len(errors),"models":{"A":a,"D":d,"F":f,"F2":f2,"G":g,"G Pro":g_pro},"gProSelection":g_pro_selection,"gSelection":g_selection,"gPocketBaseline":g_pocket_baseline,"risk":{**risk,"fGate":gate,"f2Gate":gate2},"marketIntelligence":intelligence,
-             "panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86（上市）／TPEx dailyTrade（上櫃）；同日官方逐檔資料，缺值顯示 --","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
+             "institutionQuality":institution_quality,"panels":{"institutionFlow":flow,"topicHeat":heat,"institutionSource":"TWSE T86（上市）／TPEx dailyTrade（上櫃）；同日官方逐檔資料，缺值顯示 --","topicSource":heat[0]["source"] if heat else "暫無題材資料"},
              "candidateCounts":candidate_counts,"strictCandidateCounts":strict_candidate_counts,"phase":"github-python-v8-g-default","notes":["F = D 技術強勢 + 固定大盤濾網；Risk Score >=60 允許進場，Strong Bottom Reversal 為唯一例外。","F2 = D + 動態大盤濾網：60 進場、55 維持、Strong Bottom Reversal 單日例外；Strong Top Reversal / Top Reversal Attempt 關閉狀態，Extreme Overbought 禁止新進場。","Phase 6：A/D/F、Risk、Top/Bottom Watch、官方SAR、法人、題材與產業鏈已接入。","SAR改用TWSE/TPEx官方未還原日K，避免除權息/分割造成Yahoo調整價差異。","上市、上櫃逐檔法人資料分別取自 TWSE T86 與 TPEx dailyTrade；當日未取得則顯示 -- 而非 0，且不得把缺值當作已驗證的買賣超。","正式選股 D/F/F2 固定保留 Top20 候選：嚴格通過 D 的股票優先，不足 20 才用高分且流動性合格的候補補齊；候補會明確標示。回測實際進場仍只使用嚴格通過 D 的 Rank1~3。","G 預設模型：G_DOUBLE_PERSIST，先使用全市場強勢候選，再要求 3D/18D 前一完整 K 棒高點雙突破，最後按過去10交易日的原 G 雙突破 Top20 入選紀錄加分。首次上線歷史資料未滿10天時仍正常選股但不填補假歷史。","G 今日選股只根據完整更新的日 K 資料，盤中只更新選中股票的最新價格，不會把回測歷史 Top20 偽裝成今日選股。"]}
     DATA_DIR.mkdir(parents=True,exist_ok=True);body=json.dumps(payload,ensure_ascii=False,indent=2);LATEST_JSON.write_text(body,encoding="utf-8")
     publish_market_intelligence(risk,DATA_DIR,intelligence)
