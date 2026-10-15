@@ -276,6 +276,7 @@ jobs:
         run: |
           node --check tw-stock-dashboard/docs/market-command.js
           node tw-stock-dashboard/tests/test_tx_premarket_ui.js
+          node tw-stock-dashboard/tests/test_market_live_render.cjs
           python -u tw-stock-dashboard/tests/test_market_homepage_layout.py
           node - <<'JS'
           const assert=require('assert'),fs=require('fs'),r=require('./tw-stock-dashboard/docs/market-command.js');
