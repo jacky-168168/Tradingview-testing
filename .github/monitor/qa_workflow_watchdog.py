@@ -96,7 +96,7 @@ def eod_watch(now):
     Called also by workflow_run events, so does not depend on GitHub cron.
     """
     local=now.astimezone(ZoneInfo("Asia/Taipei"))
-    if local.weekday()>=5 or (local.year==2026 and local.strftime("%m-%d") in CLOSED_2026) or not time(18,0)<=local.time()<time(23,30):
+    if local.weekday()>=5 or (local.year==2026 and local.strftime("%m-%d") in CLOSED_2026) or not time(18,0)<=local.time()<time(23,50):
         return
     try:
         reason=eod_health(now,load_official_snapshot())
