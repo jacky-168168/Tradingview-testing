@@ -14,7 +14,7 @@ def main():
         url=a.get("href","");label=a.get_text(" ",strip=True)
         if re.search("year|zip|futdaily|download|歷史|年度|年度行情|下載",url+" "+label,re.I):
             print("LINK",repr(url[:300]),repr(label[:100]))
-    for key in ['id="hisForm"','name="his_year"','futDataDown','down_type','hisForm.submit','down_type'].slice(0,5):
+    for key in ['id="hisForm"','name="his_year"','futDataDown','down_type','hisForm.submit']:
         off=resp.text.find(key)
         if off>=0:print("ANNUAL_SNIPPET",key,resp.text[max(0,off-600):off+1700].replace("\\n"," ")[:2200])
     for line in resp.text.splitlines():
