@@ -103,7 +103,7 @@ function postOpenState(r,now=new Date(),night=null,breadth=null){
   if(breadth.pct<35){level="STOP";headline="⛔ 今日盤中跌多漲少｜暫緩新倉";action="今日實際成交股票僅 "+breadth.pct.toFixed(1)+"% 上漲，市場廣度弱；不是昨日 Risk Score 所能反映。";}
   else if(breadth.pct<45){headline="🟠 今日盤中廣度偏弱｜先觀察";action="今日實際成交股票上漲比率 "+breadth.pct.toFixed(1)+"%；暫緩積極新倉。";}
   else{headline=weakNight?"🟡 夜盤曾重挫｜盤中修復待確認":"🟡 今日廣度 "+breadth.pct.toFixed(1)+"%｜尚無正式分數";action="已取得今天的盤中成交廣度，但不能把它換算成未回測的正式 Risk Score，仍需後續驗證。";}
- }else if(weakNight){level="STOP";headline="⛔ 昨夜台指期重挫｜今日現貨未確認";action="台指期同月夜盤下跌 "+Math.abs(night.pct).toFixed(2)+"%。今天尚未取得合格的現貨廣度，不能用昨天 70 分放行新倉。";}
+ }else if(weakNight){level="STOP";headline="⛔ 昨夜台指期重挫｜今日現貨未確認";action="台指期同月夜盤下跌 "+Math.abs(night.pct).toFixed(2)+"%。今天尚未取得合格的現貨廣度，不能用昨天的收盤分數直接放行新倉。";}
  else if(night?.pct<=-.5){headline="🟠 夜盤偏弱｜今日現貨尚待確認";action="夜盤偏弱，仍缺今天的可靠市場廣度，不宜以昨日分數追價。";}
  if(!breadth)flags.push({code:"PENDING_LIVE_BREADTH",title:"今日上漲家數待核對",severity:"caution",detail:"不得把昨日市場廣度當成今天。"});
  return {level,headline,action,flags,night,breadth};
