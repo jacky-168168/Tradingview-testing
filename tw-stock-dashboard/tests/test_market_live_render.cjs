@@ -59,7 +59,7 @@ const snapshot={dataDate:'2026-10-14',risk:{date:'2026-10-14',score:70,breadth:7
  assert.match(app.scoreGuidance(50,{level:'WAIT'}).title,/觀望/);
  assert.match(app.scoreGuidance(85,{reference:true,level:'WAIT'}).text,/未經獨立回測/,'Unvalidated TX baseline must never authorize high-score auto buys');
  assert.match(html,/<script src="\.\/market-command\.js\?v=[^"]+"><\/script>/,'Versioned script prevents stale cache');
- for(const label of ['75～100｜強勢偏多','60～74｜偏多觀察','45～59｜中性觀望','25～44｜風險偏高','0～24｜極高風險'])
+ for(const label of ['75～100｜強勢偏多','60～74｜偏多觀察','45～59｜中性觀望','25～44｜偏空觀察','0～24｜極度偏空'])
   assert(html.includes(label),'Visible homepage score bands: '+label);
  assert(html.includes('id="commandGuideTitle"')&&html.includes('id="commandGuideCompare"'),'Homepage must include an always-visible score guidance action');
  assert(html.includes('url.searchParams.set("appRefresh",String(Date.now()))'),'Reload must refresh script, not only JSON');
