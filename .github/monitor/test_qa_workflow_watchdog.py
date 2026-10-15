@@ -26,7 +26,7 @@ class WorkflowHealthTests(unittest.TestCase):
 class EODHealthTests(unittest.TestCase):
     def snapshot(self):
         return {"dataDate":"2026-10-15","risk":{"date":"2026-10-15"},"gSelection":{"dataDate":"2026-10-15"},
-                "models":{"A":[],"D":[],"F":[],"F2":[],"G":[]}}
+                "models":{"A":[],"D":[],"F":[],"F2":[],"G":[]},"institutionQuality":{"status":"complete","date":"2026-10-15","listedRows":900,"otcRows":750,"marketCoverage":{"上市":.95,"上櫃":.92},"missingRanked":0}}
     def test_complete_current_eod_is_valid(self):
         now=datetime(2026,10,15,13,tzinfo=timezone.utc)
         self.assertIsNone(eod_health(now,self.snapshot()))
@@ -40,6 +40,16 @@ class EODHealthTests(unittest.TestCase):
         self.assertIn("Risk Score",eod_health(now,d))
         d=self.snapshot();d["gSelection"]["dataDate"]="2026-10-14"
         self.assertIn("G 正式",eod_health(now,d))
+    def test_old_snapshot_without_quality_is_rejected(self):
+        now=datetime(2026,10,15,13,tzinfo=timezone.utc)
+        data=self.snapshot();data.pop("institutionQuality")
+        self.assertIn("法人完整性",eod_health(now,data))
+    def test_quality_missing_ranked_or_coverage_is_rejected(self):
+        now=datetime(2026,10,15,13,tzinfo=timezone.utc)
+        data=self.snapshot();data["institutionQuality"]["missingRanked"]=1
+        self.assertIn("缺漏",eod_health(now,data))
+        data=self.snapshot();data["institutionQuality"]["marketCoverage"]["上櫃"]=0.5
+        self.assertIn("覆蓋率",eod_health(now,data))
     def test_closed_market_does_not_require_new_report(self):
         self.assertIsNone(eod_health(datetime(2026,10,26,13,tzinfo=timezone.utc),{}))
 class EODWatchScheduleTests(unittest.TestCase):
