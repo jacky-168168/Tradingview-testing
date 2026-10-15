@@ -17,8 +17,8 @@ const future={asOfDate:"2026-10-08",contract:"202610",quality:"paired-day-night"
  night:{date:"20261008",contract:"202610",close:9869.5,reportQueryDate:"2026-10-12"}};
 const begin=html.indexOf("function sameContractTX(f)"),end=html.indexOf("function renderOpeningPreview(){",begin);
 assert(begin>0&&end>begin,"Original same-contract daily/overnight rule must still be present");
-const extract=new Function(html.slice(begin,end)+"\nreturn {sameContractTX,overnightPreviewModel};");
-const fns=extract();
+const extract=new Function("MarketCommand",html.slice(begin,end)+"\nreturn {sameContractTX,overnightPreviewModel};");
+const fns=extract(model);
 const c=fns.sameContractTX(future);
 assert(c,"Synthetic fixture must pair 10/08 same-contract TX day and night");
 assert.strictEqual(future.asOfDate,"2026-10-08");

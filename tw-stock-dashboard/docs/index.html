@@ -235,7 +235,7 @@ function overnightPreviewModel(r,f,today,minutes){
  const lag=(Date.parse(nextDate+"T00:00:00+08:00")-Date.parse(cashDate+"T00:00:00+08:00"))/86400000;
  if(!Number.isFinite(lag)||lag>12)return fail("下一交易日距離太長，暫停盤前推估。");
  const pct=cmp.pct;
- const adjustment=pct<=-2?-25:pct<=-1?-15:pct<=-0.5?-8:pct>=2?10:pct>=1?7:pct>=0.5?4:0;
+ const adjustment=MarketCommand.txScoreDelta(pct);
  const score=Math.max(0,Math.min(100,base+adjustment));
  const tier=score>=75?"偏多":score>=60?"風險偏低":score>=45?"中性觀察":"風險偏高";
  const caution=pct<=-1?"⛔ 盤前建議暫緩新倉":pct<=-0.5?"⚠ 盤前減少積極追價":pct>=0.5?"🟡 夜盤偏多，仍待現貨開盤確認":"🟡 夜盤變動有限，待開盤確認";
