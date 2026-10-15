@@ -33,9 +33,9 @@
 
 </style>
 <script src="./site-access.js"></script>
-<link rel="stylesheet" href="./market-command.css">
+<link rel="stylesheet" href="./market-command.css?v=20261015-score-guide-r4">
 <link rel="stylesheet" href="./dynamic-exposure.css">
-<script src="./market-command.js?v=20261015-55-score-r3"></script>
+<script src="./market-command.js?v=20261015-score-guide-r4"></script>
 <script src="./dynamic-exposure.js"></script>
 </head>
 <body>
@@ -90,6 +90,20 @@
       <div id="commandScoreDescription" class="cmd-score-label">原始 Risk Score<br>沒有混入 AI 預測</div><div id="commandCashReference" class="cmd-cash-reference" hidden aria-live="polite"></div><div class="cmd-score-track" aria-hidden="true"><span id="commandScoreFill" class="cmd-score-fill"></span></div><div class="cmd-score-extra" aria-label="分數刻度：0、60為一般基準、80為強勢、100"><span>0</span><span>60</span><span>80</span><span>100</span></div>    </div>
   </div>
 
+  <section class="cmd-trade-guide" id="commandTradeGuide" data-tone="wait" aria-label="依當前分數解讀與操作建議">
+    <div class="cmd-trade-guide-label">🧭 分數解讀與操作方向 <span id="commandGuideSource">等待有效資料</span></div>
+    <div class="cmd-trade-guide-title" id="commandGuideTitle" role="status" aria-live="polite">核對今日操作風險中…</div>
+    <div class="cmd-trade-guide-text" id="commandGuideText">分數只能評估市場環境，不能取代個股買點、停損或正式風控。</div>
+    <div class="cmd-trade-guide-compare" id="commandGuideCompare" hidden></div>
+    <details class="cmd-trade-guide-scale" id="commandGuideScale">
+      <summary>各個分數代表什麼？查看 0～100 分操作對照</summary>
+      <div class="cmd-trade-guide-band"><strong>80～100｜強勢偏多</strong><span>市場環境較有利；可擇優評估符合 G／D 與停損條件的個股，但仍避免追高或滿倉。</span></div>
+      <div class="cmd-trade-guide-band"><strong>60～79｜偏多、條件式觀察</strong><span>趨勢相對有利；先確認個股訊號、量價與風險，才考慮小部位試單，不是自動買進。</span></div>
+      <div class="cmd-trade-guide-band"><strong>45～59｜中性觀望</strong><span>一般趨勢策略優先觀望，等待大盤與個股確認，暫緩積極增加新倉。</span></div>
+      <div class="cmd-trade-guide-band"><strong>0～44｜風險偏高</strong><span>避免一般追價與主動加碼；優先控管曝險，超跌反轉須獨立確認。</span></div>
+      <small>盤前基準＝昨收 Risk Score＋同月台指期夜盤調整；尚未經獨立績效回測，分數不代表勝率或買賣保證。</small>
+    </details>
+  </section>
   <div class="cmd-metrics" aria-label="進場最重要的兩項證據">
     <div class="cmd-metric"><span>市場參與度｜當日上漲家數</span><strong id="commandBreadth">—</strong><small id="commandBreadthSub">TWSE 上漲股票比例</small></div>
     <div class="cmd-metric"><span>大盤強弱變化｜近 5 交易日</span><strong id="commandScoreChange">—</strong><small id="commandScoreChangeSub">與五個交易日前比較</small></div>
