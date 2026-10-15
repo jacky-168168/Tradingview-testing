@@ -1,0 +1,37 @@
+name: Backtest TX Night Risk Pilot
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/scripts/backtest_tx_night_score.py'
+      - 'tw-stock-dashboard/tests/test_tx_night_score_pilot.py'
+      - '.github/workflows/backtest-tx-night-risk-pilot.yml'
+permissions:
+  contents: write
+concurrency:
+  group: tx-night-risk-pilot
+  cancel-in-progress: false
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify no night session lookahead, date mismatch or fake scores
+        run: python tw-stock-dashboard/tests/test_tx_night_score_pilot.py -v
+      - name: Run pilot using pinned 2026 official-aggregated TX archive
+        run: python tw-stock-dashboard/scripts/backtest_tx_night_score.py
+      - name: Publish reproducible research evidence only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/tx_night_score_pilot/
+          if ! git diff --cached --quiet; then
+            git commit -m "research: publish pinned TX night vs Risk Score pilot (non-tradable evidence)"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
