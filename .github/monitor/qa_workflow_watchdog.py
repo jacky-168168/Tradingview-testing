@@ -1,7 +1,7 @@
 """Independent GitHub Actions QA watchdog. Posts deduplicated assigned issues."""
 from __future__ import annotations
 import json,os,sys,base64
-from datetime import datetime,timezone
+from datetime import datetime,timezone,time,timedelta
 from urllib.request import Request,urlopen
 from zoneinfo import ZoneInfo
 from g_intraday_health import CLOSED_2026
@@ -84,6 +84,38 @@ def eod_health(now,data):
 def load_official_snapshot():
     source=req("/contents/tw-stock-dashboard/docs/data/latest.json?ref=main")
     return json.loads(base64.b64decode(source["content"]).decode("utf-8"))
+def eod_watch(now):
+    """Independent recovery if GitHub scheduled FULL jobs never start.
+    Called also by workflow_run events, so does not depend on GitHub cron.
+    """
+    local=now.astimezone(ZoneInfo("Asia/Taipei"))
+    if local.weekday()>=5 or (local.year==2026 and local.strftime("%m-%d") in CLOSED_2026) or not time(18,0)<=local.time()<time(23,30):
+        return
+    try:
+        reason=eod_health(now,load_official_snapshot())
+    except Exception as exc:
+        reason="盤後資料讀取異常："+repr(exc)[:220]
+    title="TW Stock Dashboard EOD Freshness"
+    if not reason:
+        publish(title,None)
+        print("EOD_LATEST_OK",local.isoformat())
+        return
+    publish(title,reason)
+    runs=req("/actions/workflows/tw-stock-dashboard.yml/runs?per_page=45").get("workflow_runs",[])
+    recent=lambda run,mins: (n:=hours_since(run.get("created_at"),now)) is not None and -0.04<=n<mins/60
+    if any(recent(r,85) and r.get("status") in ("in_progress","queued","pending","waiting","requested") for r in runs):
+        print("EOD_RECOVERY_WAIT_ACTIVE_RUN");return
+    if any(recent(r,70) and r.get("event")=="workflow_dispatch" for r in runs):
+        print("EOD_RECOVERY_COOLDOWN_RECENT_DISPATCH");return
+    issue=issue_for(title)
+    if issue:
+        comments=req(f"/issues/{issue['number']}/comments?per_page=100")
+        if any("AUTO_EOD_RETRY" in c.get("body","") and recent(c,65) for c in comments):
+            print("EOD_RECOVERY_COOLDOWN_ISSUE");return
+    print("EOD_RECOVERY_DISPATCH",reason)
+    req("/actions/workflows/tw-stock-dashboard.yml/dispatches","POST",{"ref":"main","inputs":{"mode":"full"}})
+    if issue:
+        req(f"/issues/{issue['number']}/comments","POST",{"body":"🔄 AUTO_EOD_RETRY：正式盤後 JSON 過期，已請求 full 更新（尚待資料日期驗證）。"})
 def daily(now):
     for name,wid in SCHEDULES.items():
         latest=req("/actions/workflows/"+WORKFLOWS[name]+"/runs?per_page=5").get("workflow_runs",[])
@@ -92,16 +124,15 @@ def daily(now):
         if overdue:publish(name,overdue,newest.get("id") if newest else None,newest.get("html_url") if newest else None)
         elif newest and newest.get("conclusion")=="failure":publish(name,"最近一次測試失敗且尚未有新的成功紀錄。",newest.get("id"),newest.get("html_url"))
         elif newest and newest.get("conclusion")=="success":publish(name,None)
-    try:
-        reason=eod_health(now,load_official_snapshot())
-    except Exception as error:reason="正式資料無法讀取："+repr(error)[:260]
-    if reason:publish("TW Stock Dashboard EOD Freshness",reason)
-    else:publish("TW Stock Dashboard EOD Freshness",None)
+    eod_watch(now)
 def main():
     event_name=os.getenv("GITHUB_EVENT_NAME","")
     event_path=os.getenv("GITHUB_EVENT_PATH")
     event=json.loads(open(event_path,encoding="utf-8").read()) if event_path and os.path.isfile(event_path) else {}
-    if event_name=="workflow_run":run_event(event)
+    if event_name=="workflow_run":
+        run_event(event)
+        if (event.get("workflow_run") or {}).get("name") in WORKFLOWS:eod_watch(datetime.now(timezone.utc))
     elif event_name in ("schedule","workflow_dispatch"):daily(datetime.now(timezone.utc))
+    elif event_name=="push":eod_watch(datetime.now(timezone.utc))
     else:print("QA_BOOTSTRAP_RUN",event_name,"no incident raised")
 if __name__=="__main__":main()

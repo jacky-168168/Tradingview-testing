@@ -9,8 +9,9 @@ on:
       - 'G Intraday Health Monitor'
     types: [completed]
   schedule:
-    # Check a missed daily CI or weekly browser audit independently, 21:00 Taipei.
-    - cron: '0 13 * * *'
+    # EOD independent recovery: 18:10 / 19:10 / 20:10 / 21:10 / 22:10 TW.
+    - cron: '10 10-14 * * 1-5'
+    # In case GitHub drops the scheduled tick, workflow_run completions also inspect EOD.
   workflow_dispatch:
   push:
     branches: [main]
@@ -20,7 +21,7 @@ on:
       - '.github/workflows/tw-stock-quality-watchdog.yml'
 permissions:
   contents: read
-  actions: read
+  actions: write
   issues: write
 concurrency:
   group: tw-stock-quality-watchdog

@@ -39,4 +39,6 @@ def main():
     if not ok:
         with open(os.environ.get("GITHUB_STEP_SUMMARY","/dev/null"),"a",encoding="utf-8") as file:
             file.write("### Official daily publication pending\nNo daily Risk Score or EOD G signal was published. "+why+". The next scheduled full retry will check again.\n")
+        if after_official_cutoff(now):
+            raise SystemExit("ERROR: after 17:30 the official full update cannot be silently marked successful: "+why)
 if __name__=="__main__":main()
