@@ -1,0 +1,49 @@
+/* Regression: actually render top Risk Score on 10/15 09:28, not just calculate model.
+ * In-browser JavaScript from GitHub Pages must display 55, NOT '--' or yesterday's 70.
+ * Uses frozen Taiwan time & dated futures fixture, never mutable latest.json. */
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const ui=fs.readFileSync('tw-stock-dashboard/docs/market-command.js','utf8');
+const html=fs.readFileSync('tw-stock-dashboard/docs/index.html','utf8');
+const timestamp=Date.parse('2026-10-15T09:28:00+08:00');
+class FixedDate extends Date{constructor(...args){super(...(args.length?args:[timestamp]))}static now(){return timestamp}}
+const elements=new Map();
+function element(id){if(!elements.has(id))elements.set(id,{id,textContent:'',dataset:{},style:{},className:'',hidden:false,href:'',children:[],
+ replaceChildren(){this.children=[]},appendChild(v){this.children.push(v)}});return elements.get(id)}
+const doc={getElementById:element,createElement:tag=>element('temp-'+tag+'-'+elements.size)};
+const scope={};const ctx={window:scope,document:doc,Date:FixedDate,Intl,console,fetch:async()=>{throw Error('Fake remote unavailable')}};
+vm.runInNewContext(ui,ctx,{filename:'market-command.js'});
+const app=scope.MarketCommand;
+assert(app,'MarketCommand must attach to window');
+const futures={asOfDate:'2026-10-14',contract:'202610',quality:'paired-day-night',nightVsDayPct:-1.736,
+ day:{date:'20261014',contract:'202610',close:48792},
+ night:{date:'20261014',contract:'202610',close:47945,reportQueryDate:'2026-10-15'}};
+const snapshot={dataDate:'2026-10-14',risk:{date:'2026-10-14',score:70,breadth:75.5,dayRet:.59}};
+(async()=>{
+ await app.refresh(snapshot);
+ assert.equal(element('commandScore').textContent,'—','No valid night data must never inherit stale primary 70');
+ app.applyFutures(futures);
+ assert.equal(element('commandScore').textContent,'55','PUBLISHED PAGE MUST RENDER 55/100 at 09:28');
+ assert.match(element('commandScoreDescription').textContent,/昨收＋夜盤/);
+ assert.match(element('commandCashReference').textContent,/70\/100/);
+ assert.match(element('commandCashReference').textContent,/-15 分/);
+ assert.match(element('commandCashReference').textContent,/55\/100/);
+ assert.equal(element('commandScoreFill').style.width,'55%');
+ assert.equal(element('marketCommand').dataset.level,'STOP');
+ assert.match(element('commandStatus').textContent,/昨夜台指期/);
+ assert.equal(element('commandBreadth').textContent,'—','Previous 75.5 percent cannot masquerade as today');
+ app.applyIntraday({asOfDate:'2026-10-15',publishedAt:'2026-10-15T09:15:00+08:00',quality:'intraday-provisional-allmarket',
+  coverage:{valid:1600,total:1982,exchange:{上市:{valid:900,total:1089},上櫃:{valid:700,total:893}}},
+  marketBreadth:{quality:'verified-trade-only',total:{sample:134,up:31,down:90,flat:13},exchange:{上市:{sample:82},上櫃:{sample:52}}}});
+ assert.equal(element('commandScore').textContent,'55','Sparse provisional breadth must not erase fixed 55 baseline');
+ assert.equal(element('commandBreadth').textContent,'—','Sparse 134 samples cannot be shown as all-market confirmed');
+ app.applyFutures({...futures,night:{...futures.night,reportQueryDate:'2026-10-14'}});
+ assert.equal(element('commandScore').textContent,'—','Wrong-night date must fail closed');
+ app.applyFutures(futures);
+ assert.equal(element('commandScore').textContent,'55','Restoring dated futures restores baseline');
+ await app.refresh({dataDate:'2026-10-15',risk:{date:'2026-10-15',score:44,breadth:30}});
+ assert.equal(element('commandScore').textContent,'44','Verified same-day official close replaces TX baseline');
+ assert.match(html,/<script src="\.\/market-command\.js\?v=[^"]+"><\/script>/,'Versioned script prevents stale cache');
+ assert(html.includes('url.searchParams.set("appRefresh",String(Date.now()))'),'Reload must refresh script, not only JSON');
+ console.log('PASS REAL rendered hero 10/15 09:28:55/100, yesterday70 history, no stale 75.5%, recovery after mismatches, live 134-sample protection');
+})().catch(e=>{console.error(e);process.exitCode=1});
