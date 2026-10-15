@@ -2,8 +2,8 @@ const test=require("node:test"),assert=require("node:assert/strict"),fs=require(
 const core=require("../docs/market-sentiment.js");
 const page=fs.readFileSync(path.join(__dirname,"../docs/index.html"),"utf8");
 test("all five zones use the Chinese thresholds displayed in the design",()=>{
- assert.equal(core.band(0).label,"極高風險");assert.equal(core.band(24).label,"極高風險");
- assert.equal(core.band(25).label,"風險偏高");assert.equal(core.band(44).label,"風險偏高");
+ assert.equal(core.band(0).label,"極度偏空");assert.equal(core.band(24).label,"極度偏空");
+ assert.equal(core.band(25).label,"偏空觀察");assert.equal(core.band(44).label,"偏空觀察");
  assert.equal(core.band(45).label,"中性觀望");assert.equal(core.band(55).label,"中性觀望");
  assert.equal(core.band(56).label,"中性觀望");assert.equal(core.band(59).label,"中性觀望");assert.equal(core.band(60).label,"偏多觀察");assert.equal(core.band(74).label,"偏多觀察");
  assert.equal(core.band(75).label,"強勢偏多");assert.equal(core.band(100).label,"強勢偏多");
@@ -24,7 +24,7 @@ test("history comparisons use real as-of dates without future data or invented v
  assert.equal(core.dateOffset("2026-10-15",7),"2026-10-08");
 });
 test("gauge SVG displays true score in its assigned band",()=>{
- const svg=core.gaugeSVG(21);assert.match(svg,/大盤風險分數 21，極高風險/);assert.match(svg,/大盤風險分數/);assert.doesNotMatch(svg,/<script/);
+ const svg=core.gaugeSVG(21);assert.match(svg,/大盤風險分數 21，極度偏空/);assert.match(svg,/大盤風險分數/);assert.doesNotMatch(svg,/<script/);
  assert.match(core.gaugeSVG(null),/分數尚未取得/);
 });
 test("homepage preserves all original operational controls and displays real data visualization",()=>{
@@ -43,7 +43,7 @@ test("10/14 70 keeps original raw score but flags incomplete rebound at experime
 });
 test("10/15 score 21 is extreme risk, independently an oversold watch not a confirmed Bottom",()=>{
  const d={date:"2026-10-15",score:21,dayRet:-3.41,ret5:-5.70,foreign:-3025.6,mode:"BOTTOM",bottomState:"🟣 Oversold Watch",bottomConfirmScore:0,oversoldScore:4};
- assert.equal(core.band(d.score).label,"極高風險");
+ assert.equal(core.band(d.score).label,"極度偏空");
  assert.equal(core.reboundReview(d,{date:"2026-10-14",dayRet:0.59}).status,"clear");
  const p=core.specialPattern(d);assert.match(p.name,/超跌觀察/);assert.match(p.detail,/底部確認 0 分/);
 });
