@@ -46,7 +46,7 @@ async function main(){
         detail=document.getElementById('commandGuideText'),scale=document.getElementById('commandGuideScale');
       return !!(guide&&title&&detail&&scale&&guide.getBoundingClientRect().height>50&&
         (title.textContent.startsWith('今日操作')||title.textContent.startsWith('歷史'))&&
-        detail.textContent.length>20&&scale.querySelectorAll('.cmd-trade-guide-band').length===4&&
+        detail.textContent.length>20&&scale.querySelectorAll('.cmd-trade-guide-band').length===5&&
         guide.textContent.includes('分數解讀與操作方向'));
     }));
     await test(variant+' institution/source render',()=>page.evaluate(()=>document.getElementById('instSource').textContent.length>0&&document.getElementById('buyRows').textContent.length>0&&document.getElementById('sellRows').textContent.length>0));
