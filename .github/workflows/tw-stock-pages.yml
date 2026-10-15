@@ -279,6 +279,7 @@ jobs:
           node --check tw-stock-dashboard/docs/market-command.js
           node tw-stock-dashboard/tests/test_tx_premarket_ui.js
           node tw-stock-dashboard/tests/test_market_live_render.cjs
+          node --test tw-stock-dashboard/tests/test_market_asset_freshness.test.cjs
           python -u tw-stock-dashboard/tests/test_market_homepage_layout.py
           node - <<'JS'
           const assert=require('assert'),fs=require('fs'),r=require('./tw-stock-dashboard/docs/market-command.js');
@@ -320,3 +321,35 @@ jobs:
       - name: Deploy Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify live Pages serves correct Chinese market-risk asset version
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import hashlib,os,re,time,urllib.request,urllib.error
+          base=os.environ["PAGES_URL"].rstrip("/")
+          commit=os.environ.get("GITHUB_SHA","unknown")
+          def read(url):
+              request=urllib.request.Request(url,headers={"User-Agent":"TW-Stock-Pages-Smoke/1.0","Cache-Control":"no-cache"})
+              with urllib.request.urlopen(request,timeout=20) as resp:
+                  if resp.status!=200:raise RuntimeError(f"HTTP {resp.status}: {url}")
+                  return resp.read()
+          for attempt in range(1,13):
+              try:
+                  html=read(base+"/index.html?postdeploy="+commit).decode("utf-8")
+                  assert "25～44｜偏空觀察" in html and "0～24｜極度偏空" in html,"HTML still has stale Chinese risk labels"
+                  match=re.search(r'market-sentiment\.js\?v=([0-9a-f]{12})',html)
+                  assert match,"homepage has no versioned market sentiment JS"
+                  data=read(base+"/market-sentiment.js?v="+match.group(1))
+                  code=data.decode("utf-8")
+                  assert 'label:"極度偏空"' in code and 'label:"偏空觀察"' in code,"CDN is serving cached old gauge labels"
+                  digest=hashlib.sha1(b"blob "+str(len(data)).encode()+b"\0"+data).hexdigest()[:12]
+                  assert digest==match.group(1),"HTML version does not match deployed JS content"
+                  print("PASS live Pages HTML+JS show 偏空觀察 / 極度偏空; hash "+digest)
+                  break
+              except (AssertionError,TimeoutError,urllib.error.URLError,UnicodeError,RuntimeError) as exc:
+                  print("Pages postdeploy CDN check",attempt,"/12:",str(exc),flush=True)
+                  if attempt==12:raise
+                  time.sleep(5)
+          PY
+
