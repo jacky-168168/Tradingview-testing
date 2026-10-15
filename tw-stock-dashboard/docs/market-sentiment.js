@@ -1,7 +1,7 @@
 /* Homepage market sentiment presentation only. Never modifies Risk Score, strategy gates or official data. */
 (function(scope){
 "use strict";
-const BANDS=[{min:0,max:25,label:"極高風險",color:"#fce5e5",ink:"#9f252c"},{min:25,max:45,label:"風險偏高",color:"#fed8c9",ink:"#ba3b31"},{min:45,max:60,label:"中性觀望",color:"#e8ebf0",ink:"#475569"},{min:60,max:75,label:"偏多觀察",color:"#e4f2ed",ink:"#216d60"},{min:75,max:100,label:"強勢偏多",color:"#d4ebe3",ink:"#166354"}];
+const BANDS=[{min:0,max:25,label:"極度偏空",color:"#fce5e5",ink:"#9f252c"},{min:25,max:45,label:"偏空觀察",color:"#fed8c9",ink:"#ba3b31"},{min:45,max:60,label:"中性觀望",color:"#e8ebf0",ink:"#475569"},{min:60,max:75,label:"偏多觀察",color:"#e4f2ed",ink:"#216d60"},{min:75,max:100,label:"強勢偏多",color:"#d4ebe3",ink:"#166354"}];
 const $=id=>typeof document!=="undefined"?document.getElementById(id):null;
 function band(score){if(score==null||score===""||!Number.isFinite(Number(score))||Number(score)<0||Number(score)>100)return null;return BANDS.find((b,i)=>Number(score)<b.max||i===BANDS.length-1)||null}
 function dateOffset(date,days){if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date)))return "";const d=new Date(date+"T12:00:00Z");if(!Number.isFinite(d.getTime()))return "";d.setUTCDate(d.getUTCDate()-days);return d.toISOString().slice(0,10)}
