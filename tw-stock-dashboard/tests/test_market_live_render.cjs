@@ -49,7 +49,7 @@ const snapshot={dataDate:'2026-10-14',risk:{date:'2026-10-14',score:70,breadth:7
  assert.equal(element('commandScore').textContent,'55','Restoring dated futures restores baseline');
  await app.refresh({dataDate:'2026-10-15',risk:{date:'2026-10-15',score:44,breadth:30}});
  assert.equal(element('commandScore').textContent,'44','Verified same-day official close replaces TX baseline');
- assert.match(element('commandGuideTitle').textContent,/避免一般新倉/,'Risk score 44 means risk-off'); // fallback gate is STOP
+ assert.match(element('commandGuideTitle').textContent,/暫緩新倉/,'Risk score 44 with a STOP signal means risk-off');
  assert.equal(element('commandGuideCompare').hidden,true,'Historic/premarket comparison hidden for confirmed official close');
  for(const [score,band] of [[0,'0～44'],[44,'0～44'],[45,'45～59'],[55,'45～59'],[59,'45～59'],[60,'60～79'],[70,'60～79'],[79,'60～79'],[80,'80～100'],[100,'80～100']])
   assert.equal(app.scoreBand(score).band,band,'Risk band threshold '+score);
