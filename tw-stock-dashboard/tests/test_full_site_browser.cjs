@@ -41,6 +41,14 @@ async function main(){
    if(file==='index.html'){
     await test(variant+' home data loaded',()=>page.evaluate(()=>!!window.DATA?.dataDate&&Number.isFinite(Number(DATA.risk?.score))&&document.getElementById('marketMeta').textContent.includes(DATA.dataDate)));
     await test(variant+' home risk & timing',()=>page.evaluate(()=>Number(document.getElementById('riskScore').textContent)===Number(DATA.risk.score)&&!!document.getElementById('commandStatus').textContent));
+    await test(variant+' homepage shows score interpretation and action',()=>page.evaluate(()=>{
+      const guide=document.getElementById('commandTradeGuide'),title=document.getElementById('commandGuideTitle'),
+        detail=document.getElementById('commandGuideText'),scale=document.getElementById('commandGuideScale');
+      return !!(guide&&title&&detail&&scale&&guide.getBoundingClientRect().height>50&&
+        (title.textContent.startsWith('今日操作')||title.textContent.startsWith('歷史'))&&
+        detail.textContent.length>20&&scale.querySelectorAll('.cmd-trade-guide-band').length===4&&
+        guide.textContent.includes('分數解讀與操作方向'));
+    }));
     await test(variant+' institution/source render',()=>page.evaluate(()=>document.getElementById('instSource').textContent.length>0&&document.getElementById('buyRows').textContent.length>0&&document.getElementById('sellRows').textContent.length>0));
     await test(variant+' home to linked core routes',()=>page.evaluate(()=>['./selections.html','./stocks.html','./bubbles.html','./upstream.html','./backtest.html'].every(x=>document.querySelector('a[href="'+x+'"]'))));
     if(variant==='mobile')await test('mobile market detail toggle',async()=>{const e=page.locator('#marketAdvanced');await e.evaluate(n=>n.open=true);return await e.evaluate(n=>n.open)});
