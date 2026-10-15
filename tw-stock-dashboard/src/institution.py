@@ -23,10 +23,20 @@ def parse_twse(j):
     out={}
     if not j or not isinstance(j.get("data"),list):return out
     f=j.get("fields") or []; ci=_field(f,["證券代號"]); fi=_field(f,["外陸資買賣超股數","外資及陸資買賣超股數","外資及陸資買賣超"]); ti=_field(f,["投信買賣超股數","投信買賣超"]); di=_field(f,["自營商買賣超股數","自營商買賣超"])
+    # A changed official schema cannot silently convert unknown foreign/trust flows to zero.
+    if ci<0 or fi<0 or ti<0:return out
     for row in j["data"]:
-        code=str(row[ci if ci>=0 else 0]).strip()
-        if len(code)!=4 or not code.isdigit():continue
-        foreign=_num(row[fi]) if fi>=0 else 0; trust=_num(row[ti]) if ti>=0 else 0; dealer=_num(row[di]) if di>=0 else 0
+        try:
+            code=str(row[ci]).strip()
+            if len(code)!=4 or not code.isdigit():continue
+            def flow_num(v):
+                v=str(v).strip().replace(",","").replace("−","-").replace("－","-")
+                if v in ("","--","—","-"):raise ValueError("missing cash flow")
+                n=float(v)
+                if not math.isfinite(n):raise ValueError("nonfinite cash flow")
+                return n
+            foreign=flow_num(row[fi]);trust=flow_num(row[ti]);dealer=_num(row[di]) if di>=0 else 0
+        except (IndexError,TypeError,ValueError):continue
         out[f"上市_{code}"]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":foreign+trust+dealer}
     return out
 
@@ -90,7 +100,7 @@ def fetch_day(date,retries=3,expected_keys=None,force_refresh=False):
             try:
                 res=requests.get(url,headers=UA,timeout=REQUEST_TIMEOUT);res.raise_for_status();payload=res.json()
                 reported=str(payload.get("date") or "").strip()
-                if reported and reported not in (date,date.replace("-",""),date.replace("-","/")):
+                if reported and reported not in (date,date.replace("-",""),date.replace("-","/"),f"{int(date[:4])-1911:03d}/{date[5:7]}/{date[8:10]}",f"{int(date[:4])-1911:03d}{date[5:7]}{date[8:10]}"):
                     last="TWSE response date mismatch: "+reported
                 else:
                     fresh=parse_twse(payload)
