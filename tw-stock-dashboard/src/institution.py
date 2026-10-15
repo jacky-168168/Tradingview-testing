@@ -68,7 +68,7 @@ def coverage_ratio(rows,expected_keys,market):
     if not keys:return 1.0
     return len(keys.intersection(rows))/len(keys)
 
-def fetch_day(date,retries=3,expected_keys=None):
+def fetch_day(date,retries=3,expected_keys=None,force_refresh=False):
     """Fetch date-matched TWSE + TPEx. Incomplete caches are NEVER silently accepted."""
     DIR.mkdir(parents=True,exist_ok=True);p=DIR/f"{date}.json";cached={}
     if p.exists():
@@ -83,7 +83,7 @@ def fetch_day(date,retries=3,expected_keys=None):
     def adequate(rows,market,floor):
         if len(rows)<floor:return False
         return expected is None or coverage_ratio(rows,expected,market)>=0.80
-    if not adequate(listed,"上市",1):
+    if force_refresh or not adequate(listed,"上市",1):
         url=f"https://www.twse.com.tw/rwd/zh/fund/T86?date={date.replace('-','')}&selectType=ALLBUT0999&response=json"
         last="empty, wrong-date or incomplete TWSE T86"
         for n in range(retries):
@@ -99,7 +99,7 @@ def fetch_day(date,retries=3,expected_keys=None):
             except Exception as e:last=str(e)
             if n+1<retries:time.sleep(1+n)
         if not adequate(listed,"上市",1):errors.append("TWSE: "+last)
-    if not adequate(otc,"上櫃",200):
+    if force_refresh or not adequate(otc,"上櫃",200):
         y,m,d=map(int,date.split("-"));roc=f"{y-1911:03d}/{m:02d}/{d:02d}"
         params={"type":"Daily","sect":"EW","date":roc,"id":"","response":"json"}
         last="empty, wrong-date or incomplete TPEx report"
