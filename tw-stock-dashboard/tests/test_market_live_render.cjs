@@ -51,10 +51,12 @@ const snapshot={dataDate:'2026-10-14',risk:{date:'2026-10-14',score:70,breadth:7
  assert.equal(element('commandScore').textContent,'44','Verified same-day official close replaces TX baseline');
  assert.match(element('commandGuideTitle').textContent,/暫緩新倉/,'Risk score 44 with a STOP signal means risk-off');
  assert.equal(element('commandGuideCompare').hidden,true,'Historic/premarket comparison hidden for confirmed official close');
- for(const [score,band] of [[0,'0～44'],[44,'0～44'],[45,'45～59'],[55,'45～59'],[59,'45～59'],[60,'60～79'],[70,'60～79'],[79,'60～79'],[80,'80～100'],[100,'80～100']])
+ for(const [score,band] of [[0,'0～49'],[44,'0～49'],[49,'0～49'],[50,'50～59'],[55,'50～59'],[59,'50～59'],[60,'60～79'],[70,'60～79'],[79,'60～79'],[80,'80～100'],[100,'80～100']])
   assert.equal(app.scoreBand(score).band,band,'Risk band threshold '+score);
  assert.match(app.scoreGuidance(70,{level:'READY'}).title,/小部位/,'Yesterday 70 is conditional, not all-in');
  assert.match(app.scoreGuidance(55,{reference:true,level:'STOP'}).title,/暫緩新倉/);
+ assert.match(app.scoreGuidance(49,{level:'STOP'}).title,/暫緩新倉/);
+ assert.match(app.scoreGuidance(50,{level:'WAIT'}).title,/觀望/);
  assert.match(app.scoreGuidance(85,{reference:true,level:'WAIT'}).text,/未經獨立回測/,'Unvalidated TX baseline must never authorize high-score auto buys');
  assert.match(html,/<script src="\.\/market-command\.js\?v=[^"]+"><\/script>/,'Versioned script prevents stale cache');
  for(const label of ['80～100｜強勢偏多','60～79｜偏多、條件式觀察','45～59｜中性觀望','0～44｜風險偏高'])
