@@ -36,6 +36,9 @@ on:
     - cron: '0,30 10 * * 1-5'
     - cron: '30 11 * * 1-5'
     - cron: '30 13 * * 1-5'
+    # Last two same-day catch-up retries for official institutional feed outages.
+    - cron: '30 14 * * 1-5'
+    - cron: '15 15 * * 1-5'
 
 permissions:
   contents: write
