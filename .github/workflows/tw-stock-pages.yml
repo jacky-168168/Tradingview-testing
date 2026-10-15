@@ -7,6 +7,9 @@ on:
     paths:
       - 'tw-stock-dashboard/docs/*.html'
       - 'tw-stock-dashboard/docs/market-command.js'
+      - 'tw-stock-dashboard/docs/market-sentiment.js'
+      - 'tw-stock-dashboard/docs/market-sentiment.css'
+      - 'tw-stock-dashboard/src/homepage_asset_versions.py'
       - 'tw-stock-dashboard/tests/test_tx_premarket_ui.js'
       - 'tw-stock-dashboard/tests/test_market_live_render.cjs'
       - 'tw-stock-dashboard/tests/test_market_homepage_layout.py'
@@ -311,6 +314,8 @@ jobs:
           assert not note['research']['cautionFiltersValidatedForStockBuying']
           print('PASS: Official market score unchanged and AI is not a live trading gate')
           PY
+      - name: Stamp homepage JS and CSS asset URLs with SHA256 hashes
+        run: python tw-stock-dashboard/src/homepage_asset_versions.py prepare
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
@@ -320,3 +325,5 @@ jobs:
       - name: Deploy Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify public homepage JS is the freshly published version
+        run: python tw-stock-dashboard/src/homepage_asset_versions.py verify-live "${{ steps.deployment.outputs.page_url }}"
