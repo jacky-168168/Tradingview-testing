@@ -25,6 +25,7 @@ function reboundReview(risk,previous){
  const raw=risk?.score,score=raw==null?NaN:Number(raw);
  if(!Number.isFinite(score)||score<0||score>100)return {valid:false,status:"unavailable",adjusted:null,penalty:0,message:"原始 Risk Score 尚未取得"};
  if(!previous||!previous.date||!risk?.date||String(previous.date)>=String(risk.date))return {valid:false,status:"pending",adjusted:null,penalty:0,message:"前一交易日資料待確認，暫不推論反彈風險"};
+ if([previous.dayRet,risk.dayRet,risk.ret5,risk.foreign].some(x=>x===null||x===undefined||x===""))return {valid:false,status:"pending",adjusted:null,penalty:0,message:"前日或當日風控欄位不完整，無法驗證反彈"};
  const previousDrop=Number(previous.dayRet),today=Number(risk.dayRet),five=Number(risk.ret5),foreign=Number(risk.foreign);
  if(![previousDrop,today,five,foreign].every(Number.isFinite))return {valid:false,status:"pending",adjusted:null,penalty:0,message:"前一交易日跌幅或當日資料不完整"};
  const shock=previousDrop<=-1.5,tentative=shock&&today>0&&today<Math.abs(previousDrop)&&five<0;
