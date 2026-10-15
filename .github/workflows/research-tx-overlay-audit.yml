@@ -1,0 +1,24 @@
+name: TX Night Three-Year Risk Overlay Audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/scripts/probe_tx_annual_history.py'
+      - 'tw-stock-dashboard/src/research_tx_overlay_3y.py'
+      - '.github/workflows/research-tx-overlay-audit.yml'
+permissions:
+  contents: read
+jobs:
+  official-data-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install requests and BeautifulSoup
+        run: pip install requests beautifulsoup4
+      - name: Inspect official TAIFEX annual CSV ZIP sources
+        run: python tw-stock-dashboard/scripts/probe_tx_annual_history.py
