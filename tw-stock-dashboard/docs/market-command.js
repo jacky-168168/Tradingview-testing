@@ -213,6 +213,7 @@ function draw(data,diag){
  const reference=!!(pre||post?.baseline);
  const currentScore=pre?Number(pre.score):post?.baseline?Number(post.baseline.score):x.stale||post?null:r.score==null?null:Number(r.score);
  drawScoreGuide({officialScore:r.score,officialDate:r.date,currentScore,reference,level:d.level,date:x.today});
+ if(scope.MarketSentiment)scope.MarketSentiment.render({officialScore:r.score,officialDate:r.date,currentScore,reference,stale:x.stale,post:!!post,updated:data?.generatedAt});
  const btn=$("commandPrimaryLink");
  if(btn){btn.href="./selections.html";btn.textContent=d.level==="READY"?"查看 G／D 強勢股候選 →":d.level==="REVERSAL"?"查看個股 Bottom 反轉候選 →":"查看選股名單（僅觀察） →";}
 }
