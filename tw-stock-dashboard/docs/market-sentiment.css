@@ -58,3 +58,19 @@
 @media(max-width:1100px){.sentiment-hero{grid-template-columns:minmax(0,1.2fr) minmax(250px,.85fr)}.home-focus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-focus-grid>.insight:last-child{grid-column:span 2}}
 @media(max-width:760px){.sentiment-hero{grid-template-columns:1fr;gap:2px}.sentiment-main{padding:5px 0 1px}.sentiment-side{border-left:0;border-top:1px solid #edf1f6;padding:12px 0 0}.sentiment-history{min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.sentiment-history-row{padding:10px 0}.sentiment-history-row strong{font-size:12px}.sentiment-updated{text-align:left}.home-focus-grid{grid-template-columns:1fr}.home-focus-grid>.insight:last-child{grid-column:auto}}
 @media(max-width:440px){.sentiment-title{font-size:21px}.sentiment-sub{font-size:11px}.sentiment-dial-shell{margin:8px -5px 0;width:calc(100% + 10px)}.sentiment-history-score{width:35px;height:35px;font-size:13px}.sentiment-history{gap:0 8px}.sentiment-history-title{font-size:11px}.sentiment-history-row small{font-size:9px}.sentiment-label-detail{font-size:10px}.home-focus-title{font-size:17px}}
+
+/* Risk model V2 — distinct from the unchanged official scoring/gates. */
+.sentiment-review{margin:11px 0 2px;padding:11px;display:grid;grid-template-columns:1fr 1fr;gap:11px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:13px;text-align:left}
+.sentiment-review-item{min-width:0;padding:12px 13px;border-radius:10px;background:#fff;border:1px solid #e6ebf2;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.sentiment-review-kicker{font-size:12px;color:#475569;font-weight:850}
+.sentiment-review-kicker small{display:block;color:#94a3b8;font-size:10px;font-weight:650;line-height:1.6}
+.sentiment-adjusted{font-size:29px;font-weight:950;line-height:1.25;font-variant-numeric:tabular-nums;color:#0f172a}
+.sentiment-pattern{font-size:17px;font-weight:900;line-height:1.5;color:#334155}
+.sentiment-review-item p{margin:0;font-size:11px;line-height:1.65;color:#64748b}
+.sentiment-review-status{font-size:11px;font-weight:850;color:#475569}
+.sentiment-review[data-status="rebound"]{background:#fff7ed;border-color:#fdba74}
+.sentiment-review[data-status="rebound"] .sentiment-adjusted,.sentiment-review[data-status="rebound"] .sentiment-review-status{color:#b45309}
+.sentiment-review[data-verified="false"] .sentiment-adjusted{color:#94a3b8;font-size:21px}
+.sentiment-rebound-warning{background:#fff7ed;border:1px solid #fdba74;border-radius:10px;margin-top:9px;padding:11px 13px;font-weight:800;font-size:12px;line-height:1.75;color:#92400e}
+.sentiment-rebound-warning[hidden]{display:none}
+@media(max-width:450px){.sentiment-review{grid-template-columns:1fr;padding:8px;gap:8px}.sentiment-review-item{padding:10px}.sentiment-adjusted{font-size:26px}.sentiment-pattern{font-size:16px}}
