@@ -14,7 +14,7 @@
 .site-head-brand{min-width:0;flex:1}.site-head h1{font-size:25px;line-height:1.45;margin:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;letter-spacing:.01em}
 .site-head .badge{vertical-align:middle;margin:0;font-size:10px;white-space:nowrap}
 .site-head-description{margin:5px 0 0;color:#64748b;font-size:12px;line-height:1.65}
-.site-head-utility{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-shrink:0}
+.site-head-utility{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-shrink:0}.site-head-utility>a[hidden]{display:none!important}
 .site-head .btn{display:inline-flex;align-items:center;justify-content:center;gap:3px;border-radius:9px;padding:9px 12px;min-height:35px;white-space:nowrap;line-height:1.3;transition:background-color .18s,border-color .18s}
 .site-head .btn:hover{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
 .site-head .btn:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
@@ -50,7 +50,7 @@
       <p class="site-head-description">大盤風險分數 · 反轉監測 · 台指期日夜盤 · 法人與題材資金</p>
     </div>
     <div class="site-head-utility" aria-label="更新與操作">
-      <a class="btn btn-utility" href="https://github.com/jacky-168168/Tradingview-testing/actions/workflows/tw-stock-dashboard.yml" target="_blank" rel="noopener noreferrer">⚙ GitHub 更新</a>
+      <a class="btn btn-utility" hidden href="https://github.com/jacky-168168/Tradingview-testing/actions/workflows/tw-stock-dashboard.yml" target="_blank" rel="noopener noreferrer">⚙ GitHub 更新</a>
       <button type="button" id="reload" class="btn btn-utility btn-reload">↻ 重新載入</button>
     </div>
   </div>
