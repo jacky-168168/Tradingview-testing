@@ -1,6 +1,6 @@
 (function(){
 "use strict";
-var DATA=null,CATEGORY="all",SEARCH="",URL="./data/market_events/latest.json";
+var DATA=null,CATEGORY="all",SEARCH="",VISIBLE=12,URL="./data/market_events/latest.json";
 var $=id=>document.getElementById(id);
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function safeUrl(s){return /^https:\/\//i.test(String(s||""))?s:"#"}
@@ -40,9 +40,11 @@ function render(){
  var items=Array.isArray(DATA&&DATA.items)?DATA.items:[],today=nowTW();
  var relevant=items.filter(x=>x&&x.title&&x.date&&x.source&&x.url&&matches(x));
  var events=relevant.filter(x=>x.type==="event"&&dateDiff(x.endDate||x.date,today)>=0).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,12);
- var news=relevant.filter(x=>x.type==="news").sort((a,b)=>String(b.publishedAt||"").localeCompare(String(a.publishedAt||""))).slice(0,36);
+ var news=relevant.filter(x=>x.type==="news").sort((a,b)=>String(b.publishedAt||"").localeCompare(String(a.publishedAt||"")));
  $("events").innerHTML=events.map(x=>card(x,today)).join("");
- $("news").innerHTML=news.map(x=>card(x,today)).join("");
+ $("news").innerHTML=news.slice(0,VISIBLE).map(x=>card(x,today)).join("");
+ $("moreNews").hidden=news.length<=VISIBLE;
+ $("moreNews").textContent="顯示更多（剩餘 "+Math.max(0,news.length-VISIBLE)+" 則） ↓";
  $("eventSection").hidden=!events.length;$("newsSection").hidden=!news.length;
  $("eventCount").textContent=events.length+" 件";$("newsCount").textContent=news.length+" 則";
  $("empty").hidden=events.length+news.length>0;
@@ -70,10 +72,11 @@ async function load(){
 }
 $("filters").addEventListener("click",e=>{
  var btn=e.target.closest("button[data-cat]");if(!btn)return;
- CATEGORY=btn.dataset.cat;
+ CATEGORY=btn.dataset.cat;VISIBLE=12;
  $("filters").querySelectorAll("button[data-cat]").forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"));
  render();
 });
-$("query").addEventListener("input",e=>{SEARCH=e.target.value;render()});
+$("query").addEventListener("input",e=>{SEARCH=e.target.value;VISIBLE=12;render()});
+$("moreNews").addEventListener("click",()=>{VISIBLE+=12;render()});
 load();setInterval(load,15*60*1000);
 })();
