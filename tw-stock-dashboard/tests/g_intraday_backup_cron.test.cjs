@@ -1,6 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 let mod;
-async function worker(){mod??=await import('../infra/g-intraday-cron/worker.mjs');return mod}
+async function worker(){mod??=await import('../../infra/g-intraday-cron/worker.mjs');return mod}
 function mockAPI(data,runs=[]){
  let dispatched=0;
  const prev=global.fetch;
