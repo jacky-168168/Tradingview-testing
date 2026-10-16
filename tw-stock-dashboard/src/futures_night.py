@@ -164,6 +164,11 @@ def main():
         if prev.get("asOfDate","")>output["asOfDate"]:raise RuntimeError("New data older than previously published")
         if prev.get("asOfDate")==output["asOfDate"] and prev.get("quality")=="paired-day-night" and not night:
             raise RuntimeError("Do not replace a paired night with incomplete session data")
+        # A polling retry is NOT a new market observation. Keep fetchedAt
+        # unchanged until the exchange publishes a different verified result.
+        if prev.get("asOfDate")==output["asOfDate"] and prev.get("quality")==output["quality"] and prev.get("day")==output["day"] and prev.get("night")==output["night"]:
+            print("No new verified TX session; preserving original observation timestamp")
+            return
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(json.dumps(output,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps({"date":output["asOfDate"],"contract":output["contract"],"day":day["close"],
