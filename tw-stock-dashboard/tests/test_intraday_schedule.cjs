@@ -18,5 +18,5 @@ assert.match(ui,/setInterval\(function\(\)\{load\(false\)\},90000\)/);
 assert.match(ui,/if\(foreground\)loading\.classList\.add\("show"\)/);
 assert.match(wf,/- cron: '7,37 1-5 \* \* 1-5'/);
 assert.match(ui,/g\.asOfDate!==taipeiDate\(\)/);
-assert.match(ui,/每30分鐘更新/);
+assert.match(wf,/- cron: '0,30 1-5 \\* \\* 1-5'/); // scheduling contract belongs in workflow, not visible helper copy
 console.log('PASS ten half-hour TW intraday slots, backend/website sync, full-close retries and stale-data gate');
