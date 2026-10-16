@@ -36,7 +36,8 @@ assert(prem&&prem.score===31&&prem.level==="STOP",prem);
 assert.strictEqual(prem.source,"已完成TX夜盤，非08:58即時報價");
 assert.strictEqual(model.marketPremarket(latest.risk,estimate,at(8,29)),null);
 assert.strictEqual(model.marketPremarket(latest.risk,estimate,at(9,0)),null);
-assert.strictEqual(model.marketPremarket(latest.risk,estimate,at(8,58,"2026-10-11")),null);
+const sunday=model.marketPremarket(latest.risk,estimate,at(8,58,"2026-10-11"));
+assert(sunday&&sunday.weekendPreview&&sunday.targetDate==="2026-10-12"&&sunday.score===31,"Friday night should be visible on weekend as next-session preview");
 assert.strictEqual(model.marketPremarket(latest.risk,estimate,at(8,58,"2026-10-13")),null);
 assert.strictEqual(model.marketPremarket(latest.risk,{...estimate,nextDate:"2026-10-13"},at(8,58)),null);
 assert.strictEqual(model.marketPremarket(latest.risk,{...estimate,sourceDate:"2026-10-07"},at(8,58)),null);
@@ -46,6 +47,21 @@ const pos=model.marketPremarket({score:55,date:"2026-10-08"},{...estimate,base:5
 assert(pos&&pos.level==="WAIT"&&pos.score===65,"positive TX does not upgrade weak cash to auto BUY");
 const negative=model.marketPremarket({score:90,date:"2026-10-08"},{...estimate,base:90,score:75,adjustment:-15,pct:-1.3},at(8,58));
 assert(negative&&negative.level==="STOP","overnight selloff must veto even original high cash score");
+// 2026/10/16 Friday 15:00 -> 2026/10/17 05:00 night, next cash is Monday 10/19.
+const friCash={date:"2026-10-16",score:41,f2Gate:{reason:"MARKET_BLOCK"}};
+const fridayCrash={asOfDate:"2026-10-16",contract:"202610",quality:"paired-day-night",
+ day:{date:"20261016",contract:"202610",close:47242},
+ night:{date:"20261016",contract:"202610",close:46200,reportQueryDate:"2026-10-19"}};
+const fridayEstimate=fns.overnightPreviewModel(friCash,fridayCrash,"2026-10-17",8*60);
+assert(fridayEstimate.valid&&fridayEstimate.score===16&&fridayEstimate.adjustment===-25,fridayEstimate);
+for(const dat of ["2026-10-17","2026-10-18"]){
+ const outlook=model.marketPremarket(friCash,fridayEstimate,at(9,15,dat));
+ assert(outlook&&outlook.weekendPreview&&outlook.score===16&&outlook.level==="STOP"&&outlook.targetDate==="2026-10-19",outlook);
+}
+const mondayOpen=model.marketPremarket(friCash,fridayEstimate,at(8,58,"2026-10-19"));
+assert(mondayOpen&&!mondayOpen.weekendPreview&&mondayOpen.score===16,mondayOpen);
+assert.strictEqual(model.marketPremarket(friCash,fridayEstimate,at(9,0,"2026-10-19")),null);
+assert.strictEqual(model.marketPremarket(friCash,fridayEstimate,at(8,58,"2026-10-20")),null);
 const after=model.postOpenState(latest.risk,at(9,0));
 assert(after&&after.level==="WAIT","preview must expire after 09:00");
 assert.strictEqual(model.postOpenState({...latest.risk,date:"2026-10-12"},at(9,0)),null);
