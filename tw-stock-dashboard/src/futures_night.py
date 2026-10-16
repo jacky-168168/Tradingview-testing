@@ -40,6 +40,52 @@ def day_from_openapi(raw):
     eligible=sorted(x["contract"] for x in all_today if x["contract"]>=latest[:6])
     if not eligible:eligible=sorted(x["contract"] for x in all_today)
     return next(x for x in all_today if x["contract"]==eligible[0])
+def day_from_html(html,expected_date,expected_contract=None):
+    """Read the dated OFFICIAL day report when its OpenAPI feed lags.
+    Reject a mismatched report day, contract, or empty day volume."""
+    soup=BeautifulSoup(html,"html.parser")
+    page=" ".join(soup.stripped_strings)
+    dates=set()
+    for y,m,d in re.findall(r"(20\\d{2})\\s*[/.-]\\s*(\\d{1,2})\\s*[/.-]\\s*(\\d{1,2})\\s*08\\s*:\\s*45",page):
+        try:dates.add(date(int(y),int(m),int(d)).isoformat())
+        except ValueError:pass
+    if expected_date not in dates:return None
+    rows=[]
+    for table in soup.select("table.table_f"):
+        for tr in table.select("tr"):
+            c=[x.get_text(" ",strip=True) for x in tr.select("td")]
+            if len(c)<12 or c[0]!="TX" or not re.fullmatch(r"20\\d{4}",c[1]):continue
+            last=num(c[5]);vol=num(c[9])
+            if not last or not vol or vol<=0:continue
+            rows.append({"date":expected_date.replace("-",""),"contract":c[1],"session":"DAY",
+                "close":last,"volume":int(vol),"open":num(c[2]),"high":num(c[3]),"low":num(c[4])})
+    if not rows:return None
+    if expected_contract:
+        paired=next((x for x in rows if x["contract"]==expected_contract),None)
+        if paired:return paired
+    eligible=sorted((x for x in rows if x["contract"]>=expected_date[:7].replace("-","")),key=lambda x:x["contract"])
+    return eligible[0] if eligible else None
+def verified_day_from_html(day,now):
+    """Keep OpenAPI's last valid DAY, but prefer a newer dated TAIFEX HTML day.
+    A Saturday fetch must look for Friday, not treat Saturday as a cash day."""
+    target=now.date()
+    if now.hour<14 or target.weekday()>=5:
+        target-=timedelta(days=1)
+    while target.weekday()>=5:target-=timedelta(days=1)
+    desired=target.isoformat()
+    if desired<=day["date"][:4]+"-"+day["date"][4:6]+"-"+day["date"][6:8]:return day
+    params={"queryType":"1","marketCode":"0","MarketCode":"0","commodity_id":"TX",
+        "commodity_idt":"TX","queryDate":desired.replace("-","/")}
+    for query in (params,{"commodity_id":"TX"}):
+        try:
+            res=requests.get(REPORT,params=query,headers=UA,timeout=25);res.raise_for_status()
+            official=day_from_html(res.text,desired,day["contract"])
+            if official and official["date"]>day["date"]:
+                print("Using newer verified dated TAIFEX HTML day",desired,official["contract"],official["close"])
+                return official
+        except requests.RequestException as exc:
+            print("TAIFEX day fallback unavailable",type(exc).__name__,str(exc)[:150])
+    return day
 def night_from_html(html,expected_session_date,expected_contract,query_report_date):
     soup=BeautifulSoup(html,"html.parser")
     page=" ".join(soup.stripped_strings)
@@ -108,7 +154,7 @@ def build(day,night,now):
 def main():
     now=datetime.now(ZoneInfo("Asia/Taipei"))
     r=requests.get(ENDPOINT,headers=UA,timeout=40);r.raise_for_status()
-    day=day_from_openapi(r.json())
+    day=verified_day_from_html(day_from_openapi(r.json()),now)
     if date.fromisoformat(day["date"][:4]+"-"+day["date"][4:6]+"-"+day["date"][6:8])>now.date():
         raise RuntimeError("Future TX day session date")
     night=official_night(day,now)
