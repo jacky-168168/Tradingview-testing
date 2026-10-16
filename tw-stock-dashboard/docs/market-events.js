@@ -1,6 +1,6 @@
 (function(){
 "use strict";
-var DATA=null,CATEGORY="all",SEARCH="",VISIBLE=12,URL="./data/market_events/latest.json";
+var DATA=null,CATEGORY="all",SEARCH="",VISIBLE=20,URL="./data/market_events/latest.json";
 var $=id=>document.getElementById(id);
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function safeUrl(s){return /^https:\/\//i.test(String(s||""))?s:"#"}
@@ -72,11 +72,11 @@ async function load(){
 }
 $("filters").addEventListener("click",e=>{
  var btn=e.target.closest("button[data-cat]");if(!btn)return;
- CATEGORY=btn.dataset.cat;VISIBLE=12;
+ CATEGORY=btn.dataset.cat;VISIBLE=20;
  $("filters").querySelectorAll("button[data-cat]").forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"));
  render();
 });
-$("query").addEventListener("input",e=>{SEARCH=e.target.value;VISIBLE=12;render()});
-$("moreNews").addEventListener("click",()=>{VISIBLE+=12;render()});
+$("query").addEventListener("input",e=>{SEARCH=e.target.value;VISIBLE=20;render()});
+$("moreNews").addEventListener("click",()=>{VISIBLE+=20;render()});
 load();setInterval(load,15*60*1000);
 })();
