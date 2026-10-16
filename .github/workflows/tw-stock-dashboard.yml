@@ -22,7 +22,7 @@ on:
     # 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30 Taipei.
     # Actions schedules are best-effort: runner may start late; g_intraday.py
     # checks actual local session time and fails closed instead of faking quotes.
-    - cron: '0,30 1-5 * * 1-5' || github.event.schedule == '7,37 1-5 * * 1-5'
+    - cron: '0,30 1-5 * * 1-5'
     # Staggered GitHub-only backup avoids busy :00/:30 queue; engine skips already completed slots.
     - cron: '7,37 1-5 * * 1-5'
     # Opening-session recovery: retry at 09:15, 09:45 and 10:15 Taiwan.
