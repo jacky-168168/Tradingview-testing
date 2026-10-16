@@ -87,7 +87,8 @@ def parse_feed(xml,feed,now=None):
         if not re.search(matcher,title,re.I) or not PRIORITY.search(title):continue
         if len(title)<12 or len(title)>180:continue
         if not url.startswith("https://") or not source:continue
-        if re.search(r"股價目標|目標價|買進評等|推薦股|明牌|飆股|哪檔|這\s*[0-9一二三四五六七八九十]+\s*檔|台股大跌後該買|買什麼|翻身密碼|獲利密碼|解密飆股|名單出列|搶進哪|概念股出列",title):continue\n        if re.search(r"投資網誌|股市同學會|股市爆料|聚財網",source,re.I):continue
+        if re.search(r"股價目標|目標價|買進評等|推薦股|明牌|飆股|哪檔|這\s*[0-9一二三四五六七八九十]+\s*檔|台股大跌後該買|買什麼|翻身密碼|獲利密碼|解密飆股|名單出列|搶進哪|概念股出列",title):continue
+        if re.search(r"投資網誌|股市同學會|股市爆料|聚財網",source,re.I):continue
         key=re.sub(r"[^\w\u4e00-\u9fff]","",title.casefold())
         result.append({"id":"news-"+hashlib.sha256(key.encode()).hexdigest()[:16],
          "type":"news","category":category,"title":title,"date":t.strftime("%Y-%m-%d"),
