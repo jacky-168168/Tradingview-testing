@@ -80,6 +80,10 @@ class MarketHomepageLayout(unittest.TestCase):
             self.assertIn(expected,self.html,href+" should be hidden from the top navigation")
             self.assertTrue((HTML.parent/href).is_file(),href+" page should not be deleted")
         self.assertIn(".site-nav-links>a[hidden]{display:none!important}",self.html)
+    def test_github_update_shortcut_is_hidden_but_reload_remains_visible(self):
+        self.assertIn('class="btn btn-utility" hidden href="https://github.com/jacky-168168/Tradingview-testing/actions/workflows/tw-stock-dashboard.yml"',self.html)
+        self.assertIn('.site-head-utility>a[hidden]{display:none!important}',self.html)
+        self.assertIn('id="reload" class="btn btn-utility btn-reload"',self.html)
     def test_layout_responsive_and_accessible(self):
         for marker in ("market-brief-grid","brief-card","cmd-metrics","advanced-content","@media(max-width:650px)","@media(max-width:980px)"):
             self.assertIn(marker,self.css)
