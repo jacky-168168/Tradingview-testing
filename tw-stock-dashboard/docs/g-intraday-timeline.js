@@ -13,7 +13,7 @@ function missing(){
  if(!day)return [];
  var current=day===zoneToday(),limit=current?Math.min(810,todayMinutes()-15):810;
  if(current&&todayMinutes()<555)return [];
- var seen=new Set(entries.map(x=>slot(x.publishedAt)));
+ var seen=new Set(entries.map(x=>x.sessionSlot&&/^\d{2}:\\d{2}$/.test(x.sessionSlot)?Number(x.sessionSlot.slice(0,2))*60+Number(x.sessionSlot.slice(3,5)):slot(x.publishedAt)));
  var missingSlots=[];for(var m=540;m<=limit;m+=30)if(!seen.has(m))missingSlots.push(slotText(m));
  return missingSlots;
 }
@@ -33,7 +33,7 @@ function paint(){
  options();
  var idx=entries.findIndex(x=>x.file===chosen),g=current(latest),n=entries.length,arch=historical(g),gap=missing();
  prev.disabled=busy||idx<=0;next.disabled=busy||idx<0||idx>=n-1;jump.disabled=busy||(!pinned&&idx===n-1);
- var tick=g?slotText(slot(g.publishedAt)):"--:--";
+ var tick=g?(g.sessionSlot||slotText(slot(g.scanStartedAt||g.publishedAt))):"--:--";
  label.textContent=(g?tick+" 時段｜"+clock(g.publishedAt)+" 實際完成":"尚無有效快照")+"　"+(n?(idx+1)+"/"+n+" 輪":"");
  if(health){
   var mark=arch?"歷史回看":(!g?"資料未就緒":"最新資料");
@@ -71,7 +71,7 @@ async function sync(g){
     .filter(x=>x&&/^\d{6}(?:-\d+)?\.json$/.test(x.file||"")&&Number.isFinite(Date.parse(x.publishedAt)))
     .sort((a,b)=>a.publishedAt.localeCompare(b.publishedAt)||a.file.localeCompare(b.file));
   if(latest&&day===latest.asOfDate&&!entries.some(x=>x.publishedAt===latest.publishedAt))
-   entries.push({file:"__latest__",publishedAt:latest.publishedAt,count:latest.rows.length});
+   entries.push({file:"__latest__",publishedAt:latest.publishedAt,sessionSlot:latest.sessionSlot,count:latest.rows.length});
   var item=pinned?(chosen?entries.find(x=>x.file===chosen):entries[entries.length-1]):entries[entries.length-1];
   if(pinned&&chosen&&!item){error="舊輪次索引變動，保留原顯示；可按「回最新」";item=null}
   if(item){
