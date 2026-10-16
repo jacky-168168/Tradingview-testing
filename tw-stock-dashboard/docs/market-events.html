@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>市場大事｜台股重大新聞與展覽行事曆</title>
+<meta name="description" content="重大科技財報、PCB／AI 展覽、半導體報價、利率、油價與黃金新聞。來源與資料日期清楚標示。">
+<style>
+:root{color-scheme:light;--bg:#f5f7fb;--ink:#16263e;--muted:#6b7890;--line:#e2e8f0;--accent:#265c99}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif}a{color:inherit}
+.wrap{max-width:1160px;margin:auto;padding:19px 20px 48px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;padding-bottom:18px}
+.top a{border:1px solid var(--line);border-radius:9px;padding:8px 12px;text-decoration:none;background:#fff;font-weight:700;font-size:12px}
+h1{font-size:27px;margin:0 0 4px;letter-spacing:-.4px}.sub{font-size:12px;color:var(--muted);line-height:1.55}
+.toplinks{display:flex;gap:8px;flex-wrap:wrap}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}
+.head .sub{margin:0}
+#freshness{font-size:11px;color:#64748b}
+.filters{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:0 0 4px;flex:1;scrollbar-width:thin}
+.tab{border:1px solid #d8e2ef;border-radius:9px;padding:9px 13px;white-space:nowrap;background:#fff;color:#36506f;font-weight:800;font-size:12px;cursor:pointer}
+.tab[aria-pressed=true]{background:#193d6a;color:#fff;border-color:#193d6a}
+#query{min-width:180px;max-width:230px;flex:0 1 230px;border:1px solid var(--line);padding:10px 12px;border-radius:9px;background:#fff;font:inherit;font-size:12px}
+.section{margin:20px 0 12px;display:flex;align-items:center;gap:9px}
+.section h2{margin:0;font-size:17px}.count{font-size:11px;background:#e8eef6;color:#445a75;font-weight:800;padding:4px 7px;border-radius:6px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.item{position:relative;background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px 16px;box-shadow:0 2px 14px rgba(26,47,82,.035);min-width:0}
+.item:hover{border-color:#a3bcda}
+.event{border-left:4px solid #c88735}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:11px;margin-bottom:9px}
+.cat{font-weight:800;color:#906123}.item.news .cat{color:#345d8f}
+.item h3{margin:0 0 11px;font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.item h3 a{color:var(--ink);text-decoration:none}.item h3 a:hover{text-decoration:underline}
+.source{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.themes{display:flex;gap:5px;flex-wrap:wrap}
+.theme{color:#4a6480;background:#f0f4f9;border:1px solid #e8eef5;border-radius:6px;padding:3px 6px;font-size:10px}
+.openlink{font-size:12px;font-weight:850;color:var(--accent);text-decoration:none;white-space:nowrap}
+#alert{padding:11px 13px;margin:6px 0 15px;background:#fff7ed;color:#9a5b16;border-radius:9px;font-size:12px}
+#alert[hidden],#empty[hidden]{display:none}
+#empty{padding:35px;text-align:center;color:var(--muted);background:#fff;border-radius:12px}
+.footer{margin-top:24px;border-top:1px solid var(--line);padding-top:13px;color:var(--muted);font-size:11px;line-height:1.6}
+@media(max-width:700px){.wrap{padding:13px 12px 32px}.top{gap:9px}.top a{padding:7px 9px}.toplinks{gap:5px}.head{align-items:flex-start;flex-direction:column}h1{font-size:22px}.filters{gap:7px}#query{order:-1;max-width:none;flex:1 1 100%;min-width:0}.grid{grid-template-columns:1fr}.tabs{width:100%}.item{padding:13px}.item h3{font-size:14px}.section{margin:16px 0 10px}}
+</style>
+<script src="./site-access.js"></script>
+</head><body>
+<div class="wrap">
+<nav class="top" aria-label="頁面導覽"><a href="./index.html">← 主頁</a><div class="toplinks"><a href="./selections.html">📋 G 選股</a><a href="./bubbles.html">🫧 資金泡泡</a></div></nav>
+<div class="head"><div><h1>🗞 市場大事</h1><div class="sub">產業展覽・科技財報・漲價訊息・AI 需求・總經事件</div></div><div id="freshness" aria-live="polite">資料讀取中…</div></div>
+<div class="filters">
+  <input id="query" type="search" aria-label="搜尋市場大事" placeholder="搜尋事件、公司、產業…" autocomplete="off">
+  <div class="tabs" id="filters" role="group" aria-label="主題篩選">
+    <button class="tab" data-cat="all" aria-pressed="true">全部</button>
+    <button class="tab" data-cat="event" aria-pressed="false">🗓 展覽活動</button>
+    <button class="tab" data-cat="earnings" aria-pressed="false">📊 科技財報</button>
+    <button class="tab" data-cat="ai" aria-pressed="false">🤖 AI／半導體</button>
+    <button class="tab" data-cat="prices" aria-pressed="false">📈 產業報價</button>
+    <button class="tab" data-cat="macro" aria-pressed="false">🏦 升降息</button>
+    <button class="tab" data-cat="commodities" aria-pressed="false">🛢 油價／黃金</button>
+  </div>
+</div>
+<p id="alert" role="status" hidden></p>
+<section id="eventSection"><div class="section"><h2>即將發生</h2><span class="count" id="eventCount">—</span></div><div id="events" class="grid"></div></section>
+<section id="newsSection"><div class="section"><h2>最新重大新聞</h2><span class="count" id="newsCount">—</span></div><div id="news" class="grid"></div></section>
+<div id="empty" hidden>沒有符合的事件或新聞，請試試其他關鍵字。</div>
+<div class="footer">日期均以台灣時間呈現。活動日期以主辦單位公告為準；新聞為外部媒體標題與來源連結，未經獨立查核，不代表消息已證實，也不代表相關族群必然上漲或下跌。</div>
+</div><script src="./market-events.js"></script>
+</body></html>
