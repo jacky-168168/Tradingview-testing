@@ -24,7 +24,7 @@
 .site-nav{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 20px;border-top:1px solid var(--border);padding-top:13px;margin-top:13px}
 .site-nav-group{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
 .site-nav-label{font-size:11px;color:#64748b;font-weight:800;white-space:nowrap}
-.site-nav-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.site-nav-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.site-nav-links>a[hidden]{display:none!important}
 .site-nav-secondary .btn{background:#f8fafc}
 .nav-compact{font-weight:750;font-size:11px;opacity:.88}
 @media(max-width:1180px){.site-nav{align-items:flex-start;justify-content:flex-start}.site-nav-group{width:100%}.site-nav-secondary{border-top:1px dashed #e8edf3;padding-top:10px}}
@@ -63,10 +63,10 @@
         <a class="btn" href="./market-events.html" title="重大展覽、科技財報、漲價與總經新聞">🗞 市場大事</a>
         <a class="btn" href="./stocks.html">🔬 個股量化體檢</a>
         <a class="btn" href="./backtest.html">📈 回測中心 <span class="nav-compact">／Edge</span></a>
-        <a class="btn" href="./bottom-top-trader.html">🎯 Bottom/Top 交易雷達</a>
+        <a class="btn" href="./bottom-top-trader.html" hidden>🎯 Bottom/Top 交易雷達</a>
         <a class="btn" href="./position-sizing.html">💰 資金配置儀表板</a>
-        <a class="btn" href="./capital-water-backtest.html">📉 逆向水位回測</a>
-        <a class="btn" href="./margin-short-research.html">🧪 融資券研究</a>
+        <a class="btn" href="./capital-water-backtest.html" hidden>📉 逆向水位回測</a>
+        <a class="btn" href="./margin-short-research.html" hidden>🧪 融資券研究</a>
         <a class="btn" href="./trade-plan.html">🧮 分批資金計算</a>
       </div>
     </div>
