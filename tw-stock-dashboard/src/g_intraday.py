@@ -15,6 +15,7 @@ from config import DATA_DIR,UNIVERSE_CACHE,HISTORY_DIR,LATEST_JSON,MIN_LISTED_UN
 from yahoo_cache import to_symbol,load_cached
 from g_live import select as select_g,prior_pockets
 from industry_chain import enrich as enrich_chain
+from g_intraday_archive import archive_intraday_payload
 
 TZ=ZoneInfo("Asia/Taipei")
 BASE="https://mis.twse.com.tw/stock/"
@@ -237,6 +238,8 @@ def main():
                  "rows":rows,"selection":meta}
         OUTPUT.parent.mkdir(parents=True,exist_ok=True)
         OUTPUT.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8")
+        archived=archive_intraday_payload(DATA_DIR,payload)
+        print("INTRADAY_G_ARCHIVED",archived,flush=True)
         write_status(now,"ok","G盤中重新篩選 "+str(len(rows))+" 檔；有效全市場報價 "+str(coverage["valid"])+"/"+str(coverage["total"]))
         print(json.dumps({"intradayG":"ok","dataDate":today,"sourceCloseDate":source,
                           "candidates":meta["doubleBreakCandidates"],"top20":len(rows),
