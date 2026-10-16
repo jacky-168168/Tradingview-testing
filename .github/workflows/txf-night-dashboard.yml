@@ -36,7 +36,7 @@ jobs:
         shell: bash
         run: |
           PYTHONPATH=tw-stock-dashboard/src python - <<'PY'
-          from futures_night import day_from_openapi,night_from_html,build
+          from futures_night import day_from_openapi,day_from_html,night_from_html,build
           from datetime import datetime
           from zoneinfo import ZoneInfo
           api=[
@@ -45,6 +45,13 @@ jobs:
            {"Date":"20261008","Contract":"TX","ContractMonth(Week)":"202611","Last":"49700","Volume":"15","TradingSession":"一般"}]
           day=day_from_openapi(api)
           assert day["close"]==49349 and day["contract"]=="202610",day
+          dayhtml="""<div>2026/10/16 08:45~13:45 一般交易時段行情表</div>
+          <table class="table_f"><tr><td>TX</td><td>202610</td><td>47228</td><td>47634</td>
+          <td>47140</td><td>47242</td><td>311</td><td>0.66%</td><td>41283</td>
+          <td>63312</td><td>104595</td><td>47284</td></tr></table>"""
+          rescued=day_from_html(dayhtml,"2026-10-16","202610")
+          assert rescued and rescued["date"]=="20261016" and rescued["close"]==47242 and rescued["volume"]==63312,rescued
+          assert day_from_html(dayhtml,"2026-10-15","202610") is None
           html="""<html><body>2026/10/08 15:00~次日05:00 盤後交易時段行情表
           <table class="table_f"><tr><th>契約</th></tr>
           <tr><td>TX</td><td>202610</td><td>49122</td><td>49226</td>
