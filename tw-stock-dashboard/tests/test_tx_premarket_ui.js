@@ -8,10 +8,12 @@ const model=require(path.join(base,"market-command.js"));
 const html=fs.readFileSync(path.join(base,"index.html"),"utf8");
 const latest=JSON.parse(fs.readFileSync(path.join(base,"data/daily/2026-10-08.json"),"utf8"));
 const publishedFutures=JSON.parse(fs.readFileSync(path.join(base,"data/futures/latest.json"),"utf8"));
-assert.strictEqual(publishedFutures.quality,"paired-day-night");
+assert(["paired-day-night","day-only"].includes(publishedFutures.quality),"Only verified TX sessions may publish");
 assert.strictEqual(publishedFutures.day.date,publishedFutures.asOfDate.replace(/-/g,""));
-assert.strictEqual(publishedFutures.night.date,publishedFutures.day.date);
-assert.strictEqual(publishedFutures.night.contract,publishedFutures.day.contract);
+if(publishedFutures.quality==="paired-day-night"){
+ assert.strictEqual(publishedFutures.night.date,publishedFutures.day.date);
+ assert.strictEqual(publishedFutures.night.contract,publishedFutures.day.contract);
+}else assert.strictEqual(publishedFutures.night,null,"Pending official night must not use fabricated values");
 const future={asOfDate:"2026-10-08",contract:"202610",quality:"paired-day-night",
  day:{date:"20261008",contract:"202610",close:10000},
  night:{date:"20261008",contract:"202610",close:9869.5,reportQueryDate:"2026-10-12"}};
