@@ -25,7 +25,13 @@ async function main(){
   await check(page,tag+' G Top20 sector summary contains accurate source note or hidden',async()=>page.evaluate(()=>{
    const p=document.querySelector('#gSectorLeaderPanel');return p.hidden||p.textContent.includes('Top20');
   }));
-  await check(page,tag+' G day not falsely showing stale intraday',async()=>(await page.locator('#gIntradayStatus').innerText()).includes('沒有可用'));
+  await check(page,tag+' G intraday always labels old snapshots as historical or stale',async()=>page.evaluate(()=>{
+   const t=document.getElementById('gIntradayStatus').textContent;
+   return t.includes('沒有可用')||t.includes('歷史盤中快照')||t.includes('超過110分鐘')||t.includes('今日盤中已結束')||t.includes('盤中資料日 '+taipeiDate());
+  }));
+  await check(page,tag+' G timeline loaded with a real published timestamp',async()=>page.evaluate(()=>{
+   return !!window.GIntradayTimeline&&document.getElementById('gHistoryLabel').textContent.includes('輪')&&document.getElementById('gHistoryDate').options.length>0;
+  }));
   await check(page,tag+' TradingView link valid',async()=>page.evaluate(()=>Array.from(document.querySelectorAll('#officialTb a.tv-link')).some(a=>a.href.startsWith('https://www.tradingview.com/chart/?symbol=T'))));
   await check(page,tag+' repeat summary date and reconstruction warning',async()=>{
    await page.waitForFunction(()=>window.REPEAT_DATA!==null,{timeout:15000});
@@ -84,10 +90,14 @@ async function main(){
     DATA.models.G=real;renderGThemeLeaders();
     return alert.includes('CPO｜盤後最強入榜類股')&&alert.includes('6/20')&&alert.includes('30%');
   }));
-  await check(page,tag+' expired or stale G intraday never replaces official listing',async()=>page.evaluate(()=>{
-    const old=G_INTRADAY;const today=taipeiDate();
-    G_INTRADAY={quality:'intraday-provisional-allmarket',asOfDate:today,sourceCloseDate:DATA.dataDate,publishedAt:'2026-01-01T09:00:00+08:00',rows:[DATA.models.G[0]]};
-    const ok=currentLiveG()===null;G_INTRADAY=old;return ok;
+  await check(page,tag+' forged stale latest cannot pass intraday validity check',async()=>page.evaluate(()=>{
+    const old=G_INTRADAY,oldCurrent=GIntradayTimeline.current,oldHist=GIntradayTimeline.historical;
+    try{
+      GIntradayTimeline.current=function(fallback){return fallback};
+      GIntradayTimeline.historical=function(){return false};
+      G_INTRADAY={quality:'intraday-provisional-allmarket',asOfDate:taipeiDate(),sourceCloseDate:DATA.dataDate,publishedAt:'2026-01-01T09:00:00+08:00',rows:[DATA.models.G[0]]};
+      return currentLiveG()===null;
+    }finally{G_INTRADAY=old;GIntradayTimeline.current=oldCurrent;GIntradayTimeline.historical=oldHist}
   }));
   await check(page,tag+' no runtime exception',async()=>errs.length===0?true:JSON.stringify(errs));
   await check(page,tag+' no 4xx/5xx for assets',async()=>badHttp.length===0?true:JSON.stringify(badHttp));
