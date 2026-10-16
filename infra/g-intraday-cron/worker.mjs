@@ -10,7 +10,6 @@ function taipeiParts(now){
 }
 function localSlot(now){
  const p=taipeiParts(now),mins=Number(p.hour)*60+Number(p.minute);
- const weekday=now.getUTCDay(); // timezone shifted day handled below via date
  const localDate=p.year+"-"+p.month+"-"+p.day;
  if(["Sat","Sun"].includes(p.weekday)||(p.year==="2026"&&HOLIDAYS_2026.has(p.month+"-"+p.day))||mins<544||mins>817)return null;
  const slot=Math.max(540,Math.min(810,Math.floor(mins/30)*30));
@@ -29,7 +28,7 @@ async function api(path,token,init={}){
 }
 async function latest(token){
  const c=await api("/contents/tw-stock-dashboard/docs/data/g_intraday/latest.json?ref=main",token);
- const chars=Uint8Array.from(atob(c.content.replace(/\\s/g,"")),x=>x.charCodeAt(0));
+ const chars=Uint8Array.from(atob(c.content.replace(/\s/g,"")),x=>x.charCodeAt(0));
  return JSON.parse(new TextDecoder().decode(chars));
 }
 function activeForSlot(runs,now,slot){
