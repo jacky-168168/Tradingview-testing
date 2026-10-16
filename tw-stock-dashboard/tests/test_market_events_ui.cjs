@@ -25,6 +25,13 @@ vm.runInNewContext(script,ctx);
 setImmediate(()=>{
  assert(node('events').innerHTML.includes('TPCA Show 2026'),'confirmed TPCA must render');
  assert(!node('news').innerHTML.includes('TPCA Show'),'events cannot be faked as news');
+ const expected=Math.min(20,sample.items.filter(x=>x.type==='news').length);
+ assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,expected,'market news must show up to 20 initially');
+ if(sample.items.filter(x=>x.type==='news').length>20){
+   assert.equal(node('moreNews').hidden,false,'load more must appear when news exceed 20');
+   node('moreNews').fn();
+   assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,Math.min(40,sample.items.filter(x=>x.type==='news').length),'load more adds 20 results');
+ }
  if(sample.status==='initializing')assert(node('alert').textContent.includes('同步尚未完成'),'initializing must be shown');
 else if(sample.status==='ok')assert(node('news').innerHTML.length>0,'live news must render');
 else assert(!node('alert').hidden,'partial/degraded source must show warning');
