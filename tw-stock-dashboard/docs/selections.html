@@ -213,7 +213,7 @@ body.g-report-mode .g-report-mobile-tip{display:block;font-size:11px;color:#7180
 .g-history-controls label{display:flex;align-items:center;gap:7px;color:#64748b;font-size:12px;font-weight:800}
 .g-history-controls select{max-width:165px}
 .g-history-controls strong{font-size:12px;min-width:190px;text-align:center;color:#1e3a8a}
-.g-history-controls button:disabled{opacity:.35;cursor:not-allowed}
+.g-history-state{font-size:11px;font-weight:850;background:#e0f2fe;color:#075985;border-radius:99px;padding:5px 9px;white-space:nowrap}.g-history-state.archive{background:#f1f5f9;color:#475569}.g-history-state.warning{background:#fef3c7;color:#92400e}.g-history-controls button:disabled{opacity:.35;cursor:not-allowed}
 .g-history-note{margin:6px 4px 10px;font-size:11px;line-height:1.6;color:#64748b}
 @media(max-width:650px){.g-history-controls{gap:6px;padding:10px}.g-history-controls strong{min-width:0;flex:1;font-size:11px}.g-history-controls .btn{padding:8px 9px;font-size:11px}.g-history-controls label{width:100%}.g-history-controls select{flex:1;max-width:none}}
 </style>
@@ -286,7 +286,7 @@ body.g-report-mode .g-report-mobile-tip{display:block;font-size:11px;color:#7180
   <div id="gHistoryControls" class="g-history-controls" aria-label="盤中選股歷史輪次">
     <label for="gHistoryDate">交易日 <select id="gHistoryDate" class="btn" aria-label="選擇歷史盤中交易日"></select></label>
     <button id="gHistoryPrev" class="btn" type="button" aria-label="上一輪盤中選股" title="上一輪成功選股">◀</button>
-    <strong id="gHistoryLabel" aria-live="polite">正在讀取歷史輪次…</strong>
+    <strong id="gHistoryLabel" aria-live="polite">正在讀取歷史輪次…</strong><span id="gHistoryHealth" class="g-history-state" role="status">載入中</span>
     <button id="gHistoryNext" class="btn" type="button" aria-label="下一輪盤中選股" title="下一輪成功選股">▶</button>
     <button id="gHistoryLatest" class="btn" type="button" title="返回目前最後一次成功選股">回最新</button>
   </div>
