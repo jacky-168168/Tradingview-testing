@@ -41,7 +41,7 @@ function paint(){
   health.textContent=mark;
   health.className="g-history-state "+(arch?"archive":mark==="更新延遲"?"warning":"");
  }
- note.textContent=(error?"⚠ "+error:"")+(error&&gap.length?"｜":"")+(gap.length?"⚠ 缺少 "+gap.join("、"):"");note.hidden=!error&&!gap.length;
+ note.textContent=(error?"⚠ "+error:"")+(error&&gap.length?"｜":"")+(gap.length?"⚠ 缺 "+gap.length+" 輪":"");note.title=gap.length?"缺少時段："+gap.join("、"):"";note.hidden=!error&&!gap.length;
 }
 async function readEntry(item,d){
  if(!item)return null;
