@@ -30,7 +30,7 @@ function themeButton(theme){
  if(parts.length<=2)return '<span class="theme-chips">'+parts.map(chip).join('<span class="theme-sep"> · </span>')+'</span>';
  return '<span class="theme-chips">'+parts.slice(0,2).map(chip).join('<span class="theme-sep"> · </span>')+'</span><details class="theme-more"><summary>＋'+(parts.length-2)+' 個題材</summary><div class="theme-more-list">'+parts.slice(2).map(chip).join('')+'</div></details>';
 }
-function filterBar(){var bar=document.getElementById("themeFilterBar");if(!bar)return;bar.hidden=!THEME_FILTER;document.getElementById("themeFilterLabel").textContent=THEME_FILTER?"🔎 題材："+THEME_FILTER+"（同時篩選排行及重複上榜）":""}
+function filterBar(){var bar=document.getElementById("themeFilterBar");if(!bar)return;bar.hidden=!THEME_FILTER;document.getElementById("themeFilterLabel").textContent=THEME_FILTER?"🔎 "+THEME_FILTER:""}
 function applyTableMode(){
  var isN=MODEL==="N",isL=MODEL==="L",simple=TABLE_COMPACT;
  var official=document.getElementById("officialStockTable");official.classList.toggle("compact",simple);official.classList.toggle("simple-mode",simple);official.tHead.innerHTML=simple?STOCK_SIMPLE_HEAD.replace("<th>強度</th>","<th>近10日入榜</th>"):NORMAL_G_TABLE_HEAD.replace("現價 / 收盤","正式收盤價");
@@ -41,7 +41,7 @@ function applyTableMode(){
  layoutToggle.setAttribute("aria-pressed",simple?"true":"false");
  layoutToggle.setAttribute("aria-label",simple?"切換詳細模式，顯示全部欄位":"切換簡單模式，無需左右滑動");
  document.getElementById("repeatPanel").classList.toggle("repeat-simple",simple);
- tableHint.textContent=simple?(isN?"N 簡單模式：基本面歷史訊號，不是即時選股。":(MODEL==="G"||MODEL==="G Pro"?"G 簡單模式：近10日入榜只統計前10個已完成交易日，不含今天；「SAR 待確認」表示等待正式收盤日K，並非G盤中選股未通過。點空白處展開明細、點題材篩選。":"簡單模式：股票＋題材、總分／SAR、現價及漲跌幅；點股票以外空白處可展開明細，點題材可篩選。")):"詳細模式：顯示所有原始欄位，可左右捲動；點題材可篩選。";
+  tableHint.textContent="";
  filterBar();
 }
 function simpleMetric(name,value){return '<div><dt>'+esc(name)+'</dt><dd>'+value+'</dd></div>'}
@@ -190,13 +190,13 @@ function renderOfficialG(){
  var source=DATA&&DATA.dataDate,selection=DATA&&DATA.gSelection,full=DATA&&DATA.models&&DATA.models.G;
  var verified=Array.isArray(full)&&!!source&&!!selection&&selection.dataDate===source;
  var lg=currentLiveG(),liveStatus=document.getElementById("gIntradayStatus"),liveCount=document.getElementById("gIntradayCount");
- if(lg){liveStatus.textContent="盤中資料日 "+lg.asOfDate+"｜更新 "+lg.publishedAt+"｜全市場有效報價 "+(lg.coverage&&lg.coverage.valid||0)+"/"+(lg.coverage&&lg.coverage.total||0)+"｜未成交參考樣本 "+(lg.coverage&&lg.coverage.noTrade||0)+" 檔（不會入選）｜未完成日K，訊號僅供暫估"+gSnapshotNotice(lg)+(recentGAttemptFailure(lg)?"｜⚠ 最新一次更新失敗，保留前次有效快照":"");liveCount.textContent=lg.rows.length+" 檔"}
- else{var st=G_INTRADAY_STATUS,reason=st&&st.asOfDate===taipeiDate()&&st.status==="unavailable"?"｜⚠ 今日更新失敗："+(st.message||"來源未就緒"):"",old=G_INTRADAY&&G_INTRADAY.asOfDate===taipeiDate()?"｜當日最後發布 "+G_INTRADAY.publishedAt+"，但已超過有效時間":"";liveStatus.textContent="目前沒有可用的今日 G 盤中榜單"+reason+old+"｜預定每個交易日 09:00～13:30 每30分鐘更新；頁面每90秒自動同步（GitHub排程可能延遲）｜不拿前一日榜單冒充今日盤中";liveCount.textContent="尚無有效盤中榜"}
+  if(lg){var archived=!!(window.GIntradayTimeline&&GIntradayTimeline.historical(lg)),cov=lg.coverage||{};liveStatus.textContent=(archived?"歷史盤中快照":"盤中資料日 "+lg.asOfDate)+"｜報價 "+(cov.valid||0)+"/"+(cov.total||0)+(recentGAttemptFailure(lg)?"｜⚠ 更新失敗，顯示上一輪":"");liveCount.textContent=lg.rows.length+" 檔"}
+  else{var st=G_INTRADAY_STATUS,failed=st&&st.asOfDate===taipeiDate()&&st.status==="unavailable";liveStatus.textContent="目前沒有可用的今日 G 盤中榜單"+(failed?"｜⚠ 本輪失敗":"");liveCount.textContent="尚無盤中榜"}
  if(!verified){status.textContent="⚠ 最近正式 G 選股尚未完成或日期不一致，不能將盤中價格當作盤後正式訊號";number.textContent="資料未就緒";body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="padding:25px;text-align:center">正式 G 資料尚未同步，請等待盤後完整更新。</td></tr>';return}
  var selected=full.map(function(stock,i){return {stock:stock,rank:i+1}}).filter(function(pair){return !THEME_FILTER||stockHasTheme(pair.stock,THEME_FILTER)});
  var iq=DATA&&DATA.institutionQuality,iqGood=iq&&iq.status==="complete"&&iq.date===source&&iq.missingRanked===0;
- var iqText=iqGood?"｜✅ 官方籌碼已驗證：上市 "+iq.listedRows+" 筆、上櫃 "+iq.otcRows+" 筆，榜單缺漏 0 筆":"｜⚠ 籌碼完整性尚未驗證，請核對 GitHub 更新狀態";
- status.textContent="正式訊號日 "+source+"｜依已完成日K計算；盤中快刷不改變正式名單"+iqText;
+  var iqText=iqGood?"｜✅ 籌碼已驗證":"｜⚠ 籌碼待確認";
+  status.textContent="正式訊號日 "+source+iqText;
  number.textContent=selected.length+"/"+full.length+" 檔"+(THEME_FILTER?"｜"+THEME_FILTER:"");
  if(!selected.length){body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="text-align:center;padding:25px">'+(THEME_FILTER?"此正式榜單沒有「"+esc(THEME_FILTER)+"」題材":"該交易日沒有正式 G 入選股票")+'</td></tr>';return}
  body.innerHTML=selected.map(function(pair){var x=pair.stock,i=pair.rank-1;return TABLE_COMPACT?renderSimpleStock(x,i,true,null,true):renderOfficialDetailedRow(x,i)}).join("");

@@ -21,6 +21,18 @@ async function main(){
    return MODEL==='G'&&DATA.gSelection.dataDate===DATA.dataDate&&x===DATA.models.G.length&&x<=20;
   }));
   await check(page,tag+' 3 G report jump links',async()=>(await page.locator('.g-report-jump').count())===3);
+  await check(page,tag+' compact G selection has no persistent instructional paragraphs',async()=>page.evaluate(()=>{
+    const text=document.body.innerText,hidden=id=>getComputedStyle(document.getElementById(id)).display==='none';
+    return hidden('tableHint')&&hidden('gNote')&&hidden('meta')&&
+      !text.includes('箭頭只顯示實際成功存檔的輪次')&&
+      !text.includes('G 簡單模式：近10日入榜')&&
+      !text.includes('頁面每90秒同步；查看歷史');
+  }));
+  await check(page,tag+' compact G report jump buttons remain accessible',async()=>page.evaluate(()=>{
+    const links=[...document.querySelectorAll('.g-report-jump')];
+    if(links.length!==3||links.some(l=>l.getBoundingClientRect().width<65))return false;
+    return innerWidth>650||links.every(l=>Math.abs(l.getBoundingClientRect().top-links[0].getBoundingClientRect().top)<3);
+  }));
   await check(page,tag+' official market and date status',async()=> (await page.locator('#gOfficialStatus').innerText()).includes('正式訊號日'));
   await check(page,tag+' G Top20 sector summary contains accurate source note or hidden',async()=>page.evaluate(()=>{
    const p=document.querySelector('#gSectorLeaderPanel');return p.hidden||p.textContent.includes('Top20');
