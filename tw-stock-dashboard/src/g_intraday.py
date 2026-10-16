@@ -5,7 +5,7 @@ MIS cumulative volume is in lots (1000 shares); Yahoo history is in shares.
 Never publish a partial cross-section or silently fill missing quotes.
 """
 from __future__ import annotations
-import json,sys,time,threading
+import json,sys,time,threading,os
 from datetime import datetime,time as clock,timedelta
 from concurrent.futures import ThreadPoolExecutor,as_completed
 from pathlib import Path
@@ -189,6 +189,20 @@ def main():
     if now.weekday()>=5 or not clock(9,0)<=now.time()<clock(13,45):
         write_status(now,"closed","僅於臺灣交易日09:00–13:45產生盤中G暫估");return
     try:
+        session_slot=now.replace(minute=30 if now.minute>=30 else 0,second=0,microsecond=0).strftime("%H:%M")
+        # Multiple independent schedulers can fire in one half-hour. Scheduled
+        # recoveries must not create duplicate archived rankings for the same slot.
+        # Manual dispatches remain free to recompute on demand.
+        if os.environ.get("GITHUB_EVENT_NAME")=="schedule" and OUTPUT.exists():
+            try:
+                last=json.loads(OUTPUT.read_text(encoding="utf-8"))
+                last_time=datetime.fromisoformat(str(last.get("publishedAt","")))
+                old_slot=str(last.get("sessionSlot") or last_time.replace(minute=30 if last_time.minute>=30 else 0,second=0,microsecond=0).strftime("%H:%M"))
+                if last.get("quality")=="intraday-provisional-allmarket" and last.get("asOfDate")==today and old_slot==session_slot and now>=last_time and now-last_time<timedelta(minutes=30):
+                    print("INTRADAY_G_ALREADY_CURRENT",today,session_slot,last["publishedAt"],flush=True)
+                    return
+            except (OSError,ValueError,TypeError,KeyError):
+                pass
         if not(LATEST_JSON.exists() and UNIVERSE_CACHE.exists()):raise RuntimeError("缺少正式收盤快照或完整上市櫃公司母檔")
         base=json.loads(LATEST_JSON.read_text(encoding="utf-8"))
         source=str(base.get("dataDate") or "")
@@ -202,6 +216,7 @@ def main():
         calendar=sorted(set(str(x) for x in benchmark.date if str(x)<today and str(x).startswith(today[:4])))
         if not calendar or calendar[-1]!=source:raise RuntimeError("大盤已完成交易日與正式快照日期不吻合")
         quotes,coverage=fetch_quotes_with_retries(universe,today,now)
+        quote_captured_at=datetime.now(TZ).isoformat(timespec="seconds")
         history={};rejected=0
         for stock in universe:
             key=(stock["market"],stock["code"]);q=quotes.get(key)
@@ -230,7 +245,7 @@ def main():
         meta["pocketWarmup"]=found<min(10,len(calendar)-1)
         meta["isProvisional"]=True
         meta["note"]="盤中依未完成日K、當日累積成交量與當日MIS報價重選。當日未成交股票以核對過的昨收價及0成交量納入排名母體，不得入選G；無成交價但有買賣揭示者以經價差篩選的中間價估算。非正式G日K訊號，法人及SAR均未確認。"
-        payload={"asOfDate":today,"publishedAt":datetime.now(TZ).isoformat(timespec="seconds"),
+        payload={"asOfDate":today,"publishedAt":datetime.now(TZ).isoformat(timespec="seconds"),"scanStartedAt":now.isoformat(timespec="seconds"),"quoteCapturedAt":quote_captured_at,"sessionSlot":session_slot,
                  "sourceCloseDate":source,"quality":"intraday-provisional-allmarket",
                  "quoteSource":"TWSE MIS same-day listed+OTC; trade price if available, otherwise validated order-book midpoint proxy; cumulative lots × 1000 shares",
                  "coverage":coverage,"marketBreadth":provisional_breadth(quotes),"quotePriceSources":{kind:sum(q.get("priceSource")==kind for q in quotes.values()) for kind in ("last-trade","previous-trade","bid-ask-midpoint","one-sided-high-bid","one-sided-low-ask","no-trade-prevclose")},"historicalBarCoverage":len(history),"historyRejected":rejected,

@@ -213,7 +213,7 @@ body.g-report-mode .g-report-mobile-tip{display:block;font-size:11px;color:#7180
 .g-history-controls label{display:flex;align-items:center;gap:7px;color:#64748b;font-size:12px;font-weight:800}
 .g-history-controls select{max-width:165px}
 .g-history-controls strong{font-size:12px;min-width:190px;text-align:center;color:#1e3a8a}
-.g-history-controls button:disabled{opacity:.35;cursor:not-allowed}
+.g-history-state{font-size:11px;font-weight:850;background:#e0f2fe;color:#075985;border-radius:99px;padding:5px 9px;white-space:nowrap}.g-history-state.archive{background:#f1f5f9;color:#475569}.g-history-state.warning{background:#fef3c7;color:#92400e}.g-history-controls button:disabled{opacity:.35;cursor:not-allowed}
 .g-history-note{margin:6px 4px 10px;font-size:11px;line-height:1.6;color:#64748b}
 @media(max-width:650px){.g-history-controls{gap:6px;padding:10px}.g-history-controls strong{min-width:0;flex:1;font-size:11px}.g-history-controls .btn{padding:8px 9px;font-size:11px}.g-history-controls label{width:100%}.g-history-controls select{flex:1;max-width:none}}
 </style>
@@ -286,10 +286,11 @@ body.g-report-mode .g-report-mobile-tip{display:block;font-size:11px;color:#7180
   <div id="gHistoryControls" class="g-history-controls" aria-label="盤中選股歷史輪次">
     <label for="gHistoryDate">交易日 <select id="gHistoryDate" class="btn" aria-label="選擇歷史盤中交易日"></select></label>
     <button id="gHistoryPrev" class="btn" type="button" aria-label="上一輪盤中選股" title="上一輪成功選股">◀</button>
-    <strong id="gHistoryLabel" aria-live="polite">正在讀取歷史輪次…</strong>
+    <strong id="gHistoryLabel" aria-live="polite">正在讀取歷史輪次…</strong><span id="gHistoryHealth" class="g-history-state" role="status">載入中</span>
     <button id="gHistoryNext" class="btn" type="button" aria-label="下一輪盤中選股" title="下一輪成功選股">▶</button>
     <button id="gHistoryLatest" class="btn" type="button" title="返回目前最後一次成功選股">回最新</button>
   </div>
+  <p id="gHistoryConnection" class="g-history-note" role="alert" hidden></p>
   <p id="gHistoryNote" class="g-history-note" role="status">僅顯示實際成功儲存的盤中快照；未執行的時段不會偽造名單。</p>
 </section>
 <section id="lPanel" class="card l-research-panel" style="display:none" aria-label="L 週KD金叉及營收回測"><div class="l-research-head"><h2>🟢 L｜週KD(9,3,3) 金叉＋營收成長</h2><span>以「週K、週D均低於40」為條件；最新已公告月營收 MoM＞0% 或 YoY＞0%</span></div><p id="lStatus" class="sub" role="status">正在核對 L 每週正式訊號與歷史營收…</p><div class="l-research-head"><strong>訊號後 1W／2W／3W 淨報酬</strong><select id="lScope" class="btn" aria-label="L 回測期間"><option value="2026">2026 年訊號</option><option value="all">2023 至今全部訊號</option></select></div><div id="lStats" class="l-stats-grid"></div><p class="sub">回測：訊號週收盤確認，下一週首個交易日開盤買進，持有至第1／2／3個已完成交易週收盤；報酬已扣雙邊手續費與賣出交易稅共0.585%，未含滑價。最新官方 MOPS 歷史修訂值以次月16日為保守可用日，並非當年不可變公布快照；目前上市股票池可能有存活者偏誤。1W／2W／3W 是三種獨立持有期，不是預測未來。</p></section><div id="tableHint">手機預設簡單模式，顯示股票、題材、強度及現價；切換詳細模式可查看全部欄位。</div><div class="card table-card"><div class="scroll"><table id="stockTable" class="compact"><thead><tr><th>Rank</th><th>股票</th><th>市場</th><th>題材</th><th>總分</th><th class="g-only">原 G 分</th><th class="g-only">持續度</th><th class="g-only">前10日入選</th><th class="g-only">3D/18D</th><th>SAR</th><th>現價 / 收盤</th><th>股本</th><th>成交額</th><th>外資買超</th><th>投信買超</th><th>RS20</th><th>RVOL</th><th>5D</th><th>20D</th><th>距20日高</th><th>MA20斜率</th><th>訊號</th></tr></thead><tbody id="tb"><tr><td colspan="18" style="text-align:center;padding:40px;color:#7b8494">載入中...</td></tr></tbody></table></div></div>

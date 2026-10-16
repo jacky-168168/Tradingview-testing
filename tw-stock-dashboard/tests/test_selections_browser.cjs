@@ -56,7 +56,7 @@ async function main(){
   await check(page,tag+' G filter then clear',async()=>{
    const btn=page.locator('#officialTb .theme-pick').first();if(!await btn.count())return false;
    await btn.click();const shown=await page.locator('#themeFilterBar').isVisible();
-   await page.locator('#clearThemeFilter').click();return shown&&!(await page.locator('#themeFilterBar').isVisible())&&(await page.locator('#officialTb tr').count())===20;
+   await page.locator('#clearThemeFilter').click();return shown&&!(await page.locator('#themeFilterBar').isVisible())&&(await page.locator('#officialTb tr').count())===await page.evaluate(()=>DATA.models.G.length);
   });
   await check(page,tag+' layout simple/detail toggles',async()=>{
    const old=await page.locator('#modeBadge').innerText();
