@@ -6,7 +6,7 @@ function valid(g){return !!(g&&g.quality==="intraday-provisional-allmarket"&&Arr
 async function json(url){var r=await fetch(url+(url.indexOf("?")>=0?"&":"?")+"t="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);return r.json()}
 function render(){if(typeof renderTable==="function")renderTable();if(typeof renderMeta==="function")renderMeta()}
 function current(fallback){return selected||fallback||latest}
-function historical(g){return !!(g&&(pinned||g.asOfDate!==taipeiDate()||(latest&&g.publishedAt!==latest.publishedAt)))}
+function historical(g){return !!(g&&(pinned||g.asOfDate!==taipeiDate()||(Date.now()-Date.parse(g.publishedAt)>110*60000)||(latest&&g.publishedAt!==latest.publishedAt)))}
 function options(){
  var el=document.getElementById("gHistoryDate");if(!el)return;
  el.innerHTML=dates.map(function(d){return '<option value="'+d+'">'+d+'</option>'}).join("");
