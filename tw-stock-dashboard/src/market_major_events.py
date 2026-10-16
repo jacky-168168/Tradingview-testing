@@ -53,7 +53,7 @@ OFFICIAL=[
   "themes":["升降息","美元","黃金","科技股"],"confirmed":True},
 ]
 UA="Mozilla/5.0 (compatible; MarketCatalystRadar/1.0; +https://github.com/jacky-168168/Tradingview-testing)"
-PRIORITY=re.compile(r"漲價|調漲|上調|大漲|大跌|暴跌|暴增|飆升|缺貨|產能|擴產|突破|訂單|需求|財報|財測|FOMC|降息|升息|開幕|展覽|停產|限產|出口管制|guidance|earnings|surge|cuts",re.I)
+PRIORITY=re.compile(r"漲價|調漲|上調|上漲|下跌|走高|走低|漲幅|跌幅|創高|創低|大漲|大跌|暴跌|暴增|飆升|缺貨|產能|擴產|突破|訂單|需求|財報|財測|FOMC|降息|升息|開幕|展覽|停產|限產|出口管制|guidance|earnings|surge|cuts",re.I)
 
 def rss_url(q):
     return "https://news.google.com/rss/search?"+urllib.parse.urlencode({"q":q,"hl":"zh-TW","gl":"TW","ceid":"TW:zh-Hant"})
