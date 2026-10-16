@@ -72,7 +72,11 @@ def official_night(day,now):
     # A holiday/weekend night is filed under NEXT trading day, possibly
     # several calendar days later. Never pair two OpenAPI rows by Date!
     for offset in range(1,12):
-        report_date=(session_date+timedelta(days=offset)).isoformat()
+        query_day=session_date+timedelta(days=offset)
+        # The Friday AFTER-HOURS session is filed under Monday (or the
+        # next official open day), never a Saturday/Sunday cash session.
+        if query_day.weekday()>=5:continue
+        report_date=query_day.isoformat()
         params={"queryType":"2","marketCode":"1","MarketCode":"1","dateaddcnt":"",
             "commodity_id":"TX","commodity_idt":"TX","commodity_id2":"",
             "queryDate":report_date.replace("-","/")}
