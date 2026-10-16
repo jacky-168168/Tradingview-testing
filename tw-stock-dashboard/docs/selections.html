@@ -216,6 +216,28 @@ body.g-report-mode .g-report-mobile-tip{display:block;font-size:11px;color:#7180
 .g-history-state{font-size:11px;font-weight:850;background:#e0f2fe;color:#075985;border-radius:99px;padding:5px 9px;white-space:nowrap}.g-history-state.archive{background:#f1f5f9;color:#475569}.g-history-state.warning{background:#fef3c7;color:#92400e}.g-history-controls button:disabled{opacity:.35;cursor:not-allowed}
 .g-history-note{margin:6px 4px 10px;font-size:11px;line-height:1.6;color:#64748b}
 @media(max-width:650px){.g-history-controls{gap:6px;padding:10px}.g-history-controls strong{min-width:0;flex:1;font-size:11px}.g-history-controls .btn{padding:8px 9px;font-size:11px}.g-history-controls label{width:100%}.g-history-controls select{flex:1;max-width:none}}
+/* Focus on rankings, dates, and true error states; no persistent instructional paragraphs. */
+#tableHint,body.g-report-mode #gNote,body.g-report-mode #meta{display:none!important}
+#gHistoryNote[hidden],#gHistoryConnection[hidden]{display:none!important}
+.g-history-note:not([hidden]){padding:7px 10px;margin:5px 0 7px;border-radius:8px;background:#fff7ed;color:#92400e;font-weight:750}
+body.g-report-mode .g-report-intro{padding:9px 12px;margin:10px 0;background:transparent;border:0;box-shadow:none}
+body.g-report-mode .g-report-nav{margin:0;gap:8px}
+body.g-report-mode .g-report-jump{min-width:0;padding:10px 12px}
+body.g-report-mode .g-report-jump small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+body.g-report-mode .g-session-head{padding:12px 15px}
+body.g-report-mode .g-session-head p{margin-top:4px;line-height:1.4}
+body.g-report-mode .repeat-panel .repeat-foot{padding:7px 12px}
+@media(max-width:650px){
+ body.g-report-mode .g-report-intro{padding:7px 0;margin:9px 0}
+ body.g-report-mode .g-report-nav{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:0}
+ body.g-report-mode .g-report-jump{padding:10px 4px;text-align:center;justify-content:center;display:block;min-width:0}
+ body.g-report-mode .g-report-num{display:none}
+ body.g-report-mode .g-report-jump strong{font-size:12px;white-space:nowrap}
+ body.g-report-mode .g-report-jump small{font-size:10px;margin-top:2px}
+ body.g-report-mode .g-session-head{padding:11px 12px}
+ .g-history-controls{gap:6px;padding:9px}
+ .g-history-controls strong{min-width:0;flex:1 1 135px;font-size:11px}
+}
 </style>
 <script src="./site-access.js"></script>
 </head>
@@ -227,7 +249,7 @@ body.g-report-mode .g-report-mobile-tip{display:block;font-size:11px;color:#7180
     <a class="btn selection-home" href="./index.html" aria-label="返回台股量化市場總覽主頁">🏠 返回主頁</a>
     <div class="selection-brand">
       <h1>📋 選股排行 <span class="badge">G 預設</span></h1>
-      <div class="sub">選擇下方策略查看排名；N 為已驗證歷史研究訊號，非盤中即時資料。</div>
+      
     </div>
     <div class="selection-utilities">
       <a class="btn" href="./stocks.html">🔬 個股體檢</a>
@@ -246,12 +268,10 @@ body.g-report-mode .g-report-mobile-tip{display:block;font-size:11px;color:#7180
 <div id="staleWarning" class="warning stale" role="status">⚠ 最近交易日的資料尚未更新。</div>
 <section id="gSectorLeaderPanel" class="g-sector-alerts" aria-label="G 前20名強勢類股集中提醒" aria-live="polite" hidden></section>
 <div class="card toolbar"><div class="tabs"><button id="tabG" class="tab primary on">🚀 G 強勢股（預設）</button><button id="tabGPro" class="tab">💎 G Pro 嚴格強勢</button><button id="tabD" class="tab">D 技術強勢</button><button id="tabF" class="tab">F 固定濾網</button><button id="tabF2" class="tab">F2 動態濾網</button><button id="tabA" class="tab">A 原始多因子</button><button id="tabN" class="tab" type="button">🅽 N 成長動能</button><button id="tabL" class="tab" type="button">🟢 L 週KD低檔金叉＋營收</button></div><div style="text-align:right"><div><strong id="modelTitle">G 雙突破＋強勢持續度排行</strong> <span id="count" class="badge">0 檔</span> <span id="modeBadge" class="badge">簡單模式</span> <button id="layoutToggle" class="btn" type="button" aria-pressed="false">▥ 簡單模式</button></div><div id="meta" class="sub">載入中...</div></div></div>
-<div id="gNote" class="sub" role="status" aria-live="polite" style="margin:9px 3px 0;color:#34568b;font-weight:700;line-height:1.8">G 盤中會檢查上市＋上櫃當日報價，取得完整有效樣本才重新排序；盤中屬暫估，盤後 G 正式榜單另外保留。</div>
+<div id="gNote" class="sub" role="status" aria-live="polite"></div>
 <div id="themeFilterBar" class="theme-filter-bar" hidden><span id="themeFilterLabel">題材篩選</span><button id="clearThemeFilter" type="button">✕ 清除篩選</button></div>
 <section id="gReportIntro" class="g-report-intro" aria-label="G 選股報表導覽">
-  <div class="g-report-eyebrow">G STOCK SELECTION / 每日強勢股觀察</div>
-  <h2>G 強勢股｜選股觀察報表</h2>
-  <p id="gReportIntroDate">三份榜單分開顯示：重複入選、盤中暫估、盤後正式。指標與欄位皆沿用原有內容；資料日期各自獨立。</p>
+  <p id="gReportIntroDate" hidden></p>
   <nav class="g-report-nav" aria-label="快速切換 G 選股報表">
     <a class="g-report-jump" href="#repeatPanel"><span class="g-report-num">01</span><span><strong>重複入選</strong><small id="gQuickRepeat">正在讀取歷史紀錄</small></span></a>
     <a class="g-report-jump" href="#gIntradayHeading"><span class="g-report-num">02</span><span><strong>盤中選股</strong><small id="gQuickLive">正在檢查盤中資料</small></span></a>
@@ -274,7 +294,7 @@ body.g-report-mode .g-report-mobile-tip{display:block;font-size:11px;color:#7180
     </table>
   </div>
   <div class="repeat-foot">
-    <span>同模型、同股票於不同交易日上榜才各計1次；最新在榜者優先，再依次數排序。指標取該股最近一次上榜當日，不代表即時價格。</span>
+    
     <button id="repeatExpand" class="btn" type="button" onclick="toggleRepeatList()" style="display:none">展開全部</button>
   </div>
 </section>
@@ -291,9 +311,9 @@ body.g-report-mode .g-report-mobile-tip{display:block;font-size:11px;color:#7180
     <button id="gHistoryLatest" class="btn" type="button" title="返回目前最後一次成功選股">回最新</button>
   </div>
   <p id="gHistoryConnection" class="g-history-note" role="alert" hidden></p>
-  <p id="gHistoryNote" class="g-history-note" role="status">僅顯示實際成功儲存的盤中快照；未執行的時段不會偽造名單。</p>
+  <p id="gHistoryNote" class="g-history-note" role="alert" hidden></p>
 </section>
-<section id="lPanel" class="card l-research-panel" style="display:none" aria-label="L 週KD金叉及營收回測"><div class="l-research-head"><h2>🟢 L｜週KD(9,3,3) 金叉＋營收成長</h2><span>以「週K、週D均低於40」為條件；最新已公告月營收 MoM＞0% 或 YoY＞0%</span></div><p id="lStatus" class="sub" role="status">正在核對 L 每週正式訊號與歷史營收…</p><div class="l-research-head"><strong>訊號後 1W／2W／3W 淨報酬</strong><select id="lScope" class="btn" aria-label="L 回測期間"><option value="2026">2026 年訊號</option><option value="all">2023 至今全部訊號</option></select></div><div id="lStats" class="l-stats-grid"></div><p class="sub">回測：訊號週收盤確認，下一週首個交易日開盤買進，持有至第1／2／3個已完成交易週收盤；報酬已扣雙邊手續費與賣出交易稅共0.585%，未含滑價。最新官方 MOPS 歷史修訂值以次月16日為保守可用日，並非當年不可變公布快照；目前上市股票池可能有存活者偏誤。1W／2W／3W 是三種獨立持有期，不是預測未來。</p></section><div id="tableHint">手機預設簡單模式，顯示股票、題材、強度及現價；切換詳細模式可查看全部欄位。</div><div class="card table-card"><div class="scroll"><table id="stockTable" class="compact"><thead><tr><th>Rank</th><th>股票</th><th>市場</th><th>題材</th><th>總分</th><th class="g-only">原 G 分</th><th class="g-only">持續度</th><th class="g-only">前10日入選</th><th class="g-only">3D/18D</th><th>SAR</th><th>現價 / 收盤</th><th>股本</th><th>成交額</th><th>外資買超</th><th>投信買超</th><th>RS20</th><th>RVOL</th><th>5D</th><th>20D</th><th>距20日高</th><th>MA20斜率</th><th>訊號</th></tr></thead><tbody id="tb"><tr><td colspan="18" style="text-align:center;padding:40px;color:#7b8494">載入中...</td></tr></tbody></table></div></div>
+<section id="lPanel" class="card l-research-panel" style="display:none" aria-label="L 週KD金叉及營收回測"><div class="l-research-head"><h2>🟢 L｜週KD(9,3,3) 金叉＋營收成長</h2><span>以「週K、週D均低於40」為條件；最新已公告月營收 MoM＞0% 或 YoY＞0%</span></div><p id="lStatus" class="sub" role="status">正在核對 L 每週正式訊號與歷史營收…</p><div class="l-research-head"><strong>訊號後 1W／2W／3W 淨報酬</strong><select id="lScope" class="btn" aria-label="L 回測期間"><option value="2026">2026 年訊號</option><option value="all">2023 至今全部訊號</option></select></div><div id="lStats" class="l-stats-grid"></div><p class="sub">回測：訊號週收盤確認，下一週首個交易日開盤買進，持有至第1／2／3個已完成交易週收盤；報酬已扣雙邊手續費與賣出交易稅共0.585%，未含滑價。最新官方 MOPS 歷史修訂值以次月16日為保守可用日，並非當年不可變公布快照；目前上市股票池可能有存活者偏誤。1W／2W／3W 是三種獨立持有期，不是預測未來。</p></section><div id="tableHint" hidden aria-hidden="true"></div><div class="card table-card"><div class="scroll"><table id="stockTable" class="compact"><thead><tr><th>Rank</th><th>股票</th><th>市場</th><th>題材</th><th>總分</th><th class="g-only">原 G 分</th><th class="g-only">持續度</th><th class="g-only">前10日入選</th><th class="g-only">3D/18D</th><th>SAR</th><th>現價 / 收盤</th><th>股本</th><th>成交額</th><th>外資買超</th><th>投信買超</th><th>RS20</th><th>RVOL</th><th>5D</th><th>20D</th><th>距20日高</th><th>MA20斜率</th><th>訊號</th></tr></thead><tbody id="tb"><tr><td colspan="18" style="text-align:center;padding:40px;color:#7b8494">載入中...</td></tr></tbody></table></div></div>
 <section id="gOfficialPanel" class="g-session-panel" aria-label="G 盤後正式榜單">
   <header class="card g-session-head official">
     <div><h2>03｜G 盤後選股 <span class="sub">正式名單</span></h2><p id="gOfficialStatus" class="sub" role="status">正在讀取最近已完成交易日的正式 G 選股資料…</p></div>
