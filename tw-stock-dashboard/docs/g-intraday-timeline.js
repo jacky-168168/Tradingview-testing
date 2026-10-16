@@ -13,7 +13,7 @@ function missing(){
  if(!day)return [];
  var current=day===zoneToday(),limit=current?Math.min(810,todayMinutes()-15):810;
  if(current&&todayMinutes()<555)return [];
- var seen=new Set(entries.map(x=>x.sessionSlot&&/^\d{2}:\\d{2}$/.test(x.sessionSlot)?Number(x.sessionSlot.slice(0,2))*60+Number(x.sessionSlot.slice(3,5)):slot(x.publishedAt)));
+ var seen=new Set(entries.map(x=>x.sessionSlot&&/^\d{2}:\d{2}$/.test(x.sessionSlot)?Number(x.sessionSlot.slice(0,2))*60+Number(x.sessionSlot.slice(3,5)):slot(x.publishedAt)));
  var missingSlots=[];for(var m=540;m<=limit;m+=30)if(!seen.has(m))missingSlots.push(slotText(m));
  return missingSlots;
 }
