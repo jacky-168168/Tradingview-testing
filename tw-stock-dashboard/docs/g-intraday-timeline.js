@@ -39,7 +39,7 @@ async function sync(g){
  if(latest&&day===latest.asOfDate&&!entries.some(function(x){return x.publishedAt===latest.publishedAt})){
    entries.push({file:"__latest__",publishedAt:latest.publishedAt,count:latest.rows.length});
  }
- var item=pinned?entries.find(function(x){return x.file===chosen}):entries[entries.length-1];
+ var item=pinned?(chosen?entries.find(function(x){return x.file===chosen}):entries[entries.length-1]):entries[entries.length-1];
  if(pinned&&!item){error="原先選取的輪次已無法取得，已恢復最新";pinned=false;item=entries[entries.length-1]}
  chosen=item?item.file:"";selected=null;
  if(item){
