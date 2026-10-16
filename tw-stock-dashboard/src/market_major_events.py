@@ -42,6 +42,15 @@ OFFICIAL=[
  {"id":"event-taitronics-2026","type":"event","category":"展覽","title":"TAITRONICS & AIoT Taiwan 2026",
   "date":"2026-10-20","endDate":"2026-10-22","source":"台北世貿展覽行事曆","url":"https://www.twtc.org.tw/en/exhibition?p=menu1",
   "themes":["AIoT","電子零組件"],"confirmed":True},
+ {"id":"event-netflix-q3-2026","type":"event","category":"財報","title":"Netflix Q3 財報｜美西 10/20 公布",
+  "date":"2026-10-21","endDate":"2026-10-21","source":"Netflix 投資人關係","url":"https://ir.netflix.net/investor-news-and-events/financial-releases/press-release-details/2026/Netflix-to-Announce-Third-Quarter-2026-Financial-Results/default.aspx",
+  "themes":["美國科技","串流媒體"],"confirmed":True},
+ {"id":"event-tesla-q3-2026","type":"event","category":"財報","title":"Tesla Q3 財報｜美東 10/21 盤後",
+  "date":"2026-10-22","endDate":"2026-10-22","source":"Tesla 投資人關係","url":"https://ir.tesla.com/press-release/tesla-third-quarter-2026-production-deliveries-and-deployments",
+  "themes":["電動車","儲能","車用電子"],"confirmed":True},
+ {"id":"event-fomc-oct2026","type":"event","category":"總經","title":"美國聯準會 FOMC 利率決策｜美國 10/27–28",
+  "date":"2026-10-28","endDate":"2026-10-29","source":"Federal Reserve 官方","url":"https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+  "themes":["升降息","美元","黃金","科技股"],"confirmed":True},
 ]
 UA="Mozilla/5.0 (compatible; MarketCatalystRadar/1.0; +https://github.com/jacky-168168/Tradingview-testing)"
 PRIORITY=re.compile(r"漲價|調漲|上調|大漲|大跌|暴跌|暴增|飆升|缺貨|產能|擴產|突破|訂單|需求|財報|財測|FOMC|降息|升息|開幕|展覽|停產|限產|出口管制|guidance|earnings|surge|cuts",re.I)
