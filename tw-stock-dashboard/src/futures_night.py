@@ -46,7 +46,7 @@ def day_from_html(html,expected_date,expected_contract=None):
     soup=BeautifulSoup(html,"html.parser")
     page=" ".join(soup.stripped_strings)
     dates=set()
-    for y,m,d in re.findall(r"(20\\d{2})\\s*[/.-]\\s*(\\d{1,2})\\s*[/.-]\\s*(\\d{1,2})\\s*08\\s*:\\s*45",page):
+    for y,m,d in re.findall(r"(20\d{2})\s*[/.-]\s*(\d{1,2})\s*[/.-]\s*(\d{1,2})\s*08\s*:\s*45",page):
         try:dates.add(date(int(y),int(m),int(d)).isoformat())
         except ValueError:pass
     if expected_date not in dates:return None
@@ -54,7 +54,7 @@ def day_from_html(html,expected_date,expected_contract=None):
     for table in soup.select("table.table_f"):
         for tr in table.select("tr"):
             c=[x.get_text(" ",strip=True) for x in tr.select("td")]
-            if len(c)<12 or c[0]!="TX" or not re.fullmatch(r"20\\d{4}",c[1]):continue
+            if len(c)<12 or c[0]!="TX" or not re.fullmatch(r"20\d{4}",c[1]):continue
             last=num(c[5]);vol=num(c[9])
             if not last or not vol or vol<=0:continue
             rows.append({"date":expected_date.replace("-",""),"contract":c[1],"session":"DAY",
