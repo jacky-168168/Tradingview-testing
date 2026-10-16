@@ -1,0 +1,15 @@
+{
+  "name": "g-intraday-cron-backup",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-16",
+  "workers_dev": false,
+  "triggers": {
+    "crons": [
+      "4,19,34,49 1-4 * * 1-5",
+      "4,19,34 5 * * 1-5"
+    ]
+  },
+  "observability": {
+    "enabled": true
+  }
+}
