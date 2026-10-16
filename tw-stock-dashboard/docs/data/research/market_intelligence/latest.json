@@ -1,51 +1,33 @@
 {
   "version": "MARKET_DECISION_SUPPORT_2026_10_V1",
-  "asOf": "2026-10-15",
-  "riskScore": 21,
+  "asOf": "2026-10-16",
+  "riskScore": 41,
   "originalRiskState": "🔴 Risk OFF",
   "marketMode": "BOTTOM",
   "marketHealth": {
-    "breadthTodayPct": 19.9,
-    "breadth5Pct": 44.1,
-    "breadth10Pct": 45.7,
-    "breadthChangeVsPrev5Pts": -3.1,
-    "advanceDecline10Sum": -868,
-    "indexRet10Pct": -2.02,
+    "breadthTodayPct": 70.5,
+    "breadth5Pct": 49.4,
+    "breadth10Pct": 48.4,
+    "breadthChangeVsPrev5Pts": 2.1,
+    "advanceDecline10Sum": -341,
+    "indexRet10Pct": -2.57,
     "indexBreadthDivergence": false,
-    "riskScore3MA": 42.3,
-    "riskScore5SessionChange": -54.0,
-    "realizedVol20AnnualPct": 20.3,
-    "volatilityHistoryPercentile": 46.1,
-    "distancePrior120HighPct": -6.0,
+    "riskScore3MA": 44.0,
+    "riskScore5SessionChange": -5.0,
+    "realizedVol20AnnualPct": 20.0,
+    "volatilityHistoryPercentile": 45.8,
+    "distancePrior120HighPct": -5.72,
     "prior120HighType": "盤中最高價",
-    "distanceMA20Pct": -2.23,
-    "previousScore": 70,
-    "sourceHistoryDays": 732
+    "distanceMA20Pct": -2.1,
+    "previousScore": 21,
+    "sourceHistoryDays": 733
   },
   "decision": {
-    "level": "REVERSAL",
-    "headline": "🟣 超跌觀察｜尚未確認反轉",
-    "action": "低分可能持續下跌，先等 Strong Bottom Reversal 與個股訊號。",
+    "level": "STOP",
+    "headline": "🔴 暫不建議一般新倉",
+    "action": "市場尚未達到60分基準；等待趨勢回升或另行確認反轉。",
     "primaryGate": ">=60 Risk Score, with separate Strong Bottom exception",
     "flags": [
-      {
-        "code": "WEAK_BREADTH",
-        "severity": "caution",
-        "title": "市場參與度偏弱",
-        "detail": "近5交易日上漲家數平均不足45%，強勢股追價需要更謹慎。"
-      },
-      {
-        "code": "DAY_BREADTH_WEAK",
-        "severity": "caution",
-        "title": "當日上漲家數偏少",
-        "detail": "今天只有不到45%的上市股票上漲；這是一日風險訊號，不能單獨作為禁止買進依據。"
-      },
-      {
-        "code": "SCORE_DECELERATION",
-        "severity": "caution",
-        "title": "五日大盤分數快速下降",
-        "detail": "Risk Score 相較5個交易日前下降至少20分；需留意多頭動能轉弱，但原分數和策略門檻不變。"
-      },
       {
         "code": "FOREIGN_OUTFLOW",
         "severity": "info",
