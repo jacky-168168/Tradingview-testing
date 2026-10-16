@@ -37,6 +37,10 @@ class MajorMarketNewsTest(unittest.TestCase):
   self.assertEqual(out["status"],"partial")
   self.assertEqual(len([x for x in out["items"] if x["type"]=="news"]),1)
   self.assertFalse(next(x for x in out["items"] if x["type"]=="news")["confirmed"])
+ def test_promotional_blog_filtered_out(self):
+  feed=("AI需求","AI 晶片需求",r"AI|晶片",["AI"])
+  xml='''<rss><channel><item><title>AI晶片需求暴增！趕緊搶進熱門股 - CMoney投資網誌</title><link>https://example.com/blog</link><source>CMoney投資網誌</source><pubDate>Fri, 16 Oct 2026 07:00:00 GMT</pubDate></item></channel></rss>'''
+  self.assertEqual(parse_feed(xml.encode(),feed,now=NOW),[])
  def test_old_items_excluded_and_no_invented_news(self):
   old=parse_feed(XML.encode(),FEED,now=NOW)[0]
   old["publishedAt"]="2026-10-01T12:00:00+08:00"

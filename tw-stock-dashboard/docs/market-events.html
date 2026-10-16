@@ -33,7 +33,7 @@ h1{font-size:27px;margin:0 0 4px;letter-spacing:-.4px}.sub{font-size:12px;color:
 .themes{display:flex;gap:5px;flex-wrap:wrap}
 .theme{color:#4a6480;background:#f0f4f9;border:1px solid #e8eef5;border-radius:6px;padding:3px 6px;font-size:10px}
 .openlink{font-size:12px;font-weight:850;color:var(--accent);text-decoration:none;white-space:nowrap}
-#alert{padding:11px 13px;margin:6px 0 15px;background:#fff7ed;color:#9a5b16;border-radius:9px;font-size:12px}
+.more{display:block;width:100%;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;font-weight:800;color:var(--accent);margin:12px 0 0;cursor:pointer;font-size:12px}.more[hidden]{display:none}#alert{padding:11px 13px;margin:6px 0 15px;background:#fff7ed;color:#9a5b16;border-radius:9px;font-size:12px}
 #alert[hidden],#empty[hidden]{display:none}
 #empty{padding:35px;text-align:center;color:var(--muted);background:#fff;border-radius:12px}
 .footer{margin-top:24px;border-top:1px solid var(--line);padding-top:13px;color:var(--muted);font-size:11px;line-height:1.6}
@@ -58,7 +58,7 @@ h1{font-size:27px;margin:0 0 4px;letter-spacing:-.4px}.sub{font-size:12px;color:
 </div>
 <p id="alert" role="status" hidden></p>
 <section id="eventSection"><div class="section"><h2>即將發生</h2><span class="count" id="eventCount">—</span></div><div id="events" class="grid"></div></section>
-<section id="newsSection"><div class="section"><h2>最新重大新聞</h2><span class="count" id="newsCount">—</span></div><div id="news" class="grid"></div></section>
+<section id="newsSection"><div class="section"><h2>最新重大新聞</h2><span class="count" id="newsCount">—</span></div><div id="news" class="grid"></div><button id="moreNews" class="more" type="button" hidden>顯示更多 ↓</button></section>
 <div id="empty" hidden>沒有符合的事件或新聞，請試試其他關鍵字。</div>
 <div class="footer">日期均以台灣時間呈現。活動日期以主辦單位公告為準；新聞為外部媒體標題與來源連結，未經獨立查核，不代表消息已證實，也不代表相關族群必然上漲或下跌。</div>
 </div><script src="./market-events.js"></script>

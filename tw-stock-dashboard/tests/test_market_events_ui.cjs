@@ -25,7 +25,9 @@ vm.runInNewContext(script,ctx);
 setImmediate(()=>{
  assert(node('events').innerHTML.includes('TPCA Show 2026'),'confirmed TPCA must render');
  assert(!node('news').innerHTML.includes('TPCA Show'),'events cannot be faked as news');
- assert(node('alert').textContent.includes('同步尚未完成'),'empty news needs visible source-health hint');
+ if(sample.status==='initializing')assert(node('alert').textContent.includes('同步尚未完成'),'initializing must be shown');
+else if(sample.status==='ok')assert(node('news').innerHTML.length>0,'live news must render');
+else assert(!node('alert').hidden,'partial/degraded source must show warning');
  assert(!node('events').innerHTML.includes('<script>'),'event output must be escaped');
  console.log('PASS verified event, isolated media claims, search UI, stock dashboard navigation');
 });
