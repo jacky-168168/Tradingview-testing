@@ -328,7 +328,8 @@ function renderOpeningPreview(){
 function nextEntryPreview(){
  const f=FUTURES||{},cmp=sameContractTX(f),el=document.getElementById("nextEntry");
  el.className="txf-entry";
- if(!cmp){el.classList.add("warn");el.textContent="⏳ 尚無同日期、同月份完整 TX 日盤與夜盤成交資料；不推估隔日方向。";return}
+ if(!cmp||f.asOfDate!==DATA?.risk?.date||String(f.night?.reportQueryDate||"")<taipeiDate()){
+   el.classList.add("warn");el.textContent="⏳ 等待最近交易日的官方完整夜盤；舊期貨資料不得代表下個交易日。";return}
  const value=futDisplay(Math.abs(cmp.pct),2);
  if(cmp.pct<=-1){el.classList.add("stop");el.textContent="🔴 台指期夜盤較日盤跌 "+value+"%｜期貨偏弱，下一交易日先觀察開盤（未回測）";return}
  if(cmp.pct<=-0.5){el.classList.add("warn");el.textContent="🟠 台指期夜盤較日盤跌 "+value+"%｜期貨短線偏弱，留意開盤波動（未回測）";return}
