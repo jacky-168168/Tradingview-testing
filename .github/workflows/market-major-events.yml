@@ -1,0 +1,81 @@
+name: Market Major Events Radar
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/market_major_events.py'
+      - 'tw-stock-dashboard/docs/market-events.html'
+      - 'tw-stock-dashboard/docs/market-events.js'
+      - 'tw-stock-dashboard/tests/test_market_major_events.py'
+      - '.github/workflows/market-major-events.yml'
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/src/market_major_events.py'
+      - 'tw-stock-dashboard/docs/market-events.html'
+      - 'tw-stock-dashboard/docs/market-events.js'
+      - 'tw-stock-dashboard/tests/test_market_major_events.py'
+      - '.github/workflows/market-major-events.yml'
+  schedule:
+    # UTC 22:17 / 00:17 / 04:17 / 08:17 / 12:17 =
+    # Taipei 06:17 / 08:17 / 12:17 / 16:17 / 20:17.
+    # GitHub cron is best-effort; frontend always shows actual generatedAt.
+    - cron: '17 0,4,8,12,22 * * *'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate standalone news feed parser
+        run: python -m unittest discover -s tw-stock-dashboard/tests -p test_market_major_events.py -v
+      - name: Verify new UI JavaScript syntax, navigation and initial official events
+        run: |
+          node --check tw-stock-dashboard/docs/market-events.js
+          node tw-stock-dashboard/tests/test_market_events_ui.cjs
+  publish:
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    concurrency:
+      group: tw-stock-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch timestamped attributable market news
+        run: python tw-stock-dashboard/src/market_major_events.py
+      - name: Publish news dataset without overwriting unrelated dashboard data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/market_events/latest.json
+          if ! git diff --cached --quiet; then git commit -m "Update market major events radar"; fi
+          ok=0
+          for i in 1 2 3 4 5; do
+            git pull --rebase -X theirs origin main || { git rebase --abort || true; sleep $((i*4)); continue; }
+            if git push origin HEAD:main; then ok=1; break; fi
+            sleep $((i*4))
+          done
+          [ "$ok" -eq 1 ] || exit 1
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - id: deployment
+        uses: actions/deploy-pages@v4
