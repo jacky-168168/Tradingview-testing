@@ -74,6 +74,12 @@ class MarketHomepageLayout(unittest.TestCase):
         self.assertNotIn('upstream-industry-links',self.html)
         self.assertNotIn('href="./upstream.html?industry=',self.html)
         self.assertTrue((HTML.parent/"upstream.html").is_file(),"The linked detail page must remain intact")
+    def test_unused_home_nav_links_hidden_but_pages_preserved(self):
+        for href in ("bottom-top-trader.html","capital-water-backtest.html","margin-short-research.html"):
+            expected=f'href="./{href}" hidden>'
+            self.assertIn(expected,self.html,href+" should be hidden from the top navigation")
+            self.assertTrue((HTML.parent/href).is_file(),href+" page should not be deleted")
+        self.assertIn(".site-nav-links>a[hidden]{display:none!important}",self.html)
     def test_layout_responsive_and_accessible(self):
         for marker in ("market-brief-grid","brief-card","cmd-metrics","advanced-content","@media(max-width:650px)","@media(max-width:980px)"):
             self.assertIn(marker,self.css)
