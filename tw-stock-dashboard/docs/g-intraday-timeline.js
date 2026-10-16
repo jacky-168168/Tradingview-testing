@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 var root="./data/g_intraday/archive/",dates=[],day="",entries=[],selected=null,pinned=false,chosen="",latest=null,seq=0,error="";
-function valid(g){return !!(g&&g.quality==="intraday-provisional-allmarket"&&Array.isArray(g.rows)&&/^20\\d{2}-\\d{2}-\\d{2}$/.test(g.asOfDate||"")&&Number.isFinite(Date.parse(g.publishedAt)))}
+function valid(g){return !!(g&&g.quality==="intraday-provisional-allmarket"&&Array.isArray(g.rows)&&/^20\d{2}-\d{2}-\d{2}$/.test(g.asOfDate||"")&&Number.isFinite(Date.parse(g.publishedAt)))}
 async function json(url){var r=await fetch(url+(url.indexOf("?")>=0?"&":"?")+"t="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);return r.json()}
 function render(){if(typeof renderTable==="function")renderTable();if(typeof renderMeta==="function")renderMeta()}
 function current(fallback){return selected||fallback||latest}
@@ -27,14 +27,14 @@ async function sync(g){
  var catalog;
  try{catalog=await json(root+"index.json")}catch(_){catalog=null}
  if(id!==seq)return;
- dates=Array.isArray(catalog&&catalog.dates)?catalog.dates.filter(function(d){return /^20\\d{2}-\\d{2}-\\d{2}$/.test(d)}):[];
+ dates=Array.isArray(catalog&&catalog.dates)?catalog.dates.filter(function(d){return /^20\d{2}-\d{2}-\d{2}$/.test(d)}):[];
  if(latest&&dates.indexOf(latest.asOfDate)<0)dates.push(latest.asOfDate);
  dates.sort().reverse();
  if(!pinned||!day||dates.indexOf(day)<0){day=dates[0]||"";pinned=false;chosen=""}
  var manifest=null;
  if(day){try{manifest=await json(root+day+"/index.json")}catch(_){}}
  if(id!==seq)return;
- entries=manifest&&manifest.date===day&&Array.isArray(manifest.snapshots)?manifest.snapshots.filter(function(x){return x&&/^\\d{6}(?:-\\d+)?\\.json$/.test(x.file||"")&&Number.isFinite(Date.parse(x.publishedAt))}):[];
+ entries=manifest&&manifest.date===day&&Array.isArray(manifest.snapshots)?manifest.snapshots.filter(function(x){return x&&/^\d{6}(?:-\d+)?\.json$/.test(x.file||"")&&Number.isFinite(Date.parse(x.publishedAt))}):[];
  entries.sort(function(a,b){return a.publishedAt.localeCompare(b.publishedAt)||a.file.localeCompare(b.file)});
  if(latest&&day===latest.asOfDate&&!entries.some(function(x){return x.publishedAt===latest.publishedAt})){
    entries.push({file:"__latest__",publishedAt:latest.publishedAt,count:latest.rows.length});
