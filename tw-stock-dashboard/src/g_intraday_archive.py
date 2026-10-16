@@ -44,6 +44,9 @@ def archive_intraday_payload(data_dir, payload):
     snapshots.append({
         "file": filename,
         "publishedAt": payload["publishedAt"],
+        "sessionSlot": payload.get("sessionSlot"),
+        "scanStartedAt": payload.get("scanStartedAt"),
+        "quoteCapturedAt": payload.get("quoteCapturedAt"),
         "count": len(payload["rows"]),
         "coverage": payload.get("coverage", {}).get("valid"),
     })
