@@ -52,3 +52,22 @@
 .usop-daily-meta{color:#9eafc9;font-size:11px;line-height:1.6}
 .usop-daily[data-state="stale"] .usop-daily-title{color:#f6d294}
 @media(max-width:650px){.usop-daily{margin-top:10px;padding-top:11px}.usop-daily-title{font-size:15px}.usop-daily-list{font-size:12px;gap:8px}}
+
+.usop-report{font-size:12px;color:#dbe7f7}
+.usop-report-status{margin:5px 0 11px;line-height:1.65;font-weight:850;font-size:13px;color:#f8c87e}
+.usop-report-status[data-status="green"]{color:#86efac}
+.usop-report-status[data-status="red"]{color:#fca5a5}
+.usop-report-status[data-status="white"]{color:#d9e3f1}
+.usop-report h4{font-size:12px;font-weight:850;color:#a9c1db;margin:12px 0 7px}
+.usop-report-scroll{overflow-x:auto;border:1px solid #3d4a60;border-radius:9px}
+.usop-report table{border-collapse:collapse;width:100%;font-size:11px;white-space:nowrap;text-align:left}
+.usop-report th,.usop-report td{padding:8px 10px;text-align:left;border-bottom:1px solid #344158}
+.usop-report tr:last-child td{border-bottom:0}
+.usop-report th{color:#b5c9e3;background:#26354c;font-weight:850}
+.usop-report td:first-child{font-weight:800;color:#f2f6fc}
+.usop-report-list{padding:0;margin:0;list-style:none;display:grid;gap:5px;line-height:1.65}
+.usop-report-list li{position:relative;padding-left:13px}
+.usop-report-list li::before{content:"";position:absolute;top:.75em;left:1px;width:5px;height:5px;border-radius:50%;background:#8da7c8}
+.usop-report-resonance,.usop-report-compare{margin:11px 0;font-size:11px;line-height:1.75;color:#bfd2ea}
+.usop-report-compare{border-top:1px dashed #40516a;padding-top:10px}
+@media(max-width:650px){.usop-report table{font-size:10px}.usop-report th,.usop-report td{padding:8px 9px}.usop-report-status{font-size:12px}.usop-report-list{gap:7px}}
