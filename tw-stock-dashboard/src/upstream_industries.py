@@ -114,6 +114,31 @@ INDUSTRIES=[
    ("鋰電池材料",["鋰電池材料"])]},
  {"name":"CPO／矽光子","code":"CPO","keys":[],"groups":[(g,[]) for g in CPO_GROUPS]},
 ]
+# Audited extensions have their own citation and stage, never relabel official
+# TPEx PCB midstream as "official upstream".
+THEME_CATALOG=json.loads((DATA_DIR/"industry_upstream"/"theme_catalog.json").read_text(encoding="utf-8"))
+if THEME_CATALOG.get("schema")!="tw-industry-chain-research-overlay-v1":
+    raise RuntimeError("Unsupported research overlay schema")
+THEME_GROUPS={}
+THEME_SOURCES={}
+THEME_ROWS={}
+for extension in THEME_CATALOG["extensions"]:
+    parent=next(z for z in INDUSTRIES if z["code"]==extension["code"])
+    for group in extension["groups"]:
+        assert not any(existing==group["name"] for existing,_ in parent["groups"])
+        parent["groups"].append((group["name"],[]))
+        THEME_GROUPS[(parent["code"],group["name"])]=group
+        for row in group["stocks"]:
+            THEME_ROWS.setdefault(row["code"],[]).append((parent["code"],group,row))
+for sector in THEME_CATALOG["sectors"]:
+    assert not any(z["code"]==sector["code"] for z in INDUSTRIES)
+    INDUSTRIES.append({"name":sector["name"],"code":sector["code"],"keys":[],"groups":[(g["name"],[]) for g in sector["groups"]]})
+    THEME_SOURCES[sector["code"]]=sector
+    for group in sector["groups"]:
+        THEME_GROUPS[(sector["code"],group["name"])]=group
+        for row in group["stocks"]:
+            THEME_ROWS.setdefault(row["code"],[]).append((sector["code"],group,row))
+
 def normalize(s):
     s=str(s or "").strip()
     return re.sub(r"[\s　\n\r、,，／/（）()\-_]+","",s).casefold()
@@ -172,11 +197,11 @@ def compile_map(stocks,memberships,data_date):
     groups={}
     for spec in INDUSTRIES:
         groups[spec["code"]]={"name":spec["name"],"code":spec["code"],
-            "source":CPO_SOURCE if spec["code"]=="CPO" else SOURCE+"introduce.php?ic="+spec["code"],
-            "sourceLabel":"CPO 產業供應鏈研究（非櫃買官方產業碼）" if spec["code"]=="CPO" else "櫃買中心原始產業鏈",
+            "source":CPO_SOURCE if spec["code"]=="CPO" else THEME_SOURCES[spec["code"]]["source"] if spec["code"] in THEME_SOURCES else SOURCE+"introduce.php?ic="+spec["code"],
+            "sourceLabel":"CPO 產業供應鏈研究（非櫃買官方產業碼）" if spec["code"]=="CPO" else THEME_SOURCES[spec["code"]]["sourceLabel"] if spec["code"] in THEME_SOURCES else "櫃買中心原始產業鏈",
             "subgroups":{}}
     covered=0;upstream_stocks=set();entries_count=0
-    published_materials=set();basis_counts={"tpex_official":0,"independent_industry_material":0,"tpex_cross_industry":0,"company_product_verified":0,"tpex_ambiguous":0,"cpo_industry_research":0}
+    published_materials=set();basis_counts={"tpex_official":0,"independent_industry_material":0,"tpex_cross_industry":0,"company_product_verified":0,"tpex_ambiguous":0,"cpo_industry_research":0,"industry_theme_research":0}
     for x in stocks:
         code=str(x.get("code") or "").strip();market=x.get("market")
         if market not in ("上市","上櫃") or not re.fullmatch(r"[0-9]{4}",code):continue
@@ -252,6 +277,16 @@ def compile_map(stocks,memberships,data_date):
                 "classification":"CPO 上游光學零件研究名單（非官方類股）",
                 "basis":"cpo_industry_research","source":evidence,
                 "roleNote":role+" 相關產品不等於已取得CPO客戶訂單，也不等於已認列CPO營收。"}
+        # Explicit, cited theme membership: name and TWSE/TPEx market parity required.
+        # TPEx chain alone cannot prove LEO orders / material sales proportions.
+        for sid,segment,row in THEME_ROWS.get(code,[]):
+            if row["market"]!=market or normalize(row["name"]) not in normalize(x.get("name","")):
+                raise RuntimeError(f"Research stock code/name/market conflict: {code}: {x.get('name')!r}")
+            matches[(sid,segment["name"])]={
+                "classification":segment["stage"]+"｜研究延伸（非櫃買上游）",
+                "basis":"industry_theme_research",
+                "source":row["source"],
+                "roleNote":row["roleNote"]+" 產業相關不等於已取得特定客戶訂單／主要營收。"}
         for (sid,segment),meta in sorted(matches.items()):
             upstream_stocks.add((market,code));entries_count+=1
             basis_counts[meta["basis"]]+=1
@@ -284,16 +319,20 @@ def compile_map(stocks,memberships,data_date):
                       if key!=COMM_PENDING else
                       "官方原始『主／被動元件』是合併分類；產品未獲證實者保留待核對，不會猜測。")
             if cpo:note="CPO／矽光子研究補充的光學零件上游；不等於櫃買中心官方產業鏈、CPO 客戶認證、實際訂單或主要營收。"+"此頁不把晶圓代工或交換器系統廠混作元件上游。"
-            child.append({"name":key,"count":len(items),"stocks":items,"source":WAFER_MATERIAL_SOURCE if extended else item["source"],"note":note,
-                          "classification":"CPO 研究上游" if cpo else "獨立研究延伸上游材料" if extended else "櫃買中心官方上游"})
+            research=THEME_GROUPS.get((spec["code"],key))
+            if research:note=research["note"]
+            child.append({"name":key,"count":len(items),"stocks":items,
+                          "source":research["source"] if research else WAFER_MATERIAL_SOURCE if extended else item["source"],
+                          "note":note,"stage":research["stage"] if research else "櫃買官方上游",
+                          "classification":"有來源的產業鏈研究延伸" if research else "CPO 研究上游" if cpo else "獨立研究延伸上游材料" if extended else "櫃買中心官方上游"})
         item["subgroups"]=child
         item["stockCount"]=len({(z["market"],z["code"]) for g in child for z in g["stocks"]})
         sectors.append(item)
     valid=len([x for x in stocks if x.get("market") in ("上市","上櫃")])
     return {"schema":"tw-upstream-industries-v2","dataDate":data_date,
         "generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),
-        "source":"TPEx industry value chains; ITIS semiconductor wafer research; curated CPO optical upstream evidence; dated full-market stock diagnostics",
-        "method":"Eight TPEx industry chain upstream classifications, ITIS silicon wafer materials, and a ninth independent CPO optical-components upstream research category (NOT an official TPEx sector nor proof of named customer orders).",
+        "source":"TPEx industry stages; ITIS wafer materials; curated CPO/LEO/PCB/IC substrate supply-chain research; dated full-market stock diagnostics",
+        "method":"Eight verified official TPEx upstream sectors, distinct CPO research, sourced LEO satellite, IC substrate midstream, and PCB midstream/process additions with explicit stage and no claims of confirmed orders.",
         "coverage":{"marketStocks":valid,"verifiedCompanyPages":covered,"verifiedRatioPct":round(100*covered/valid,1) if valid else 0,
                     "distinctUpstreamStocks":len(upstream_stocks),"upstreamMemberships":entries_count,"industries":len(sectors),
                     "classifiedBySource":basis_counts},
@@ -303,7 +342,9 @@ def compile_map(stocks,memberships,data_date):
                  "extendedMaterials":sorted(published_materials),
                  "materialsReference":WAFER_MATERIAL_SOURCE,
                  "solarConductivePasteReference":SOLAR_MATERIAL_SOURCE,
-                 "qualification":"TPEx official category is a value-chain ROLE, not stock principal-business or segment revenue share."},
+                 "qualification":"TPEx official category is a value-chain ROLE, not stock principal-business or segment revenue share.",
+                 "researchThemeCatalog":THEME_CATALOG["schema"],
+                 "researchThemeSectors":[z["code"] for z in THEME_CATALOG["sectors"]]},
         "industries":sectors}
 
 def main():
