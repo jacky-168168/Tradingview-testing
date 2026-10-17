@@ -49,7 +49,7 @@ jobs:
           equity=json.loads((root/'equity.json').read_text())['models']
           assert summary['sample']['g2026ParitySignals']==summary['sample']['g2026ParityCorrect']
           assert summary['sample']['symbolOHLCUsable']>=150
-          assert len(summary['models'])==2
+          assert len(summary['models'])==4
           for m in summary['models']:
               name=m['model'];hist=equity[name];log=trades[name]
               assert hist[0]['date']>='2024-01-02' and hist[-1]['date']=='2026-10-16'
