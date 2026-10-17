@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>台股量化｜產業鏈上游類股地圖</title>
+<title>台股量化｜產業鏈：官方上游＋研究延伸</title>
 <style>
 :root{--bg:#f4f6f9;--surface:#fff;--text:#1d293e;--muted:#64748b;--line:#e1e7ef;--blue:#2563eb;--red:#dc2626;--green:#059669}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif}
@@ -56,16 +56,16 @@ h1{font-size:25px;margin:0;line-height:1.4}.sub{color:var(--muted);font-size:12p
 <body>
 <div class="wrap">
 <header class="header">
-  <div><h1>🧩 產業鏈上游類股地圖</h1><p class="sub">預設顯示「所有」產業，上游細項可展開上市／上櫃股票，點選股票開啟 TradingView。</p></div>
+  <div><h1>🧩 產業鏈地圖｜上游＋研究延伸</h1><p class="sub">預設顯示所有產業｜分開呈現官方上游、研究延伸的中游板材與製程耗材；股票可查看產業角色與來源。</p></div>
   <nav class="actions"><a class="btn primary" href="./index.html">🏠 返回主頁</a><a class="btn" href="./selections.html">📋 選股排行</a><a class="btn" href="./stocks.html">🔬 個股體檢</a><button id="reload" class="btn" type="button">↻ 更新資料</button></nav>
 </header>
 <div id="status" class="status" role="status" aria-live="polite">正在讀取櫃買中心產業價值鏈與全市場股票資料…</div>
-<div class="toolbar"><input type="search" id="search" aria-label="搜尋產業、上游細項或股票" placeholder="搜尋：半導體、銅箔、CPO相關零組件、2330…" autocomplete="off"><button id="clear" type="button" class="btn">清除</button></div>
+<div class="toolbar"><input type="search" id="search" aria-label="搜尋產業、上游細項或股票" placeholder="搜尋：低軌衛星、CPO、玻纖布、PCB、ABF、鑽針、股票代號…" autocomplete="off"><button id="clear" type="button" class="btn">清除</button></div>
 <div class="layout">
   <aside class="card sidebar"><h2>產業類別</h2><nav id="industryNav" class="industry-nav" aria-label="上游產業分類選單"></nav></aside>
   <section id="results" class="card results" aria-live="polite"><div class="empty">選擇左側產業，檢視其上游子類別與股票。</div></section>
 </div>
-<details class="notice"><summary style="cursor:pointer;font-weight:800;color:#365d89">資料來源與分類口徑（展開查看）</summary><div style="margin-top:8px">資料口徑：櫃買中心 <a href="https://ic.tpex.org.tw/ic_report_index.php" target="_blank" rel="noopener noreferrer">產業價值鏈資訊平台</a>（公司所屬產業鏈、各產業上游環節）與本站最新完整日K個股快照。只納入有明確上游歸類的上市櫃股票，沒有經過上游核對的不自動歸類。公司可能同時屬於多個產業或細項，因此細項股票數加總可能大於不重複股票數。股價和報酬是<strong>資料日收盤</strong>，不是盤中即時價格；產業鏈歸類不代表該業務是公司的主要營收來源，也不構成投資建議。</div></details>
+<details class="notice"><summary style="cursor:pointer;font-weight:800;color:#365d89">資料來源與分類口徑（展開查看）</summary><div style="margin-top:8px">資料口徑：櫃買中心 <a href="https://ic.tpex.org.tw/ic_report_index.php" target="_blank" rel="noopener noreferrer">產業價值鏈資訊平台</a>（公司所屬產業鏈、各產業上游環節）與本站最新完整日K個股快照。官方分類僅列證實屬上游的公司；CCL、載板製造、鑽針與低軌衛星另設有來源的供應鏈研究分組，清楚標明實際上中游或終端位置，不冒充官方上游。公司可能同時屬於多個產業或細項，因此細項股票數加總可能大於不重複股票數。股價和報酬是<strong>資料日收盤</strong>，不是盤中即時價格；產業鏈歸類不代表該業務是公司的主要營收來源，也不構成投資建議。</div></details>
 </div>
 <script src="./upstream-industries.js"></script>
 </body>
