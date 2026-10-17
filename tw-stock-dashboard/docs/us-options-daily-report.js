@@ -59,7 +59,7 @@ function calculate(history,index=history?.length-1,includePrev=true){
  const pWhere=positions[0]>=0.85?"接近半年高點":positions[0]<=0.15?"接近半年低點":"位於半年區間中段";
  const dWhere=pLabel(positions[1]),gWhere=pLabel(positions[2]);
  const priceWhy="S&P 500 60日結構"+structure+"，5日動能"+momentum+"，"+pWhere+"（5日 "+sign(p5)+"%）。";
- const dixWhy="DIX 位於半年"+dWhere+"，5日"+(dixDir==="上升"?"增加 ":dixDir==="下降"?"減少 ":"變動 ")+Math.abs(dixDelta).toFixed(2)+" 個百分點"+(highDivergence?"；價格測試20日新高但 DIX 未跟上。":"。");
+ const dixWhy="DIX 位於半年"+dWhere+"，5日"+(dixDir==="上升"?"增加 ":dixDir==="下降"?"減少 ":"變動 ")+Math.abs(dixDelta).toFixed(2)+" 個百分點；"+(highDivergence?"價格測試20日新高但 DIX 未跟上。":priceRecord?"價格測試20日高點，DIX 未見明顯創高背離。":"價格未測試20日高點，暫無創高背離條件。");
  const gexWhy="GEX 位於半年"+gWhere+"、5日"+(gexDir==="上升"?"回升":gexDir==="下降"?"下降":"持平")+"；推估避險穩定作用"+gexStrength+(nearZero?"（相對前20日典型值接近零）。":"。");
  const interplay= resonance+"（"+severity+"；屬技術訊號解讀，非機率預測）。";
  const points=[priceWhy,dixWhy,gexWhy,interplay];
@@ -79,9 +79,18 @@ function calculate(history,index=history?.length-1,includePrev=true){
  let compare=null;
  if(includePrev){
   const lastReport=calculate(history,index-1,false);
-  if(lastReport)compare={date:lastReport.date,prior:lastReport.status.label,
-    changed:lastReport.status.code!==code,
-    text:lastReport.status.code!==code?"由「"+lastReport.status.label+"」轉為「"+label+"」；主要觀察價格5日走勢、DIX及GEX方向的組合是否變動。":"與前一交易日同規則回推的「"+lastReport.status.label+"」一致，狀態未變。"};
+  if(lastReport){
+   const factors=[
+    lastReport.stats.priceDir!==priceDir?"價格5日方向":null,
+    lastReport.stats.dixDir!==dixDir?"DIX5日方向":null,
+    lastReport.stats.gexDir!==gexDir?"GEX5日方向":null,
+    lastReport.stats.gexStrength!==gexStrength?"GEX緩衝強弱":null,
+    lastReport.stats.highDivergence!==highDivergence?"價格創高背離條件":null
+   ].filter(Boolean);
+   compare={date:lastReport.date,prior:lastReport.status.label,changed:lastReport.status.code!==code,
+     text:lastReport.status.code!==code?"由「"+lastReport.status.label+"」轉為「"+label+"」；主要變因："+(factors.length?factors.join("、"):"趨勢數值跨越分級門檻")+"。":
+       "與前一交易日同規則回推的「"+lastReport.status.label+"」一致；"+(factors.length?"變動項目："+factors.join("、")+"，尚未改變狀態。":"未出現足以改變分級的訊號。")};
+  }
  }
  return {date:last[0],status:{code,label,reason},rows,points,resonance,severity,watch,compare,
    stats:{structure,momentum,priceDir,dixDir,gexDir,nearZero,gexStrength,positions,dixDelta,gexNorm,highDivergence},
