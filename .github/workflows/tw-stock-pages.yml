@@ -29,6 +29,8 @@ on:
       - 'tw-stock-dashboard/tests/test_g_rank_export.cjs'
       - 'tw-stock-dashboard/docs/g-theme-leaders.js'
       - 'tw-stock-dashboard/docs/upstream-industries.js'
+      - 'tw-stock-dashboard/docs/data/industry_upstream/**'
+      - 'tw-stock-dashboard/tests/test_upstream_research_data.cjs'
       - 'tw-stock-dashboard/docs/backtest-g-panel.js'
       - 'tw-stock-dashboard/docs/data/backtest_g/*.json'
       - 'tw-stock-dashboard/docs/data/research/etf_history/**'
@@ -62,6 +64,7 @@ jobs:
         run: |
           node tw-stock-dashboard/tests/test_entry_playbook.js
           node tw-stock-dashboard/tests/test_upstream_ui.cjs
+          node tw-stock-dashboard/tests/test_upstream_research_data.cjs
           node tw-stock-dashboard/tests/test_intraday_schedule.cjs
           node tw-stock-dashboard/tests/test_us_options_chart.cjs
           node tw-stock-dashboard/tests/test_market_compact.cjs
