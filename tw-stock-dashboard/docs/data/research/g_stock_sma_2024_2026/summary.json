@@ -1,0 +1,200 @@
+{
+  "version": "G_STOCK_SMA_2024_2026_AB_V1",
+  "generatedAt": "2026-10-18T06:53:39+08:00",
+  "period": {
+    "firstSignal": "2023-10-09",
+    "portfolioStart": "2024-01-02",
+    "lastSignal": "2026-10-07",
+    "lastMark": "2026-10-16"
+  },
+  "source": {
+    "G": "research_g_regime_3y.make_g; 3D/18D confirmed break and 10-day previous Top20 persistence",
+    "GBackfilledNotOriginalArchive": true,
+    "selectedStockCount": 479,
+    "validSelectedBars": 479,
+    "universeCount": 1983,
+    "historyErrors": 0,
+    "historyErrorExamples": {},
+    "selectedDays": 649,
+    "selectedSignals": 1927,
+    "parity2026": {
+      "referenceSignals": 490,
+      "matchedCodes": 490,
+      "overlapPct": 100.0,
+      "byYear": {
+        "2026": {
+          "ranked": 490,
+          "overlap": 490,
+          "exactDays": 164,
+          "days": 164
+        }
+      }
+    },
+    "gRebuildAudit": {
+      "symbols": 1979,
+      "dailyFeatureRows": 29708,
+      "validGSignalDays": 649,
+      "meanGStocksPerSignal": 40.86
+    }
+  },
+  "method": {
+    "initialCapital": 1000000.0,
+    "maxPositions": 4,
+    "initialPositionCapPct": 25.0,
+    "buyFactor": 1.002425,
+    "sellFactor": 0.994575,
+    "fill": "D-close signal -> next trade day opening",
+    "A": "G Top3 bought next session, held five index sessions",
+    "B": "G Top3 and close > own stock SMA10*1.01. Exit on 3 consecutive closes < own SMA10*0.98",
+    "executionLimits": "One share units, idealized daily opening, zero borrowing; no gap or stop order assumptions.",
+    "caveats": [
+      "2024-2025 historical G lists recreated using current listed universe and current paid-in capital.",
+      "No daily liquidity / limit-up queue modelling; small share opening fills hypothetical.",
+      "Unadjusted stock prices may differ across corporate actions; dividends not separately credited.",
+      "Ranking developed from 2026 observations; backtest isn't independently preregistered.",
+      "No limit for SMA10 holding time; open positions valued at mark at END_MARK."
+    ]
+  },
+  "models": [
+    {
+      "model": "G_HOLD5",
+      "periodStart": "2024-01-02",
+      "periodEnd": "2026-10-16",
+      "startCapital": 1000000.0,
+      "endEquity": 882438.36,
+      "netReturnPct": -11.756,
+      "maxDrawdownPct": -62.711,
+      "closedTrades": 474,
+      "wins": 213,
+      "losses": 261,
+      "winRatePct": 44.94,
+      "profitFactor": 0.976,
+      "avgWinPct": 11.335,
+      "avgLossPct": -8.916,
+      "avgHoldDays": 5.0,
+      "openAtEnd": 0,
+      "entryTypes": {
+        "G_top3": 474
+      },
+      "exitTypes": {
+        "time5": 474
+      },
+      "earlySMA5Rebuys": 0,
+      "skips": {
+        "stale_marks": 4
+      },
+      "maxPositions": 4,
+      "maxInitialWeightPct": 25.0,
+      "yearly": {
+        "2026": {
+          "first": "2026-01-02",
+          "last": "2026-10-16",
+          "returnPct": -11.756
+        }
+      },
+      "annual": {
+        "2024": {
+          "startEquity": 1000000.0,
+          "endEquity": 884561.42,
+          "returnPct": -11.544,
+          "maxDDPct": -42.114,
+          "closedTrades": 175,
+          "wins": 73,
+          "losses": 102,
+          "winPct": 41.71
+        },
+        "2025": {
+          "startEquity": 884561.42,
+          "endEquity": 640746.45,
+          "returnPct": -27.563,
+          "maxDDPct": -42.795,
+          "closedTrades": 162,
+          "wins": 65,
+          "losses": 97,
+          "winPct": 40.12
+        },
+        "2026": {
+          "startEquity": 640746.45,
+          "endEquity": 882438.36,
+          "returnPct": 37.72,
+          "maxDDPct": -45.74,
+          "closedTrades": 137,
+          "wins": 75,
+          "losses": 62,
+          "winPct": 54.74
+        }
+      }
+    },
+    {
+      "model": "G_SMA10",
+      "periodStart": "2024-01-02",
+      "periodEnd": "2026-10-16",
+      "startCapital": 1000000.0,
+      "endEquity": 1554737.96,
+      "netReturnPct": 55.474,
+      "maxDrawdownPct": -66.734,
+      "closedTrades": 154,
+      "wins": 55,
+      "losses": 99,
+      "winRatePct": 35.71,
+      "profitFactor": 1.186,
+      "avgWinPct": 28.1,
+      "avgLossPct": -11.761,
+      "avgHoldDays": 16.604,
+      "openAtEnd": 1,
+      "entryTypes": {
+        "G_top3": 155
+      },
+      "exitTypes": {
+        "sma10_3below": 154
+      },
+      "earlySMA5Rebuys": 0,
+      "skips": {
+        "stale_marks": 4,
+        "entry_sma10_not_met": 2
+      },
+      "maxPositions": 4,
+      "maxInitialWeightPct": 25.0,
+      "yearly": {
+        "2026": {
+          "first": "2026-01-02",
+          "last": "2026-10-16",
+          "returnPct": 55.474
+        }
+      },
+      "annual": {
+        "2024": {
+          "startEquity": 1000000.0,
+          "endEquity": 859936.47,
+          "returnPct": -14.006,
+          "maxDDPct": -44.242,
+          "closedTrades": 61,
+          "wins": 21,
+          "losses": 40,
+          "winPct": 34.43
+        },
+        "2025": {
+          "startEquity": 859936.47,
+          "endEquity": 913632.03,
+          "returnPct": 6.244,
+          "maxDDPct": -44.653,
+          "closedTrades": 51,
+          "wins": 16,
+          "losses": 35,
+          "winPct": 31.37
+        },
+        "2026": {
+          "startEquity": 913632.03,
+          "endEquity": 1554737.96,
+          "returnPct": 70.171,
+          "maxDDPct": -38.006,
+          "closedTrades": 42,
+          "wins": 18,
+          "losses": 24,
+          "winPct": 42.86
+        }
+      }
+    }
+  ],
+  "elapsedSeconds": 143.31
+}
