@@ -286,6 +286,6 @@ async function checkMl(){
   txt("commandAi",x.advisoryEligible?"AI 候選僅通過方向研究；不參與買進判斷":"AI 回測未證明穩定增益，正式買進判斷維持規則式");
  }catch(_err){txt("commandAi","AI 尚未通過可供正式使用的驗證");}
 }
-scope.MarketCommand={evaluate,fallback,refresh,checkMl,applyPremarket,applyFutures,applyIntraday,marketPremarket,postOpenState,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
+scope.MarketCommand={evaluate,fallback,refresh,checkMl,verifiedNightPreview,applyPremarket,applyFutures,applyIntraday,marketPremarket,postOpenState,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
 if(typeof module!=="undefined"&&module.exports)module.exports={fallback,evaluate,verifiedNightPreview,marketPremarket,postOpenState,taipeiParts,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
 })(typeof window!=="undefined"?window:globalThis);
