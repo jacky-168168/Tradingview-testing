@@ -11,7 +11,7 @@ const tv=s=>"https://www.tradingview.com/chart/?symbol="+encodeURIComponent(mark
 const codeOK=s=>/^[0-9]{4}$/.test(String(s.code||""))&&["上市","上櫃"].includes(s.market);
 const fmtDate=s=>String(s||"—").slice(0,10);
 function categories(){
- const priority=["L000","IC_SUB","LEO","CPO","A100","D000","I000","F000","K000","A300","3000"];
+ const priority=["L000","IC_SUB","LEO","CPO","J000","A100","D000","I000","F000","K000","A300","3000"];
  return [...(state.data?.industries||[])].sort((a,b)=>{
   const i=priority.indexOf(a.code),j=priority.indexOf(b.code);
   return (i<0?999:i)-(j<0?999:j);
@@ -54,9 +54,9 @@ function industryMarkup(industry,allMode){
  const unique=new Set(groups.flatMap(g=>g.rows.map(s=>s.market+"_"+s.code)));
  if(state.query&&!groups.length)return "";
  const external='<a class="industry-source" href="'+esc(industry.source)+'" target="_blank" rel="noopener noreferrer">'+esc(industry.sourceLabel||"櫃買中心原始產業鏈")+' ↗</a>';
- const subtitle=industry.code==="CPO"?"CPO 光學元件研究名單；不表示已獲特定客戶訂單。":industry.code==="LEO"?"低軌衛星／太空通訊主題：射頻、衛星 PCB、CCL 與終端分層；非官方 LEO 專屬產業碼或已確認訂單。":industry.code==="IC_SUB"?"IC 載板材料上游與 ABF／BT 載板製造中游嚴格分開，不混充官方上游。":industry.code==="L000"?"櫃買中心 PCB 官方上游材料＋有來源的 CCL（中游）及鑽針（製程耗材）延伸分類。":allMode?"此產業經核對的上游細項；點選細項可展開股票。":"上游細項對應上市櫃股票，點選類別可展開。";
+ const subtitle=industry.code==="J000"?"櫃買中心 J000 被動元件官方產業鏈：材料上游與電阻、電容、電感、濾波器／振盪器製造中游分開；公司可跨環節重複列示。":industry.code==="CPO"?"CPO 光學元件研究名單；不表示已獲特定客戶訂單。":industry.code==="LEO"?"低軌衛星／太空通訊主題：射頻、衛星 PCB、CCL 與終端分層；非官方 LEO 專屬產業碼或已確認訂單。":industry.code==="IC_SUB"?"IC 載板材料上游與 ABF／BT 載板製造中游嚴格分開，不混充官方上游。":industry.code==="L000"?"櫃買中心 PCB 官方上游材料＋有來源的 CCL（中游）及鑽針（製程耗材）延伸分類。":allMode?"此產業經核對的上游細項；點選細項可展開股票。":"上游細項對應上市櫃股票，點選類別可展開。";
  return '<section class="industry-block" aria-label="'+esc(industry.name)+' 上游股票">'+
- '<div class="industry-top"><div class="industry-title"><h2>'+esc(industry.name)+(industry.code==="LEO"||industry.code==="IC_SUB"?'｜產業鏈研究':industry.code==="L000"?'｜上游與製程延伸':'｜上游類股')+'</h2><span class="stat">'+unique.size+' 檔股票</span></div>'+
+ '<div class="industry-top"><div class="industry-title"><h2>'+esc(industry.name)+(industry.code==="J000"?'｜產業鏈上中游':industry.code==="LEO"||industry.code==="IC_SUB"?'｜產業鏈研究':industry.code==="L000"?'｜上游與製程延伸':'｜上游類股')+'</h2><span class="stat">'+unique.size+' 檔股票</span></div>'+
  '<p>'+subtitle+(state.query?'｜搜尋：'+esc(state.query):'')+'</p>'+external+'</div>'+
  '<div class="groups">'+(groups.length?groups.map(groupMarkup).join(""):'<div class="empty">此產業尚無符合搜尋條件的上游股票。</div>')+'</div></section>';
 }
@@ -87,8 +87,8 @@ function load(){
   const r=await fetch(url,{cache:"no-store"});
   if(!r.ok)throw new Error("資料尚未發布（HTTP "+r.status+"）");
   const d=await r.json();
-  if(d.schema!=="tw-upstream-industries-v2"||!d.coverage||!Array.isArray(d.industries)||d.industries.length<11||d.coverage.verifiedCompanyPages<500||!d.industries.some(x=>x.code==="CPO"&&x.stockCount>0)||!d.industries.some(x=>x.code==="LEO"&&x.stockCount>0)||!d.industries.some(x=>x.code==="IC_SUB"&&x.stockCount>0))
-   throw new Error("CPO／衛星／載板研究分類或官方資料版本尚未同步");
+  if(d.schema!=="tw-upstream-industries-v2"||!d.coverage||!Array.isArray(d.industries)||d.industries.length<12||d.coverage.verifiedCompanyPages<500||!d.industries.some(x=>x.code==="CPO"&&x.stockCount>0)||!d.industries.some(x=>x.code==="LEO"&&x.stockCount>0)||!d.industries.some(x=>x.code==="IC_SUB"&&x.stockCount>0)||!d.industries.some(x=>x.code==="J000"&&x.stockCount>0))
+   throw new Error("CPO／衛星／載板／被動元件分類資料尚未同步");
   return d;
  }
  getVerified(primary).catch(async ()=>{const d=await getVerified(backup);d._fromLatestGitHub=true;return d;}).then(d=>{
@@ -102,7 +102,7 @@ function load(){
   if(!wafer||!wafer.stocks.some(x=>x.code==="6488"&&x.basis==="independent_industry_material"))throw new Error("環球晶與矽晶圓材料分類尚未完成核對");
   const warn=d.coverage.verifiedRatioPct<90||age>7;
   $("status").classList.toggle("warn",warn);
-  $("status").textContent=(d._fromLatestGitHub?"已從 GitHub 主分支補齊最新分類｜":"")+"資料日 "+dated+"｜已核對公司 "+n(d.coverage.verifiedCompanyPages,0)+"/"+n(d.coverage.marketStocks,0)+"｜櫃買上游原始分類＋CPO、低軌、載板、CCL、鑽針有來源延伸；各細項標明上游或中游。"+(warn?" ⚠ 部分公司分類未取得或資料日期較舊；未確認的股票不計入，不能視為全市場完整覆蓋。":"");
+  $("status").textContent=(d._fromLatestGitHub?"已從 GitHub 主分支補齊最新分類｜":"")+"資料日 "+dated+"｜已核對公司 "+n(d.coverage.verifiedCompanyPages,0)+"/"+n(d.coverage.marketStocks,0)+"｜櫃買上游原始分類＋CPO、低軌、載板、CCL、鑽針有來源延伸；被動元件 J000 官方上中游分開，各細項標明製程位置。"+(warn?" ⚠ 部分公司分類未取得或資料日期較舊；未確認的股票不計入，不能視為全市場完整覆蓋。":"");
   const requested=new URLSearchParams(location.search).get("industry");
   const current=categories().find(x=>x.code===requested);
   select(current?current.code:"all",false);
