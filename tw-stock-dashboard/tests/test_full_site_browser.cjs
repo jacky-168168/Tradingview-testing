@@ -3,7 +3,7 @@
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 const ROOT=path.resolve(__dirname,'../docs'),BASE='http://127.0.0.1:8765/';
 const CORE=['index.html','selections.html','bubbles.html','stocks.html','upstream.html','history.html','backtest.html'];
-const EXT=['market-methodology.html','market-ml-stocks.html','market-cash-3y.html','n-canslim.html','txf-backtest.html','etf-allocation.html','g-backtest.html','g-persistence.html','g-pro-3y.html','g-regime-3y.html','g-regime-contrarian-3y.html','g-target.html','g-candles.html','g-compound-3y.html','g-compound-v2-3y.html','g-compound-v3-walkforward.html'];
+const EXT=['market-methodology.html','market-ml-stocks.html','market-cash-3y.html','n-canslim.html','txf-backtest.html','etf-allocation.html','g-backtest.html','g-persistence.html','g-pro-3y.html','g-regime-3y.html','g-regime-contrarian-3y.html','g-target.html','g-candles.html','g-compound-3y.html','g-compound-v2-3y.html','g-compound-v3-walkforward.html','etf-00631l.html'];
 const ALL=[...CORE,...EXT],checks=[],problems=[],warnings=[];
 const log=(name,ok,details)=>{const rec={name,pass:!!ok,...(details?{details}:{} )};checks.push(rec);if(!ok)problems.push(rec)};
 async function test(name,fn){try{let ret=await fn();log(name,ret===true||ret?.ok===true,typeof ret==='object'?JSON.stringify(ret).slice(0,900):String(ret))}catch(e){log(name,false,e.message.slice(0,600))}}
@@ -130,7 +130,18 @@ async function main(){
     await test(variant+' history date select populated',async()=>await page.locator('#day option').count()>4);
     await test(variant+' history G primary render',async()=>await page.locator('#tb tr').count()>0&&await page.locator('#tableTitle').innerText()!=='' );
    }
+   if(file==='etf-00631l.html'){
+    await page.waitForFunction(()=>document.querySelectorAll('#models tr').length===9,null,{timeout:20000}).catch(()=>{});
+    await test(variant+' 00631L archive 9 strategies',()=>page.evaluate(()=>document.querySelectorAll('#models tr').length===9&&document.getElementById('model').value==='CRASH2_SMA5'&&document.getElementById('ending').textContent.includes('96,770,982')));
+    await test(variant+' 00631L daily capital curve and 2018 switch',async()=>{
+      await page.waitForFunction(()=>document.querySelector('#curve svg path'),null,{timeout:20000}).catch(()=>{});
+      const old=await page.locator('#curveInfo').innerText();await page.locator('#period').selectOption('common2018');
+      await page.waitForFunction(()=>document.querySelector('#curveInfo').textContent.includes('2018-01-02'),null,{timeout:20000}).catch(()=>{});
+      return old.includes('2014-10-31')&&(await page.locator('#curveInfo').innerText()).includes('2018-01-02')&&await page.locator('#curve svg path').count()===1;
+    });
+   }
    if(file==='backtest.html'){
+    await test(variant+' 00631L page direct entry',()=>page.evaluate(()=>!!document.querySelector('.toolbar a[href="./etf-00631l.html"]')));
     await test(variant+' backtest model controls',async()=>await page.locator('#modelTabs button').count()>=3);
     await test(variant+' backtest published data',async()=>!(await page.locator('#meta').innerText()).includes('載入失敗'));
    }
