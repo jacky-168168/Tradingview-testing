@@ -126,30 +126,62 @@ function build(){
  });
  if(typeof ResizeObserver!=="undefined"){const ro=new ResizeObserver(()=>{if(state.data.length)render()});ro.observe(wrap);}
  else scope.addEventListener("resize",()=>{if(state.data.length)render()});
- (async()=>{
+ const retryButton=$("usopRetry");
+ let pending=false;
+ async function readJson(name,attempts=3){
+  let lastError;
+  for(let k=0;k<attempts;k++){
+   const controller=typeof AbortController!=="undefined"?new AbortController():null;
+   const timer=controller?setTimeout(()=>controller.abort(),12000):null;
+   try{
+    // A new cache key on each retry avoids a stale 404 from a Pages CDN edge.
+    const url=URL+name+"?retry="+Date.now()+"-"+k;
+    const res=await fetch(url,{cache:"no-store",...(controller?{signal:controller.signal}:{})});
+    if(!res.ok)throw Error("HTTP "+res.status);
+    return await res.json();
+   }catch(e){lastError=e;
+   }finally{if(timer!==null)clearTimeout(timer)}
+   if(k+1<attempts)await new Promise(resolve=>setTimeout(resolve,500*(k+1)));
+  }
+  throw Error(name+"："+(lastError?.message||"下載失敗"));
+ }
+ async function loadChart(){
+  if(pending)return;
+  pending=true;
+  if(retryButton)retryButton.hidden=true;
+  date.textContent="正在載入歷史曲線…";
+  msg.textContent="正在核對美股官方歷史資料…";
   try{
-   const [histRes,latestRes]=await Promise.all([
-    fetch(URL+"history.json?cache="+Date.now(),{cache:"no-store"}),
-    fetch(URL+"latest.json?cache="+Date.now(),{cache:"no-store"})
-   ]);
-   if(!histRes.ok||!latestRes.ok)throw Error("資料尚未同步");
-   const [hist,latest]=await Promise.all([histRes.json(),latestRes.json()]);
-   const rows=validate(hist);
-   if(latest.date!==hist.asOf||Math.abs(latest.spx-rows[rows.length-1][1])>1)throw Error("最新數據與圖表日期不一致");
+   // Full history is independently self-validating; latest.json is optional.
+   // An out-of-order update of latest.json MUST NOT blank all existing curves.
+   const hist=await readJson("history.json"),rows=validate(hist);
    state.data=rows;
    const age=(Date.now()-Date.parse(hist.asOf+"T23:59:59Z"))/86400000;
    const stale=!Number.isFinite(age)||age>8;
    valueStatus.textContent="SqueezeMetrics 官方日資料｜"+rows.length.toLocaleString("en-US")+" 個交易日"+(stale?"｜⚠ 資料過期":"");
-   msg.textContent=stale?"⚠ 官方資料超過八天未更新，僅供歷史觀察。":"三條線採獨立尺度比較各自的變化趨勢，不能比較線條的絕對高低；不是台股買賣訊號。";
+   msg.textContent=stale?"⚠ 官方歷史資料超過八天未更新，僅供歷史觀察。":"三條線採獨立尺度比較各自變化趨勢，不能直接比較絕對高低；不是台股買賣訊號。";
+   wrap.classList.remove("usop-error");
    render();
+   // Cross-check separately: metadata staleness is a warning, never a graph outage.
+   readJson("latest.json",1).then(latest=>{
+    if(latest?.date!==hist.asOf||Math.abs(Number(latest?.spx)-rows[rows.length-1][1])>1){
+     valueStatus.textContent+="｜⚠ 最新摘要同步中（曲線可正常使用）";
+    }
+   }).catch(()=>{valueStatus.textContent+="｜⚠ 最新摘要暫不可用（曲線可正常使用）"});
   }catch(e){
-   date.textContent="無法載入歷史曲線";
-   valueStatus.textContent="尚無可核對的走勢資料";
-   msg.textContent="圖表來源尚未同步或日期核對失敗；不顯示虛構曲線。";
-   wrap.textContent="圖表資料暫時不可用，請稍後重試。";
+   state.data=[];
+   date.textContent="圖表暫時無法載入";
+   valueStatus.textContent="歷史資料尚未取得";
+   msg.textContent="載入失敗："+String(e?.message||e).slice(0,170)+"。可按「重試圖表」，不會影響台股風控分數。";
    wrap.classList.add("usop-error");
-  }
- })();
+   // Retain <svg> and listener bindings so retry is actually functional.
+   svg.replaceChildren();
+   if(retryButton)retryButton.hidden=false;
+   if(typeof console!=="undefined")console.warn("DIX/GEX history load",e);
+  }finally{pending=false}
+ }
+ if(retryButton)retryButton.addEventListener("click",loadChart);
+ void loadChart();
 }
 if(typeof document!=="undefined"){
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",build,{once:true});else build();

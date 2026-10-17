@@ -41,6 +41,20 @@ async function main(){
    if(file==='index.html'){
     await test(variant+' home data loaded',()=>page.evaluate(()=>!!window.DATA?.dataDate&&Number.isFinite(Number(DATA.risk?.score))&&document.getElementById('marketMeta').textContent.includes(DATA.dataDate)));
     await test(variant+' home risk & timing',()=>page.evaluate(()=>Number(document.getElementById('riskScore').textContent)===Number(DATA.risk.score)&&!!document.getElementById('commandStatus').textContent));
+    await test(variant+' DIX GEX chart renders real 3-series historical lines',async()=>{
+      await page.waitForFunction(()=>{
+        const wrap=document.getElementById('usopChartWrap'),svg=document.getElementById('usopChart');
+        return wrap?.classList.contains('usop-error')||svg?.querySelectorAll('path[data-path-series]').length===3;
+      },{timeout:18000}).catch(()=>{});
+      const status=await page.evaluate(()=>{
+        const w=document.getElementById('usopChartWrap'),svg=document.getElementById('usopChart');
+        return {bad:w?.classList.contains('usop-error'),paths:svg?.querySelectorAll('path[data-path-series]').length||0,
+          date:document.getElementById('usopDate')?.textContent,message:document.getElementById('usopMessage')?.textContent,
+          main:document.getElementById('usopValuegex')?.textContent};
+      });
+      return status.paths===3&&!status.bad&&status.date.includes('2026/')&&status.main!=='—'?true:{ok:false,status};
+    });
+
     await test(variant+' homepage shows score interpretation and action',()=>page.evaluate(()=>{
       const guide=document.getElementById('commandTradeGuide'),title=document.getElementById('commandGuideTitle'),
         detail=document.getElementById('commandGuideText'),scale=document.getElementById('commandGuideScale');
@@ -50,6 +64,19 @@ async function main(){
         guide.textContent.includes('分數解讀與操作方向'));
     }));
     await test(variant+' institution/source render',()=>page.evaluate(()=>document.getElementById('instSource').textContent.length>0&&document.getElementById('buyRows').textContent.length>0&&document.getElementById('sellRows').textContent.length>0));
+    await test(variant+' DIX chart remains functional when latest.json is unavailable',async()=>{
+      const x=await ctx.newPage();
+      try{
+        await x.route('**/data/research/us_options/latest.json*',route=>route.fulfill({status:503,body:'maintenance'}));
+        await x.goto(BASE+'index.html',{waitUntil:'domcontentloaded',timeout:28000});
+        await x.waitForFunction(()=>{
+          const svg=document.getElementById('usopChart');
+          return svg?.querySelectorAll('path[data-path-series]').length===3;
+        },null,{timeout:18000});
+        return await x.evaluate(()=>document.getElementById('usopValuegex').textContent!=='—'&&!document.getElementById('usopChartWrap').classList.contains('usop-error'));
+      }finally{await x.close()}
+    });
+
     await test(variant+' home to linked core routes',()=>page.evaluate(()=>['./selections.html','./stocks.html','./bubbles.html','./upstream.html','./backtest.html'].every(x=>document.querySelector('a[href="'+x+'"]'))));
     if(variant==='mobile')await test('mobile market detail toggle',async()=>{const e=page.locator('#marketAdvanced');await e.evaluate(n=>n.open=true);return await e.evaluate(n=>n.open)});
    }

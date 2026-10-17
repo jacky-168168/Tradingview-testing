@@ -42,7 +42,7 @@
 <script src="./market-command.js?v=c27a62c1e751"></script>
 <script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
-<script defer src="./us-options-risk.js?v=20261017-chart1"></script>
+<script defer src="./us-options-risk.js?v=59f6bca413e6"></script>
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -205,6 +205,7 @@
  <p id="usopMessage" class="usop-msg">正在載入官方歷史走勢。三條線使用獨立尺度，不能直接比較絕對高低。</p>
  <div class="usop-footer">
   <span id="usopStatus">歷史資料同步中…</span>
+  <button id="usopRetry" type="button" hidden style="border:1px solid #64748b;border-radius:8px;padding:7px 12px;background:#334155;color:#fff;cursor:pointer">重試圖表</button>
   <div class="usop-footer-links"><a href="https://squeezemetrics.com/monitor/dix" target="_blank" rel="noopener noreferrer">原始圖表 ↗</a><a href="./data/research/us_options/backtest.json" target="_blank" rel="noopener noreferrer">台股回測 ↗</a><a href="./data/research/us_options/history.json" target="_blank" rel="noopener noreferrer">完整歷史資料 ↗</a></div>
  </div>
 </section>

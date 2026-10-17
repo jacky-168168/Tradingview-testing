@@ -365,3 +365,36 @@ jobs:
                   time.sleep(5)
           PY
 
+      - name: Verify live Pages delivers valid DIX GEX chart files
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,re,time,urllib.request
+          base=os.environ['PAGES_URL'].rstrip('/')
+          def get(p):
+              url=base+'/'+p
+              req=urllib.request.Request(url,headers={'User-Agent':'DIX-GEX-Live-Chart-Check','Cache-Control':'no-cache'})
+              with urllib.request.urlopen(req,timeout=25) as r:
+                  if r.status!=200:raise RuntimeError('HTTP '+str(r.status)+' '+url)
+                  return r.read()
+          for attempt in range(12):
+              try:
+                  html=get('index.html?chart-test='+str(time.time())).decode('utf-8')
+                  m=re.search(r'us-options-risk\.js\?v=([0-9a-f]{12})',html)
+                  assert m,'Missing versioned DIX JS'
+                  js=get('us-options-risk.js?v='+m.group(1))
+                  digest=hashlib.sha1(b'blob '+str(len(js)).encode()+b'\0'+js).hexdigest()[:12]
+                  assert digest==m.group(1),'Live DIX JS does not match HTML cache hash'
+                  assert b'latest.json' in js and b'history.json' in js
+                  h=json.loads(get('data/research/us_options/history.json?chart-test='+str(time.time())))
+                  assert h['columns']==['date','spx','dixPct','gex']
+                  assert len(h['rows'])>=3000 and h['rows'][-1][0]==h['asOf']
+                  assert all(isinstance(v,(int,float)) for v in h['rows'][-1][1:])
+                  print('PASS LIVE DIX/SPX/GEX chart:',len(h['rows']),'rows',h['asOf'],'HTML/JS SHA',digest)
+                  break
+              except Exception as e:
+                  print('Live DIX chart attempt',attempt+1,'/12:',repr(e),flush=True)
+                  if attempt==11:raise
+                  time.sleep(5)
+          PY
