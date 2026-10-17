@@ -1,0 +1,63 @@
+name: Isolated G Stock SMA 2026 Backtest
+on:
+  push:
+    branches:
+      - research/g-stock-sma-2026-1018
+    paths:
+      - tw-stock-dashboard/scripts/research_g_stock_sma_2026.py
+      - .github/workflows/research-g-stock-sma-2026.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: isolated-g-stock-sma-2026
+  cancel-in-progress: false
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-Linux-gstock-sma-2026
+          restore-keys: |
+            tw-stock-cache-Linux-
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Syntax and deterministic correctness checks
+        run: |
+          python -m py_compile tw-stock-dashboard/scripts/research_g_stock_sma_2026.py
+      - name: Execute isolated 2026 chronological stock backtest
+        working-directory: tw-stock-dashboard
+        run: python -u scripts/research_g_stock_sma_2026.py
+      - name: Verify full model outputs and prevent incomplete data publication
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('tw-stock-dashboard/docs/data/research/g_stock_sma_2026')
+          j=json.loads((p/'summary.json').read_text())
+          assert j['source']['symbolDataUsable']>=.85*j['source']['gUniqueSymbols']
+          assert len(j['models'])==5
+          for m in j['models']:
+              assert m['endEquity']>0 and m['closedTrades']>=0,m
+              assert m['wins']+m['losses']==m['closedTrades']
+              assert m['periodEnd']=='2026-10-16',m
+          print('VERIFIED 2026 G STOCK SMA RESULTS', [(m['model'],m['netReturnPct']) for m in j['models']])
+          PY
+      - name: Commit only branch research results (never main)
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_stock_sma_2026/
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: archive G stock SMA 2026 benchmark and trades'
+            git push origin HEAD:research/g-stock-sma-2026-1018
+          fi
