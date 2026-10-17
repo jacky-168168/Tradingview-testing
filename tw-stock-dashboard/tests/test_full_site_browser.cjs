@@ -55,23 +55,25 @@ async function main(){
       return status.paths===3&&!status.bad&&status.date.includes('2026/')&&status.main!=='—'?true:{ok:false,status};
     });
 
-    await test(variant+' DIX six-month 7-step daily report renders with full evidence',()=>page.evaluate(()=>{
-      const card=document.getElementById('usopDailyAnalysis'),title=document.getElementById('usopDailyTitle'),
-        table=document.querySelector('#usopDailyBody table'),
-        rows=table?[...table.querySelectorAll('tbody tr')]:[],
-        headers=[...document.querySelectorAll('#usopDailyBody h4')].map(x=>x.textContent),
-        lists=[...document.querySelectorAll('#usopDailyBody ul')],
-        status=document.querySelector('#usopDailyBody .usop-report-status'),
-        resonance=document.querySelector('#usopDailyBody .usop-report-resonance'),
+    await test(variant+' DIX plain-language summary is visible and expert detail starts collapsed',()=>page.evaluate(()=>{
+      const root=document.getElementById('usopDailyAnalysis'),title=document.getElementById('usopDailyTitle'),
+        simple=root?.querySelector('.usop-easy-view'),cards=simple?[...simple.querySelectorAll('.usop-easy-line')]:[],
+        status=root?.querySelector('.usop-reader-status'),watch=root?.querySelector('.usop-easy-watch'),
+        details=root?.querySelector('details.usop-deep-details'),tbl=details?.querySelector('table'),
         meta=document.getElementById('usopDailyMeta');
-      return !!card&&card.dataset.state==="ready"&&title.textContent.includes("美股資金結構日報")&&
-        !!status&&/🟢|🟡|🟠|🔴|⚪/.test(status.textContent)&&
-        rows.length===3&&rows[0].textContent.includes("DIX")&&rows[1].textContent.includes("S&P 500")&&rows[2].textContent.includes("GEX")&&
-        headers.includes("數據")&&headers.includes("重點解讀")&&headers.includes("明日觀察重點")&&
-        lists.length===2&&lists[0].querySelectorAll('li').length>=3&&lists[1].querySelectorAll('li').length>=2&&
-        !!resonance&&resonance.textContent.includes("程度")&&
-        meta.textContent.includes("資料日")&&meta.textContent.includes("尚未獨立驗證預測力");
+      return root?.dataset.state==='ready'&&title?.textContent.includes('今天怎麼看？')&&
+        !!status&&status.textContent.length<100&&cards.length===3&&
+        cards[0].textContent.includes('綠線')&&cards[1].textContent.includes('藍線')&&cards[2].textContent.includes('黃線')&&
+        cards[1].textContent.includes('不等於大戶正在買超')&&cards[2].textContent.includes('不能直接預測股價漲跌')&&
+        watch?.querySelectorAll('li').length===2&&!!details&&!details.open&&
+        tbl?.querySelectorAll('tbody tr').length===3&&meta?.textContent.includes('資料日');
     }));
+    await test(variant+' DIX advanced 7-step evidence is expandable',async()=>{
+      const details=page.locator('#usopDailyAnalysis details.usop-deep-details');
+      await details.locator('summary').click();
+      return await details.evaluate(el=>el.open&&el.querySelectorAll('h4').length>=3&&
+        !!el.querySelector('.usop-report-resonance')&&!!el.querySelector('.usop-report-compare'));
+    });
     await test(variant+' homepage shows score interpretation and action',()=>page.evaluate(()=>{
       const guide=document.getElementById('commandTradeGuide'),title=document.getElementById('commandGuideTitle'),
         detail=document.getElementById('commandGuideText'),scale=document.getElementById('commandGuideScale');
