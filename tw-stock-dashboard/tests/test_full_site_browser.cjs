@@ -41,6 +41,20 @@ async function main(){
    if(file==='index.html'){
     await test(variant+' home data loaded',()=>page.evaluate(()=>!!window.DATA?.dataDate&&Number.isFinite(Number(DATA.risk?.score))&&document.getElementById('marketMeta').textContent.includes(DATA.dataDate)));
     await test(variant+' home risk & timing',()=>page.evaluate(()=>Number(document.getElementById('riskScore').textContent)===Number(DATA.risk.score)&&!!document.getElementById('commandStatus').textContent));
+    await test(variant+' DIX GEX chart renders real 3-series historical lines',async()=>{
+      await page.waitForFunction(()=>{
+        const wrap=document.getElementById('usopChartWrap'),svg=document.getElementById('usopChart');
+        return wrap?.classList.contains('usop-error')||svg?.querySelectorAll('path[data-path-series]').length===3;
+      },{timeout:18000}).catch(()=>{});
+      const status=await page.evaluate(()=>{
+        const w=document.getElementById('usopChartWrap'),svg=document.getElementById('usopChart');
+        return {bad:w?.classList.contains('usop-error'),paths:svg?.querySelectorAll('path[data-path-series]').length||0,
+          date:document.getElementById('usopDate')?.textContent,message:document.getElementById('usopMessage')?.textContent,
+          main:document.getElementById('usopValuegex')?.textContent};
+      });
+      return status.paths===3&&!status.bad&&status.date.includes('2026/')&&status.main!=='—'?true:{ok:false,status};
+    });
+
     await test(variant+' homepage shows score interpretation and action',()=>page.evaluate(()=>{
       const guide=document.getElementById('commandTradeGuide'),title=document.getElementById('commandGuideTitle'),
         detail=document.getElementById('commandGuideText'),scale=document.getElementById('commandGuideScale');
