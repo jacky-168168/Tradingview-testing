@@ -51,7 +51,7 @@ def compile_bars(df):
     d["crash2_7"]=(d.ret1<=-.07)&(d.ret1.shift(1)<=-.07)
     d["recent2_4"]=d.crash2_4.rolling(5,min_periods=1).max().astype(bool)
     d["recent2_7"]=d.crash2_7.rolling(5,min_periods=1).max().astype(bool)
-    return {str(r["date"]):{k:(float(r[k]) if finite(r[k]) else None) for k in
+    return {str(r["date"]):{k:(bool(r[k]) if k in ("below3","recent2_4","recent2_7") else (float(r[k]) if finite(r[k]) else None)) for k in
       ("open","high","low","close","sma5","sma10","ret1","below3","recent2_4","recent2_7")}
       for _,r in d.iterrows()}
 def load_signals():
