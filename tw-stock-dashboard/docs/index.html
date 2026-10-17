@@ -35,10 +35,12 @@
 <script src="./site-access.js"></script>
 <link rel="stylesheet" href="./market-sentiment.css?v=0bd68b022c1b">
 <link rel="stylesheet" href="./market-command.css?v=4eb52cea25e6">
+<link rel="stylesheet" href="./market-compact.css?v=60bacca3238b">
 <link rel="stylesheet" href="./dynamic-exposure.css">
 <link rel="stylesheet" href="./us-options-risk.css?v=20261017-chart1">
-<script src="./market-command.js?v=4386f2d88d3e"></script>
-<script src="./market-sentiment.js?v=3defd3af06ea"></script>
+<script src="./market-compact.js?v=3442d2ef5d76"></script>
+<script src="./market-command.js?v=f14a58503538"></script>
+<script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
 <script defer src="./us-options-risk.js?v=20261017-chart1"></script>
 </head>
@@ -82,7 +84,26 @@
     </div>
   </nav>
 </header>
-<section id="marketCommand" class="market-command cmd-unknown" aria-label="大盤風險情緒與操作方向">
+<section id="marketCommand" class="market-command market-compact cmd-unknown" aria-label="大盤風險情緒與操作方向">
+<div id="compactMarketSummary" class="compact-summary" data-tone="wait" data-reference="false" aria-label="大盤操作總覽">
+ <div id="compactScoreType" class="compact-eyebrow">正在核對市場分數…</div>
+ <div class="compact-hero-line"><h2 id="compactAction" class="compact-action">等待有效資料</h2><div class="compact-major-score"><span id="compactScore">—</span><small>/100</small></div></div>
+ <div class="compact-meaning"><strong id="compactBand">資料待確認</strong><span id="compactSession">正式資料日核對中</span></div>
+ <div class="compact-score-sources" aria-label="分數來源，校正為獨立研究">
+  <div class="compact-source"><span class="compact-source-label">正式收盤</span><strong id="compactOfficial">—</strong><small>原始 Risk Score</small></div>
+  <div class="compact-source" id="compactResearch" data-verified="false"><span class="compact-source-label">校正參考</span><strong id="compactAdjusted">—</strong><small>獨立研究，不參與運算</small></div>
+  <div class="compact-source" id="compactNightCell" hidden><span class="compact-source-label">TX 夜盤調整</span><strong id="compactNight">—</strong><small>未經獨立回測</small></div>
+ </div>
+ <div class="compact-explain" id="compactEquation">校正研究不參與正式分數或夜盤參考計算。</div>
+ <div class="compact-safety"><span id="compactPattern" class="compact-pattern" hidden>反彈待確認</span><span id="compactScoreFootnote">分數不能取代個股風險管控。</span></div>
+</div>
+<div class="cmd-metrics" aria-label="進場最重要的兩項證據">
+    <div class="cmd-metric"><span>市場參與度｜當日上漲家數</span><strong id="commandBreadth">—</strong><small id="commandBreadthSub">TWSE 上漲股票比例</small></div>
+    <div class="cmd-metric"><span>大盤強弱變化｜近 5 交易日</span><strong id="commandScoreChange">—</strong><small id="commandScoreChangeSub">與五個交易日前比較</small></div>
+  </div>
+<div class="cmd-bottom"><div id="commandReasons" class="cmd-chips" aria-label="當前關鍵風險"><span class="command-chip">市場風險核對中</span></div><a id="commandPrimaryLink" class="cmd-cta" href="./selections.html">查看選股候選 →</a></div>
+<details id="marketRiskDetails" class="compact-deep" aria-label="進階市場風險與歷史">
+ <summary>查看完整分析、儀表板與歷史分數</summary>
  <section id="sentimentPanel" class="sentiment-hero" aria-label="大盤情緒儀表板">
   <div class="sentiment-main">
    <div class="sentiment-eyebrow">MARKET RISK｜台股市場</div>
@@ -130,8 +151,7 @@
       <div id="commandScoreDescription" class="cmd-score-label">原始 Risk Score<br>沒有混入 AI 預測</div><div id="commandCashReference" class="cmd-cash-reference" hidden aria-live="polite"></div><div class="cmd-score-track" aria-hidden="true"><span id="commandScoreFill" class="cmd-score-fill"></span></div><div class="cmd-score-extra" aria-label="分數刻度：0、60為一般基準、80為強勢、100"><span>0</span><span>60</span><span>80</span><span>100</span></div>    </div>
   </div>
  </div>
-
-  <section class="cmd-trade-guide" id="commandTradeGuide" data-tone="wait" aria-label="依當前分數解讀與操作建議">
+ <section class="cmd-trade-guide" id="commandTradeGuide" data-tone="wait" aria-label="依當前分數解讀與操作建議">
     <div class="cmd-trade-guide-label">🧭 分數解讀與操作方向 <span id="commandGuideSource">等待有效資料</span></div>
     <div class="cmd-trade-guide-title" id="commandGuideTitle" role="status" aria-live="polite">核對今日操作風險中…</div>
     <div class="cmd-trade-guide-text" id="commandGuideText">分數只能評估市場環境，不能取代個股買點、停損或正式風控。</div>
@@ -147,12 +167,7 @@
       <small>盤前基準＝昨收 Risk Score＋同月台指期夜盤調整；尚未經獨立績效回測，分數不代表勝率或買賣保證。</small>
     </details>
   </section>
-  <div class="cmd-metrics" aria-label="進場最重要的兩項證據">
-    <div class="cmd-metric"><span>市場參與度｜當日上漲家數</span><strong id="commandBreadth">—</strong><small id="commandBreadthSub">TWSE 上漲股票比例</small></div>
-    <div class="cmd-metric"><span>大盤強弱變化｜近 5 交易日</span><strong id="commandScoreChange">—</strong><small id="commandScoreChangeSub">與五個交易日前比較</small></div>
-  </div>
-  <div class="cmd-bottom"><div id="commandReasons" class="cmd-chips" aria-label="當前關鍵風險"><span class="command-chip">市場風險核對中</span></div><a id="commandPrimaryLink" class="cmd-cta" href="./selections.html">查看選股候選 →</a></div>
-  <details class="cmd-advanced" id="commandAdvanced"><summary>查看前高、波動與完整判斷依據<span class="disclosure-hint">進階</span></summary>
+ <details class="cmd-advanced" id="commandAdvanced"><summary>查看前高、波動與完整判斷依據<span class="disclosure-hint">進階</span></summary>
     <div class="cmd-extra-metrics">
       <div class="cmd-metric"><span>實現波動｜20日年化</span><strong id="commandVol">—</strong><small id="commandVolSub">用歷史分位觀察波動</small></div>
       <div class="cmd-metric"><span>距離前120日高點</span><strong id="commandHigh">—</strong><small id="commandHighSub">接近前高不代表必然反轉</small></div>
@@ -162,6 +177,7 @@
     <div class="cmd-validated-strategy"><strong>G／D 策略歷史檢驗</strong><span id="commandStrategyEvidence">正在核對 G 20 日／D 10 日歷史淨報酬…</span><small>2026 年資料曾被先前研究檢視；以下為歷史訊號平均淨報酬，非即時買點或帳戶複利。</small><a href="./data/research/market_entry_playbook/report.md" target="_blank" rel="noopener">查看完整回測與限制 ↗</a></div>
     <div class="cmd-research"><span id="commandAi">機器學習回測狀態核對中…</span><a href="./data/research/market_ml_audit/summary.json" target="_blank" rel="noopener">AI 驗證</a><a href="./data/research/market_intelligence/latest.json" target="_blank" rel="noopener">風險依據</a><a href="./market-methodology.html">書籍／GitHub／研究說明</a></div>
   </details>
+</details>
 </section>
 <section class="card usop-panel" id="usOptionsRisk" aria-label="美股 DIX S&P 500 GEX 完整歷史趨勢圖">
  <div class="usop-top">

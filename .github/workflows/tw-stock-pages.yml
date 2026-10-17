@@ -7,6 +7,10 @@ on:
     paths:
       - 'tw-stock-dashboard/docs/*.html'
       - 'tw-stock-dashboard/docs/market-command.js'
+      - 'tw-stock-dashboard/docs/market-compact.js'
+      - 'tw-stock-dashboard/docs/market-compact.css'
+      - 'tw-stock-dashboard/tests/test_market_compact.cjs'
+      - 'tw-stock-dashboard/docs/market-sentiment.js'
       - 'tw-stock-dashboard/docs/us-options-risk.js'
       - 'tw-stock-dashboard/docs/us-options-risk.css'
       - 'tw-stock-dashboard/tests/test_us_options_chart.cjs'
@@ -60,6 +64,8 @@ jobs:
           node tw-stock-dashboard/tests/test_upstream_ui.cjs
           node tw-stock-dashboard/tests/test_intraday_schedule.cjs
           node tw-stock-dashboard/tests/test_us_options_chart.cjs
+          node tw-stock-dashboard/tests/test_market_compact.cjs
+          python3 tw-stock-dashboard/tests/test_market_homepage_layout.py
           node --check tw-stock-dashboard/docs/g-rank-export.js
           node tw-stock-dashboard/tests/test_g_rank_export.cjs
           node - <<'JS'

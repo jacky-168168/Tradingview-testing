@@ -61,6 +61,7 @@ function updateReview(){
  const note=$("sentimentReviewNote");if(note)note.textContent=result.status==="rebound"?"原始 "+risk.score+" 分，僅示範下修 "+result.penalty+" 分作風險提示；G／F／F2 正式交易規則不變。":"與原始分數分開呈現；本研究規則尚缺少足夠樣本，不代表預測勝率。";
  const guide=$("commandReboundWarning");
  if(guide){guide.hidden=result.status!=="rebound";if(!guide.hidden)guide.textContent="⚠ 大跌後反彈尚未確認：原始 Risk Score "+risk.score+" 分、校正參考 "+result.adjusted+" 分。請勿只因原始高分就積極追價；"+result.message}
+ if(scope.MarketCompact)scope.MarketCompact.review(result,pattern);
 }
 async function loadPrevious(){
  if(!last||!historyLoaded)return;

@@ -185,7 +185,7 @@ function drawScoreGuide({officialScore,officialDate,currentScore,reference,level
 function draw(data,diag){
  const panel=$("marketCommand");if(!panel)return;
  const r=data?.risk||{},now=new Date(),val=Number(r.score),x=evaluate(r,diag,now),pre=marketPremarket(r,currentPremarket,now),night=overnightRisk(currentFutures,r,now),breadthLive=tradedBreadth(currentIntraday,now),post=pre?null:postOpenState(r,now,night,breadthLive),d=pre?{...x.decision,...pre}:post?{...x.decision,...post}:x.decision,info=x.diag?.marketHealth||{};
- panel.dataset.level=d.level;panel.dataset.premarket=pre?"true":"false";panel.className="market-command cmd-"+d.level.toLowerCase();
+ panel.dataset.level=d.level;panel.dataset.premarket=pre?"true":"false";panel.className="market-command market-compact cmd-"+d.level.toLowerCase();
  txt("commandStatus",d.headline);
  txt("commandAction",d.action);
  txt("commandScore",pre?String(pre.score):post?.baseline?String(post.baseline.score):post||x.stale?"—":Number.isFinite(val)&&r.score!=null?String(val):"—");
@@ -221,6 +221,7 @@ function draw(data,diag){
  txt("commandLogic",post?.baseline?"今日參考基準＝昨日正式 "+post.baseline.base+" 分 "+(post.baseline.delta>=0?"+":"")+post.baseline.delta+" 分，根據對應今日的同月台指期夜盤調整，故為 "+post.baseline.score+"/100；基準不會因日內價格波動變動，今日現貨廣度另以警示表示，不修改正式 F／F2／G，調整門檻尚未獨立回測。":x.stale?"交易日已進入收盤後，但官方收盤資料尚未完整同步；僅顯示上次已核對分數，不改動 F／F2／G 原始策略或補入推測法人數值。":pre?"盤前情境 "+pre.base+" "+pre.deltaLabel+" = "+pre.score+"/100。"+pre.source+"，調整規則尚未通過獨立回測；正式 F／F2／G 仍用現貨分數。":post?"今日現貨資料尚未齊全，前一交易日現貨分數不自動放行新倉。":post?"只將今天的 MIS 實際成交廣度及前一晚官方台指期作風險警示；昨日 Risk Score 不具今日即時效力。":x.diag?"已核對市場廣度、波動、前高和反轉監測；僅原始 Risk Score 曾參與既有進場回測。":"目前顯示經核對的原始收盤 Risk Score；延伸市場診斷尚未同步，暫不推測其他指標。");
  const reference=!!(pre||post?.baseline);
  const currentScore=pre?Number(pre.score):post?.baseline?Number(post.baseline.score):x.stale||post?null:r.score==null?null:Number(r.score);
+ if(scope.MarketCompact)scope.MarketCompact.render({score:currentScore,officialScore:r.score,officialDate:r.date,level:d.level,reference,date:pre?.targetDate||post?.baseline?.target||x.today,delta:pre?.adjustment??post?.baseline?.delta??null,stale:x.stale,post:!!post});
  drawScoreGuide({officialScore:r.score,officialDate:r.date,currentScore,reference,level:d.level,date:pre?.targetDate||x.today});
  if(scope.MarketSentiment)scope.MarketSentiment.render({officialScore:r.score,officialDate:r.date,currentScore,reference,stale:x.stale,post:!!post,updated:data?.generatedAt,risk:r});
  const btn=$("commandPrimaryLink");
