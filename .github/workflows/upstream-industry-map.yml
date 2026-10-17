@@ -63,7 +63,7 @@ jobs:
           assert a['schema']=='tw-upstream-industries-v2' and a['dataDate']==b['dataDate']
           assert a['coverage']['verifiedCompanyPages']>=500 and a['coverage']['marketStocks']>=1000
           assert a['coverage']['distinctUpstreamStocks']>30
-          assert len(a['industries'])==11
+          assert len(a['industries'])==12
           cpo=next(x for x in a['industries'] if x['code']=='CPO')
           assert cpo['name']=='CPO／矽光子' and cpo['stockCount']>=7 and len(cpo['subgroups'])==3
           assert 'trendforce.com.tw' in cpo['source'], 'CPO must be independent research, not fake TPEx industry'
@@ -95,6 +95,16 @@ jobs:
           y=next(x for x in c['被動元件（電阻電容／濾波等）']['stocks'] if x['code']=='2327')
           assert y['basis']=='tpex_cross_industry' and '中游' in y['roleNote'] and y['source'].endswith('stk_code=2327')
           print('PASS communication main-passive split',len(active),len(passive),len(pending),'Yageo J000 midstream')
+          j000=next(z for z in a['industries'] if z['code']=='J000')
+          assert j000['name']=='被動元件' and len(j000['subgroups'])==8 and j000['stockCount']>=10
+          passive_materials=[x for g in j000['subgroups'] if not '中游' in g['name'] for x in g['stocks']]
+          passive_makers=[x for g in j000['subgroups'] if '中游' in g['name'] for x in g['stocks']]
+          assert {'4760','6204'}.issubset({x['code'] for x in passive_materials})
+          assert {'2327','2492','3026'}.issubset({x['code'] for x in passive_makers})
+          assert '2327' not in {x['code'] for x in passive_materials}, 'Yageo is passive middle stage, not ceramic upstream'
+          assert all(x['basis']=='tpex_official' for x in passive_materials)
+          assert all(x['basis']=='tpex_official_midstream' for x in passive_makers)
+          print('PASS independent official passive J000 material and device production stages',j000['stockCount'])
           assert all(z['source'].startswith('https://ic.tpex.org.tw/introduce.php?ic=') for z in a['industries'] if z['code'] not in {'CPO','LEO','IC_SUB'})
           assert all(x['market'] in ('上市','上櫃') and x['code'].isdigit() and len(x['code'])==4 for sector in a['industries'] for part in sector['subgroups'] for x in part['stocks'])
           pcb=next(z for z in a['industries'] if z['code']=='L000')
