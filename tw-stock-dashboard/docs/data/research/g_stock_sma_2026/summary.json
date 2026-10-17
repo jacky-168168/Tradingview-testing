@@ -1,0 +1,225 @@
+{
+  "version": "G_STOCK_SMA_2026_PREDECLARED_V1",
+  "generatedAt": "2026-10-18T06:41:23.728398+08:00",
+  "source": {
+    "Garchive": "docs/data/backtest_g/g_persistence_2026.json",
+    "stockBars": "Yahoo daily OHLC; cached source if present",
+    "benchmark": "TWII session calendar",
+    "gScorePointInTime": "retrospectively backtested, NOT a preserved official historical daily top3",
+    "signalDateEnd": "2026-10-07",
+    "gDays": 164,
+    "gRows": 490,
+    "gUniqueSymbols": 146,
+    "symbolDataUsable": 146,
+    "stockErrors": {},
+    "sessionCount": 190
+  },
+  "execution": {
+    "startingCapitalTWD": 1000000.0,
+    "feeBuy": 0.0024249999999998995,
+    "feeSellAndTaxAndSlippage": 0.005425000000000013,
+    "shareIncrement": 1,
+    "assumption": "daily close D triggers next D+1 open; odd-lot opening at official daily open optimistic; no intraday stops",
+    "holdingSMA": "own stock SMA10, no borrowing/leverage",
+    "maxSlots": 4,
+    "entryAllocationPct": 25.0
+  },
+  "models": [
+    {
+      "model": "G_HOLD5",
+      "periodStart": "2026-01-02",
+      "periodEnd": "2026-10-16",
+      "startCapital": 1000000.0,
+      "endEquity": 1408398.49,
+      "netReturnPct": 40.84,
+      "maxDrawdownPct": -45.759,
+      "closedTrades": 132,
+      "wins": 74,
+      "losses": 58,
+      "winRatePct": 56.06,
+      "profitFactor": 1.184,
+      "avgWinPct": 12.708,
+      "avgLossPct": -12.592,
+      "avgHoldDays": 5.0,
+      "openAtEnd": 0,
+      "entryTypes": {
+        "G_top3": 132
+      },
+      "exitTypes": {
+        "time5": 132
+      },
+      "earlySMA5Rebuys": 0,
+      "skips": {},
+      "maxPositions": 4,
+      "maxInitialWeightPct": 25.0,
+      "yearly": {
+        "2026": {
+          "first": "2026-01-02",
+          "last": "2026-10-16",
+          "returnPct": 40.84
+        }
+      }
+    },
+    {
+      "model": "G_SMA10",
+      "periodStart": "2026-01-02",
+      "periodEnd": "2026-10-16",
+      "startCapital": 1000000.0,
+      "endEquity": 1542368.13,
+      "netReturnPct": 54.237,
+      "maxDrawdownPct": -42.887,
+      "closedTrades": 38,
+      "wins": 17,
+      "losses": 21,
+      "winRatePct": 44.74,
+      "profitFactor": 1.472,
+      "avgWinPct": 32.356,
+      "avgLossPct": -12.968,
+      "avgHoldDays": 17.395,
+      "openAtEnd": 1,
+      "entryTypes": {
+        "G_top3": 39
+      },
+      "exitTypes": {
+        "sma10_3below": 38
+      },
+      "earlySMA5Rebuys": 0,
+      "skips": {
+        "entry_sma10_not_met": 1
+      },
+      "maxPositions": 4,
+      "maxInitialWeightPct": 25.0,
+      "yearly": {
+        "2026": {
+          "first": "2026-01-02",
+          "last": "2026-10-16",
+          "returnPct": 54.237
+        }
+      }
+    },
+    {
+      "model": "G_SMA10_PANIC4",
+      "periodStart": "2026-01-02",
+      "periodEnd": "2026-10-16",
+      "startCapital": 1000000.0,
+      "endEquity": 880083.91,
+      "netReturnPct": -11.992,
+      "maxDrawdownPct": -54.616,
+      "closedTrades": 147,
+      "wins": 52,
+      "losses": 95,
+      "winRatePct": 35.37,
+      "profitFactor": 0.946,
+      "avgWinPct": 14.784,
+      "avgLossPct": -7.701,
+      "avgHoldDays": 4.327,
+      "openAtEnd": 0,
+      "entryTypes": {
+        "G_top3": 147
+      },
+      "exitTypes": {
+        "panic": 145,
+        "sma10_3below": 2
+      },
+      "earlySMA5Rebuys": 0,
+      "skips": {
+        "entry_sma10_not_met": 1
+      },
+      "maxPositions": 4,
+      "maxInitialWeightPct": 25.0,
+      "yearly": {
+        "2026": {
+          "first": "2026-01-02",
+          "last": "2026-10-16",
+          "returnPct": -11.992
+        }
+      }
+    },
+    {
+      "model": "G_SMA10_PANIC4_CRASH2_SMA5",
+      "periodStart": "2026-01-02",
+      "periodEnd": "2026-10-16",
+      "startCapital": 1000000.0,
+      "endEquity": 900977.71,
+      "netReturnPct": -9.902,
+      "maxDrawdownPct": -53.539,
+      "closedTrades": 148,
+      "wins": 52,
+      "losses": 96,
+      "winRatePct": 35.14,
+      "profitFactor": 0.956,
+      "avgWinPct": 15.202,
+      "avgLossPct": -7.749,
+      "avgHoldDays": 4.345,
+      "openAtEnd": 0,
+      "entryTypes": {
+        "G_top3": 143,
+        "SMA5_fast": 5
+      },
+      "exitTypes": {
+        "panic": 146,
+        "sma10_3below": 2
+      },
+      "earlySMA5Rebuys": 5,
+      "skips": {
+        "entry_sma10_not_met": 1
+      },
+      "maxPositions": 4,
+      "maxInitialWeightPct": 25.0,
+      "yearly": {
+        "2026": {
+          "first": "2026-01-02",
+          "last": "2026-10-16",
+          "returnPct": -9.902
+        }
+      }
+    },
+    {
+      "model": "G_SMA10_PANIC7_CRASH2_SMA5",
+      "periodStart": "2026-01-02",
+      "periodEnd": "2026-10-16",
+      "startCapital": 1000000.0,
+      "endEquity": 999241.41,
+      "netReturnPct": -0.076,
+      "maxDrawdownPct": -41.942,
+      "closedTrades": 93,
+      "wins": 33,
+      "losses": 60,
+      "winRatePct": 35.48,
+      "profitFactor": 0.953,
+      "avgWinPct": 17.784,
+      "avgLossPct": -9.329,
+      "avgHoldDays": 6.957,
+      "openAtEnd": 1,
+      "entryTypes": {
+        "G_top3": 92,
+        "SMA5_fast": 2
+      },
+      "exitTypes": {
+        "panic": 81,
+        "sma10_3below": 12
+      },
+      "earlySMA5Rebuys": 2,
+      "skips": {
+        "entry_sma10_not_met": 1
+      },
+      "maxPositions": 4,
+      "maxInitialWeightPct": 25.0,
+      "yearly": {
+        "2026": {
+          "first": "2026-01-02",
+          "last": "2026-10-16",
+          "returnPct": -0.076
+        }
+      }
+    }
+  ],
+  "notes": [
+    "G model built after seeing 2026 history; results are retrospective, not fresh walk-forward out-of-sample.",
+    "G signal list only through 2026-10-07; positions marked through 2026-10-16.",
+    "SMA5 early reentry requires prior held G stock exited via panic, a recent G selection, and two daily crashes inside 5 sessions.",
+    "SMA10 versions may hold indefinitely until confirmed exit, unlike G_HOLD5 time exit.",
+    "G stock fees assume 0.1425% each-side broker, 0.3% sell tax, 0.1% each-side slippage.",
+    "Cash dividends are not separately credited; no intraday stops; corporate actions and historic universes can introduce bias."
+  ]
+}
