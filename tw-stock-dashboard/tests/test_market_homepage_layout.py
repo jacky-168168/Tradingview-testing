@@ -35,11 +35,11 @@ class MarketHomepageLayout(unittest.TestCase):
         self.assertFalse(self.dom.errors,self.dom.errors[:8]);self.assertFalse(self.dom.stack,self.dom.stack[-5:])
         self.assertFalse(self.dom.duplicates,self.dom.duplicates)
     def test_top_buy_decision_is_not_collapsed(self):
-        for name in ("marketCommand","commandStatus","commandScore","commandBreadth","commandScoreChange","commandReasons","commandPrimaryLink","revState","nextEntry"):
+        for name in ("marketCommand","compactMarketSummary","compactAction","compactScore","compactOfficial","compactAdjusted","compactNight","commandBreadth","commandScoreChange","commandReasons","commandPrimaryLink","revState","nextEntry"):
             self.assertIn(name,self.dom.ids)
             self.assertFalse(self.dom.details[name],name+" should be visible without opening advanced section")
     def test_professional_data_is_kept_in_details_not_deleted(self):
-        for ident,container in (("riskScore","marketAdvanced"),("riskLight","marketAdvanced"),("riskWarning","marketAdvanced"),
+        for ident,container in (("commandScore","marketRiskDetails"),("commandStatus","marketRiskDetails"),("sentimentGauge","marketRiskDetails"),("sentimentHistory","marketRiskDetails"),("sentimentAdjusted","marketRiskDetails"),("commandGuideTitle","marketRiskDetails"),("riskScore","marketAdvanced"),("riskLight","marketAdvanced"),("riskWarning","marketAdvanced"),
                                 ("idx","marketAdvanced"),("ma5","marketAdvanced"),("ma20","marketAdvanced"),
                                 ("txfDay","txfDetails"),("txfNight","txfDetails"),("txfContract","txfDetails"),
                                 ("txfWidgetShell","txfLiveChart"),("extreme","reversalDetails"),
@@ -49,10 +49,22 @@ class MarketHomepageLayout(unittest.TestCase):
             self.assertIn(ident,self.dom.ids)
             self.assertIn(container,self.dom.details[ident],ident+" must be inside "+container)
     def test_no_autoexpanded_expert_panels(self):
-        for item in ("marketAdvanced","txfDetails","txfLiveChart","reversalDetails","commandAdvanced","secondaryInsights"):
+        for item in ("marketRiskDetails","marketAdvanced","txfDetails","txfLiveChart","reversalDetails","commandAdvanced","secondaryInsights"):
             self.assertIn(item,self.dom.ids)
+        self.assertNotIn('id="marketRiskDetails" class="compact-deep" open',self.html)
         self.assertNotIn('id="marketAdvanced" open',self.html)
         self.assertNotIn('id="txfDetails" open',self.html)
+    def test_mobile_compact_score_is_primary_not_repeated(self):
+        for ident in ("compactMarketSummary","compactAction","compactScore","compactOfficial","compactAdjusted","compactNight","commandReasons"):
+            self.assertFalse(self.dom.details[ident],ident+" must remain immediately visible")
+        for ident in ("commandScore","sentimentGauge","sentimentHistory","sentimentPattern","commandGuideTitle"):
+            self.assertIn("marketRiskDetails",self.dom.details[ident],ident+" should be optional research")
+        self.assertEqual(self.html.count('id="compactScore"'),1)
+        self.assertIn('market-compact.css',self.html)
+        self.assertIn('market-compact.js',self.html)
+        self.assertIn('id="usopChart"',self.html)
+        self.assertNotIn('id="marketRiskDetails" class="compact-deep" open',self.html)
+    
     def test_single_upstream_entry_is_in_top_navigation_only(self):
         from html.parser import HTMLParser
         class NavigationLinks(HTMLParser):
