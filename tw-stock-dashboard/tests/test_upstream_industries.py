@@ -139,12 +139,44 @@ class UpstreamIndustryTests(unittest.TestCase):
         self.assertNotIn("2330",{z["code"] for g in sector["subgroups"] for z in g["stocks"]})
         self.assertNotIn("2317",{z["code"] for g in sector["subgroups"] for z in g["stocks"]})
         self.assertTrue(all(x["basis"]=="cpo_industry_research" and x["source"].startswith("https://") and "不等於" in x["roleNote"] for g in sector["subgroups"] for x in g["stocks"]))
+    def test_research_splits_substrate_maker_and_pcb_material_drill_from_official_upstream(self):
+        stocks=[sample("8021","尖點"),sample("2383","台光電"),sample("3037","欣興"),
+                sample("8046","南電"),sample("3189","景碩"),sample("1303","南亞"),
+                sample("2313","華通"),sample("3491","昇達科","上櫃"),sample("2330","台積電")]
+        memberships={x["code"]:[] for x in stocks}
+        memberships["1303"]=[{"industry":"印刷電路板","subCategory":"玻璃纖維/玻纖布"}]
+        r=compile_map(stocks,memberships,"2026-10-16")
+        groups={x["code"]:x for x in r["industries"]}
+        self.assertEqual(len(groups),11)
+        pcb={g["name"]:g for g in groups["L000"]["subgroups"]}
+        ccl=pcb["銅箔基板 CCL／高速基材（中游延伸）"]
+        drill=pcb["PCB 精密鑽針／鑽孔耗材（製程上游供應）"]
+        self.assertEqual({x["code"] for x in ccl["stocks"]},{"2383","1303"})
+        self.assertEqual({x["code"] for x in drill["stocks"]},{"8021"})
+        self.assertIn("中游",ccl["stage"])
+        self.assertNotIn("8021",{x["code"] for x in pcb["玻璃纖維／玻纖布"]["stocks"]})
+        subs={g["name"]:g for g in groups["IC_SUB"]["subgroups"]}
+        self.assertEqual({x["code"] for x in subs["ABF／BT IC 載板製造（中游）"]["stocks"]},{"3037","8046","3189"})
+        self.assertIn("中游",subs["ABF／BT IC 載板製造（中游）"]["stage"])
+        self.assertNotIn("3037",{x["code"] for x in subs["載板用樹脂／材料（上游跨應用）"]["stocks"]})
+        leo={g["name"]:g for g in groups["LEO"]["subgroups"]}
+        self.assertEqual({x["code"] for x in leo["衛星用高頻 PCB／HDI（製板）"]["stocks"]},{"2313"})
+        self.assertEqual({x["code"] for x in leo["衛星射頻／毫米波／天線零組件（上游）"]["stocks"]},{"3491"})
+        self.assertNotIn("2330",{x["code"] for g in groups["LEO"]["subgroups"] for x in g["stocks"]})
+        research=[v for sec in groups.values() for g in sec["subgroups"] for v in g["stocks"] if v["basis"]=="industry_theme_research"]
+        self.assertTrue(all(z["source"].startswith("https://") and "不等於" in z["roleNote"] for z in research))
+        self.assertEqual(len(research),8)
+        self.assertEqual(r["coverage"]["classifiedBySource"]["industry_theme_research"],8)
+        self.assertEqual(r["coverage"]["verifiedCompanyPages"],9)
+    def test_curated_codes_name_market_must_match_actual_archive(self):
+        with self.assertRaisesRegex(RuntimeError,"Research stock code/name/market conflict"):
+            compile_map([sample("8021","台積電")],{"8021":[]},"2026-10-16")
     def test_bad_html_with_no_arrow_never_assumed_upstream(self):
         self.assertEqual(read_memberships("<html>半導體 晶圓製造 IP設計</html>"),[])
     def test_all_mapped_sectors_have_unique_official_source(self):
-        self.assertEqual(len(INDUSTRIES),9)
-        self.assertEqual(len({i["code"] for i in INDUSTRIES}),9)
+        self.assertEqual(len(INDUSTRIES),11)
+        self.assertEqual(len({i["code"] for i in INDUSTRIES}),11)
         self.assertTrue(all(i["groups"] for i in INDUSTRIES))
-        self.assertTrue(all(i["keys"] for i in INDUSTRIES if i["code"]!="CPO"))
+        self.assertTrue(all(i["keys"] for i in INDUSTRIES if i["code"] not in ("CPO","LEO","IC_SUB")))
         self.assertFalse(next(i for i in INDUSTRIES if i["code"]=="CPO")["keys"],"CPO must not masquerade as an official TPEx sector")
 if __name__=="__main__":unittest.main()
