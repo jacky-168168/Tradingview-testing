@@ -29,8 +29,10 @@ jobs:
           python-version: '3.12'
       - name: Refresh verified US close and TWII backtest
         run: python tw-stock-dashboard/src/update_us_options.py
-      - name: Verify public dashboard JavaScript syntax
-        run: node --check tw-stock-dashboard/docs/us-options-risk.js
+      - name: Verify interactive chart source and test suite
+        run: |
+          node --check tw-stock-dashboard/docs/us-options-risk.js
+          node tw-stock-dashboard/tests/test_us_options_chart.cjs
       - name: Verify snapshot and embargoed out-of-sample report
         run: |
           python - <<'PY'
@@ -39,6 +41,11 @@ jobs:
           root=Path("tw-stock-dashboard/docs/data/research/us_options")
           latest=json.loads((root/"latest.json").read_text())
           report=json.loads((root/"backtest.json").read_text())
+          chart=json.loads((root/"history.json").read_text())
+          assert chart["asOf"] == latest["date"]
+          assert chart["columns"] == ["date","spx","dixPct","gex"]
+          assert len(chart["rows"]) >= 2000
+          assert chart["rows"][-1][0] == latest["date"]
           assert latest["date"] == report["usSourceEnd"]
           assert report["samples"] >= 1500
           assert "strictly before" in report["lagPolicy"]
@@ -49,7 +56,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tw-stock-dashboard/docs/data/research/us_options/latest.json tw-stock-dashboard/docs/data/research/us_options/backtest.json
+          git add tw-stock-dashboard/docs/data/research/us_options/latest.json tw-stock-dashboard/docs/data/research/us_options/backtest.json tw-stock-dashboard/docs/data/research/us_options/history.json
           if ! git diff --cached --quiet; then
             git commit -m "data: update delayed DIX GEX and TWII research"
             git push
