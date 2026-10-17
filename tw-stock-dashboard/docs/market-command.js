@@ -286,5 +286,5 @@ async function checkMl(){
  }catch(_err){txt("commandAi","AI 尚未通過可供正式使用的驗證");}
 }
 scope.MarketCommand={evaluate,fallback,refresh,checkMl,applyPremarket,applyFutures,applyIntraday,marketPremarket,marketPremarketFromFutures,postOpenState,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
-if(typeof module!=="undefined"&&module.exports)module.exports={fallback,evaluate,marketPremarket,postOpenState,taipeiParts,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
+if(typeof module!=="undefined"&&module.exports)module.exports={fallback,evaluate,marketPremarket,marketPremarketFromFutures,postOpenState,taipeiParts,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
 })(typeof window!=="undefined"?window:globalThis);
