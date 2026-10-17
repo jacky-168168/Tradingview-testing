@@ -33,7 +33,7 @@ if(live.asOf==="2026-10-16"){
  assert.ok(real.lines[2].includes("緩和波動的效果可能減弱"));
 }
 assert.ok(real.disclaimer.includes("非漲跌方向預測"));
-const {calculate}=require("../docs/us-options-daily-report.js");
+const {calculate,plainLanguage}=require("../docs/us-options-daily-report.js");
 assert.equal(calculate(rows.slice(0,50)),null,"Insufficient six-month sample cannot produce a fabricated classification");
 const detailed=calculate(rows);
 assert.equal(detailed.date,rows.at(-1)[0]);
@@ -43,8 +43,19 @@ assert.ok(detailed.watch.length>=2&&detailed.watch.length<=3);
 assert.ok(["red","orange","yellow","green","white"].includes(detailed.status.code));
 assert.ok(detailed.compare&&detailed.compare.date===rows.at(-2)[0],"Compare prior close under identical rules");
 assert.ok(detailed.rows.every(x=>x.where&&x.direction));
+const easy=plainLanguage(detailed);
+assert.equal(easy.cards.length,3);
+assert.deepEqual(easy.cards.map(x=>x.id),["spx","dix","gex"]);
+assert.ok(easy.summary.length<80,"Above fold summary should be brief");
+assert.ok(easy.cards[1].detail.includes("不等於大戶正在買超"),"DIX must not be sold as net buy volume");
+assert.ok(easy.cards[2].detail.includes("不能直接預測股價漲跌"),"GEX is not a direction oracle");
+assert.equal(easy.watch.length,2);
 const realDetailed=calculate(validate(live));
 assert.equal(realDetailed.date,live.asOf);
+const plainLive=plainLanguage(realDetailed);
+assert.equal(plainLive.cards.length,3);
+assert.ok(plainLive.summary.length>18&&plainLive.watch.every(x=>x.length<70));
+
 assert.ok(realDetailed.points.length>=3&&realDetailed.points.length<=5);
 assert.ok(realDetailed.stats.positions.every(x=>x>=0&&x<=1));
 if(live.asOf==="2026-10-16"){
@@ -65,5 +76,7 @@ assert.ok(!home.includes('<details class="card" id="usOptionsRisk"'),"Chart cann
 assert.ok(js.includes('pointermove')&&js.includes('ArrowLeft')&&js.includes('pointerdown'));
 assert.ok(py.includes('def history_chart(us)')&&py.includes('DATA/"history.json"'));
 assert.ok(home.includes('src="./us-options-daily-report.js?v='));
+assert.ok(home.includes('綠線看美股漲跌')&&home.includes('黃線看選擇權相關波動風險'));
+assert.ok(js.includes('renderDailyAnalysis(rows,stale)'));
 assert.ok(!js.includes("RiskScore=")&&!js.includes("DATA.risk.score="),"Historical chart must not modify market scoring");
 console.log("Interactive three-series US options chart DOM, validation, date ranges, no placeholders: OK");
