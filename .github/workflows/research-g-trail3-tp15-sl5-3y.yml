@@ -1,0 +1,72 @@
+name: Isolated G trailing TP/SL three-year backtest
+on:
+  push:
+    branches:
+      - research/g-trail3-tp15-sl5-2024-2026
+    paths:
+      - tw-stock-dashboard/scripts/research_g_trail3_tp15_sl5_3y.py
+      - .github/workflows/research-g-trail3-tp15-sl5-3y.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: isolated-g-trail3-tp15-sl5-3y
+  cancel-in-progress: false
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-Linux-g-trail3-tp15-sl5-20261018
+          restore-keys: |
+            tw-stock-cache-Linux-
+      - name: Install Python libraries
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Compile simulation engine
+        run: |
+          python -m py_compile tw-stock-dashboard/scripts/research_g_trail3_tp15_sl5_3y.py
+          python -m py_compile tw-stock-dashboard/scripts/research_g_stock_sma_2026.py
+      - name: Run 2024-2026 complete universe G strategy reconstruction
+        working-directory: tw-stock-dashboard
+        run: python -u scripts/research_g_trail3_tp15_sl5_3y.py
+      - name: Verify portfolio/trades and per-year coverage
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('tw-stock-dashboard/docs/data/research/g_trail3_tp15_sl5_3y')
+          summary=json.loads((root/'summary.json').read_text())
+          trades=json.loads((root/'trades.json').read_text())['models']
+          equity=json.loads((root/'equity.json').read_text())['models']
+          assert summary['sample']['g2026ParitySignals']==summary['sample']['g2026ParityCorrect']
+          assert summary['sample']['symbolOHLCUsable']>=150
+          assert len(summary['models'])==2
+          for m in summary['models']:
+              name=m['model'];hist=equity[name];log=trades[name]
+              assert hist[0]['date']>='2024-01-02' and hist[-1]['date']=='2026-10-16'
+              assert len(hist)>660 and len(log)==m['trades']
+              assert m['wins']+m['losses']==m['trades']
+              assert abs(hist[-1]['equity']-m['endEquity'])<.01
+              assert all(y in m['yearly'] for y in ['2024','2025','2026'])
+              assert m['endEquity']>0
+              assert all(x['exit'] in ['gap_fixed_stop','gap_trailing_stop','gap_fixed_target','fixed_stop','trailing_stop','fixed_target'] for x in log)
+          print('G TRAILING 2024-2026 VERIFIED',[(m['model'],m['totalReturnPct'],m['maxDrawdownPct']) for m in summary['models']])
+          PY
+      - name: Commit results to isolated research branch only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_trail3_tp15_sl5_3y/
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: archive G trailing TP SL full 2024-2026 outcomes'
+            git push origin HEAD:research/g-trail3-tp15-sl5-2024-2026
+          fi
