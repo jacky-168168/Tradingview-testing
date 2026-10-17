@@ -23,7 +23,7 @@ MAX_WEIGHT=.25;MAX_SLOTS=4
 ARM=.03;TRAIL=.03;TAKE=.15;STOP=.05
 BUY=1+.001425+.001
 SELL=1-.001425-.003-.001
-STRATEGIES=("A_G_TOP3","B_G_TOP3_SMA10")
+STRATEGIES=("A_G_TOP3","B_G_TOP3_SMA10","A_G_TOP3_LOW_FIRST","B_G_TOP3_SMA10_LOW_FIRST")
 def validate_prices(z):
     if not z:return False
     return z["open"]>0 and z["high"]>=z["low"]>0 and z["high"]>=z["open"]>=z["low"]
@@ -55,6 +55,28 @@ def intraday_exit(p,candle):
     if trailHit:return trail,"trailing_stop",armed,newPeak,conflicts,newlyArmedAndLow
     if targetHit:return target,"fixed_target",armed,newPeak,conflicts,newlyArmedAndLow
     return None,None,armed,newPeak,conflicts,newlyArmedAndLow
+def intraday_exit_low_first(p,candle):
+    """Alternative feasible OHLC path: open -> low -> high -> close.
+    No trail newly raised by today's high can act on an earlier intraday low.
+    If CLOSE is below the raised trail, a post-high exit is unavoidable.
+    """
+    hi=float(candle["high"]);lo=float(candle["low"]);cl=float(candle["close"])
+    ent=p["entryPrice"];fixed=ent*(1-STOP);target=ent*(1+TAKE)
+    prevPeak=p["highest"];prevArm=p["armed"]
+    prevTrail=prevPeak*(1-TRAIL) if prevArm else None
+    newPeak=max(prevPeak,hi);newArm=prevArm or newPeak>=ent*(1+ARM)
+    newTrail=newPeak*(1-TRAIL) if newArm else None
+    fixHit=lo<=fixed
+    priorTrailHit=prevTrail is not None and lo<=prevTrail
+    targetHit=hi>=target
+    conflict=int(fixHit and (priorTrailHit or targetHit))+int(priorTrailHit and targetHit)
+    sameBarNewArmStop=int(not prevArm and newArm and cl<=newTrail and not(fixHit or targetHit))
+    if fixHit:return fixed,"fixed_stop",newArm,newPeak,conflict,sameBarNewArmStop
+    if priorTrailHit:return prevTrail,"trailing_stop",newArm,newPeak,conflict,sameBarNewArmStop
+    if targetHit:return target,"fixed_target",newArm,newPeak,conflict,sameBarNewArmStop
+    if newArm and cl<=newTrail:return newTrail,"trailing_stop",newArm,newPeak,conflict,sameBarNewArmStop
+    return None,None,newArm,newPeak,conflict,sameBarNewArmStop
+
 def run_one(name,dates,picks,bars):
     cash=PRINCIPAL;positions={};closed=[];curve=[]
     exit_types=collections.Counter();entry_types=collections.Counter();skips=collections.Counter()
@@ -91,7 +113,7 @@ def run_one(name,dates,picks,bars):
             if prevBar is None or current is None:
                 skips["entry_no_bar"]+=1;continue
             if not validate_prices(current):raise RuntimeError("Invalid candidate bar "+sym+" "+d)
-            if name=="B_G_TOP3_SMA10":
+            if name.startswith("B_"):
                 ma=prevBar["sma10"]
                 if ma is None or float(prevBar["close"])<=float(ma)*1.01:
                     skips["entry_sma10_rejected"]+=1;continue
@@ -120,7 +142,7 @@ def run_one(name,dates,picks,bars):
             today=bars.get(sym,{}).get(d)
             if today is None:
                 skips["missing_daily_candle"]+=1;continue
-            ans=intraday_exit(p,today)
+            ans=(intraday_exit_low_first(p,today) if name.endswith("_LOW_FIRST") else intraday_exit(p,today))
             px,why,armed,highest,ambiguous,newarm=ans
             same_day_conflicts+=ambiguous
             newly_armed_same_day_stop+=newarm
@@ -205,7 +227,14 @@ def unit_tests():
     assert open_exit(p2,102.)==(102.,"gap_trailing_stop")
     assert open_exit(p2,94.)==(94.,"gap_fixed_stop")
     assert open_exit(p2,116.)==(116.,"gap_fixed_target")
-    print("UNIT_TESTS_PASSED stop/gap/activation/samebar/target")
+        # Low-first model cannot retroactively execute a trail at the morning low.
+    q=intraday_exit_low_first(p,{"high":103.5,"low":100.,"close":102.})
+    assert q[1] is None,q
+    q=intraday_exit_low_first(p,{"high":103.5,"low":100.,"close":100.1})
+    assert q[1]=="trailing_stop" and abs(q[0]-100.395)<1e-6,q
+    q=intraday_exit_low_first(p,{"high":116.,"low":110.,"close":114.})
+    assert q[1]=="fixed_target",q
+    print("UNIT_TESTS_PASSED stop/gap/activation/samebar/target/low-first")
 def main():
     t0=time.monotonic();unit_tests()
     engine.START=START;engine.MARKET_END=MARK_END
@@ -253,7 +282,7 @@ def main():
       "entryB":"Entry A AND individual stock prior close > prior SMA10*1.01",
       "trailArmPct":3,"trailFromHighestPct":3,"takeProfitPct":15,"hardStopPct":-5,
       "trailReference":"highest intraday price observed since acquisition",
-      "sameCandleOrder":"fixed stop first, trailing stop second, +15% target third; conservative intrabar ordering",
+      "sameCandleOrder":"Primary: fixed stop, trailing stop, fixed target (high-before-low pessimistic). Secondary: open-low-high-close ordering with preexisting stops and guaranteed close crossings.",
       "gapStop":"fill at true daily opening when open crosses resting stop; can lose more than 5%",
       "positionCapPct":25,"maximumConcurrentPositions":4,"initialCapitalTWD":PRINCIPAL,
       "commissionBuyPct":(BUY-1)*100,"commissionSellTaxSlippagePct":(1-SELL)*100},
@@ -265,13 +294,14 @@ def main():
       "limitations":[
         "2024-2025 historical G ranks reconstructed retrospectively from CURRENT stock universe and capital; survivorship and historical float bias.",
         "A/B entry at next session opening; exits simulated with daily OHLC not tick sequence.",
-        "When multiple levels crossed inside one day, worst (lower) available exit is chosen; actual ordering unobservable.",
+        "Two intraday scenarios bracket possible OHLC ordering, NOT known true tick trades; outcomes can be extremely path sensitive.",
         "Trailing activation and stop both occurring inside one day may be impossible in actual price path order.",
         "Brokerage 0.1425% each side, stock sell tax 0.3%, slippage 0.1% each side.",
         "Daily OHLC stock splits/dividends not fully corporate-action adjusted, no daily limit up/down/queue simulation.",
         "Fixed exit +15% on single stock may take longer than one Taiwan daily 10% price-limit session.",
         "Output is retrospective research, not walk-forward independently verified and not a live record."],
-      "models":rows,"elapsedSeconds":round(time.monotonic()-t0,2)}
+      "models":rows,"elapsedSeconds":round(time.monotonic()-t0,2),
+      "scenarios":{"base":"high_before_low_pessimistic","low_first":"open_low_high_close_alternative"}}
     OUT.mkdir(parents=True,exist_ok=True)
     (OUT/"summary.json").write_text(json.dumps(output,ensure_ascii=False,indent=2),encoding="utf-8")
     (OUT/"trades.json").write_text(json.dumps({"version":output["version"],"models":allTrades},ensure_ascii=False),encoding="utf-8")
