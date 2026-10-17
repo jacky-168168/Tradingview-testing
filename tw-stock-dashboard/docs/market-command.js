@@ -59,8 +59,8 @@ function verifiedNightPreview(r,f,now=new Date()){
  if(!cashDate||r?.score==null||!Number.isFinite(Number(r.score))||!Number.isFinite(Number(day.close))||
     !Number.isFinite(Number(night.close))||Number(day.close)<=0||Number(night.close)<=0||
     f?.quality!=="paired-day-night"||f.asOfDate!==cashDate||day.date!==compact||night.date!==compact||
-    day.contract!==f.contract||night.contract!==f.contract||!/^20\\d{4}$/.test(String(f.contract||""))||
-    !/^20\\d{2}-\\d{2}-\\d{2}$/.test(target)||target<=cashDate||target<d.date)return null;
+    day.contract!==f.contract||night.contract!==f.contract||!/^20\d{4}$/.test(String(f.contract||""))||
+    !/^20\d{2}-\d{2}-\d{2}$/.test(target)||target<=cashDate||target<d.date)return null;
  const gap=(Date.parse(target+"T12:00:00+08:00")-Date.parse(cashDate+"T12:00:00+08:00"))/86400000;
  if(!Number.isFinite(gap)||gap>12)return null;
  const pct=100*(Number(night.close)/Number(day.close)-1),reported=Number(f.nightVsDayPct);
@@ -208,7 +208,7 @@ function draw(data,diag){
  txt("commandAction",d.action);
  txt("commandScore",pre?String(pre.score):post?.baseline?String(post.baseline.score):weekendNeedsNight||post||x.stale?"—":Number.isFinite(val)&&r.score!=null?String(val):"—");
  txt("commandScoreDescription",pre?"下次交易日盤前基準｜未回測":weekendNeedsNight?"週末盤前資料待核對，正式分數僅供歷史參考":post?.baseline?"昨收＋夜盤｜今日基準（未回測）":post?"今日 Risk Score 尚未建立":x.stale?"正式分數待更新":strength(val)+"｜盤後正式分數");
- txt("commandCashReference",pre?"昨收正式 "+pre.base+"/100（"+pre.referenceDate+"）｜台指期調整 "+pre.deltaLabel+" 分":post?.baseline?"昨收正式 "+post.baseline.base+"/100（"+post.baseline.date+"） "+(post.baseline.delta>=0?"+":"")+post.baseline.delta+" 分（已完成 TX 夜盤 "+post.baseline.pct.toFixed(2)+"%）＝今日盤前基準 "+post.baseline.score+"/100":x.stale?"今日正式 Risk Score 尚未建立；"+(r.date||"未知")+" 的 "+val+" 分僅供歷史參考":post?"昨收歷史 Risk Score "+val+"/100（"+(r.date||"未知")+"）｜非今日盤中":"");
+ txt("commandCashReference",pre?"昨收正式 "+pre.base+"/100（"+pre.referenceDate+"）｜台指期調整 "+pre.deltaLabel+" 分":post?.baseline?"昨收正式 "+post.baseline.base+"/100（"+post.baseline.date+"） "+(post.baseline.delta>=0?"+":"")+post.baseline.delta+" 分（已完成 TX 夜盤 "+post.baseline.pct.toFixed(2)+"%）＝今日盤前基準 "+post.baseline.score+"/100":x.stale?"今日正式 Risk Score 尚未建立；"+(r.date||"未知")+" 的 "+val+" 分僅供歷史參考":post?"昨收歷史 Risk Score "+val+"/100（"+(r.date||"未知")+"）｜非今日盤中":weekendNeedsNight?"已核對的正式收盤 "+r.score+"/100；週末下個交易日盤前資料待確認，不以舊分數取代":"");
  const ref=$("commandCashReference");if(ref)ref.hidden=!pre&&!post&&!x.stale&&!weekendNeedsNight;
  const fill=$("commandScoreFill");if(fill)fill.style.width=(pre?pre.score:post?.baseline?post.baseline.score:weekendNeedsNight||post||x.stale?0:r.score==null||!Number.isFinite(val)?0:Math.max(0,Math.min(100,val)))+"%";
  const date=x.marketDate||"未知";
