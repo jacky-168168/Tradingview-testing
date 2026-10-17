@@ -37,12 +37,12 @@
 <link rel="stylesheet" href="./market-command.css?v=4eb52cea25e6">
 <link rel="stylesheet" href="./market-compact.css?v=60bacca3238b">
 <link rel="stylesheet" href="./dynamic-exposure.css">
-<link rel="stylesheet" href="./us-options-risk.css?v=807b85b60039">
+<link rel="stylesheet" href="./us-options-risk.css?v=3ef14b834c18">
 <script src="./market-compact.js?v=b1b009ea95e1"></script>
 <script src="./market-command.js?v=c27a62c1e751"></script>
 <script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
-<script defer src="./us-options-daily-report.js?v=2fe80201e84a"></script>
+<script defer src="./us-options-daily-report.js?v=c765cc4b0fee"></script>
 <script defer src="./us-options-risk.js?v=a6ebd79f70d7"></script>
 </head>
 <body>
@@ -182,7 +182,7 @@
 </section>
 <section class="card usop-panel" id="usOptionsRisk" aria-label="美股 DIX S&P 500 GEX 完整歷史趨勢圖">
  <div class="usop-top">
-  <div><div class="usop-kicker">SQUEEZEMETRICS · 美股市場資金與選擇權</div><h2>🇺🇸 DIX · S&P 500 · GEX 走勢圖</h2><p class="usop-subtitle">獨立歷史曲線｜美股每日收盤資料｜可切換期間及顯示項目</p></div>
+  <div><div class="usop-kicker">SQUEEZEMETRICS · 美股市場資金與選擇權</div><h2>🇺🇸 DIX · S&P 500 · GEX 走勢圖</h2><p class="usop-subtitle">綠線看美股漲跌、藍線看暗池交易占比、黃線看選擇權相關波動風險；三條線刻度不同，請看各自方向，不要比較高度。</p></div>
   <div class="usop-ranges" role="group" aria-label="圖表時間範圍">
    <button type="button" data-usop-range="6m" class="is-active" aria-pressed="true">6 個月</button>
    <button type="button" data-usop-range="2y" aria-pressed="false">2 年</button>
@@ -205,7 +205,7 @@
  <div id="usopChartWrap" class="usop-chartwrap"><svg id="usopChart" class="usop-chart" tabindex="0" role="img" aria-label="可用滑鼠、觸控或左右方向鍵查看 DIX S&P 500 GEX 每日完整走勢"></svg></div>
  <section id="usopDailyAnalysis" class="usop-daily usop-report" aria-label="依六個月走勢分析的美股資金結構日報" aria-live="polite">
   <div class="usop-daily-eyebrow">SQUEEZEMETRICS｜每日收盤分析</div>
-  <h3 class="usop-daily-title" id="usopDailyTitle">正在產生最新美股資金結構日報…</h3>
+  <h3 class="usop-daily-title" id="usopDailyTitle">正在用白話整理最新美股走勢…</h3>
   <div id="usopDailyBody"></div>
   <p class="usop-daily-meta" id="usopDailyMeta">依實際收盤資料計算，不是台股進出場指令。</p>
  </section>

@@ -96,32 +96,81 @@ function calculate(history,index=history?.length-1,includePrev=true){
    stats:{structure,momentum,priceDir,dixDir,gexDir,nearZero,gexStrength,positions,dixDelta,gexNorm,highDivergence},
    disclaimer:"相對半年位置為區間高低比例；共振與分級採固定啟發式規則，尚未獨立驗證預測力。DIX 非機構淨買超，GEX 僅是有條件的避險風險參考。"};
 }
+/* Reader-first copy. The quantitative status/thresholds above stay unchanged.
+ * The copy describes signals cautiously: DIX is a volume share, not net buying,
+ * and GEX is model-dependent rather than a guaranteed volatility damper.
+ */
+function plainLanguage(report){
+ if(!report)return null;
+ const t=report.stats,price=report.rows.find(x=>x.name==="S&P 500"),dix=report.rows.find(x=>x.name==="DIX"),gex=report.rows.find(x=>x.name==="GEX");
+ const summaries={
+  green:"美股近期偏強，另外兩條線大致配合，但不代表接下來一定上漲。",
+  yellow:"美股仍在相對高檔，但部分市場訊號沒有跟上，追高要謹慎。",
+  orange:"選擇權市場的波動緩衝可能變弱，接下來比較容易出現大幅震盪。",
+  red:"美股近期轉弱，另外兩項市場訊號也走低，短線要更留意下跌與震盪風險。",
+  white:"三條線目前沒有給出一致方向，先觀察，別急著判斷漲跌。"
+ };
+ const priceTone=t.priceDir==="上升"?"近5日上漲":t.priceDir==="下降"?"近5日下跌":"近5日變動不大";
+ const priceWhere=t.positions[0]>=0.75?"目前仍靠近近半年高檔":t.positions[0]<=0.25?"目前靠近近半年低檔":"目前在近半年中間區域";
+ const dark=t.dixDir==="上升"?"最近5日比率回升":t.dixDir==="下降"?"最近5日比率下滑":"最近5日變化不大";
+ const darkWhere=t.positions[1]>=0.75?"偏高":t.positions[1]<=0.25?"偏低":"中間";
+ const gamma=t.gexStrength==="弱"?"目前對行情的穩定效果可能較弱":t.gexStrength==="強"?"依這套模型，可能較能緩和短線波動":"目前仍有一定緩衝，但不能保證市場穩定";
+ const gTrend=t.gexDir==="上升"?"近5日上升":t.gexDir==="下降"?"近5日下降":"近5日變化不大";
+ const cards=[
+  {id:"spx",title:"綠線｜美股價格",signal:priceTone,detail:priceWhere+"；近5日 "+price.direction.split(" ").slice(-1)[0]+"。"},
+  {id:"dix",title:"藍線｜暗池成交占比 DIX",signal:dark,detail:"近半年位置"+darkWhere+"（"+dix.value+"）。暗池是不公開掛單的交易場所；這只是成交比例，不等於大戶正在買超。"},
+  {id:"gex",title:"黃線｜選擇權影響 GEX",signal:gTrend,detail:gamma+"；GEX 高低不能直接預測股價漲跌。"}
+ ];
+ const watch=[t.priceDir==="下降"?"先看美股能否止跌、連續2天站回20日均線。":"先看美股能否連續2天守住20日均線。",
+  t.gexStrength==="弱"?"留意 GEX 是否持續接近零或變負，波動可能擴大。":t.dixDir==="下降"?"留意 DIX 是否連續2天改善，確認資金訊號有沒有跟上。":"留意 DIX 和 GEX 是否繼續配合價格方向。"];
+ return {summary:summaries[report.status.code]||summaries.white,cards,watch};
+}
 function render(rows,stale){
  const root=$("usopDailyAnalysis"),title=$("usopDailyTitle"),body=$("usopDailyBody"),meta=$("usopDailyMeta");
  if(!root||!title||!body||!meta)return;
  body.replaceChildren();
  const report=calculate(rows);
  if(!report){
-  title.textContent="⚪ 資訊不足｜歷史資料尚未齊全";
-  meta.textContent="需要近半年至少85筆完整交易日資料；不以不完整資料推論市場方向。";
+  title.textContent="⚪ 目前還無法判讀";
+  meta.textContent="近半年資料不足，先不推測市場漲跌。";
   root.dataset.state="unavailable";return;
  }
  const create=(tag,value,cls)=>{const e=document.createElement(tag);if(value!==undefined)e.textContent=value;if(cls)e.className=cls;return e};
- title.textContent="📅 "+datefmt(report.date)+" 美股資金結構日報";
- const status=create("p","狀態："+report.status.label+"（"+report.status.reason+"）","usop-report-status");status.dataset.status=report.status.code;body.appendChild(status);
- const label=create("h4","數據");body.appendChild(label);
+ const easy=plainLanguage(report);
+ title.textContent="📅 "+datefmt(report.date)+" 美股三線圖｜今天怎麼看？";
+ const status=create("p",report.status.label+"｜"+easy.summary,"usop-report-status usop-reader-status");
+ status.dataset.status=report.status.code;body.appendChild(status);
+ const simple=create("section",undefined,"usop-easy-view");
+ simple.setAttribute("aria-label","三條線的白話說明");
+ for(const item of easy.cards){
+  const card=create("div",undefined,"usop-easy-line");
+  card.dataset.series=item.id;
+  const heading=create("div",undefined,"usop-easy-line-title");
+  heading.appendChild(create("strong",item.title));heading.appendChild(create("span",item.signal,"usop-easy-signal"));
+  card.appendChild(heading);card.appendChild(create("p",item.detail));simple.appendChild(card);
+ }
+ body.appendChild(simple);
+ const next=create("div",undefined,"usop-easy-watch");
+ next.appendChild(create("strong","接下來看什麼？"));
+ const notes=create("ul");for(const item of easy.watch)notes.appendChild(create("li",item));next.appendChild(notes);body.appendChild(next);
+ const details=create("details",undefined,"usop-deep-details");
+ details.appendChild(create("summary","查看詳細分析：數據、半年位置、背離、昨日比較"));
+ const inner=create("div",undefined,"usop-deep-inner");
+ inner.appendChild(create("h4","三線數據"));
  const scroll=create("div",undefined,"usop-report-scroll"),table=create("table"),thead=create("thead"),tr=create("tr");
- for(const x of ["指標","最新值","相對近半年位置","近5日方向"]){const th=create("th",x);tr.appendChild(th)}
+ for(const x of ["指標","最新值","相對近半年位置","近5日方向"])tr.appendChild(create("th",x));
  thead.appendChild(tr);table.appendChild(thead);
- const tbody=create("tbody");for(const r of report.rows){const line=create("tr");for(const value of [r.name,r.value,r.where,r.direction])line.appendChild(create("td",value));tbody.appendChild(line)}table.appendChild(tbody);scroll.appendChild(table);body.appendChild(scroll);
- function bulletSection(heading,items){body.appendChild(create("h4",heading));const list=create("ul",undefined,"usop-report-list");for(const s of items)list.appendChild(create("li",s));body.appendChild(list)}
+ const tbody=create("tbody");for(const r of report.rows){const line=create("tr");for(const v of [r.name,r.value,r.where,r.direction])line.appendChild(create("td",v));tbody.appendChild(line)}table.appendChild(tbody);scroll.appendChild(table);inner.appendChild(scroll);
+ function bulletSection(heading,items){inner.appendChild(create("h4",heading));const list=create("ul",undefined,"usop-report-list");for(const item of items)list.appendChild(create("li",item));inner.appendChild(list)}
  bulletSection("重點解讀",report.points);
- body.appendChild(create("p","背離／共振檢查："+report.resonance+"；程度："+report.severity,"usop-report-resonance"));
+ inner.appendChild(create("p","背離／共振檢查："+report.resonance+"；程度："+report.severity,"usop-report-resonance"));
  bulletSection("明日觀察重點",report.watch);
- if(report.compare){body.appendChild(create("p","與前一交易日比較（"+datefmt(report.compare.date)+"，依同一規則回推，非留存昨日報告）："+report.compare.text,"usop-report-compare"))}
- meta.textContent=(stale?"⚠ 資料已過期｜":"")+"資料日："+datefmt(report.date)+"｜"+report.disclaimer;
+ if(report.compare)inner.appendChild(create("p","與前一交易日比較（"+datefmt(report.compare.date)+"，依同一規則回推，非留存昨日報告）："+report.compare.text,"usop-report-compare"));
+ details.appendChild(inner);body.appendChild(details);
+ meta.textContent=(stale?"⚠ 資料已過期｜":"")+"資料日："+datefmt(report.date)+"｜燈號是風險提醒，不是明日漲跌預告；分類規則尚未獨立回測證明有效。";
  root.dataset.state=stale?"stale":"ready";
 }
-if(typeof module!=="undefined")module.exports={calculate};
-scope.USOptionDailyReport={calculate,render};
+
+if(typeof module!=="undefined")module.exports={calculate,plainLanguage};
+scope.USOptionDailyReport={calculate,plainLanguage,render};
 })(typeof window!=="undefined"?window:globalThis);
