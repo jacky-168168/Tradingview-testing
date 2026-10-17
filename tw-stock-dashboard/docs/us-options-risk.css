@@ -71,3 +71,23 @@
 .usop-report-resonance,.usop-report-compare{margin:11px 0;font-size:11px;line-height:1.75;color:#bfd2ea}
 .usop-report-compare{border-top:1px dashed #40516a;padding-top:10px}
 @media(max-width:650px){.usop-report table{font-size:10px}.usop-report th,.usop-report td{padding:8px 9px}.usop-report-status{font-size:12px}.usop-report-list{gap:7px}}
+
+/* Plain-language view opens by default; preserve technical evidence on demand. */
+.usop-reader-status{font-size:14px;line-height:1.8;margin:4px 0 13px}
+.usop-easy-view{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.usop-easy-line{border:1px solid #465471;border-radius:10px;background:#25324a;padding:12px;min-width:0}
+.usop-easy-line[data-series="spx"]{border-left:3px solid #3cdb79}
+.usop-easy-line[data-series="dix"]{border-left:3px solid #56baff}
+.usop-easy-line[data-series="gex"]{border-left:3px solid #f5c651}
+.usop-easy-line-title{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;font-size:12px;line-height:1.5}
+.usop-easy-line-title strong{color:#f3f7ff}
+.usop-easy-signal{color:#bcd7ff;font-size:11px;font-weight:800}
+.usop-easy-line p{margin:6px 0 0;font-size:12px;line-height:1.7;color:#c9d9ed}
+.usop-easy-watch{margin-top:12px;font-size:12px;line-height:1.75;color:#d5e3f3}
+.usop-easy-watch strong{color:#e8f2ff}
+.usop-easy-watch ul{padding-left:19px;margin:5px 0 0}
+.usop-deep-details{margin-top:13px;border-top:1px solid #43516a;padding-top:10px}
+.usop-deep-details summary{cursor:pointer;color:#a9d9ff;font-weight:800;font-size:12px;line-height:1.8;list-style:revert}
+.usop-deep-inner{padding-top:6px}
+.usop-deep-details summary:focus-visible{outline:2px solid #9bd0ff;outline-offset:3px}
+@media(max-width:700px){.usop-easy-view{grid-template-columns:1fr;gap:7px}.usop-easy-line{padding:10px 11px}.usop-reader-status{font-size:13px}.usop-easy-line p{font-size:12px}}
