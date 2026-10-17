@@ -36,10 +36,11 @@
 <link rel="stylesheet" href="./market-sentiment.css?v=0bd68b022c1b">
 <link rel="stylesheet" href="./market-command.css?v=4eb52cea25e6">
 <link rel="stylesheet" href="./dynamic-exposure.css">
+<link rel="stylesheet" href="./us-options-risk.css?v=20261017-chart1">
 <script src="./market-command.js?v=4386f2d88d3e"></script>
 <script src="./market-sentiment.js?v=3defd3af06ea"></script>
 <script src="./dynamic-exposure.js"></script>
-<script defer src="./us-options-risk.js?v=20261017"></script>
+<script defer src="./us-options-risk.js?v=20261017-chart1"></script>
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -162,10 +163,35 @@
     <div class="cmd-research"><span id="commandAi">機器學習回測狀態核對中…</span><a href="./data/research/market_ml_audit/summary.json" target="_blank" rel="noopener">AI 驗證</a><a href="./data/research/market_intelligence/latest.json" target="_blank" rel="noopener">風險依據</a><a href="./market-methodology.html">書籍／GitHub／研究說明</a></div>
   </details>
 </section>
-<details class="card" id="usOptionsRisk" aria-label="美股暗池及Gamma輔助風險研究" style="margin:14px 0;padding:13px 16px">
- <summary style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:850">🇺🇸 美股 DIX／GEX｜輔助風險觀察 <span id="usOptionsHeadline" style="font-size:12px;color:#64748b">核對歷史關聯與正式來源中…</span></summary>
- <div id="usOptionsBody" style="font-size:13px;line-height:1.9;margin-top:10px;color:#334155">僅供海外風險情緒研究，不納入 Risk Score 或 G 選股權重。</div>
-</details>
+<section class="card usop-panel" id="usOptionsRisk" aria-label="美股 DIX S&P 500 GEX 完整歷史趨勢圖">
+ <div class="usop-top">
+  <div><div class="usop-kicker">SQUEEZEMETRICS · 美股市場資金與選擇權</div><h2>🇺🇸 DIX · S&P 500 · GEX 走勢圖</h2><p class="usop-subtitle">獨立歷史曲線｜美股每日收盤資料｜可切換期間及顯示項目</p></div>
+  <div class="usop-ranges" role="group" aria-label="圖表時間範圍">
+   <button type="button" data-usop-range="6m" class="is-active" aria-pressed="true">6 個月</button>
+   <button type="button" data-usop-range="2y" aria-pressed="false">2 年</button>
+   <button type="button" data-usop-range="max" aria-pressed="false">全部</button>
+  </div>
+ </div>
+ <div class="usop-toolbar">
+  <div class="usop-legend" role="group" aria-label="切換走勢線">
+   <button type="button" class="usop-toggle" data-usop-series="dix" style="--series-color:#56baff" aria-pressed="true">DIX</button>
+   <button type="button" class="usop-toggle" data-usop-series="spx" style="--series-color:#3cdb79" aria-pressed="true">S&P 500</button>
+   <button type="button" class="usop-toggle" data-usop-series="gex" style="--series-color:#f5c651" aria-pressed="true">GEX</button>
+  </div>
+  <div class="usop-date" id="usopDate">正在載入最新交易日…</div>
+ </div>
+ <div class="usop-readings" aria-label="目前選取日期的美股市場數值">
+  <div class="usop-reading" style="--series-color:#56baff"><span>DIX · 暗池成交比率</span><strong id="usopValuedix">—</strong></div>
+  <div class="usop-reading" style="--series-color:#3cdb79"><span>S&P 500 · 指數點數</span><strong id="usopValuespx">—</strong></div>
+  <div class="usop-reading" style="--series-color:#f5c651"><span>GEX · Gamma 曝險</span><strong id="usopValuegex">—</strong></div>
+ </div>
+ <div id="usopChartWrap" class="usop-chartwrap"><svg id="usopChart" class="usop-chart" tabindex="0" role="img" aria-label="可用滑鼠、觸控或左右方向鍵查看 DIX S&P 500 GEX 每日完整走勢"></svg></div>
+ <p id="usopMessage" class="usop-msg">正在載入官方歷史走勢。三條線使用獨立尺度，不能直接比較絕對高低。</p>
+ <div class="usop-footer">
+  <span id="usopStatus">歷史資料同步中…</span>
+  <div class="usop-footer-links"><a href="https://squeezemetrics.com/monitor/dix" target="_blank" rel="noopener noreferrer">原始圖表 ↗</a><a href="./data/research/us_options/backtest.json" target="_blank" rel="noopener noreferrer">台股回測 ↗</a><a href="./data/research/us_options/history.json" target="_blank" rel="noopener noreferrer">完整歷史資料 ↗</a></div>
+ </div>
+</section>
 <details class="insights-disclosure home-insights-disclosure" id="secondaryInsights" open>
  <summary><span>市場焦點｜法人、G 選股與題材</span><span class="insight-summary-note">預設展開 · 點擊收合</span></summary>
  <section id="homeFocus" class="home-focus" aria-label="今日法人動向、G 選股與熱門題材">
