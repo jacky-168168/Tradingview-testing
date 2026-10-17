@@ -41,3 +41,14 @@
  .usop-legend{gap:5px}
  .usop-date{font-size:11px}
 }
+
+/* Three concise daily observations immediately below the chart. */
+.usop-daily{margin:12px 0 11px;border-top:1px solid #344158;padding:12px 0 0;color:#e4ecf9}
+.usop-daily-eyebrow{font-size:11px;color:#9cb7d7;font-weight:850;letter-spacing:.02em;margin-bottom:5px}
+.usop-daily-title{margin:0 0 9px;font-size:16px;font-weight:900;color:#eaf1ff;line-height:1.5}
+.usop-daily-list{margin:0 0 7px;padding:0;list-style:none;display:grid;gap:6px;font-size:12px;line-height:1.65;color:#d6e1f0}
+.usop-daily-list li{padding-left:12px;position:relative}
+.usop-daily-list li::before{content:"";position:absolute;left:0;top:.75em;width:5px;height:5px;background:#8aa2bf;border-radius:50%}
+.usop-daily-meta{color:#9eafc9;font-size:11px;line-height:1.6}
+.usop-daily[data-state="stale"] .usop-daily-title{color:#f6d294}
+@media(max-width:650px){.usop-daily{margin-top:10px;padding-top:11px}.usop-daily-title{font-size:15px}.usop-daily-list{font-size:12px;gap:8px}}
