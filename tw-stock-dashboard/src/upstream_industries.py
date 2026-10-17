@@ -323,7 +323,7 @@ def compile_map(stocks,memberships,data_date):
             if research:note=research["note"]
             child.append({"name":key,"count":len(items),"stocks":items,
                           "source":research["source"] if research else WAFER_MATERIAL_SOURCE if extended else item["source"],
-                          "note":note,"stage":research["stage"] if research else "櫃買官方上游",
+                          "note":note,"stage":research["stage"] if research else "研究延伸｜CPO 光學元件" if cpo else "研究延伸｜半導體矽晶圓材料" if extended else "櫃買官方上游",
                           "classification":"有來源的產業鏈研究延伸" if research else "CPO 研究上游" if cpo else "獨立研究延伸上游材料" if extended else "櫃買中心官方上游"})
         item["subgroups"]=child
         item["stockCount"]=len({(z["market"],z["code"]) for g in child for z in g["stocks"]})
