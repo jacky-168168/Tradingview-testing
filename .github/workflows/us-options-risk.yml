@@ -29,6 +29,8 @@ jobs:
           python-version: '3.12'
       - name: Refresh verified US close and TWII backtest
         run: python tw-stock-dashboard/src/update_us_options.py
+      - name: Verify public dashboard JavaScript syntax
+        run: node --check tw-stock-dashboard/docs/us-options-risk.js
       - name: Verify snapshot and embargoed out-of-sample report
         run: |
           python - <<'PY'
