@@ -1,6 +1,6 @@
 {
   "version": "G_TRAIL3_ARM3_TP15_SL5_3Y_V1",
-  "generatedAt": "2026-10-18T07:09:07+08:00",
+  "generatedAt": "2026-10-18T07:17:31+08:00",
   "period": {
     "start": "2024-01-02",
     "signalEnd": "2026-10-07",
@@ -14,7 +14,7 @@
     "takeProfitPct": 15,
     "hardStopPct": -5,
     "trailReference": "highest intraday price observed since acquisition",
-    "sameCandleOrder": "fixed stop first, trailing stop second, +15% target third; conservative intrabar ordering",
+    "sameCandleOrder": "Primary: fixed stop, trailing stop, fixed target (high-before-low pessimistic). Secondary: open-low-high-close ordering with preexisting stops and guaranteed close crossings.",
     "gapStop": "fill at true daily opening when open crosses resting stop; can lose more than 5%",
     "positionCapPct": 25,
     "maximumConcurrentPositions": 4,
@@ -41,7 +41,7 @@
   "limitations": [
     "2024-2025 historical G ranks reconstructed retrospectively from CURRENT stock universe and capital; survivorship and historical float bias.",
     "A/B entry at next session opening; exits simulated with daily OHLC not tick sequence.",
-    "When multiple levels crossed inside one day, worst (lower) available exit is chosen; actual ordering unobservable.",
+    "Two intraday scenarios bracket possible OHLC ordering, NOT known true tick trades; outcomes can be extremely path sensitive.",
     "Trailing activation and stop both occurring inside one day may be impossible in actual price path order.",
     "Brokerage 0.1425% each side, stock sell tax 0.3%, slippage 0.1% each side.",
     "Daily OHLC stock splits/dividends not fully corporate-action adjusted, no daily limit up/down/queue simulation.",
@@ -169,7 +169,132 @@
           "winRatePct": 45.56
         }
       }
+    },
+    {
+      "model": "A_G_TOP3_LOW_FIRST",
+      "startCapital": 1000000.0,
+      "endEquity": 338031.16,
+      "totalReturnPct": -66.197,
+      "maxDrawdownPct": -75.382,
+      "maxDrawdownDate": "2026-09-09",
+      "trades": 1232,
+      "wins": 546,
+      "losses": 686,
+      "winRatePct": 44.32,
+      "profitFactor": 0.854,
+      "avgWinPct": 5.602,
+      "avgLossPct": -4.973,
+      "avgHoldSessions": 0.739,
+      "openAtEnd": 0,
+      "entryCounts": {
+        "G_top3": 1232
+      },
+      "exitCounts": {
+        "trailing_stop": 513,
+        "fixed_stop": 538,
+        "gap_fixed_target": 33,
+        "fixed_target": 65,
+        "gap_trailing_stop": 56,
+        "gap_fixed_stop": 27
+      },
+      "conflictingSameDayStopAndTarget": 49,
+      "sameBarTrailActivationAndStop": 302,
+      "skips": {
+        "missing_daily_candle": 4,
+        "stale_daily_mark": 4
+      },
+      "yearly": {
+        "2024": {
+          "startEquity": 1000000.0,
+          "endEquity": 474861.4,
+          "returnPct": -52.514,
+          "maxDrawdownPct": -60.316,
+          "closedTrades": 480,
+          "winRatePct": 41.67
+        },
+        "2025": {
+          "startEquity": 474861.4,
+          "endEquity": 460454.89,
+          "returnPct": -3.034,
+          "maxDrawdownPct": -27.59,
+          "closedTrades": 377,
+          "winRatePct": 48.01
+        },
+        "2026": {
+          "startEquity": 460454.89,
+          "endEquity": 338031.16,
+          "returnPct": -26.588,
+          "maxDrawdownPct": -38.544,
+          "closedTrades": 375,
+          "winRatePct": 44.0
+        }
+      }
+    },
+    {
+      "model": "B_G_TOP3_SMA10_LOW_FIRST",
+      "startCapital": 1000000.0,
+      "endEquity": 339659.54,
+      "totalReturnPct": -66.034,
+      "maxDrawdownPct": -75.273,
+      "maxDrawdownDate": "2026-09-09",
+      "trades": 1230,
+      "wins": 545,
+      "losses": 685,
+      "winRatePct": 44.31,
+      "profitFactor": 0.855,
+      "avgWinPct": 5.606,
+      "avgLossPct": -4.972,
+      "avgHoldSessions": 0.74,
+      "openAtEnd": 0,
+      "entryCounts": {
+        "G_top3": 1230
+      },
+      "exitCounts": {
+        "trailing_stop": 512,
+        "fixed_stop": 537,
+        "gap_fixed_target": 33,
+        "fixed_target": 65,
+        "gap_trailing_stop": 56,
+        "gap_fixed_stop": 27
+      },
+      "conflictingSameDayStopAndTarget": 49,
+      "sameBarTrailActivationAndStop": 301,
+      "skips": {
+        "missing_daily_candle": 4,
+        "stale_daily_mark": 4,
+        "entry_sma10_rejected": 2
+      },
+      "yearly": {
+        "2024": {
+          "startEquity": 1000000.0,
+          "endEquity": 474861.4,
+          "returnPct": -52.514,
+          "maxDrawdownPct": -60.316,
+          "closedTrades": 480,
+          "winRatePct": 41.67
+        },
+        "2025": {
+          "startEquity": 474861.4,
+          "endEquity": 467116.97,
+          "returnPct": -1.631,
+          "maxDrawdownPct": -27.59,
+          "closedTrades": 376,
+          "winRatePct": 48.14
+        },
+        "2026": {
+          "startEquity": 467116.97,
+          "endEquity": 339659.54,
+          "returnPct": -27.286,
+          "maxDrawdownPct": -39.063,
+          "closedTrades": 374,
+          "winRatePct": 43.85
+        }
+      }
     }
   ],
-  "elapsedSeconds": 134.09
+  "elapsedSeconds": 227.15,
+  "scenarios": {
+    "base": "high_before_low_pessimistic",
+    "low_first": "open_low_high_close_alternative"
+  }
 }
