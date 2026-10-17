@@ -56,13 +56,14 @@ function txScoreDelta(pct){
 function verifiedNightPreview(r,f,now=new Date()){
  const d=taipeiParts(now),day=f?.day||{},night=f?.night||{},cashDate=String(r?.date||""),
        compact=cashDate.replace(/-/g,""),target=String(night.reportQueryDate||"");
- if(!cashDate||r?.score==null||!Number.isFinite(Number(r.score))||!Number.isFinite(Number(day.close))||
+ if(!cashDate||r?.score==null||!Number.isFinite(Number(r.score))||Number(r.score)<0||Number(r.score)>100||!Number.isFinite(Number(day.close))||
     !Number.isFinite(Number(night.close))||Number(day.close)<=0||Number(night.close)<=0||
     f?.quality!=="paired-day-night"||f.asOfDate!==cashDate||day.date!==compact||night.date!==compact||
     day.contract!==f.contract||night.contract!==f.contract||!/^20\d{4}$/.test(String(f.contract||""))||
     !/^20\d{2}-\d{2}-\d{2}$/.test(target)||target<=cashDate||target<d.date)return null;
- const gap=(Date.parse(target+"T12:00:00+08:00")-Date.parse(cashDate+"T12:00:00+08:00"))/86400000;
- if(!Number.isFinite(gap)||gap>12)return null;
+ const targetDay=new Date(target+"T12:00:00+08:00"),weekday=twWeekday(targetDay);
+ const gap=(targetDay-Date.parse(cashDate+"T12:00:00+08:00"))/86400000;
+ if(!Number.isFinite(gap)||gap>12||["Sat","Sun"].includes(weekday))return null;
  const pct=100*(Number(night.close)/Number(day.close)-1),reported=Number(f.nightVsDayPct);
  if(!Number.isFinite(pct)||Math.abs(pct)>12||!Number.isFinite(reported)||Math.abs(pct-reported)>.08)return null;
  const adjustment=txScoreDelta(pct),base=Number(r.score),score=Math.max(0,Math.min(100,base+adjustment));
