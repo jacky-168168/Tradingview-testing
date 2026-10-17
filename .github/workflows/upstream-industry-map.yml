@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'tw-stock-dashboard/src/upstream_industries.py'
+      - 'tw-stock-dashboard/docs/data/industry_upstream/theme_catalog.json'
       - 'tw-stock-dashboard/tests/test_upstream_industries.py'
       - '.github/workflows/upstream-industry-map.yml'
   schedule:
@@ -47,6 +48,7 @@ jobs:
           python -m unittest discover -s tests -p test_upstream_industries.py -v
           node --check docs/upstream-industries.js
           node tests/test_upstream_ui.cjs
+          node tests/test_upstream_research_data.cjs
       - name: Build sector and upstream stock list from dated full-market archive
         working-directory: tw-stock-dashboard
         run: python -u src/upstream_industries.py
