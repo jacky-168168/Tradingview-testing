@@ -33,15 +33,37 @@ if(live.asOf==="2026-10-16"){
  assert.ok(real.lines[2].includes("緩和波動的效果可能減弱"));
 }
 assert.ok(real.disclaimer.includes("非漲跌方向預測"));
+const {calculate}=require("../docs/us-options-daily-report.js");
+assert.equal(calculate(rows.slice(0,50)),null,"Insufficient six-month sample cannot produce a fabricated classification");
+const detailed=calculate(rows);
+assert.equal(detailed.date,rows.at(-1)[0]);
+assert.equal(detailed.rows.length,3,"DIX, S&P500 and GEX");
+assert.equal(detailed.points.length,4);
+assert.ok(detailed.watch.length>=2&&detailed.watch.length<=3);
+assert.ok(["red","orange","yellow","green","white"].includes(detailed.status.code));
+assert.ok(detailed.compare&&detailed.compare.date===rows.at(-2)[0],"Compare prior close under identical rules");
+assert.ok(detailed.rows.every(x=>x.where&&x.direction));
+const realDetailed=calculate(validate(live));
+assert.equal(realDetailed.date,live.asOf);
+assert.ok(realDetailed.points.length>=3&&realDetailed.points.length<=5);
+assert.ok(realDetailed.stats.positions.every(x=>x>=0&&x<=1));
+if(live.asOf==="2026-10-16"){
+ assert.equal(realDetailed.status.code,"red","All three five-day trends fall in verified 10/16 sample");
+ assert.equal(realDetailed.stats.gexStrength,"弱");
+ assert.match(realDetailed.resonance,/偏空共振/);
+ assert.ok(realDetailed.rows.some(x=>x.name==="DIX"&&x.value==="44.65%"));
+}
+assert.equal(calculate(validate(live).slice(0,-1)).date,live.rows.at(-2)[0],"Never leak tomorrow's reading into previous day's analysis");
 const home=fs.readFileSync(path.join(__dirname,"../docs/index.html"),"utf8");
 const js=fs.readFileSync(path.join(__dirname,"../docs/us-options-risk.js"),"utf8");
 const py=fs.readFileSync(path.join(__dirname,"../src/update_us_options.py"),"utf8");
-for(const id of ["usOptionsRisk","usopChart","usopChartWrap","usopDate","usopStatus","usopMessage","usopDailyAnalysis","usopDailyTitle","usopDailyList","usopDailyMeta","usopValuedix","usopValuespx","usopValuegex"])assert.ok(home.includes('id="'+id+'"'),"Missing chart DOM "+id);
+for(const id of ["usOptionsRisk","usopChart","usopChartWrap","usopDate","usopStatus","usopMessage","usopDailyAnalysis","usopDailyTitle","usopDailyBody","usopDailyMeta","usopValuedix","usopValuespx","usopValuegex"])assert.ok(home.includes('id="'+id+'"'),"Missing chart DOM "+id);
 for(const range of ["6m","2y","max"])assert.ok(home.includes('data-usop-range="'+range+'"'));
 for(const key of ["dix","spx","gex"])assert.ok(home.includes('data-usop-series="'+key+'"'));
 assert.ok(home.includes('href="./us-options-risk.css?v=')&&home.includes('src="./us-options-risk.js?v='));
 assert.ok(!home.includes('<details class="card" id="usOptionsRisk"'),"Chart cannot be hidden behind collapsed details");
 assert.ok(js.includes('pointermove')&&js.includes('ArrowLeft')&&js.includes('pointerdown'));
 assert.ok(py.includes('def history_chart(us)')&&py.includes('DATA/"history.json"'));
+assert.ok(home.includes('src="./us-options-daily-report.js?v='));
 assert.ok(!js.includes("RiskScore=")&&!js.includes("DATA.risk.score="),"Historical chart must not modify market scoring");
 console.log("Interactive three-series US options chart DOM, validation, date ranges, no placeholders: OK");

@@ -3,7 +3,7 @@
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 const ROOT=path.resolve(__dirname,'../docs'),BASE='http://127.0.0.1:8765/';
 const CORE=['index.html','selections.html','bubbles.html','stocks.html','upstream.html','history.html','backtest.html'];
-const EXT=['market-methodology.html','market-ml-stocks.html','market-cash-3y.html','n-canslim.html','txf-backtest.html','etf-allocation.html','g-backtest.html','g-persistence.html','g-pro-3y.html','g-regime-3y.html','g-regime-contrarian-3y.html','g-target.html','g-candles.html','g-compound-3y.html','g-compound-v2-3y.html','g-compound-v3-walkforward.html'];
+const EXT=['market-methodology.html','market-ml-stocks.html','market-cash-3y.html','n-canslim.html','txf-backtest.html','etf-allocation.html','g-backtest.html','g-persistence.html','g-pro-3y.html','g-regime-3y.html','g-regime-contrarian-3y.html','g-target.html','g-candles.html','g-compound-3y.html','g-compound-v2-3y.html','g-compound-v3-walkforward.html','etf-00631l.html'];
 const ALL=[...CORE,...EXT],checks=[],problems=[],warnings=[];
 const log=(name,ok,details)=>{const rec={name,pass:!!ok,...(details?{details}:{} )};checks.push(rec);if(!ok)problems.push(rec)};
 async function test(name,fn){try{let ret=await fn();log(name,ret===true||ret?.ok===true,typeof ret==='object'?JSON.stringify(ret).slice(0,900):String(ret))}catch(e){log(name,false,e.message.slice(0,600))}}
@@ -55,16 +55,22 @@ async function main(){
       return status.paths===3&&!status.bad&&status.date.includes('2026/')&&status.main!=='—'?true:{ok:false,status};
     });
 
-    await test(variant+' DIX daily commentary stays brief and uses latest close',()=>page.evaluate(()=>{
-      const card=document.getElementById('usopDailyAnalysis');
-      const title=document.getElementById('usopDailyTitle');
-      const items=[...document.querySelectorAll('#usopDailyList li')];
-      const meta=document.getElementById('usopDailyMeta');
-      const chart=document.getElementById('usopChartWrap');
-      return !!card&&card.dataset.state==="ready"&&chart&&chart.compareDocumentPosition(card)&Node.DOCUMENT_POSITION_FOLLOWING&&
-        !!title&&title.textContent.length>5&&items.length===3&&items.every(x=>x.textContent.length>25&&x.textContent.length<170)&&
-        items[0].textContent.includes("S&P 500")&&items[1].textContent.includes("DIX")&&items[2].textContent.includes("GEX")&&
-        meta.textContent.includes("資料日")&&meta.textContent.includes("非漲跌方向預測");
+    await test(variant+' DIX six-month 7-step daily report renders with full evidence',()=>page.evaluate(()=>{
+      const card=document.getElementById('usopDailyAnalysis'),title=document.getElementById('usopDailyTitle'),
+        table=document.querySelector('#usopDailyBody table'),
+        rows=table?[...table.querySelectorAll('tbody tr')]:[],
+        headers=[...document.querySelectorAll('#usopDailyBody h4')].map(x=>x.textContent),
+        lists=[...document.querySelectorAll('#usopDailyBody ul')],
+        status=document.querySelector('#usopDailyBody .usop-report-status'),
+        resonance=document.querySelector('#usopDailyBody .usop-report-resonance'),
+        meta=document.getElementById('usopDailyMeta');
+      return !!card&&card.dataset.state==="ready"&&title.textContent.includes("美股資金結構日報")&&
+        !!status&&/🟢|🟡|🟠|🔴|⚪/.test(status.textContent)&&
+        rows.length===3&&rows[0].textContent.includes("DIX")&&rows[1].textContent.includes("S&P 500")&&rows[2].textContent.includes("GEX")&&
+        headers.includes("數據")&&headers.includes("重點解讀")&&headers.includes("明日觀察重點")&&
+        lists.length===2&&lists[0].querySelectorAll('li').length>=3&&lists[1].querySelectorAll('li').length>=2&&
+        !!resonance&&resonance.textContent.includes("程度")&&
+        meta.textContent.includes("資料日")&&meta.textContent.includes("尚未獨立驗證預測力");
     }));
     await test(variant+' homepage shows score interpretation and action',()=>page.evaluate(()=>{
       const guide=document.getElementById('commandTradeGuide'),title=document.getElementById('commandGuideTitle'),
@@ -84,7 +90,7 @@ async function main(){
           const svg=document.getElementById('usopChart');
           return svg?.querySelectorAll('path[data-path-series]').length===3;
         },null,{timeout:18000});
-        return await x.evaluate(()=>document.getElementById('usopValuegex').textContent!=='—'&&!document.getElementById('usopChartWrap').classList.contains('usop-error')&&document.querySelectorAll('#usopDailyList li').length===3);
+        return await x.evaluate(()=>document.getElementById('usopValuegex').textContent!=='—'&&!document.getElementById('usopChartWrap').classList.contains('usop-error')&&document.querySelectorAll('#usopDailyBody tbody tr').length===3);
       }finally{await x.close()}
     });
 
@@ -124,7 +130,18 @@ async function main(){
     await test(variant+' history date select populated',async()=>await page.locator('#day option').count()>4);
     await test(variant+' history G primary render',async()=>await page.locator('#tb tr').count()>0&&await page.locator('#tableTitle').innerText()!=='' );
    }
+   if(file==='etf-00631l.html'){
+    await page.waitForFunction(()=>document.querySelectorAll('#models tr').length===9,null,{timeout:20000}).catch(()=>{});
+    await test(variant+' 00631L archive 9 strategies',()=>page.evaluate(()=>document.querySelectorAll('#models tr').length===9&&document.getElementById('model').value==='CRASH2_SMA5'&&document.getElementById('ending').textContent.includes('96,770,982')));
+    await test(variant+' 00631L daily capital curve and 2018 switch',async()=>{
+      await page.waitForFunction(()=>document.querySelector('#curve svg path'),null,{timeout:20000}).catch(()=>{});
+      const old=await page.locator('#curveInfo').innerText();await page.locator('#period').selectOption('common2018');
+      await page.waitForFunction(()=>document.querySelector('#curveInfo').textContent.includes('2018-01-02'),null,{timeout:20000}).catch(()=>{});
+      return old.includes('2014-10-31')&&(await page.locator('#curveInfo').innerText()).includes('2018-01-02')&&await page.locator('#curve svg path').count()===1;
+    });
+   }
    if(file==='backtest.html'){
+    await test(variant+' 00631L page direct entry',()=>page.evaluate(()=>!!document.querySelector('.toolbar a[href="./etf-00631l.html"]')));
     await test(variant+' backtest model controls',async()=>await page.locator('#modelTabs button').count()>=3);
     await test(variant+' backtest published data',async()=>!(await page.locator('#meta').innerText()).includes('載入失敗'));
    }

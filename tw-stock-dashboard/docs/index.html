@@ -37,12 +37,13 @@
 <link rel="stylesheet" href="./market-command.css?v=4eb52cea25e6">
 <link rel="stylesheet" href="./market-compact.css?v=60bacca3238b">
 <link rel="stylesheet" href="./dynamic-exposure.css">
-<link rel="stylesheet" href="./us-options-risk.css?v=f0cf5f64f5fe">
+<link rel="stylesheet" href="./us-options-risk.css?v=807b85b60039">
 <script src="./market-compact.js?v=b1b009ea95e1"></script>
 <script src="./market-command.js?v=c27a62c1e751"></script>
 <script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
-<script defer src="./us-options-risk.js?v=b98be70f27eb"></script>
+<script defer src="./us-options-daily-report.js?v=2fe80201e84a"></script>
+<script defer src="./us-options-risk.js?v=a6ebd79f70d7"></script>
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -202,11 +203,11 @@
   <div class="usop-reading" style="--series-color:#f5c651"><span>GEX · Gamma 曝險</span><strong id="usopValuegex">—</strong></div>
  </div>
  <div id="usopChartWrap" class="usop-chartwrap"><svg id="usopChart" class="usop-chart" tabindex="0" role="img" aria-label="可用滑鼠、觸控或左右方向鍵查看 DIX S&P 500 GEX 每日完整走勢"></svg></div>
- <section id="usopDailyAnalysis" class="usop-daily" aria-label="依每日收盤數據自動更新的美股簡評" aria-live="polite">
-  <div class="usop-daily-eyebrow">每日美股盤勢簡評 · 自動更新</div>
-  <h3 class="usop-daily-title" id="usopDailyTitle">正在分析最新交易日…</h3>
-  <ul class="usop-daily-list" id="usopDailyList"></ul>
-  <div class="usop-daily-meta" id="usopDailyMeta">依實際歷史資料計算，並非買賣訊號。</div>
+ <section id="usopDailyAnalysis" class="usop-daily usop-report" aria-label="依六個月走勢分析的美股資金結構日報" aria-live="polite">
+  <div class="usop-daily-eyebrow">SQUEEZEMETRICS｜每日收盤分析</div>
+  <h3 class="usop-daily-title" id="usopDailyTitle">正在產生最新美股資金結構日報…</h3>
+  <div id="usopDailyBody"></div>
+  <p class="usop-daily-meta" id="usopDailyMeta">依實際收盤資料計算，不是台股進出場指令。</p>
  </section>
  <p id="usopMessage" class="usop-msg">正在載入官方歷史走勢。三條線使用獨立尺度，不能直接比較絕對高低。</p>
  <div class="usop-footer">

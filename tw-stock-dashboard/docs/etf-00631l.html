@@ -1,0 +1,49 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>00631L｜2014–2026 9 策略回測</title><script src="./site-access.js"></script><style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;color:#172033;background:#f4f7fb}
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1180px;margin:auto;padding:18px}.head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}h1{font-size:clamp(22px,4vw,30px);margin:10px 0}h2{font-size:18px;margin:0 0 10px}a{color:#2563eb}.back{display:inline-flex;padding:10px 12px;border:1px solid #d7deea;border-radius:10px;background:white;font-weight:750;text-decoration:none}.muted{color:#637083;font-size:12px;line-height:1.7}.card{background:#fff;border:1px solid #e1e7f0;border-radius:15px;padding:17px;margin:13px 0}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.stat{padding:12px;border:1px solid #e6edf5;border-radius:11px}.stat span{display:block;color:#64748b;font-size:11px}.stat b{font-size:20px;display:block;margin-top:5px}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}select{border:1px solid #d7e0ee;border-radius:8px;padding:9px;background:white;font-weight:800;color:#172033;max-width:100%}.scroller{overflow:auto}table{border-collapse:collapse;min-width:600px;width:100%;font-size:12px}th,td{padding:10px 8px;text-align:right;border-bottom:1px solid #e7edf4}th:first-child,td:first-child{text-align:left}th{color:#64748b;background:#f7f9fc}tbody tr{cursor:pointer}tbody tr:hover,tbody tr.selected{background:#eaf2ff}svg{width:100%;height:auto;background:#f8fafc;border-radius:11px}#status{min-height:22px}.risk{font-size:12px;line-height:1.7;color:#64748b}@media(max-width:620px){.wrap{padding:11px}.card{padding:12px}.cards{gap:5px}.stat{padding:8px}.stat b{font-size:16px}table{font-size:11px}}
+</style></head><body><main class="wrap">
+<div class="head"><div><div class="muted">ETF 策略歷史研究｜已有存檔，非即時訊號</div><h1>📈 00631L｜2014～2026 九種策略回測</h1><div class="muted">本金 100 萬元｜含交易摩擦｜處理 2026 年 22:1 分割｜截至 2026/10/07</div></div><a class="back" href="./backtest.html">← 回測總覽</a></div>
+<div class="card"><div class="controls"><label>回測起點 <select id="period"><option value="full">2014/10/31～2026/10/07</option><option value="common2018">2018/01/02～2026/10/07</option></select></label><label>策略 <select id="model"></select></label></div><div id="status" class="muted">正在讀取原始回測存檔…</div></div>
+<div class="card"><h2>9 套策略比較</h2><div class="scroller"><table><thead><tr><th>策略</th><th>100萬期末資產</th><th>累積報酬</th><th>最大回撤</th><th>賣出／買回</th></tr></thead><tbody id="models"></tbody></table></div></div>
+<div class="card"><h2 id="detailTitle">策略明細</h2><div class="cards"><div class="stat"><span>期末資產</span><b id="ending">—</b></div><div class="stat"><span>最大回撤</span><b id="drawdown">—</b></div><div class="stat"><span>交易日數</span><b id="sessions">—</b></div></div>
+<h2 style="margin-top:18px">逐日帳戶資金曲線</h2><div id="curve"><p class="muted">載入中…</p></div><div class="muted" id="curveInfo"></div>
+<p class="muted"><a id="curveLink" target="_blank" rel="noopener" href="#">查看所選策略完整交易和每日資金 JSON ↗</a></p>
+</div>
+<div class="card"><h2>原始來源與研究限制</h2><p class="risk">2014/10/31～2026/10/07 為歷史模擬，策略係同段歷史資料反覆研究比較，含樣本內策略選擇偏誤；最大回撤為歷史數值，不能保證未來風險。00631L 為每日槓桿 ETF，長期績效受路徑、交易成本及當時資料供應商調整影響，資料採 2026/03 的 22:1 分割校正。</p><a href="./data/research/etf_history/00631l_full_split_v1/summary.json" target="_blank" rel="noopener">完整回測摘要 JSON ↗</a></div>
+</main><script>
+(function(){
+const $=id=>document.getElementById(id),base="./data/research/etf_history/",labels={HOLD:"買進長抱",SMA10:"SMA10",SMA10_PANIC4:"SMA10＋暴跌避險",SMA5_ENTRY10_EXIT:"SMA5 提早買回、SMA10 出場",SMA5_BOTH:"SMA5 雙向",CRASH2_SMA5:"暴跌買回＋SMA5（CRASH2）",CRASH1_SMA5:"CRASH1＋SMA5",CRASH3_SMA5:"CRASH3＋SMA5",CRASH2RED_SMA5:"連跌 CRASH2＋SMA5"};
+const fmt=n=>Number(n).toLocaleString("zh-TW",{maximumFractionDigits:0}),pc=n=>Number(n).toFixed(2)+"%";
+let info=null,seq=0;
+async function load(){
+ try{let r=await fetch(base+"00631l_full_split_v1/summary.json",{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);info=await r.json();
+ if(!info?.models?.SMA10||!info?.models?.CRASH2_SMA5)throw Error("策略資料缺失");
+ $("model").replaceChildren();for(const name of Object.keys(info.models)){const opt=document.createElement("option");opt.value=name;opt.textContent=labels[name]||name;$("model").appendChild(opt)}
+ $("model").value="CRASH2_SMA5";render();$("status").textContent="原始存檔日期："+info.createdAt.slice(0,10)+"｜9套策略";
+ }catch(e){$("status").textContent="資料載入失敗："+e.message}
+}
+function render(){
+ if(!info)return;
+ const period=$("period").value,id=$("model").value,model=info.models[id],stats=model[period];if(!stats)return;
+ const body=$("models");body.replaceChildren();
+ for(const [key,row] of Object.entries(info.models)){const m=row[period];const tr=document.createElement("tr");if(key===id)tr.className="selected";
+ for(const text of [labels[key]||key,fmt(m.endNTD)+" 元",pc(m.returnPct),pc(m.mddPct),m.riskOffSells+"／"+m.riskOnReentries]){const td=document.createElement("td");td.textContent=text;tr.appendChild(td)}
+ tr.addEventListener("click",()=>{$("model").value=key;render()});body.appendChild(tr)}
+ $("detailTitle").textContent=labels[id]||id;$("ending").textContent=fmt(stats.endNTD)+" 元";$("drawdown").textContent=pc(stats.mddPct);$("sessions").textContent=fmt(stats.sessions);
+ const suffix=period==="common2018"?"__2018":"",url=base+"curves/00631_split_v1__"+id+suffix+".json";$("curveLink").href=url;draw(url,++seq);
+}
+async function draw(url,ticket){
+ $("curve").textContent="正在讀取每日資金曲線…";$("curveInfo").textContent="";
+ try{const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const data=await r.json();if(ticket!==seq)return;
+ const pts=data.points||[];if(pts.length<20)throw Error("資料不足");
+ const values=pts.map(x=>Number(x[1]));if(values.some(x=>!Number.isFinite(x)))throw Error("非有效資產資料");
+ const lo=Math.min(...values),hi=Math.max(...values),diff=Math.max(1,hi-lo),view=pts.filter((_,i)=>i%Math.max(1,Math.floor(pts.length/550))===0||i===pts.length-1);
+ const coords=view.map(([day,y],i)=>((i===0?"M":"L")+(20+i*860/Math.max(1,view.length-1)).toFixed(2)+","+(207-(y-lo)/diff*182).toFixed(2))).join(" ");
+ const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox","0 0 900 230");svg.setAttribute("role","img");svg.setAttribute("aria-label","00631L 策略每日資金曲線");
+ const line=document.createElementNS("http://www.w3.org/2000/svg","path");line.setAttribute("d",coords);line.setAttribute("fill","none");line.setAttribute("stroke","#2563eb");line.setAttribute("stroke-width","2");svg.appendChild(line);$("curve").replaceChildren(svg);
+ $("curveInfo").textContent="交易日 "+pts.length+"｜"+pts[0][0]+"～"+pts[pts.length-1][0]+"｜模擬買賣紀錄 "+(data.trades||[]).length+" 筆";
+ }catch(e){if(ticket!==seq)return;$("curve").textContent="資金曲線暫時無法載入："+e.message}
+}
+$("period").addEventListener("change",render);$("model").addEventListener("change",render);load();
+})();
+</script></body></html>
