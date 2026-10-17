@@ -165,8 +165,8 @@ class UpstreamIndustryTests(unittest.TestCase):
         self.assertNotIn("2330",{x["code"] for g in groups["LEO"]["subgroups"] for x in g["stocks"]})
         research=[v for sec in groups.values() for g in sec["subgroups"] for v in g["stocks"] if v["basis"]=="industry_theme_research"]
         self.assertTrue(all(z["source"].startswith("https://") and "不等於" in z["roleNote"] for z in research))
-        self.assertEqual(len(research),8)
-        self.assertEqual(r["coverage"]["classifiedBySource"]["industry_theme_research"],8)
+        self.assertEqual(len(research),9)
+        self.assertEqual(r["coverage"]["classifiedBySource"]["industry_theme_research"],9)
         self.assertEqual(r["coverage"]["verifiedCompanyPages"],9)
     def test_curated_codes_name_market_must_match_actual_archive(self):
         with self.assertRaisesRegex(RuntimeError,"Research stock code/name/market conflict"):
