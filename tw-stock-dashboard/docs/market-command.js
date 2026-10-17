@@ -201,7 +201,7 @@ function drawScoreGuide({officialScore,officialDate,currentScore,reference,level
 }
 function draw(data,diag){
  const panel=$("marketCommand");if(!panel)return;
- const r=data?.risk||{},now=new Date(),val=Number(r.score),x=evaluate(r,diag,now),verified=verifiedNightPreview(r,currentFutures,now),pre=marketPremarket(r,verified,now)||marketPremarket(r,currentPremarket,now),night=overnightRisk(currentFutures,r,now),breadthLive=tradedBreadth(currentIntraday,now),post=pre?null:postOpenState(r,now,night,breadthLive),d=pre?{...x.decision,...pre}:post?{...x.decision,...post}:x.decision,info=x.diag?.marketHealth||{};
+ const r=data?.risk||{},now=new Date(),val=Number(r.score),x=evaluate(r,diag,now),verified=verifiedNightPreview(r,currentFutures,now),pre=marketPremarket(r,verified,now)||(currentFutures?null:marketPremarket(r,currentPremarket,now)),night=overnightRisk(currentFutures,r,now),breadthLive=tradedBreadth(currentIntraday,now),post=pre?null:postOpenState(r,now,night,breadthLive),d=pre?{...x.decision,...pre}:post?{...x.decision,...post}:x.decision,info=x.diag?.marketHealth||{};
  const weekendNeedsNight=!pre&&x.weekend&&r?.date&&x.today>r.date;
  panel.dataset.level=d.level;panel.dataset.premarket=pre?"true":"false";panel.className="market-command market-compact cmd-"+d.level.toLowerCase();
  txt("commandStatus",d.headline);
