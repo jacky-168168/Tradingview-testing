@@ -85,7 +85,7 @@ function build(){
     const y=geo.top+(b.hi-r[s.index])/(b.hi-b.lo)*geo.plotH;
     return(i===0?"M":"L")+x.toFixed(2)+" "+y.toFixed(2);
    }).join(" ");
-   svg.appendChild(make("path",{d:pts,stroke:s.color,"stroke-width":w<480?1.8:2.25,fill:"none","stroke-linecap":"round","stroke-linejoin":"round",opacity:state.visible[s.id]?1:0.04,"data-path-series":s.id}));
+   svg.appendChild(make("path",{d:pts,stroke:s.color,"stroke-width":w<480?1.8:2.25,fill:"none","stroke-linecap":"round","stroke-linejoin":"round",opacity:state.visible[s.id]?1:0,"data-path-series":s.id}));
   });
   marks.cross=make("line",{x1:0,y1:geo.top,x2:0,y2:geo.bottom,stroke:"#c6d2e1","stroke-width":1,"stroke-dasharray":"4 4",opacity:.75,"pointer-events":"none"});
   svg.appendChild(marks.cross);
@@ -102,9 +102,9 @@ function build(){
  }
  function move(e){
   if(!state.view.length||!state.geom)return;
-  const rect=svg.getBoundingClientRect(),x=((e.clientX-rect.left)/Math.max(1,rect.width))*state.geom.right;
+  const rect=svg.getBoundingClientRect();
   // rect width corresponds to viewBox full width, not plot width.
-  const vb=svg.viewBox.baseVal,w=vb.width||rect.width,full=((e.clientX-rect.left)/rect.width)*w;
+  const full=((e.clientX-rect.left)/Math.max(1,rect.width))*svg.viewBox.baseVal.width;
   const p=(full-state.geom.left)/state.geom.plotW;
   showPoint(Math.round(p*(state.view.length-1)));
  }
