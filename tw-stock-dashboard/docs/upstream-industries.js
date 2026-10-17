@@ -13,7 +13,7 @@ const fmtDate=s=>String(s||"—").slice(0,10);
 function categories(){return state.data?.industries||[]}
 function contains(stock,sectorName,groupName,q){
  if(!q)return true;
- const text=[stock.name,stock.code,stock.market,stock.industry,sectorName,groupName,...(stock.models||[])].join(" ").toLocaleLowerCase("zh-TW");
+ const text=[stock.name,stock.code,stock.market,stock.industry,stock.roleNote,stock.classification,sectorName,groupName,...(stock.models||[])].join(" ").toLocaleLowerCase("zh-TW");
  return text.includes(q);
 }
 function matchedGroups(industry){
@@ -31,7 +31,7 @@ function row(s){
  const url=String(s.source||""),trusted=/^https:\/\//.test(url);
  const evidence=trusted?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">核對依據 ↗</a>':"";
  const note=s.roleNote||"";
- const role='<small>'+esc(s.classification||"")+"｜"+evidence+'</small>'+(s.basis==="independent_industry_material"?'<small class="stock-note">晶圓材料供應商，非晶圓代工廠</small>':"")+(s.code==="4760"?'<small class="stock-note">'+esc(note)+' <a href="https://ampletec.com.tw/about.asp" target="_blank" rel="noopener noreferrer">公司說明 ↗</a></small>':s.code==="2327"||s.basis==="cpo_industry_research"?'<small class="stock-note">'+esc(note)+'</small>':"");
+ const role='<small>'+esc(s.classification||"")+"｜"+evidence+'</small>'+(s.basis==="independent_industry_material"?'<small class="stock-note">晶圓材料供應商，非晶圓代工廠</small>':"")+(s.code==="4760"?'<small class="stock-note">'+esc(note)+' <a href="https://ampletec.com.tw/about.asp" target="_blank" rel="noopener noreferrer">公司說明 ↗</a></small>':s.code==="2327"||s.basis==="cpo_industry_research"||s.basis==="industry_theme_research"?'<small class="stock-note">'+esc(note)+'</small>':"");
  return '<tr><td class="stock-cell"><a href="'+esc(tv(s))+'" target="_blank" rel="noopener noreferrer">'+esc(s.code)+' '+esc(s.name)+'</a><small>'+esc(s.market)+' · '+esc(marketStock(s))+'</small>'+role+'</td>'+
  '<td class="numeric">'+n(s.close)+'</td><td class="numeric '+signed(s.ret5)+'">'+pct(s.ret5)+'</td><td class="numeric '+signed(s.ret20)+'">'+pct(s.ret20)+'</td>'+
  '<td class="optional numeric">'+n(s.momentumScore,1)+'</td><td class="optional">'+(tags||'<span class="sub">—</span>')+'</td></tr>';
@@ -40,7 +40,7 @@ function groupMarkup(g,i){
  const inner=g.rows.map(row).join("");
  const extra=g.source&&g.source!==""?'<a class="industry-source" href="'+esc(g.source)+'" target="_blank" rel="noopener noreferrer">細項分類來源 ↗</a>':"";
  const note=g.note?'<div class="group-note">'+esc(g.note)+'</div>':"";
- return '<details class="group" '+(state.sector!=="all"&&i<3?"open":"")+'><summary><span class="group-name">'+esc(g.name)+'</span><span class="group-count">'+g.rows.length+' 檔</span></summary>'+
+ return '<details class="group" '+(state.sector!=="all"&&i<3?"open":"")+'><summary><span class="group-name">'+esc(g.name)+(g.stage&&g.stage!=="櫃買官方上游"?' <small class="tag">'+esc(g.stage)+'</small>':"")+'</span><span class="group-count">'+g.rows.length+' 檔</span></summary>'+
  note+extra+'<div style="overflow-x:auto"><table class="stock-table"><thead><tr><th>股票／名稱</th><th class="numeric">收盤</th><th class="numeric">5D</th><th class="numeric">20D</th><th class="optional numeric">動能分位</th><th class="optional">入選模型</th></tr></thead><tbody>'+inner+'</tbody></table></div></details>';
 }
 function industryMarkup(industry,allMode){
@@ -48,9 +48,9 @@ function industryMarkup(industry,allMode){
  const unique=new Set(groups.flatMap(g=>g.rows.map(s=>s.market+"_"+s.code)));
  if(state.query&&!groups.length)return "";
  const external='<a class="industry-source" href="'+esc(industry.source)+'" target="_blank" rel="noopener noreferrer">'+esc(industry.sourceLabel||"櫃買中心原始產業鏈")+' ↗</a>';
- const subtitle=industry.code==="CPO"?"獨立研究的CPO光學上游：磊晶雷射、FAU／耦光及ELS。不是櫃買中心官方產業分類；產品相關不等於已獲CPO訂單。":allMode?"此產業經核對的上游細項；點選細項可展開股票。":"上游細項對應上市櫃股票，點選類別可展開。";
+ const subtitle=industry.code==="CPO"?"CPO 光學元件研究名單；不表示已獲特定客戶訂單。":industry.code==="LEO"?"低軌衛星／太空通訊主題：射頻、衛星 PCB、CCL 與終端分層；非官方 LEO 專屬產業碼或已確認訂單。":industry.code==="IC_SUB"?"IC 載板材料上游與 ABF／BT 載板製造中游嚴格分開，不混充官方上游。":industry.code==="L000"?"櫃買中心 PCB 官方上游材料＋有來源的 CCL（中游）及鑽針（製程耗材）延伸分類。":allMode?"此產業經核對的上游細項；點選細項可展開股票。":"上游細項對應上市櫃股票，點選類別可展開。";
  return '<section class="industry-block" aria-label="'+esc(industry.name)+' 上游股票">'+
- '<div class="industry-top"><div class="industry-title"><h2>'+esc(industry.name)+'｜上游類股</h2><span class="stat">'+unique.size+' 檔股票</span></div>'+
+ '<div class="industry-top"><div class="industry-title"><h2>'+esc(industry.name)+(industry.code==="LEO"||industry.code==="IC_SUB"?'｜產業鏈研究':industry.code==="L000"?'｜上游與製程延伸':'｜上游類股')+'</h2><span class="stat">'+unique.size+' 檔股票</span></div>'+
  '<p>'+subtitle+(state.query?'｜搜尋：'+esc(state.query):'')+'</p>'+external+'</div>'+
  '<div class="groups">'+(groups.length?groups.map(groupMarkup).join(""):'<div class="empty">此產業尚無符合搜尋條件的上游股票。</div>')+'</div></section>';
 }
@@ -81,8 +81,8 @@ function load(){
   const r=await fetch(url,{cache:"no-store"});
   if(!r.ok)throw new Error("資料尚未發布（HTTP "+r.status+"）");
   const d=await r.json();
-  if(d.schema!=="tw-upstream-industries-v2"||!d.coverage||!Array.isArray(d.industries)||d.industries.length<9||d.coverage.verifiedCompanyPages<500||!d.industries.some(x=>x.code==="CPO"&&x.stockCount>0))
-   throw new Error("CPO 上游研究分類及官方分類資料版本未同步");
+  if(d.schema!=="tw-upstream-industries-v2"||!d.coverage||!Array.isArray(d.industries)||d.industries.length<11||d.coverage.verifiedCompanyPages<500||!d.industries.some(x=>x.code==="CPO"&&x.stockCount>0)||!d.industries.some(x=>x.code==="LEO"&&x.stockCount>0)||!d.industries.some(x=>x.code==="IC_SUB"&&x.stockCount>0))
+   throw new Error("CPO／衛星／載板研究分類或官方資料版本尚未同步");
   return d;
  }
  getVerified(primary).catch(async ()=>{const d=await getVerified(backup);d._fromLatestGitHub=true;return d;}).then(d=>{
@@ -96,7 +96,7 @@ function load(){
   if(!wafer||!wafer.stocks.some(x=>x.code==="6488"&&x.basis==="independent_industry_material"))throw new Error("環球晶與矽晶圓材料分類尚未完成核對");
   const warn=d.coverage.verifiedRatioPct<90||age>7;
   $("status").classList.toggle("warn",warn);
-  $("status").textContent=(d._fromLatestGitHub?"已從 GitHub 主分支補齊最新分類｜":"")+"資料日 "+dated+"｜已核對公司 "+n(d.coverage.verifiedCompanyPages,0)+"/"+n(d.coverage.marketStocks,0)+"｜上游採櫃買中心各產業階段；半導體用矽晶圓供應商另據工研院 ITIS 延伸分類，均可點股票查看來源。"+(warn?" ⚠ 部分公司分類未取得或資料日期較舊；未確認的股票不計入，不能視為全市場完整覆蓋。":"");
+  $("status").textContent=(d._fromLatestGitHub?"已從 GitHub 主分支補齊最新分類｜":"")+"資料日 "+dated+"｜已核對公司 "+n(d.coverage.verifiedCompanyPages,0)+"/"+n(d.coverage.marketStocks,0)+"｜櫃買上游原始分類＋CPO、低軌、載板、CCL、鑽針有來源延伸；各細項標明上游或中游。"+(warn?" ⚠ 部分公司分類未取得或資料日期較舊；未確認的股票不計入，不能視為全市場完整覆蓋。":"");
   const requested=new URLSearchParams(location.search).get("industry");
   const current=categories().find(x=>x.code===requested);
   select(current?current.code:"all",false);
