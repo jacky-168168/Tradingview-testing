@@ -6,6 +6,12 @@ const src=fs.readFileSync(path.join(dir,"upstream-industries.js"),"utf8");
 new Function(src);
 assert(!html.includes('class="kpis"'),"Unneeded top 4 statistics cards must be removed");
 assert(html.includes('id="industryNav"')&&html.includes('id="results"'));
+const scriptVersion=html.match(/upstream-industries\.js\?v=([a-f0-9]{12})/);
+assert(scriptVersion,"upstream script must be cache-versioned or the phone can show old nav order");
+const crypto=require("node:crypto");
+const digest=crypto.createHash("sha1").update("blob "+Buffer.byteLength(src)+"\0"+src).digest("hex").slice(0,12);
+assert.equal(scriptVersion[1],digest,"upstream HTML must reference exact current JS version");
+
 const sectors=[
  {code:"D000",name:"半導體",source:"https://ic.tpex.org.tw/introduce.php?ic=D000",stockCount:1,subgroups:[
   {name:"半導體用矽晶圓／磊晶材料（延伸上游）",count:1,source:"https://www.itis.org.tw/NetReport_Detail.aspx?rpno=613160445",
@@ -59,6 +65,13 @@ setImmediate(()=>{
   assert(els.results.innerHTML.includes('被動元件產業本身屬中游'),"Yageo midstream caveat must be clearly visible");
   assert(els.industryNav.innerHTML.includes('CPO／矽光子'),"CPO must be selectable");
   assert(els.industryNav.innerHTML.includes("被動元件"),"Passive elements category must appear in the sidebar");
+  const navOrder=[...els.industryNav.innerHTML.matchAll(/data-sector="([^"]+)"/g)].map(x=>x[1]);
+  assert.equal(navOrder[0],"all","All must stay first");
+  assert.equal(navOrder.indexOf("J000"),navOrder.indexOf("CPO")+1,"被動元件 must sit immediately after CPO, not at the bottom");
+  assert.equal(navOrder[navOrder.indexOf("J000")+1],"A100","Solar must follow the new passive category");
+  const blockOrder=[...els.results.innerHTML.matchAll(/aria-label="([^"]+) 上游股票"/g)].map(x=>x[1]);
+  assert.equal(blockOrder.indexOf("被動元件"),blockOrder.indexOf("CPO／矽光子")+1,"All-mode content must also place passive under CPO");
+
   assert(els.industryNav.innerHTML.includes('低軌衛星')&&els.industryNav.innerHTML.includes('IC 載板'),"New researched sectors visible");
   assert(els.results.innerHTML.includes('CPO／矽光子｜上游類股')&&els.results.innerHTML.includes('3363 上詮'),"All must show CPO FAU supplier");
   assert(els.results.innerHTML.includes('CPO 產業供應鏈研究（非櫃買官方產業碼）'),"Clearly independent from official TPEx industry chains");
