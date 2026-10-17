@@ -55,6 +55,17 @@ async function main(){
       return status.paths===3&&!status.bad&&status.date.includes('2026/')&&status.main!=='—'?true:{ok:false,status};
     });
 
+    await test(variant+' DIX daily commentary stays brief and uses latest close',()=>page.evaluate(()=>{
+      const card=document.getElementById('usopDailyAnalysis');
+      const title=document.getElementById('usopDailyTitle');
+      const items=[...document.querySelectorAll('#usopDailyList li')];
+      const meta=document.getElementById('usopDailyMeta');
+      const chart=document.getElementById('usopChartWrap');
+      return !!card&&card.dataset.state==="ready"&&chart&&chart.compareDocumentPosition(card)&Node.DOCUMENT_POSITION_FOLLOWING&&
+        !!title&&title.textContent.length>5&&items.length===3&&items.every(x=>x.textContent.length>25&&x.textContent.length<170)&&
+        items[0].textContent.includes("S&P 500")&&items[1].textContent.includes("DIX")&&items[2].textContent.includes("GEX")&&
+        meta.textContent.includes("資料日")&&meta.textContent.includes("非漲跌方向預測");
+    }));
     await test(variant+' homepage shows score interpretation and action',()=>page.evaluate(()=>{
       const guide=document.getElementById('commandTradeGuide'),title=document.getElementById('commandGuideTitle'),
         detail=document.getElementById('commandGuideText'),scale=document.getElementById('commandGuideScale');
@@ -73,7 +84,7 @@ async function main(){
           const svg=document.getElementById('usopChart');
           return svg?.querySelectorAll('path[data-path-series]').length===3;
         },null,{timeout:18000});
-        return await x.evaluate(()=>document.getElementById('usopValuegex').textContent!=='—'&&!document.getElementById('usopChartWrap').classList.contains('usop-error'));
+        return await x.evaluate(()=>document.getElementById('usopValuegex').textContent!=='—'&&!document.getElementById('usopChartWrap').classList.contains('usop-error')&&document.querySelectorAll('#usopDailyList li').length===3);
       }finally{await x.close()}
     });
 
