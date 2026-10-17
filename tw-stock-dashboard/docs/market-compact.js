@@ -8,23 +8,23 @@ const safeScore=n=>validScore(n)?String(Math.round(Number(n))):"—";
 const ACTION={STOP:"暫緩新倉",WAIT:"先觀望",CAUTION:"避免追高",REVERSAL:"等待反轉確認",READY:"擇優評估",UNKNOWN:"等待有效資料"};
 function render(s){
  const box=$("compactMarketSummary");if(!box)return;
- const level=String(s?.level||"UNKNOWN").toUpperCase(),reference=!!s?.reference,score=validScore(s?.score)?Number(s.score):null;
+ const level=String(s?.level||"UNKNOWN").toUpperCase(),reference=!!s?.reference,pending=!!s?.pendingPreview,score=validScore(s?.score)?Number(s.score):null;
  box.dataset.tone=(level==="STOP"?"stop":level==="READY"?"ready":level==="CAUTION"?"caution":"wait");
  box.dataset.reference=reference?"true":"false";
  put("compactAction",level==="STOP"?"暫緩新倉":score===null?"等待有效資料":ACTION[level]||"先觀望");
  put("compactScore",safeScore(score));
  put("compactBand",score!==null&&root.MarketCommand?.scoreBand?root.MarketCommand.scoreBand(score)?.label||"待確認":"資料待確認");
- put("compactScoreType",reference?"下個交易日盤前參考分數｜未獨立回測":s?.stale?"歷史風險分數｜最新資料待同步":s?.post?"今日現貨正式分數待更新":"最近正式收盤 Risk Score");
+ put("compactScoreType",reference?"下個交易日盤前參考分數｜未獨立回測":pending?"下個交易日夜盤風險待核對｜不可沿用昨收":s?.stale?"歷史風險分數｜最新資料待同步":s?.post?"今日現貨正式分數待更新":"最近正式收盤 Risk Score");
  put("compactSession",reference?"參考交易日 "+(s?.date||"待確認"):"正式資料日 "+(s?.officialDate||"待確認"));
  const off=validScore(s?.officialScore)?Number(s.officialScore):null,delta=reference&&s?.delta!=null&&Number.isFinite(Number(s.delta))?Math.round(Number(s.delta)):null;
  put("compactOfficial",safeScore(off));
- put("compactNight",delta===null?"—":(delta>=0?"+":"")+delta);
- const n=$("compactNightCell");if(n)n.hidden=!reference;
+ put("compactNight",delta===null?(pending?"待核對":"—"):(delta>=0?"+":"")+delta);
+ const n=$("compactNightCell");if(n)n.hidden=!reference&&!pending;
  const info=$("compactEquation");
- if(info)info.textContent=reference?"盤前參考＝正式收盤分數＋夜盤調整；風險校正為獨立研究，不參與此運算。":"原始正式分數與校正研究分開呈現；盤後資料不代表下次開盤的交易許可。";
+ if(info)info.textContent=reference?"盤前參考＝正式收盤分數＋夜盤調整；風險校正為獨立研究，不參與此運算。":pending?"已完成夜盤尚未驗證，主分數暫停顯示；41 分僅為歷史收盤，不是下個交易日的評分。":"原始正式分數與校正研究分開呈現；盤後資料不代表下次開盤的交易許可。";
  const guard=$("compactResearch");
  if(guard)guard.hidden=off===null;
- put("compactScoreFootnote",reference?"僅供盤前情境判讀，非正式盤中交易許可。":"市場分類不是進出場保證，仍須確認個股條件。");
+ put("compactScoreFootnote",reference?"僅供盤前情境判讀，非正式盤中交易許可。":pending?"夜盤資料未核對完成，等待更新，不自動採用較高的正式收盤分數。":"市場分類不是進出場保證，仍須確認個股條件。");
 }
 function review(result,pattern){
  const el=$("compactAdjusted"),box=$("compactResearch");if(!el)return;
