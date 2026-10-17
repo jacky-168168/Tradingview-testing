@@ -8,6 +8,8 @@ on:
       - 'tw-stock-dashboard/docs/*.html'
       - 'tw-stock-dashboard/docs/market-command.js'
       - 'tw-stock-dashboard/docs/us-options-risk.js'
+      - 'tw-stock-dashboard/docs/us-options-risk.css'
+      - 'tw-stock-dashboard/tests/test_us_options_chart.cjs'
       - 'tw-stock-dashboard/docs/data/research/us_options/**'
       - 'tw-stock-dashboard/tests/test_tx_premarket_ui.js'
       - 'tw-stock-dashboard/tests/test_market_live_render.cjs'
@@ -57,6 +59,7 @@ jobs:
           node tw-stock-dashboard/tests/test_entry_playbook.js
           node tw-stock-dashboard/tests/test_upstream_ui.cjs
           node tw-stock-dashboard/tests/test_intraday_schedule.cjs
+          node tw-stock-dashboard/tests/test_us_options_chart.cjs
           node --check tw-stock-dashboard/docs/g-rank-export.js
           node tw-stock-dashboard/tests/test_g_rank_export.cjs
           node - <<'JS'
