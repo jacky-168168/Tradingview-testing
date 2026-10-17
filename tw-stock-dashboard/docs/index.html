@@ -39,6 +39,7 @@
 <script src="./market-command.js?v=4386f2d88d3e"></script>
 <script src="./market-sentiment.js?v=3defd3af06ea"></script>
 <script src="./dynamic-exposure.js"></script>
+<script defer src="./us-options-risk.js?v=20261017"></script>
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -161,6 +162,10 @@
     <div class="cmd-research"><span id="commandAi">機器學習回測狀態核對中…</span><a href="./data/research/market_ml_audit/summary.json" target="_blank" rel="noopener">AI 驗證</a><a href="./data/research/market_intelligence/latest.json" target="_blank" rel="noopener">風險依據</a><a href="./market-methodology.html">書籍／GitHub／研究說明</a></div>
   </details>
 </section>
+<details class="card" id="usOptionsRisk" aria-label="美股暗池及Gamma輔助風險研究" style="margin:14px 0;padding:13px 16px">
+ <summary style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:850">🇺🇸 美股 DIX／GEX｜輔助風險觀察 <span id="usOptionsHeadline" style="font-size:12px;color:#64748b">核對歷史關聯與正式來源中…</span></summary>
+ <div id="usOptionsBody" style="font-size:13px;line-height:1.9;margin-top:10px;color:#334155">僅供海外風險情緒研究，不納入 Risk Score 或 G 選股權重。</div>
+</details>
 <details class="insights-disclosure home-insights-disclosure" id="secondaryInsights" open>
  <summary><span>市場焦點｜法人、G 選股與題材</span><span class="insight-summary-note">預設展開 · 點擊收合</span></summary>
  <section id="homeFocus" class="home-focus" aria-label="今日法人動向、G 選股與熱門題材">

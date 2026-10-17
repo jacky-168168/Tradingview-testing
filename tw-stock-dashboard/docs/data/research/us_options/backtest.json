@@ -1,0 +1,92 @@
+{
+  "source": "https://squeezemetrics.com/monitor/static/DIX.csv",
+  "twSource": "repository TWSE market-risk archive, original close-to-close dayRet",
+  "updatedAt": "2026-10-17T05:40:53+00:00",
+  "usSourceEnd": "2026-10-16",
+  "lagPolicy": "US date strictly before (TW date minus 1 calendar day); conservative publication embargo",
+  "caution": "Association is not causation, and historical close-to-close TWII return is not a tradable open-to-close forecast. No risk-score weights changed.",
+  "samples": 2857,
+  "groups": {
+    "training_2015_2021": {
+      "start": "2015-01-05",
+      "end": "2021-12-30",
+      "n": 1702,
+      "gexPositive": {
+        "n": 1568,
+        "upRatePct": 53.89,
+        "meanReturnPct": 0.0403
+      },
+      "gexNegative": {
+        "n": 134,
+        "upRatePct": 59.7,
+        "meanReturnPct": 0.0885
+      },
+      "gexUpRateDiffPctPoints": -5.81,
+      "dixAtLeast45": {
+        "n": 289,
+        "upRatePct": 59.52,
+        "meanReturnPct": 0.1122
+      },
+      "dixBelow45": {
+        "n": 1413,
+        "upRatePct": 53.29,
+        "meanReturnPct": 0.0301
+      },
+      "sufficientGexGroups": true
+    },
+    "oos_2022_2023": {
+      "start": "2022-01-03",
+      "end": "2023-12-29",
+      "n": 485,
+      "gexPositive": {
+        "n": 366,
+        "upRatePct": 56.56,
+        "meanReturnPct": 0.1208
+      },
+      "gexNegative": {
+        "n": 119,
+        "upRatePct": 45.38,
+        "meanReturnPct": -0.3618
+      },
+      "gexUpRateDiffPctPoints": 11.18,
+      "dixAtLeast45": {
+        "n": 414,
+        "upRatePct": 55.07,
+        "meanReturnPct": 0.0264
+      },
+      "dixBelow45": {
+        "n": 71,
+        "upRatePct": 46.48,
+        "meanReturnPct": -0.1376
+      },
+      "sufficientGexGroups": true
+    },
+    "recent_2024_2026": {
+      "start": "2024-01-02",
+      "end": "2026-10-08",
+      "n": 670,
+      "gexPositive": {
+        "n": 652,
+        "upRatePct": 56.6,
+        "meanReturnPct": 0.1796
+      },
+      "gexNegative": {
+        "n": 18,
+        "upRatePct": 44.44,
+        "meanReturnPct": -0.4306
+      },
+      "gexUpRateDiffPctPoints": null,
+      "dixAtLeast45": {
+        "n": 484,
+        "upRatePct": 56.4,
+        "meanReturnPct": 0.1692
+      },
+      "dixBelow45": {
+        "n": 186,
+        "upRatePct": 55.91,
+        "meanReturnPct": 0.1478
+      },
+      "sufficientGexGroups": false
+    }
+  }
+}
