@@ -28,7 +28,8 @@ const sectors=[
  ]},
  ...["L000","F000","K000","3000","A300"].map(code=>({code,name:code,stockCount:0,subgroups:[],source:"https://ic.tpex.org.tw/introduce.php?ic="+code}))
 ];
-const payload={schema:"tw-upstream-industries-v2",dataDate:"2026-10-12",coverage:{industries:9,marketStocks:1952,verifiedCompanyPages:1952,verifiedRatioPct:100,distinctUpstreamStocks:5,upstreamMemberships:5},industries:sectors};
+sectors.push(...[{code:"IC_SUB",name:"IC 載板／ABF・BT（研究）",stockCount:0,source:"https://ic.tpex.org.tw/introduce.php?ic=L000",subgroups:[]},{code:"LEO",name:"低軌衛星／太空通訊（研究）",stockCount:0,source:"https://ic.tpex.org.tw/introduce.php?ic=4100",subgroups:[]}]);
+const payload={schema:"tw-upstream-industries-v2",dataDate:"2026-10-12",coverage:{industries:11,marketStocks:1952,verifiedCompanyPages:1952,verifiedRatioPct:100,distinctUpstreamStocks:5,upstreamMemberships:5},industries:sectors};
 const events={},els={};
 function el(id){if(!els[id])els[id]={innerHTML:"",textContent:"",value:"",classList:{toggle(){} ,add(){}},addEventListener(type,fn){events[id+"|"+type]=fn}};return els[id]}
 const ctx={document:{getElementById:el},fetch:()=>Promise.resolve({ok:true,json:()=>Promise.resolve(payload)}),Date,Intl,URL,URLSearchParams,Number,Set,String,Array,console,
