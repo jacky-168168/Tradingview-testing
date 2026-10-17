@@ -171,7 +171,7 @@ class UpstreamIndustryTests(unittest.TestCase):
         memberships["1303"]=[{"industry":"印刷電路板","subCategory":"玻璃纖維/玻纖布"}]
         r=compile_map(stocks,memberships,"2026-10-16")
         groups={x["code"]:x for x in r["industries"]}
-        self.assertEqual(len(groups),11)
+        self.assertEqual(len(groups),12)
         pcb={g["name"]:g for g in groups["L000"]["subgroups"]}
         ccl=pcb["銅箔基板 CCL／高速基材（中游延伸）"]
         drill=pcb["PCB 精密鑽針／鑽孔耗材（製程上游供應）"]
