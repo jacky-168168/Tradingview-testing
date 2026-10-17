@@ -20,9 +20,11 @@ async function start(){
   if(stale)text(body,"⚠ 來源資料超過八天未更新，舊訊號不可用於今日台股風險判斷。");
   const groups=report.groups||{},old=groups.oos_2022_2023,newer=groups.recent_2024_2026;
   if(old?.sufficientGexGroups)text(body,"歷史樣本外 2022～2023（保守延後一天）：GEX 正值次日台股上漲率 "+pct(old.gexPositive?.upRatePct)+"（"+old.gexPositive?.n+"日）；負值 "+pct(old.gexNegative?.upRatePct)+"（"+old.gexNegative?.n+"日）。");
+  const training=groups.training_2015_2021;
+  if(training?.sufficientGexGroups)text(body,"2015～2021 訓練段：GEX 正值上漲率 "+pct(training.gexPositive?.upRatePct)+"；負值 "+pct(training.gexNegative?.upRatePct)+"。與 2022～2023 方向相反，關聯不具跨時期穩定性。");
   if(newer?.sufficientGexGroups)text(body,"近期 2024～2026 獨立分段：GEX 正值台股上漲率 "+pct(newer.gexPositive?.upRatePct)+"（"+newer.gexPositive?.n+"日）；負值 "+pct(newer.gexNegative?.upRatePct)+"（"+newer.gexNegative?.n+"日）。");
   if(newer&&!newer.sufficientGexGroups)text(body,"2024～2026 驗證：正負 GEX 子樣本不足，暫不推論。");
-  const note=text(body,"僅為美股選擇權市場風險參考；相關性不代表因果，也不保證台股隔日漲跌。未加入 Risk Score／G 選股權重。");note.style.color="#64748b";note.style.fontSize="12px";
+  const note=text(body,"僅為美股選擇權市場風險參考。DIX ≥45% 未通過穩定預測驗證；GEX 關聯性跨期間不一致，不能作為買賣訊號。未加入 Risk Score／G 選股權重。");note.style.color="#64748b";note.style.fontSize="12px";
   const links=document.createElement("div");links.style.marginTop="7px";for(const [label,href] of [["官方來源 ↗","https://squeezemetrics.com/monitor/dix"],["回測結果 JSON ↗",url+"backtest.json"]]){const a=document.createElement("a");a.href=href;a.textContent=label;a.target="_blank";a.rel="noopener noreferrer";a.style.marginRight="17px";a.style.color="#2563eb";links.appendChild(a)}body.appendChild(links);
  }catch(e){head.textContent="⚪ 研究資料尚未完成同步";body.textContent="DIX／GEX 尚未取得可核對的正式來源，暫不顯示交易風險訊號；原本台股大盤分數與選股均不受影響。";}
 }
