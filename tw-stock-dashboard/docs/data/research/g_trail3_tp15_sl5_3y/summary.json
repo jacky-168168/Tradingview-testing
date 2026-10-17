@@ -1,0 +1,175 @@
+{
+  "version": "G_TRAIL3_ARM3_TP15_SL5_3Y_V1",
+  "generatedAt": "2026-10-18T07:09:07+08:00",
+  "period": {
+    "start": "2024-01-02",
+    "signalEnd": "2026-10-07",
+    "markEnd": "2026-10-16"
+  },
+  "rules": {
+    "entryA": "G double-break and 10-day persistence Top3 D-close => buy D+1 open",
+    "entryB": "Entry A AND individual stock prior close > prior SMA10*1.01",
+    "trailArmPct": 3,
+    "trailFromHighestPct": 3,
+    "takeProfitPct": 15,
+    "hardStopPct": -5,
+    "trailReference": "highest intraday price observed since acquisition",
+    "sameCandleOrder": "fixed stop first, trailing stop second, +15% target third; conservative intrabar ordering",
+    "gapStop": "fill at true daily opening when open crosses resting stop; can lose more than 5%",
+    "positionCapPct": 25,
+    "maximumConcurrentPositions": 4,
+    "initialCapitalTWD": 1000000.0,
+    "commissionBuyPct": 0.24249999999998995,
+    "commissionSellTaxSlippagePct": 0.5425000000000013
+  },
+  "sample": {
+    "listedOtcUniverse": 1983,
+    "stockHistoryErrors": 0,
+    "historicGSignalDays": 649,
+    "gRankRows": 1927,
+    "differentRankedSymbols": 479,
+    "symbolOHLCUsable": 479,
+    "g2026ParitySignals": 490,
+    "g2026ParityCorrect": 490,
+    "dailyGScannerAudit": {
+      "symbols": 1979,
+      "dailyFeatureRows": 29708,
+      "validGSignalDays": 649,
+      "meanGStocksPerSignal": 40.86
+    }
+  },
+  "limitations": [
+    "2024-2025 historical G ranks reconstructed retrospectively from CURRENT stock universe and capital; survivorship and historical float bias.",
+    "A/B entry at next session opening; exits simulated with daily OHLC not tick sequence.",
+    "When multiple levels crossed inside one day, worst (lower) available exit is chosen; actual ordering unobservable.",
+    "Trailing activation and stop both occurring inside one day may be impossible in actual price path order.",
+    "Brokerage 0.1425% each side, stock sell tax 0.3%, slippage 0.1% each side.",
+    "Daily OHLC stock splits/dividends not fully corporate-action adjusted, no daily limit up/down/queue simulation.",
+    "Fixed exit +15% on single stock may take longer than one Taiwan daily 10% price-limit session.",
+    "Output is retrospective research, not walk-forward independently verified and not a live record."
+  ],
+  "models": [
+    {
+      "model": "A_G_TOP3",
+      "startCapital": 1000000.0,
+      "endEquity": 9082.47,
+      "totalReturnPct": -99.092,
+      "maxDrawdownPct": -99.15,
+      "maxDrawdownDate": "2026-10-07",
+      "trades": 1468,
+      "wins": 653,
+      "losses": 815,
+      "winRatePct": 44.48,
+      "profitFactor": 0.463,
+      "avgWinPct": 3.225,
+      "avgLossPct": -4.859,
+      "avgHoldSessions": 0.393,
+      "openAtEnd": 0,
+      "entryCounts": {
+        "G_top3": 1468
+      },
+      "exitCounts": {
+        "trailing_stop": 806,
+        "fixed_stop": 629,
+        "gap_fixed_stop": 32,
+        "gap_fixed_target": 1
+      },
+      "conflictingSameDayStopAndTarget": 142,
+      "sameBarTrailActivationAndStop": 938,
+      "skips": {
+        "entry_no_bar": 3,
+        "missing_daily_candle": 2,
+        "stale_daily_mark": 2,
+        "no_buying_power": 22
+      },
+      "yearly": {
+        "2024": {
+          "startEquity": 1000000.0,
+          "endEquity": 129322.79,
+          "returnPct": -87.068,
+          "maxDrawdownPct": -87.853,
+          "closedTrades": 566,
+          "winRatePct": 44.17
+        },
+        "2025": {
+          "startEquity": 129322.79,
+          "endEquity": 32149.89,
+          "returnPct": -75.14,
+          "maxDrawdownPct": -75.14,
+          "closedTrades": 473,
+          "winRatePct": 43.76
+        },
+        "2026": {
+          "startEquity": 32149.89,
+          "endEquity": 9082.47,
+          "returnPct": -71.75,
+          "maxDrawdownPct": -71.911,
+          "closedTrades": 429,
+          "winRatePct": 45.69
+        }
+      }
+    },
+    {
+      "model": "B_G_TOP3_SMA10",
+      "startCapital": 1000000.0,
+      "endEquity": 9230.88,
+      "totalReturnPct": -99.077,
+      "maxDrawdownPct": -99.136,
+      "maxDrawdownDate": "2026-10-07",
+      "trades": 1466,
+      "wins": 652,
+      "losses": 814,
+      "winRatePct": 44.47,
+      "profitFactor": 0.464,
+      "avgWinPct": 3.225,
+      "avgLossPct": -4.858,
+      "avgHoldSessions": 0.393,
+      "openAtEnd": 0,
+      "entryCounts": {
+        "G_top3": 1466
+      },
+      "exitCounts": {
+        "trailing_stop": 805,
+        "fixed_stop": 628,
+        "gap_fixed_stop": 32,
+        "gap_fixed_target": 1
+      },
+      "conflictingSameDayStopAndTarget": 142,
+      "sameBarTrailActivationAndStop": 937,
+      "skips": {
+        "entry_no_bar": 3,
+        "missing_daily_candle": 2,
+        "stale_daily_mark": 2,
+        "entry_sma10_rejected": 2,
+        "no_buying_power": 22
+      },
+      "yearly": {
+        "2024": {
+          "startEquity": 1000000.0,
+          "endEquity": 129322.79,
+          "returnPct": -87.068,
+          "maxDrawdownPct": -87.853,
+          "closedTrades": 566,
+          "winRatePct": 44.17
+        },
+        "2025": {
+          "startEquity": 129322.79,
+          "endEquity": 32610.86,
+          "returnPct": -74.783,
+          "maxDrawdownPct": -74.783,
+          "closedTrades": 472,
+          "winRatePct": 43.86
+        },
+        "2026": {
+          "startEquity": 32610.86,
+          "endEquity": 9230.88,
+          "returnPct": -71.694,
+          "maxDrawdownPct": -71.855,
+          "closedTrades": 428,
+          "winRatePct": 45.56
+        }
+      }
+    }
+  ],
+  "elapsedSeconds": 134.09
+}
