@@ -78,6 +78,16 @@ INDUSTRIES=[
    ("IP設計／IC設計代工",["IP設計/IC設計代工服務","IP設計/IC設計","IP設計","IC設計代工服務"]),
    ("IC 設計",["IC設計","消費性IC","微控制器IC","電源管理IC","平面顯示器控制IC","平面顯示器驅動IC","影像感測IC","類比IC","數位IC","記憶體IC","通訊IC","射頻IC","驅動IC","ASIC","網路IC"]),
    ("半導體用矽晶圓／磊晶材料（延伸上游）",[])]},
+ {"name":"被動元件","code":"J000","keys":["被動元件"],"groups":[
+   ("電阻器材料／陶瓷基板・導電漿料",["電阻器材料","電阻器材料(氧化鋁陶瓷基板、導電漿墨)","電阻器材料(氧化鋁陶瓷基板、導電漿料)"]),
+   ("電容器材料／鋁箔・介電瓷粉",["電容器材料","電容器材料(如電蝕/化成鋁箔、介面瓷粉)","電容器材料(如電蝕/化成鋁箔、介電瓷粉)"]),
+   ("電感器材料／鐵氧體・導電漿料",["電感器材料","電感器材料(如鐵氧體、導電漿墨)"]),
+   ("濾波器／振盪器材料・壓電晶片",["濾波器、振盪器材料","濾波器、振盪器材料(鉭酸鋰/鈮酸鋰晶圓/片、石英基板、金屬及陶瓷封裝材料)"]),
+   ("電阻器製造（中游）",["電阻器"]),
+   ("電容器製造（中游）",["電容器"]),
+   ("電感器製造（中游）",["電感器"]),
+   ("濾波器／振盪器製造（中游）",["濾波器、振盪器"])
+ ]},
  {"name":"印刷電路板（PCB）","code":"L000","keys":["印刷電路板"],"groups":[
    ("玻璃纖維／玻纖布",["玻璃纖維/玻纖布","玻璃纖維","玻纖布"]),
    ("環氧樹脂",["環氧樹脂"]),("酚醛樹脂",["酚醛樹脂"]),
@@ -201,7 +211,7 @@ def compile_map(stocks,memberships,data_date):
             "sourceLabel":"CPO 產業供應鏈研究（非櫃買官方產業碼）" if spec["code"]=="CPO" else THEME_SOURCES[spec["code"]]["sourceLabel"] if spec["code"] in THEME_SOURCES else "櫃買中心原始產業鏈",
             "subgroups":{}}
     covered=0;upstream_stocks=set();entries_count=0
-    published_materials=set();basis_counts={"tpex_official":0,"independent_industry_material":0,"tpex_cross_industry":0,"company_product_verified":0,"tpex_ambiguous":0,"cpo_industry_research":0,"industry_theme_research":0}
+    published_materials=set();basis_counts={"tpex_official":0,"tpex_official_midstream":0,"independent_industry_material":0,"tpex_cross_industry":0,"company_product_verified":0,"tpex_ambiguous":0,"cpo_industry_research":0,"industry_theme_research":0}
     for x in stocks:
         code=str(x.get("code") or "").strip();market=x.get("market")
         if market not in ("上市","上櫃") or not re.fullmatch(r"[0-9]{4}",code):continue
@@ -215,10 +225,12 @@ def compile_map(stocks,memberships,data_date):
                 if sector not in [normalize(k) for k in spec["keys"]]:continue
                 group=stage_group(spec,entry.get("subCategory",""))
                 if group:
+                    is_mid=spec["code"]=="J000" and group.endswith("製造（中游）")
                     matches[(spec["code"],group)]={
-                        "classification":"櫃買中心上游階段","basis":"tpex_official",
+                        "classification":"櫃買中心被動元件中游製造（非材料上游）" if is_mid else "櫃買中心上游階段",
+                        "basis":"tpex_official_midstream" if is_mid else "tpex_official",
                         "source":SOURCE+"company_chain.php?stk_code="+code,
-                        "roleNote":"官方產業鏈列名；不代表該產品是公司主要營收來源。"}
+                        "roleNote":("官方被動元件製造中游；非材料上游，亦非元件原料純度保證。" if is_mid else "官方產業鏈列名；不代表該產品是公司主要營收來源。")}
         # Separate communications active and passive only with actual product
         # evidence. TPEx I000 parent "主/被動元件" itself is non-discriminating.
         communication=any(normalize(e.get("industry"))=="通信網路"
@@ -319,12 +331,14 @@ def compile_map(stocks,memberships,data_date):
                       if key!=COMM_PENDING else
                       "官方原始『主／被動元件』是合併分類；產品未獲證實者保留待核對，不會猜測。")
             if cpo:note="CPO／矽光子研究補充的光學零件上游；不等於櫃買中心官方產業鏈、CPO 客戶認證、實際訂單或主要營收。"+"此頁不把晶圓代工或交換器系統廠混作元件上游。"
+            j_mid=spec["code"]=="J000" and key.endswith("製造（中游）")
+            if j_mid:note="櫃買中心 J000 正式被動元件中游廠商；應與電阻／電容／電感／濾波材料的上游供應商區分。"
             research=THEME_GROUPS.get((spec["code"],key))
             if research:note=research["note"]
             child.append({"name":key,"count":len(items),"stocks":items,
                           "source":research["source"] if research else WAFER_MATERIAL_SOURCE if extended else item["source"],
-                          "note":note,"stage":research["stage"] if research else "研究延伸｜CPO 光學元件" if cpo else "研究延伸｜半導體矽晶圓材料" if extended else "櫃買官方上游",
-                          "classification":"有來源的產業鏈研究延伸" if research else "CPO 研究上游" if cpo else "獨立研究延伸上游材料" if extended else "櫃買中心官方上游"})
+                          "note":note,"stage":research["stage"] if research else "櫃買官方中游｜被動元件製造" if j_mid else "研究延伸｜CPO 光學元件" if cpo else "研究延伸｜半導體矽晶圓材料" if extended else "櫃買官方上游",
+                          "classification":"有來源的產業鏈研究延伸" if research else "櫃買中心官方中游" if j_mid else "CPO 研究上游" if cpo else "獨立研究延伸上游材料" if extended else "櫃買中心官方上游"})
         item["subgroups"]=child
         item["stockCount"]=len({(z["market"],z["code"]) for g in child for z in g["stocks"]})
         sectors.append(item)
@@ -332,7 +346,7 @@ def compile_map(stocks,memberships,data_date):
     return {"schema":"tw-upstream-industries-v2","dataDate":data_date,
         "generatedAt":datetime.now(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),
         "source":"TPEx industry stages; ITIS wafer materials; curated CPO/LEO/PCB/IC substrate supply-chain research; dated full-market stock diagnostics",
-        "method":"Eight verified official TPEx upstream sectors, distinct CPO research, sourced LEO satellite, IC substrate midstream, and PCB midstream/process additions with explicit stage and no claims of confirmed orders.",
+        "method":"Eight verified TPEx upstream sectors plus the independently mapped J000 passive-component upstream and manufacturing midstream, distinct CPO research, sourced LEO satellite, IC substrate midstream, and PCB midstream/process additions with explicit stage and no claims of confirmed orders.",
         "coverage":{"marketStocks":valid,"verifiedCompanyPages":covered,"verifiedRatioPct":round(100*covered/valid,1) if valid else 0,
                     "distinctUpstreamStocks":len(upstream_stocks),"upstreamMemberships":entries_count,"industries":len(sectors),
                     "classifiedBySource":basis_counts},

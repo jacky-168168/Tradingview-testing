@@ -139,6 +139,30 @@ class UpstreamIndustryTests(unittest.TestCase):
         self.assertNotIn("2330",{z["code"] for g in sector["subgroups"] for z in g["stocks"]})
         self.assertNotIn("2317",{z["code"] for g in sector["subgroups"] for z in g["stocks"]})
         self.assertTrue(all(x["basis"]=="cpo_industry_research" and x["source"].startswith("https://") and "不等於" in x["roleNote"] for g in sector["subgroups"] for x in g["stocks"]))
+    def test_passive_j000_is_standalone_with_upstream_and_middle_stage(self):
+        official=ind("J000")
+        self.assertEqual(stage_group(official,"電阻器材料(氧化鋁陶瓷基板、導電漿墨)"),"電阻器材料／陶瓷基板・導電漿料")
+        self.assertEqual(stage_group(official,"電容器材料(如電蝕/化成鋁箔、介面瓷粉)"),"電容器材料／鋁箔・介電瓷粉")
+        self.assertEqual(stage_group(official,"電阻器"),"電阻器製造（中游）")
+        self.assertEqual(stage_group(official,"濾波器、振盪器"),"濾波器／振盪器製造（中游）")
+        self.assertIsNone(stage_group(official,"各類電子產品"))
+        stocks=[sample("2327","國巨*"),sample("4760","勤凱科技","上櫃"),sample("3081","聯亞","上櫃")]
+        memberships={
+          "2327":[{"industry":"被動元件","subCategory":"電阻器"}],
+          "4760":[{"industry":"被動元件","subCategory":"電阻器材料(氧化鋁陶瓷基板、導電漿墨)"}],
+          "3081":[{"industry":"通信網路","subCategory":"主/被動元件"}]
+        }
+        sectors={x["code"]:x for x in compile_map(stocks,memberships,"2026-10-16")["industries"]}
+        self.assertEqual(len(sectors["J000"]["subgroups"]),8)
+        mats=next(x for x in sectors["J000"]["subgroups"] if x["name"].startswith("電阻器材料"))
+        makers=next(x for x in sectors["J000"]["subgroups"] if x["name"]=="電阻器製造（中游）")
+        self.assertEqual([x["code"] for x in mats["stocks"]],["4760"])
+        self.assertEqual([x["code"] for x in makers["stocks"]],["2327"])
+        self.assertEqual(mats["stocks"][0]["basis"],"tpex_official")
+        self.assertEqual(makers["stocks"][0]["basis"],"tpex_official_midstream")
+        self.assertIn("中游",makers["stage"])
+        self.assertNotIn("3081",{x["code"] for g in sectors["J000"]["subgroups"] for x in g["stocks"]})
+        self.assertEqual(sectors["J000"]["stockCount"],2)
     def test_research_splits_substrate_maker_and_pcb_material_drill_from_official_upstream(self):
         stocks=[sample("8021","尖點"),sample("2383","台光電"),sample("3037","欣興"),
                 sample("8046","南電"),sample("3189","景碩"),sample("1303","南亞"),
@@ -147,7 +171,7 @@ class UpstreamIndustryTests(unittest.TestCase):
         memberships["1303"]=[{"industry":"印刷電路板","subCategory":"玻璃纖維/玻纖布"}]
         r=compile_map(stocks,memberships,"2026-10-16")
         groups={x["code"]:x for x in r["industries"]}
-        self.assertEqual(len(groups),11)
+        self.assertEqual(len(groups),12)
         pcb={g["name"]:g for g in groups["L000"]["subgroups"]}
         ccl=pcb["銅箔基板 CCL／高速基材（中游延伸）"]
         drill=pcb["PCB 精密鑽針／鑽孔耗材（製程上游供應）"]
@@ -174,8 +198,8 @@ class UpstreamIndustryTests(unittest.TestCase):
     def test_bad_html_with_no_arrow_never_assumed_upstream(self):
         self.assertEqual(read_memberships("<html>半導體 晶圓製造 IP設計</html>"),[])
     def test_all_mapped_sectors_have_unique_official_source(self):
-        self.assertEqual(len(INDUSTRIES),11)
-        self.assertEqual(len({i["code"] for i in INDUSTRIES}),11)
+        self.assertEqual(len(INDUSTRIES),12)
+        self.assertEqual(len({i["code"] for i in INDUSTRIES}),12)
         self.assertTrue(all(i["groups"] for i in INDUSTRIES))
         self.assertTrue(all(i["keys"] for i in INDUSTRIES if i["code"] not in ("CPO","LEO","IC_SUB")))
         self.assertFalse(next(i for i in INDUSTRIES if i["code"]=="CPO")["keys"],"CPO must not masquerade as an official TPEx sector")
