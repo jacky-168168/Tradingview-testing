@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'tw-stock-dashboard/src/upstream_industries.py'
+      - 'tw-stock-dashboard/docs/data/industry_upstream/theme_catalog.json'
       - 'tw-stock-dashboard/tests/test_upstream_industries.py'
       - '.github/workflows/upstream-industry-map.yml'
   schedule:
@@ -47,6 +48,7 @@ jobs:
           python -m unittest discover -s tests -p test_upstream_industries.py -v
           node --check docs/upstream-industries.js
           node tests/test_upstream_ui.cjs
+          node tests/test_upstream_research_data.cjs
       - name: Build sector and upstream stock list from dated full-market archive
         working-directory: tw-stock-dashboard
         run: python -u src/upstream_industries.py
@@ -61,7 +63,7 @@ jobs:
           assert a['schema']=='tw-upstream-industries-v2' and a['dataDate']==b['dataDate']
           assert a['coverage']['verifiedCompanyPages']>=500 and a['coverage']['marketStocks']>=1000
           assert a['coverage']['distinctUpstreamStocks']>30
-          assert len(a['industries'])==9
+          assert len(a['industries'])==11
           cpo=next(x for x in a['industries'] if x['code']=='CPO')
           assert cpo['name']=='CPO／矽光子' and cpo['stockCount']>=7 and len(cpo['subgroups'])==3
           assert 'trendforce.com.tw' in cpo['source'], 'CPO must be independent research, not fake TPEx industry'
@@ -93,8 +95,21 @@ jobs:
           y=next(x for x in c['被動元件（電阻電容／濾波等）']['stocks'] if x['code']=='2327')
           assert y['basis']=='tpex_cross_industry' and '中游' in y['roleNote'] and y['source'].endswith('stk_code=2327')
           print('PASS communication main-passive split',len(active),len(passive),len(pending),'Yageo J000 midstream')
-          assert all(z['source'].startswith('https://ic.tpex.org.tw/introduce.php?ic=') for z in a['industries'] if z['code']!='CPO')
+          assert all(z['source'].startswith('https://ic.tpex.org.tw/introduce.php?ic=') for z in a['industries'] if z['code'] not in {'CPO','LEO','IC_SUB'})
           assert all(x['market'] in ('上市','上櫃') and x['code'].isdigit() and len(x['code'])==4 for sector in a['industries'] for part in sector['subgroups'] for x in part['stocks'])
+          pcb=next(z for z in a['industries'] if z['code']=='L000')
+          groups={g['name']:g for g in pcb['subgroups']}
+          assert {'2383','6213','6274'}.issubset({x['code'] for x in groups['銅箔基板 CCL／高速基材（中游延伸）']['stocks']})
+          assert {'8021'}.issubset({x['code'] for x in groups['PCB 精密鑽針／鑽孔耗材（製程上游供應）']['stocks']})
+          sub=next(z for z in a['industries'] if z['code']=='IC_SUB')
+          sg={g['name']:g for g in sub['subgroups']}
+          assert {'3037','8046','3189'}.issubset({x['code'] for x in sg['ABF／BT IC 載板製造（中游）']['stocks']})
+          assert not {'3037','8046','3189'} & {x['code'] for x in sg['載板用樹脂／材料（上游跨應用）']['stocks']}
+          leo=next(z for z in a['industries'] if z['code']=='LEO')
+          assert {'3491','2313','2367','2383','6285'}.issubset({x['code'] for g in leo['subgroups'] for x in g['stocks']})
+          assert all(x['basis']=='industry_theme_research' and x['source'].startswith('https://')
+                     for z in a['industries'] for g in z['subgroups'] for x in g['stocks'] if x['basis']=='industry_theme_research')
+          print('PASS official-vs-research stage separation and key PCB/LEO/substrate core suppliers')
           print('PASS dated upstream stock map',a['dataDate'],a['coverage'])
           PY
           git config user.name 'github-actions[bot]'

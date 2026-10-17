@@ -28,7 +28,11 @@ const sectors=[
  ]},
  ...["L000","F000","K000","3000","A300"].map(code=>({code,name:code,stockCount:0,subgroups:[],source:"https://ic.tpex.org.tw/introduce.php?ic="+code}))
 ];
-const payload={schema:"tw-upstream-industries-v2",dataDate:"2026-10-12",coverage:{industries:9,marketStocks:1952,verifiedCompanyPages:1952,verifiedRatioPct:100,distinctUpstreamStocks:5,upstreamMemberships:5},industries:sectors};
+sectors.push(...[
+ {code:"IC_SUB",name:"IC 載板／ABF・BT（研究）",stockCount:1,source:"https://ic.tpex.org.tw/introduce.php?ic=L000",subgroups:[{name:"ABF／BT IC 載板製造（中游）",stocks:[{code:"3037",name:"欣興",market:"上市",source:"https://ic.tpex.org.tw/introduce.php?ic=L000",basis:"industry_theme_research",classification:"中游｜研究延伸",roleNote:"IC 載板，非 ABF 原料。"}]}]},
+ {code:"LEO",name:"低軌衛星／太空通訊（研究）",stockCount:1,source:"https://ic.tpex.org.tw/introduce.php?ic=4100",subgroups:[{name:"衛星射頻／毫米波／天線零組件（上游）",stocks:[{code:"3491",name:"昇達科",market:"上櫃",source:"https://ic.tpex.org.tw/introduce.php?ic=4100",basis:"industry_theme_research",classification:"研究延伸",roleNote:"衛星射頻，非直接訂單保證。"}]}]}
+]);
+const payload={schema:"tw-upstream-industries-v2",dataDate:"2026-10-12",coverage:{industries:11,marketStocks:1952,verifiedCompanyPages:1952,verifiedRatioPct:100,distinctUpstreamStocks:7,upstreamMemberships:7},industries:sectors};
 const events={},els={};
 function el(id){if(!els[id])els[id]={innerHTML:"",textContent:"",value:"",classList:{toggle(){} ,add(){}},addEventListener(type,fn){events[id+"|"+type]=fn}};return els[id]}
 const ctx={document:{getElementById:el},fetch:()=>Promise.resolve({ok:true,json:()=>Promise.resolve(payload)}),Date,Intl,URL,URLSearchParams,Number,Set,String,Array,console,
@@ -42,13 +46,14 @@ setImmediate(()=>{
   assert(els.results.innerHTML.includes('所有產業｜上游類股總覽'),"All is default");
   assert(els.results.innerHTML.includes('半導體｜上游類股')&&els.results.innerHTML.includes('太陽能｜上游類股'),"All must show multiple distinct sectors");
   assert(els.results.innerHTML.includes('6488 環球晶')&&els.results.innerHTML.includes('4760 勤凱科技'),"All must contain every upstream stock");
-  assert(els.results.innerHTML.includes('5 檔股票'),"All stocks must be deduplicated");
+  assert(els.results.innerHTML.includes('7 檔股票'),"All stocks must be deduplicated");
   assert(els.results.innerHTML.includes('核對依據'),"Individual company source must be visible");
   assert(els.results.innerHTML.includes('非純太陽能股'),"Cross-industry evidence should be visible");
   assert(els.results.innerHTML.includes('主動元件（光主動／晶片）')&&els.results.innerHTML.includes('被動元件（電阻電容／濾波等）'),"Independent active/passive headings required");
   assert(els.results.innerHTML.includes('2327 國巨*')&&els.results.innerHTML.includes('3081 聯亞'),"Both verified active and passive companies should be listed");
   assert(els.results.innerHTML.includes('被動元件產業本身屬中游'),"Yageo midstream caveat must be clearly visible");
   assert(els.industryNav.innerHTML.includes('CPO／矽光子'),"CPO must be selectable");
+  assert(els.industryNav.innerHTML.includes('低軌衛星')&&els.industryNav.innerHTML.includes('IC 載板'),"New researched sectors visible");
   assert(els.results.innerHTML.includes('CPO／矽光子｜上游類股')&&els.results.innerHTML.includes('3363 上詮'),"All must show CPO FAU supplier");
   assert(els.results.innerHTML.includes('CPO 產業供應鏈研究（非櫃買官方產業碼）'),"Clearly independent from official TPEx industry chains");
   const click=events["industryNav|click"];assert.equal(typeof click,"function");
