@@ -12,7 +12,9 @@ import pandas as pd
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"src"))
 from yahoo_cache import update_many,update_symbol,to_symbol
-SRC=ROOT/"docs/data/research/model_execution_2026/trades/G_DOUBLE_PERSIST.json"
+SRC=ROOT/"docs/data/backtest_g/g_persistence_2026.json"
+MARKETS=ROOT/"docs/data/research/model_execution_2026/trades/G_DOUBLE_PERSIST.json"
+MARKETS_AUX=ROOT/"docs/data/research/model_execution_2026/trades/G_TRIGGER.json"
 OUT=ROOT/"docs/data/research/g_stock_sma_2026"
 START="2026-01-02"
 SIGNAL_END="2026-10-07"
@@ -56,18 +58,31 @@ def compile_bars(df):
       for _,r in d.iterrows()}
 def load_signals():
     raw=json.loads(SRC.read_text(encoding="utf-8"))
-    rows=raw["5"]["ladder"]
-    out=collections.defaultdict(list)
-    seen=set()
+    rows=raw["models"]["G_DOUBLE_PERSIST"]["signals"]
+    # Execution ledgers preserve exchange suffix; signal rankings alone do not.
+    markets={}
+    for file in (MARKETS,MARKETS_AUX):
+        audit=json.loads(file.read_text(encoding="utf-8"))
+        for p in audit["5"]["ladder"]:
+            if p.get("market") in ("上市","上櫃"):
+                code=str(p["code"]);m=p["market"]
+                if code in markets and markets[code]!=m:raise RuntimeError("Market mismatch "+code)
+                markets[code]=m
+    officialFallback={"2409":"上市","1709":"上市","3094":"上市","6672":"上市"}
+    markets.update({k:v for k,v in officialFallback.items() if k not in markets})
+    out=collections.defaultdict(list);seen=set();unresolved=set()
     for p in rows:
-        d=str(p["date"]);code=str(p["code"]);market=p.get("market")
-        if not(START<=d<=SIGNAL_END and market in ("上市","上櫃")):continue
+        d=str(p["signalDate"]);code=str(p["code"]);market=markets.get(code)
+        if not(START<=d<=SIGNAL_END):continue
+        if market not in ("上市","上櫃"):
+            unresolved.add(code);continue
         tag=(d,code)
         if tag in seen:raise RuntimeError("Duplicate G daily stock "+str(tag))
         seen.add(tag)
         out[d].append({"code":code,"market":market,"sym":to_symbol(code,market),
-          "name":p.get("name",code),"rank":int(p["rank"])})
-    if len(out)<140 or len(seen)<420:raise RuntimeError(f"Incomplete G rank archive {len(out)} days, {len(seen)} rows")
+                        "name":p.get("name",code),"rank":int(p["rank"])})
+    if unresolved:raise RuntimeError("Unresolved exchange for G symbols "+",".join(sorted(unresolved)))
+    if len(out)<160 or len(seen)<475:raise RuntimeError(f"Incomplete G rank archive {len(out)} days, {len(seen)} rows")
     for d in out:out[d].sort(key=lambda x:x["rank"])
     return dict(out)
 def rolling_stats(xs):
@@ -234,7 +249,7 @@ def main():
     good={sym for sym,df in bars.items() if len(df)>=100}
     if len(good)<len(symbols)*.85:
         raise RuntimeError(f"Stock daily OHLC coverage insufficient {len(good)}/{len(symbols)}: "+json.dumps(errors,ensure_ascii=False)[:1500])
-    sourceData={"Garchive":"docs/data/research/model_execution_2026/trades/G_DOUBLE_PERSIST.json",
+    sourceData={"Garchive":"docs/data/backtest_g/g_persistence_2026.json",
         "stockBars":"Yahoo daily OHLC; cached source if present","benchmark":"TWII session calendar",
         "gScorePointInTime":"retrospectively backtested, NOT a preserved official historical daily top3",
         "signalDateEnd":SIGNAL_END,"gDays":len(picks),"gRows":sum(map(len,picks.values())),
