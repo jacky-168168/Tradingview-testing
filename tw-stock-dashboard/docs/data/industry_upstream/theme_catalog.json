@@ -1,0 +1,235 @@
+{
+  "schema": "tw-industry-chain-research-overlay-v1",
+  "sourcePolicy": "TPEx sector stages stay unchanged. PCB CCL/IC substrates are middle-stage, drills supply process consumables, and LEO is a thematic subset of the broader satellite chain. Inclusion never implies customer orders, pure-play revenue, or official TPEx upstream membership.",
+  "extensions": [
+    {
+      "code": "L000",
+      "groups": [
+        {
+          "name": "銅箔基板 CCL／高速基材（中游延伸）",
+          "stage": "中游｜PCB 板材",
+          "note": "櫃買中心將 CCL 列為 PCB 中游；它是 PCB 製板廠的重要基材供應端，但不是玻纖紗、樹脂、銅箔的原料上游。",
+          "source": "https://ic.tpex.org.tw/introduce.php?ic=L000",
+          "stocks": [
+            {
+              "code": "2383",
+              "name": "台光電",
+              "market": "上市",
+              "roleNote": "高頻高速銅箔基板（CCL）；屬 PCB 板材供應商，不是玻纖紗製造商。",
+              "source": "https://ic.tpex.org.tw/introduce.php?ic=L000"
+            },
+            {
+              "code": "6213",
+              "name": "聯茂",
+              "market": "上市",
+              "roleNote": "高頻高速 CCL 製造；與原料玻纖布／樹脂供應階段不同。",
+              "source": "https://ic.tpex.org.tw/introduce.php?ic=L000"
+            },
+            {
+              "code": "6274",
+              "name": "台燿",
+              "market": "上櫃",
+              "roleNote": "高階高速 CCL 板材供應，不能直接當作 ABF 載板製造商。",
+              "source": "https://ic.tpex.org.tw/introduce.php?ic=L000"
+            },
+            {
+              "code": "1303",
+              "name": "南亞",
+              "market": "上市",
+              "roleNote": "玻纖布、樹脂與 CCL 垂直整合；多階段跨屬，非單一業務純度。",
+              "source": "https://ic.tpex.org.tw/introduce.php?ic=L000"
+            }
+          ]
+        },
+        {
+          "name": "PCB 精密鑽針／鑽孔耗材（製程上游供應）",
+          "stage": "製程耗材｜供應 PCB 製板",
+          "note": "精密鑽針／鑽孔屬 PCB 製程耗材與製造服務，不屬玻纖布、銅箔等原料製造；尖點為已公開揭露的高階鑽針供應商。",
+          "source": "https://money.udn.com/money/story/5607/9548356",
+          "stocks": [
+            {
+              "code": "8021",
+              "name": "尖點",
+              "market": "上市",
+              "roleNote": "PCB 高階精密鑽針、鍍膜鑽針及鑽孔服務；非 PCB 成品板廠。",
+              "source": "https://money.udn.com/money/story/5607/9548356"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sectors": [
+    {
+      "code": "IC_SUB",
+      "name": "IC 載板／ABF・BT（研究）",
+      "source": "https://ic.tpex.org.tw/introduce.php?ic=L000",
+      "sourceLabel": "櫃買中心 PCB 中游流程＋載板公司產業研究（非上游官方代碼）",
+      "groups": [
+        {
+          "name": "載板用樹脂／材料（上游跨應用）",
+          "stage": "上游材料（非 ABF 膜國產保證）",
+          "note": "只列明確供應樹脂／玻纖等材料的公司；ABF 增層膜和 BT 樹脂材料並不等於 ABF／BT 載板製造商。",
+          "source": "https://ic.tpex.org.tw/introduce.php?ic=L000",
+          "stocks": [
+            {
+              "code": "1303",
+              "name": "南亞",
+              "market": "上市",
+              "roleNote": "PCB／載板用樹脂與玻纖等材料供應，屬跨產品材料；並非日本 Ajinomoto ABF 膜製造商。",
+              "source": "https://ic.tpex.org.tw/introduce.php?ic=L000"
+            }
+          ]
+        },
+        {
+          "name": "ABF／BT IC 載板製造（中游）",
+          "stage": "中游｜晶片封裝載板",
+          "note": "欣興、南電、景碩是 IC 載板代表廠；IC 載板製造不是上游 ABF 薄膜供應。臻鼎屬跨足 ABF 的 PCB/載板公司，不能推定載板為主要營收。",
+          "source": "https://www.sinotrade.com.tw/richclub/master/%E6%AC%A3%E8%88%88%E6%B4%97%E7%94%A2%E5%9C%B0%E9%A2%A8%E6%B3%A2%E4%B8%8B-%E8%BC%89%E6%9D%BF%E5%9B%9B%E9%9B%84%E5%BE%8C%E7%BA%8C%E6%80%8E%E9%BA%BC%E7%9C%8B-%E6%AC%A3%E8%88%88-%E5%8D%97%E9%9B%BB-%E6%99%AF%E7%A2%A9-%E8%87%BB%E9%BC%8E%E4%B8%89%E5%A4%A7%E9%9D%A2%E5%90%91%E5%85%A8%E6%AF%94%E8%BC%83-%E9%99%B3%E5%94%AF%E6%B3%B0-6a9a5ee6e078b8353f59167f",
+          "stocks": [
+            {
+              "code": "3037",
+              "name": "欣興",
+              "market": "上市",
+              "roleNote": "ABF／BT 載板製造，屬 IC 封裝載板環節。",
+              "source": "https://www.sinotrade.com.tw/richclub/master/%E6%AC%A3%E8%88%88%E6%B4%97%E7%94%A2%E5%9C%B0%E9%A2%A8%E6%B3%A2%E4%B8%8B-%E8%BC%89%E6%9D%BF%E5%9B%9B%E9%9B%84%E5%BE%8C%E7%BA%8C%E6%80%8E%E9%BA%BC%E7%9C%8B-%E6%AC%A3%E8%88%88-%E5%8D%97%E9%9B%BB-%E6%99%AF%E7%A2%A9-%E8%87%BB%E9%BC%8E%E4%B8%89%E5%A4%A7%E9%9D%A2%E5%90%91%E5%85%A8%E6%AF%94%E8%BC%83-%E9%99%B3%E5%94%AF%E6%B3%B0-6a9a5ee6e078b8353f59167f"
+            },
+            {
+              "code": "8046",
+              "name": "南電",
+              "market": "上市",
+              "roleNote": "高階 ABF／BT 載板製造，屬中游。",
+              "source": "https://www.sinotrade.com.tw/richclub/master/%E6%AC%A3%E8%88%88%E6%B4%97%E7%94%A2%E5%9C%B0%E9%A2%A8%E6%B3%A2%E4%B8%8B-%E8%BC%89%E6%9D%BF%E5%9B%9B%E9%9B%84%E5%BE%8C%E7%BA%8C%E6%80%8E%E9%BA%BC%E7%9C%8B-%E6%AC%A3%E8%88%88-%E5%8D%97%E9%9B%BB-%E6%99%AF%E7%A2%A9-%E8%87%BB%E9%BC%8E%E4%B8%89%E5%A4%A7%E9%9D%A2%E5%90%91%E5%85%A8%E6%AF%94%E8%BC%83-%E9%99%B3%E5%94%AF%E6%B3%B0-6a9a5ee6e078b8353f59167f"
+            },
+            {
+              "code": "3189",
+              "name": "景碩",
+              "market": "上市",
+              "roleNote": "BT、ABF 封裝載板製造，非 ABF 原料製造。",
+              "source": "https://www.sinotrade.com.tw/richclub/master/%E6%AC%A3%E8%88%88%E6%B4%97%E7%94%A2%E5%9C%B0%E9%A2%A8%E6%B3%A2%E4%B8%8B-%E8%BC%89%E6%9D%BF%E5%9B%9B%E9%9B%84%E5%BE%8C%E7%BA%8C%E6%80%8E%E9%BA%BC%E7%9C%8B-%E6%AC%A3%E8%88%88-%E5%8D%97%E9%9B%BB-%E6%99%AF%E7%A2%A9-%E8%87%BB%E9%BC%8E%E4%B8%89%E5%A4%A7%E9%9D%A2%E5%90%91%E5%85%A8%E6%AF%94%E8%BC%83-%E9%99%B3%E5%94%AF%E6%B3%B0-6a9a5ee6e078b8353f59167f"
+            },
+            {
+              "code": "4958",
+              "name": "臻鼎-KY",
+              "market": "上市",
+              "roleNote": "PCB 大廠跨足 ABF 等載板業務；非單純 IC 載板股。",
+              "source": "https://www.sinotrade.com.tw/richclub/master/%E6%AC%A3%E8%88%88%E6%B4%97%E7%94%A2%E5%9C%B0%E9%A2%A8%E6%B3%A2%E4%B8%8B-%E8%BC%89%E6%9D%BF%E5%9B%9B%E9%9B%84%E5%BE%8C%E7%BA%8C%E6%80%8E%E9%BA%BC%E7%9C%8B-%E6%AC%A3%E8%88%88-%E5%8D%97%E9%9B%BB-%E6%99%AF%E7%A2%A9-%E8%87%BB%E9%BC%8E%E4%B8%89%E5%A4%A7%E9%9D%A2%E5%90%91%E5%85%A8%E6%AF%94%E8%BC%83-%E9%99%B3%E5%94%AF%E6%B3%B0-6a9a5ee6e078b8353f59167f"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "LEO",
+      "name": "低軌衛星／太空通訊（研究）",
+      "source": "https://ic.tpex.org.tw/introduce.php?ic=4100",
+      "sourceLabel": "櫃買中心太空衛星科技產業鏈與衛星專題研究（不是 LEO 專屬官方分類）",
+      "groups": [
+        {
+          "name": "衛星射頻／毫米波／天線零組件（上游）",
+          "stage": "上游｜高頻通信元件",
+          "note": "衛星／地面端高頻射頻元件、天線研發與測試；主題關聯不代表持有特定衛星業者訂單。",
+          "source": "https://www.pgia.com.tw/upload/docdl/U0006/19be8d0434aueLX/doc_20260123_030521_0482.pdf",
+          "stocks": [
+            {
+              "code": "3491",
+              "name": "昇達科",
+              "market": "上櫃",
+              "roleNote": "微波／毫米波衛星通訊元件與模組，屬高頻 RF 供應端。",
+              "source": "https://www.pgia.com.tw/upload/docdl/U0006/19be8d0434aueLX/doc_20260123_030521_0482.pdf"
+            },
+            {
+              "code": "3138",
+              "name": "耀登",
+              "market": "上櫃",
+              "roleNote": "天線、衛星終端及射頻測試相關產品；非衛星營運商。",
+              "source": "https://www.pgia.com.tw/upload/docdl/U0006/19be8d0434aueLX/doc_20260123_030521_0482.pdf"
+            },
+            {
+              "code": "3105",
+              "name": "穩懋",
+              "market": "上櫃",
+              "roleNote": "GaAs／射頻化合物半導體技術具衛星通訊應用，不能視為已確認特定 LEO 客戶訂單。",
+              "source": "https://ic.tpex.org.tw/introduce.php?ic=4100"
+            }
+          ]
+        },
+        {
+          "name": "衛星用高頻 PCB／HDI（製板）",
+          "stage": "中游｜衛星用電路板",
+          "note": "衛星用高頻、高多層與 HDI PCB，屬板材加工製造，不是銅箔或玻纖原料上游。",
+          "source": "https://www.pgia.com.tw/upload/docdl/U0006/19be8d0434aueLX/doc_20260123_030521_0482.pdf",
+          "stocks": [
+            {
+              "code": "2313",
+              "name": "華通",
+              "market": "上市",
+              "roleNote": "衛星／地面接收端 HDI／高階 PCB 製板，屬 PCB 製造環節。",
+              "source": "https://www.pgia.com.tw/upload/docdl/U0006/19be8d0434aueLX/doc_20260123_030521_0482.pdf"
+            },
+            {
+              "code": "2367",
+              "name": "燿華",
+              "market": "上市",
+              "roleNote": "衛星用 PCB／HDI 製板；非上游玻纖布或 CCL 材料廠。",
+              "source": "https://www.pgia.com.tw/upload/docdl/U0006/19be8d0434aueLX/doc_20260123_030521_0482.pdf"
+            }
+          ]
+        },
+        {
+          "name": "衛星高頻基材 CCL（PCB 前段）",
+          "stage": "板材供應｜PCB 前段",
+          "note": "高頻高速 CCL 板材對衛星用 PCB 是上游供應，對 PCB 官方完整製程分類是中游。",
+          "source": "https://www.pgia.com.tw/upload/docdl/U0006/19be8d0434aueLX/doc_20260123_030521_0482.pdf",
+          "stocks": [
+            {
+              "code": "2383",
+              "name": "台光電",
+              "market": "上市",
+              "roleNote": "高頻高速 CCL 基材供應，與衛星及地面接收端 PCB 材料有關。",
+              "source": "https://www.pgia.com.tw/upload/docdl/U0006/19be8d0434aueLX/doc_20260123_030521_0482.pdf"
+            }
+          ]
+        },
+        {
+          "name": "衛星用戶終端／地面設備（系統環節）",
+          "stage": "終端設備｜非零組件原料",
+          "note": "終端、天線及地面接收設備不是衛星上游原材料；產品關聯不代表直接供應特定衛星星系。",
+          "source": "https://www.pgia.com.tw/upload/docdl/U0006/19be8d0434aueLX/doc_20260123_030521_0482.pdf",
+          "stocks": [
+            {
+              "code": "6285",
+              "name": "啟碁",
+              "market": "上市",
+              "roleNote": "衛星通訊天線、終端及地面設備相關，屬系統／終端環節。",
+              "source": "https://www.pgia.com.tw/upload/docdl/U0006/19be8d0434aueLX/doc_20260123_030521_0482.pdf"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "aliases": {
+    "L000": [
+      "PCB",
+      "印刷電路板",
+      "玻纖布",
+      "玻璃纖維",
+      "CCL",
+      "鑽針"
+    ],
+    "IC_SUB": [
+      "載板",
+      "IC載板",
+      "ABF",
+      "BT"
+    ],
+    "LEO": [
+      "低軌",
+      "低軌衛星",
+      "衛星",
+      "LEO",
+      "Starlink"
+    ]
+  }
+}
