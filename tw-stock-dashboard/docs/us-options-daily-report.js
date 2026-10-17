@@ -118,7 +118,7 @@ function plainLanguage(report){
  const gTrend=t.gexDir==="上升"?"近5日上升":t.gexDir==="下降"?"近5日下降":"近5日變化不大";
  const cards=[
   {id:"spx",title:"綠線｜美股價格",signal:priceTone,detail:priceWhere+"；近5日 "+price.direction.split(" ").slice(-1)[0]+"。"},
-  {id:"dix",title:"藍線｜暗池成交占比 DIX",signal:dark,detail:"近半年位置"+darkWhere+"（"+dix.value+"）。這是暗池交易占比，不等於大戶正在買超。"},
+  {id:"dix",title:"藍線｜暗池成交占比 DIX",signal:dark,detail:"近半年位置"+darkWhere+"（"+dix.value+"）。暗池是不公開掛單的交易場所；這只是成交比例，不等於大戶正在買超。"},
   {id:"gex",title:"黃線｜選擇權影響 GEX",signal:gTrend,detail:gamma+"；GEX 高低不能直接預測股價漲跌。"}
  ];
  const watch=[t.priceDir==="下降"?"先看美股能否止跌、連續2天站回20日均線。":"先看美股能否連續2天守住20日均線。",
@@ -167,7 +167,7 @@ function render(rows,stale){
  bulletSection("明日觀察重點",report.watch);
  if(report.compare)inner.appendChild(create("p","與前一交易日比較（"+datefmt(report.compare.date)+"，依同一規則回推，非留存昨日報告）："+report.compare.text,"usop-report-compare"));
  details.appendChild(inner);body.appendChild(details);
- meta.textContent=(stale?"⚠ 資料已過期｜":"")+"資料日："+datefmt(report.date)+"｜僅供市場風險觀察，不是買賣訊號；分類規則尚未獨立回測證明有效。";
+ meta.textContent=(stale?"⚠ 資料已過期｜":"")+"資料日："+datefmt(report.date)+"｜燈號是風險提醒，不是明日漲跌預告；分類規則尚未獨立回測證明有效。";
  root.dataset.state=stale?"stale":"ready";
 }
 
