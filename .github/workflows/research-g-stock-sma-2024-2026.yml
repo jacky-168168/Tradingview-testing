@@ -1,0 +1,71 @@
+name: Isolated 2024-2026 G A/B SMA Backtest
+on:
+  push:
+    branches:
+      - research/g-stock-sma-2024-2026-1018
+    paths:
+      - tw-stock-dashboard/scripts/research_g_stock_sma_2024_2026.py
+      - .github/workflows/research-g-stock-sma-2024-2026.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: isolated-g-stock-sma-2024-2026
+  cancel-in-progress: false
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-Linux-g-stock-sma-3y-20261018
+          restore-keys: |
+            tw-stock-cache-Linux-
+      - name: Install backtest requirements
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Compile both strategy implementations
+        run: |
+          python -m py_compile tw-stock-dashboard/scripts/research_g_stock_sma_2026.py tw-stock-dashboard/scripts/research_g_stock_sma_2024_2026.py
+      - name: Execute full-market date-causal G selection and two cash-strategy backtests
+        working-directory: tw-stock-dashboard
+        run: python -u scripts/research_g_stock_sma_2024_2026.py
+      - name: Validate finished 3-year results
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          d=Path('tw-stock-dashboard/docs/data/research/g_stock_sma_2024_2026')
+          s=json.loads((d/'summary.json').read_text())
+          t=json.loads((d/'trades.json').read_text())
+          e=json.loads((d/'equity.json').read_text())
+          assert s['period']['portfolioStart']=='2024-01-02'
+          assert s['period']['lastMark']=='2026-10-16'
+          assert s['source']['selectedSignals']>=1000,s['source']
+          assert s['source']['validSelectedBars']>=150
+          assert len(s['models'])==2 and len(t['models'])==len(e['models'])==2
+          for m in s['models']:
+              assert m['wins']+m['losses']==m['closedTrades']
+              assert m['endEquity']>0
+              assert m['periodEnd']==s['period']['lastMark']
+              assert len(e['models'][m['model']])>660
+              assert abs(m['endEquity']-e['models'][m['model']][-1]['equity'])<.02
+              assert all(yy in m['annual'] for yy in ['2024','2025','2026'])
+          print('VALIDATED',[(m['model'],m['netReturnPct'],m['maxDrawdownPct']) for m in s['models']])
+          PY
+      - name: Publish audited research files to isolated branch only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/g_stock_sma_2024_2026/
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: archive full-market G A/B 2024-2026 trades and equity'
+            git push origin HEAD:research/g-stock-sma-2024-2026-1018
+          fi
