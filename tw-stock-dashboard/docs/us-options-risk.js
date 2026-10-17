@@ -57,16 +57,9 @@ function dailyAnalysis(rows){
  return {date:now[0],headline,lines:[price,dix,gex],metrics:{spx1:one,spx5:five,dix1:dixOne,dix5:dixFive,gexRelative,thin,negative},disclaimer:"依已公布美股每日收盤資料；DIX 不代表機構淨買超，GEX 非漲跌方向預測。"};
 }
 function renderDailyAnalysis(rows,stale){
- const area=$("usopDailyAnalysis"),title=$("usopDailyTitle"),list=$("usopDailyList"),meta=$("usopDailyMeta");
- if(!area||!title||!list||!meta)return;
- const report=dailyAnalysis(rows);
- list.replaceChildren();
- if(!report){title.textContent="資料不足，無法分析";meta.textContent="需具備至少 22 個美股交易日的完整數列。";area.dataset.state="unavailable";return}
- title.textContent=report.headline;
- for(const line of report.lines){const li=document.createElement("li");li.textContent=line;list.appendChild(li)}
- meta.textContent="資料日："+fmtDate(report.date)+(stale?"｜⚠ 歷史資料過期":"")+"｜"+report.disclaimer;
- area.dataset.state=stale?"stale":"ready";
+ if(scope.USOptionDailyReport&&typeof scope.USOptionDailyReport.render==="function")scope.USOptionDailyReport.render(rows,stale);
 }
+
 function build(){
  const svg=$("usopChart"),wrap=$("usopChartWrap"),date=$("usopDate"),msg=$("usopMessage");
  if(!svg||!wrap||!date||!msg)return;
