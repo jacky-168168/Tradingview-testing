@@ -32,6 +32,41 @@ const recent=(rows,range)=>{
  const cutoff=t.toISOString().slice(0,10),from=rows.findIndex(r=>r[0]>=cutoff);
  return from<0?rows:rows.slice(Math.max(0,from-1));
 };
+/* Uses only confirmed daily observations, never next-day data or Taiwan scores.
+ * GEX comparison uses the previous 20 days' absolute-value median so a
+ * positive-but-near-zero reading is not misleadingly described as stable.
+ */
+function dailyAnalysis(rows){
+ if(!Array.isArray(rows)||rows.length<22)return null;
+ const now=rows[rows.length-1],prev=rows[rows.length-2],old5=rows[rows.length-6];
+ const pct=(a,b)=>b>0?100*(a/b-1):null,one=pct(now[1],prev[1]),five=pct(now[1],old5[1]);
+ const dixOne=now[2]-prev[2],dixFive=now[2]-old5[2];
+ const vals=rows.slice(-21,-1).map(r=>Math.abs(r[3])).filter(Number.isFinite).sort((a,b)=>a-b);
+ if(![now[1],now[2],now[3],prev[1],old5[1]].every(Number.isFinite)||one===null||five===null||vals.length!==20)return null;
+ const typical=(vals[9]+vals[10])/2,gexRelative=typical>0?Math.abs(now[3])/typical:null;
+ const weak=five<=-1||(one<=-0.7&&five<0),strong=five>=1&&one>=0;
+ const thin=gexRelative!==null&&gexRelative<0.25,negative=now[3]<0;
+ const headline=weak&&(thin||negative)?"短線偏弱｜留意波動風險":weak?"價格偏弱｜反轉尚待確認":strong&&!thin&&!negative?"短線偏強｜觀察延續性":thin||negative?"方向待確認｜波動風險偏高":"市場訊號分歧｜持續觀察";
+ const signed=(v,places=2)=>(v>0?"+":"")+v.toFixed(places),relative=gexRelative===null?"未取得":"約為前20日典型絕對水準的 "+(gexRelative*100).toFixed(1)+"%";
+ const price="S&P 500｜單日 "+signed(one)+"%、近5日 "+signed(five)+"%，"+(weak?"短線價格偏弱。":strong?"短線價格偏強。":"方向尚待確認。");
+ const dixState=dixOne>=0.8&&dixFive<0?"單日回升，但近5日仍偏弱。":dixOne<=-0.8&&dixFive>0?"單日回落，近5日仍為回升。":dixFive<=-1?"近期比率走弱。":dixFive>=1?"近5日比率回升，仍須觀察持續性。":"變化尚未形成明確方向。";
+ const dix="DIX｜"+now[2].toFixed(2)+"%，單日 "+signed(dixOne)+"、近5日 "+signed(dixFive)+" 個百分點；"+dixState;
+ const abs=Math.abs(now[3]),units=abs>=1e8?(abs/1e8).toFixed(2)+"億":(abs/1e4).toFixed(0)+"萬";
+ const gexState=negative?"負值下，選擇權避險交易可能放大波動。":thin?"雖為正值，但緩和波動的效果可能減弱。":"正值不代表股市必漲，仍須留意波動。";
+ const gex="GEX｜"+(now[3]<0?"−":"+")+units+"，"+relative+"；"+gexState;
+ return {date:now[0],headline,lines:[price,dix,gex],metrics:{spx1:one,spx5:five,dix1:dixOne,dix5:dixFive,gexRelative,thin,negative},disclaimer:"依已公布美股每日收盤資料；DIX 不代表機構淨買超，GEX 非漲跌方向預測。"};
+}
+function renderDailyAnalysis(rows,stale){
+ const area=$("usopDailyAnalysis"),title=$("usopDailyTitle"),list=$("usopDailyList"),meta=$("usopDailyMeta");
+ if(!area||!title||!list||!meta)return;
+ const report=dailyAnalysis(rows);
+ list.replaceChildren();
+ if(!report){title.textContent="資料不足，無法分析";meta.textContent="需具備至少 22 個美股交易日的完整數列。";area.dataset.state="unavailable";return}
+ title.textContent=report.headline;
+ for(const line of report.lines){const li=document.createElement("li");li.textContent=line;list.appendChild(li)}
+ meta.textContent="資料日："+fmtDate(report.date)+(stale?"｜⚠ 歷史資料過期":"")+"｜"+report.disclaimer;
+ area.dataset.state=stale?"stale":"ready";
+}
 function build(){
  const svg=$("usopChart"),wrap=$("usopChartWrap"),date=$("usopDate"),msg=$("usopMessage");
  if(!svg||!wrap||!date||!msg)return;
@@ -162,6 +197,7 @@ function build(){
    msg.textContent=stale?"⚠ 官方歷史資料超過八天未更新，僅供歷史觀察。":"三條線採獨立尺度比較各自變化趨勢，不能直接比較絕對高低；不是台股買賣訊號。";
    wrap.classList.remove("usop-error");
    render();
+   renderDailyAnalysis(rows,stale);
    // Cross-check separately: metadata staleness is a warning, never a graph outage.
    readJson("latest.json",1).then(latest=>{
     if(latest?.date!==hist.asOf||Math.abs(Number(latest?.spx)-rows[rows.length-1][1])>1){
@@ -170,6 +206,7 @@ function build(){
    }).catch(()=>{valueStatus.textContent+="｜⚠ 最新摘要暫不可用（曲線可正常使用）"});
   }catch(e){
    state.data=[];
+   renderDailyAnalysis([],true);
    date.textContent="圖表暫時無法載入";
    valueStatus.textContent="歷史資料尚未取得";
    msg.textContent="載入失敗："+String(e?.message||e).slice(0,170)+"。可按「重試圖表」，不會影響台股風控分數。";
@@ -186,5 +223,5 @@ function build(){
 if(typeof document!=="undefined"){
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",build,{once:true});else build();
 }
-if(typeof module!=="undefined")module.exports={validate,recent};
+if(typeof module!=="undefined")module.exports={validate,recent,dailyAnalysis};
 })(typeof window!=="undefined"?window:globalThis);
