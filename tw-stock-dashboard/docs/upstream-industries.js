@@ -10,7 +10,13 @@ const marketStock=s=>((s.market==="上櫃"?"TPEX":"TWSE")+":"+s.code);
 const tv=s=>"https://www.tradingview.com/chart/?symbol="+encodeURIComponent(marketStock(s));
 const codeOK=s=>/^[0-9]{4}$/.test(String(s.code||""))&&["上市","上櫃"].includes(s.market);
 const fmtDate=s=>String(s||"—").slice(0,10);
-function categories(){return state.data?.industries||[]}
+function categories(){
+ const priority=["L000","IC_SUB","LEO","CPO","A100","D000","I000","F000","K000","A300","3000"];
+ return [...(state.data?.industries||[])].sort((a,b)=>{
+  const i=priority.indexOf(a.code),j=priority.indexOf(b.code);
+  return (i<0?999:i)-(j<0?999:j);
+ });
+}
 function contains(stock,sectorName,groupName,q){
  if(!q)return true;
  const text=[stock.name,stock.code,stock.market,stock.industry,stock.roleNote,stock.classification,sectorName,groupName,...(stock.models||[])].join(" ").toLocaleLowerCase("zh-TW");
