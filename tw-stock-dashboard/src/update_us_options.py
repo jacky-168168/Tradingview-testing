@@ -100,6 +100,13 @@ def write_if_changed(path,obj,stable_keys):
     path.write_text(json.dumps(obj,ensure_ascii=False,indent=2,allow_nan=False)+"\n",encoding="utf-8")
     return True
 
+def history_chart(us):
+    """Provide all official daily observations for the three-series SVG display.
+    Each series has its own visual scale; values remain in original units.
+    """
+    return {"source":SOURCE,"asOf":us[-1]["date"],"columns":["date","spx","dixPct","gex"],
+            "rows":[[r["date"],round(r["price"],4),round(100*r["dix"],4),round(r["gex"],2)] for r in us]}
+
 def main():
     us=read_source()
     latest=us[-1]
@@ -110,7 +117,9 @@ def main():
           "source":SOURCE,"updatedAt":datetime.now(timezone.utc).isoformat(timespec="seconds"),
           "message":"Only a delayed US options-positioning observation; NOT a Taiwan entry signal and NOT part of the market score."}
     changed1=write_if_changed(DATA/"latest.json",risk,["date","dix","gex","spx"])
+    chart=history_chart(us)
+    changed3=write_if_changed(DATA/"history.json",chart,["asOf","rows","source"])
     report=backtest(us,tw_market())
     changed2=write_if_changed(DATA/"backtest.json",report,["usSourceEnd","groups","samples","lagPolicy"])
-    print(json.dumps({"latest":latest["date"],"sample":report["samples"],"changed":changed1 or changed2,"oos":report["groups"]["oos_2022_2023"],"recent":report["groups"]["recent_2024_2026"]},ensure_ascii=False))
+    print(json.dumps({"latest":latest["date"],"sample":report["samples"],"changed":changed1 or changed2 or changed3,"oos":report["groups"]["oos_2022_2023"],"recent":report["groups"]["recent_2024_2026"]},ensure_ascii=False))
 if __name__=="__main__":main()
