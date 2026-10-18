@@ -37,13 +37,12 @@
 <link rel="stylesheet" href="./market-command.css?v=4eb52cea25e6">
 <link rel="stylesheet" href="./market-compact.css?v=60bacca3238b">
 <link rel="stylesheet" href="./dynamic-exposure.css">
-<link rel="stylesheet" href="./us-options-risk.css?v=3ef14b834c18">
+<link rel="stylesheet" href="./fear-greed-home.css?v=1">
 <script src="./market-compact.js?v=b1b009ea95e1"></script>
 <script src="./market-command.js?v=c27a62c1e751"></script>
 <script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
-<script defer src="./us-options-daily-report.js?v=c765cc4b0fee"></script>
-<script defer src="./us-options-risk.js?v=a6ebd79f70d7"></script>
+<script defer src="./fear-greed-home.js?v=1"></script>
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -180,40 +179,50 @@
   </details>
 </details>
 </section>
-<section class="card usop-panel" id="usOptionsRisk" aria-label="美股 DIX S&P 500 GEX 完整歷史趨勢圖">
- <div class="usop-top">
-  <div><div class="usop-kicker">SQUEEZEMETRICS · 美股市場資金與選擇權</div><h2>🇺🇸 DIX · S&P 500 · GEX 走勢圖</h2><p class="usop-subtitle">綠線看美股漲跌、藍線看暗池交易占比、黃線看選擇權相關波動風險；三條線刻度不同，請看各自方向，不要比較高度。</p></div>
-  <div class="usop-ranges" role="group" aria-label="圖表時間範圍">
-   <button type="button" data-usop-range="6m" class="is-active" aria-pressed="true">6 個月</button>
-   <button type="button" data-usop-range="2y" aria-pressed="false">2 年</button>
-   <button type="button" data-usop-range="max" aria-pressed="false">全部</button>
+<section class="card fg-panel" id="fearGreedPanel" aria-label="美股 CNN 恐懼與貪婪指數及標普500走勢">
+ <div class="fg-top">
+  <div>
+   <div class="fg-kicker">CNN FEAR & GREED · 美國股市情緒</div>
+   <h2>🇺🇸 Fear & Greed · S&P 500 情緒走勢圖</h2>
+   <p class="fg-sub">上方橘線：美股恐懼與貪婪（0～100分）；下方綠線：S&P 500 指數。兩張圖的刻度各自獨立，不把情緒當股價。</p>
+  </div>
+  <div class="fg-ranges" role="group" aria-label="選擇歷史走勢期間">
+   <button type="button" class="is-active" data-fg-range="6m" aria-pressed="true">6個月</button>
+   <button type="button" data-fg-range="2y" aria-pressed="false">2年</button>
+   <button type="button" data-fg-range="max" aria-pressed="false">全部</button>
   </div>
  </div>
- <div class="usop-toolbar">
-  <div class="usop-legend" role="group" aria-label="切換走勢線">
-   <button type="button" class="usop-toggle" data-usop-series="dix" style="--series-color:#56baff" aria-pressed="true">DIX</button>
-   <button type="button" class="usop-toggle" data-usop-series="spx" style="--series-color:#3cdb79" aria-pressed="true">S&P 500</button>
-   <button type="button" class="usop-toggle" data-usop-series="gex" style="--series-color:#f5c651" aria-pressed="true">GEX</button>
+ <div class="fg-data" aria-label="所選美股交易日觀察值">
+  <div class="fg-metric"><span>Fear & Greed 分數</span><strong id="fgValue">—</strong></div>
+  <div class="fg-metric fg-mood"><span>市場情緒狀態</span><strong id="fgMood">—</strong></div>
+  <div class="fg-metric"><span>S&P 500 指數</span><strong id="fgSpxValue">—</strong></div>
+ </div>
+ <div class="fg-caption">
+  <span>市場恐懼與貪婪分數 <span class="fg-hint">數值低代表恐懼，數值高代表貪婪</span></span>
+  <span id="fgSelectedDate" class="fg-hint">讀取交易日中…</span>
+ </div>
+ <svg id="fgChart" class="fg-chart fg-chart-fear" tabindex="0" role="img" aria-label="0到100分美股恐懼與貪婪指數，滑鼠或觸控與左右鍵可查看日期"></svg>
+ <div class="fg-zones" aria-label="分數區間">
+  <span>極度恐懼</span><span>恐懼</span><span>中立</span><span>貪婪</span><span>極度貪婪</span>
+ </div>
+ <div class="fg-caption"><span>S&P 500 美股價格趨勢</span><span class="fg-hint">以美股每日收盤值呈現</span></div>
+ <svg id="fgSpxChart" class="fg-chart fg-chart-spx" tabindex="0" role="img" aria-label="S&P 500美股收盤走勢，滑鼠或觸控與左右鍵可查看日期"></svg>
+ <div class="fg-report" aria-live="polite">
+  <div class="fg-kicker">每日美股情緒觀察 · 不等於台股買賣訊號</div>
+  <h3 id="fgReportTitle">正在分析已確認的美股交易日…</h3>
+  <p id="fgReportBody"></p>
+  <p class="fg-context" id="fgReportContext"></p>
+  <p><strong>接下來觀察：</strong><span id="fgReportWatch">—</span></p>
+ </div>
+ <p class="fg-message" id="fgMessage" role="status">正在讀取經日期核對的 CNN 歷史資料，不使用推估或假數字。</p>
+ <div class="fg-footer">
+  <span id="fgSource" class="fg-source">美股收盤資料與情緒指標驗證中…</span>
+  <button id="fgRetry" hidden type="button">重試</button>
+  <div class="fg-links">
+   <a href="https://edition.cnn.com/markets/fear-and-greed" target="_blank" rel="noopener noreferrer">CNN 原始資料 ↗</a>
+   <a href="./data/research/us_fear_greed/history.json" target="_blank" rel="noopener noreferrer">歷史資料 ↗</a>
+   <a href="./data/research/us_options/backtest.json" target="_blank" rel="noopener noreferrer">原 DIX／GEX 研究 ↗</a>
   </div>
-  <div class="usop-date" id="usopDate">正在載入最新交易日…</div>
- </div>
- <div class="usop-readings" aria-label="目前選取日期的美股市場數值">
-  <div class="usop-reading" style="--series-color:#56baff"><span>DIX · 暗池成交比率</span><strong id="usopValuedix">—</strong></div>
-  <div class="usop-reading" style="--series-color:#3cdb79"><span>S&P 500 · 指數點數</span><strong id="usopValuespx">—</strong></div>
-  <div class="usop-reading" style="--series-color:#f5c651"><span>GEX · Gamma 曝險</span><strong id="usopValuegex">—</strong></div>
- </div>
- <div id="usopChartWrap" class="usop-chartwrap"><svg id="usopChart" class="usop-chart" tabindex="0" role="img" aria-label="可用滑鼠、觸控或左右方向鍵查看 DIX S&P 500 GEX 每日完整走勢"></svg></div>
- <section id="usopDailyAnalysis" class="usop-daily usop-report" aria-label="依六個月走勢分析的美股資金結構日報" aria-live="polite">
-  <div class="usop-daily-eyebrow">SQUEEZEMETRICS｜每日收盤分析</div>
-  <h3 class="usop-daily-title" id="usopDailyTitle">正在用白話整理最新美股走勢…</h3>
-  <div id="usopDailyBody"></div>
-  <p class="usop-daily-meta" id="usopDailyMeta">依實際收盤資料計算，不是台股進出場指令。</p>
- </section>
- <p id="usopMessage" class="usop-msg">正在載入官方歷史走勢。三條線使用獨立尺度，不能直接比較絕對高低。</p>
- <div class="usop-footer">
-  <span id="usopStatus">歷史資料同步中…</span>
-  <button id="usopRetry" type="button" hidden style="border:1px solid #64748b;border-radius:8px;padding:7px 12px;background:#334155;color:#fff;cursor:pointer">重試圖表</button>
-  <div class="usop-footer-links"><a href="https://squeezemetrics.com/monitor/dix" target="_blank" rel="noopener noreferrer">原始圖表 ↗</a><a href="./data/research/us_options/backtest.json" target="_blank" rel="noopener noreferrer">台股回測 ↗</a><a href="./data/research/us_options/history.json" target="_blank" rel="noopener noreferrer">完整歷史資料 ↗</a></div>
  </div>
 </section>
 <details class="insights-disclosure home-insights-disclosure" id="secondaryInsights" open>
