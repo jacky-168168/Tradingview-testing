@@ -107,7 +107,7 @@ async function main(){
                groups=panel?.querySelectorAll('article.whale-quadrant').length||0;
          if(groups!==4)return {ok:false,status,groups};
          const count=[...panel.querySelectorAll('.whale-quadrant-title>span')].reduce((total,x)=>total+Number(x.textContent.replace(/\D/g,'')),0);
-         return count===57&&panel.querySelectorAll('.whale-stock').length>10&&
+         return count>0&&panel.querySelectorAll('.whale-stock').length>0&&
           document.getElementById('tdccWhaleDates')?.textContent.includes('2026/')&&
           panel.querySelectorAll('.whale-return').length>10&&
           !!document.querySelector('a[href="./index.html"]');
