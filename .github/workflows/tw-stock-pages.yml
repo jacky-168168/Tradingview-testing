@@ -16,6 +16,10 @@ on:
       - 'tw-stock-dashboard/docs/etf-00631l.html'
       - 'tw-stock-dashboard/docs/us-options-risk.css'
       - 'tw-stock-dashboard/docs/fear-greed-home.js'
+      - 'tw-stock-dashboard/docs/tdcc-whale-weekly.js'
+      - 'tw-stock-dashboard/docs/tdcc-whale-weekly.css'
+      - 'tw-stock-dashboard/docs/data/research/tdcc_whales/**'
+      - 'tw-stock-dashboard/tests/test_tdcc_whale_ui.cjs'
       - 'tw-stock-dashboard/docs/fear-greed-home.css'
       - 'tw-stock-dashboard/docs/data/research/us_fear_greed/**'
       - 'tw-stock-dashboard/tests/fear-greed-home.test.cjs'
@@ -74,6 +78,7 @@ jobs:
           node tw-stock-dashboard/tests/test_intraday_schedule.cjs
           node --check tw-stock-dashboard/docs/us-options-daily-report.js
           node tw-stock-dashboard/tests/test_us_options_chart.cjs
+          node tw-stock-dashboard/tests/test_tdcc_whale_ui.cjs
           node tw-stock-dashboard/tests/test_market_compact.cjs
           node tw-stock-dashboard/tests/test_weekend_premarket_score.cjs
           python3 tw-stock-dashboard/tests/test_market_homepage_layout.py
@@ -414,3 +419,39 @@ jobs:
                   if attempt==12:raise
                   time.sleep(5)
           PY
+      - name: Verify live TDCC weekly widget and genuine three-week baseline
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request,urllib.error
+          base=os.environ["PAGES_URL"].rstrip("/")
+          def read(p):
+              req=urllib.request.Request(base+"/"+p,headers={"User-Agent":"TDCC-Whale-Pages-Check","Cache-Control":"no-cache"})
+              with urllib.request.urlopen(req,timeout=25) as r:
+                  if r.status!=200:raise ValueError(f"HTTP {r.status} {p}")
+                  return r.read()
+          for attempt in range(12):
+              try:
+                  h=read("index.html?whale="+str(time.time())).decode("utf-8")
+                  assert 'id="tdccWhalePanel"' in h
+                  assert "tdcc-whale-weekly.js" in h
+                  assert "tdcc-whale-weekly.css" in h
+                  try:
+                      p=json.loads(read("data/research/tdcc_whales/latest.json?whale="+str(time.time())))
+                  except urllib.error.HTTPError as err:
+                      if err.code==404:
+                          print("TDCC page online, first historical report awaiting official runner",flush=True)
+                          break
+                      raise
+                  assert p["version"]=="TDCC_WHALE_400_QUADRANTS_V1"
+                  assert p["twoWeeksBefore"]<p["priorDate"]<p["date"]
+                  assert p["coverage"]["sharedThreeWeeks"]>=3500
+                  print("PASS live TDCC weekly panel",p["date"],{k:v["count"] for k,v in p["quadrants"].items()})
+                  break
+              except Exception as err:
+                  print("TDCC live Pages attempt",attempt+1,repr(err),flush=True)
+                  if attempt==11:raise
+                  time.sleep(5)
+          PY
+
