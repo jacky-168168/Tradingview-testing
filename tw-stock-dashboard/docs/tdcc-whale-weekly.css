@@ -1,0 +1,39 @@
+/* TDCC >=400 lots four quadrants, after-close weekly research. */
+.whale-panel.card{padding:23px 22px;margin:16px 0;background:#10151c;color:#e7edf7;border:1px solid #2b3745;border-radius:16px}
+.whale-panel *{box-sizing:border-box}
+.whale-mainhead{display:flex;justify-content:space-between;gap:14px;align-items:start;flex-wrap:wrap}
+.whale-title{font-size:24px;font-weight:900;color:#f8fafc;line-height:1.3;margin:0 0 6px}
+.whale-intro{color:#f6c957;font-weight:800;font-size:12px;margin:0 0 6px}
+.whale-dates{font-size:11px;color:#aab6c9;line-height:1.6}
+.whale-coverage{font-size:11px;color:#91a5bc;line-height:1.6}
+.whale-cards{display:grid;grid-template-columns:1fr;gap:13px;margin:14px 0}
+.whale-quadrant{border:1px solid #343f4e;background:#0e131b;border-radius:12px;padding:13px}
+.whale-quadrant-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-bottom:1px solid #2f3d4d;padding-bottom:8px;margin-bottom:8px}
+.whale-quadrant-title{display:flex;align-items:baseline;flex-wrap:wrap;gap:10px}
+.whale-quadrant-title strong{font-size:17px;color:#f7fbff}
+.whale-quadrant-title>span{font-size:12px;color:#fbbf24;font-weight:850}
+.whale-quadrant-title small{font-size:11px;color:#a8b7c8}
+.whale-week-returns{font-size:11px;color:#aab6c9}
+.whale-row-head{display:grid;grid-template-columns:minmax(75px,1.05fr) minmax(150px,1fr) minmax(90px,.65fr);gap:6px;color:#7f92a8;font-size:10px;font-weight:800;margin-bottom:4px}
+.whale-row-head span:nth-child(3){text-align:right}
+.whale-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:14px;row-gap:3px}
+.whale-stock{display:grid;grid-template-columns:minmax(75px,1.05fr) minmax(150px,1fr) minmax(90px,.65fr);gap:6px;align-items:center;padding:6px 3px;border-bottom:1px solid #182332;min-width:0}
+.whale-name{font-size:12px;font-weight:750;color:#f3f7fe;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.whale-name small{color:#8294a9;font-size:10px;margin-left:4px;font-weight:500}
+.whale-flow{text-align:left;color:#d1dce9;white-space:nowrap;font-size:12px;font-variant-numeric:tabular-nums;font-weight:800}
+.whale-flow small{color:#9aacc1;font-size:9px;font-weight:500}
+.whale-return{text-align:right;font-size:12px;font-weight:850;font-variant-numeric:tabular-nums;white-space:nowrap}
+.whale-return.is-red,.whale-week-returns .is-red{color:#fb6467}
+.whale-return.is-green,.whale-week-returns .is-green{color:#31d1ab}
+.whale-return.is-neutral,.whale-week-returns .is-neutral{color:#a9b8c6}
+.whale-none{font-size:12px;color:#9caaba}
+.whale-expand{cursor:pointer;margin:12px auto 0;display:block;background:#23354b;border:1px solid #53708c;border-radius:8px;color:#e9f4ff;padding:8px 16px;font-weight:800;font-size:11px}
+.whale-expand:hover{background:#2e4965}.whale-expand:focus-visible,#tdccWhaleRetry:focus-visible{outline:2px solid #93c5fd;outline-offset:3px}
+.whale-footer{font-size:11px;color:#b6c5d9;line-height:1.8;background:#19222c;border-radius:10px;padding:12px 14px}
+.whale-sources{display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px;font-size:11px}
+.whale-sources a{color:#90cbff;text-decoration:underline;text-underline-offset:3px}
+.whale-status{font-size:11px;color:#edcf91;line-height:1.65}
+#tdccWhaleRetry{padding:8px 13px;border:1px solid #7895b6;border-radius:8px;color:#f8fafc;background:#283e59;cursor:pointer}
+@media(max-width:1240px){.whale-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.whale-grid{grid-template-columns:1fr}.whale-quadrant{padding:11px}.whale-row-head,.whale-stock{grid-template-columns:minmax(70px,.9fr) minmax(155px,1.25fr) minmax(75px,.65fr)}.whale-panel.card{padding:17px 12px}}
+@media(max-width:430px){.whale-title{font-size:19px}.whale-stock{grid-template-columns:minmax(66px,.94fr) minmax(144px,1.3fr) minmax(64px,.65fr);gap:2px;padding:7px 2px}.whale-row-head{grid-template-columns:minmax(66px,.94fr) minmax(144px,1.3fr) minmax(64px,.65fr);gap:2px}.whale-flow,.whale-name,.whale-return{font-size:11px}.whale-name small{font-size:9px}.whale-flow small{display:none}}

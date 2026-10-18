@@ -41,38 +41,43 @@ async function main(){
    if(file==='index.html'){
     await test(variant+' home data loaded',()=>page.evaluate(()=>!!window.DATA?.dataDate&&Number.isFinite(Number(DATA.risk?.score))&&document.getElementById('marketMeta').textContent.includes(DATA.dataDate)));
     await test(variant+' home risk & timing',()=>page.evaluate(()=>Number(document.getElementById('riskScore').textContent)===Number(DATA.risk.score)&&!!document.getElementById('commandStatus').textContent));
-    await test(variant+' DIX GEX chart renders real 3-series historical lines',async()=>{
+    await test(variant+' CNN Fear Greed and SPX historical lines render',async()=>{
       await page.waitForFunction(()=>{
-        const wrap=document.getElementById('usopChartWrap'),svg=document.getElementById('usopChart');
-        return wrap?.classList.contains('usop-error')||svg?.querySelectorAll('path[data-path-series]').length===3;
+       const a=document.getElementById('fgChart'),b=document.getElementById('fgSpxChart');
+       return (a?.querySelectorAll('polyline').length===1&&b?.querySelectorAll('polyline').length===1)||
+        (!document.getElementById('fgRetry')?.hidden);
       },{timeout:18000}).catch(()=>{});
-      const status=await page.evaluate(()=>{
-        const w=document.getElementById('usopChartWrap'),svg=document.getElementById('usopChart');
-        return {bad:w?.classList.contains('usop-error'),paths:svg?.querySelectorAll('path[data-path-series]').length||0,
-          date:document.getElementById('usopDate')?.textContent,message:document.getElementById('usopMessage')?.textContent,
-          main:document.getElementById('usopValuegex')?.textContent};
-      });
-      return status.paths===3&&!status.bad&&status.date.includes('2026/')&&status.main!=='—'?true:{ok:false,status};
+      const d=await page.evaluate(()=>({
+       fear:document.getElementById('fgChart')?.querySelectorAll('polyline').length,
+       spx:document.getElementById('fgSpxChart')?.querySelectorAll('polyline').length,
+       value:document.getElementById('fgValue')?.textContent,
+       report:document.getElementById('fgReportTitle')?.textContent
+      }));
+      return d.fear===1&&d.spx===1&&Number.isFinite(Number(d.value))&&d.report?.length>6?true:{ok:false,d};
     });
-
-    await test(variant+' DIX plain-language summary is visible and expert detail starts collapsed',()=>page.evaluate(()=>{
-      const root=document.getElementById('usopDailyAnalysis'),title=document.getElementById('usopDailyTitle'),
-        simple=root?.querySelector('.usop-easy-view'),cards=simple?[...simple.querySelectorAll('.usop-easy-line')]:[],
-        status=root?.querySelector('.usop-reader-status'),watch=root?.querySelector('.usop-easy-watch'),
-        details=root?.querySelector('details.usop-deep-details'),tbl=details?.querySelector('table'),
-        meta=document.getElementById('usopDailyMeta');
-      return root?.dataset.state==='ready'&&title?.textContent.includes('今天怎麼看？')&&
-        !!status&&status.textContent.length<100&&cards.length===3&&
-        cards[0].textContent.includes('綠線')&&cards[1].textContent.includes('藍線')&&cards[2].textContent.includes('黃線')&&
-        cards[1].textContent.includes('不等於大戶正在買超')&&cards[2].textContent.includes('不能直接預測股價漲跌')&&
-        watch?.querySelectorAll('li').length===2&&!!details&&!details.open&&
-        tbl?.querySelectorAll('tbody tr').length===3&&meta?.textContent.includes('資料日');
+    await test(variant+' Fear Greed dates, risks and chart time range',()=>page.evaluate(()=>{
+      const p=document.getElementById('fearGreedPanel'),
+       source=document.getElementById('fgSource'),
+       options=[...p.querySelectorAll('[data-fg-range]')];
+      return !!p&&options.length===3&&
+       source?.textContent.includes('CNN')&&
+       document.getElementById('fgReportBody')?.textContent.length>15&&
+       document.getElementById('fgReportWatch')?.textContent.length>12;
     }));
-    await test(variant+' DIX advanced 7-step evidence is expandable',async()=>{
-      const details=page.locator('#usopDailyAnalysis details.usop-deep-details');
-      await details.locator('summary').click();
-      return await details.evaluate(el=>el.open&&el.querySelectorAll('h4').length>=3&&
-        !!el.querySelector('.usop-report-resonance')&&!!el.querySelector('.usop-report-compare'));
+    await test(variant+' TDCC 400-lot weekly panel gracefully handles not-yet-published source',async()=>{
+      await page.waitForFunction(()=>{
+       const s=document.getElementById('tdccWhaleStatus')?.textContent||'';
+       return s.includes('本期')||s.includes('尚未取得完整驗證結果');
+      },{timeout:15000}).catch(()=>{});
+      return page.evaluate(()=>{
+       const root=document.getElementById('tdccWhalePanel'),msg=document.getElementById('tdccWhaleStatus')?.textContent||'';
+       const cards=root?.querySelectorAll('article.whale-quadrant').length||0;
+       if(!root)return {ok:false,missing:'tdccWhalePanel'};
+       if(cards===4)return msg.includes('百分點')&&root.querySelectorAll('.whale-stock').length>=1&&
+        document.getElementById('tdccWhaleDates')?.textContent.includes('2026/')&&
+        root.querySelectorAll('.whale-stock .whale-return').length>=1;
+       return msg.includes('尚未取得完整驗證結果')&&!!document.getElementById('tdccWhaleRetry')&&!document.getElementById('tdccWhaleRetry').hidden;
+      });
     });
     await test(variant+' homepage shows score interpretation and action',()=>page.evaluate(()=>{
       const guide=document.getElementById('commandTradeGuide'),title=document.getElementById('commandGuideTitle'),
@@ -83,16 +88,19 @@ async function main(){
         guide.textContent.includes('分數解讀與操作方向'));
     }));
     await test(variant+' institution/source render',()=>page.evaluate(()=>document.getElementById('instSource').textContent.length>0&&document.getElementById('buyRows').textContent.length>0&&document.getElementById('sellRows').textContent.length>0));
-    await test(variant+' DIX chart remains functional when latest.json is unavailable',async()=>{
+    await test(variant+' CNN Fear Greed still renders when retired DIX latest.json is unavailable',async()=>{
       const x=await ctx.newPage();
       try{
-        await x.route('**/data/research/us_options/latest.json*',route=>route.fulfill({status:503,body:'maintenance'}));
+        await x.route('**/data/research/us_options/latest.json*',route=>route.fulfill({status:503,body:'retired DIX endpoint'}));
         await x.goto(BASE+'index.html',{waitUntil:'domcontentloaded',timeout:28000});
         await x.waitForFunction(()=>{
-          const svg=document.getElementById('usopChart');
-          return svg?.querySelectorAll('path[data-path-series]').length===3;
+          const fear=document.getElementById('fgChart'),spx=document.getElementById('fgSpxChart');
+          return fear?.querySelectorAll('polyline').length===1&&spx?.querySelectorAll('polyline').length===1;
         },null,{timeout:18000});
-        return await x.evaluate(()=>document.getElementById('usopValuegex').textContent!=='—'&&!document.getElementById('usopChartWrap').classList.contains('usop-error')&&document.querySelectorAll('#usopDailyBody tbody tr').length===3);
+        return x.evaluate(()=>{
+          return !!document.getElementById('fgReportTitle')?.textContent.trim()&&
+           Number.isFinite(Number(document.getElementById('fgValue')?.textContent));
+        });
       }finally{await x.close()}
     });
 
