@@ -43,6 +43,8 @@
 <script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
 <script defer src="./fear-greed-home.js?v=d22e116e0cc6"></script>
+<link rel="stylesheet" href="./tdcc-whale-weekly.css?v=1">
+<script defer src="./tdcc-whale-weekly.js?v=1"></script>
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -223,6 +225,24 @@
    <a href="./data/research/us_fear_greed/history.json" target="_blank" rel="noopener noreferrer">歷史資料 ↗</a>
    <a href="./data/research/us_options/backtest.json" target="_blank" rel="noopener noreferrer">原 DIX／GEX 研究 ↗</a>
   </div>
+ </div>
+</section>
+<section class="card whale-panel" id="tdccWhalePanel" aria-label="大戶換手四象限週報">
+ <div class="whale-mainhead">
+  <div>
+   <h2 class="whale-title">大戶換手・四象限週報</h2>
+   <p class="whale-intro">400張以上持股比率｜雙週變動方向 × 本週股價反應</p>
+   <div class="whale-dates" id="tdccWhaleDates">正在確認最近三期集保股權分散表…</div>
+  </div>
+  <div class="whale-coverage" id="tdccWhaleCoverage">資料來源：TDCC 集保股權分散表｜每週一次更新</div>
+ </div>
+ <div id="tdccWhaleCards" class="whale-cards" aria-live="polite"></div>
+ <div class="whale-footer" id="tdccWhaleFoot">資料為每週實際公布的集保持股級距，並非大戶真實買賣超；不直接作為投資建議。</div>
+ <div class="whale-sources">
+  <div id="tdccWhaleStatus" class="whale-status" role="status">等候本週原始資料通過完整性檢查…</div>
+  <button id="tdccWhaleRetry" type="button" hidden>重新讀取</button>
+  <div><a href="https://www.tdcc.com.tw/portal/zh/smWeb/qryStock" target="_blank" rel="noopener noreferrer">集保官方來源 ↗</a> ·
+   <a href="https://github.com/wirelessr/tdcc-opendata-archive" target="_blank" rel="noopener noreferrer">歷史檔案 ↗</a></div>
  </div>
 </section>
 <details class="insights-disclosure home-insights-disclosure" id="secondaryInsights" open>
