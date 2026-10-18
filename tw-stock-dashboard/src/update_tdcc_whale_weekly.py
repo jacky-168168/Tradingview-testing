@@ -90,7 +90,9 @@ def parse_snapshot(body,day):
     if len(output)<3500:raise ValueError(f"TDCC valid security coverage insufficient: {len(output)}")
     return output
 def quadrant_of(previous,current):
-    if abs(previous)<THRESHOLD_PP-1e-7 or abs(current)<THRESHOLD_PP-1e-7:return None
+    # Screenshot displays 2 decimals: classify with the same displayed precision.
+    previous,current=round(previous,2),round(current,2)
+    if abs(previous)<THRESHOLD_PP or abs(current)<THRESHOLD_PP:return None
     for k,(a,b) in QUADRANTS.items():
         if (previous>0)==(a=="positive") and (current>0)==(b=="positive"):return k
     return None
@@ -147,7 +149,7 @@ def select_owners(points,universe,listing_dates=None,as_of=None):
         # Avoid corporate actions/reclassifications that change share denominator.
         totals=[prev["total"],mid["total"],latest["total"]]
         if any(not v or v<=0 for v in totals):skipped["zero_total"]+=1;continue
-        if max(abs(totals[i]/totals[i-1]-1) for i in (1,2))>.05:
+        if max(abs(totals[i]/totals[i-1]-1) for i in (1,2))>.03:
             skipped["large_tdcc_depository_change"]+=1;continue
         pp1=mid["ratio"]-prev["ratio"]
         pp2=latest["ratio"]-mid["ratio"]
@@ -214,7 +216,7 @@ def render(dates,records,universe,price_returns,price_cov,listing_dates=None):
             "continuedBuy":"兩段變動均達+1.00pp","turnaround":"前段≤−1.00pp、本段≥+1.00pp",
             "exit":"前段≥+1.00pp、本段≤−1.00pp","continuedSell":"兩段變動均≤−1.00pp",
             "price":"本週收盤漲跌＝本期相對前一期調整後收盤價的百分比（Yahoo Finance），不可取得留空",
-            "screen":"當前上市/上櫃四碼普通股（不含存託憑證及官方上市/櫃日期未滿30日的新掛牌股票），兩段絕對變動都達1pp；排除集保合計股數週變化超過5%者",
+            "screen":"當前上市/上櫃四碼普通股（不含存託憑證及官方上市/櫃日期未滿30日的新掛牌股票），兩段絕對變動都達1pp；排除集保合計股數週變化超過3%者",
             "differenceFromImage":"原圖額外入榜規則未揭露；此處顯示完整符合公開條件的集合，不宣稱與原圖數量相同"
         },
         "source":{"official":"https://www.tdcc.com.tw/portal/zh/smWeb/qryStock",
