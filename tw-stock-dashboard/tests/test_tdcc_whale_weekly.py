@@ -25,6 +25,8 @@ class TestTDCCWhales(unittest.TestCase):
         self.assertEqual(quadrant_of(3,-2),"下車")
         self.assertEqual(quadrant_of(-1.4,-2),"續賣")
         self.assertIsNone(quadrant_of(.99,4))
+        self.assertEqual(quadrant_of(2.6536,-0.99756),"下車")
+        self.assertIsNone(quadrant_of(2.6536,-0.994))
     def test_400_lot_share_ratio_and_risks(self):
         universe=[{"code":"6278","name":"台表科","market":"上市"}]
         p=[{"6278":{"ratio":65.353,"total":100000000}},{"6278":{"ratio":68.856,"total":100000000}},{"6278":{"ratio":74.337,"total":100000000}}]
@@ -49,7 +51,7 @@ class TestTDCCWhales(unittest.TestCase):
         self.assertEqual(reasons["recent_initial_listing_under_30_days"],1)
     def test_total_share_denominator_change_not_turnover(self):
         universe=[{"code":"6278","name":"台表科","market":"上市"}]
-        p=[{"6278":{"ratio":50,"total":1000000}},{"6278":{"ratio":53,"total":1200000}},{"6278":{"ratio":56,"total":1200000}}]
+        p=[{"6278":{"ratio":50,"total":1000000}},{"6278":{"ratio":53,"total":1049950}},{"6278":{"ratio":56,"total":1049950}}]
         groups,reasons,_=select_owners(p,universe)
         self.assertEqual(sum(len(x) for x in groups.values()),0)
         self.assertEqual(reasons["large_tdcc_depository_change"],1)
