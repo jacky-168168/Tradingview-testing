@@ -2,7 +2,7 @@ name: M10-M11 Official 2026 Stock Selector Backtest
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, research/m10-m11-2026-official-backtest]
     paths:
       - 'tw-stock-dashboard/src/research_m10_m11_2026.py'
       - 'tw-stock-dashboard/tests/test_m10_m11_2026.py'
@@ -60,6 +60,7 @@ jobs:
           path: tw-stock-dashboard/docs/data/research/m10_m11_2026/summary.json
           retention-days: 90
       - name: Publish research-only 2026 output (never changes live stock picks)
+        if: github.ref == 'refs/heads/main'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
