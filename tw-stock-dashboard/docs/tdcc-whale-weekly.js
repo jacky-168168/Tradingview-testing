@@ -79,7 +79,7 @@ function build(){
    draw();
    const total=ORDER.reduce((n,k)=>n+data.quadrants[k].count,0);
    status.textContent="本期 "+total+" 檔符合公開條件，前兩期變動均至少1個百分點。原圖還有未公開的入榜條件，檔數不一定相同。"+(age>12?"（資料逾12日，請確認是否有新一期）":"");
-   $("tdccWhaleFoot").textContent="比率＝持有400,001股以上之集保股數／集保總股數；變化單位為百分點（pp），不是實際買賣張數。排除集保合計股數單週變動逾5%的個股。股價是兩個公布基準日間的調整後收盤漲跌；無資料顯示未取得。資料：臺灣集中保管結算所，歷史原始檔備份。";
+   $("tdccWhaleFoot").textContent="比率＝持有400,001股以上之集保股數／集保總股數；變化單位為百分點（pp），不是實際買賣張數。排除存託憑證、官方上市/上櫃未滿30日及集保合計股數單週變動逾5%的個股。股價是兩個公布基準日間的調整後收盤漲跌；無資料顯示未取得。來源：臺灣集中保管結算所，歷史原始檔備份。原圖個別股票若與官方數字矛盾，以原始資料重算為準。";
   }catch(e){
    status.textContent="本週資料尚未取得完整驗證結果："+e.message+"。不以舊報告冒充新資料，也不使用假數字。";
    cards.replaceChildren();retry.hidden=false;
