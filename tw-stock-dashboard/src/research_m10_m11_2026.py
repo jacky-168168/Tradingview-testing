@@ -120,7 +120,7 @@ def select_models(days,universe,hist,credits,inst):
         key=x["market"]+"_"+x["code"]
         info[key]=x
         if str(x.get("industry") or "未分類")!="未分類":
-            by_industry[(x["market"],x["industry"])].append(key)
+            by_industry[x["industry"]].append(key)
     result={"M10":{},"M11":{}}
     for i,day in enumerate(days):
         credit=credits.get(day);flow=inst.get(day)
@@ -138,7 +138,7 @@ def select_models(days,universe,hist,credits,inst):
             cap=float(meta.get("capitalB") or 0)
             if not(10<=price and turn>=1 and 0<cap<500):continue
             ret5=float(bar["ret5"]);ret5=ret5 if math.isfinite(ret5) else -999
-            ratio=ratios.get((meta["market"],meta.get("industry")),0)
+            ratio=ratios.get(meta.get("industry"),0)
             base={"date":day,"code":meta["code"],"name":meta["name"],"market":meta["market"],
                   "industry":meta.get("industry"),"ret5":round(ret5,3),"turnoverB":round(turn,3)}
             if ratio>=.30 and ret5>10:
@@ -216,10 +216,34 @@ def run_one(model,days,signals,hist,hold=10):
     return {"signalDays":sum(bool(x) for x in signals.values()),"candidateCount":sum(len(x) for x in signals.values()),
             "top3TradeSample":{h:summarize_sample(v) for h,v in per_h.items()},
             "top3SampleTrades10D":samples,"portfolio10D":{"capitalStart":1000000,"capitalEnd":round(float(vals[-1]),2),
-                "netReturnPct":round(float(100*(vals[-1]/vals[0]-1)),3),"maxDrawdownPct":mdd,
+                "netReturnPct":round(float(100*(vals[-1]/vals[0]-1)),3),"annualizedCAGRpct":round(float(100*((vals[-1]/vals[0])**(365.2425/(pd.Timestamp(days[-1])-pd.Timestamp(days[0])).days)-1)),3),"maxDrawdownPct":mdd,
                 "closedTrades":len(trades),"openAtEnd":len(positions),
                 "tradeStats":summarize_sample([t["netPct"] for t in trades])},
             "trades10D":trades,"equity10D":nav}
+
+def etf_0050_baseline(days):
+    """Buy/hold 0050 on equivalent 2026 dates, adjusted prices; ETF sales tax 0.1%."""
+    _,q,error=update_symbol("0050.TW",datetime(2025,12,1),datetime(2026,10,19))
+    if error or q.empty:return {"status":"NO_AUTHENTIC_ETF_BARS","reason":str(error)}
+    q=q.sort_values("date").drop_duplicates("date",keep="last").copy()
+    for name in ("open","close","adjclose"):q[name]=pd.to_numeric(q[name],errors="coerce")
+    q["adjOpen"]=q.open*q.adjclose/q.close
+    m={str(r["date"]):r for r in q.to_dict("records")}
+    dates=[d for d in days if d in m and float(m[d]["adjOpen"])>0 and float(m[d]["adjclose"])>0]
+    if len(dates)<len(days)*.90:return {"status":"INCOMPLETE_0050_HISTORY","validDays":len(dates)}
+    start=dates[0];end=dates[-1];price=float(m[start]["adjOpen"])*(1+SLIP)*(1+BROKER)
+    qty=int(1000000/price//1000)*1000
+    if qty<1000:return {"status":"CANNOT_AFFORD_ROUND_LOT"}
+    cash=1000000-qty*price
+    nav=[1000000.0]+[cash+qty*float(m[d]["adjclose"])*(1-SLIP)*(1-BROKER-.001) for d in dates]
+    v=np.asarray(nav);mdd=float(100*np.min(v/np.maximum.accumulate(v)-1))
+    yrs=(pd.Timestamp(end)-pd.Timestamp(start)).days/365.2425
+    return {"status":"OK","code":"0050","start":start,"end":end,"shares":qty,
+            "netReturnPct":round(100*(nav[-1]/nav[0]-1),3),
+            "annualizedCAGRpct":round(100*((nav[-1]/nav[0])**(1/yrs)-1),3),
+            "maxDrawdownPct":round(mdd,3),"validDays":len(dates),
+            "costs":"broker 0.1425% per side, 0050 sale tax 0.1%, 0.1% slippage per side"}
+
 def main():
     arg=argparse.ArgumentParser();arg.add_argument("--from-date",default=START);arg.add_argument("--to-date",default=END)
     arg.add_argument("--workers",type=int,default=4);args=arg.parse_args()
@@ -253,13 +277,14 @@ def main():
     complete=len(credits)/len(days)>=.90 and len(inst)/len(days)>=.90 and len(hist)>=1400
     result={"version":"M10_M11_2026_PIT_LAGGED_RESEARCH_V1","generatedAt":datetime.utcnow().isoformat()+"Z",
             "period":{"start":days[0],"end":days[-1]},"status":"PRELIMINARY_SURVIVORSHIP_BIAS" if complete else "INCOMPLETE_DO_NOT_INTERPRET",
-            "coverage":coverage,"definitions":{"M10":"Industry trust buy ratio >=30% of dated reported stocks (at least 8); individual adjusted 5D gain >10%",
+            "coverage":coverage,"definitions":{"M10":"Across TWSE+TPEx within same industry, trust buy ratio >=30% of dated reported stocks (at least 8); individual adjusted 5D gain >10%",
              "M11":"Per-security margin and short outstanding balances each strictly increase on all five past completed trading sessions",
              "base":"Current universe listed+OTC, price>=10, turnover>=100m TWD, paid-in capital 0..500 (100m TWD), no intraday information",
              "execution":"Close D signal -> D+1 adjusted open; fixed 5/10/20 trading-day close; 10D max 3 simultaneous round-lot positions; 0.1425% broker each side, 0.3% sale tax, 0.1% slippage each side.",
              "pitCaveats":"Official historical reports may be revised later. Current issuer master excludes delisted names and uses current industry/capital. Historical 2026 ROI is preliminary, not certified PIT."},
             "models":{},"picks":signal}
     for name in ("M10","M11"):result["models"][name]=run_one(name,days,signal[name],hist)
+    result["benchmark0050"]=etf_0050_baseline(days)
     OUT.mkdir(parents=True,exist_ok=True)
     (OUT/"summary.json").write_text(json.dumps(result,ensure_ascii=False,indent=2,default=str),encoding="utf-8")
     print(json.dumps({"status":result["status"],"coverage":{k:v for k,v in coverage.items() if not isinstance(v,dict)},
