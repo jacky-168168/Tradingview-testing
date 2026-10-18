@@ -7,7 +7,7 @@ const row={code:"6278",name:"台表科",previousPP:3.5,currentPP:5.48,bigHolderR
 groups["續買"]={count:1,rows:[row],priceCount:1,upCount:1,avgPriceReturnPct:20.4};
 const original={version:"TDCC_WHALE_400_QUADRANTS_V1",date:"2026-10-16",priorDate:"2026-10-08",twoWeeksBefore:"2026-10-02",thresholdPP:1.0,quadrants:groups};
 assert.equal(validate(original),original);
-assert.throws(()=>validate({...original,date:"2026-10-02"}),/日期/);
+assert.throws(()=>validate({...original,date:"2026-10-02"}),/日期|基準日/);
 assert.throws(()=>validate({...original,thresholdPP:0}),/格式/);
 assert.throws(()=>validate({...original,quadrants:{...groups,"續買":{...groups["續買"],count:3}}}),/數量/);
 assert.throws(()=>validate({...original,quadrants:{...groups,"續買":{...groups["續買"],rows:[{...row,currentPP:-1.1}]}}}),/方向/);
