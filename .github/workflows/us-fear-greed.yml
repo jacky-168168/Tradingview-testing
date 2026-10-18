@@ -1,0 +1,70 @@
+name: CNN Fear Greed US Market Chart
+on:
+  workflow_dispatch:
+  schedule:
+    # 08:00 and 20:00 Asia/Taipei (after existing S&P500 archive updates)
+    - cron: '0 0,12 * * *'
+  push:
+    branches: [main, feat/fear-greed-home-replace-20261018]
+    paths:
+      - 'tw-stock-dashboard/src/update_us_fear_greed.py'
+      - 'tw-stock-dashboard/tests/test_us_fear_greed.py'
+      - 'tw-stock-dashboard/tests/fear-greed-home.test.cjs'
+      - '.github/workflows/us-fear-greed.yml'
+permissions:
+  contents: write
+concurrency:
+  group: cnn-fear-greed-research
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify parser, dates and chart front-end
+        run: |
+          python -m py_compile tw-stock-dashboard/src/update_us_fear_greed.py
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_us_fear_greed.py' -v
+          node --check tw-stock-dashboard/docs/fear-greed-home.js
+          node --test tw-stock-dashboard/tests/fear-greed-home.test.cjs
+      - name: Refresh CNN historical sentiments and aligned SPX
+        run: python -u tw-stock-dashboard/src/update_us_fear_greed.py
+      - name: Validate source freshness and no fabricated data
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('tw-stock-dashboard/docs/data/research/us_fear_greed/history.json')
+          x=json.loads(p.read_text())
+          assert x['version']=='US_CNN_FEAR_GREED_SPX_V1'
+          assert x['columns']==['date','fearGreed','spx']
+          assert len(x['rows'])>=150
+          assert x['rows'][-1][0]==x['asOf']
+          assert len(set(r[0] for r in x['rows']))==len(x['rows'])
+          print('CNN_FEAR_GREED_VALID',x['asOf'],'rows',len(x['rows']))
+          PY
+      - name: Save verified historical data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnn-fear-greed-spx-history
+          path: tw-stock-dashboard/docs/data/research/us_fear_greed/history.json
+          retention-days: 90
+      - name: Publish research snapshot on main only
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/us_fear_greed/history.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'data: refresh confirmed CNN Fear Greed and S&P500 market history'
+            for i in 1 2 3; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*4)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*4))
+            done
+            exit 1
+          fi
