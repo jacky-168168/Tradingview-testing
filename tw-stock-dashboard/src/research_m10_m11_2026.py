@@ -35,7 +35,7 @@ def parse_margin(payload,market,day):
         y,m,d=map(int,day.split("-"));roc=f"{y-1911:03d}/{m:02d}/{d:02d}"
         tables=payload.get("tables") or []
         reported=str(payload.get("date") or (tables[0].get("date") if tables else "") or "").strip()
-        if reported not in (roc,day,day.replace("-","/")):raise ValueError("TPEx margin wrong date "+reported)
+        if reported not in (roc,day,day.replace("-","/"),day.replace("-",""),f"{y-1911:03d}{m:02d}{d:02d}"):raise ValueError("TPEx margin wrong date "+reported)
     result={}
     for tab in tables:
         fields=[str(x).replace(" ","").replace("\n","") for x in tab.get("fields",[])]
