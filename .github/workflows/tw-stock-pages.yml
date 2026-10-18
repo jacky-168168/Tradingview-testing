@@ -422,7 +422,7 @@ jobs:
                   if attempt==12:raise
                   time.sleep(5)
           PY
-      - name: Verify live TDCC weekly widget and genuine three-week baseline
+      - name: Verify live navbar-linked TDCC weekly report and genuine three-week baseline
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
@@ -437,9 +437,15 @@ jobs:
           for attempt in range(12):
               try:
                   h=read("index.html?whale="+str(time.time())).decode("utf-8")
-                  assert 'id="tdccWhalePanel"' in h
-                  assert "tdcc-whale-weekly.js" in h
-                  assert "tdcc-whale-weekly.css" in h
+                  assert 'href="./tdcc-whale-weekly.html"' in h,"Missing whale research nav link"
+                  assert 'id="tdccWhalePanel"' not in h,"Old large homepage panel still present"
+                  detail=read("tdcc-whale-weekly.html?whale="+str(time.time())).decode("utf-8")
+                  assert 'id="tdccWhalePanel"' in detail and 'id="tdccWhaleCards"' in detail
+                  assert "tdcc-whale-weekly.js" in detail and "tdcc-whale-weekly.css" in detail
+                  assert "site-access.js" in detail
+                  assert "返回大盤首頁" in detail
+                  assert b"TDCCWhaleWeekly" in read("tdcc-whale-weekly.js")
+                  assert b".whale-stock" in read("tdcc-whale-weekly.css")
                   try:
                       p=json.loads(read("data/research/tdcc_whales/latest.json?whale="+str(time.time())))
                   except urllib.error.HTTPError as err:
@@ -450,7 +456,7 @@ jobs:
                   assert p["version"]=="TDCC_WHALE_400_QUADRANTS_V1"
                   assert p["twoWeeksBefore"]<p["priorDate"]<p["date"]
                   assert p["coverage"]["sharedThreeWeeks"]>=3500
-                  print("PASS live TDCC weekly panel",p["date"],{k:v["count"] for k,v in p["quadrants"].items()})
+                  print("PASS live navbar-linked TDCC weekly report",p["date"],{k:v["count"] for k,v in p["quadrants"].items()})
                   break
               except Exception as err:
                   print("TDCC live Pages attempt",attempt+1,repr(err),flush=True)

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="臺灣集中保管結算所400張以上大戶持股級距週報。續買、回頭車、下車、續賣四象限與股價反應。">
+<title>大戶換手四象限週報｜台股量化市場總覽</title>
+<style>
+:root{color-scheme:light;--bg:#f4f6f9;--ink:#172033;--blue:#2563eb}
+*{box-sizing:border-box}
+html,body{min-height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif}
+.whale-layout{max-width:1540px;margin:0 auto;padding:16px 20px 40px}
+.whale-pagebar{background:#fff;border:1px solid #e1e7f0;border-radius:15px;padding:17px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 4px 16px #14253b08}
+.whale-pagebar h1{font-size:22px;font-weight:900;margin:0 0 5px}
+.whale-pagebar p{font-size:12px;line-height:1.6;color:#64748b;margin:0}
+.whale-links{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.whale-links a{font-weight:800;font-size:12px;color:#1d4ed8;text-decoration:none;border:1px solid #cad6e8;border-radius:9px;padding:9px 13px;background:#f8fafc}
+.whale-links a:first-child{background:#2563eb;border-color:#2563eb;color:#fff}
+.whale-links a:hover{text-decoration:underline}
+.whale-header-note{font-size:11px;color:#526780;line-height:1.65;margin:12px 3px 0}
+@media(max-width:600px){.whale-layout{padding:10px 8px 24px}.whale-pagebar{padding:13px 12px}.whale-pagebar h1{font-size:19px}.whale-links a{padding:8px 10px}}
+</style>
+<link rel="stylesheet" href="./tdcc-whale-weekly.css?v=20261019">
+<script src="./site-access.js"></script>
+<script defer src="./tdcc-whale-weekly.js?v=20261019"></script>
+</head>
+<body>
+<main class="whale-layout">
+ <header class="whale-pagebar">
+  <div><h1>🐋 大戶換手四象限週報</h1><p>400張以上大戶持股變化｜每週更新｜集保公布日為準</p></div>
+  <nav class="whale-links" aria-label="大戶週報導覽">
+   <a href="./index.html">← 返回大盤首頁</a>
+   <a href="./selections.html">📋 選股排行</a>
+   <a href="./stocks.html">🔬 個股體檢</a>
+  </nav>
+ </header>
+ <p class="whale-header-note">每週日09:35（臺灣時間）檢查更新；資料反映每週集保歷史持股級距，並非即時籌碼，也不代表大戶實際買賣超。</p>
+ <section class="card whale-panel" id="tdccWhalePanel" aria-label="大戶換手四象限週報">
+ <div class="whale-mainhead">
+  <div>
+   <h2 class="whale-title">大戶換手・四象限週報</h2>
+   <p class="whale-intro">400張以上持股比率｜雙週變動方向 × 本週股價反應</p>
+   <div class="whale-dates" id="tdccWhaleDates">正在確認最近三期集保股權分散表…</div>
+  </div>
+  <div class="whale-coverage" id="tdccWhaleCoverage">資料來源：TDCC 集保股權分散表｜每週一次更新</div>
+ </div>
+ <div id="tdccWhaleCards" class="whale-cards" aria-live="polite"></div>
+ <div class="whale-footer" id="tdccWhaleFoot">資料為每週實際公布的集保持股級距，並非大戶真實買賣超；不直接作為投資建議。</div>
+ <div class="whale-sources">
+  <div id="tdccWhaleStatus" class="whale-status" role="status">等候本週原始資料通過完整性檢查…</div>
+  <button id="tdccWhaleRetry" type="button" hidden>重新讀取</button>
+  <div><a href="https://www.tdcc.com.tw/portal/zh/smWeb/qryStock" target="_blank" rel="noopener noreferrer">集保官方來源 ↗</a> ·
+   <a href="https://github.com/wirelessr/tdcc-opendata-archive" target="_blank" rel="noopener noreferrer">歷史檔案 ↗</a></div>
+ </div>
+</section>
+</main>
+</body>
+</html>
