@@ -43,8 +43,8 @@
 <script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
 <script defer src="./fear-greed-home.js?v=d22e116e0cc6"></script>
-<link rel="stylesheet" href="./tdcc-whale-weekly.css?v=1">
-<script defer src="./tdcc-whale-weekly.js?v=1"></script>
+
+
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -68,6 +68,7 @@
         <a class="btn main" href="./selections.html">📋 選股排行</a>
         <a class="btn" href="./market-events.html" title="重大展覽、科技財報、漲價與總經新聞">🗞 市場大事</a>
         <a class="btn" href="./stocks.html">🔬 個股量化體檢</a>
+        <a class="btn" href="./tdcc-whale-weekly.html" title="集保400張以上持股變動；續買／回頭車／下車／續賣；每週更新">🐋 大戶換手週報</a>
         <a class="btn" href="./backtest.html">📈 回測中心 <span class="nav-compact">／Edge</span></a>
         <a class="btn" href="./bottom-top-trader.html" hidden>🎯 Bottom/Top 交易雷達</a>
         <a class="btn" href="./position-sizing.html">💰 資金配置儀表板</a>
@@ -227,24 +228,7 @@
   </div>
  </div>
 </section>
-<section class="card whale-panel" id="tdccWhalePanel" aria-label="大戶換手四象限週報">
- <div class="whale-mainhead">
-  <div>
-   <h2 class="whale-title">大戶換手・四象限週報</h2>
-   <p class="whale-intro">400張以上持股比率｜雙週變動方向 × 本週股價反應</p>
-   <div class="whale-dates" id="tdccWhaleDates">正在確認最近三期集保股權分散表…</div>
-  </div>
-  <div class="whale-coverage" id="tdccWhaleCoverage">資料來源：TDCC 集保股權分散表｜每週一次更新</div>
- </div>
- <div id="tdccWhaleCards" class="whale-cards" aria-live="polite"></div>
- <div class="whale-footer" id="tdccWhaleFoot">資料為每週實際公布的集保持股級距，並非大戶真實買賣超；不直接作為投資建議。</div>
- <div class="whale-sources">
-  <div id="tdccWhaleStatus" class="whale-status" role="status">等候本週原始資料通過完整性檢查…</div>
-  <button id="tdccWhaleRetry" type="button" hidden>重新讀取</button>
-  <div><a href="https://www.tdcc.com.tw/portal/zh/smWeb/qryStock" target="_blank" rel="noopener noreferrer">集保官方來源 ↗</a> ·
-   <a href="https://github.com/wirelessr/tdcc-opendata-archive" target="_blank" rel="noopener noreferrer">歷史檔案 ↗</a></div>
- </div>
-</section>
+
 <details class="insights-disclosure home-insights-disclosure" id="secondaryInsights" open>
  <summary><span>市場焦點｜法人、G 選股與題材</span><span class="insight-summary-note">預設展開 · 點擊收合</span></summary>
  <section id="homeFocus" class="home-focus" aria-label="今日法人動向、G 選股與熱門題材">
