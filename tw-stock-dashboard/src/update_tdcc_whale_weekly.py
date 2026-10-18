@@ -14,6 +14,7 @@ import requests
 from config import DATA_DIR
 from yahoo_cache import update_many,to_symbol
 from pipeline import load_universe
+from config import TWSE_COMPANY_URL,TPEX_COMPANY_URLS
 
 OUT=DATA_DIR/"research"/"tdcc_whales"
 ARCHIVE="https://api.github.com/repos/wirelessr/tdcc-opendata-archive/contents/snapshots"
@@ -93,7 +94,41 @@ def quadrant_of(previous,current):
     for k,(a,b) in QUADRANTS.items():
         if (previous>0)==(a=="positive") and (current>0)==(b=="positive"):return k
     return None
-def select_owners(points,universe):
+def parse_listing_day(raw):
+    """Accept YYYYMMDD, ISO, Minguo 1150922, ROC/ISO slash dates."""
+    if raw is None:return None
+    s=str(raw).strip()
+    if not s:return None
+    digits=re.sub(r"[^0-9]","",s)
+    try:
+        if len(digits)==8 and 1950<=int(digits[:4])<=2100:
+            return date(int(digits[:4]),int(digits[4:6]),int(digits[6:8]))
+        if len(digits)==7 and 70<=int(digits[:3])<=189:
+            return date(1911+int(digits[:3]),int(digits[3:5]),int(digits[5:7]))
+    except ValueError:return None
+    return None
+def get_official_listing_dates():
+    """Authoritative TWSE/TPEx issuer master. No inferred/synthetic listing dates."""
+    dates={}
+    urls=[("上市",TWSE_COMPANY_URL),("上櫃",TPEX_COMPANY_URLS[0])]
+    for market,url in urls:
+        try:
+            rows=request(url,retries=2).json()
+            if not isinstance(rows,list):raise ValueError("issuer list not array")
+            valid=0
+            for row in rows:
+                if not isinstance(row,dict):continue
+                code=str(row.get("公司代號") or row.get("SecuritiesCompanyCode") or row.get("Code") or row.get("股票代號") or "").strip()
+                if not re.fullmatch(r"\d{4}",code):continue
+                keys=[k for k in row if "上市" in k or "上櫃" in k or "listing" in k.lower()]
+                day=next((d for k in keys if (d:=parse_listing_day(row.get(k))) is not None),None)
+                if day:
+                    dates[code]=day;valid+=1
+            print("issuer listing dates",market,valid,"of",len(rows),flush=True)
+        except (RuntimeError,ValueError) as exc:
+            print("issuer listing metadata unavailable",market,str(exc)[:160],file=sys.stderr)
+    return dates
+def select_owners(points,universe,listing_dates=None,as_of=None):
     a,b,c=points
     universe_by_code={x["code"]:x for x in universe if x["market"] in {"上市","上櫃"} and re.fullmatch(r"\d{4}",x["code"])}
     found=defaultdict(list);skipped=Counter();common=0
@@ -103,6 +138,11 @@ def select_owners(points,universe):
         stock=universe_by_code.get(code)
         if not stock:
             skipped["no_current_listed_otc_universe"]+=1;continue
+        if stock.get("name","").upper().endswith("-DR") or stock.get("industry")=="存託憑證":
+            skipped["depositary_receipt"]+=1;continue
+        listed=(listing_dates or {}).get(code)
+        if listed is not None and as_of is not None and 0<=(as_of-listed).days<30:
+            skipped["recent_initial_listing_under_30_days"]+=1;continue
         prev,mid=a[code],b[code]
         # Avoid corporate actions/reclassifications that change share denominator.
         totals=[prev["total"],mid["total"],latest["total"]]
@@ -148,9 +188,9 @@ def fetch_close_prices(groups,universe,start,end):
                 returns[code]=round((c/p-1)*100,2)
         except (ValueError,TypeError,KeyError):continue
     return returns,{"attempted":len(pairs),"paired":len(returns),"errors":len(fail)}
-def render(dates,records,universe,price_returns,price_cov):
+def render(dates,records,universe,price_returns,price_cov,listing_dates=None):
     (d0,_),(d1,_),(d2,_)=dates
-    groups,skipped,common=select_owners(records,universe)
+    groups,skipped,common=select_owners(records,universe,listing_dates=listing_dates,as_of=date.fromisoformat(d2))
     result={}
     for name in QUADRANTS:
         rows=groups.get(name,[])
@@ -174,7 +214,7 @@ def render(dates,records,universe,price_returns,price_cov):
             "continuedBuy":"兩段變動均達+1.00pp","turnaround":"前段≤−1.00pp、本段≥+1.00pp",
             "exit":"前段≥+1.00pp、本段≤−1.00pp","continuedSell":"兩段變動均≤−1.00pp",
             "price":"本週收盤漲跌＝本期相對前一期調整後收盤價的百分比（Yahoo Finance），不可取得留空",
-            "screen":"當前上市/上櫃四碼普通股，兩段絕對變動都達1pp；排除集保合計股數週變化超過5%者",
+            "screen":"當前上市/上櫃四碼普通股（不含存託憑證及官方上市/櫃日期未滿30日的新掛牌股票），兩段絕對變動都達1pp；排除集保合計股數週變化超過5%者",
             "differenceFromImage":"原圖額外入榜規則未揭露；此處顯示完整符合公開條件的集合，不宣稱與原圖數量相同"
         },
         "source":{"official":"https://www.tdcc.com.tw/portal/zh/smWeb/qryStock",
@@ -199,15 +239,16 @@ def main():
         print("TDCC",day,len(rows),"codes",len(raw),"bytes",flush=True)
         snapshots.append(rows)
     universe=load_universe()
+    listing_dates=get_official_listing_dates()
     if len(universe)<1400:raise RuntimeError("Listed+OTC universe unexpectedly small")
-    groups,_,_=select_owners(snapshots,universe)
+    groups,_,_=select_owners(snapshots,universe,listing_dates=listing_dates,as_of=date.fromisoformat(dates[-1][0]))
     if args.skip_price:
         print("CHECK_ONLY",json.dumps({k:len(v) for k,v in groups.items()},ensure_ascii=False))
         return
     values,cov=fetch_close_prices(groups,universe,dates[1][0],dates[2][0])
     if cov["paired"]<max(40,int(cov["attempted"]*.60)):
         raise RuntimeError(f"Price source coverage too low: {cov} (refuse to publish incomplete weekly report)")
-    report=render(dates,snapshots,universe,values,cov)
+    report=render(dates,snapshots,universe,values,cov,listing_dates=listing_dates)
     OUT.mkdir(parents=True,exist_ok=True)
     text=json.dumps(report,ensure_ascii=False,indent=2)+"\n"
     (OUT/"latest.json").write_text(text,encoding="utf-8")
