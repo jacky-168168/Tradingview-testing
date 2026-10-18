@@ -13,6 +13,11 @@ class TestM10M11(unittest.TestCase):
         p={"tables":[{"date":"115/10/15","fields":["代號","名稱","資餘額","券餘額"],"data":rows}]}
         v=parse_margin(p,"上櫃","2026-10-15")
         self.assertEqual(v["上櫃_2000"],[11,3])
+        p["date"]="20261015"
+        v=parse_margin(p,"上櫃","2026-10-15")
+        self.assertEqual(v["上櫃_2000"],[11,3])
+        p["date"]="20261014"
+        with self.assertRaisesRegex(ValueError,"wrong date"):parse_margin(p,"上櫃","2026-10-15")
     def test_five_consecutive_rises_not_only_endpoints(self):
         days=[f"2026-01-{i:02d}" for i in range(2,8)]
         full={d:{"上市_1234":[20+i,7+i]} for i,d in enumerate(days)}
