@@ -72,8 +72,8 @@ jobs:
           path: tw-stock-dashboard/docs/data/research/tdcc_whales
           if-no-files-found: warn
           retention-days: 90
-      - name: Publish only on default branch
-        if: github.ref == 'refs/heads/main'
+      - name: Publish verified initial snapshot to feature branch and default branch
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/tdcc-whale-quadrant-weekly-20261019'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -82,7 +82,7 @@ jobs:
             git commit -m 'data: refresh verified TDCC 400-lot quadrants weekly'
             for i in 1 2 3 4 5; do
               git pull --rebase origin main || { git rebase --abort || true; sleep $((i*5)); continue; }
-              if git push origin HEAD:main; then exit 0; fi
+              if git push origin HEAD:"$GITHUB_REF_NAME"; then exit 0; fi
               sleep $((i*5))
             done
             exit 1
