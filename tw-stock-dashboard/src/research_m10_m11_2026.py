@@ -207,7 +207,7 @@ def run_one(model,days,signals,hist,hold=10):
                            "code":p["stock"]["code"],"netPct":round(100*(proceeds/p["paid"]-1),4),
                            "netTWD":round(proceeds-p["paid"],2)})
             del positions[key]
-        equity=cash+sum(p["shares"]*p["lastClose"]*(1-SLIP)*(1-BROKER-SELL_TAX)) for p in positions.values())
+        equity=cash+sum(p["shares"]*p["lastClose"]*(1-SLIP)*(1-BROKER-SELL_TAX) for p in positions.values())
         nav.append({"date":day,"equity":round(equity,2)})
         pending=signals.get(day,[])[:3] # queued until next session open
     vals=np.array([1_000_000]+[z["equity"] for z in nav],float)
@@ -237,9 +237,12 @@ def main():
             else:credit_errors[day]=error
     for i,day in enumerate(days):
         try:
-            flow=fetch_day(day,retries=2)
-            # fetch_day may return error-bearing structures; only accept date-specific per-stock records.
-            if len(flow)<900:raise RuntimeError(f"only {len(flow)} institutional stock rows")
+            report_day,flow,fetch_error=fetch_day(day,retries=2)
+            if report_day!=day or fetch_error:raise RuntimeError(fetch_error or "wrong institutional date")
+            # Both markets must be represented; missing official dates cannot be treated as zero.
+            listed=sum(k.startswith("上市_") for k in flow)
+            otc=sum(k.startswith("上櫃_") for k in flow)
+            if listed<500 or otc<250:raise RuntimeError(f"official stock rows insufficient: listed={listed} otc={otc}")
             inst[day]=flow
         except Exception as e:flow_errors[day]=str(e)
         if i%30==0:print("institution",i,"/",len(days),flush=True)
