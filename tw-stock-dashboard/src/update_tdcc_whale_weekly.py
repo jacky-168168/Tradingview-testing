@@ -252,8 +252,17 @@ def main():
         raise RuntimeError(f"Price source coverage too low: {cov} (refuse to publish incomplete weekly report)")
     report=render(dates,snapshots,universe,values,cov,listing_dates=listing_dates)
     OUT.mkdir(parents=True,exist_ok=True)
+    target=OUT/"latest.json"
+    if target.exists():
+        try:
+            existing=json.loads(target.read_text(encoding="utf-8"))
+            fields=("date","priorDate","twoWeeksBefore","quadrants","coverage","definitions")
+            if all(existing.get(k)==report.get(k) for k in fields):
+                print("TDCC_WEEKLY_NO_CHANGE verified data already published",report["date"],flush=True)
+                return
+        except (OSError,ValueError):pass
     text=json.dumps(report,ensure_ascii=False,indent=2)+"\n"
-    (OUT/"latest.json").write_text(text,encoding="utf-8")
+    target.write_text(text,encoding="utf-8")
     archive=OUT/"history";archive.mkdir(exist_ok=True)
     (archive/f"{report['date']}.json").write_text(text,encoding="utf-8")
     print("TDCC_400_QUADRANTS_VERIFIED",report["date"],
