@@ -1,0 +1,87 @@
+name: TDCC Whale Shareholder Weekly
+on:
+  workflow_dispatch:
+  schedule:
+    # Sunday 09:35 Asia/Taipei; reference day could be Thursday or Friday.
+    - cron: '35 1 * * 0'
+  push:
+    branches: [main, feat/tdcc-whale-quadrant-weekly-20261019]
+    paths:
+      - 'tw-stock-dashboard/src/update_tdcc_whale_weekly.py'
+      - 'tw-stock-dashboard/tests/test_tdcc_whale_weekly.py'
+      - '.github/workflows/tdcc-whale-weekly.yml'
+permissions:
+  contents: write
+concurrency:
+  group: tdcc-whale-weekly
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tdcc-weekly-v1
+          restore-keys: |
+            tw-stock-cache-
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Unit test TDCC 400-lot parsing, quadrants, and time guards
+        run: |
+          python -m py_compile tw-stock-dashboard/src/update_tdcc_whale_weekly.py
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p test_tdcc_whale_weekly.py -v
+          node --check tw-stock-dashboard/docs/tdcc-whale-weekly.js
+          node tw-stock-dashboard/tests/test_tdcc_whale_ui.cjs
+      - name: Fetch 3 actual TDCC snapshots and verified weekly stock closes
+        run: python -u tw-stock-dashboard/src/update_tdcc_whale_weekly.py
+      - name: Verify 400-lot weekly report
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from datetime import date
+          p=Path('tw-stock-dashboard/docs/data/research/tdcc_whales/latest.json')
+          x=json.loads(p.read_text(encoding='utf-8'))
+          assert x['version']=='TDCC_WHALE_400_QUADRANTS_V1'
+          assert x['twoWeeksBefore']<x['priorDate']<x['date']<=date.today().isoformat()
+          assert x['coverage']['sharedThreeWeeks']>=3500
+          assert x['coverage']['price']['paired']>=40
+          assert set(x['quadrants'])=={'續買','回頭車','下車','續賣'}
+          assert sum(len(z['rows']) for z in x['quadrants'].values())>30
+          assert all(z['count']==len(z['rows']) for z in x['quadrants'].values())
+          assert all(0<=r['bigHolderRatio']<=100 and abs(r['previousPP'])>=.995 and abs(r['currentPP'])>=.995 for z in x['quadrants'].values() for r in z['rows'])
+          print('VALID TDCC WEEKLY',x['date'],{k:v['count'] for k,v in x['quadrants'].items()})
+          PY
+      - name: Archive diagnostics and verified report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tdcc-whale-weekly-report
+          path: tw-stock-dashboard/docs/data/research/tdcc_whales
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Publish only on default branch
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/tdcc_whales
+          if ! git diff --cached --quiet; then
+            git commit -m 'data: refresh verified TDCC 400-lot quadrants weekly'
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*5)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*5))
+            done
+            exit 1
+          fi
