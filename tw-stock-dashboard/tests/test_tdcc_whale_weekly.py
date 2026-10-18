@@ -1,5 +1,6 @@
 import io,csv,unittest
-from update_tdcc_whale_weekly import parse_snapshot,quadrant_of,select_owners,render
+from update_tdcc_whale_weekly import parse_snapshot,quadrant_of,select_owners,render,parse_listing_day
+from datetime import date
 class TestTDCCWhales(unittest.TestCase):
     @staticmethod
     def fixture(date="2026-10-16",invalid=False):
@@ -34,6 +35,18 @@ class TestTDCCWhales(unittest.TestCase):
         self.assertEqual(groups["續買"][0]["currentPP"],5.48)
         report=render([("2026-10-02","archA"),("2026-10-08","archB"),("2026-10-16","archC")],p,universe,{"6278":20.4},{"paired":1,"attempted":1,"errors":0})
         self.assertEqual(report["quadrants"]["續買"]["rows"][0]["priceReturnPct"],20.4)
+    def test_dr_and_recent_ipo_excluded_without_hardcoded_tickers(self):
+        self.assertEqual(parse_listing_day("1150922"),date(2026,9,22))
+        self.assertEqual(parse_listing_day("2026/09/22"),date(2026,9,22))
+        self.assertIsNone(parse_listing_day("invalid"))
+        universe=[{"code":"9105","name":"泰金寶-DR","market":"上市"},{"code":"7856","name":"漢測","market":"上櫃"},{"code":"6278","name":"台表科","market":"上市"}]
+        versions=[]
+        for rate in (40,43,46):
+            versions.append({k:{"ratio":rate,"total":100000000} for k in ("9105","7856","6278")})
+        groups,reasons,_=select_owners(versions,universe,{"7856":date(2026,9,22),"6278":date(2010,1,1)},date(2026,10,16))
+        self.assertEqual([r["code"] for r in groups["續買"]],["6278"])
+        self.assertEqual(reasons["depositary_receipt"],1)
+        self.assertEqual(reasons["recent_initial_listing_under_30_days"],1)
     def test_total_share_denominator_change_not_turnover(self):
         universe=[{"code":"6278","name":"台表科","market":"上市"}]
         p=[{"6278":{"ratio":50,"total":1000000}},{"6278":{"ratio":53,"total":1200000}},{"6278":{"ratio":56,"total":1200000}}]
