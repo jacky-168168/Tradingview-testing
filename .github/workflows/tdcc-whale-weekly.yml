@@ -72,8 +72,8 @@ jobs:
           path: tw-stock-dashboard/docs/data/research/tdcc_whales
           if-no-files-found: warn
           retention-days: 90
-      - name: Publish verified initial snapshot to feature branch and default branch
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/tdcc-whale-quadrant-weekly-20261019'
+      - name: Publish verified weekly snapshot to default branch
+        if: github.ref == 'refs/heads/main'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
