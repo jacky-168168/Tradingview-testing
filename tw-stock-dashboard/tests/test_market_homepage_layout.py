@@ -62,7 +62,9 @@ class MarketHomepageLayout(unittest.TestCase):
         self.assertEqual(self.html.count('id="compactScore"'),1)
         self.assertIn('market-compact.css',self.html)
         self.assertIn('market-compact.js',self.html)
-        self.assertIn('id="usopChart"',self.html)
+        self.assertIn('id="fgChart"',self.html)
+        self.assertIn('id="fgSpxChart"',self.html)
+        self.assertNotIn('id="usopChart"',self.html)
         self.assertNotIn('id="marketRiskDetails" class="compact-deep" open',self.html)
     
     def test_single_upstream_entry_is_in_top_navigation_only(self):

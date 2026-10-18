@@ -1,0 +1,44 @@
+/* CNN Fear & Greed primary market-sentiment card. Existing DIX/GEX research stays archived. */
+.fg-panel.card{background:linear-gradient(145deg,#152238,#1f304a 66%,#172638);border:1px solid #3a5072;border-radius:17px;padding:21px 24px;margin:14px 0 18px;color:#e9f1ff;box-shadow:0 7px 25px #0f172a24}
+.fg-panel *{box-sizing:border-box}
+.fg-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.fg-kicker{font-size:11px;color:#a2bad7;letter-spacing:.11em;font-weight:850}
+.fg-top h2{font-size:21px;line-height:1.35;margin:5px 0;color:white;font-weight:900}
+.fg-sub{font-size:12px;color:#b3c4db;line-height:1.75;margin:4px 0}
+.fg-ranges{display:flex;gap:8px;flex-wrap:wrap}
+.fg-ranges button{border:1px solid #556986;border-radius:9px;background:#263a55;color:#dbe7f7;padding:8px 12px;cursor:pointer;font-weight:800}
+.fg-ranges button.is-active{background:#f4f7ff;color:#17243b;border-color:#f4f7ff}
+.fg-ranges button:focus-visible,.fg-chart:focus-visible,#fgRetry:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.fg-data{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}
+.fg-metric{background:#253750;border:1px solid #405474;border-radius:12px;padding:12px 14px;min-width:0}
+.fg-metric span{display:block;font-size:11px;color:#b5c7dc;font-weight:750;margin-bottom:7px}
+.fg-metric strong{display:block;color:white;font-size:26px;line-height:1.1;font-weight:900;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.fg-metric.fg-mood strong[data-zone="extreme-fear"]{color:#f87171}
+.fg-metric.fg-mood strong[data-zone="fear"]{color:#fdba74}
+.fg-metric.fg-mood strong[data-zone="neutral"]{color:#e2e8f0}
+.fg-metric.fg-mood strong[data-zone="greed"]{color:#86efac}
+.fg-metric.fg-mood strong[data-zone="extreme-greed"]{color:#34d399}
+.fg-caption{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:8px 0;color:#f2f6ff;font-weight:800;font-size:13px}
+.fg-hint{font-size:11px;color:#b8cbe0;font-weight:500}
+.fg-chart{display:block;width:100%;min-height:110px;cursor:crosshair;touch-action:pan-y;outline:none}
+.fg-chart-fear{height:auto}
+.fg-chart-spx{height:auto;margin-bottom:8px}
+.fg-zones{display:flex;gap:3px;margin:7px 14px 14px 51px;max-width:calc(100% - 73px)}
+.fg-zones>span{font-size:10px;text-align:center;line-height:1.4;white-space:nowrap;color:#eaf2fc;padding:4px 0}
+.fg-zones>span:nth-child(1){width:25%;background:#7f1d1d}
+.fg-zones>span:nth-child(2){width:20%;background:#9a3412}
+.fg-zones>span:nth-child(3){width:10%;background:#475569}
+.fg-zones>span:nth-child(4){width:20%;background:#166534}
+.fg-zones>span:nth-child(5){width:25%;background:#047857}
+.fg-report{border-top:1px solid #48607a;margin-top:11px;padding-top:15px}
+.fg-report h3{margin:0 0 9px;font-size:17px;color:#f8fafc}
+.fg-report p{font-size:13px;line-height:1.75;color:#d5e2f2;margin:5px 0}
+.fg-report p strong{color:#f4cf86}
+.fg-report .fg-context{color:#a9deff;font-weight:800}
+.fg-footer{border-top:1px solid #415470;margin-top:13px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;gap:9px}
+.fg-footer a{color:#9dcbff;text-decoration:underline;text-underline-offset:2px}
+.fg-source,.fg-message{font-size:11px;color:#adbed4;line-height:1.8}
+.fg-message{margin:8px 0}
+.fg-links{display:flex;gap:14px;flex-wrap:wrap;font-size:12px}
+#fgRetry{cursor:pointer;border:1px solid #7691b5;border-radius:8px;background:#263d5c;color:white;padding:7px 12px}
+@media(max-width:700px){.fg-panel.card{padding:16px 12px}.fg-top h2{font-size:19px}.fg-data{gap:6px}.fg-metric{padding:10px 7px}.fg-metric strong{font-size:19px}.fg-metric span{font-size:10px}.fg-zones{margin-left:42px;max-width:calc(100% - 60px)}.fg-zones>span{font-size:8px}.fg-report h3{font-size:15px}}
