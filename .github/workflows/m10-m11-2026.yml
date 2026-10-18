@@ -1,0 +1,75 @@
+name: M10-M11 Official 2026 Stock Selector Backtest
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/research_m10_m11_2026.py'
+      - 'tw-stock-dashboard/tests/test_m10_m11_2026.py'
+      - '.github/workflows/m10-m11-2026.yml'
+permissions:
+  contents: write
+concurrency:
+  group: m10-m11-2026-research
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: m10-m11-research-20261018-v1
+          restore-keys: |
+            tw-stock-cache-
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Syntax and data-timing unit tests
+        run: |
+          python -m py_compile tw-stock-dashboard/src/research_m10_m11_2026.py
+          PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_m10_m11_2026.py' -v
+      - name: Collect official 2026 TWSE/TPEx per-stock daily history and backtest
+        working-directory: tw-stock-dashboard
+        run: python -u src/research_m10_m11_2026.py --from-date 2026-01-01 --to-date 2026-10-16
+      - name: Check output integrity and source coverage
+        run: |
+          python - <<'PY'
+          import json
+          p='tw-stock-dashboard/docs/data/research/m10_m11_2026/summary.json'
+          x=json.load(open(p))
+          assert x['version']=='M10_M11_2026_PIT_LAGGED_RESEARCH_V1'
+          assert x['period']['start']>='2026-01-01'
+          assert len(x['models'])==2
+          for k in ('M10','M11'):
+              z=x['models'][k]
+              assert z['portfolio10D']['capitalEnd']>=0
+              for h in ('5','10','20'):assert z['top3TradeSample'][h]['trades']>=0
+          print('Research audit:',x['status'],'coverage',x['coverage']['pairedSessions'],'/',x['coverage']['marketSessions'])
+          PY
+      - name: Archive full 2026 preliminary results for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: M10-M11-Official-2026-Research
+          path: tw-stock-dashboard/docs/data/research/m10_m11_2026/summary.json
+          retention-days: 90
+      - name: Publish research-only 2026 output (never changes live stock picks)
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/m10_m11_2026/summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish M10 M11 official 2026 backtest audit'
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
