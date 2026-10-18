@@ -39,7 +39,10 @@ def dates_from_archive(year=None):
     now=date.today(); years=[year] if year else sorted({now.year,now.year-1},reverse=True)
     result=[]
     for y in years:
-        rows=request(f"{ARCHIVE}/{y}").json()
+        try:rows=request(f"{ARCHIVE}/{y}",retries=1).json()
+        except RuntimeError as e:
+            if y!=now.year and ("404" in str(e)):continue  # archive started in 2026; older years not mandatory
+            raise
         if not isinstance(rows,list):raise ValueError("TDCC weekly archive index shape changed")
         for x in rows:
             name=str(x.get("name") or "")
