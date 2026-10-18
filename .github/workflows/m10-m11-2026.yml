@@ -47,6 +47,7 @@ jobs:
           assert x['version']=='M10_M11_2026_PIT_LAGGED_RESEARCH_V1'
           assert x['period']['start']>='2026-01-01'
           assert len(x['models'])==2
+          assert x['status']=='PRELIMINARY_SURVIVORSHIP_BIAS', f"Official data incomplete: {x['coverage']['pairedSessions']}/{x['coverage']['marketSessions']} sessions"
           for k in ('M10','M11'):
               z=x['models'][k]
               assert z['portfolio10D']['capitalEnd']>=0
@@ -54,6 +55,7 @@ jobs:
           print('Research audit:',x['status'],'coverage',x['coverage']['pairedSessions'],'/',x['coverage']['marketSessions'])
           PY
       - name: Archive full 2026 preliminary results for review
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: M10-M11-Official-2026-Research
