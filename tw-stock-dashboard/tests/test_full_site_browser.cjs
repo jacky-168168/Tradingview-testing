@@ -86,16 +86,19 @@ async function main(){
         guide.textContent.includes('分數解讀與操作方向'));
     }));
     await test(variant+' institution/source render',()=>page.evaluate(()=>document.getElementById('instSource').textContent.length>0&&document.getElementById('buyRows').textContent.length>0&&document.getElementById('sellRows').textContent.length>0));
-    await test(variant+' DIX chart remains functional when latest.json is unavailable',async()=>{
+    await test(variant+' CNN Fear Greed still renders when retired DIX latest.json is unavailable',async()=>{
       const x=await ctx.newPage();
       try{
-        await x.route('**/data/research/us_options/latest.json*',route=>route.fulfill({status:503,body:'maintenance'}));
+        await x.route('**/data/research/us_options/latest.json*',route=>route.fulfill({status:503,body:'retired DIX endpoint'}));
         await x.goto(BASE+'index.html',{waitUntil:'domcontentloaded',timeout:28000});
         await x.waitForFunction(()=>{
-          const svg=document.getElementById('usopChart');
-          return svg?.querySelectorAll('path[data-path-series]').length===3;
+          const fear=document.getElementById('fgChart'),spx=document.getElementById('fgSpxChart');
+          return fear?.querySelectorAll('polyline').length===1&&spx?.querySelectorAll('polyline').length===1;
         },null,{timeout:18000});
-        return await x.evaluate(()=>document.getElementById('usopValuegex').textContent!=='—'&&!document.getElementById('usopChartWrap').classList.contains('usop-error')&&document.querySelectorAll('#usopDailyBody tbody tr').length===3);
+        return x.evaluate(()=>{
+          return !!document.getElementById('fgReportTitle')?.textContent.trim()&&
+           Number.isFinite(Number(document.getElementById('fgValue')?.textContent));
+        });
       }finally{await x.close()}
     });
 
