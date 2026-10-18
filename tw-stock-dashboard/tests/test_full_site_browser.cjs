@@ -2,7 +2,7 @@
    static Pages tree, with real Chromium at desktop and Android-like viewports. */
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 const ROOT=path.resolve(__dirname,'../docs'),BASE='http://127.0.0.1:8765/';
-const CORE=['index.html','selections.html','bubbles.html','stocks.html','upstream.html','history.html','backtest.html'];
+const CORE=['index.html','selections.html','bubbles.html','stocks.html','upstream.html','history.html','backtest.html','tdcc-whale-weekly.html'];
 const EXT=['market-methodology.html','market-ml-stocks.html','market-cash-3y.html','n-canslim.html','txf-backtest.html','etf-allocation.html','g-backtest.html','g-persistence.html','g-pro-3y.html','g-regime-3y.html','g-regime-contrarian-3y.html','g-target.html','g-candles.html','g-compound-3y.html','g-compound-v2-3y.html','g-compound-v3-walkforward.html','etf-00631l.html'];
 const ALL=[...CORE,...EXT],checks=[],problems=[],warnings=[];
 const log=(name,ok,details)=>{const rec={name,pass:!!ok,...(details?{details}:{} )};checks.push(rec);if(!ok)problems.push(rec)};
@@ -64,21 +64,10 @@ async function main(){
        document.getElementById('fgReportBody')?.textContent.length>15&&
        document.getElementById('fgReportWatch')?.textContent.length>12;
     }));
-    await test(variant+' TDCC 400-lot weekly panel gracefully handles not-yet-published source',async()=>{
-      await page.waitForFunction(()=>{
-       const s=document.getElementById('tdccWhaleStatus')?.textContent||'';
-       return s.includes('本期')||s.includes('尚未取得完整驗證結果');
-      },{timeout:15000}).catch(()=>{});
-      return page.evaluate(()=>{
-       const root=document.getElementById('tdccWhalePanel'),msg=document.getElementById('tdccWhaleStatus')?.textContent||'';
-       const cards=root?.querySelectorAll('article.whale-quadrant').length||0;
-       if(!root)return {ok:false,missing:'tdccWhalePanel'};
-       if(cards===4)return msg.includes('百分點')&&root.querySelectorAll('.whale-stock').length>=1&&
-        document.getElementById('tdccWhaleDates')?.textContent.includes('2026/')&&
-        root.querySelectorAll('.whale-stock .whale-return').length>=1;
-       return msg.includes('尚未取得完整驗證結果')&&!!document.getElementById('tdccWhaleRetry')&&!document.getElementById('tdccWhaleRetry').hidden;
-      });
-    });
+    await test(variant+' TDCC weekly report is reachable from primary navbar without giant home panel',()=>page.evaluate(()=>{
+      const link=document.querySelector('.site-nav-primary a[href="./tdcc-whale-weekly.html"]');
+      return !!link&&link.textContent.includes('大戶換手')&&!document.getElementById('tdccWhalePanel');
+    }));
     await test(variant+' homepage shows score interpretation and action',()=>page.evaluate(()=>{
       const guide=document.getElementById('commandTradeGuide'),title=document.getElementById('commandGuideTitle'),
         detail=document.getElementById('commandGuideText'),scale=document.getElementById('commandGuideScale');
@@ -106,6 +95,27 @@ async function main(){
 
     await test(variant+' home to linked core routes',()=>page.evaluate(()=>['./selections.html','./stocks.html','./bubbles.html','./upstream.html','./backtest.html'].every(x=>document.querySelector('a[href="'+x+'"]'))));
     if(variant==='mobile')await test('mobile market detail toggle',async()=>{const e=page.locator('#marketAdvanced');await e.evaluate(n=>n.open=true);return await e.evaluate(n=>n.open)});
+   }
+   if(file==='tdcc-whale-weekly.html'){
+     await test(variant+' TDCC dedicated page loads 400-lot weekly quadrants',async()=>{
+       await page.waitForFunction(()=>{
+         const status=document.getElementById('tdccWhaleStatus')?.textContent||'';
+         return status.includes('本期')||status.includes('尚未取得完整驗證結果');
+       },null,{timeout:18000}).catch(()=>{});
+       return page.evaluate(()=>{
+         const panel=document.getElementById('tdccWhalePanel'),status=document.getElementById('tdccWhaleStatus')?.textContent||'',
+               groups=panel?.querySelectorAll('article.whale-quadrant').length||0;
+         if(groups!==4)return {ok:false,status,groups};
+         const count=[...panel.querySelectorAll('.whale-quadrant-title>span')].reduce((total,x)=>total+Number(x.textContent.replace(/\D/g,'')),0);
+         return count===57&&panel.querySelectorAll('.whale-stock').length>10&&
+          document.getElementById('tdccWhaleDates')?.textContent.includes('2026/')&&
+          panel.querySelectorAll('.whale-return').length>10&&
+          !!document.querySelector('a[href="./index.html"]');
+       });
+     });
+     if(variant==='mobile')await test('mobile TDCC report does not overflow viewport',()=>page.evaluate(()=>{
+        return document.documentElement.scrollWidth<=window.innerWidth+3;
+     }));
    }
    if(file==='selections.html'){
     await test(variant+' G official 20 with dated source',()=>page.evaluate(()=>MODEL==='G'&&DATA.gSelection?.dataDate===DATA.dataDate&&document.querySelectorAll('#officialTb tr').length===DATA.models.G.length));
