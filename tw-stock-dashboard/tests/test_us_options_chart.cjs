@@ -68,15 +68,14 @@ assert.equal(calculate(validate(live).slice(0,-1)).date,live.rows.at(-2)[0],"Nev
 const home=fs.readFileSync(path.join(__dirname,"../docs/index.html"),"utf8");
 const js=fs.readFileSync(path.join(__dirname,"../docs/us-options-risk.js"),"utf8");
 const py=fs.readFileSync(path.join(__dirname,"../src/update_us_options.py"),"utf8");
-for(const id of ["usOptionsRisk","usopChart","usopChartWrap","usopDate","usopStatus","usopMessage","usopDailyAnalysis","usopDailyTitle","usopDailyBody","usopDailyMeta","usopValuedix","usopValuespx","usopValuegex"])assert.ok(home.includes('id="'+id+'"'),"Missing chart DOM "+id);
-for(const range of ["6m","2y","max"])assert.ok(home.includes('data-usop-range="'+range+'"'));
-for(const key of ["dix","spx","gex"])assert.ok(home.includes('data-usop-series="'+key+'"'));
-assert.ok(home.includes('href="./us-options-risk.css?v=')&&home.includes('src="./us-options-risk.js?v='));
-assert.ok(!home.includes('<details class="card" id="usOptionsRisk"'),"Chart cannot be hidden behind collapsed details");
+// DIX/GEX is retained as a historical research module, not displayed on the home page.
+for(const id of ["fearGreedPanel","fgChart","fgSpxChart","fgReportTitle","fgReportBody"])
+ assert.ok(home.includes('id="'+id+'"'),"Missing new CNN chart DOM "+id);
+assert.ok(home.includes('fear-greed-home.css')&&home.includes('fear-greed-home.js'));
+assert.ok(home.includes('原 DIX／GEX 研究'),"Archive reference must stay available");
+assert.ok(!home.includes('id="usOptionsRisk"'),"Retired DIX/GEX home chart must not persist");
 assert.ok(js.includes('pointermove')&&js.includes('ArrowLeft')&&js.includes('pointerdown'));
 assert.ok(py.includes('def history_chart(us)')&&py.includes('DATA/"history.json"'));
-assert.ok(home.includes('src="./us-options-daily-report.js?v='));
-assert.ok(home.includes('綠線看美股漲跌')&&home.includes('黃線看選擇權相關波動風險'));
 assert.ok(js.includes('renderDailyAnalysis(rows,stale)'));
 assert.ok(!js.includes("RiskScore=")&&!js.includes("DATA.risk.score="),"Historical chart must not modify market scoring");
-console.log("Interactive three-series US options chart DOM, validation, date ranges, no placeholders: OK");
+console.log("DIX/GEX archived research validated; CNN Fear Greed is primary home US chart: OK");
