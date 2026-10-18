@@ -73,7 +73,9 @@ async function main(){
        const root=document.getElementById('tdccWhalePanel'),msg=document.getElementById('tdccWhaleStatus')?.textContent||'';
        const cards=root?.querySelectorAll('article.whale-quadrant').length||0;
        if(!root)return {ok:false,missing:'tdccWhalePanel'};
-       if(cards===4)return msg.includes('百分點')&&root.querySelectorAll('.whale-stock').length>=1;
+       if(cards===4)return msg.includes('百分點')&&root.querySelectorAll('.whale-stock').length>=1&&
+        document.getElementById('tdccWhaleDates')?.textContent.includes('2026/')&&
+        root.querySelectorAll('.whale-stock .whale-return').length>=1;
        return msg.includes('尚未取得完整驗證結果')&&!!document.getElementById('tdccWhaleRetry')&&!document.getElementById('tdccWhaleRetry').hidden;
       });
     });
