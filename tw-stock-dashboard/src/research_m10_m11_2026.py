@@ -13,7 +13,7 @@ import numpy as np,pandas as pd,requests
 from config import CACHE_DIR,DATA_DIR
 from pipeline import load_universe
 from yahoo_cache import update_many,update_symbol,to_symbol
-from institution import fetch_day
+from institution import fetch_many
 OUT=DATA_DIR/"research"/"m10_m11_2026"
 CACHE=CACHE_DIR/"m10_m11_2026"
 START="2026-01-01";END="2026-10-16"
@@ -124,10 +124,10 @@ def select_models(days,universe,hist,credits,inst):
     result={"M10":{},"M11":{}}
     for i,day in enumerate(days):
         credit=credits.get(day);flow=inst.get(day)
-        if not credit or not flow:continue
+        if not credit and not flow:continue
         ratios={}
         for g,keys in by_industry.items():
-            present=[k for k in keys if k in flow]
+            present=[k for k in keys if flow and k in flow]
             if len(present)>=8:
                 ratios[g]=sum(float(flow[k]["trust"])>0 for k in present)/len(present)
         ten=[];eleven=[]
@@ -143,7 +143,7 @@ def select_models(days,universe,hist,credits,inst):
                   "industry":meta.get("industry"),"ret5":round(ret5,3),"turnoverB":round(turn,3)}
             if ratio>=.30 and ret5>10:
                 ten.append(dict(base,trustIndustryRatio=round(100*ratio,2),rankScore=round(ratio*100+ret5,3)))
-            if growing_five(i,days,key,credits):
+            if credit and growing_five(i,days,key,credits):
                 v=credit.get(key)
                 if v:
                     b=credits[days[i-5]][key]
@@ -235,17 +235,17 @@ def main():
             day,rows,error=f.result()
             if rows is not None:credits[day]=rows
             else:credit_errors[day]=error
-    for i,day in enumerate(days):
-        try:
-            report_day,flow,fetch_error=fetch_day(day,retries=2)
-            if report_day!=day or fetch_error:raise RuntimeError(fetch_error or "wrong institutional date")
-            # Both markets must be represented; missing official dates cannot be treated as zero.
-            listed=sum(k.startswith("上市_") for k in flow)
-            otc=sum(k.startswith("上櫃_") for k in flow)
-            if listed<500 or otc<250:raise RuntimeError(f"official stock rows insufficient: listed={listed} otc={otc}")
-            inst[day]=flow
-        except Exception as e:flow_errors[day]=str(e)
-        if i%30==0:print("institution",i,"/",len(days),flush=True)
+    # TWSE T86 and TPEx dailyTrade are date-pinned; no missing data treated as zero.
+    fetched,issues=fetch_many(days,workers=max(1,min(4,args.workers)))
+    for day in days:
+        flow=fetched.get(day) or {}
+        error=issues.get(day)
+        listed=sum(k.startswith("上市_") for k in flow)
+        otc=sum(k.startswith("上櫃_") for k in flow)
+        if error or listed<500 or otc<250:
+            flow_errors[day]=str(error or f"market coverage insufficient: listed={listed} otc={otc}")
+        else:inst[day]=flow
+    print("official institution sessions",len(inst),"/",len(days),flush=True)
     signal=select_models(days,universe,hist,credits,inst)
     coverage={"marketSessions":len(days),"creditSessions":len(credits),"institutionSessions":len(inst),
               "pairedSessions":len(set(credits)&set(inst)),"stockPriceHistories":valid,
