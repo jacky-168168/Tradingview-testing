@@ -371,36 +371,42 @@ jobs:
                   time.sleep(5)
           PY
 
-      - name: Verify live Pages delivers valid DIX GEX chart files
+      - name: Verify deployed CNN Fear Greed and S&P 500 chart
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
           python - <<'PY'
           import hashlib,json,os,re,time,urllib.request
           base=os.environ['PAGES_URL'].rstrip('/')
-          def get(p):
-              url=base+'/'+p
-              req=urllib.request.Request(url,headers={'User-Agent':'DIX-GEX-Live-Chart-Check','Cache-Control':'no-cache'})
+          def read(path):
+              req=urllib.request.Request(base+'/'+path,headers={'User-Agent':'CNN-Fear-Greed-Live-Check','Cache-Control':'no-cache'})
               with urllib.request.urlopen(req,timeout=25) as r:
-                  if r.status!=200:raise RuntimeError('HTTP '+str(r.status)+' '+url)
+                  if r.status!=200:raise RuntimeError('HTTP '+str(r.status))
                   return r.read()
-          for attempt in range(12):
+          def blob_sha(raw):
+              return hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()[:12]
+          for attempt in range(1,13):
               try:
-                  html=get('index.html?chart-test='+str(time.time())).decode('utf-8')
-                  m=re.search(r'us-options-risk\.js\?v=([0-9a-f]{12})',html)
-                  assert m,'Missing versioned DIX JS'
-                  js=get('us-options-risk.js?v='+m.group(1))
-                  digest=hashlib.sha1(b'blob '+str(len(js)).encode()+b'\0'+js).hexdigest()[:12]
-                  assert digest==m.group(1),'Live DIX JS does not match HTML cache hash'
-                  assert b'latest.json' in js and b'history.json' in js
-                  h=json.loads(get('data/research/us_options/history.json?chart-test='+str(time.time())))
-                  assert h['columns']==['date','spx','dixPct','gex']
-                  assert len(h['rows'])>=3000 and h['rows'][-1][0]==h['asOf']
-                  assert all(isinstance(v,(int,float)) for v in h['rows'][-1][1:])
-                  print('PASS LIVE DIX/SPX/GEX chart:',len(h['rows']),'rows',h['asOf'],'HTML/JS SHA',digest)
+                  html=read('index.html?fg-deploy='+str(time.time())).decode('utf-8')
+                  assert 'id="fearGreedPanel"' in html and 'id="fgChart"' in html
+                  assert 'id="usOptionsRisk"' not in html,'Legacy three-line home panel still present'
+                  j=re.search(r'fear-greed-home\.js\?v=([0-9a-f]{12})',html)
+                  c=re.search(r'fear-greed-home\.css\?v=([0-9a-f]{12})',html)
+                  assert j and c,'Missing versioned CNN chart assets'
+                  js=read('fear-greed-home.js?v='+j.group(1))
+                  css=read('fear-greed-home.css?v='+c.group(1))
+                  assert blob_sha(js)==j.group(1) and blob_sha(css)==c.group(1),'Asset content mismatch'
+                  assert b'history.json' in js and b'ArrowLeft' in js
+                  history=json.loads(read('data/research/us_fear_greed/history.json?fg-check='+str(time.time())))
+                  assert history['version']=='US_CNN_FEAR_GREED_SPX_V1'
+                  assert history['columns']==['date','fearGreed','spx']
+                  assert len(history['rows'])>=1000 and history['rows'][-1][0]==history['asOf']
+                  assert all(0<=r[1]<=100 and r[2]>100 for r in history['rows'])
+                  assert 'https://edition.cnn.com/markets/fear-and-greed' in html
+                  print('PASS LIVE CNN Fear & Greed / SPX',len(history['rows']),'rows, asOf',history['asOf'])
                   break
               except Exception as e:
-                  print('Live DIX chart attempt',attempt+1,'/12:',repr(e),flush=True)
-                  if attempt==11:raise
+                  print('CNN Fear & Greed Pages check',attempt,'/12',repr(e),flush=True)
+                  if attempt==12:raise
                   time.sleep(5)
           PY
