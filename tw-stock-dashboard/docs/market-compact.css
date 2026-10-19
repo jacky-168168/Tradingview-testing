@@ -66,3 +66,29 @@
  .compact-deep .sentiment-dial-shell{width:100%;max-width:390px;margin:0 auto}
 }
 @media(max-width:360px){.compact-action{font-size:20px}.compact-major-score{font-size:30px}.compact-meaning{font-size:11px}.compact-source strong{font-size:18px}}
+/* Home market risk layout deduplication v2 */
+.compact-source-disclosure,.market-extra-research{border:1px solid #e2e8f0;border-radius:11px;background:#f8fafc;margin:10px 0}
+.compact-source-disclosure>summary,.market-extra-research>summary{padding:11px 13px;cursor:pointer;font-size:12px;font-weight:800;color:#34465e;line-height:1.6}
+.compact-source-disclosure[open],.market-extra-research[open]{padding-bottom:10px}
+.compact-source-disclosure .compact-score-sources{margin:0 11px 6px}
+.compact-source-disclosure .compact-explain{margin:0 12px 8px}
+.market-extra-research>section,.market-extra-research>.sentiment-source-details,.market-extra-research>.cmd-trade-guide,.market-extra-research>.cmd-advanced,.market-extra-research>.sentiment-review,.market-extra-research>.sentiment-label-detail{margin-left:10px;margin-right:10px}
+.market-extra-research .sentiment-review{margin-top:0}
+.market-compact>.compact-reversal{margin:2px 0 0;padding:12px 14px;border:1px solid #dce5f0;box-shadow:none;background:#fff}
+.compact-reversal .brief-head{margin-bottom:4px}
+.compact-reversal .brief-title{font-size:16px;line-height:1.35}
+.compact-reversal .brief-state{font-size:13px;font-weight:750;line-height:1.5;margin:3px 0 10px}
+.compact-reversal .rev-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.compact-reversal .rev-grid>.metric{min-width:0;background:#f8fafc;border:1px solid #edf0f6;border-radius:9px;padding:10px 12px}
+.compact-reversal .rev-grid .metric-value{font-size:25px}
+.compact-reversal .rev-grid .metric-label{line-height:1.6;font-size:11px}
+.compact-reversal .compact-reversal-rule{color:#66758a;font-size:11px;line-height:1.7;margin:8px 0 0}
+.compact-reversal .detail-stack{margin-top:8px}
+.compact-reversal .detail-stack>summary{font-size:11px;color:#52647c}
+.market-brief-grid.market-brief-single{grid-template-columns:minmax(0,1fr)}
+@media(max-width:600px){
+ .market-compact>.compact-reversal{padding:11px 10px}
+ .compact-reversal .rev-grid>.metric{padding:9px 8px}
+ .compact-reversal .rev-grid .metric-value{font-size:22px}
+ .compact-source-disclosure .compact-score-sources{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
