@@ -187,6 +187,8 @@ return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+tvStockLink(x)+'</td><t
 function officialPublicationAge(date){
  var today=taipeiDate(),week=new Date(today+"T12:00:00+08:00").getUTCDay(),tradeDay=week>=1&&week<=5;
  var t=Date.now(),start=Date.parse(today+"T17:30:00+08:00"),late=Date.parse(today+"T19:00:00+08:00");
+ var laterLive=G_INTRADAY&&G_INTRADAY.quality==="intraday-provisional-allmarket"&&typeof G_INTRADAY.asOfDate==="string"&&G_INTRADAY.asOfDate>date&&G_INTRADAY.asOfDate<today&&Array.isArray(G_INTRADAY.rows)&&G_INTRADAY.rows.length>0;
+ if(laterLive)return {late:true,pending:false,today:today};
  if(!tradeDay||date>=today)return {late:false,pending:false,today:today};
  return {late:t>=late,pending:t>=start&&t<late,today:today};
 }
