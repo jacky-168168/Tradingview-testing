@@ -35,7 +35,7 @@
 <script src="./site-access.js"></script>
 <link rel="stylesheet" href="./market-sentiment.css?v=0bd68b022c1b">
 <link rel="stylesheet" href="./market-command.css?v=4eb52cea25e6">
-<link rel="stylesheet" href="./market-compact.css?v=60bacca3238b">
+<link rel="stylesheet" href="./market-compact.css?v=dedup20261019">
 <link rel="stylesheet" href="./dynamic-exposure.css">
 <link rel="stylesheet" href="./fear-greed-home.css?v=vix2-native-20261019">
 <script src="./market-compact.js?v=b1b009ea95e1"></script>
@@ -93,12 +93,14 @@
  <div id="compactScoreType" class="compact-eyebrow">正在核對市場分數…</div>
  <div class="compact-hero-line"><h2 id="compactAction" class="compact-action">等待有效資料</h2><div class="compact-major-score"><span id="compactScore">—</span><small>/100</small></div></div>
  <div class="compact-meaning"><strong id="compactBand">資料待確認</strong><span id="compactSession">正式資料日核對中</span></div>
+ <details class="compact-source-disclosure" id="compactSourceDisclosure"><summary>分數來源、TX 夜盤與校正研究</summary>
  <div class="compact-score-sources" aria-label="分數來源，校正為獨立研究">
   <div class="compact-source"><span class="compact-source-label">正式收盤</span><strong id="compactOfficial">—</strong><small>原始 Risk Score</small></div>
   <div class="compact-source" id="compactResearch" data-verified="false"><span class="compact-source-label">校正參考</span><strong id="compactAdjusted">—</strong><small>獨立研究，不參與運算</small></div>
   <div class="compact-source" id="compactNightCell" hidden><span class="compact-source-label">TX 夜盤調整</span><strong id="compactNight">—</strong><small>未經獨立回測</small></div>
  </div>
  <div class="compact-explain" id="compactEquation">校正研究不參與正式分數或夜盤參考計算。</div>
+ </details>
  <div class="compact-safety"><span id="compactPattern" class="compact-pattern" hidden>反彈待確認</span><span id="compactScoreFootnote">分數不能取代個股風險管控。</span></div>
 </div>
 <div class="cmd-metrics" aria-label="進場最重要的兩項證據">
@@ -106,8 +108,21 @@
     <div class="cmd-metric"><span>大盤強弱變化｜近 5 交易日</span><strong id="commandScoreChange">—</strong><small id="commandScoreChangeSub">與五個交易日前比較</small></div>
   </div>
 <div class="cmd-bottom"><div id="commandReasons" class="cmd-chips" aria-label="當前關鍵風險"><span class="command-chip">市場風險核對中</span></div><a id="commandPrimaryLink" class="cmd-cta" href="./selections.html">查看選股候選 →</a></div>
+<section class="card brief-card brief-reversal compact-reversal" aria-label="底部與頂部反轉量化確認">
+ <div class="brief-head"><div><div class="small-title">02 · 反轉確認｜獨立於 Risk Score</div><div class="brief-title">Bottom／Top 反轉條件</div></div><span id="revMode" class="brief-mode">觀察中</span></div>
+ <div id="revState" class="rev-state brief-state" role="status">正在核對反轉條件…</div>
+ <div class="rev-grid">
+  <div class="metric"><div id="extremeLabel" class="metric-label">超跌程度（非反轉分數）</div><div id="extreme" class="metric-value">--</div></div>
+  <div class="metric"><div id="confirmLabel" class="metric-label">反轉確認（6/9 為強訊號）</div><div id="confirm" class="metric-value">--</div></div>
+ </div>
+ <p class="compact-reversal-rule">確認分數達 4 分是反轉嘗試、達 6 分為強反轉；仍須符合近期極端條件，並非進場保證。</p>
+ <details class="detail-stack" id="reversalDetails"><summary>查看 MA20 距離、當日漲跌與收盤位置 <span class="disclosure-hint">進階</span></summary>
+  <div class="brief-chips"><span id="dist" class="chip">距 MA20 --</span><span id="dayret" class="chip">資料日 --</span><span id="closepos" class="chip">收盤位置 --</span></div>
+  <div id="revDataStatus" class="sub brief-data-status" role="status">正在核對市場日期…</div>
+ </details>
+</section>
 <details id="marketRiskDetails" class="compact-deep" aria-label="進階市場風險與歷史">
- <summary>查看完整分析、儀表板與歷史分數</summary>
+ <summary>查看大盤風險儀表板與歷史分數（進階）</summary>
  <section id="sentimentPanel" class="sentiment-hero" aria-label="大盤情緒儀表板">
   <div class="sentiment-main">
    <div class="sentiment-eyebrow">MARKET RISK｜台股市場</div>
@@ -117,6 +132,7 @@
    <div id="sentimentCurrentState" class="sentiment-gauge-caption" role="status">資料待更新</div>
    <div class="sentiment-meta"><strong id="sentimentScoreSource">核對正式風控資料中…</strong><span id="sentimentAsOf"></span></div>
    <p id="sentimentExplanation" class="sentiment-label-detail">這是原始 Risk Score，並非恐懼與貪婪指數。</p>
+   <details class="market-extra-research" id="marketSentimentResearch"><summary>校正研究與技術型態（非正式交易分數）</summary>
    <section id="sentimentRiskReview" class="sentiment-review" data-status="pending" data-verified="false" aria-label="風險校正參考與技術型態">
     <div class="sentiment-review-item">
      <span class="sentiment-review-kicker">風險校正參考 <small>研究中，非交易門檻</small></span>
@@ -131,6 +147,7 @@
     </div>
    </section>
    <p id="sentimentReviewNote" class="sentiment-label-detail">原始分數不更動，校正數字僅是額外風險提示。</p>
+   </details>
   </div>
   <aside class="sentiment-side" aria-label="大盤歷史分數比較">
    <div class="sentiment-tabs" role="tablist" aria-label="歷史比較方式">
@@ -142,6 +159,7 @@
    <small class="home-source-note">依最新正式交易日回推；「3天／5天／一週前」以日曆天計，休市時取該日或之前最近有效交易日。</small>
   </aside>
  </section>
+ <details class="market-extra-research market-extra-research--logic" id="marketLogicResearch"><summary>詳細風控門檻、盤前基準與回測依據</summary>
  <div class="sentiment-source-details" id="commandSourceDetails" aria-label="原始風控分數與盤前風險狀態">
   <div class="cmd-main">
     <div class="cmd-top">
@@ -181,6 +199,7 @@
     <div class="cmd-validated-strategy"><strong>G／D 策略歷史檢驗</strong><span id="commandStrategyEvidence">正在核對 G 20 日／D 10 日歷史淨報酬…</span><small>2026 年資料曾被先前研究檢視；以下為歷史訊號平均淨報酬，非即時買點或帳戶複利。</small><a href="./data/research/market_entry_playbook/report.md" target="_blank" rel="noopener">查看完整回測與限制 ↗</a></div>
     <div class="cmd-research"><span id="commandAi">機器學習回測狀態核對中…</span><a href="./data/research/market_ml_audit/summary.json" target="_blank" rel="noopener">AI 驗證</a><a href="./data/research/market_intelligence/latest.json" target="_blank" rel="noopener">風險依據</a><a href="./market-methodology.html">書籍／GitHub／研究說明</a></div>
   </details>
+ </details>
 </details>
 </section>
 <section class="card fg-panel" id="fearGreedPanel" aria-label="美股 CNN 恐懼與貪婪指數及標普500走勢">
@@ -325,18 +344,8 @@
 
 </section>
 
-<div class="market-brief-grid" aria-label="大盤重要補充訊號">
-<section class="card brief-card brief-reversal" aria-label="頂部與底部反轉監測">
- <div class="brief-head"><div><div class="small-title">01 · 反轉與追價風險</div><div class="brief-title">市場有沒有開始轉折？</div></div><span id="revMode" class="brief-mode">NORMAL</span></div>
- <div id="revState" class="rev-state brief-state">⚪ 正在分析…</div>
- <p class="brief-explain">先看有沒有明確的 Top／Bottom 反轉。<strong>Top Watch 只是觀察，不等於確認頂部。</strong></p>
- <div class="brief-chips"><span id="dist" class="chip">距 MA20 --</span><span id="dayret" class="chip">資料日 --</span></div>
- <details class="detail-stack" id="reversalDetails"><summary>查看反轉強度與收盤位置 <span class="disclosure-hint">進階</span></summary>
-   <div class="rev-grid"><div class="metric"><div id="extremeLabel" class="metric-label">極端程度</div><div id="extreme" class="metric-value">--</div></div><div class="metric"><div id="confirmLabel" class="metric-label">反轉確認</div><div id="confirm" class="metric-value">--</div></div></div>
-   <div class="chips"><span id="closepos" class="chip">收盤位置 --</span></div>
-   <div id="revDataStatus" class="sub brief-data-status" role="status">正在核對市場日期…</div>
- </details>
-</section>
+<div class="market-brief-grid market-brief-single" aria-label="隔日盤前台指期補充訊號">
+
 <section class="card brief-card brief-futures" aria-label="隔日盤前期貨風險">
  <div class="brief-head"><div><div class="small-title">02 · 隔日盤前參考</div><div class="brief-title">台指期夜盤是否增添風險？</div></div><span class="brief-mode">TX</span></div>
  <div id="futuresSub" class="sub brief-data-status" role="status">正在核對期交所資料…</div>
@@ -379,7 +388,7 @@ function C(x){return Number(x)>=0?"pos":"neg"}
 function esc(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function taipeiDate(){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
 function dayInfo(){var d=String(DATA&&DATA.dataDate||DATA&&DATA.risk&&DATA.risk.date||'');var today=taipeiDate();var weekend=["Sat","Sun"].includes(new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Taipei",weekday:"short"}).format(new Date()));var label=d===today?'📅 '+d+'｜當日交易日資料':(weekend?'⏸ 週末休市｜':'⏸ 尚無今日交易日資料｜')+'最近交易日 '+(d||'未知')+'（非即時訊號）';return {d:d,today:today,weekend:weekend,isCurrent:d===today,label:label}}
-function renderRisk(){var state=dayInfo();riskDataStatus.textContent=state.label;revDataStatus.textContent=state.label;var r=DATA&&DATA.risk||{};riskScore.textContent=Number.isFinite(Number(r.score))?r.score:"--";riskState.textContent=r.state||"尚未分析";var s=Number(r.score||0);riskLight.style.background=s>=60?"#dcfce7":s>=45?"#fef3c7":"#fee2e2";riskLight.style.color=s>=60?"#16a34a":s>=45?"#d97706":"#dc2626";var g2=r.f2Gate||{};riskAdvice.textContent=(state.isCurrent?"現貨風控：":"前次收盤 "+state.d+" 歷史風控：")+(s>=75?"強勢多頭。":s>=60?"Risk ON。":s>=45?"Neutral。":"Risk OFF。")+" F2："+(g2.reason||"尚未分析")+(state.isCurrent?"":"｜並非今日盤中進場許可");riskWarning.style.display=s<60?"block":"none";const mode=r.mode||"NORMAL";revMode.textContent=mode==="TOP"?"頂部觀察":mode==="BOTTOM"?"底部觀察":"一般狀態";const names={"⚪ Normal":"⚪ 未見明確反轉","⚪ Top Watch":"⚪ 頂部觀察中，尚未確認轉弱","⚪ Bottom Watch":"⚪ 底部觀察中，尚未確認反轉","🟡 Overbought Watch":"🟡 短線過熱，留意追價","🟣 Oversold Watch":"🟣 超跌觀察，尚未確認反彈","🟣 Extreme Oversold":"🟣 極端超跌，等待反轉確認","🟠 Bottom Reversal Attempt":"🟠 底部反轉嘗試中","🟢 Strong Bottom Reversal":"🟢 強底部反轉已確認","🟠 Top Reversal Attempt":"🟠 頂部轉弱嘗試中","🔴 Strong Top Reversal":"🔴 頂部反轉警戒","🔴 Extreme Overbought":"🔴 極端過熱"};revState.textContent=names[r.activeState]||r.activeState||"⚪ 未見明確反轉";var top=r.mode==="TOP";extremeLabel.textContent=top?"過熱程度":"極端程度";confirmLabel.textContent=top?"轉弱確認":"反轉確認";extreme.textContent=(top?(r.overboughtScore||0):(r.oversoldScore||0))+"/9";document.getElementById("confirm").textContent=(top?(r.topConfirmScore||0):(r.bottomConfirmScore||0))+"/9";dist.textContent="距MA20 "+P(r.distMA20);dayret.textContent=(state.isCurrent?"當日 ":"資料日 ")+P(r.dayRet);closepos.textContent="收盤位置 "+P(r.closePosition,1);idx.textContent=N(r.index);ma5.textContent=N(r.ma5);ma20.textContent=N(r.ma20);r5.textContent=P(r.ret5);r5.className="metric-value "+C(r.ret5);r20.textContent=P(r.ret20);r20.className="metric-value "+C(r.ret20);breadth.textContent=P(r.breadth,1);foreign.textContent=N(r.foreign,1)+" 億";foreign.className="metric-value "+C(r.foreign);trend.textContent=r.trend||"--"}
+function renderRisk(){var state=dayInfo();riskDataStatus.textContent=state.label;revDataStatus.textContent=state.label;var r=DATA&&DATA.risk||{};riskScore.textContent=Number.isFinite(Number(r.score))?r.score:"--";riskState.textContent=r.state||"尚未分析";var s=Number(r.score||0);riskLight.style.background=s>=60?"#dcfce7":s>=45?"#fef3c7":"#fee2e2";riskLight.style.color=s>=60?"#16a34a":s>=45?"#d97706":"#dc2626";var g2=r.f2Gate||{};riskAdvice.textContent=(state.isCurrent?"現貨風控：":"前次收盤 "+state.d+" 歷史風控：")+(s>=75?"強勢多頭。":s>=60?"Risk ON。":s>=45?"Neutral。":"Risk OFF。")+" F2："+(g2.reason||"尚未分析")+(state.isCurrent?"":"｜並非今日盤中進場許可");riskWarning.style.display=s<60?"block":"none";const mode=r.mode||"NORMAL";revMode.textContent=mode==="TOP"?"頂部觀察":mode==="BOTTOM"?"底部觀察":"一般狀態";const names={"⚪ Normal":"⚪ 未見明確反轉","⚪ Top Watch":"⚪ 頂部觀察中，尚未確認轉弱","⚪ Bottom Watch":"⚪ 底部觀察中，尚未確認反轉","🟡 Overbought Watch":"🟡 短線過熱，留意追價","🟣 Oversold Watch":"🟣 超跌觀察，尚未確認反彈","🟣 Extreme Oversold":"🟣 極端超跌，等待反轉確認","🟠 Bottom Reversal Attempt":"🟠 底部反轉嘗試中","🟢 Strong Bottom Reversal":"🟢 強底部反轉已確認","🟠 Top Reversal Attempt":"🟠 頂部轉弱嘗試中","🔴 Strong Top Reversal":"🔴 頂部反轉警戒","🔴 Extreme Overbought":"🔴 極端過熱"};revState.textContent=names[r.activeState]||r.activeState||"⚪ 未見明確反轉";var top=r.mode==="TOP";extremeLabel.textContent=top?"過熱程度（非反轉分數）":"超跌程度（非反轉分數）";confirmLabel.textContent=top?"頂部確認（6/9 為強訊號）":"底部反轉確認（6/9 為強訊號）";extreme.textContent=(top?(r.overboughtScore||0):(r.oversoldScore||0))+"/9";document.getElementById("confirm").textContent=(top?(r.topConfirmScore||0):(r.bottomConfirmScore||0))+"/9";dist.textContent="距MA20 "+P(r.distMA20);dayret.textContent=(state.isCurrent?"當日 ":"資料日 ")+P(r.dayRet);closepos.textContent="收盤位置 "+P(r.closePosition,1);idx.textContent=N(r.index);ma5.textContent=N(r.ma5);ma20.textContent=N(r.ma20);r5.textContent=P(r.ret5);r5.className="metric-value "+C(r.ret5);r20.textContent=P(r.ret20);r20.className="metric-value "+C(r.ret20);breadth.textContent=P(r.breadth,1);foreign.textContent=N(r.foreign,1)+" 億";foreign.className="metric-value "+C(r.foreign);trend.textContent=r.trend||"--"}
 function panelRow(x){return '<div class="row"><span><b>'+esc(x.code)+" "+esc(x.name)+'</b></span><span>'+N(x.lots,0)+' 張</span></div>'}
 let FUTURES=null;
 function futDisplay(v,digits){const x=Number(v);return v!=null&&Number.isFinite(x)?x.toLocaleString("zh-TW",{minimumFractionDigits:digits||0,maximumFractionDigits:digits||0}):"--"}
