@@ -1,6 +1,6 @@
 from __future__ import annotations
 import json,sys
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta,time
 from zoneinfo import ZoneInfo
 import requests
 from config import *
@@ -205,6 +205,11 @@ def main():
     _,idx,idxerr=update_symbol(BENCHMARK,start,now)
     if idxerr or idx is None or len(idx)<25:raise RuntimeError(f"benchmark unavailable: {idxerr}")
     market_date=str(idx.iloc[-1]["date"]);published=published_data_date()
+    # The workflow already checks dated TWSE official-close readiness before a full run.
+    # If Yahoo's benchmark is still on Friday after a Monday close, do NOT
+    # silently mark the job successful or pretend the old G list is today's.
+    if now.weekday()<5 and now.time()>=time(17,30) and market_date<now.date().isoformat():
+        raise RuntimeError("BENCHMARK_OFFICIAL_DATE_STALE: expected "+now.date().isoformat()+" after Taiwan 17:30, but ^TWII latest date="+market_date+" (last published="+(published or "none")+")")
     if published and market_date<published:
         print(json.dumps({"generatedAt":now.isoformat(timespec="seconds"),"dataDate":market_date,"publishedDate":published,"skipped":"stale-market-date"},ensure_ascii=False));return
     # Never rewrite a completed prior trading day while market is closed or still awaiting a new session.
