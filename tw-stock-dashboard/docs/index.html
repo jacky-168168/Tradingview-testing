@@ -37,12 +37,13 @@
 <link rel="stylesheet" href="./market-command.css?v=4eb52cea25e6">
 <link rel="stylesheet" href="./market-compact.css?v=60bacca3238b">
 <link rel="stylesheet" href="./dynamic-exposure.css">
-<link rel="stylesheet" href="./fear-greed-home.css?v=vix1-20261019">
+<link rel="stylesheet" href="./fear-greed-home.css?v=vix2-native-20261019">
 <script src="./market-compact.js?v=b1b009ea95e1"></script>
 <script src="./market-command.js?v=c27a62c1e751"></script>
 <script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
 <script defer src="./fear-greed-home.js?v=d22e116e0cc6"></script>
+<script defer src="./vix-home.js?v=native-20261019"></script>
 
 
 </head>
@@ -211,26 +212,34 @@
  <div class="fg-caption"><span>S&P 500 美股價格趨勢</span><span class="fg-hint">以美股每日收盤值呈現</span></div>
  <svg id="fgSpxChart" class="fg-chart fg-chart-spx" tabindex="0" role="img" aria-label="S&P 500美股收盤走勢，滑鼠或觸控與左右鍵可查看日期"></svg>
 
- <section class="fg-vix" id="fgVixPanel" aria-label="Cboe VIX 市場預期波動觀察">
-  <div class="fg-vix-head">
-   <div>
-    <h3>VIX｜美股市場預期波動</h3>
-    <p>與上方 Fear &amp; Greed、S&amp;P 500 一起觀察；可在圖表上切換四種 Cboe 指數及歷史區間。</p>
-   </div>
-   <div class="fg-vix-tags" aria-label="VIX 指標涵蓋範圍"><span>VIX · 30天</span><span>VIX9D · 9天</span><span>VIX3M · 3個月</span><span>VVIX · VIX波動</span></div>
+ <section class="fg-vix" id="fgVixPanel" aria-label="美股VIX官方每日收盤走勢">
+  <div class="fg-vix-head"><div><h3>VIX｜美股市場預期波動</h3><p>採用 Cboe 官方歷史收盤資料，自行繪圖，不依賴受限的 TradingView 嵌入元件。</p></div></div>
+  <div class="fg-vix-buttons" role="group" aria-label="選擇波動指數">
+   <button type="button" data-vix-symbol="VIX" class="is-active" aria-pressed="true">VIX · 30天</button>
+   <button type="button" data-vix-symbol="VIX9D" aria-pressed="false">VIX9D · 9天</button>
+   <button type="button" data-vix-symbol="VIX3M" aria-pressed="false">VIX3M · 3個月</button>
+   <button type="button" data-vix-symbol="VVIX" aria-pressed="false">VVIX · VIX波動</button>
   </div>
-  <div class="fg-vix-widget" aria-label="VIX、VIX9D、VIX3M 及 VVIX 互動圖表，由 TradingView 顯示">
-   <div class="tradingview-widget-container">
-    <div class="tradingview-widget-container__widget"></div>
-    <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/CBOE-VIX/" target="_blank" rel="noopener nofollow noreferrer">Cboe VIX 指數圖表</a> by <a href="https://www.tradingview.com/" target="_blank" rel="noopener nofollow noreferrer">TradingView</a></div>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>{"symbols":[["VIX · 30天","CBOE:VIX|1D"],["VIX9D · 9天","CBOE:VIX9D|1D"],["VIX3M · 3個月","CBOE:VIX3M|1D"],["VVIX · VIX的波動","CBOE:VVIX|1D"]],"chartOnly":false,"width":"100%","height":"100%","autosize":true,"locale":"zh_TW","colorTheme":"dark","isTransparent":false,"backgroundColor":"#152238","gridLineColor":"rgba(148,163,184,0.11)","fontColor":"#cbd5e1","showVolume":false,"showMA":false,"hideDateRanges":false,"hideMarketStatus":false,"hideSymbolLogo":true,"scalePosition":"right","scaleMode":"Normal","valuesTracking":"1","changeMode":"price-and-percent","chartType":"line","lineWidth":2,"lineColor":"#f5b861","dateRanges":["1m|1D","3m|1D","6m|1D","12m|1D","60m|1W","all|1M"]}</script>
-   </div>
+  <div class="fg-vix-data" aria-label="選擇交易日的官方收盤資訊">
+   <div class="fg-vix-metric"><span>美股交易日</span><strong id="fgVixDate">—</strong></div>
+   <div class="fg-vix-metric"><span>當日收盤</span><strong id="fgVixValue">—</strong></div>
+   <div class="fg-vix-metric"><span>相較前日</span><strong id="fgVixChange">—</strong></div>
+   <div class="fg-vix-metric"><span>近一年歷史百分位</span><strong id="fgVixPercentile">—</strong></div>
   </div>
-  <p class="fg-vix-note">資料來源：Cboe 指數，行情由 TradingView 元件提供，可能延遲或因授權限制而無法顯示；請依圖表標示的交易日、交易時段與延遲資訊判斷。VIX 是預期波動，不代表市場必然下跌，也不直接改變台股大盤分數。</p>
+  <div class="fg-vix-ranges" role="group" aria-label="選擇VIX走勢期間">
+   <button type="button" data-vix-range="6m" class="is-active" aria-pressed="true">6個月</button>
+   <button type="button" data-vix-range="2y" aria-pressed="false">2年</button>
+   <button type="button" data-vix-range="5y" aria-pressed="false">5年</button>
+   <button type="button" data-vix-range="all" aria-pressed="false">全部</button>
+  </div>
+  <div class="fg-vix-chart-wrap"><svg id="fgVixChart" tabindex="0" role="img" aria-label="美股VIX歷史收盤走勢，可點按或左右鍵查看交易日"></svg></div>
+  <p class="fg-vix-status" id="fgVixStatus" role="status">正在讀取Cboe官方收盤歷史資料…</p>
+  <button type="button" id="fgVixRetry" hidden>重新讀取</button>
+  <div class="fg-vix-guide" aria-live="polite"><h4 id="fgVixGuideTitle">收盤風險解讀</h4><p id="fgVixGuide">VIX代表預期波動，不代表美股必然上漲或下跌。</p></div>
+  <p class="fg-vix-note">每日收盤資料，非盤中即時報價；百分位為所選日期往前約252交易日內的相對位置。指數資料版權歸 Cboe 所有；不直接影響台股大盤分數或交易訊號。資料未更新時明確標示，不推估或補造。</p>
   <div class="fg-vix-links">
-   <a href="https://www.cboe.com/tradable_products/vix/vix_historical_data/" target="_blank" rel="noopener noreferrer">Cboe 官方歷史資料 ↗</a>
-   <a href="https://www.cboe.com/data/global-indices-feed" target="_blank" rel="noopener noreferrer">Cboe 即時資料服務說明 ↗</a>
-   <a href="https://fred.stlouisfed.org/series/VIXCLS" target="_blank" rel="noopener noreferrer">FRED 日線備援 ↗</a>
+   <a href="https://www.cboe.com/tradable-products/vix/vix-historical-data/" target="_blank" rel="noopener noreferrer">Cboe 官方歷史資料 ↗</a>
+   <a href="https://fred.stlouisfed.org/series/VIXCLS" target="_blank" rel="noopener noreferrer">FRED VIX 日線 ↗</a>
   </div>
  </section>
  <div class="fg-report" aria-live="polite">
