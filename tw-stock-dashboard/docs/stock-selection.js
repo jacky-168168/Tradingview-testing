@@ -184,6 +184,12 @@ var extra=isG?'<td>'+N(x.gScore)+'</td><td title="加分 +'+N(x.gExtra)+'"><b>'+
 return '<tr><td><b>'+(i+1)+'</b></td><td class="stock">'+tvStockLink(x)+'</td><td>'+esc(x.market)+'</td><td class="theme" title="'+esc(x.theme||"")+'">'+themeButton(x.theme)+'</td><td class="score">'+N(x.total,1)+'</td>'+extra+'<td class="sar">'+esc(x.sarText||"—")+'</td><td>'+cp+chg+'</td><td>'+N(x.capitalB)+'</td><td>'+N(x.turnoverB)+'</td><td class="'+C(x.foreignToday)+'">'+N(x.foreignToday,0)+'</td><td class="'+C(x.trustToday)+'">'+N(x.trustToday,0)+'</td><td class="'+C(x.rs20)+'">'+P(x.rs20)+'</td><td>'+N(x.rvol)+'</td><td class="'+C(x.ret5)+'">'+P(x.ret5)+'</td><td class="'+C(x.ret20)+'">'+P(x.ret20)+'</td><td class="'+C(x.breakoutPct)+'">'+P(x.breakoutPct)+'</td><td class="'+C(x.ma20Slope)+'">'+P(x.ma20Slope)+'</td><td>'+esc(x.signal||"")+'</td></tr>'
 
 }
+function officialPublicationAge(date){
+ var today=taipeiDate(),week=new Date(today+"T12:00:00+08:00").getUTCDay(),tradeDay=week>=1&&week<=5;
+ var t=Date.now(),start=Date.parse(today+"T17:30:00+08:00"),late=Date.parse(today+"T19:00:00+08:00");
+ if(!tradeDay||date>=today)return {late:false,pending:false,today:today};
+ return {late:t>=late,pending:t>=start&&t<late,today:today};
+}
 function renderOfficialG(){
  if(MODEL!=="G")return;
  var status=document.getElementById("gOfficialStatus"),number=document.getElementById("gOfficialCount"),body=document.getElementById("officialTb");
@@ -196,8 +202,11 @@ function renderOfficialG(){
  var selected=full.map(function(stock,i){return {stock:stock,rank:i+1}}).filter(function(pair){return !THEME_FILTER||stockHasTheme(pair.stock,THEME_FILTER)});
  var iq=DATA&&DATA.institutionQuality,iqGood=iq&&iq.status==="complete"&&iq.date===source&&iq.missingRanked===0;
   var iqText=iqGood?"｜✅ 籌碼已驗證":"｜⚠ 籌碼待確認";
-  status.textContent="正式訊號日 "+source+iqText;
- number.textContent=selected.length+"/"+full.length+" 檔"+(THEME_FILTER?"｜"+THEME_FILTER:"");
+  var freshness=officialPublicationAge(source);
+  if(freshness.late){status.textContent="⚠ "+freshness.today+" 盤後正式榜單尚未發布｜目前顯示 "+source+" 歷史正式榜（非今日訊號）"+iqText+"｜請檢查 TW Stock Dashboard Actions";status.style.color="#b91c1c";}
+  else if(freshness.pending){status.textContent="⏳ "+freshness.today+" 盤後資料正在更新｜目前顯示 "+source+" 歷史正式榜"+iqText;status.style.color="#a16207";}
+  else{status.textContent="正式訊號日 "+source+iqText;status.style.color="";}
+ number.textContent=(freshness.late?"⚠ 舊榜 ":"")+selected.length+"/"+full.length+" 檔"+(THEME_FILTER?"｜"+THEME_FILTER:"");
  if(!selected.length){body.innerHTML='<tr><td colspan="'+(TABLE_COMPACT?4:22)+'" style="text-align:center;padding:25px">'+(THEME_FILTER?"此正式榜單沒有「"+esc(THEME_FILTER)+"」題材":"該交易日沒有正式 G 入選股票")+'</td></tr>';return}
  body.innerHTML=selected.map(function(pair){var x=pair.stock,i=pair.rank-1;return TABLE_COMPACT?renderSimpleStock(x,i,true,null,true):renderOfficialDetailedRow(x,i)}).join("");
 }
@@ -207,7 +216,8 @@ function updateGReportOverview(){
  var verified=!!(date&&g&&g.dataDate===date&&Array.isArray(official));
  var live=currentLiveG(),r=typeof REPEAT_DATA!=="undefined"?REPEAT_DATA:null,rg=r&&r.models&&r.models.G;
  var repeatReady=!!(rg&&r.referenceDate===date);
- document.getElementById("gReportIntroDate").textContent="最近正式交易日 "+(date||"未提供")+"｜三份清單各有獨立資料日期；保留既有全部欄位與原始排序。盤中資料只在有效時顯示，不能代替盤後正式清單。";
+ var age=officialPublicationAge(date);
+ document.getElementById("gReportIntroDate").textContent=(age.late?"⚠ "+age.today+" 盤後正式榜單尚未更新，以下僅為 "+(date||"未知")+" 歷史正式資料。":age.pending?"⏳ 今日盤後資料更新中，以下暫顯示 "+(date||"未知")+" 正式資料。":"最近正式交易日 "+(date||"未提供"))+"｜三份清單各有獨立資料日期；盤中榜單不能代替盤後正式訊號。";
  document.getElementById("gQuickRepeat").textContent=repeatReady?(rg.stocks||[]).length+" 檔重複上榜｜統計至 "+date:rg?"統計檔案待與正式日期同步":"正在讀取歷史快照";
  document.getElementById("gQuickLive").textContent=live?live.rows.length+" 檔｜"+(gSnapshotNotice(live)?"僅供參考":"暫估")+"｜"+(live.asOfDate||"今日"): "目前無有效盤中榜單";
  document.getElementById("gQuickOfficial").textContent=verified?official.length+" 檔正式｜"+date:"正式資料待同步";
