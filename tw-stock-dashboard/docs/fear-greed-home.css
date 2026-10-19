@@ -42,3 +42,19 @@
 .fg-links{display:flex;gap:14px;flex-wrap:wrap;font-size:12px}
 #fgRetry{cursor:pointer;border:1px solid #7691b5;border-radius:8px;background:#263d5c;color:white;padding:7px 12px}
 @media(max-width:700px){.fg-panel.card{padding:16px 12px}.fg-top h2{font-size:19px}.fg-data{gap:6px}.fg-metric{padding:10px 7px}.fg-metric strong{font-size:19px}.fg-metric span{font-size:10px}.fg-zones{margin-left:42px;max-width:calc(100% - 60px)}.fg-zones>span{font-size:8px}.fg-report h3{font-size:15px}}
+/* Cboe VIX family shown via TradingView's licensed embed, beside Fear & Greed / S&P 500. */
+.fg-vix{border-top:1px solid #48607a;margin-top:15px;padding-top:15px}
+.fg-vix-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.fg-vix-head h3{margin:0;color:#f8fafc;font-size:17px;line-height:1.4}
+.fg-vix-head p{font-size:12px;color:#b9cee4;line-height:1.7;margin:5px 0 0}
+.fg-vix-tags{display:flex;flex-wrap:wrap;gap:5px}
+.fg-vix-tags span{font-size:11px;color:#deebfa;background:#273f5e;border:1px solid #476183;border-radius:7px;padding:4px 7px}
+.fg-vix-widget{height:390px;min-height:320px;overflow:hidden;border:1px solid #405474;border-radius:11px;background:#152238}
+.fg-vix-widget .tradingview-widget-container{height:100%;width:100%}
+.fg-vix-widget .tradingview-widget-container__widget{height:calc(100% - 26px);width:100%}
+.fg-vix-widget .tradingview-widget-copyright{font-size:11px;text-align:center;line-height:26px;color:#b5c7dc}
+.fg-vix-widget .tradingview-widget-copyright a{color:#9dcbff}
+.fg-vix-note{font-size:11px;line-height:1.8;color:#b8cbe0;margin:9px 0 4px}
+.fg-vix-links{display:flex;gap:13px;flex-wrap:wrap;font-size:12px}
+.fg-vix-links a{color:#9dcbff;text-decoration:underline;text-underline-offset:2px}
+@media(max-width:700px){.fg-vix-widget{height:345px}.fg-vix-head h3{font-size:16px}}
