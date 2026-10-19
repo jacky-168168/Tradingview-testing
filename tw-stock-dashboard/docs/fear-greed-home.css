@@ -42,19 +42,28 @@
 .fg-links{display:flex;gap:14px;flex-wrap:wrap;font-size:12px}
 #fgRetry{cursor:pointer;border:1px solid #7691b5;border-radius:8px;background:#263d5c;color:white;padding:7px 12px}
 @media(max-width:700px){.fg-panel.card{padding:16px 12px}.fg-top h2{font-size:19px}.fg-data{gap:6px}.fg-metric{padding:10px 7px}.fg-metric strong{font-size:19px}.fg-metric span{font-size:10px}.fg-zones{margin-left:42px;max-width:calc(100% - 60px)}.fg-zones>span{font-size:8px}.fg-report h3{font-size:15px}}
-/* Cboe VIX family shown via TradingView's licensed embed, beside Fear & Greed / S&P 500. */
-.fg-vix{border-top:1px solid #48607a;margin-top:15px;padding-top:15px}
-.fg-vix-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px}
-.fg-vix-head h3{margin:0;color:#f8fafc;font-size:17px;line-height:1.4}
+/* Native Cboe VIX daily closing chart; no third-party embed restrictions. */
+.fg-vix{border-top:1px solid #48607a;margin-top:16px;padding-top:16px}
+.fg-vix-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.fg-vix-head h3{margin:0;color:#f8fafc;font-size:18px;line-height:1.4}
 .fg-vix-head p{font-size:12px;color:#b9cee4;line-height:1.7;margin:5px 0 0}
-.fg-vix-tags{display:flex;flex-wrap:wrap;gap:5px}
-.fg-vix-tags span{font-size:11px;color:#deebfa;background:#273f5e;border:1px solid #476183;border-radius:7px;padding:4px 7px}
-.fg-vix-widget{height:390px;min-height:320px;overflow:hidden;border:1px solid #405474;border-radius:11px;background:#152238}
-.fg-vix-widget .tradingview-widget-container{height:100%;width:100%}
-.fg-vix-widget .tradingview-widget-container__widget{height:calc(100% - 26px);width:100%}
-.fg-vix-widget .tradingview-widget-copyright{font-size:11px;text-align:center;line-height:26px;color:#b5c7dc}
-.fg-vix-widget .tradingview-widget-copyright a{color:#9dcbff}
+.fg-vix-buttons,.fg-vix-ranges{display:flex;gap:7px;flex-wrap:wrap}
+.fg-vix-buttons button,.fg-vix-ranges button{border:1px solid #526985;border-radius:9px;background:#263b59;color:#deebfa;padding:8px 11px;cursor:pointer;font-size:12px;font-weight:750}
+.fg-vix-buttons button.is-active,.fg-vix-ranges button.is-active{background:#e4d6ff;border-color:#e4d6ff;color:#24314a}
+.fg-vix-buttons button:focus-visible,.fg-vix-ranges button:focus-visible,#fgVixRetry:focus-visible,#fgVixChart:focus-visible{outline:3px solid #af91f5;outline-offset:2px}
+.fg-vix-ranges{margin:12px 0;justify-content:flex-end}
+.fg-vix-data{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}
+.fg-vix-metric{background:#253750;border:1px solid #405474;border-radius:10px;padding:10px;min-width:0}
+.fg-vix-metric span{display:block;font-size:11px;color:#b5c7dc;margin-bottom:5px}
+.fg-vix-metric strong{display:block;font-size:20px;color:#f5edff;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fg-vix-chart-wrap{background:#182940;border:1px solid #405474;border-radius:11px;padding:10px 5px 0;overflow:hidden}
+#fgVixChart{display:block;width:100%;height:auto;touch-action:pan-y;cursor:crosshair;min-height:90px}
+.fg-vix-status{color:#b7cce3;font-size:11px;line-height:1.8;margin:9px 0}
+#fgVixRetry{border:1px solid #7890b2;border-radius:7px;background:#274363;color:#f1f5fa;padding:6px 12px;font-size:12px}
+.fg-vix-guide{background:#253750;border:1px solid #405474;border-radius:10px;padding:11px 13px;margin:12px 0}
+.fg-vix-guide h4{margin:0 0 6px;color:#e8dafc;font-size:13px}
+.fg-vix-guide p{margin:0;color:#cad6e6;font-size:12px;line-height:1.7}
 .fg-vix-note{font-size:11px;line-height:1.8;color:#b8cbe0;margin:9px 0 4px}
 .fg-vix-links{display:flex;gap:13px;flex-wrap:wrap;font-size:12px}
 .fg-vix-links a{color:#9dcbff;text-decoration:underline;text-underline-offset:2px}
-@media(max-width:700px){.fg-vix-widget{height:345px}.fg-vix-head h3{font-size:16px}}
+@media(max-width:700px){.fg-vix-head h3{font-size:16px}.fg-vix-data{grid-template-columns:repeat(2,minmax(0,1fr))}.fg-vix-metric strong{font-size:19px}.fg-vix-buttons button{padding:8px 9px}.fg-vix-ranges button{padding:7px 9px}}
