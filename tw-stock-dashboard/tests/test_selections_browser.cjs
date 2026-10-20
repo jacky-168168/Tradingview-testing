@@ -95,12 +95,20 @@ async function main(){
    });
   }
   await check(page,tag+' CPO leadership banner 6/20 and source trace',async()=>page.evaluate(()=>{
-    const real=DATA.models.G,codes=Array.from(gLeaderCpoCodes(G_LEADER_CATALOG||{}));
-    if(codes.length<6)return false;
-    DATA.models.G=real.map((x,i)=>i<6?{...x,code:codes[i],name:'CPO稽核'+i}:x);
-    renderGThemeLeaders();const alert=document.getElementById('gSectorLeaderPanel').textContent;
-    DATA.models.G=real;renderGThemeLeaders();
-    return alert.includes('CPO｜盤後最強入榜類股')&&alert.includes('6/20')&&alert.includes('30%');
+    // Fixed fixture tests the UI logic without relying on mutable market data.
+    const real=DATA.models.G,oldCatalog=G_LEADER_CATALOG,oldSelection=DATA.gSelection;
+    if(!Array.isArray(real)||real.length<20)return false;
+    const codes=Array.from({length:6},(_,i)=>String(9501+i));
+    try{
+      G_LEADER_CATALOG={dataDate:'測試資料',industries:[{code:'CPO',name:'CPO',subgroups:[{stocks:codes.map(code=>({code}))}]}]};
+      DATA.gSelection={...(oldSelection||{}),dataDate:DATA.dataDate};
+      DATA.models.G=real.map((x,i)=>({...x,code:String(i<6?9501+i:9601+i),name:'稽核測試'+i,subIndustry:'—',theme:'—'}));
+      renderGThemeLeaders();
+      const alert=document.getElementById('gSectorLeaderPanel').textContent;
+      return alert.includes('CPO｜盤後最強入榜類股')&&alert.includes('6/20')&&alert.includes('30%');
+    }finally{
+      DATA.models.G=real;DATA.gSelection=oldSelection;G_LEADER_CATALOG=oldCatalog;renderGThemeLeaders();
+    }
   }));
   await check(page,tag+' forged stale latest cannot pass intraday validity check',async()=>page.evaluate(()=>{
     const old=G_INTRADAY,oldCurrent=GIntradayTimeline.current,oldHist=GIntradayTimeline.historical;

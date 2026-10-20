@@ -16,6 +16,7 @@ from yahoo_cache import to_symbol,load_cached
 from g_live import select as select_g,prior_pockets
 from industry_chain import enrich as enrich_chain
 from g_intraday_archive import archive_intraday_payload
+from g_market_overlay import build_overlay
 
 TZ=ZoneInfo("Asia/Taipei")
 BASE="https://mis.twse.com.tw/stock/"
@@ -244,13 +245,24 @@ def main():
         meta["pocketSnapshotsFound"]=found
         meta["pocketWarmup"]=found<min(10,len(calendar)-1)
         meta["isProvisional"]=True
+        # This optional research layer must never prevent valid G publication.
+        try:
+            previous={}
+            if OUTPUT.exists():
+                previous=json.loads(OUTPUT.read_text(encoding="utf-8"))
+            old=previous.get("freeMarketOverlay",{}).get("industryMomentum") if isinstance(previous,dict) else None
+            overlay=build_overlay(universe,quotes,today,rows,previous=old,now=datetime.now(TZ))
+        except Exception as exc:
+            print("G_FREE_MARKET_OVERLAY_UNAVAILABLE",type(exc).__name__,str(exc),file=sys.stderr,flush=True)
+            overlay={"version":"free-market-overlay-v1","asOfDate":today,"status":"unavailable",
+                     "reason":type(exc).__name__,"note":"研究附加資訊取得失敗；正式 G 排名未受影響"}
         meta["note"]="盤中依未完成日K、當日累積成交量與當日MIS報價重選。當日未成交股票以核對過的昨收價及0成交量納入排名母體，不得入選G；無成交價但有買賣揭示者以經價差篩選的中間價估算。非正式G日K訊號，法人及SAR均未確認。"
         payload={"asOfDate":today,"publishedAt":datetime.now(TZ).isoformat(timespec="seconds"),"scanStartedAt":now.isoformat(timespec="seconds"),"quoteCapturedAt":quote_captured_at,"sessionSlot":session_slot,
                  "sourceCloseDate":source,"quality":"intraday-provisional-allmarket",
                  "quoteSource":"TWSE MIS same-day listed+OTC; trade price if available, otherwise validated order-book midpoint proxy; cumulative lots × 1000 shares",
                  "coverage":coverage,"marketBreadth":provisional_breadth(quotes),"quotePriceSources":{kind:sum(q.get("priceSource")==kind for q in quotes.values()) for kind in ("last-trade","previous-trade","bid-ask-midpoint","one-sided-high-bid","one-sided-low-ask","no-trade-prevclose")},"historicalBarCoverage":len(history),"historyRejected":rejected,
                  "market20Reference":"previous completed cash-market return (not live index)",
-                 "rows":rows,"selection":meta}
+                 "rows":rows,"selection":meta,"freeMarketOverlay":overlay}
         OUTPUT.parent.mkdir(parents=True,exist_ok=True)
         OUTPUT.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8")
         archived=archive_intraday_payload(DATA_DIR,payload)
