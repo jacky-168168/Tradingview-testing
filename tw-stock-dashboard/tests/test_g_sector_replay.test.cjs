@@ -29,7 +29,7 @@ test("real archived sector comparison calculates observed +2pp without synthetic
  const {els}=harness();await new Promise(r=>setTimeout(r,12));
  assert.match(els.round.textContent,/第 2／2 輪/);
  assert.match(els.sectorRows.innerHTML,/\+2\.00pp/);
- assert.match(els.context.textContent,/上一完整收盤風險分數 55/);
+ assert.match(els.context.textContent,/前一完整收盤風險分數 55/);
  els.prev.handlers.click();assert.match(els.sectorRows.innerHTML,/>—<\/td>/);
 });
 test("older snapshots without sector overlay must show missing data",async()=>{
