@@ -1,9 +1,17 @@
 name: CNN Fear Greed US Market Chart
 on:
   workflow_dispatch:
+  # Rebuild once the actual S&P 500 archive publisher finishes, preventing
+  # a previous US session from being presented as the latest joined record.
+  workflow_run:
+    workflows: ["US DIX GEX Research and Snapshot"]
+    types: [completed]
   schedule:
-    # 08:00 and 20:00 Asia/Taipei (after existing S&P500 archive updates)
-    - cron: '0 0,12 * * *'
+    # Taipei Tue-Sat 08:15, 10:15, 12:15, 14:15, 16:15.
+    # Retries matter because CNN and the SPX archive have independent delays.
+    - cron: '15 0,2,4,6,8 * * 2-6'
+    # Taipei Mon-Fri 20:15: final catch-up / post-holiday audit.
+    - cron: '15 12 * * 1-5'
   push:
     branches: [main, feat/fear-greed-home-replace-20261018]
     paths:
@@ -13,11 +21,15 @@ on:
       - '.github/workflows/us-fear-greed.yml'
 permissions:
   contents: write
+  pages: write
+  id-token: write
 concurrency:
   group: cnn-fear-greed-research
   cancel-in-progress: false
 jobs:
   update:
+    # Ignore failed upstream runs; scheduled/manual retries remain available.
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -68,3 +80,25 @@ jobs:
             done
             exit 1
           fi
+      - name: Verify latest checked-in record before deployment
+        run: |
+          git fetch origin main
+          git checkout -B main origin/main
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('tw-stock-dashboard/docs/data/research')
+          fg=json.loads((root/'us_fear_greed/history.json').read_text('utf-8'))
+          spx=json.loads((root/'us_options/history.json').read_text('utf-8'))
+          assert fg['asOf']==fg['rows'][-1][0], 'fear & greed last date mismatch'
+          assert spx['asOf']==fg['asOf'], 'Fear & Greed must match latest S&P 500 session before publishing'
+          print('ALIGNED_FEAR_GREED_SPX',fg['asOf'],len(fg['rows']))
+          PY
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload verified site snapshot
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - name: Deploy Pages
+        uses: actions/deploy-pages@v4
