@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 function h(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
-function n(v,d){var x=Number(v);return Number.isFinite(x)?x.toFixed(d):"—"}
+function n(v,d){if(v==null||v==="")return "—";var x=Number(v);return Number.isFinite(x)?x.toFixed(d):"—"}
 function render(g){
  var root=document.getElementById("gFreeMarketPanel");if(!root)return;
  var ov=g&&g.freeMarketOverlay;
