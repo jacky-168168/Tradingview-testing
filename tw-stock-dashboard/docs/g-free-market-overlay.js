@@ -25,7 +25,19 @@ function render(g){
  var status=unverified.length?'<p class="g-free-warn">⚠ '+h(unverified.join("、"))+'處置公告目前無法查證，不能視為沒有交易限制。</p>':'<p class="g-free-note">本輪 G Top20 未列入已取得的官方處置公告不等於保證可當沖；交易前仍需核對券商與交易所公告。</p>';
  var controls='<div class="g-free-section"><h4>G 榜單處置公告檢查</h4>'+(risk||'<p>本輪未發現已核實的處置公告期間標的。</p>')+status+
  '<p class="g-free-note">來源：<a href="https://www.twse.com.tw/rwd/zh/announcement/punish?response=json" target="_blank" rel="noopener noreferrer">證交所</a>／<a href="https://www.tpex.org.tw/openapi/v1/tpex_disposal_information" target="_blank" rel="noopener noreferrer">櫃買中心</a>。只作警示，不改變 G 排名與交易決策。</p></div>';
- root.innerHTML=head+'<div class="g-free-grid">'+rank+controls+'</div>';
+ var ctx=g&&g.gSignalContext,context='';
+ if(ctx&&ctx.status!=="unavailable"&&ctx.asOfDate===g.asOfDate){
+  var prev=ctx.previousCloseRisk||{},m=ctx.market||{},breadth=m.breadth||{},listed=breadth["上市"]||{},otc=breadth["上櫃"]||{};
+  var risk=prev.score==null?"未取得":h(prev.score)+" 分（"+h(prev.date||"")+" 收盤）";
+  var strength=(ctx.top20||[]).filter(function(x){return Number.isFinite(x.relativeToEqualWeightPeersPct)}).sort(function(a,b){return b.relativeToEqualWeightPeersPct-a.relativeToEqualWeightPeersPct}).slice(0,5);
+  var leaders=strength.map(function(x){return '<span class="g-free-flag g-free-neutral">'+h(x.code)+" "+h(x.name)+" 相對同市場均漲 "+(x.relativeToEqualWeightPeersPct>0?"+":"")+n(x.relativeToEqualWeightPeersPct,2)+'pp</span>'}).join("")||"尚無足夠實際成交樣本";
+  context='<div class="g-free-section g-free-wide"><h4>📍 本輪 G 訊號 × 大盤情境（只記錄，不改選股）</h4>'+
+   '<p><strong>前一日正式風險分數：</strong>'+risk+'｜<strong>盤中實際成交價市場廣度：</strong>'+n(m.allMarketUpPct,1)+'% 上漲（'+h(m.breadthBand||"資料不足")+'）</p>'+
+   '<p>上市上漲 '+n(listed.upPct,1)+'%（'+h(listed.tradedSample??0)+' 檔）｜上櫃上漲 '+n(otc.upPct,1)+'%（'+h(otc.tradedSample??0)+' 檔）</p>'+
+   '<p><strong>本輪相對同市場平均漲幅較強：</strong>'+leaders+'</p>'+
+   '<p class="g-free-note">風險分數是前一交易日收盤資料，不能視為當輪即時風險分數；相對強弱比較實際成交價股票的等權均漲，非加權或櫃買指數。歷史輪次不能當成獨立買進次數，尚無對應績效回測。</p></div>';
+ }
+ root.innerHTML=head+'<div class="g-free-grid">'+context+rank+controls+'</div><p class="g-free-note"><a href="./g-sector-replay.html">🕒 開啟盤中族群輪動時間軸（僅顯示真實封存輪次） →</a></p>';
 }
 window.renderFreeGMarketOverlay=render;
 })();
