@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G 盤中族群輪動｜台股量化研究</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif;color:#1e293b;background:#f5f7fb}
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1170px;margin:auto;padding:22px}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}h1{font-size:25px;margin:0 0 5px}h2{font-size:18px;margin:0 0 10px}
+p{line-height:1.8;color:#64748b;font-size:13px}.btn{color:#1550a1;background:white;border:1px solid #dbe5f0;border-radius:9px;padding:10px 13px;text-decoration:none;font:inherit;cursor:pointer;font-size:13px}
+.card{background:white;border:1px solid #e1e7ef;border-radius:13px;padding:19px;margin-top:15px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.controls label{font-size:13px}.controls select{margin-left:7px}
+#round{min-width:180px;font-size:14px}#timeline{width:100%;margin-top:17px}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:700px}
+th,td{padding:11px 9px;text-align:left;border-bottom:1px solid #e8edf3;font-size:12px}th{background:#f8fafc;color:#64748b}
+.pos{color:#c62828}.neg{color:#16815d}.note{font-size:12px;color:#64748b}.warning{background:#fff7ed;border:1px solid #fed7aa;color:#a64b06;padding:12px;border-radius:8px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.metric{background:#f8fafc;border-radius:10px;padding:13px}.metric span{display:block;color:#64748b;font-size:12px}.metric strong{font-size:21px}
+@media(max-width:700px){.wrap{padding:12px}h1{font-size:20px}.card{padding:12px}.grid{grid-template-columns:1fr 1fr}.controls{gap:8px}}
+</style>
+<script src="./site-access.js"></script>
+</head>
+<body>
+<div class="wrap">
+<header><div><h1>🕒 G 盤中族群輪動時間軸</h1><p>只回放 GitHub 已成功封存的真實盤中快照；不是 10 秒即時行情。</p></div><a class="btn" href="./selections.html#G">← 回 G 選股</a></header>
+<div class="card">
+ <div class="controls"><label for="tradeDay">交易日<select id="tradeDay" class="btn"></select></label>
+ <button id="prev" class="btn" type="button">◀ 上一輪</button><strong id="round">讀取中…</strong>
+ <button id="next" class="btn" type="button">下一輪 ▶</button><button id="reload" class="btn" type="button">↻ 重新讀取</button></div>
+ <input id="timeline" type="range" min="0" max="0" value="0" aria-label="選擇已封存盤中輪次">
+ <p id="status" role="status">讀取封存紀錄中…</p>
+</div>
+<section class="card"><h2>當輪市場與樣本狀態</h2><div id="summary" class="grid"></div><p id="context" class="note"></p></section>
+<section class="card"><h2>產業強度排行與前輪變化</h2><p class="note">強度＝實際成交價漲跌幅以 √估計成交額加權。名次升降與強度差只比較同交易日、上一個具有效資料的實際封存輪次；不補造缺失時段。</p>
+<div class="scroll"><table><thead><tr><th>名次</th><th>產業</th><th>強度</th><th>前輪強度差</th><th>名次變化</th><th>上漲比例</th><th>估計成交額</th><th>有效／母體</th><th>主要成交股</th></tr></thead><tbody id="sectorRows"><tr><td colspan="9">尚未讀到資料</td></tr></tbody></table></div>
+</section>
+<p class="note">資料來源：GitHub main 分支的 G 盤中封存 JSON（TWSE MIS），不使用付費 API。累積成交額的變化不等於資金淨流入。舊封存尚未加入產業強度者，會明確顯示資料缺口；資料尚不足時不顯示或推估交易績效。</p>
+</div>
+<script src="./g-sector-replay.js"></script>
+</body></html>
