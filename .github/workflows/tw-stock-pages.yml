@@ -311,6 +311,7 @@ jobs:
           node tw-stock-dashboard/tests/test_tx_premarket_ui.js
           node tw-stock-dashboard/tests/test_market_live_render.cjs
           node --test tw-stock-dashboard/tests/test_market_asset_freshness.test.cjs
+          node --test tw-stock-dashboard/tests/us-market-freshness.test.cjs
           python -u tw-stock-dashboard/tests/test_market_homepage_layout.py
           node - <<'JS'
           const assert=require('assert'),fs=require('fs'),r=require('./tw-stock-dashboard/docs/market-command.js');
@@ -420,6 +421,43 @@ jobs:
                   break
               except Exception as e:
                   print('CNN Fear & Greed Pages check',attempt,'/12',repr(e),flush=True)
+                  if attempt==12:raise
+                  time.sleep(5)
+          PY
+      - name: Verify live Cboe VIX daily values and correct mobile market assets
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,re,time,urllib.request
+          from pathlib import Path
+          base=os.environ['PAGES_URL'].rstrip('/')
+          root=Path('tw-stock-dashboard/docs')
+          local=json.loads((root/'data/research/us_vix/history.json').read_text('utf-8'))
+          def get(path):
+              req=urllib.request.Request(base+'/'+path,headers={'User-Agent':'VIX-Daily-Smoke/1.0','Cache-Control':'no-cache'})
+              with urllib.request.urlopen(req,timeout=25) as r:return r.read()
+          def blob(raw):return hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()[:12]
+          for attempt in range(1,13):
+              try:
+                  page=get('index.html?us-daily='+str(time.time())).decode('utf-8')
+                  assert 'id="fgVixPanel"' in page and 'id="fgVixFreshness"' in page and 'id="fgMarketFreshness"' in page
+                  for filename in ('us-market-freshness.js','vix-home.js','fear-greed-home.js'):
+                      match=re.search(r'\./'+re.escape(filename)+r'\?v=([0-9a-f]{12})',page)
+                      assert match, 'missing content-addressed asset: '+filename
+                      data=get(filename+'?v='+match.group(1))
+                      assert blob(data)==match.group(1), 'stale mobile JS '+filename
+                  live=json.loads(get('data/research/us_vix/history.json?check='+str(time.time())))
+                  assert live['version']=='CBOE_VIX_DAILY_V1'
+                  for symbol in ('VIX','VIX9D','VIX3M','VVIX'):
+                      record=live['series'][symbol]
+                      assert record['lastDate']==record['rows'][-1][0]
+                      assert record['lastDate']==local['series'][symbol]['lastDate'],symbol+' Pages date stale'
+                      assert record['rows'][-1][1]==local['series'][symbol]['rows'][-1][1],symbol+' Pages close stale'
+                  print('PASS LIVE VIX', {k:v['lastDate'] for k,v in live['series'].items()})
+                  break
+              except Exception as exc:
+                  print('Pages Cboe VIX attempt',attempt,repr(exc),flush=True)
                   if attempt==12:raise
                   time.sleep(5)
           PY
