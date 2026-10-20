@@ -8,8 +8,13 @@ const assert=require("node:assert/strict"),fs=require("node:fs"),vm=require("nod
 const root=path.resolve(__dirname,"../docs");
 const market=fs.readFileSync(path.join(root,"market-command.js"),"utf8");
 const compact=fs.readFileSync(path.join(root,"market-compact.js"),"utf8");
-const snap=JSON.parse(fs.readFileSync(path.join(root,"data/latest.json"),"utf8"));
-const fut=JSON.parse(fs.readFileSync(path.join(root,"data/futures/latest.json"),"utf8"));
+// Freeze the original 2026-10-17 regression scenario. Never import mutable
+// live snapshots here: their dates MUST advance as markets update.
+const snap={dataDate:"2026-10-16",risk:{date:"2026-10-16",score:41},marketIntelligence:null};
+const fut={quality:"paired-day-night",asOfDate:"2026-10-16",contract:"202610",
+ day:{date:"20261016",contract:"202610",close:50000},
+ night:{date:"20261016",contract:"202610",close:48833.5,reportQueryDate:"2026-10-19"},
+ nightVsDayPct:-2.333};
 assert.equal(snap.risk.date,"2026-10-16");
 assert.equal(snap.risk.score,41);
 assert.equal(fut.asOfDate,"2026-10-16");
