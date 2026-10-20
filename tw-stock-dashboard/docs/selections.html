@@ -253,6 +253,7 @@ body.g-report-mode .repeat-panel .repeat-foot{padding:7px 12px}
 .g-free-note{color:#718096}.g-free-warn{color:#a64c00;font-weight:800}
 .g-free-flag{display:inline-block;margin:2px 4px 3px 0;padding:5px 8px;border-radius:7px;border:1px solid #f3c3b8;color:#a43121;font-size:11px;font-weight:800;background:#fff6f4}
 @media(max-width:850px){.g-free-grid{grid-template-columns:1fr}.g-free-market{padding:12px}}
+.g-free-wide{grid-column:1/-1}.g-free-neutral{background:#eef5ff;border-color:#dbeafe;color:#24509b}
 </style>
 <script src="./site-access.js"></script>
 </head>
@@ -317,7 +318,7 @@ body.g-report-mode .repeat-panel .repeat-foot{padding:7px 12px}
 <section id="gIntradayHeading" class="g-session-panel" aria-label="G 盤中暫估榜單">
   <header class="card g-session-head intraday">
     <div><h2>02｜G 盤中選股 <span class="sub">暫估訊號</span></h2><p id="gIntradayStatus" class="sub" role="status">正在檢查當日盤中 G 選股資料…</p></div>
-    <div class="g-session-action"><span id="gIntradayCount" class="g-session-count">載入中</span><button id="gExportIntraday" class="btn g-export-btn" type="button" aria-label="下載目前盤中 G 選股榜單圖片" title="將目前可見的盤中排名下載成 PNG 圖片">📷 下載圖片</button></div>
+    <div class="g-session-action"><span id="gIntradayCount" class="g-session-count">載入中</span><a class="btn" href="./g-sector-replay.html" title="檢視 G 已封存輪次的盤中族群強弱變化">🕒 族群輪動</a><button id="gExportIntraday" class="btn g-export-btn" type="button" aria-label="下載目前盤中 G 選股榜單圖片" title="將目前可見的盤中排名下載成 PNG 圖片">📷 下載圖片</button></div>
   </header>
   <div id="gHistoryControls" class="g-history-controls" aria-label="盤中選股歷史輪次">
     <label for="gHistoryDate">交易日 <select id="gHistoryDate" class="btn" aria-label="選擇歷史盤中交易日"></select></label>
