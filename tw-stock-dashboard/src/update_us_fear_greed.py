@@ -68,8 +68,11 @@ def to_archive(cnn,spx):
     if abs((datetime.fromisoformat(spx_latest)-datetime.fromisoformat(cnn_latest)).days)>10:
         raise ValueError("CNN and SPX latest dates materially inconsistent")
     last=common[-1]
-    if (datetime.fromisoformat(spx_latest)-datetime.fromisoformat(last)).days>8:
-        raise ValueError("Joined data stale against S&P500")
+    # Never silently turn an already-available US session into an older chart:
+    # the two independent providers must both contain the newest dated close.
+    # A missing side fails this attempt; the workflow retries after US SPX finishes.
+    if last!=spx_latest or last!=cnn_latest:
+        raise ValueError("US_MARKET_DATE_NOT_ALIGNED: joined="+last+" CNN="+cnn_latest+" SPX="+spx_latest)
     components={}
     for key,title in COMPONENTS.items():
         raw=cnn.get(key) or {}
