@@ -125,9 +125,10 @@ function build(){
    const response=await fetch(URL+"?t="+Date.now(),{cache:"no-store"});
    if(!response.ok)throw Error("HTTP "+response.status);
    data=await response.json();rows=validate(data);
-   const day=new Date(rows.at(-1)[0]+"T12:00:00Z");
-   const age=(Date.now()-day.getTime())/86400000;
-   $("fgSource").textContent="CNN Fear & Greed｜最後共同收盤日："+data.asOf+"｜歷史 "+rows.length+" 筆"+(age>4?"｜⚠ 資料較舊，非即時":"");
+   const freshness=scope.USMarketFreshness?.warning(data.asOf)||{stale:false,message:""};
+   $("fgSource").textContent="CNN Fear & Greed／S&P 500｜CNN資料日 "+String(data.cnnHistoricalLast||"未知")+"｜SPX資料日 "+String(data.spxLast||"未知")+"｜最後共同收盤日："+data.asOf+"｜歷史 "+rows.length+" 筆";
+   const alert=$("fgMarketFreshness");
+   if(alert){alert.hidden=!freshness.stale;alert.textContent=freshness.message;}
    output.textContent="美股情緒是風險背景，不能直接視為台股買進或賣出訊號。低分不等於立即見底，高分也不代表必跌。";
    report();draw();retry.hidden=true;
   }catch(err){
