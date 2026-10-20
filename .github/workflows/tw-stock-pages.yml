@@ -95,7 +95,8 @@ jobs:
           const main=fs.readFileSync(root+'stock-selection.js','utf8');
           const {gLeaderStats,gLeaderSplit,gLeaderCard}=new Function(js+';return {gLeaderStats,gLeaderSplit,gLeaderCard}').call(null);
           assert(html.includes('id="gSectorLeaderPanel"')&&html.includes('src="./g-theme-leaders.js"'));
-          assert(html.indexOf('src="./g-theme-leaders.js"')<html.indexOf('src="./stock-selection.js"'));
+          const selectionScriptAt=html.search(/src="\.\/stock-selection\.js(?:\?v=[^"]+)?"/);
+          assert(selectionScriptAt>=0 && html.indexOf('src="./g-theme-leaders.js"')<selectionScriptAt);
           assert(main.includes('ensureGThemeCatalog();renderGThemeLeaders()'));
           assert.deepStrictEqual(gLeaderSplit('光通訊設備(如光纖電纜、光傳輸設備)、電阻器'),['光通訊設備(如光纖電纜、光傳輸設備)','電阻器']);
           const stocks=Array.from({length:20},(_,i)=>({code:String(i+1).padStart(4,'0'),market:'上市',name:'測試'+i,
