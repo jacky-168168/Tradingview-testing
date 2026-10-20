@@ -238,6 +238,21 @@ body.g-report-mode .repeat-panel .repeat-foot{padding:7px 12px}
  .g-history-controls{gap:6px;padding:9px}
  .g-history-controls strong{min-width:0;flex:1 1 135px;font-size:11px}
 }
+
+/* Independently computed, read-only free-data context for G intraday snapshots. */
+.g-free-market[hidden]{display:none!important}
+.g-free-market{margin-top:12px;padding:16px;border:1px solid #dce5f0;border-radius:14px;background:#fff}
+.g-free-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.g-free-head h3{margin:0;font-size:16px;color:#1f3454}.g-free-head span{font-size:11px;color:#718096}
+.g-free-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,1fr);gap:12px;margin-top:12px}
+.g-free-section{min-width:0;padding:12px;border-radius:10px;border:1px solid #e7edf4;background:#fafbfc}
+.g-free-section h4{margin:0 0 9px;font-size:13px;color:#1f3454}
+.g-free-section p{font-size:11px;line-height:1.65;margin:7px 0}
+.g-free-scroll{overflow-x:auto}.g-free-scroll table{min-width:620px}
+.g-free-scroll th,.g-free-scroll td{padding:8px 7px;text-align:left;font-size:10px;white-space:normal}
+.g-free-note{color:#718096}.g-free-warn{color:#a64c00;font-weight:800}
+.g-free-flag{display:inline-block;margin:2px 4px 3px 0;padding:5px 8px;border-radius:7px;border:1px solid #f3c3b8;color:#a43121;font-size:11px;font-weight:800;background:#fff6f4}
+@media(max-width:850px){.g-free-grid{grid-template-columns:1fr}.g-free-market{padding:12px}}
 </style>
 <script src="./site-access.js"></script>
 </head>
@@ -314,6 +329,7 @@ body.g-report-mode .repeat-panel .repeat-foot{padding:7px 12px}
   <p id="gHistoryConnection" class="g-history-note" role="alert" hidden></p>
   <p id="gHistoryNote" class="g-history-note" role="alert" hidden></p>
 </section>
+<section id="gFreeMarketPanel" class="g-free-market" aria-label="G 盤中產業強度與交易限制研究" hidden></section>
 <section id="lPanel" class="card l-research-panel" style="display:none" aria-label="L 週KD金叉及營收回測"><div class="l-research-head"><h2>🟢 L｜週KD(9,3,3) 金叉＋營收成長</h2><span>以「週K、週D均低於40」為條件；最新已公告月營收 MoM＞0% 或 YoY＞0%</span></div><p id="lStatus" class="sub" role="status">正在核對 L 每週正式訊號與歷史營收…</p><div class="l-research-head"><strong>訊號後 1W／2W／3W 淨報酬</strong><select id="lScope" class="btn" aria-label="L 回測期間"><option value="2026">2026 年訊號</option><option value="all">2023 至今全部訊號</option></select></div><div id="lStats" class="l-stats-grid"></div><p class="sub">回測：訊號週收盤確認，下一週首個交易日開盤買進，持有至第1／2／3個已完成交易週收盤；報酬已扣雙邊手續費與賣出交易稅共0.585%，未含滑價。最新官方 MOPS 歷史修訂值以次月16日為保守可用日，並非當年不可變公布快照；目前上市股票池可能有存活者偏誤。1W／2W／3W 是三種獨立持有期，不是預測未來。</p></section><div id="tableHint" hidden aria-hidden="true"></div><div class="card table-card"><div class="scroll"><table id="stockTable" class="compact"><thead><tr><th>Rank</th><th>股票</th><th>市場</th><th>題材</th><th>總分</th><th class="g-only">原 G 分</th><th class="g-only">持續度</th><th class="g-only">前10日入選</th><th class="g-only">3D/18D</th><th>SAR</th><th>現價 / 收盤</th><th>股本</th><th>成交額</th><th>外資買超</th><th>投信買超</th><th>RS20</th><th>RVOL</th><th>5D</th><th>20D</th><th>距20日高</th><th>MA20斜率</th><th>訊號</th></tr></thead><tbody id="tb"><tr><td colspan="18" style="text-align:center;padding:40px;color:#7b8494">載入中...</td></tr></tbody></table></div></div>
 <section id="gOfficialPanel" class="g-session-panel" aria-label="G 盤後正式榜單">
   <header class="card g-session-head official">
@@ -342,6 +358,7 @@ body.g-report-mode .repeat-panel .repeat-foot{padding:7px 12px}
 <script src="./repeat-rankings.js"></script>
 <script src="./g-theme-leaders.js"></script>
 <script src="./g-intraday-timeline.js"></script>
+<script src="./g-free-market-overlay.js"></script>
 <script src="./stock-selection.js?v=eod-date-guard-20261019"></script>
 <script src="./g-rank-export.js"></script>
 </body></html>
