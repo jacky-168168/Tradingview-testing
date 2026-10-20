@@ -11,7 +11,8 @@ import csv
 import io
 import json
 import os
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -21,6 +22,14 @@ DEST = ROOT / "docs/data/research/us_vix/history.json"
 SYMBOLS = ("VIX", "VIX9D", "VIX3M", "VVIX")
 URLS = {k: tuple("https://" + host + "/api/global/us_indices/daily_prices/" + k + "_History.csv" for host in ("cdn-api.cboe.com", "cdn.cboe.com")) for k in SYMBOLS}
 MAX_BYTES = 6_000_000
+
+def most_recent_expected_us_close(now: datetime) -> str:
+    """Expectation after 20:00 New York; does not fabricate holiday sessions."""
+    eastern = now.astimezone(ZoneInfo("America/New_York"))
+    day = eastern.date() if eastern.hour >= 20 else eastern.date() - timedelta(days=1)
+    while day.weekday() >= 5:
+        day -= timedelta(days=1)
+    return day.isoformat()
 
 def parse_csv(raw: bytes) -> list[list[object]]:
     reader = csv.DictReader(io.StringIO(raw.decode("utf-8-sig", errors="replace")))
@@ -86,6 +95,9 @@ def main() -> None:
     for name in SYMBOLS:
         try:
             rows, url = fetch(name)
+            saved = prior.get(name) if isinstance(prior, dict) else None
+            if isinstance(saved, dict) and rows[-1][0] < str(saved.get("lastDate", "")):
+                raise ValueError("SOURCE_DATE_REGRESSION: "+rows[-1][0]+" < "+str(saved.get("lastDate")))
             series[name] = {"lastDate": rows[-1][0], "source": url, "rows": rows}
             print(f"{name}: {len(rows)} observations to {rows[-1][0]}")
         except Exception as exc:
@@ -99,6 +111,13 @@ def main() -> None:
     if "VIX" not in series:
         raise RuntimeError("VIX official data unavailable; cannot publish an empty or invented chart")
     today = datetime.now(timezone.utc)
+    expected = most_recent_expected_us_close(today)
+    if series["VIX"]["lastDate"] < expected:
+        # Be explicit: a successful fetch that serves Friday's CSV on Tuesday
+        # is NOT a successful Monday update. Retry via GitHub Actions.
+        raise RuntimeError("VIX_SOURCE_STALE: official latest="+series["VIX"]["lastDate"]+
+                           ", expected US close="+expected+
+                           " (possible Cboe publication delay or US exchange holiday)")
     payload = {"version": "CBOE_VIX_DAILY_V1", "frequency": "daily_close", "source": "Cboe Global Markets",
                "sourcePage": "https://www.cboe.com/tradable-products/vix/vix-historical-data/",
                "updatedAt": today.isoformat(timespec="seconds"),
