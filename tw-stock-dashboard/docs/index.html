@@ -35,15 +35,16 @@
 <script src="./site-access.js"></script>
 <link rel="stylesheet" href="./market-sentiment.css?v=0bd68b022c1b">
 <link rel="stylesheet" href="./market-command.css?v=4eb52cea25e6">
-<link rel="stylesheet" href="./market-compact.css?v=dedup20261019">
+<link rel="stylesheet" href="./market-compact.css?v=65481d6d48f4">
 <link rel="stylesheet" href="./dynamic-exposure.css">
-<link rel="stylesheet" href="./fear-greed-home.css?v=vix2-native-20261019">
+<link rel="stylesheet" href="./fear-greed-home.css?v=842f00c777d9">
 <script src="./market-compact.js?v=b1b009ea95e1"></script>
 <script src="./market-command.js?v=c27a62c1e751"></script>
 <script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
-<script defer src="./fear-greed-home.js?v=d22e116e0cc6"></script>
-<script defer src="./vix-home.js?v=native-20261019"></script>
+<script defer src="./us-market-freshness.js?v=de836e1500a9"></script>
+<script defer src="./fear-greed-home.js?v=c8cea7d26984"></script>
+<script defer src="./vix-home.js?v=cc61084cae03"></script>
 
 
 </head>
@@ -220,6 +221,7 @@
   <div class="fg-metric fg-mood"><span>市場情緒狀態</span><strong id="fgMood">—</strong></div>
   <div class="fg-metric"><span>S&P 500 指數</span><strong id="fgSpxValue">—</strong></div>
  </div>
+ <p id="fgMarketFreshness" class="fg-freshness-alert" role="status" hidden></p>
  <div class="fg-caption">
   <span>市場恐懼與貪婪分數 <span class="fg-hint">數值低代表恐懼，數值高代表貪婪</span></span>
   <span id="fgSelectedDate" class="fg-hint">讀取交易日中…</span>
@@ -245,6 +247,7 @@
    <div class="fg-vix-metric"><span>相較前日</span><strong id="fgVixChange">—</strong></div>
    <div class="fg-vix-metric"><span>近一年歷史百分位</span><strong id="fgVixPercentile">—</strong></div>
   </div>
+  <p id="fgVixFreshness" class="fg-freshness-alert" role="status" hidden></p>
   <div class="fg-vix-ranges" role="group" aria-label="選擇VIX走勢期間">
    <button type="button" data-vix-range="6m" class="is-active" aria-pressed="true">6個月</button>
    <button type="button" data-vix-range="2y" aria-pressed="false">2年</button>
