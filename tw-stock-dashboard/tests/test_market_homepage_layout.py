@@ -35,15 +35,15 @@ class MarketHomepageLayout(unittest.TestCase):
         self.assertFalse(self.dom.errors,self.dom.errors[:8]);self.assertFalse(self.dom.stack,self.dom.stack[-5:])
         self.assertFalse(self.dom.duplicates,self.dom.duplicates)
     def test_top_buy_decision_is_not_collapsed(self):
-        for name in ("marketCommand","compactMarketSummary","compactAction","compactScore","compactOfficial","compactAdjusted","compactNight","commandBreadth","commandScoreChange","commandReasons","commandPrimaryLink","revState","nextEntry"):
+        for name in ("marketCommand","compactMarketSummary","compactAction","compactScore","commandBreadth","commandScoreChange","commandReasons","commandPrimaryLink","revState","extreme","confirm","nextEntry"):
             self.assertIn(name,self.dom.ids)
             self.assertFalse(self.dom.details[name],name+" should be visible without opening advanced section")
     def test_professional_data_is_kept_in_details_not_deleted(self):
         for ident,container in (("commandScore","marketRiskDetails"),("commandStatus","marketRiskDetails"),("sentimentGauge","marketRiskDetails"),("sentimentHistory","marketRiskDetails"),("sentimentAdjusted","marketRiskDetails"),("commandGuideTitle","marketRiskDetails"),("riskScore","marketAdvanced"),("riskLight","marketAdvanced"),("riskWarning","marketAdvanced"),
                                 ("idx","marketAdvanced"),("ma5","marketAdvanced"),("ma20","marketAdvanced"),
                                 ("txfDay","txfDetails"),("txfNight","txfDetails"),("txfContract","txfDetails"),
-                                ("txfWidgetShell","txfLiveChart"),("extreme","reversalDetails"),
-                                ("confirm","reversalDetails"),("commandVol","commandAdvanced"),
+                                ("txfWidgetShell","txfLiveChart"),("dist","reversalDetails"),
+                                ("closepos","reversalDetails"),("commandVol","commandAdvanced"),
                                 ("commandHigh","commandAdvanced"),("commandAi","commandAdvanced"),
                                 ("buyRows","secondaryInsights"),("sellRows","secondaryInsights"),("themeRows","secondaryInsights")):
             self.assertIn(ident,self.dom.ids)
@@ -55,8 +55,14 @@ class MarketHomepageLayout(unittest.TestCase):
         self.assertNotIn('id="marketAdvanced" open',self.html)
         self.assertNotIn('id="txfDetails" open',self.html)
     def test_mobile_compact_score_is_primary_not_repeated(self):
-        for ident in ("compactMarketSummary","compactAction","compactScore","compactOfficial","compactAdjusted","compactNight","commandReasons"):
+        # Only one primary score and the independent 3/9 & 1/9 reversal
+        # scores stay visible. Research/source repetitions now live in a
+        # disclosure, as requested by the homepage owner.
+        for ident in ("compactMarketSummary","compactAction","compactScore","commandReasons","extreme","confirm"):
             self.assertFalse(self.dom.details[ident],ident+" must remain immediately visible")
+        for ident in ("compactOfficial","compactAdjusted","compactNight"):
+            self.assertIn("compactSourceDisclosure",self.dom.details[ident],
+                          ident+" must be preserved in the collapsed source disclosure")
         for ident in ("commandScore","sentimentGauge","sentimentHistory","sentimentPattern","commandGuideTitle"):
             self.assertIn("marketRiskDetails",self.dom.details[ident],ident+" should be optional research")
         self.assertEqual(self.html.count('id="compactScore"'),1)
@@ -64,6 +70,8 @@ class MarketHomepageLayout(unittest.TestCase):
         self.assertIn('market-compact.js',self.html)
         self.assertIn('id="fgChart"',self.html)
         self.assertIn('id="fgSpxChart"',self.html)
+        self.assertIn('id="fgMarketFreshness"',self.html)
+        self.assertIn('id="fgVixFreshness"',self.html)
         self.assertNotIn('id="usopChart"',self.html)
         self.assertNotIn('id="marketRiskDetails" class="compact-deep" open',self.html)
     
