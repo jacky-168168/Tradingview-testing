@@ -82,10 +82,12 @@ function boot(){
   $("fgVixGuideTitle").textContent=SYMBOLS[symbol]+"｜收盤風險解讀";
  };
  const draw=()=>{
-  const source=series[symbol];if(!source||source.length<30){status.textContent=SYMBOLS[symbol]+" 官方日資料暫時未取得，請改選其他指標或使用下方Cboe連結。";svg.replaceChildren();return;}
+  const source=series[symbol];if(!source||source.length<30){status.textContent=SYMBOLS[symbol]+" 官方日資料暫時未取得，請改選其他指標或使用下方Cboe連結。";const warn=$("fgVixFreshness");if(warn){warn.hidden=false;warn.textContent="⚠ 此指標目前沒有可驗證的新交易日數據。";}svg.replaceChildren();return;}
   status.textContent="資料來源：Cboe 官方每日收盤｜最新美股交易日："+source.at(-1)[0]+(payload.errors?.[symbol]?"｜⚠本次更新失敗，保留上次成功資料":"");
-  const age=(Date.now()-Date.parse(source.at(-1)[0]+"T12:00:00Z"))/86400000;
-  if(age>7)status.textContent+="｜⚠歷史資料可能過期";
+  const fresh=scope.USMarketFreshness?.warning(source.at(-1)[0])||{stale:false,message:""};
+  const warning=$("fgVixFreshness");
+  if(warning){warning.hidden=!fresh.stale;warning.textContent=fresh.message;}
+  if(!warning&&fresh.stale)status.textContent+="｜"+fresh.message;
   visible=sample(choose(source,range));idx=visible.length-1;handle=chart(svg,visible);present();
   for(const b of buttons){const yes=b.dataset.vixSymbol===symbol;b.classList.toggle("is-active",yes);b.setAttribute("aria-pressed",yes?"true":"false");}
   for(const b of ranges){const yes=b.dataset.vixRange===range;b.classList.toggle("is-active",yes);b.setAttribute("aria-pressed",yes?"true":"false");}
