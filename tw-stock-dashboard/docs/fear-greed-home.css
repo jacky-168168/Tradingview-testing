@@ -67,3 +67,7 @@
 .fg-vix-links{display:flex;gap:13px;flex-wrap:wrap;font-size:12px}
 .fg-vix-links a{color:#9dcbff;text-decoration:underline;text-underline-offset:2px}
 @media(max-width:700px){.fg-vix-head h3{font-size:16px}.fg-vix-data{grid-template-columns:repeat(2,minmax(0,1fr))}.fg-vix-metric strong{font-size:19px}.fg-vix-buttons button{padding:8px 9px}.fg-vix-ranges button{padding:7px 9px}}
+
+/* Make stale US closing dates visible instead of silently showing Friday's chart. */
+.fg-freshness-alert{border:1px solid #efc878;background:#fff3d5;color:#7c3d05;border-radius:9px;margin:9px 0 12px;padding:10px 12px;font-size:12px;font-weight:750;line-height:1.7}
+.fg-freshness-alert[hidden]{display:none!important}
