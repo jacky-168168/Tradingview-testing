@@ -3,8 +3,11 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const root='tw-stock-dashboard/docs/',html=fs.readFileSync(root+'selections.html','utf8'),code=fs.readFileSync(root+'g-rank-export.js','utf8');
 for(const id of ['gExportIntraday','gExportOfficial'])assert(html.includes('id="'+id+'"'),'missing download button '+id);
 assert(html.includes('src="./g-rank-export.js"'),'export JS not loaded');
-assert(html.includes('src="./stock-selection.js"'),'selection JS missing');
-assert(html.indexOf('src="./stock-selection.js"')<html.indexOf('src="./g-rank-export.js"'),'export loaded before ranking data');
+// Ranking JS may carry a cache-busting ?v= token after a deployment.
+const selectionScript=/src="\.\/stock-selection\.js(?:\?v=[^"]+)?"?/;
+const selectionAt=html.search(selectionScript);
+assert(selectionAt>=0,'selection JS missing');
+assert(selectionAt<html.indexOf('src="./g-rank-export.js"'),'export loaded before ranking data');
 const day='2026-10-14',live={asOfDate:day,publishedAt:day+'T13:30:00+08:00',rows:[{code:'6834'}]};
 function makeTable(simple){
  const headers=simple?['排名','股票／題材','近10日入榜','現價／漲跌']:['Rank','股票','市場','題材','總分','正式收盤價'];
