@@ -3,7 +3,7 @@ const fs=require("node:fs"),path=require("node:path"),assert=require("node:asser
 const html=fs.readFileSync(path.resolve(__dirname,"../docs/selections.html"),"utf8");
 const home=fs.readFileSync(path.resolve(__dirname,"../docs/index.html"),"utf8");
 const script=fs.readFileSync(path.resolve(__dirname,"../docs/stock-selection.js"),"utf8");
-assert.match(html,/<script src="\.\/stock-selection\.js"><\/script>/,"Rankings page must load its own script");new Function(script);
+assert.match(html,/<script src="\.\/stock-selection\.js(?:\?[^"]+)?"><\/script>/,"Rankings page must load its own script");new Function(script);
 assert(!home.includes('id="stockTable"')&&!home.includes('id="tabG"'),"Home must not show the stock selection table");
 assert(home.includes('href="./selections.html"'),"Home needs an obvious rankings entry");
 assert(home.includes('id="riskScore"')&&home.includes('id="buyRows"')&&home.includes('id="txfNight"'),"Market and institutional panels must stay on homepage");
