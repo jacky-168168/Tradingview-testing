@@ -37,12 +37,12 @@ def assess(now,latest,status,runs,pages=None):
             if b<500 or a/b<.60:errors.append(f"{market}報價覆蓋率不足 {a}/{b}")
     except (KeyError,TypeError,ValueError,ZeroDivisionError):errors.append("有效報價覆蓋率缺失或格式錯誤")
     failure=parse(status.get("checkedAt"))
-    if status.get("asOfDate")==today and status.get("status")=="unavailable" and failure and (not published or failure>published+timedelta(minutes=10)):
+    if status.get("asOfDate")==today and status.get("status")=="unavailable" and failure and (not published or failure>published):
         errors.append("最新重選失敗："+str(status.get("message") or "不明原因")[:140])
     recent=[r for r in (runs or []) if r.get("name")=="TW Stock Dashboard" and (t:=parse(r.get("created_at"))) and 0<=(now-t).total_seconds()<95*60]
     if not recent:errors.append("最近95分鐘無 TW Stock Dashboard 工作紀錄，排程可能未觸發")
     active=any(r.get("status") in ("queued","waiting","in_progress","pending","requested") for r in recent)
-    if pages is not None and published and age is not None and age>25:
+    if pages is not None and published:
         page_at=parse(pages.get("publishedAt")) if isinstance(pages,dict) else None
         if not page_at or published-page_at>timedelta(minutes=25):errors.append("GitHub Pages 榜單比原始檔落後超過25分鐘")
     return {"ok":not errors,"errors":errors,"date":today,"publishedAt":latest.get("publishedAt"),
