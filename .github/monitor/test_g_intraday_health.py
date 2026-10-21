@@ -15,6 +15,7 @@ def runs():
 class TestWatchdog(unittest.TestCase):
     def test_healthy(self):self.assertTrue(assess(now,live(),{},runs())["ok"])
     def test_stale(self):self.assertFalse(assess(now,live(66),{},runs())["ok"])
+    def test_future_published_at(self):self.assertFalse(assess(now,live(-1),{},runs())["ok"])
     def test_missing_today(self):self.assertFalse(assess(now,live(1440),{},runs())["ok"])
     def test_missing_job(self):self.assertTrue(any("工作紀錄" in x for x in assess(now,live(),{},[])["errors"]))
     def test_low_otc(self):self.assertTrue(any("上櫃" in x for x in assess(now,live(0,1000,360),{},runs())["errors"]))
