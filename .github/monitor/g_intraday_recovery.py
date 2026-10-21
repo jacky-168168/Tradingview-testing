@@ -15,7 +15,7 @@ def trade_window(now):
     tw=now.astimezone(TZ)
     return (tw.weekday()<5
             and not(tw.year==2026 and tw.strftime("%m-%d") in CLOSED_2026)
-            and time(9,10)<=tw.time()<time(13,28))
+            and time(9,10)<=tw.time()<time(13,42))
 
 def is_good_snapshot(latest, now):
     if not isinstance(latest,dict):return False
