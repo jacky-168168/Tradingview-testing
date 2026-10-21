@@ -1,0 +1,36 @@
+name: G Intraday Recovery Clock
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/g-intraday-recovery-clock.yml'
+      - '.github/monitor/g_intraday_recovery.py'
+      - '.github/monitor/test_g_intraday_recovery.py'
+  schedule:
+    # Independent clock, offset from primary :03/:33 and secondary :09/:39.
+    # Taiwan 09:12, 09:42, 10:12 ... 12:42, 13:12; 13:32 is outside
+    # the auto-recovery cutoff and would not run a useful new scan.
+    - cron: '12,42 1-4 * * 1-5'
+    - cron: '12 5 * * 1-5'
+permissions:
+  contents: read
+  actions: write
+concurrency:
+  group: g-intraday-independent-recovery
+  cancel-in-progress: false
+jobs:
+  check-and-recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test backup coverage, stale snapshots and dispatch deduplication
+        run: python -m unittest discover -s .github/monitor -p 'test_g_intraday_recovery.py' -v
+      - name: Trigger intraday refresh if no valid recent scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/monitor/g_intraday_recovery.py
