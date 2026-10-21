@@ -9,10 +9,10 @@ on:
       - '.github/monitor/test_g_intraday_recovery.py'
   schedule:
     # Independent clock, offset from primary :03/:33 and secondary :09/:39.
-    # Taiwan 09:12, 09:42, 10:12 ... 12:42, 13:12; 13:32 is outside
-    # the auto-recovery cutoff and would not run a useful new scan.
+    # Taiwan 09:12, 09:42, 10:12 ... 12:42, 13:12 and 13:39.
+    # Closing-session :39 tick is after :33 primary; never publish after 13:45.
     - cron: '12,42 1-4 * * 1-5'
-    - cron: '12 5 * * 1-5'
+    - cron: '12,39 5 * * 1-5'
 permissions:
   contents: read
   actions: write
