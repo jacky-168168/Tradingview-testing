@@ -20,7 +20,7 @@ assert.match(ui,/if\(foreground\)loading\.classList\.add\("show"\)/);
 assert.match(wf,/- cron: '9,39 1-5 \* \* 1-5'/);
 assert.match(ui,/g\.asOfDate!==taipeiDate\(\)/);
 assert.match(wf,/- cron: '3,33 1-5 \* \* 1-5'/); // scheduling contract belongs in workflow, not visible helper copy
-assert.match(backup,/- cron: '12,42 1-4 \\* \\* 1-5'/);
-assert.match(backup,/- cron: '12 5 \\* \\* 1-5'/);
-assert.match(backup,/python \\.github\\/monitor\\/g_intraday_recovery\\.py/);
+assert.ok(backup.includes("- cron: '12,42 1-4 * * 1-5'"));
+assert.ok(backup.includes("- cron: '12 5 * * 1-5'"));
+assert.ok(backup.includes("run: python .github/monitor/g_intraday_recovery.py"));
 console.log('PASS offset half-hour TW intraday slots, silent fallback clock, frontend sync and stale-data gate');
