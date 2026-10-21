@@ -20,6 +20,9 @@ from g_market_overlay import build_overlay
 from g_signal_context import build_context
 
 TZ=ZoneInfo("Asia/Taipei")
+# Confirmed TWSE calendar closures (2026). Match independent health/recovery guards.
+# Maintain official exchange calendar annually; never substitute a stale trading day.
+CLOSED_2026=set("01-01 02-12 02-13 02-16 02-17 02-18 02-19 02-20 02-27 04-03 04-06 05-01 06-19 09-25 09-28 10-09 10-26 12-25".split())
 BASE="https://mis.twse.com.tw/stock/"
 QUOTE=BASE+"api/getStockInfo.jsp"
 OUTPUT=DATA_DIR/"g_intraday"/"latest.json"
@@ -188,6 +191,9 @@ def write_status(now,status,details=""):
 
 def main():
     now=datetime.now(TZ);today=now.date().isoformat()
+    if now.year==2026 and now.strftime("%m-%d") in CLOSED_2026:
+        write_status(now,"closed","臺灣證交所休市，G 盤中選股不執行")
+        return
     if now.weekday()>=5 or not clock(9,0)<=now.time()<clock(13,45):
         write_status(now,"closed","僅於臺灣交易日09:00–13:45產生盤中G暫估");return
     try:
