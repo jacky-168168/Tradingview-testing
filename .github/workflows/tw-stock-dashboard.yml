@@ -18,13 +18,13 @@ on:
       - 'tw-stock-dashboard/docs/*.js'
       - '.github/workflows/tw-stock-dashboard.yml'
   schedule:
-    # Every 30 minutes on weekday TW trading sessions: 09:00, 09:30,
-    # 10:00, 10:30, 11:00, 11:30, 12:00, 12:30, 13:00, 13:30 Taipei.
+    # Every 30 minutes on weekday TW trading sessions at :03 / :33 Taipei.
+    # Avoid GitHub's documented :00 scheduler hot spot; resync cron actor.
     # Actions schedules are best-effort: runner may start late; g_intraday.py
     # checks actual local session time and fails closed instead of faking quotes.
-    - cron: '0,30 1-5 * * 1-5'
-    # Staggered GitHub-only backup avoids busy :00/:30 queue; engine skips already completed slots.
-    - cron: '7,37 1-5 * * 1-5'
+    - cron: '3,33 1-5 * * 1-5'
+    # Same-workflow secondary slots at :09 / :39; engine skips completed slots.
+    - cron: '9,39 1-5 * * 1-5'
     # Opening-session recovery: retry at 09:15, 09:45 and 10:15 Taiwan.
     # Early MIS often has incomplete OHLCV even when the exchange is open.
     - cron: '15,45 1 * * 1-5'
@@ -50,7 +50,7 @@ permissions:
 # Isolate intraday scans from long-running full-history builds. Without this,
 # full backfills can queue a 09:00 scan until after market close.
 concurrency:
-  group: ${{ ((github.event_name == 'schedule' && (github.event.schedule == '0,30 1-5 * * 1-5' || github.event.schedule == '7,37 1-5 * * 1-5' || github.event.schedule == '15,45 1 * * 1-5' || github.event.schedule == '15 2 * * 1-5' || github.event.schedule == '20 3-5 * * 1-5')) || (github.event_name == 'workflow_dispatch' && inputs.mode == 'intraday')) && 'tw-stock-dashboard-intraday' || 'tw-stock-dashboard-full' }}
+  group: ${{ ((github.event_name == 'schedule' && (github.event.schedule == '3,33 1-5 * * 1-5' || github.event.schedule == '9,39 1-5 * * 1-5' || github.event.schedule == '15,45 1 * * 1-5' || github.event.schedule == '15 2 * * 1-5' || github.event.schedule == '20 3-5 * * 1-5')) || (github.event_name == 'workflow_dispatch' && inputs.mode == 'intraday')) && 'tw-stock-dashboard-intraday' || 'tw-stock-dashboard-full' }}
   cancel-in-progress: false
 
 jobs:
@@ -80,7 +80,7 @@ jobs:
               # GitHub cron execution may be delayed: use the SCHEDULED slot,
               # never the actual runner start time to choose intraday vs full.
               case "${{ github.event.schedule }}" in
-                '0,30 1-5 * * 1-5'|'7,37 1-5 * * 1-5'|'15,45 1 * * 1-5'|'15 2 * * 1-5'|'20 3-5 * * 1-5') MODE="intraday" ;;
+                '3,33 1-5 * * 1-5'|'9,39 1-5 * * 1-5'|'15,45 1 * * 1-5'|'15 2 * * 1-5'|'20 3-5 * * 1-5') MODE="intraday" ;;
                 *) MODE="full" ;;
               esac
             else
