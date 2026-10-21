@@ -21,7 +21,8 @@ class TestUSFearGreed(unittest.TestCase):
     def test_missing_score_not_fake_zero(self):
         c,s=self.fixtures();c["fear_and_greed_historical"]["data"][12]["y"]=None
         o=to_archive(c,s)
-        self.assertEqual(len(o["rows"]),255)\n        self.assertIsNone(o["rows"][12][1])
+        self.assertEqual(len(o["rows"]),255)
+        self.assertIsNone(o["rows"][12][1])
     def test_one_source_can_be_newer(self):
         c,s=self.fixtures()
         last=s["rows"][-1][0]
