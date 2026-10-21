@@ -25,6 +25,14 @@ class TestWatchdog(unittest.TestCase):
     def test_failed_latest(self):
         d=live(20);s={"asOfDate":"2026-10-15","status":"unavailable","checkedAt":now.isoformat(),"message":"MIS"}
         self.assertTrue(any("重選失敗" in x for x in assess(now,d,s,runs())["errors"]))
+    def test_pages_stale_even_when_fresh_main_snapshot(self):
+        # Every 30m the repository may refresh; stale Pages must still alert.
+        self.assertTrue(any("Pages" in x for x in assess(now,live(2),{},runs(),live(50))["errors"]))
+    def test_unavailable_one_minute_after_success(self):
+        d=live(2)
+        s={"asOfDate":"2026-10-15","status":"unavailable",
+           "checkedAt":(now-timedelta(minutes=1)).isoformat(),"message":"TWSE MIS outage"}
+        self.assertTrue(any("重選失敗" in x for x in assess(now,d,s,runs())["errors"]))
     def test_pages_stale(self):
         self.assertTrue(any("Pages" in x for x in assess(now,live(30),{},runs(),live(80))["errors"]))
     def test_holiday_and_out_of_hours(self):
