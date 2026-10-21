@@ -24,7 +24,8 @@ const ctx={document,fetch:async()=>({ok:true,json:async()=>sample}),setInterval:
 vm.runInNewContext(script,ctx);
 setImmediate(()=>{
  assert(node('events').innerHTML.includes('TPCA Show 2026'),'confirmed TPCA must render');
- assert(!node('news').innerHTML.includes('TPCA Show'),'events cannot be faked as news');
+ assert(!node('news').innerHTML.includes('class="item event"'),'event cards cannot be rendered as news');
+ assert(!node('news').innerHTML.includes('TPCA Show 2026｜台灣電路板產業國際展'),'confirmed TPCA event cannot be rendered as news');
  const expected=Math.min(20,sample.items.filter(x=>x.type==='news').length);
  assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,expected,'market news must show up to 20 initially');
  if(sample.items.filter(x=>x.type==='news').length>20){
