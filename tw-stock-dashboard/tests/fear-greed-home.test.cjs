@@ -12,6 +12,13 @@ test("trustworthy dated data only",()=>{
  assert.throws(()=>validate({...doc,rows:[rows[0],rows[0],...rows.slice(1)]}),/異常/);
  assert.throws(()=>validate({...doc,rows:rows.map((r,i)=>i===6?[r[0],r[1],0]:r)}),/範圍/);
 });
+test("independent missing values display as gaps rather than invented numbers",()=>{
+ const partial={...doc,version:"US_CNN_FEAR_GREED_SPX_V2",rows:rows.map((r,i)=>i===399?[r[0],r[1],null]:r)};
+ assert.equal(validate(partial).at(-1)[2],null);
+ const reverse={...partial,rows:rows.map((r,i)=>i===399?[r[0],null,r[2]]:r)};
+ assert.equal(validate(reverse).at(-1)[1],null);
+ assert.throws(()=>validate({...partial,rows:rows.map((r,i)=>i===399?[r[0],null,null]:r)}),/範圍/);
+});
 test("zone labels and range choices",()=>{
  assert.equal(zone(0).label,"極度恐懼");
  assert.equal(zone(24.99).label,"極度恐懼");

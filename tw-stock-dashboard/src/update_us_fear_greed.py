@@ -65,14 +65,10 @@ def to_archive(cnn,spx):
     if len(common)<150:raise ValueError("CNN and S&P500 overlap too short")
     cnn_latest=max(points)
     spx_latest=max(us)
-    if abs((datetime.fromisoformat(spx_latest)-datetime.fromisoformat(cnn_latest)).days)>10:
-        raise ValueError("CNN and SPX latest dates materially inconsistent")
-    last=common[-1]
-    # Never silently turn an already-available US session into an older chart:
-    # the two independent providers must both contain the newest dated close.
-    # A missing side fails this attempt; the workflow retries after US SPX finishes.
-    if last!=spx_latest or last!=cnn_latest:
-        raise ValueError("US_MARKET_DATE_NOT_ALIGNED: joined="+last+" CNN="+cnn_latest+" SPX="+spx_latest)
+    # Publish each independent source immediately. A missing date is null,
+    # never forward-filled, and does not delay the other provider.
+    all_dates=sorted(set(us)|set(points))
+    last=all_dates[-1]
     components={}
     for key,title in COMPONENTS.items():
         raw=cnn.get(key) or {}
@@ -81,16 +77,16 @@ def to_archive(cnn,spx):
     # Latest headline is separate from the confirmed end-of-day, aligned history.
     headline=cnn.get("fear_and_greed") or {}
     src_ts=str(headline.get("timestamp") or "") if isinstance(headline,dict) else ""
-    rows=[[d,points[d],us[d]] for d in common]
+    rows=[[d,points.get(d),us.get(d)] for d in all_dates]
     return {
-        "version":"US_CNN_FEAR_GREED_SPX_V1","source":SOURCE,
+        "version":"US_CNN_FEAR_GREED_SPX_V2","source":SOURCE,
         "sourceLink":"https://edition.cnn.com/markets/fear-and-greed",
         "spxSource":"SqueezeMetrics DIX.csv / indexed S&P 500 settlement (display only)",
         "updatedAt":datetime.now(timezone.utc).isoformat(),
         "cnnTimestamp":src_ts,"cnnHistoricalLast":cnn_latest,"spxLast":spx_latest,
         "asOf":last,"columns":["date","fearGreed","spx"],"rows":rows,
         "components":components,
-        "disclaimer":"Confirmed matched US market daily observations; no same-day forward fill, no TA stock Risk Score integration.",
+        "disclaimer":"Independent dated CNN and S&P 500 observations; missing values are null and never forward-filled. No TA stock Risk Score integration.",
     }
 def fetch_cnn():
     req=urllib.request.Request(SOURCE,headers=HEADERS,method="GET")

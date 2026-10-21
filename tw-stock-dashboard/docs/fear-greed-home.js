@@ -13,12 +13,12 @@ function zone(score){
  return {label:"極度貪婪",key:"extreme-greed",detail:"市場樂觀情緒偏高"};
 }
 function validate(x){
- if(!x||x.version!=="US_CNN_FEAR_GREED_SPX_V1"||JSON.stringify(x.columns)!=='["date","fearGreed","spx"]'||!Array.isArray(x.rows))throw Error("CNN歷史資料格式異常");
+ if(!x||!["US_CNN_FEAR_GREED_SPX_V1","US_CNN_FEAR_GREED_SPX_V2"].includes(x.version)||JSON.stringify(x.columns)!=='["date","fearGreed","spx"]'||!Array.isArray(x.rows))throw Error("CNN歷史資料格式異常");
  let last="",rows=[];
  for(const row of x.rows){
-  if(!Array.isArray(row)||row.length!==3||!/^20\d{2}-\d{2}-\d{2}$/.test(row[0])||row[0]<=last||!finite(row[1])||!finite(row[2]))throw Error("歷史日期或數值異常");
-  const f=Number(row[1]),p=Number(row[2]);
-  if(f<0||f>100||p<=0)throw Error("歷史資料超出合理範圍");
+  if(!Array.isArray(row)||row.length!==3||!/^20\d{2}-\d{2}-\d{2}$/.test(row[0])||row[0]<=last)throw Error("歷史日期或數值異常");
+  const f=row[1]===null?null:Number(row[1]),p=row[2]===null?null:Number(row[2]);
+  if((f!==null&&(!Number.isFinite(f)||f<0||f>100))||(p!==null&&(!Number.isFinite(p)||p<=0))||(f===null&&p===null))throw Error("歷史資料超出合理範圍");
   rows.push([row[0],f,p]);last=row[0];
  }
  if(rows.length<150||x.asOf!==last)throw Error("歷史涵蓋率不足或最新日期不一致");
@@ -33,7 +33,8 @@ function recent(rows,range){
 }
 function explain(rows){
  if(!Array.isArray(rows)||rows.length<22)return null;
- const last=rows.at(-1),prev=rows.at(-2),five=rows.at(-6),twenty=rows.at(-21);
+ const aligned=rows.filter(r=>r[1]!==null&&r[2]!==null);if(aligned.length<22)return null;
+ const last=aligned.at(-1),prev=aligned.at(-2),five=aligned.at(-6),twenty=aligned.at(-21);
  const delta=last[1]-five[1],d1=last[1]-prev[1],r5=(last[2]/five[2]-1)*100,r20=(last[2]/twenty[2]-1)*100;
  const mood=zone(last[1]);let title,guide,risk;
  if(last[1]<25&&delta<=0){title="🔴 極度恐懼仍在惡化";guide="市場情緒十分悲觀且近5日持續走弱，價格可能繼續下跌。不要只因分數低就認定已到底部。";risk="觀察市場廣度是否回升、S&P 500是否重新站穩短期趨勢。";}
@@ -48,7 +49,7 @@ function explain(rows){
 const E=(tag,props={},text)=>{const e=document.createElementNS(NS,tag);for(const [k,v]of Object.entries(props))e.setAttribute(k,String(v));if(text!==undefined)e.textContent=text;return e};
 const WIDTH=1000,LEFT=52,RIGHT=20,BOTTOM=24,TOP=13;
 function plot(svg,rows,column,isFear){
- const height=isFear?206:148,minX=LEFT,maxX=WIDTH-RIGHT,lo=isFear?0:Math.min(...rows.map(x=>x[column])),hi=isFear?100:Math.max(...rows.map(x=>x[column]));
+ const height=isFear?206:148,minX=LEFT,maxX=WIDTH-RIGHT,values=rows.map(x=>x[column]).filter(v=>v!==null),lo=isFear?0:Math.min(...values),hi=isFear?100:Math.max(...values);
  const span=hi-lo||1,pad=isFear?0:span*0.08,minY=lo-pad,maxY=hi+pad;
  const y=v=>height-BOTTOM-(v-minY)/(maxY-minY)*(height-TOP-BOTTOM);
  const x=i=>minX+(i/(rows.length-1))*(maxX-minX);
@@ -69,9 +70,9 @@ function plot(svg,rows,column,isFear){
   svg.appendChild(E("text",{x:x(idx),y:height-4,"text-anchor":i===0?"start":i===4?"end":"middle",fill:"#aebdd0","font-size":"12"},rows[idx][0].slice(2).replace(/-/g,"/")));
  }
  const line=E("line",{x1:x(rows.length-1),x2:x(rows.length-1),y1:TOP,y2:height-BOTTOM,stroke:"#f8fafc","stroke-dasharray":"4 5",opacity:".7"});
- const point=E("circle",{cx:x(rows.length-1),cy:y(rows.at(-1)[column]),r:"5",fill:isFear?"#f8bd62":"#60cb98",stroke:"#1e293b","stroke-width":"2"});
+ const point=E("circle",{cx:x(rows.length-1),cy:rows.at(-1)[column]===null?0:y(rows.at(-1)[column]),r:"5",fill:isFear?"#f8bd62":"#60cb98",stroke:"#1e293b","stroke-width":"2"});
  svg.append(line,point);
- return {select(i){line.setAttribute("x1",x(i));line.setAttribute("x2",x(i));point.setAttribute("cx",x(i));point.setAttribute("cy",y(rows[i][column]));},nearest(px){return Math.max(0,Math.min(rows.length-1,Math.round((px-minX)/(maxX-minX)*(rows.length-1))))}};
+ return {select(i){line.setAttribute("x1",x(i));line.setAttribute("x2",x(i));point.setAttribute("cx",x(i));point.setAttribute("cy",rows[i][column]===null?0:y(rows[i][column]));point.setAttribute("visibility",rows[i][column]===null?"hidden":"visible");},nearest(px){return Math.max(0,Math.min(rows.length-1,Math.round((px-minX)/(maxX-minX)*(rows.length-1))))}};
 }
 function build(){
  const root=$("fearGreedPanel");if(!root)return;
@@ -81,12 +82,12 @@ function build(){
   if(!visible.length)return;
   cur=Math.max(0,Math.min(i,visible.length-1));
   for(const chart of charts)chart.select(cur);
-  const r=visible[cur],z=zone(r[1]);
-  $("fgSelectedDate").textContent=r[0].replace(/-/g,"/")+" · "+z.label;
-  $("fgValue").textContent=r[1].toFixed(1);
-  $("fgSpxValue").textContent=fmt(r[2]);
-  $("fgMood").textContent=z.label;
-  $("fgMood").dataset.zone=z.key;
+  const r=visible[cur],z=r[1]===null?null:zone(r[1]);
+  $("fgSelectedDate").textContent=r[0].replace(/-/g,"/")+" · "+(z?z.label:"Fear 尚無資料");
+  $("fgValue").textContent=r[1]===null?"—":r[1].toFixed(1);
+  $("fgSpxValue").textContent=r[2]===null?"—":fmt(r[2]);
+  $("fgMood").textContent=z?z.label:"資料未更新";
+  $("fgMood").dataset.zone=z?z.key:"neutral";
  }
  function draw(){
   visible=recent(rows,ranges);
@@ -98,7 +99,7 @@ function build(){
   }
  }
  function report(){
-  const e=explain(rows);
+  const e=explain(rows);if(!e){$("fgReportTitle").textContent="共同資料不足";$("fgReportBody").textContent="兩項資料獨立更新，尚無足夠共同交易日可供趨勢比較。";$("fgReportWatch").textContent="等待資料更新";$("fgReportContext").textContent="";return}
   $("fgReportTitle").textContent=e.title;
   $("fgReportBody").textContent=e.guide;
   $("fgReportWatch").textContent=e.risk;
