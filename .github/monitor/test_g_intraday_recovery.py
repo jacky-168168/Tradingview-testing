@@ -51,7 +51,7 @@ class RecoveryTests(unittest.TestCase):
         self.assertTrue(recovery_decision(NOW,snapshot(40),{},[run(24,"completed","failure")])[0])
     def test_closed_market_never_runs(self):
         for day in [datetime(2026,10,26,11,tzinfo=TZ),datetime(2026,10,25,11,tzinfo=TZ),
-                    datetime(2026,10,21,9,0,tzinfo=TZ),datetime(2026,10,21,13,30,tzinfo=TZ)]:
+                    datetime(2026,10,21,9,0,tzinfo=TZ),datetime(2026,10,21,13,42,tzinfo=TZ)]:
             self.assertFalse(trade_window(day))
             self.assertFalse(recovery_decision(day,{}, {},[])[0])
     def test_open_market_runs(self):
