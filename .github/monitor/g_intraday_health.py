@@ -18,7 +18,7 @@ def parse(s):
     except (TypeError,ValueError):return None
 def session(now):
     n=now.astimezone(TZ)
-    return n.weekday()<5 and not(n.year==2026 and n.strftime("%m-%d") in CLOSED_2026) and time(9,50)<=n.time()<time(13,44)
+    return n.weekday()<5 and not(n.year==2026 and n.strftime("%m-%d") in CLOSED_2026) and time(9,50)<=n.time()<time(13,45)
 def assess(now,latest,status,runs,pages=None):
     latest=latest if isinstance(latest,dict) else {}
     status=status if isinstance(status,dict) else {}
@@ -26,7 +26,7 @@ def assess(now,latest,status,runs,pages=None):
     published=parse(latest.get("publishedAt"))
     age=(now-published).total_seconds()/60 if published else None
     if latest.get("asOfDate")!=today or latest.get("quality")!="intraday-provisional-allmarket":errors.append("今日盤中 G 快照缺失或品質標籤錯誤")
-    if age is None or age< -5 or age>65:errors.append("盤中榜單超過 65 分鐘未更新（目前距今 "+(str(round(age)) if age is not None else "未知")+" 分鐘）")
+    if age is None or age<0 or age>65:errors.append("盤中榜單超過 65 分鐘未更新（目前距今 "+(str(round(age)) if age is not None else "未知")+" 分鐘）")
     rows=latest.get("rows")
     if not isinstance(rows,list) or not 1<=len(rows)<=20 or any(not isinstance(r,dict) or not str(r.get("code","")).strip() for r in rows):errors.append("盤中榜單空白或格式不合法")
     try:
