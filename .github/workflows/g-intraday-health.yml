@@ -8,7 +8,14 @@ on:
       - '.github/monitor/test_g_intraday_health.py'
       - '.github/workflows/g-intraday-health.yml'
   workflow_run:
-    workflows: ['TW Stock Dashboard']
+    # Independent event sources: GitHub may omit both dashboard and monitor
+    # scheduled events. These separate live workflows provide recovery ticks.
+    # Session and holiday guards in g_intraday_health.py remain authoritative.
+    workflows:
+      - 'TW Stock Dashboard'
+      - 'TX Futures Day Night Dashboard'
+      - 'Collect Three-Year Official Market Risk History'
+      - 'US DIX GEX Research and Snapshot'
     types: [completed]
   schedule:
     # Taiwan 09:50, then 10:05, 10:20 ... 13:35 on trading weekdays.
