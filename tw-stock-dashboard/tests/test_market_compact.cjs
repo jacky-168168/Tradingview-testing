@@ -25,7 +25,7 @@ global.MarketCompact.render({score:null,officialScore:41,officialDate:"2026-10-1
 assert.equal(elements.compactScore.textContent,"—");
 assert.equal(elements.compactNightCell.hidden,true);
 assert.equal(elements.compactOfficial.textContent,"41");
-assert.equal(elements.compactAction.textContent,"今日盤中待確認");
+assert.equal(elements.compactAction.textContent,"暫緩新倉");
 assert.match(elements.compactSession.textContent,/前次正式資料日 2026-10-16/);
 assert.match(elements.compactEquation.textContent,/前次收盤 41 分/);
 global.MarketCompact.render({score:null,officialScore:52,officialDate:"2026-10-21",date:"2026-10-22",level:"WAIT",reference:false,post:true});
