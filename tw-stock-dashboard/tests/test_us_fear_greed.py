@@ -1,40 +1,50 @@
 import unittest
-from datetime import datetime,timedelta,timezone
-from update_us_fear_greed import cnn_series,to_archive,valid_score
+from datetime import datetime,timedelta
+from update_us_fear_greed import VERSION,parse_wantgoo,to_archive,score
+SAMPLE="""<html><h2>恐懼與貪婪指數</h2><table><tr><th>日期</th><th>恐懼與貪婪指數</th><th>S&P500</th></tr>
+<tr><td>2026/10/21</td><td>恐懼 <strong>29</strong></td><td>7,751.95</td></tr>
+<tr><td>2026/10/20</td><td>恐懼 <span>27</span></td><td>7,712.57</td></tr>
+<tr><td>2026/10/19</td><td>極度恐懼 23</td><td>7,690.73</td></tr>
+<tr><td>2026/10/16</td><td>極度恐懼 18</td><td>7,659.44</td></tr>
+<tr><td>2026/10/15</td><td>恐懼 32</td><td>7,744.06</td></tr></table></html>"""
 class TestUSFearGreed(unittest.TestCase):
-    def fixtures(self):
-        start=datetime(2025,1,1,tzinfo=timezone.utc)
-        dates=[(start+timedelta(days=i)).date().isoformat() for i in range(255)]
-        raw={"fear_and_greed_historical":{"data":[{"x":int((start+timedelta(days=i)).timestamp()*1000),"y":float((i*3)%100)} for i in range(255)]},
-             "fear_and_greed":{"timestamp":"2025-09-12T21:00:00+00:00","score":45}}
-        spx={"columns":["date","spx","dixPct","gex"],"rows":[[d,5000+i,45,1000] for i,d in enumerate(dates)]}
-        # Source price minimum for quality gate is 500, expand earlier archive
-        earlier=[[(start-timedelta(days=400-i)).date().isoformat(),4200+i,44,1000] for i in range(400)]
-        spx["rows"]=earlier+spx["rows"]
-        return raw,spx
-    def test_date_alignment(self):
-        c,s=self.fixtures();o=to_archive(c,s)
-        self.assertEqual(o["version"],"US_CNN_FEAR_GREED_SPX_V1")
-        self.assertEqual(o["columns"],["date","fearGreed","spx"])
-        self.assertEqual(len(o["rows"]),255)
-        self.assertEqual(o["rows"][-1][0],o["asOf"])
-    def test_missing_score_not_fake_zero(self):
-        c,s=self.fixtures();c["fear_and_greed_historical"]["data"][12]["y"]=None
-        o=to_archive(c,s)
-        self.assertEqual(len(o["rows"]),254)
-    def test_reject_stale_price(self):
-        c,s=self.fixtures();s["rows"][-1][0]="2026-10-10"
-        # archive has a missing-tail discontinuity; stale checks must reject
-        with self.assertRaises(ValueError):to_archive(c,s)
-    def test_reject_schema_and_nans(self):
-        c,s=self.fixtures();s["columns"]=["date","spx","gex","dixPct"]
-        with self.assertRaisesRegex(ValueError,"schema"):to_archive(c,s)
-        self.assertIsNone(valid_score("NaN"))
-        self.assertIsNone(valid_score(150))
-        self.assertIsNone(valid_score(-1))
-        self.assertIsNone(valid_score(True))
-    def test_reject_too_short_history(self):
-        c,s=self.fixtures()
-        c["fear_and_greed_historical"]["data"]=c["fear_and_greed_historical"]["data"][:30]
-        with self.assertRaisesRegex(ValueError,"insufficient"):cnn_series(c)
+    def fixture(self):
+        start=datetime(2026,1,1)
+        rows=[[(start+timedelta(days=i)).date().isoformat(),float(i%100),7600+i] for i in range(294)]
+        return {"version":"US_CNN_FEAR_GREED_SPX_V1","sourceLink":"https://edition.cnn.com/markets/fear-and-greed",
+                "spxSource":"SqueezeMetrics","columns":["date","fearGreed","spx"],"rows":rows}
+    def test_extract_confirmed_public_table(self):
+        got=parse_wantgoo(SAMPLE)
+        self.assertEqual(len(got),5)
+        self.assertEqual(got[-1],["2026-10-21",29,7751.95])
+        self.assertEqual(got[0][1],32)
+    def test_parse_without_table_markup(self):
+        html="<html>恐懼與貪婪指數<div>2026/10/21</div><span>恐懼 29</span><div>7,751.95</div><div>2026/10/20 恐懼 27 7,712.57</div></html>"
+        self.assertEqual(len(parse_wantgoo(html)),2)
+    def test_keep_attributed_legacy_and_replace_overlaps(self):
+        d=to_archive(SAMPLE,self.fixture())
+        self.assertEqual(d["version"],VERSION)
+        self.assertEqual(d["sourceLink"],"https://www.wantgoo.com/global/macroeconomics/fearandgreed")
+        self.assertEqual(d["legacyThrough"],"2026-10-14")
+        self.assertIn("cnn.com",d["legacyHistorySource"])
+        self.assertEqual(d["asOf"],"2026-10-21")
+        self.assertEqual(d["rows"][-1],["2026-10-21",29,7751.95])
+        self.assertEqual(len(d["rows"]),294)
+    def test_incremental_update_keeps_original_boundary(self):
+        d=to_archive(SAMPLE,self.fixture())
+        d2=to_archive(SAMPLE,d)
+        self.assertEqual(d2["legacyThrough"],"2026-10-14")
+        self.assertEqual(d["rows"],d2["rows"])
+    def test_fail_closed_when_page_changes(self):
+        with self.assertRaisesRegex(ValueError,"heading"):parse_wantgoo("<html>broken</html>")
+        with self.assertRaisesRegex(ValueError,"table"):parse_wantgoo("<html>恐懼與貪婪指數 2026/10/21 恐懼 29</html>")
+    def test_reject_stale_and_bad_history(self):
+        old=self.fixture()
+        old["rows"][-1][0]="2026-10-22"
+        with self.assertRaisesRegex(ValueError,"BEHIND_ARCHIVE"):to_archive(SAMPLE,old)
+        bad=self.fixture();bad["columns"]=["date","spx","fearGreed"]
+        with self.assertRaisesRegex(ValueError,"incompatible"):to_archive(SAMPLE,bad)
+        self.assertIsNone(score(-1))
+        self.assertIsNone(score(101))
+        self.assertIsNone(score("nan"))
 if __name__=="__main__":unittest.main()

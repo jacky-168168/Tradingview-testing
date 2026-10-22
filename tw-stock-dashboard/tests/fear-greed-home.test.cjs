@@ -3,9 +3,10 @@ const test=require("node:test"),assert=require("node:assert/strict"),fs=require(
 const {validate,recent,zone,explain}=require("../docs/fear-greed-home.js");
 const dates=Array.from({length:400},(_,i)=>new Date(Date.UTC(2025,0,1+i)).toISOString().slice(0,10));
 const rows=dates.map((d,i)=>[d,35+i%45,5000+i*2]);
-const doc={version:"US_CNN_FEAR_GREED_SPX_V1",columns:["date","fearGreed","spx"],asOf:dates.at(-1),rows};
+const doc={version:"US_WANTGOO_FEAR_GREED_SPX_V2",columns:["date","fearGreed","spx"],asOf:dates.at(-1),rows};
 test("trustworthy dated data only",()=>{
  assert.equal(validate(doc).length,400);
+ assert.equal(validate({...doc,version:"US_CNN_FEAR_GREED_SPX_V1"}).length,400); // legacy display while collector first runs
  assert.throws(()=>validate({...doc,asOf:"2028-05-01"}),/日期/);
  assert.throws(()=>validate({...doc,rows:rows.map((r,i)=>i===5?[r[0],101,r[2]]:r)}),/範圍/);
  assert.throws(()=>validate({...doc,columns:["date","spx","fearGreed"]}),/格式/);
@@ -34,6 +35,8 @@ test("explanation uses only past data without automatic buy/sell",()=>{
 test("homepage replaces triple DIX chart but retains study reference",()=>{
  const html=fs.readFileSync(path.join(__dirname,"../docs/index.html"),"utf8");
  assert.match(html,/id="fearGreedPanel"/);
+ assert.match(html,/WANTGOO FEAR & GREED/);
+ assert.ok(html.includes("www.wantgoo.com/global/macroeconomics/fearandgreed"));
  assert.match(html,/fear-greed-home.js/);
  assert.match(html,/fear-greed-home.css/);
  assert.match(html,/原 DIX／GEX 研究/);
