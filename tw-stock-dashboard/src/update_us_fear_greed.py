@@ -109,6 +109,8 @@ def fetch_wantgoo():
 def main():
     previous=json.loads(OUT.read_text(encoding="utf-8"))
     result=to_archive(fetch_wantgoo(),previous)
+    if previous.get("version")==VERSION and previous.get("rows")==result["rows"]:
+        result["updatedAt"]=previous.get("updatedAt",result["updatedAt"])
     OUT.write_text(json.dumps(result,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
     print("WANTGOO_FEAR_GREED_VALID",result["wantgooLast"],"rows",len(result["rows"]),
           "legacyThrough",result["legacyThrough"])
