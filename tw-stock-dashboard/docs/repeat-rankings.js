@@ -56,9 +56,10 @@ function renderRepeatPanel(model,data){
  rows.innerHTML=all.map(function(s,i){
   var score=s.total??s.gScore??null;
   var evidence=(s.reconstructedCount||0)>0?' <span class="repeat-backfilled" title="含 '+s.reconstructedCount+' 次歷史行情回推，非原始正式封存">含回推</span>':"";
+  var inlineTheme=typeof TABLE_COMPACT==="undefined"||TABLE_COMPACT?(typeof themeButton==="function"?themeButton(s.theme||s.subIndustry):repeatSafe(s.theme||s.subIndustry||"—")):"";
   return '<tr>'+
    '<td><b>'+(i+1)+'</b></td>'+
-   '<td class="stock">'+repeatTradingview(s)+'<span class="repeat-stock-meta">'+(typeof themeButton==="function"?themeButton(s.theme||s.subIndustry):repeatSafe(s.theme||s.subIndustry||"—"))+(s.onReferenceDate?' <span class="repeat-live">最新在榜</span>':'')+evidence+'</span></td>'+
+   '<td class="stock">'+repeatTradingview(s)+'<span class="repeat-stock-meta">'+inlineTheme+(s.onReferenceDate?' <span class="repeat-live">最新在榜</span>':'')+evidence+'</span></td>'+
    '<td>'+repeatSafe(s.market||"—")+'</td>'+
    '<td class="theme" title="'+repeatSafe(s.theme||s.subIndustry||"")+'">'+(typeof themeButton==="function"?themeButton(s.theme||s.subIndustry):repeatSafe(s.theme||s.subIndustry||"—"))+'</td>'+
    '<td class="repeat-frequency"><strong>'+repeatSafe(s.count)+'</strong> 次</td>'+
