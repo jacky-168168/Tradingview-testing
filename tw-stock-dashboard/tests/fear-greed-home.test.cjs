@@ -36,7 +36,7 @@ test("homepage replaces triple DIX chart but retains study reference",()=>{
  const html=fs.readFileSync(path.join(__dirname,"../docs/index.html"),"utf8");
  assert.match(html,/id="fearGreedPanel"/);
  assert.match(html,/WANTGOO FEAR & GREED/);
- assert.match(html,/wantgoo\\.com\\/global\\/macroeconomics\\/fearandgreed/);
+ assert.ok(html.includes("www.wantgoo.com/global/macroeconomics/fearandgreed"));
  assert.match(html,/fear-greed-home.js/);
  assert.match(html,/fear-greed-home.css/);
  assert.match(html,/原 DIX／GEX 研究/);
