@@ -1,19 +1,14 @@
-name: CNN Fear Greed US Market Chart
+name: WantGoo Fear Greed US Market Chart
 on:
   workflow_dispatch:
-  # Rebuild once the actual S&P 500 archive publisher finishes, preventing
-  # a previous US session from being presented as the latest joined record.
-  workflow_run:
-    workflows: ["US DIX GEX Research and Snapshot"]
-    types: [completed]
   schedule:
     # Taipei Tue-Sat 08:15, 10:15, 12:15, 14:15, 16:15.
-    # Retries matter because CNN and the SPX archive have independent delays.
+    # Retry independent WantGoo updates without waiting for another SPX provider.
     - cron: '15 0,2,4,6,8 * * 2-6'
-    # Taipei Mon-Fri 20:15: final catch-up / post-holiday audit.
+    # Taipei Mon-Fri 20:15 catch-up and post-holiday check.
     - cron: '15 12 * * 1-5'
   push:
-    branches: [main, feat/fear-greed-home-replace-20261018]
+    branches: [main, fix/wantgoo-fear-greed-20261022]
     paths:
       - 'tw-stock-dashboard/src/update_us_fear_greed.py'
       - 'tw-stock-dashboard/tests/test_us_fear_greed.py'
@@ -21,58 +16,57 @@ on:
       - '.github/workflows/us-fear-greed.yml'
 permissions:
   contents: write
-  pages: write
-  id-token: write
 concurrency:
-  group: cnn-fear-greed-research
+  group: wantgoo-fear-greed-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   update:
-    # Ignore failed upstream runs; scheduled/manual retries remain available.
-    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Verify parser, dates and chart front-end
+      - name: Test dated WantGoo HTML parser and browser chart
         run: |
           python -m py_compile tw-stock-dashboard/src/update_us_fear_greed.py
           PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_us_fear_greed.py' -v
           node --check tw-stock-dashboard/docs/fear-greed-home.js
           node --test tw-stock-dashboard/tests/fear-greed-home.test.cjs
-      - name: Refresh CNN historical sentiments and aligned SPX
+      - name: Fetch WantGoo dated sentiment and S&P 500
         run: python -u tw-stock-dashboard/src/update_us_fear_greed.py
-      - name: Validate source freshness and no fabricated data
+      - name: Verify published provenance and dates
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          p=Path('tw-stock-dashboard/docs/data/research/us_fear_greed/history.json')
-          x=json.loads(p.read_text())
-          assert x['version']=='US_CNN_FEAR_GREED_SPX_V1'
+          x=json.loads(Path('tw-stock-dashboard/docs/data/research/us_fear_greed/history.json').read_text('utf-8'))
+          assert x['version']=='US_WANTGOO_FEAR_GREED_SPX_V2'
+          assert x['sourceLink']=='https://www.wantgoo.com/global/macroeconomics/fearandgreed'
           assert x['columns']==['date','fearGreed','spx']
           assert len(x['rows'])>=150
-          assert x['rows'][-1][0]==x['asOf']
+          assert x['rows'][-1][0]==x['asOf']==x['wantgooLast']==x['spxLast']
           assert len(set(r[0] for r in x['rows']))==len(x['rows'])
-          print('CNN_FEAR_GREED_VALID',x['asOf'],'rows',len(x['rows']))
+          assert x['legacyHistorySource'] and x['legacyThrough']
+          print('WANTGOO_FEAR_GREED_VALID',x['wantgooLast'],'rows',len(x['rows']))
           PY
-      - name: Save verified historical data artifact
+      - name: Save verifiable snapshot
         uses: actions/upload-artifact@v4
         with:
-          name: cnn-fear-greed-spx-history
+          name: wantgoo-fear-greed-spx-history
           path: tw-stock-dashboard/docs/data/research/us_fear_greed/history.json
-          retention-days: 90
-      - name: Publish research snapshot on main only
+          retention-days: 30
+      - name: Publish changed WantGoo archive (main only)
         if: github.ref == 'refs/heads/main'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add tw-stock-dashboard/docs/data/research/us_fear_greed/history.json
           if ! git diff --cached --quiet; then
-            git commit -m 'data: refresh confirmed CNN Fear Greed and S&P500 market history'
+            git commit -m 'data: refresh dated WantGoo Fear Greed and S&P500 history'
             for i in 1 2 3; do
               git pull --rebase origin main || { git rebase --abort || true; sleep $((i*4)); continue; }
               if git push origin HEAD:main; then exit 0; fi
@@ -80,25 +74,3 @@ jobs:
             done
             exit 1
           fi
-      - name: Verify latest checked-in record before deployment
-        run: |
-          git fetch origin main
-          git checkout -B main origin/main
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          root=Path('tw-stock-dashboard/docs/data/research')
-          fg=json.loads((root/'us_fear_greed/history.json').read_text('utf-8'))
-          spx=json.loads((root/'us_options/history.json').read_text('utf-8'))
-          assert fg['asOf']==fg['rows'][-1][0], 'fear & greed last date mismatch'
-          assert spx['asOf']==fg['asOf'], 'Fear & Greed must match latest S&P 500 session before publishing'
-          print('ALIGNED_FEAR_GREED_SPX',fg['asOf'],len(fg['rows']))
-          PY
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-      - name: Upload verified site snapshot
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: tw-stock-dashboard/docs
-      - name: Deploy Pages
-        uses: actions/deploy-pages@v4
