@@ -46,3 +46,9 @@ test("homepage labels current provider WantGoo and credits the older archive",()
  assert.match(html,/wantgoo\.com\/global\/macroeconomics\/fearandgreed/);
  assert.match(html,/切換前的歷史資料保留 CNN 來源標示/);
 });
+
+test("the old published CNN JSON remains readable during source cutover",()=>{
+ const old={...doc,version:"US_CNN_FEAR_GREED_SPX_V1"};
+ assert.equal(validate(old).length,400);
+ assert.throws(()=>validate({...doc,version:"UNVERIFIED_SOURCE"}),/格式/);
+});
