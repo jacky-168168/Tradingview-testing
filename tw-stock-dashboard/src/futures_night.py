@@ -37,9 +37,10 @@ def day_from_openapi(raw):
     if not rows:raise RuntimeError("No completed TX day-session rows")
     latest=max(x["date"] for x in rows)
     all_today=[x for x in rows if x["date"]==latest]
-    eligible=sorted(x["contract"] for x in all_today if x["contract"]>=latest[:6])
-    if not eligible:eligible=sorted(x["contract"] for x in all_today)
-    return next(x for x in all_today if x["contract"]==eligible[0])
+    eligible=[x for x in all_today if x["contract"]>=latest[:6]] or all_today
+    # 期指移倉時不可繼續選當月到期合約：以最近交易日最大日盤成交量
+    # 選擇實際主力合約（同量才選較近月份），而非一律選日期最小的合約。
+    return sorted(eligible,key=lambda x:(-x["volume"],x["contract"]))[0]
 def day_from_html(html,expected_date,expected_contract=None):
     """Read the dated OFFICIAL day report when its OpenAPI feed lags.
     Reject a mismatched report day, contract, or empty day volume."""
@@ -60,11 +61,14 @@ def day_from_html(html,expected_date,expected_contract=None):
             rows.append({"date":expected_date.replace("-",""),"contract":c[1],"session":"DAY",
                 "close":last,"volume":int(vol),"open":num(c[2]),"high":num(c[3]),"low":num(c[4])})
     if not rows:return None
+    eligible=[x for x in rows if x["contract"]>=expected_date[:7].replace("-","")] or rows
+    # Historical/HTML fallback must obey the same rollover as OpenAPI.
+    active=sorted(eligible,key=lambda x:(-x["volume"],x["contract"]))[0]
     if expected_contract:
-        paired=next((x for x in rows if x["contract"]==expected_contract),None)
-        if paired:return paired
-    eligible=sorted((x for x in rows if x["contract"]>=expected_date[:7].replace("-","")),key=lambda x:x["contract"])
-    return eligible[0] if eligible else None
+        paired=next((x for x in eligible if x["contract"]==expected_contract),None)
+        # An already selected non-leading contract must not shadow the newly rolled TX.
+        if paired and paired["volume"]>=active["volume"]:return paired
+    return active
 def verified_day_from_html(day,now):
     """Keep OpenAPI's last valid DAY, but prefer a newer dated TAIFEX HTML day.
     A Saturday fetch must look for Friday, not treat Saturday as a cash day."""
@@ -151,10 +155,34 @@ def build(day,night,now):
             "officialNightChangePct":night.get("officialChangePct"),
             "officialNightReference":night.get("officialReference")})
     return out
+def fallback_day_when_api_unavailable(now):
+    """Only accept an actual, date-checked official TX day report; never invent 08:45 prices."""
+    target=now.date() if now.hour>=14 else now.date()-timedelta(days=1)
+    while target.weekday()>=5:target-=timedelta(days=1)
+    desired=target.isoformat()
+    params={"queryType":"1","marketCode":"0","MarketCode":"0",
+            "commodity_id":"TX","commodity_idt":"TX","queryDate":desired.replace("-","/")}
+    errors=[]
+    for q in (params,{"commodity_id":"TX","queryDate":desired.replace("-","/")}):
+        try:
+            r=requests.get(REPORT,params=q,headers=UA,timeout=25);r.raise_for_status()
+            day=day_from_html(r.text,desired)
+            if day:return day
+            errors.append("date/contract or volume not found in dated HTML")
+        except requests.RequestException as exc:errors.append(str(exc)[:130])
+    raise RuntimeError("TAIFEX OpenAPI returned no usable JSON and dated official HTML also unavailable: "+"; ".join(errors))
+
 def main():
     now=datetime.now(ZoneInfo("Asia/Taipei"))
-    r=requests.get(ENDPOINT,headers=UA,timeout=40);r.raise_for_status()
-    day=verified_day_from_html(day_from_openapi(r.json()),now)
+    try:
+        r=requests.get(ENDPOINT,headers=UA,timeout=40);r.raise_for_status()
+        if "json" not in r.headers.get("Content-Type","").lower() and not r.text.lstrip().startswith(("[","{")):
+            raise ValueError("non-JSON response from TAIFEX OpenAPI")
+        day=day_from_openapi(r.json())
+    except (requests.RequestException,ValueError,RuntimeError) as exc:
+        print("TAIFEX_OPENAPI_UNAVAILABLE",type(exc).__name__,str(exc)[:180],flush=True)
+        day=fallback_day_when_api_unavailable(now)
+    day=verified_day_from_html(day,now)
     if date.fromisoformat(day["date"][:4]+"-"+day["date"][4:6]+"-"+day["date"][6:8])>now.date():
         raise RuntimeError("Future TX day session date")
     night=official_night(day,now)
