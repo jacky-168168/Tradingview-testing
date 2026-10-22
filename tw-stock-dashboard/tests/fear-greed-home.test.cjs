@@ -3,7 +3,7 @@ const test=require("node:test"),assert=require("node:assert/strict"),fs=require(
 const {validate,recent,zone,explain}=require("../docs/fear-greed-home.js");
 const dates=Array.from({length:400},(_,i)=>new Date(Date.UTC(2025,0,1+i)).toISOString().slice(0,10));
 const rows=dates.map((d,i)=>[d,35+i%45,5000+i*2]);
-const doc={version:"US_CNN_FEAR_GREED_SPX_V1",columns:["date","fearGreed","spx"],asOf:dates.at(-1),rows};
+const doc={version:"US_WANTGOO_FEAR_GREED_SPX_V1",columns:["date","fearGreed","spx"],asOf:dates.at(-1),rows};
 test("trustworthy dated data only",()=>{
  assert.equal(validate(doc).length,400);
  assert.throws(()=>validate({...doc,asOf:"2028-05-01"}),/日期/);
@@ -38,4 +38,17 @@ test("homepage replaces triple DIX chart but retains study reference",()=>{
  assert.match(html,/fear-greed-home.css/);
  assert.match(html,/原 DIX／GEX 研究/);
  assert.doesNotMatch(html,/id="usOptionsRisk"/);
+});
+
+test("homepage labels current provider WantGoo and credits the older archive",()=>{
+ const html=fs.readFileSync(path.join(__dirname,"../docs/index.html"),"utf8");
+ assert.match(html,/玩股網 Fear & Greed/);
+ assert.match(html,/wantgoo\.com\/global\/macroeconomics\/fearandgreed/);
+ assert.match(html,/切換前的歷史資料保留 CNN 來源標示/);
+});
+
+test("the old published CNN JSON remains readable during source cutover",()=>{
+ const old={...doc,version:"US_CNN_FEAR_GREED_SPX_V1"};
+ assert.equal(validate(old).length,400);
+ assert.throws(()=>validate({...doc,version:"UNVERIFIED_SOURCE"}),/格式/);
 });
