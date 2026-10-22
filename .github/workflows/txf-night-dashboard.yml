@@ -63,6 +63,20 @@ jobs:
           assert night_from_html(html,"2026-10-08","202611","2026-10-12") is None
           result=build(day,night,datetime.now(ZoneInfo("Asia/Taipei")))
           assert result["nightVsDayPoints"]==-644 and result["officialNightChangePoints"]==-652,result
+          # 2026-10-21 is TX October expiry: next morning 08:45 trades the NOV contract.
+          rollover=[
+           {"Date":"20261021","Contract":"TX","ContractMonth(Week)":"202610","Last":"46648","Volume":"23455","TradingSession":"一般"},
+           {"Date":"20261021","Contract":"TX","ContractMonth(Week)":"202611","Last":"46992","Volume":"40515","TradingSession":"一般"},
+           {"Date":"20261021","Contract":"TX","ContractMonth(Week)":"202612","Last":"47178","Volume":"261","TradingSession":"一般"}]
+          selected=day_from_openapi(rollover)
+          assert selected["contract"]=="202611" and selected["close"]==46992,selected
+          html_roll="""<div>2026/10/21 08:45~13:45 一般交易時段行情表</div>
+          <table class="table_f">
+          <tr><td>TX</td><td>202610</td><td>47240</td><td>47288</td><td>46596</td><td>46648</td><td>307</td><td>0.66%</td><td>30400</td><td>23455</td><td>53855</td><td>-</td></tr>
+          <tr><td>TX</td><td>202611</td><td>47388</td><td>47450</td><td>46872</td><td>46992</td><td>482</td><td>1.04%</td><td>8063</td><td>40515</td><td>48578</td><td>47013</td></tr></table>"""
+          recovered=day_from_html(html_roll,"2026-10-21","202610")
+          assert recovered and recovered["contract"]=="202611",recovered
+          print("PASS TX expiry rollover 20261021 -> 202611, matched both OpenAPI and HTML")
           print("PASS holiday crossover TX day=49349, night=48705, day delta=-644, official settlement delta=-652")
           PY
       - name: Fetch official TAIFEX completed sessions
