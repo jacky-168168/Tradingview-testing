@@ -37,7 +37,7 @@ function render(g){
    '<p><strong>本輪相對同市場平均漲幅較強：</strong>'+leaders+'</p>'+
    '<p class="g-free-note">風險分數是前一交易日收盤資料，不能視為當輪即時風險分數；相對強弱比較實際成交價股票的等權均漲，非加權或櫃買指數。歷史輪次不能當成獨立買進次數，尚無對應績效回測。</p></div>';
  }
- root.innerHTML=head+'<div class="g-free-grid">'+context+rank+controls+'</div><p class="g-free-note"><a href="./g-sector-replay.html">🕒 開啟盤中族群輪動時間軸（僅顯示真實封存輪次） →</a></p>';
+ root.innerHTML=head+'<div class="g-free-grid">'+context+rank+controls+'</div>';
 }
 window.renderFreeGMarketOverlay=render;
 })();
