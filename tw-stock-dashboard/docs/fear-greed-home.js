@@ -13,7 +13,7 @@ function zone(score){
  return {label:"極度貪婪",key:"extreme-greed",detail:"市場樂觀情緒偏高"};
 }
 function validate(x){
- if(!x||x.version!=="US_WANTGOO_FEAR_GREED_SPX_V1"||JSON.stringify(x.columns)!=='["date","fearGreed","spx"]'||!Array.isArray(x.rows))throw Error("玩股網歷史資料格式異常");
+ if(!x||!["US_WANTGOO_FEAR_GREED_SPX_V1","US_CNN_FEAR_GREED_SPX_V1"].includes(x.version)||JSON.stringify(x.columns)!=='["date","fearGreed","spx"]'||!Array.isArray(x.rows))throw Error("玩股網歷史資料格式異常");
  let last="",rows=[];
  for(const row of x.rows){
   if(!Array.isArray(row)||row.length!==3||!/^20\d{2}-\d{2}-\d{2}$/.test(row[0])||row[0]<=last||!finite(row[1])||!finite(row[2]))throw Error("歷史日期或數值異常");
@@ -126,10 +126,12 @@ function build(){
    if(!response.ok)throw Error("HTTP "+response.status);
    data=await response.json();rows=validate(data);
    const freshness=scope.USMarketFreshness?.warning(data.asOf)||{stale:false,message:""};
-   $("fgSource").textContent="玩股網 Fear & Greed／S&P 500｜玩股網資料日 "+String(data.wantgooHistoricalLast||"未知")+"｜SPX資料日 "+String(data.spxLast||"未知")+"｜最後共同收盤日："+data.asOf+"｜歷史 "+rows.length+" 筆（"+String(data.legacyCount||0)+" 筆為 "+String(data.legacyUntil||"未知")+" 以前的 CNN 舊歷史；新觀測起自 "+String(data.wantgooFrom||"未知")+"）";
+   $("fgSource").textContent=data.version==="US_WANTGOO_FEAR_GREED_SPX_V1"?
+    "玩股網 Fear & Greed／S&P 500｜玩股網資料日 "+String(data.wantgooHistoricalLast||"未知")+"｜SPX資料日 "+String(data.spxLast||"未知")+"｜最後共同收盤日："+data.asOf+"｜歷史 "+rows.length+" 筆（"+String(data.legacyCount||0)+" 筆為 "+String(data.legacyUntil||"未知")+" 以前的 CNN 舊歷史；新觀測起自 "+String(data.wantgooFrom||"未知")+"）":
+    "資料來源切換中：目前仍顯示 CNN 舊研究資料（"+data.asOf+"），非玩股網最新值。新資料驗證完成後才會取代。";
    const alert=$("fgMarketFreshness");
    if(alert){alert.hidden=!freshness.stale;alert.textContent=freshness.message;}
-   output.textContent="美股情緒是風險背景，不能直接視為台股買進或賣出訊號。低分不等於立即見底，高分也不代表必跌。";
+   output.textContent=(data.version==="US_CNN_FEAR_GREED_SPX_V1"?"玩股網資料尚未完成驗證，目前僅顯示 CNN 舊研究歷史。":"")+"美股情緒是風險背景，不能直接視為台股買進或賣出訊號。低分不等於立即見底，高分也不代表必跌。";
    report();draw();retry.hidden=true;
   }catch(err){
    output.textContent="目前無法取得已驗證的玩股網 Fear & Greed 歷史資料："+err.message+"。不使用推估分數，也不把舊資料當成即時。";
