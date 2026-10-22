@@ -148,7 +148,7 @@ def to_archive(wantgoo, spx_doc, old):
     # Check independently provided prices for the same market date.
     for d, (_, wantgoo_spx) in incoming.items():
         if d in us and abs(wantgoo_spx - us[d]) > 5:
-            raise ValueError("WantGoo vs S&P500 close differs materially: " + d)
+            raise ValueError(f"WantGoo vs S&P500 close differs materially: {d} WantGoo={wantgoo_spx} SPX={us[d]}")
     observed.update({d: v[0] for d, v in incoming.items()})
     latest_wantgoo = max(incoming)
     latest_spx = max(us)
