@@ -131,6 +131,21 @@ class SocialCollectorTest(unittest.TestCase):
         self.assertEqual(rows[0]["url"],"https://bsky.app/profile/trader.bsky.social/post/3lxyzabc")
         self.assertEqual(rows[0]["stance"],"偏多")
         self.assertIn("官方公開搜尋",rows[0]["method"])
+    def test_bluesky_uses_documented_second_appview_host_only_on_http_access_error(self):
+        import urllib.error
+        calls=[]
+        entry={"uri":"at://did:plc:abc/app.bsky.feed.post/3abcd",
+               "author":{"handle":"hello.bsky.social"},
+               "record":{"text":"台股台積電市場突破","createdAt":"2026-10-24T03:00:00Z"}}
+        def fetch(url):
+            calls.append(url)
+            if url.startswith(mod.BLUESKY_API):raise urllib.error.HTTPError(url,403,"Restricted",{},None)
+            if url.startswith(mod.BLUESKY_BACKUP_API):return json.dumps({"posts":[entry]}).encode()
+            raise AssertionError("unexpected endpoint")
+        rows=mod.bluesky(NOW,fetch)
+        self.assertEqual(len(rows),1)
+        self.assertEqual(len(calls),len(mod.BLUESKY_QUERIES)*2)
+        self.assertTrue(all(x.startswith((mod.BLUESKY_API,mod.BLUESKY_BACKUP_API)) for x in calls))
     def test_bluesky_rejects_future_old_and_unverifiable_post_dates(self):
         def fetch(_):
             samples=[]
