@@ -22,7 +22,7 @@ class SocialCollectorTest(unittest.TestCase):
         rows=mod.ptt(atom(),NOW)
         self.assertEqual(len(rows),10)
         summary=mod.statistics(rows)
-        self.assertEqual(summary["status"],"偏多討論較多")
+        self.assertEqual(summary["status"],"已有樣本｜偏多討論較多")
         self.assertEqual(summary["bull"],7)
         self.assertEqual(summary["bear"],3)
     def test_future_and_bad_url_rejected(self):
@@ -48,7 +48,21 @@ class SocialCollectorTest(unittest.TestCase):
             result=mod.collect(now=NOW,fetch=bad,old=old,environmental={})
         self.assertEqual(result["sources"]["PTT"]["status"],"error")
         self.assertEqual(len(result["items"]),1)
-        self.assertEqual(result["social"]["status"],"樣本不足")
+        self.assertEqual(result["social"]["status"],"已有樣本｜偏多討論較多")
+    def test_one_neutral_post_still_counts_as_valid_sample(self):
+        row=mod.sanitize("PTT","台股下週大家怎麼看","https://www.ptt.cc/bbs/Stock/M.1.html",
+                         "2026-10-24T03:00:00Z",NOW)
+        stats=mod.statistics([row])
+        self.assertEqual(stats["sample"],1)
+        self.assertEqual(stats["status"],"已有樣本｜尚無明確多空方向")
+        self.assertNotIn("樣本不足",stats["status"])
+    def test_one_bearish_post_can_be_reported_without_claiming_consensus(self):
+        x=mod.sanitize("PTT","台股崩盤跌停走勢","https://www.ptt.cc/bbs/Stock/M.2.html",
+                       "2026-10-24T03:00:00Z",NOW)
+        stats=mod.statistics([x])
+        self.assertEqual(stats["sample"],1)
+        self.assertEqual(stats["status"],"已有樣本｜偏空討論較多")
+        self.assertIn("不代表市場共識",stats["method"])
     def test_duplicate_url_no_double_count(self):
         r=mod.ptt(atom(),NOW)
         self.assertEqual(len(mod.unique(r+r)),10)

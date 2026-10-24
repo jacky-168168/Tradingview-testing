@@ -147,11 +147,13 @@ def statistics(items):
     bear=sum(x["stance"]=="偏空" for x in items)
     neutral=len(items)-bull-bear
     directional=bull+bear
-    state=("樣本不足" if len(items)<8 or directional<5 else
-        "偏多討論較多" if bull>=bear*1.5 else
-        "偏空討論較多" if bear>=bull*1.5 else "多空討論接近")
+    state=("尚無有效討論" if not items else
+        "已有樣本｜偏多討論較多" if bull>bear else
+        "已有樣本｜偏空討論較多" if bear>bull else
+        "已有樣本｜尚無明確多空方向" if directional==0 else
+        "已有樣本｜多空討論接近")
     return {"sample":len(items),"bull":bull,"bear":bear,"neutral":neutral,"directional":directional,
-            "status":state,"method":"保守關鍵詞比對文章標題／公開貼文；不是全文情緒模型，也不代表市場共識"}
+            "status":state,"method":"只要有一篇有效公開貼文就視為已有樣本；關鍵詞僅供觀察，篇數少不代表市場共識，也不是留言全文分析"}
 
 def collect(now=None, fetch=request, old=None, environmental=None):
     now=now or dt.datetime.now(UTC)

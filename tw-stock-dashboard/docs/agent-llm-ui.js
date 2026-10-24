@@ -11,7 +11,7 @@ function card(where,role,data,heading){
  where.append(box);
 }
 function assertReport(j){
- if(!j||j.schema!==1||j.provider!=="GitHub Models"||j.verifiedModelExecution!==true||j.inferenceCalls!==9||j.noTrade!==true)throw Error("未完成真實 LLM 驗證");
+ if(!j||j.schema!==1||j.provider!=="Google Gemini API"||j.verifiedModelExecution!==true||j.inferenceCalls!==9||j.noTrade!==true)throw Error("未完成真實 LLM 驗證");
  if(!j.rounds||!j.rounds.initial||!j.rounds.critiques||!j.rounds.final)throw Error("交叉質疑報告不完整");
  for(const role of ROLE.slice(0,5)){if(j.rounds.initial[role]?.role!==role)throw Error("獨立角色缺失 "+role)}
  if(j.rounds.draft?.role!=="NOVA"||j.rounds.final?.role!=="NOVA"||j.rounds.critiques.TITAN?.role!=="TITAN"||
@@ -23,7 +23,7 @@ function assertReport(j){
 async function load(){
  const host=$("llmDebate"),flag=$("llmState"),info=$("llmMeta");
  if(!host)return;
- host.replaceChildren();flag.textContent="核對中…";info.textContent="正在讀取 GitHub Models 研究快照…";
+ host.replaceChildren();flag.textContent="核對中…";info.textContent="正在讀取已授權 LLM 研究快照…";
  try{
   const response=await fetch("./data/agent_llm/latest.json?v="+Date.now(),{cache:"no-store",signal:AbortSignal.timeout(12000)});
   if(!response.ok)throw Error("報告尚未發布（HTTP "+response.status+"）");

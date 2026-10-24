@@ -121,11 +121,11 @@ test("LUNA keeps real social sample distinct from risk and absent Meta sources",
  x.social={generatedAt:time,sources:{PTT:{status:"ok"},Threads:{status:"not_authorized"},Instagram:{status:"not_authorized"}},
   social:{status:"偏多討論較多",sample:12,bull:8,bear:3,neutral:1,directional:11},
   news:{status:"樣本不足"},items:[
-   {platform:"PTT",title:"台積電今日看多突破",url:"https://www.ptt.cc/bbs/Stock/M.1.html",publishedAt:time},
-   ...Array.from({length:11},(_,i)=>({platform:"PTT",title:"台股第"+i+"篇",url:"https://www.ptt.cc/bbs/Stock/M."+i+".html",publishedAt:time}))]};
+   {platform:"PTT",title:"台積電今日看多突破",url:"https://www.ptt.cc/bbs/Stock/M.100.html",publishedAt:time,stance:"偏多"},
+   ...Array.from({length:11},(_,i)=>({platform:"PTT",title:"台股第"+i+"篇",url:"https://www.ptt.cc/bbs/Stock/M."+i+".html",publishedAt:time,stance:i<7?"偏多":i<10?"偏空":"中立／難判"}))]};
  const out=core.analyze(x,LIVE);
  const c=out.candidates[0].agents;
- assert.equal(c.luna.socialStatus,"偏多討論較多");
+ assert.equal(c.luna.socialStatus,"已有樣本｜偏多內容較多");
  assert.equal(c.luna.socialSample,12);
  assert.equal(c.luna.socialMentions,1);
  assert.equal(c.luna.sourceStatus.Threads,"not_authorized");
@@ -133,7 +133,7 @@ test("LUNA keeps real social sample distinct from risk and absent Meta sources",
  assert.equal(c.titan.hardVeto,false);
  assert.equal(c.nova.noTrade,true);
 });
-test("LUNA never turns stale data or disconnected PTT into social confidence",()=>{
+test("LUNA never turns missing posts into social samples",()=>{
  const x=fixtures();
  x.social={generatedAt:"2026-10-21T00:00:00+08:00",sources:{PTT:{status:"ok"}},
   social:{status:"偏多討論較多",sample:100,directional:99,bull:90,bear:9},items:[]};
@@ -144,4 +144,34 @@ test("LUNA never turns stale data or disconnected PTT into social confidence",()
 test("LLM role pipeline has explicit self-test and no-trade guard",async()=>{
  const llm=require("../scripts/run_six_agent_llm.cjs");
  await llm.selfTest();
+});
+
+test("LUNA counts a single verifiable neutral PTT post as an actual sample",()=>{
+ const x=fixtures(),time=new Date(LIVE.getTime()-15*60000).toISOString();
+ x.social={generatedAt:time,sources:{PTT:{status:"ok"},Threads:{status:"not_authorized"},Instagram:{status:"not_authorized"}},
+  social:{status:"已有樣本｜尚無明確多空方向",sample:1,bull:0,bear:0,neutral:1,directional:0},
+  items:[{platform:"PTT",title:"台股接下來怎麼看",url:"https://www.ptt.cc/bbs/Stock/M.1.html",publishedAt:time,stance:"中立／難判"}]};
+ const l=core.analyze(x,LIVE).candidates[0].agents.luna;
+ assert.equal(l.socialSample,1);
+ assert.equal(l.socialBull,0);
+ assert.equal(l.socialBear,0);
+ assert.match(l.socialStatus,/已有樣本/);
+ assert.doesNotMatch(l.socialStatus,/樣本不足/);
+});
+test("LUNA counts an authorized Threads post with no PTT feed",()=>{
+ const x=fixtures(),time=new Date(LIVE.getTime()-15*60000).toISOString();
+ x.social={generatedAt:time,sources:{PTT:{status:"empty"},Threads:{status:"ok"},Instagram:{status:"not_authorized"}},
+  items:[{platform:"Threads",title:"台股今天真的很強勢突破",url:"https://www.threads.net/@user/post/xyz",publishedAt:time,stance:"偏多"}]};
+ const l=core.analyze(x,LIVE).candidates[0].agents.luna;
+ assert.equal(l.socialSample,1);
+ assert.equal(l.socialBull,1);
+ assert.match(l.socialStatus,/已有樣本/);
+});
+test("LUNA labels valid cached posts as historical instead of erasing them",()=>{
+ const x=fixtures(),time=new Date(LIVE.getTime()-12*3600000).toISOString();
+ x.social={generatedAt:time,sources:{PTT:{status:"error"}},
+  items:[{platform:"PTT",title:"台股今天怎麼看",url:"https://www.ptt.cc/bbs/Stock/M.3.html",publishedAt:time,stance:"中立／難判"}]};
+ const l=core.analyze(x,LIVE).candidates[0].agents.luna;
+ assert.equal(l.socialSample,1);
+ assert.match(l.socialStatus,/已有歷史樣本/);
 });

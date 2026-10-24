@@ -37,10 +37,10 @@
 ## 公開社群氛圍 v0.2（PTT 為免費基礎來源）
 - 正式資料接入腳本：`scripts/collect_social_sentiment.py`。固定 HTTPS 白名單讀取 PTT 股票板官方 Atom 訂閱；同一連結去重，最多保留最近 48 小時的公開標題，嚴格拒絕未來時間。
 - 公開資料整理到 `docs/data/social_sentiment/latest.json`，PTT 原文網址與標題提供查核；不存作者個資、不全文爬蟲、不以標題判斷留言區共識。
-- 以保守中文看多／看空關鍵詞分類，兩種方向同時出現視為中立／難判；總樣本至少 8 篇且有方向標題至少 5 篇才展示傾向。新聞標題另計，不與社群混合成單一投票。
+- 以保守中文看多／看空關鍵詞分類，兩種方向同時出現視為中立／難判；只要有 **1 篇**公開且可核對、48 小時內的有效 PTT／Threads／Instagram 貼文，就顯示「已有樣本」及實際篇數（含中立標題）；絕不使用「樣本不足」當作否定已有資料。資料量少時仍要提醒不代表市場共識；新聞標題另計，不與社群混合成單一投票。
 - Threads 官方 `keyword_search` 需要 Meta App 及 `threads_keyword_search` 審核後的 `THREADS_ACCESS_TOKEN`；Instagram Hashtag Discovery 需要合格商業／創作者帳號，`IG_ACCESS_TOKEN` 與 `IG_USER_ID`。未授權時明示 `not_authorized`，絕不繞過登入或偽造覆蓋。
 - 每日 09:10、11:10、13:10、17:10、21:10（臺灣時間）執行 `LUNA Public Social Sentiment`，公開來源無法取得時不可將空資料說成中立；保留最多 48 小時可驗證歷史樣本。
-- LUNA 只有資料集在 8 小時內更新、PTT 收集成功且樣本數符合門檻才顯示方向；大盤風險分數與社群方向彼此獨立，任何社群觀點不能解除 TITAN 否決。
+- LUNA 只要有 1 篇有效社群貼文就會顯示樣本數；8 小時內更新視為近期觀察，較舊但貼文仍在 48 小時有效期內則明確標示「已有歷史樣本」。來源失聯時不得捏造新資料；大盤風險分數與社群方向彼此獨立，任何社群觀點不能解除 TITAN 否決。
 
 ## 重要修正：GitHub Models 已退役（2026-07-30）
 - GitHub 官方於 2026-07-01 公告 GitHub Models（包含其推論 API）在 **2026-07-30 全面終止**，官方公告：https://github.blog/changelog/2026-07-01-github-models-is-being-fully-retired-on-july-30-2026/
@@ -62,3 +62,10 @@
 - `python -m unittest discover -s tw-stock-dashboard/tests -p 'test_social_sentiment.py' -v`
 - `node --test tw-stock-dashboard/tests/test_six_agent_research.cjs`
 - `node tw-stock-dashboard/scripts/run_six_agent_llm.cjs --self-test`
+
+## Gemini 供應商接入 v0.3（可選、預設停用）
+- 原 GitHub Models 確定已退役；新增仍受支援的 Google Gemini REST API 轉接：`scripts/gemini_transport.cjs`。驗證回應 JSON，不接受純字串 `OK`、不完整模型輸出、錯誤或缺值充當成功結果。
+- `Six Agent Gemini LLM Debate` 工作流程保留離線測試；**真實推論預設停用**。要啟用需由帳戶持有人在 GitHub 儲存庫的 **Settings → Secrets and variables → Actions** 設定 Secret `GEMINI_API_KEY`，並在 Variables 新增 `ENABLE_SIX_AGENT_GEMINI=true`。**不要把金鑰貼在 ChatGPT、Issue、PR 或程式碼裡**。
+- 真正啟用後預計每臺灣時間週一至週五 19:00 嘗試產生九次獨立模型呼叫的研究報告（TITAN 硬性風控不可解除）；GitHub Secrets、API 帳戶用量、模型存取權及額度皆需實際驗證後才能宣稱「真實六 LLM 已成功」。
+- 預設 Gemini 模型 `gemini-2.5-flash-lite`。免費額度、頻率限制及資料處理政策由 Google 決定，請自行在 AI Studio 確認；此研究管線只使用網站公開市場資料，不送入個人持倉、密碼或帳戶資訊。
+- 開發／驗證：`node --test tw-stock-dashboard/tests/test_six_agent_research.cjs tw-stock-dashboard/tests/test_six_agent_gemini.cjs`。使用 Mock 的九輪測試不是正式 API 呼叫，只有實際輸出 `REAL_GEMINI_SIX_AGENT_VERIFIED` 才能當正式執行證據。
