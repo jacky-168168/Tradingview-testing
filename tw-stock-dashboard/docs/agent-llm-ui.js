@@ -1,4 +1,4 @@
-/* Verified GitHub Models research snapshot viewer; never presents text as live stock advice. */
+/* Verified Google Gemini nine-call research viewer; never presents text as live stock advice. */
 (function(){"use strict";
 const $=id=>document.getElementById(id),ROLE=["ATLAS","VEGA","ORION","LUNA","TITAN","NOVA"];
 function node(tag,text,css){const n=document.createElement(tag);if(text!=null)n.textContent=String(text);if(css)n.className=css;return n}
@@ -30,7 +30,8 @@ async function load(){
   const doc=await response.json(),hours=assertReport(doc);
   const historical=hours>26||!doc.inputIsLive;
   flag.textContent=hours>26?"歷史報告（已過期）":historical?"歷史研究":"模型討論快照";
-  info.textContent="模型："+doc.model+"｜推論呼叫："+doc.inferenceCalls+" 次｜產出："+doc.generatedAt+
+  info.textContent="模型："+doc.model+"｜推論呼叫："+doc.inferenceCalls+" 次｜產出（台灣時間）："+
+   new Date(doc.generatedAt).toLocaleString("zh-TW",{timeZone:"Asia/Taipei",hour12:false})+
    "｜來源日："+(doc.evidenceDate||"缺值")+"｜"+doc.marketMode+"｜"+doc.outcome+
    "。此為 AI 研究觀點，逐條事實尚未經人工覆核；不是買賣建議。";
   for(const role of ROLE.slice(0,5))card(host,role,doc.rounds.initial[role],"第一輪獨立觀點");
@@ -40,8 +41,8 @@ async function load(){
   card(host,"NOVA",doc.rounds.final,"最終研究結論（不可下單）");
  }catch(e){
   flag.textContent="LLM 未驗證／暫不可用";
-  info.textContent="原 GitHub Models 服務已於 2026/07/30 全面退役；沒有可確認的九次模型討論紀錄（"+String(e.message)+
-    "）。目前保留六角色規則式研究與 PTT／新聞情緒，真正 LLM 須改接可用服務；絕不偽造推論。";
+  info.textContent="Google Gemini 真實九輪報告尚未通過驗證或暫時無法取得（"+String(e.message)+
+    "）。規則式六代理與 PTT／新聞研究仍可獨立使用；請檢查 GitHub Actions 的 Six Agent Gemini LLM Debate 紀錄，不以模擬或過期資料冒充新報告。";
  }
 }
 $("refresh")?.addEventListener("click",()=>{void load()});
