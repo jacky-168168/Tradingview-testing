@@ -1,0 +1,52 @@
+name: Loop Health Triage
+on:
+  workflow_dispatch:
+  schedule:
+    # 08:55 and 20:55 Taipei daily; weekday intraday diagnostics.
+    - cron: '55 0,12 * * *'
+    - cron: '55 1-5 * * 1-5'
+    - cron: '25 2-5 * * 1-5'
+  workflow_run:
+    workflows:
+      - 'TW Stock Dashboard'
+      - 'Market Major Events Radar'
+      - 'G Intraday Recovery Clock'
+      - 'G Intraday Health Monitor'
+    types: [completed]
+permissions:
+  contents: read
+  actions: read
+  issues: write
+concurrency:
+  group: loop-health-triage
+  cancel-in-progress: false
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Regression tests before any alert
+        run: python -m unittest discover -s .github/agent -p 'test_*.py' -v
+      - name: Diagnose live G and market news without mutating data
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/agent/health.py agent-health.json
+      - name: Open, deduplicate or close incident Issues
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/agent/issue_reporter.py agent-health.json
+      - name: Preserve structured diagnosis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: loop-health-evidence
+          path: agent-health.json
+          retention-days: 14
+          if-no-files-found: ignore

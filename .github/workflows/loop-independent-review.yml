@@ -1,0 +1,64 @@
+name: Loop Independent PR Acceptance
+on:
+  pull_request:
+    paths:
+      - 'AGENTS.md'
+      - '.github/agent/**'
+      - '.github/monitor/**'
+      - '.github/workflows/loop-*.yml'
+      - 'ops/cloudflare-g-recovery/**'
+      - 'tw-stock-dashboard/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  deterministic-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Permanent AI harness and incident regression tests
+        run: python -m unittest discover -s .github/agent -p 'test_*.py' -v
+      - name: Cloudflare independent-clock tests (offline)
+        run: node --test ops/cloudflare-g-recovery/test_worker.mjs
+      - name: Syntax and baseline news UI
+        run: |
+          python -m compileall -q .github/agent .github/monitor
+          node --check ops/cloudflare-g-recovery/worker.mjs
+          node --check tw-stock-dashboard/docs/market-events.js
+          node tw-stock-dashboard/tests/test_market_events_ui.cjs
+      - name: Independent review checklist
+        run: cat .github/agent/review_checklist.md
+  optional-codex-review:
+    if: >-
+      github.event_name == 'pull_request' &&
+      vars.ENABLE_AI_REVIEW == 'true' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt-file: .github/agent/prompts/review.md
+          output-file: independent-review.md
+          sandbox: read-only
+          safety-strategy: drop-sudo
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ai-independent-review
+          path: independent-review.md
+          retention-days: 14

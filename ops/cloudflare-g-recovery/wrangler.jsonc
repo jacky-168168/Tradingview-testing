@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/wrangler.json",
+  "name": "tw-g-independent-recovery",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-24",
+  "triggers": {
+    "crons": ["17,47 1-4 * * MON-FRI", "17,38 5 * * MON-FRI"]
+  },
+  "observability": {"enabled": true}
+}

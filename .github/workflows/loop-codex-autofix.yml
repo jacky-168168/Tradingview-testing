@@ -1,0 +1,151 @@
+name: Loop Codex Safe Autofix Proposal
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Failed main-branch Actions run ID'
+        required: true
+        type: string
+  workflow_run:
+    workflows:
+      - 'TW Stock Python CI'
+      - 'Market Major Events Radar'
+      - 'TW Stock Dashboard'
+      - 'G Intraday Health Monitor'
+      - 'G Intraday Recovery Clock'
+    types: [completed]
+# Disabled unless Repository Variable ENABLE_AI_AUTOFIX=true and Secret OPENAI_API_KEY exists.
+# Never send secrets to pull_request, fork, or arbitrary code.
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: safe-codex-autofix
+  cancel-in-progress: false
+jobs:
+  propose:
+    if: >-
+      vars.ENABLE_AI_AUTOFIX == 'true' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'workflow_run' &&
+        github.event.workflow_run.conclusion == 'failure' &&
+        github.event.workflow_run.head_branch == 'main' &&
+        github.event.workflow_run.head_repository.full_name == github.repository &&
+        github.event.workflow_run.event != 'pull_request'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    outputs:
+      has_patch: ${{ steps.patch.outputs.has_patch }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Collect ONLY trusted main failure metadata
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || inputs.run_id }}
+        run: python .github/agent/collect_failure.py "$RUN_ID"
+      - name: Run limited baseline tests
+        run: python -m unittest discover -s .github/agent -p 'test_*.py' -v
+      - name: Codex proposes changes without repository write token
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt-file: .github/agent/prompts/autofix.md
+          output-file: codex-summary.txt
+          sandbox: workspace-write
+          safety-strategy: drop-sudo
+      - name: Verify allowed diff and export patch artifact
+        id: patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -N tw-stock-dashboard/tests .github/monitor
+          if git diff --quiet; then
+            echo "has_patch=false" >> "$GITHUB_OUTPUT"
+            echo "No code changes; no PR required."
+            exit 0
+          fi
+          python .github/agent/safe_patch.py
+          git diff --binary > candidate.patch
+          echo "has_patch=true" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: steps.patch.outputs.has_patch == 'true'
+        with:
+          name: safe-codex-patch
+          path: |
+            candidate.patch
+            codex-summary.txt
+          retention-days: 7
+  validate_untrusted_patch:
+    if: needs.propose.outputs.has_patch == 'true'
+    needs: propose
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: safe-codex-patch
+      - name: Apply and test AI-produced changes without any write token
+        shell: bash
+        run: |
+          set -euo pipefail
+          git apply --check candidate.patch
+          git apply candidate.patch
+          python .github/agent/safe_patch.py
+          python -m compileall -q .github/monitor tw-stock-dashboard/src/market_major_events.py tw-stock-dashboard/tests
+          node --check tw-stock-dashboard/docs/market-events.js
+          python -m unittest discover -s .github/agent -p 'test_*.py' -v
+          python -m unittest discover -s tw-stock-dashboard/tests -p test_market_major_events.py -v
+          node tw-stock-dashboard/tests/test_market_events_ui.cjs
+  open_draft_pr:
+    if: needs.propose.outputs.has_patch == 'true'
+    needs: [propose, validate_untrusted_patch]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/download-artifact@v4
+        with:
+          name: safe-codex-patch
+      - name: Apply only previously validated patch, do not execute modified code
+        shell: bash
+        run: |
+          set -euo pipefail
+          git apply --check candidate.patch
+          git apply candidate.patch
+          python .github/agent/safe_patch.py
+      - name: Push only a draft PR, never merge into production
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || inputs.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch="ai-suggested-fix/$GITHUB_RUN_ID"
+          git checkout -b "$branch"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- tw-stock-dashboard/src/market_major_events.py tw-stock-dashboard/docs/market-events.js tw-stock-dashboard/tests .github/monitor
+          git diff --cached --quiet && { echo "No changes to propose"; exit 0; }
+          git commit -m "AI proposal: minimal safe CI repair (requires human review)"
+          git push origin "HEAD:refs/heads/$branch"
+          printf 'Automated draft only. No production deployment.\n\nSource failed run ID: %s\n\nFull CI, independent PR validation and human review required. See AGENTS.md.\n' "$RUN_ID" > pr-body.md
+          gh pr create --draft --base main --head "$branch" --title "AI repair proposal: CI failure #$RUN_ID" --body-file pr-body.md
+          gh workflow run tw-stock-ci.yml --ref "$branch"
