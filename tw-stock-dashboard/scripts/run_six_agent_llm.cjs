@@ -13,7 +13,7 @@ const RULES={
  ATLAS:"獨立審查 G 候選的量能、RS20 與流動性。不可更改原始排行，不能把一日熱度當長期效益。",
  VEGA:"獨立審查 MA20 斜率、ATR 波動和價量趨勢，先講失效條件與不足，不能編造入場、停損價。",
  ORION:"獨立評估新聞事件及時間、來源可信度；標題相關不等於公司受惠，不能將轉載當官方。",
- LUNA:"獨立評估實際可取得的 PTT／Meta 公開社群情緒、樣本偏差與大盤風險，無來源就明確說缺值；反諷標題不可當代表性輿情。",
+ LUNA:"獨立評估可核對的 PTT／Meta 社群標題、來源失聯、新聞轉載比例、反諷／求救及個股題材提及。不能把標題視為留言全文，沒有語意資料就保留不確定性。題材熱度不是買進理由，過熱僅作追高風險觀察；絕不改風險分數或 G 排名。",
  TITAN:"獨立擔任紅隊風控，優先否決來源日期不一致、G 資料不合格、波動過高與風險分數偏低；不得推翻程式的硬性否決。",
  NOVA:"嚴格整合前五位的獨立觀點與交叉質疑，點出爭點、共識、不確定性及風險；沒有任何下單權限。"
 };
@@ -33,7 +33,11 @@ function compactInput(now=new Date()){
   typeof i.title==="string"&&i.title.length>=4&&typeof i.url==="string"&&/^https:\/\//.test(i.url));
  const usedSocial=Boolean(socialFresh&&verified.length>0);
  const posts=usedSocial?verified.slice(0,8).map(i=>({
-  platform:i.platform,title:truncate(i.title,115),time:i.publishedAt,url:i.url,stance:i.stance})):[];
+  platform:i.platform,title:truncate(i.title,115),time:i.publishedAt,url:i.url,stance:i.stance,
+  contentType:i.contentType||"未分類",tone:i.tone||"未驗證"})):[];
+ const heat=usedSocial&&Array.isArray(social.stockHeat?.stocks)?social.stockHeat.stocks.slice(0,5).map(x=>({
+  code:x.code,name:x.name,recent24h:x.recent24h,prior24h:x.prior24h,
+  originalDiscussion:x.originalDiscussion,overheatWatch:x.overheatWatch})):[];
  const candidates=rules.candidates.slice(0,3).map(c=>({
    code:c.code,name:c.name,date:c.asOfDate,sourceRank:c.sourceRank,theme:truncate(c.theme,100),
    atlas:c.agents.atlas,vega:c.agents.vega,orion:{status:c.agents.orion.status,verifiedCount:c.agents.orion.verifiedCount},
@@ -43,7 +47,7 @@ function compactInput(now=new Date()){
   NEWS:recentNews.length>0,SOCIAL:posts.length>0};
  return {checkedAt:now.toISOString(),datasetDate:rules.asOfDate,mode:rules.mode,liveVerified:rules.liveVerified,
   risks:{score:rules.source.riskScore,date:rules.source.riskDate},sources,
-  candidates,news:recentNews,social:usedSocial?{stats:social.social,sourceStatus:social.sources,posts}:
+  candidates,news:recentNews,social:usedSocial?{stats:social.social,sourceStatus:social.sources,posts,stockHeat:heat}:
   {status:verified.length?"已有可核對歷史社群樣本，資料集未更新":"尚無可核對的公開社群討論",sourceStatus:social.sources||{}},
   hardVeto:candidates.some(x=>x.titan.hardVeto),noTrade:true};
 }

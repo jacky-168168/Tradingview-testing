@@ -35,6 +35,7 @@ function detail(c){
   "社群標題觀察："+a.luna.socialStatus+"（有效 "+(a.luna.socialSample??0)+" 篇；偏多 "+(a.luna.socialBull??0)+"／偏空 "+(a.luna.socialBear??0)+"）",
   "來源篇數：PTT "+(a.luna.socialPlatforms?.PTT??0)+"／Threads "+(a.luna.socialPlatforms?.Threads??0)+"／Instagram "+(a.luna.socialPlatforms?.Instagram??0),
   "與此股票名稱／代碼直接相關的 PTT 標題："+(a.luna.socialMentions??"無有效樣本")+" 篇",
+  "個股討論熱度："+a.luna.heatStatus,
   "新聞標題觀察："+a.luna.newsStatus+"（獨立計數，不代表社群討論）",
   "來源：PTT "+a.luna.sourceStatus.PTT+"；Threads "+a.luna.sourceStatus.Threads+"；Instagram "+a.luna.sourceStatus.Instagram,
   a.luna.method,...(a.luna.sources||[])]);
@@ -63,6 +64,33 @@ function renderList(){
  }
  if(!chosen.some(x=>x.code===selected))detail(chosen[0]);
 }
+function renderSocialHeat(social){
+ const host=$("lunaHeat");if(!host)return;
+ host.replaceChildren();
+ const stamp=social?.generatedAt?Date.parse(social.generatedAt):NaN;
+ const healthy=["PTT","Threads","Instagram"].some(p=>social?.sources?.[p]?.status==="ok");
+ const fresh=healthy&&Number.isFinite(stamp)&&Date.now()>=stamp&&Date.now()-stamp<=8*3600000;
+ const entries=Array.isArray(social?.stockHeat?.stocks)?social.stockHeat.stocks:[];
+ const p=append(host,"p",(fresh?"最新可核對來源":"歷史快照／來源可能過期")+
+  "｜PTT "+(social?.sources?.PTT?.status||"缺值")+"｜資料日 "+(social?.stockHeat?.sourceDate||"缺值")+"｜公開討論 "+
+  (social?.social?.originalDiscussion??"缺值")+" 篇、新聞轉載 "+
+  (social?.social?.repostedNews??"缺值")+" 篇。僅追蹤 G 前20名；無樣本不代表沒有討論。","description");
+ p.setAttribute("role","status");
+ if(!entries.length){append(host,"p","目前沒有可核對的個股提及，未建立熱度排行榜。","small");return}
+ for(const x of entries.slice(0,10)){
+  if(!/^\d{4}$/.test(String(x.code||""))||!Number.isInteger(x.sample)||x.sample<1)continue;
+  const card=append(host,"div",null,"entry");
+  append(card,"div",x.code+" "+x.name+"｜近24小時 "+x.recent24h+" 篇／前24小時 "+x.prior24h+" 篇（累計 "+x.sample+"）","small");
+  if(fresh&&x.overheatWatch===true&&x.originalDiscussion>=3&&x.recent24h>=3)
+   append(card,"p","熱度過熱觀察：價量延伸且有多篇獨立討論；不代表交易訊號。","hint");
+  for(const link of (x.links||[]).slice(0,2)){
+   if(typeof link.url!=="string"||!/^https:\/\/(?:www\.ptt\.cc|(?:www\.)?threads\.(?:net|com)|(?:www\.)?instagram\.com)\//.test(link.url))continue;
+   const a=append(card,"a",link.platform+"｜"+link.title);
+   a.href=link.url;a.target="_blank";a.rel="noopener noreferrer nofollow";
+   append(card,"span","　","small");
+  }
+ }
+}
 async function loadJson(path){
  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);
  try{const r=await fetch(path+(path.includes("?")?"&":"?")+"v="+Date.now(),{cache:"no-store",signal:controller.signal});
@@ -78,6 +106,7 @@ async function load(){
  ]);
  const errors=files.map((x,i)=>x.status==="rejected"?["正式日榜單","盤中 G","盤中狀態","重大新聞","社群情緒"][i]+"無法讀取":null).filter(Boolean);
  const [daily,intraday,status,news,social]=files.map(x=>x.status==="fulfilled"?x.value:{});
+ renderSocialHeat(social);
  const result=core.analyze({daily,intraday,status,news,social},new Date());current=result;
  $("mode").textContent=result.mode;$("asOf").textContent="來源日："+(result.asOfDate||"缺值")+"｜風險日："+(result.source.riskDate||"缺值");
  $("nCandidates").textContent=String(result.counts.candidates);

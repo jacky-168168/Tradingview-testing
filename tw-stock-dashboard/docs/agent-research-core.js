@@ -84,11 +84,20 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
  const examples=posts.slice(0,3).map(x=>({title:x.title,url:x.url,
   source:x.platform+"（公開貼文標題）",publishedAt:x.publishedAt}));
  const name=String(row?.name||""),code=String(row?.code||"");
- const mentions=posts.filter(x=>(code.length===4&&x.title.includes(code))||
+ const mentions=posts.filter(x=>(/^\d{4}$/.test(code)&&new RegExp("(^|\\D)"+code+"(?!\\d)").test(x.title))||
   (name.length>=2&&x.title.includes(name))).length;
+ const heat=(Array.isArray(social?.stockHeat?.stocks)?social.stockHeat.stocks:[]).find(x=>x.code===code&&x.name===name);
+ const heatCount=heat&&Number.isInteger(heat.recent24h)&&heat.recent24h>=0?heat.recent24h:null;
+ const corroborated=heat&&heat.sample<=posts.length&&heatCount!==null&&mentions>=heatCount;
+ const sourceHealthy=["PTT","Threads","Instagram"].some(k=>feeds[k]?.status==="ok");
+ const overheatWatch=Boolean(fresh&&sourceHealthy&&corroborated&&heat.overheatWatch===true&&
+   heat.originalDiscussion>=3&&heatCount>=3);
+ const heatStatus=overheatWatch?"社群過熱觀察：討論升溫且價量延伸，警惕追高（非買賣訊號）":
+  corroborated&&fresh&&sourceHealthy?"可核對近24小時提及 "+heatCount+" 篇（僅 G 候選標題）":
+  corroborated?"已有歷史樣本，來源未確認":"熱度不足／尚未驗證";
  return {status,score,breadth,ret20,method:"只要有1篇可核對公開貼文就視為已有樣本；資料量少僅代表少量觀察，不可推論市場共識。社群不修改 Risk Score 或 TITAN 風控。",
   socialStatus,socialSample:sample?sample:null,socialBull:sample?bull:null,socialBear:sample?bear:null,
-  socialMentions:sample?mentions:null,socialPlatforms:sample?{
+  socialMentions:sample?mentions:null,heatStatus,overheatWatch,socialPlatforms:sample?{
    PTT:posts.filter(x=>x.platform==="PTT").length,
    Threads:posts.filter(x=>x.platform==="Threads").length,
    Instagram:posts.filter(x=>x.platform==="Instagram").length}:null,newsStatus:fresh?String(social?.news?.status||"未取得"):"新聞情緒資料未確認",

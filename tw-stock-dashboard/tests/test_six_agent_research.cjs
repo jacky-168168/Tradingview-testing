@@ -167,6 +167,23 @@ test("LUNA counts an authorized Threads post with no PTT feed",()=>{
  assert.equal(l.socialBull,1);
  assert.match(l.socialStatus,/已有樣本/);
 });
+test("LUNA confirms stock overheat only with fresh corroborated posts and never changes TITAN",()=>{
+ const x=fixtures(),time=LIVE.toISOString();
+ const posts=Array.from({length:3},(_,i)=>({platform:"PTT",title:"[討論] 2330 突破 第"+i+"篇",
+  url:"https://www.ptt.cc/bbs/Stock/M."+i+".html",publishedAt:time,stance:"偏多"}));
+ x.social={generatedAt:time,items:posts,sources:{PTT:{status:"ok"},Threads:{status:"not_authorized"},Instagram:{status:"not_authorized"}},
+  stockHeat:{sourceDate:"2026-10-21",stocks:[{code:"2330",name:"台積電",sample:3,recent24h:3,prior24h:0,
+   originalDiscussion:3,overheatWatch:true}]}};
+ const a=core.analyze(x,LIVE).candidates[0].agents;
+ assert.equal(a.luna.overheatWatch,true);
+ assert.match(a.luna.heatStatus,/社群過熱/);
+ assert.equal(a.titan.hardVeto,false);
+ x.social.stockHeat.stocks[0].sample=200;
+ assert.equal(core.analyze(x,LIVE).candidates[0].agents.luna.overheatWatch,false);
+ x.social.stockHeat.stocks[0].sample=3;
+ x.social.generatedAt="2026-10-21T00:00:00Z";
+ assert.equal(core.analyze(x,LIVE).candidates[0].agents.luna.overheatWatch,false);
+});
 test("LUNA labels valid cached posts as historical instead of erasing them",()=>{
  const x=fixtures(),time=new Date(LIVE.getTime()-12*3600000).toISOString();
  x.social={generatedAt:time,sources:{PTT:{status:"error"}},

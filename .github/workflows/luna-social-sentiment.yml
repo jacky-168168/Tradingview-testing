@@ -47,9 +47,9 @@ jobs:
           obj=importlib.util.module_from_spec(spec)
           spec.loader.exec_module(obj)
           from datetime import datetime,timezone
-          rows=obj.ptt(obj.request(obj.PTT_URL),datetime.now(timezone.utc))
-          print('PUBLIC_PTT_ATOM_REACHABLE',len(rows))
-          assert rows, 'PTT Atom returned no published posts from past 48 hours'
+          rows,state=obj.collect_ptt(datetime.now(timezone.utc),obj.request)
+          print('PUBLIC_PTT_PROBE',len(rows),state)
+          assert rows, 'PTT official Atom and HTML fallback returned no checkable posts from past 48 hours'
           PY
   publish:
     if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push')
@@ -77,6 +77,9 @@ jobs:
           assert all(x['platform'] in {'PTT','Threads','Instagram'} and x['url'].startswith('https://') for x in d['items'])
           assert all(x['platform']=='新聞' for x in d['newsItems'])
           assert d['social']['sample']>=len(d['items'])
+          assert isinstance(d.get("stockHeat"),dict)
+          assert all(x["sample"]>=1 and x["sample"]<=len(d["items"]) and x["recent24h"]<=x["sample"] for x in d["stockHeat"]["stocks"])
+          assert all(x["sample"]>=x["originalDiscussion"]>=0 for x in d["stockHeat"]["stocks"])
           print('SOCIAL_VALIDATED',d['sources'])
           PY
       - name: Publish research-only social JSON to Pages source
