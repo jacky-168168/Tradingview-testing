@@ -125,7 +125,8 @@ class SocialCollectorTest(unittest.TestCase):
             responses.append(url)
             return json.dumps({"posts":[good,other,evil]},ensure_ascii=False).encode()
         rows=mod.bluesky(NOW,fetch)
-        self.assertEqual(len(responses),len(mod.BLUESKY_QUERIES))
+        self.assertGreaterEqual(len(responses),len(mod.BLUESKY_QUERIES))
+        self.assertLessEqual(len(responses),len(mod.BLUESKY_QUERIES)+3)
         self.assertEqual(len(rows),1)
         self.assertEqual(rows[0]["platform"],"Bluesky")
         self.assertEqual(rows[0]["url"],"https://bsky.app/profile/trader.bsky.social/post/3lxyzabc")
@@ -144,7 +145,8 @@ class SocialCollectorTest(unittest.TestCase):
             raise AssertionError("unexpected endpoint")
         rows=mod.bluesky(NOW,fetch)
         self.assertEqual(len(rows),1)
-        self.assertEqual(len(calls),len(mod.BLUESKY_QUERIES)*2)
+        self.assertGreaterEqual(len(calls),len(mod.BLUESKY_QUERIES)*2)
+        self.assertLessEqual(len(calls),len(mod.BLUESKY_QUERIES)*2+6)
         self.assertTrue(all(x.startswith((mod.BLUESKY_API,mod.BLUESKY_BACKUP_API)) for x in calls))
     def test_bluesky_rejects_future_old_and_unverifiable_post_dates(self):
         def fetch(_):
@@ -177,6 +179,65 @@ class SocialCollectorTest(unittest.TestCase):
         self.assertEqual(data["sources"]["Bluesky"]["status"],"error")
         self.assertEqual(len(data["items"]),1)
         self.assertEqual(data["items"][0]["platform"],"Bluesky")
+    def test_only_real_investment_discussion_contributes_to_sentiment(self):
+        samples=[
+          ("台積電運動會取消但員工獎金照發","非投資話題",False,"中立／難判"),
+          ("#中央社即時新聞：台積電營收成長，記者報導","新聞轉載",False,"中立／難判"),
+          ("我剛加碼買進台積電，看多走勢","投資討論",True,"偏多"),
+          ("台股暴跌要停損了","投資討論",True,"偏空"),
+          ("感覺現在買不起台積電","投資討論",True,"中立／難判"),
+        ]
+        for i,(title,kind,eligible,stance) in enumerate(samples):
+            row=mod.sanitize("Bluesky",title,f"https://bsky.app/profile/test.bsky.social/post/3ab{i}",
+                             "2026-10-24T03:00:00Z",NOW)
+            self.assertEqual(row["contentType"],kind,title)
+            self.assertEqual(row["investmentEligible"],eligible,title)
+            self.assertEqual(row["stance"],stance,title)
+    def test_quality_report_keeps_raw_and_investment_counts_separate(self):
+        examples=[
+          "[新聞] 台股暴跌新聞標題",
+          "[討論] 台股多頭突破",
+          "[討論] 台股空頭崩盤",
+          "台積電運動會舉辦"]
+        xml='<feed xmlns="http://www.w3.org/2005/Atom">'+''.join(
+          f'<entry><title>{t}</title><link href="https://www.ptt.cc/bbs/Stock/M.{i}.html"/>'
+          '<updated>2026-10-24T03:00:00Z</updated></entry>'
+          for i,t in enumerate(examples))+'</feed>'
+        with patch.object(mod,"news_items",return_value=([],"無有效新聞")):
+            d=mod.collect(now=NOW,fetch=lambda u:xml.encode() if u.startswith(mod.PTT_URL) else
+                          json.dumps({"posts":[]}).encode(),old={},environmental={})
+        summary=d["social"]
+        self.assertEqual(summary["rawSample"],4)
+        self.assertEqual(summary["sample"],2)
+        self.assertEqual(summary["investmentDiscussion"],2)
+        self.assertEqual(summary["repostedNews"],1)
+        self.assertEqual(summary["unrelated"],1)
+        self.assertEqual(summary["bull"],1)
+        self.assertEqual(summary["bear"],1)
+        self.assertEqual(len(d["items"]),4)
+        self.assertEqual(summary["platformCounts"]["PTT"],2)
+    def test_partial_bluesky_rate_limit_preserves_verified_posts(self):
+        import urllib.error
+        diagnostics={}
+        calls=[]
+        def fetch(url):
+            calls.append(url)
+            if len(calls)==1:
+                return json.dumps({"posts":[{"uri":"at://did:plc:abc/app.bsky.feed.post/3abc",
+                 "author":{"handle":"trader.bsky.social"},
+                 "record":{"text":"台股多頭突破，想加碼","createdAt":"2026-10-24T03:00:00Z"}}]}).encode()
+            raise urllib.error.HTTPError(url,429,"Too many requests",{},None)
+        with patch.object(mod,"stock_catalog",return_value=("",[])):
+            rows=mod.bluesky(NOW,fetch,diagnostics)
+        self.assertEqual(len(rows),1)
+        self.assertTrue(diagnostics["rateLimited"])
+        self.assertEqual(diagnostics["queriesSucceeded"],1)
+        self.assertEqual(diagnostics["queriesFailed"],1)
+        self.assertEqual(diagnostics["queriesAttempted"],2)
+    def test_all_bluesky_queries_fail_closed(self):
+        with patch.object(mod,"stock_catalog",return_value=("",[])):
+            with self.assertRaises(ValueError):
+                mod.bluesky(NOW,lambda _:(_ for _ in ()).throw(OSError("offline")))
     def test_dont_use_old_news(self):
         with patch.object(mod,"NEWS_PATH",Path("/definitely/not/a/real/file.json")):
             rows,reason=mod.news_items(NOW)
