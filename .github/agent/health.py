@@ -67,7 +67,7 @@ def evaluate_g(now,latest,status,dashboard,monitor,recovery,pages=None):
             errors.append(incident("data-quality","全市場有效報價不足",valid=valid,total=total))
         for market in ("上市","上櫃"):
             v=c["exchange"][market];a=int(v["valid"]);b=int(v["total"])
-            if b<1 or a/b<.60:errors.append(incident("data-quality",market+"有效報價涵蓋率不足",valid=a,total=b))
+            if b<500 or a/b<.60:errors.append(incident("data-quality",market+"有效報價涵蓋率不足",valid=a,total=b))
     except (KeyError,ValueError,TypeError,ZeroDivisionError):
         errors.append(incident("data-quality","coverage 結構缺失或無法解讀"))
     last=recent_run(now,dashboard,95)
@@ -105,6 +105,8 @@ def evaluate_news(now,data,runs):
         errors.append(incident("news-stale","新聞列表沒有最近48小時內的文章"))
     if data.get("status") in ("degraded","initializing"):
         errors.append(incident("news-source","新聞來源全部不可用",status=data.get("status")))
+    elif data.get("status")=="partial":
+        errors.append(incident("news-source","部分新聞來源不可讀",feedsOk=data.get("feedsOk"),feedsTotal=data.get("feedsTotal")))
     r=recent_run(now,runs,24*60)
     if not r:
         errors.append(incident("news-schedule","最近24小時無新聞更新工作流程紀錄"))
@@ -128,7 +130,7 @@ def workflow_runs(name,token=None):
 def inspect(now=None,fetcher=None):
     now=now or datetime.now(timezone.utc)
     token=os.environ.get("GITHUB_TOKEN")
-    fetcher=fetcher or {"json":lambda url:http_json(url,token), "file":lambda path:github_file(path,token),"runs":lambda name:workflow_runs(name,token)}
+    fetcher=fetcher or {"json":lambda url:http_json(url,token if url.startswith(API+"/") else None), "file":lambda path:github_file(path,token),"runs":lambda name:workflow_runs(name,token)}
     results={"checkedAt":now.astimezone(TZ).isoformat(timespec="seconds"),"gSession":g_session(now),"incidents":[],"scopes":["news"]}
     # Do not make off-hours decisions or notifications about intraday G.
     if results["gSession"]:
