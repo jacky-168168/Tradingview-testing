@@ -25,7 +25,7 @@ const fresh=Array.from({length:23},(_,i)=>({
  date:'2026-10-24',publishedAt:new Date(Date.parse(FIXED_NOW)-(i+1)*60000).toISOString(),
  source:'測試媒體',url:'https://example.com/test/'+i,themes:['AI'],confirmed:false
 }));
-const sample={...archived,items:[...archived.items,...fresh]};
+const sample={...archived,generatedAt:'2026-10-21T00:00:00+08:00',items:[...archived.items,...fresh]};
 const nodes=new Map();
 function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',hidden:false,value:'',fn:null,
  addEventListener(type,fn){this.fn=fn},querySelectorAll(){return []}
@@ -40,7 +40,11 @@ setImmediate(()=>{
  assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,20,'first page must show 20 genuinely fresh articles');
  assert.equal(node('moreNews').hidden,false,'load more must appear for 23 fresh articles');
  node('moreNews').fn();
- assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,23,'load more adds recent news only');
+ const freshTotal=sample.items.filter(x=>x.type==='news'&&Number.isFinite(Date.parse(x.publishedAt))&&
+   Date.parse(FIXED_NOW)-Date.parse(x.publishedAt)>=-5*60000&&
+   Date.parse(FIXED_NOW)-Date.parse(x.publishedAt)<=48*3600000).length;
+ assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,Math.min(40,freshTotal),
+    'load more adds only fresh items, regardless of live fixture size');
  assert(node('alert').textContent.includes('新聞超過 36 小時未更新'),'stale dataset must show warning');
  assert(!node('events').innerHTML.includes('<script>'),'event output must be escaped');
  console.log('PASS ended events filtered, only fresh news rendered, pagination and stale dataset warning');
