@@ -184,6 +184,31 @@ test("LUNA confirms stock overheat only with fresh corroborated posts and never 
  x.social.generatedAt="2026-10-21T00:00:00Z";
  assert.equal(core.analyze(x,LIVE).candidates[0].agents.luna.overheatWatch,false);
 });
+test("healthy empty Bluesky feed cannot relabel cached offline PTT as fresh",()=>{
+ const x=fixtures(),at=LIVE.toISOString();
+ x.social={generatedAt:at,sources:{PTT:{status:"error"},Bluesky:{status:"empty",freshCount:0}},
+ items:[{platform:"PTT",title:"台股高檔又要突破",
+  url:"https://www.ptt.cc/bbs/Stock/M.123.A.A.html",publishedAt:at,stance:"偏多"}]};
+ const a=core.analyze(x,LIVE).candidates[0].agents.luna;
+ assert.match(a.socialStatus,/已有歷史樣本/);
+ assert.equal(a.overheatWatch,false);
+});
+test("LUNA accepts real Bluesky links, reports source counts, and keeps TITAN decision",()=>{
+ const x=fixtures(),at=LIVE.toISOString();
+ x.social={generatedAt:at,sources:{PTT:{status:"error"},Bluesky:{status:"ok",freshCount:1},
+  Threads:{status:"not_authorized"},Instagram:{status:"not_authorized"}},
+  items:[{platform:"Bluesky",title:"台股 2330 突破多頭走勢",
+    url:"https://bsky.app/profile/trader.bsky.social/post/3ab",
+    publishedAt:at,stance:"偏多"}]};
+ const r=core.analyze(x,LIVE).candidates[0].agents;
+ assert.equal(r.luna.socialSample,1);
+ assert.equal(r.luna.socialPlatforms.Bluesky,1);
+ assert.equal(r.luna.sourceStatus.Bluesky,"ok");
+ assert.equal(r.luna.socialMentions,1);
+ assert.equal(r.titan.hardVeto,false);
+ x.daily.risk.score=11;
+ assert.equal(core.analyze(x,LIVE).candidates[0].agents.titan.hardVeto,true);
+});
 test("LUNA labels valid cached posts as historical instead of erasing them",()=>{
  const x=fixtures(),time=new Date(LIVE.getTime()-12*3600000).toISOString();
  x.social={generatedAt:time,sources:{PTT:{status:"error"}},

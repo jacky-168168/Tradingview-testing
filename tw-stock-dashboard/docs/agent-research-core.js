@@ -70,7 +70,7 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
  const age=ageMinutes(social?.generatedAt,now),fresh=age!==null&&age>=0&&age<=8*60;
  const feeds=social?.sources||{};
  const domains={PTT:/^https:\/\/www\.ptt\.cc\//,Threads:/^https:\/\/(?:www\.)?threads\.(?:net|com)\//,
-  Instagram:/^https:\/\/(?:www\.)?instagram\.com\//};
+  Instagram:/^https:\/\/(?:www\.)?instagram\.com\//,Bluesky:/^https:\/\/bsky\.app\/profile\/[^/]+\/post\/[a-zA-Z0-9]+$/};
  const posts=(Array.isArray(social?.items)?social.items:[]).filter(x=>{
   const a=ageMinutes(x?.publishedAt,now);
   return x&&typeof x.title==="string"&&x.title.length>=4&&typeof x.url==="string"&&
@@ -80,7 +80,8 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
  const signal=sample===0?"尚無可核對的社群討論":
   bull>bear?"已有樣本｜偏多內容較多":bear>bull?"已有樣本｜偏空內容較多":
   bull+bear===0?"已有樣本｜尚無明確多空方向":"已有樣本｜多空內容接近";
- const socialStatus=sample&&fresh?signal:sample?"已有歷史樣本｜來源未在8小時內更新":signal;
+ const currentEvidence=posts.some(x=>feeds[x.platform]?.status==="ok");
+ const socialStatus=sample&&fresh&&currentEvidence?signal:sample?"已有歷史樣本｜來源未在8小時內更新或已失聯":signal;
  const examples=posts.slice(0,3).map(x=>({title:x.title,url:x.url,
   source:x.platform+"（公開貼文標題）",publishedAt:x.publishedAt}));
  const name=String(row?.name||""),code=String(row?.code||"");
@@ -89,7 +90,7 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
  const heat=(Array.isArray(social?.stockHeat?.stocks)?social.stockHeat.stocks:[]).find(x=>x.code===code&&x.name===name);
  const heatCount=heat&&Number.isInteger(heat.recent24h)&&heat.recent24h>=0?heat.recent24h:null;
  const corroborated=heat&&heat.sample<=posts.length&&heatCount!==null&&mentions>=heatCount;
- const sourceHealthy=["PTT","Threads","Instagram"].some(k=>feeds[k]?.status==="ok");
+ const sourceHealthy=["PTT","Threads","Instagram","Bluesky"].some(k=>feeds[k]?.status==="ok");
  const overheatWatch=Boolean(fresh&&sourceHealthy&&corroborated&&heat.overheatWatch===true&&
    heat.originalDiscussion>=3&&heatCount>=3);
  const heatStatus=overheatWatch?"社群過熱觀察：討論升溫且價量延伸，警惕追高（非買賣訊號）":
@@ -100,9 +101,10 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
   socialMentions:sample?mentions:null,heatStatus,overheatWatch,socialPlatforms:sample?{
    PTT:posts.filter(x=>x.platform==="PTT").length,
    Threads:posts.filter(x=>x.platform==="Threads").length,
-   Instagram:posts.filter(x=>x.platform==="Instagram").length}:null,newsStatus:fresh?String(social?.news?.status||"未取得"):"新聞情緒資料未確認",
+   Instagram:posts.filter(x=>x.platform==="Instagram").length,
+   Bluesky:posts.filter(x=>x.platform==="Bluesky").length}:null,newsStatus:fresh?String(social?.news?.status||"未取得"):"新聞情緒資料未確認",
   sources:examples,sourceStatus:{PTT:feeds.PTT?.status||"not_available",Threads:feeds.Threads?.status||"not_authorized",
-   Instagram:feeds.Instagram?.status||"not_authorized"},socialAgeMinutes:age};
+   Instagram:feeds.Instagram?.status||"not_authorized",Bluesky:feeds.Bluesky?.status||"not_available"},socialAgeMinutes:age};
 }
 function titan(row,context){const veto=[],info=[];
  const risk=context.risk;

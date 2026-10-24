@@ -20,6 +20,9 @@ PTT_URL = "https://www.ptt.cc/atom/stock.xml"
 PTT_FEEDS = (PTT_URL, "https://www.ptt.cc/atom/Stock.xml")
 PTT_BOARD = "https://www.ptt.cc/bbs/Stock/index.html"
 PTT_PUBLIC_FEED = "https://feed.cqd.tw/ptt/Stock/title/.*"
+BLUESKY_API = "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts"
+BLUESKY_BACKUP_API = "https://api.bsky.app/xrpc/app.bsky.feed.searchPosts"
+BLUESKY_QUERIES = ("台股","台積電","CPO 台股")
 STOCK_PATH = ROOT / "data/latest.json"
 NEWS_PATH = ROOT / "data/market_events/latest.json"
 OUT_PATH = ROOT / "data/social_sentiment/latest.json"
@@ -48,7 +51,7 @@ def score(title):
 
 def request(url, token=None):
     parsed = urllib.parse.urlsplit(url)
-    if parsed.scheme != "https" or parsed.hostname not in {"www.ptt.cc", "feed.cqd.tw", "graph.threads.net", "graph.facebook.com"}:
+    if parsed.scheme != "https" or parsed.hostname not in {"www.ptt.cc", "feed.cqd.tw", "public.api.bsky.app", "api.bsky.app", "graph.threads.net", "graph.facebook.com"}:
         raise ValueError("拒絕非白名單 HTTPS 來源")
     h = {"User-Agent": "Tradingview-testing-SocialResearch/1.0", "Accept": "application/atom+xml, text/html;q=0.9, application/json;q=0.8"}
     if token:
@@ -62,7 +65,7 @@ def sanitize(source, title, url, date, now, max_hours=48):
         return None
     link = urllib.parse.urlsplit(str(url))
     allowed = {"PTT": {"www.ptt.cc"}, "Threads": {"www.threads.net", "threads.net", "www.threads.com", "threads.com"},
-               "Instagram": {"www.instagram.com", "instagram.com"}, "新聞": None}
+               "Instagram": {"www.instagram.com", "instagram.com"}, "Bluesky": {"bsky.app"}, "新聞": None}
     if link.scheme != "https" or (allowed[source] is not None and link.hostname not in allowed[source]):
         return None
     if not link.netloc or len(str(title).strip()) < 4:
@@ -193,6 +196,39 @@ def topic_heat(items,now,catalog):
     return {"sourceDate":date,"stocks":result[:10],
             "method":"僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"}
 
+def bluesky(now, fetch=request):
+    """Read public Bluesky searchPosts without auth. Verify original URI, timestamp and TW relevance."""
+    rows=[]
+    for query in BLUESKY_QUERIES:
+        params=urllib.parse.urlencode({"q":query,"sort":"latest","limit":25})
+        try:
+            payload=json.loads(fetch(BLUESKY_API+"?"+params))
+        except urllib.error.HTTPError as err:
+            if err.code not in (403,404):raise
+            # Official alternate AppView host, not a bypass of authentication.
+            payload=json.loads(fetch(BLUESKY_BACKUP_API+"?"+params))
+        if not isinstance(payload,dict) or not isinstance(payload.get("posts"),list):
+            raise ValueError("Bluesky API 未回傳有效 posts 陣列")
+        for entry in payload["posts"]:
+            if not isinstance(entry,dict) or not isinstance(entry.get("record"),dict):continue
+            record=entry["record"]
+            content=str(record.get("text","")).strip()
+            if len(content)<4 or len(content)>6000:continue
+            # Search sometimes matches English CPO unrelated to Taiwanese stocks.
+            if not re.search(r"台股|臺股|台積電|[台臺]灣|上市櫃|加權指數|2330|股票|股市|證交所|投信|外資|正二",content):continue
+            handle=str(entry.get("author",{}).get("handle",""))
+            uri=str(entry.get("uri",""))
+            if not re.fullmatch(r"[a-zA-Z0-9.-]{3,253}",handle) or ".." in handle:continue
+            match=re.fullmatch(r"at://did:[a-z0-9:._-]+/app\.bsky\.feed\.post/([a-zA-Z0-9]+)",uri)
+            if not match:continue
+            link="https://bsky.app/profile/"+urllib.parse.quote(handle,safe=".-")+"/post/"+match.group(1)
+            item=sanitize("Bluesky",content[:160],link,record.get("createdAt"),now)
+            if item:
+                item["contentType"]="公開貼文標題摘要"
+                item["method"]="Bluesky 官方公開搜尋 API（取貼文首160字，非全文留言）"
+                rows.append(item)
+    return unique(rows,50)
+
 def threads(token, now):
     queries = ["台股", "股票"]
     entries = []
@@ -281,7 +317,7 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     prior=old.get("items") if isinstance(old.get("items"),list) else []
     cached=[]
     for x in prior:
-        if not isinstance(x,dict) or x.get("platform") not in ("PTT","Threads","Instagram"):continue
+        if not isinstance(x,dict) or x.get("platform") not in ("PTT","Threads","Instagram","Bluesky"):continue
         row=sanitize(x.get("platform"),x.get("title"),x.get("url"),x.get("publishedAt"),now)
         if row:
             if x.get("timestampBasis")=="文章網址 ID 推算，非官方發文時間":
@@ -294,6 +330,13 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     state={}
     new,state["PTT"]=collect_ptt(now,fetch)
     inputs+=new
+    try:
+        found=bluesky(now,fetch)
+        state["Bluesky"]={"status":"ok" if found else "empty","freshCount":len(found),
+                          "method":"官方公開 app.bsky.feed.searchPosts","url":BLUESKY_API}
+        inputs+=found
+    except Exception as exc:
+        state["Bluesky"]={"status":"error","reason":type(exc).__name__,"freshCount":0,"url":BLUESKY_API}
     for name, func, args in [
         ("Threads",threads,(environmental.get("THREADS_ACCESS_TOKEN"),now)),
         ("Instagram",instagram,(environmental.get("IG_ACCESS_TOKEN"),environmental.get("IG_USER_ID",""),now))]:
@@ -323,7 +366,8 @@ def collect(now=None, fetch=request, old=None, environmental=None):
         "items":social[:80],"newsItems":news[:30],
         "notes":["僅使用公開、實際取得且不超過48小時的資料；缺乏授權的平台顯示未授權。",
                  "標題關鍵詞易受反諷、轉載、選擇偏差與機器人影響；不能視為代表性民調。",
-                 "新聞與社群分開計數；標題反諷／轉載不直接判定多空，無讀取留言全文。",
+                 "新聞與社群分開計數；Bluesky 來源另記錄，僅官方可公開搜尋貼文，無讀取留言全文。",
+                 "標題反諷／轉載不直接判定多空，無取得平台授權不蒐集受限制來源。",
                  "個股熱度只是對 G Top20 的實際可驗證標題對照，不更改 G 排名或 TITAN 風控。"]}
 
 def main():

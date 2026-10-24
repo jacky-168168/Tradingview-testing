@@ -86,3 +86,14 @@
 - `overheatWatch` 只是研究警示：近 24 小時至少三篇、其中至少三篇非新聞轉載，且個股 20 日漲幅超過 25%、量比 >= 2 或 MA20 斜率 >= 5 之一。研究頁還會驗證樣本、時間是否一致，異常來源不標榜即時訊號。不得更改 G 名次、正式大盤分數、TITAN 風控或下單。
 - Gemini 九輪的 LUNA 首輪只解釋實際已取得的社群與大盤資料，新增的 `contentType`、`tone`、`stockHeat` 僅在社群資料新鮮且有效時提交。新聞和社群分開計數。
 - Threads／Instagram 仍需各自官方授權。未授權就是 `not_authorized`，不可假裝取得 IG/Threads 輿情。此版本沒有加入完整留言分析、語意級 LLM 分類、完整市場情緒勝率回測。
+
+## 多社群來源可行性實測 v0.6（2026-10-25）
+- **Bluesky**：使用官方 `https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts` 公開 GET，不需提供登入資訊，依臺股、台積電、CPO 台股三項搜尋，每次最多 25 筆且去重；查核官方 `at://` 原始貼文 ID、公開作者 handle、`record.createdAt`，只保留貼文中有臺股相關上下文、48 小時內的原始連結。若被拒絕或出現 API 錯誤則顯示 `error` 而不是捏造貼文。官方參考：https://bsky.network/docs/api-directory/ 和 https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/feed/searchPosts.json 。
+- **CMoney 股市爆料同學會**：商業資料 API 已確認存在，**未證實公開訂閱包含社群貼文與再利用權**。不能將一般金融行情資料 API 當作股市爆料社群授權；聯絡 https://cmoney.com.tw/product/api 後方可納入。
+- **Reddit**：雲端主機 Data API 需 OAuth，現有 GitHub Actions 無用戶批准的 OAuth 應用，因此尚未呼叫。官方依據：https://support.reddithelp.com/hc/en-us/articles/14945211791892-Developer-Platform-Accessing-Reddit-Data 。
+- **YouTube**：可透過官方 Data API 讀取授權範圍內資料，必須有使用者同意的 API Key 與符合衍生情緒統計的政策；本版無金鑰，不使用 HTML 爬蟲替代。官方依據：https://developers.google.com/youtube/terms/derived-metrics-policy 。
+- **Mobile01**：使用授權與自動化蒐集規則未核實，暫不嘗試直接抓取貼文；可人工研究或取得正式資料授權。
+- **Dcard**：使用條款限制自動化蒐集其他使用者內容，本版禁用爬蟲。來源：https://www.dcard.tw/terms 。
+- **TradingView 投資想法**：官方明確禁止自動化蒐集，禁止把公開投資想法當資料 API 抓取；來源：https://tw.tradingview.com/support/solutions/43000674726/ 。
+- **PTT**：既有四組來源仍獨立執行，當連線失敗時保留 48h 內曾核實的歷史貼文並標示錯誤；Bluesky 的成功不代表 PTT 正常。
+- 限制：目前所有成功新資料仍需觀察實際公開貼文數是否足以代表台股散戶，無資料不代表中立。**新功能由單元測試與 GitHub Runner 真實連線診斷分別驗證**；沒有任何社群來源能修改正式 G 排名或 TITAN 否決。
