@@ -63,6 +63,29 @@ function validateResponse(raw,role,sources){
  return {role,assessment:j.assessment,confidence:j.confidence,evidenceRefs:j.evidenceRefs,
    uncertainties:j.uncertainties,noTrade:true};
 }
+function scopedEvidence(e,role){
+ const allowed=role==="ATLAS"||role==="VEGA"||role==="TITAN"?["G","RISK"]:
+   role==="ORION"?["G","NEWS"]:["G","RISK","NEWS","SOCIAL"];
+ const sources=Object.fromEntries(Object.entries(e.sources).map(([k,v])=>[k,Boolean(v&&allowed.includes(k))]));
+ const base={checkedAt:e.checkedAt,datasetDate:e.datasetDate,mode:e.mode,liveVerified:e.liveVerified,sources,noTrade:true};
+ const candidates=e.candidates.map(c=>{
+  const common={code:c.code,name:c.name,date:c.date,sourceRank:c.sourceRank};
+  if(role==="ATLAS")return {...common,theme:c.theme,atlas:c.atlas};
+  if(role==="VEGA")return {...common,vega:c.vega};
+  if(role==="ORION")return {...common,theme:c.theme,orion:c.orion};
+  if(role==="TITAN")return {...common,atlas:c.atlas,vega:c.vega,titan:c.titan};
+  return common;
+ });
+ if(role==="ATLAS")return {...base,candidates,risks:e.risks};
+ if(role==="VEGA")return {...base,candidates,risks:e.risks};
+ if(role==="ORION")return {...base,candidates,news:e.news};
+ if(role==="LUNA")return {...base,candidates,risks:e.risks,social:e.social,news:e.news};
+ return {...base,candidates,risks:e.risks,hardVeto:e.hardVeto};
+}
+function identicalAssessment(a,b){
+ const tidy=s=>String(s||"").replace(/[\s，。、；：！？,.!?;:]/g,"").trim();
+ return tidy(a?.assessment)===tidy(b?.assessment);
+}
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 async function infer(role,context,transport){
  const sourceRefs=Object.entries(context.evidence?.sources||{}).filter(([,v])=>v).map(([k])=>k);
@@ -84,27 +107,39 @@ async function infer(role,context,transport){
 }
 async function deliberate(evidence,transport=geminiModel,wait=delay){
  assert(evidence.noTrade===true);
- const initial={};
+ const initial={},executionTrace=[];
+ const step=async(role,phase,context)=>{
+  const start=Date.now(),answer=await infer(role,context,transport);
+  executionTrace.push({sequence:executionTrace.length+1,role,phase,status:"success",
+   durationMs:Math.max(0,Date.now()-start),completedAt:new Date().toISOString()});
+  return answer;
+ };
  for(const role of ROLES){
-  initial[role]=await infer(role,{phase:"獨立首輪",evidence},transport);
+  initial[role]=await step(role,"獨立首輪",{phase:"獨立首輪",evidence:scopedEvidence(evidence,role)});
   await wait(1250);
  }
- const draft=await infer("NOVA",{phase:"第一輪整合",evidence,
-  reports:initial,rule:"不得推翻 evidence.hardVeto"},transport);
+ const draft=await step("NOVA","第一輪整合",{phase:"第一輪整合",evidence,
+  reports:initial,rule:"不得推翻 evidence.hardVeto"});
  await wait(1250);
  const questions={};
  for(const role of ["VEGA","TITAN"]){
-  questions[role]=await infer(role,{phase:"反駁／交叉質疑",evidence,firstRound:initial,
-   novaDraft:draft,rule:"指出具體推理漏洞或尚未確認的數據"},transport);
+  questions[role]=await step(role,"反駁／交叉質疑",{phase:"反駁／交叉質疑",evidence,
+   firstRound:initial,novaDraft:draft,
+   rule:"必須比較 NOVA 初稿與其他角色先前的判斷，提出具體新質疑；不可只重述自己的首輪報告"});
   await wait(1250);
  }
- const final=await infer("NOVA",{phase:"最終討論結論",evidence,firstRound:initial,novaDraft:draft,
-  critiques:questions,hardVeto:evidence.hardVeto,rule:"交叉檢查意見歧異；不得取消任何程式風險否決"},transport);
+ const final=await step("NOVA","最終討論結論",{phase:"最終討論結論",evidence,firstRound:initial,
+  novaDraft:draft,critiques:questions,hardVeto:evidence.hardVeto,
+  rule:"逐一回應 VEGA 與 TITAN 的新質疑；不得取消程式風險否決"});
+ const reviewAudit={method:"僅比較文字是否完全相同（忽略空白與標點），不代表語意品質評分",
+  critiqueRepeatedFirstRound:["VEGA","TITAN"].filter(role=>identicalAssessment(initial[role],questions[role])),
+  finalRepeatedDraft:identicalAssessment(draft,final)};
+
  return {schema:1,mode:"六角色獨立 LLM 推論及跨角色交叉質疑",generatedAt:new Date().toISOString(),
   model:MODEL,provider:"Google Gemini API",inferenceCalls:9,verifiedModelExecution:true,
   evidenceDate:evidence.datasetDate,sourceSummary:evidence.sources,marketMode:evidence.mode,
   inputIsLive:evidence.liveVerified,hardVeto:evidence.hardVeto,
-  rounds:{initial,draft,critiques:questions,final},
+  rounds:{initial,draft,critiques:questions,final},executionTrace,reviewAudit,
   outcome:evidence.hardVeto?"程式硬性否決，不可作交易建議":"研究待人工審核，並非交易許可",
   noTrade:true,disclaimer:"各角色使用同一 Gemini 模型的獨立 API 呼叫與不同提示詞；不是六種不同模型。免費額度與資料處理政策依 Google 帳戶設定；模型文字仍須人工核實。"};
 }
@@ -113,6 +148,15 @@ function validateSnapshot(doc){assert(doc.verifiedModelExecution===true&&doc.inf
  assert.equal(doc.rounds.final.noTrade,true);
  assert.equal(doc.provider,"Google Gemini API");
  assert(doc.generatedAt&&Number.isFinite(Date.parse(doc.generatedAt)));
+ if(doc.executionTrace){
+  const expected=[...ROLES,"NOVA","VEGA","TITAN","NOVA"];
+  assert.equal(doc.executionTrace.length,9,"nine execution records required");
+  doc.executionTrace.forEach((x,i)=>{assert.equal(x.sequence,i+1);assert.equal(x.role,expected[i]);
+   assert.equal(x.status,"success");assert(Number.isFinite(x.durationMs)&&x.durationMs>=0);
+   assert(Number.isFinite(Date.parse(x.completedAt)));});
+  assert(Array.isArray(doc.reviewAudit?.critiqueRepeatedFirstRound));
+  assert(typeof doc.reviewAudit.finalRepeatedDraft==="boolean");
+ }
  if(doc.hardVeto)assert.match(doc.outcome,/否決/);
  return true;}
 async function selfTest(){
@@ -123,6 +167,11 @@ async function selfTest(){
    confidence:"低",evidenceRefs:["G"],uncertainties:["樣本與日期缺失"],noTrade:true})};
  const s=await deliberate(ev,async args=>{assert.equal(args.response_format?.type,"json_object");return mock(args)},async()=>{});
  assert.equal(called,9);validateSnapshot(s);
+ assert.equal(s.executionTrace.length,9);
+ assert.deepEqual(s.executionTrace.map(x=>x.role),["ATLAS","VEGA","ORION","LUNA","TITAN","NOVA","VEGA","TITAN","NOVA"]);
+ assert.deepEqual(s.reviewAudit.critiqueRepeatedFirstRound,["VEGA","TITAN"]);
+ const broken=structuredClone(s);broken.executionTrace[0].role="NOVA";
+ assert.throws(()=>validateSnapshot(broken));
  await assert.rejects(async()=>infer("ATLAS",{phase:"回歸測試",evidence:ev},async()=> "OK\\n"),/non-JSON/);
  assert.throws(()=>validateResponse({role:"TITAN",assessment:"x".repeat(20),confidence:"高",evidenceRefs:["SOCIAL"],
    uncertainties:["未知"],noTrade:true},"TITAN",ev.sources));
@@ -143,4 +192,4 @@ async function main(){
   datasetDate:report.evidenceDate,hardVeto:report.hardVeto}));
 }
 if(require.main===module)main().catch(e=>{console.error("SIX_LLM_FAILED",e.message);process.exitCode=1});
-module.exports={compactInput,validateResponse,deliberate,validateSnapshot,selfTest};
+module.exports={compactInput,scopedEvidence,validateResponse,deliberate,validateSnapshot,selfTest};
