@@ -1,6 +1,11 @@
 name: Six Agent GitHub Models LLM Debate
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/six-agent-llm.yml'
+      - 'tw-stock-dashboard/scripts/run_six_agent_llm.cjs'
   schedule:
     # 18:50 Taipei weekdays, after social snapshot and official market news.
     - cron: '50 10 * * 1-5'
@@ -32,7 +37,7 @@ jobs:
           node --check tw-stock-dashboard/scripts/run_six_agent_llm.cjs
           node tw-stock-dashboard/scripts/run_six_agent_llm.cjs --self-test
   inference:
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push')
     needs: offline
     runs-on: ubuntu-latest
     timeout-minutes: 12
