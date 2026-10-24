@@ -32,7 +32,8 @@ function detail(c){
   "來源資料同步年齡："+(a.orion.datasetAgeMinutes===null?"不明":Math.round(a.orion.datasetAgeMinutes)+" 分鐘"),...links]);
  explainCard(host,"LUNA","市場與公開社群討論",a.luna.status,[
   "大盤風險分數："+fmt(a.luna.score,0)+"／100；上漲家數比率："+fmt(a.luna.breadth,1)+"%",
-  "社群標題觀察："+a.luna.socialStatus+"（PTT "+(a.luna.socialSample??"缺值")+" 篇；偏多 "+(a.luna.socialBull??"—")+"／偏空 "+(a.luna.socialBear??"—")+"）",
+  "社群標題觀察："+a.luna.socialStatus+"（有效 "+(a.luna.socialSample??0)+" 篇；偏多 "+(a.luna.socialBull??0)+"／偏空 "+(a.luna.socialBear??0)+"）",
+  "來源篇數：PTT "+(a.luna.socialPlatforms?.PTT??0)+"／Threads "+(a.luna.socialPlatforms?.Threads??0)+"／Instagram "+(a.luna.socialPlatforms?.Instagram??0),
   "與此股票名稱／代碼直接相關的 PTT 標題："+(a.luna.socialMentions??"無有效樣本")+" 篇",
   "新聞標題觀察："+a.luna.newsStatus+"（獨立計數，不代表社群討論）",
   "來源：PTT "+a.luna.sourceStatus.PTT+"；Threads "+a.luna.sourceStatus.Threads+"；Instagram "+a.luna.sourceStatus.Instagram,
