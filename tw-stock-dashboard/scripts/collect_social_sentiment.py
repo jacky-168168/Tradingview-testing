@@ -213,22 +213,35 @@ def topic_heat(items,now,catalog):
     return {"sourceDate":date,"stocks":result[:10],
             "method":"僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"}
 
-def bluesky(now, fetch=request):
-    """Read public Bluesky searchPosts without auth. Verify original URI, timestamp and TW relevance."""
+def bluesky(now, fetch=request, diagnostic=None):
+    """Public Bluesky search; preserve valid queries if later search fails or rate-limits."""
     rows=[]
+    state=diagnostic if diagnostic is not None else {}
+    state.update({"queriesAttempted":0,"queriesSucceeded":0,"queriesFailed":0,"rateLimited":False})
     _,g_top=stock_catalog()
     queries=list(BLUESKY_QUERIES)
     queries.extend(x["name"]+" 股票" for x in g_top[:3] if len(x["name"])>=2)
     for query in dict.fromkeys(queries):
+        state["queriesAttempted"]+=1
         params=urllib.parse.urlencode({"q":query,"sort":"latest","limit":25})
         try:
-            payload=json.loads(fetch(BLUESKY_API+"?"+params))
+            try:
+                payload=json.loads(fetch(BLUESKY_API+"?"+params))
+            except urllib.error.HTTPError as err:
+                if err.code not in (403,404):raise
+                payload=json.loads(fetch(BLUESKY_BACKUP_API+"?"+params))
+            if not isinstance(payload,dict) or not isinstance(payload.get("posts"),list):
+                raise ValueError("Bluesky API 未回傳有效 posts 陣列")
         except urllib.error.HTTPError as err:
-            if err.code not in (403,404):raise
-            # Official alternate AppView host, not a bypass of authentication.
-            payload=json.loads(fetch(BLUESKY_BACKUP_API+"?"+params))
-        if not isinstance(payload,dict) or not isinstance(payload.get("posts"),list):
-            raise ValueError("Bluesky API 未回傳有效 posts 陣列")
+            state["queriesFailed"]+=1
+            if err.code==429:
+                state["rateLimited"]=True
+                break
+            continue
+        except (ValueError,TypeError,urllib.error.URLError,OSError):
+            state["queriesFailed"]+=1
+            continue
+        state["queriesSucceeded"]+=1
         for entry in payload["posts"]:
             if not isinstance(entry,dict) or not isinstance(entry.get("record"),dict):continue
             record=entry["record"]
@@ -250,7 +263,9 @@ def bluesky(now, fetch=request):
                 item["stance"]=score(content) if eligible else "中立／難判"
                 item["method"]="Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
                 rows.append(item)
-    return unique(rows,50)
+    if state["queriesSucceeded"]==0:
+        raise ValueError("Bluesky 官方查詢全部失敗或遭限流，沒有可驗證的新資料")
+    return unique(rows,80)
 
 def threads(token, now):
     queries = ["台股", "股票"]
@@ -354,8 +369,11 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     new,state["PTT"]=collect_ptt(now,fetch)
     inputs+=new
     try:
-        found=bluesky(now,fetch)
-        state["Bluesky"]={"status":"ok" if found else "empty","freshCount":len(found),
+        diagnostic={}
+        found=bluesky(now,fetch,diagnostic)
+        state["Bluesky"]={"status":("partial" if diagnostic["queriesFailed"] else "ok") if found else
+                          ("partial" if diagnostic["queriesFailed"] else "empty"),
+                          "freshCount":len(found),"queryHealth":diagnostic,
                           "method":"官方公開 app.bsky.feed.searchPosts","url":BLUESKY_API}
         inputs+=found
     except Exception as exc:
