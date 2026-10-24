@@ -19,7 +19,7 @@ NEWS_PATH = ROOT / "data/market_events/latest.json"
 OUT_PATH = ROOT / "data/social_sentiment/latest.json"
 UP = ("看多", "多頭", "轉強", "突破", "創高", "噴出", "漲停", "軋空", "強勢", "反攻", "上攻", "拉升", "飆漲")
 DOWN = ("看空", "空頭", "轉弱", "破底", "崩盤", "暴跌", "跌停", "套牢", "利空", "出貨", "殺盤", "跳水", "重挫", "賣壓")
-IGNORE = re.compile(r"^\\s*(?:Re:|Fw:|\\[公告\\]|\\[版務\\])", re.I)
+IGNORE = re.compile(r"^\s*(?:Re:|Fw:|\[公告\]|\[版務\])", re.I)
 ATOM = "{http://www.w3.org/2005/Atom}"
 
 def iso(value):
@@ -57,7 +57,7 @@ def sanitize(source, title, url, date, now, max_hours=48):
         return None
     if not link.netloc or len(str(title).strip()) < 4:
         return None
-    title = re.sub(r"[\\x00-\\x1f]+", " ", str(title).strip())[:160]
+    title = re.sub(r"[\x00-\x1f]+", " ", str(title).strip())[:160]
     return {"platform":source, "title":title, "url":str(url)[:350], "publishedAt":t.isoformat().replace("+00:00", "Z"),
             "stance":score(title)}
 
@@ -90,7 +90,7 @@ def threads(token, now):
     return entries
 
 def instagram(token, user_id, now):
-    if not re.fullmatch(r"\\d+",user_id):
+    if not re.fullmatch(r"\d+",user_id):
         raise ValueError("Instagram user id 格式錯誤")
     entries=[]
     for tag in ["台股", "股票"]:
