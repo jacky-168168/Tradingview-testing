@@ -31,7 +31,7 @@ function compactInput(now=new Date()){
  const verified=(Array.isArray(social.items)?social.items:[]).filter(i=>
   ["PTT","Threads","Instagram","Bluesky"].includes(i.platform)&&maxAge(i.publishedAt,48)&&
   typeof i.title==="string"&&i.title.length>=4&&typeof i.url==="string"&&/^https:\/\//.test(i.url));
- const usedSocial=Boolean(socialFresh&&verified.length>0);
+ const usedSocial=Boolean(socialFresh&&verified.some(x=>social.sources?.[x.platform]?.status==="ok"));
  const posts=usedSocial?verified.slice(0,8).map(i=>({
   platform:i.platform,title:truncate(i.title,115),time:i.publishedAt,url:i.url,stance:i.stance,
   contentType:i.contentType||"未分類",tone:i.tone||"未驗證"})):[];
