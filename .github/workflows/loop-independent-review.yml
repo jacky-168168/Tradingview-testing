@@ -14,6 +14,7 @@ permissions:
   pull-requests: read
 jobs:
   setup-diagnostic:
+    timeout-minutes: 8
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,6 +31,15 @@ jobs:
           echo "REVIEW_ENABLED=$REVIEW_ENABLED"
           echo "API_KEY_PRESENT=$API_KEY_PRESENT"
           echo "TRUSTED_REPOSITORY=$TRUSTED_REPOSITORY"
+      - name: Read-only Codex API connection smoke test
+        if: env.API_KEY_PRESENT == 'true'
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt: 'Connection smoke test only. Return exactly the token CODEX_CONNECT_OK. Do not access repository files or modify anything.'
+          output-file: codex-smoke-result.txt
+          sandbox: read-only
+          safety-strategy: drop-sudo
   deterministic-acceptance:
     runs-on: ubuntu-latest
     timeout-minutes: 12
