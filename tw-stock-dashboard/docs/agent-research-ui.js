@@ -34,7 +34,7 @@ function detail(c){
   "大盤風險分數："+fmt(a.luna.score,0)+"／100；上漲家數比率："+fmt(a.luna.breadth,1)+"%",
   "社群標題觀察："+a.luna.socialStatus+"（有效 "+(a.luna.socialSample??0)+" 篇；偏多 "+(a.luna.socialBull??0)+"／偏空 "+(a.luna.socialBear??0)+"）",
   "來源篇數：PTT "+(a.luna.socialPlatforms?.PTT??0)+"／Threads "+(a.luna.socialPlatforms?.Threads??0)+"／Instagram "+(a.luna.socialPlatforms?.Instagram??0)+"／Bluesky "+(a.luna.socialPlatforms?.Bluesky??0),
-  "與此股票名稱／代碼直接相關的 PTT 標題："+(a.luna.socialMentions??"無有效樣本")+" 篇",
+  "與此股票名稱／代碼直接相關的投資討論標題："+(a.luna.socialMentions??"無有效樣本")+" 篇",
   "個股討論熱度："+a.luna.heatStatus,
   "新聞標題觀察："+a.luna.newsStatus+"（獨立計數，不代表社群討論）",
   "來源：PTT "+a.luna.sourceStatus.PTT+"；Threads "+a.luna.sourceStatus.Threads+"；Instagram "+a.luna.sourceStatus.Instagram+"；Bluesky "+a.luna.sourceStatus.Bluesky,
@@ -68,13 +68,14 @@ function renderSocialHeat(social){
  const host=$("lunaHeat");if(!host)return;
  host.replaceChildren();
  const stamp=social?.generatedAt?Date.parse(social.generatedAt):NaN;
- const healthy=Array.isArray(social?.items)&&social.items.some(x=>social?.sources?.[x.platform]?.status==="ok");
+ const healthy=Array.isArray(social?.items)&&social.items.some(x=>x.investmentEligible!==false&&["ok","partial"].includes(social?.sources?.[x.platform]?.status));
  const fresh=healthy&&Number.isFinite(stamp)&&Date.now()>=stamp&&Date.now()-stamp<=8*3600000;
  const entries=Array.isArray(social?.stockHeat?.stocks)?social.stockHeat.stocks:[];
  const p=append(host,"p",(fresh?"最新可核對來源":"歷史快照／來源可能過期")+
   "｜PTT "+(social?.sources?.PTT?.status||"缺值")+"／Bluesky "+(social?.sources?.Bluesky?.status||"缺值")+"｜資料日 "+(social?.stockHeat?.sourceDate||"缺值")+"｜公開討論 "+
-  (social?.social?.originalDiscussion??"缺值")+" 篇、新聞轉載 "+
-  (social?.social?.repostedNews??"缺值")+" 篇。僅追蹤 G 前20名；無樣本不代表沒有討論。","description");
+  (social?.social?.investmentDiscussion??social?.social?.originalDiscussion??"缺值")+" 篇、新聞轉載 "+
+  (social?.social?.repostedNews??"缺值")+" 篇、非投資話題 "+
+  (social?.social?.unrelated??"缺值")+" 篇（原始可查 "+(social?.social?.rawSample??"缺值")+" 篇）。僅追蹤 G 前20名；無樣本不代表沒有討論。","description");
  p.setAttribute("role","status");
  if(!entries.length){append(host,"p","目前沒有可核對的個股提及，未建立熱度排行榜。","small");return}
  for(const x of entries.slice(0,10)){
