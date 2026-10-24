@@ -1,6 +1,9 @@
 name: Six Agent Live Pages Verification
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/six-agent-live-pages.yml'
   push:
     branches: [main]
     paths:
