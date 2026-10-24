@@ -96,6 +96,12 @@ class SocialCollectorTest(unittest.TestCase):
         items.append(mod.sanitize("PTT","[討論] 台積電怎麼看","https://www.ptt.cc/bbs/Stock/M.9.html","2026-10-24T03:00:00Z",NOW))
         self.assertTrue(mod.topic_heat(items,NOW,catalog)["stocks"][0]["overheatWatch"])
         self.assertFalse(mod.mentions_stock("12330",catalog[1][0]))
+    def test_public_rss_bridge_requires_original_ptt_links(self):
+        xml=b'<rss><channel><item><title>[討論] 台積電突破</title><link>https://www.ptt.cc/bbs/Stock/M.1792800000.A.A.html</link><pubDate>Sat, 24 Oct 2026 03:00:00 +0000</pubDate></item><item><title>[討論] 假股票文</title><link>https://evil.example/post</link><pubDate>Sat, 24 Oct 2026 03:00:00 +0000</pubDate></item></channel></rss>'
+        rows=mod.ptt_public_feed(xml,NOW)
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]["platform"],"PTT")
+        self.assertIn("第三方",rows[0]["feedBasis"])
     def test_no_network_no_cached_posts_still_publishes_explicit_missing(self):
         with patch.object(mod,"news_items",return_value=([],"沒有新新聞")):
             result=mod.collect(now=NOW,fetch=lambda _:(_ for _ in ()).throw(OSError("blocked")),
