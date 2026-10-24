@@ -81,23 +81,22 @@ jobs:
             candidate.patch
             codex-summary.txt
           retention-days: 7
-  open_draft_pr:
+  validate_untrusted_patch:
     if: needs.propose.outputs.has_patch == 'true'
     needs: propose
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
-      contents: write
-      pull-requests: write
-      actions: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
+          persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
           name: safe-codex-patch
-      - name: Apply and independently test candidate
+      - name: Apply and test AI-produced changes without any write token
         shell: bash
         run: |
           set -euo pipefail
@@ -109,6 +108,29 @@ jobs:
           python -m unittest discover -s .github/agent -p 'test_*.py' -v
           python -m unittest discover -s tw-stock-dashboard/tests -p test_market_major_events.py -v
           node tw-stock-dashboard/tests/test_market_events_ui.cjs
+  open_draft_pr:
+    if: needs.propose.outputs.has_patch == 'true'
+    needs: [propose, validate_untrusted_patch]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/download-artifact@v4
+        with:
+          name: safe-codex-patch
+      - name: Apply only previously validated patch, do not execute modified code
+        shell: bash
+        run: |
+          set -euo pipefail
+          git apply --check candidate.patch
+          git apply candidate.patch
+          python .github/agent/safe_patch.py
       - name: Push only a draft PR, never merge into production
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
