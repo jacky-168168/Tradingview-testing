@@ -97,7 +97,7 @@ class SocialCollectorTest(unittest.TestCase):
         self.assertTrue(mod.topic_heat(items,NOW,catalog)["stocks"][0]["overheatWatch"])
         self.assertFalse(mod.mentions_stock("12330",catalog[1][0]))
     def test_public_rss_bridge_requires_original_ptt_links(self):
-        xml=b'<rss><channel><item><title>[討論] 台積電突破</title><link>https://www.ptt.cc/bbs/Stock/M.1792800000.A.A.html</link><pubDate>Sat, 24 Oct 2026 03:00:00 +0000</pubDate></item><item><title>[討論] 假股票文</title><link>https://evil.example/post</link><pubDate>Sat, 24 Oct 2026 03:00:00 +0000</pubDate></item></channel></rss>'
+        xml='<rss><channel><item><title>[討論] 台積電突破</title><link>https://www.ptt.cc/bbs/Stock/M.1792800000.A.A.html</link><pubDate>Sat, 24 Oct 2026 03:00:00 +0000</pubDate></item><item><title>[討論] 假股票文</title><link>https://evil.example/post</link><pubDate>Sat, 24 Oct 2026 03:00:00 +0000</pubDate></item></channel></rss>'.encode('utf-8')
         rows=mod.ptt_public_feed(xml,NOW)
         self.assertEqual(len(rows),1)
         self.assertEqual(rows[0]["platform"],"PTT")
