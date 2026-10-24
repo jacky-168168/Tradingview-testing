@@ -1,12 +1,18 @@
 {
   "schema": 1,
-  "generatedAt": "2026-10-24T21:49:55.137990Z",
+  "generatedAt": "2026-10-24T22:42:00.159990Z",
   "sources": {
     "PTT": {
       "status": "error",
       "reason": "HTTPError；HTTPError；HTTPError；HTTPError",
       "url": "https://www.ptt.cc/atom/stock.xml",
       "freshCount": 0
+    },
+    "Bluesky": {
+      "status": "ok",
+      "freshCount": 4,
+      "method": "官方公開 app.bsky.feed.searchPosts",
+      "url": "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts"
     },
     "Threads": {
       "status": "not_authorized",
@@ -22,14 +28,14 @@
     }
   },
   "social": {
-    "sample": 6,
+    "sample": 10,
     "bull": 0,
     "bear": 0,
-    "neutral": 6,
+    "neutral": 10,
     "directional": 0,
     "status": "已有樣本｜尚無明確多空方向",
     "method": "只要有一篇有效公開貼文就視為已有樣本；關鍵詞僅供觀察，篇數少不代表市場共識，也不是留言全文分析",
-    "originalDiscussion": 1,
+    "originalDiscussion": 5,
     "repostedNews": 5
   },
   "news": {
@@ -106,6 +112,46 @@
       "contentType": "新聞轉載",
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "📢 薔琵颱風來襲，台積電考量人員安全，決定取消辦理原訂24日舉行的2026台積電運動會。不過，台積電依然對基層員工發放獎金，每人獎金自去年的新台幣2.5萬元，提高至3萬元。",
+      "url": "https://bsky.app/profile/cnataiwan.nzcow.com/post/3mykhyqsj7u2y",
+      "publishedAt": "2026-10-23T15:18:18.186936Z",
+      "stance": "中立／難判",
+      "contentType": "公開貼文標題摘要",
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（取貼文首160字，非全文留言）"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "感覺吵此話題的世界線可能還來得及買台積電（現在買不起ㄌ",
+      "url": "https://bsky.app/profile/kei35607.bsky.social/post/3mykhu44cgs2u",
+      "publishedAt": "2026-10-23T15:15:42.317000Z",
+      "stance": "中立／難判",
+      "contentType": "公開貼文標題摘要",
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（取貼文首160字，非全文留言）"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "#中央社即時新聞 財經新聞 20:18 台積電10/24運動會取消 基層員工每人發3萬元獎金 （中央社記者張建中新竹23日電）薔琵颱風來襲，台積電考量人員安全，決定取消辦理原訂24日舉行的2026台積電運動會。不過，台積電依然對基層員工發放獎金，每人獎金自去年的新台幣2.5萬元，提高至3萬元。 https://w",
+      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3myke76ogw5q2",
+      "publishedAt": "2026-10-23T14:10:08Z",
+      "stance": "中立／難判",
+      "contentType": "公開貼文標題摘要",
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（取貼文首160字，非全文留言）"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "1. 生產結構：銀行不製造東西，但「誰能開工」由它決定 • 我的疑問：銀行製造什麼？ • 結構面開竅：銀行不生產晶片，但沒有銀行的錢，科技公司就無法生產！ • 晶圓廠（如台積電）、資料中心、輝達的 AI 晶片，每一項生產都需要天文數字的資金。 • 這篇新聞的生產結構是：「實體生產（亞洲半導體）高度依賴美國的資本（三大",
+      "url": "https://bsky.app/profile/fishwayforbsky.bsky.social/post/3myjtsis44s2p",
+      "publishedAt": "2026-10-23T09:16:53.672000Z",
+      "stance": "中立／難判",
+      "contentType": "公開貼文標題摘要",
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（取貼文首160字，非全文留言）"
     }
   ],
   "newsItems": [
@@ -413,7 +459,8 @@
   "notes": [
     "僅使用公開、實際取得且不超過48小時的資料；缺乏授權的平台顯示未授權。",
     "標題關鍵詞易受反諷、轉載、選擇偏差與機器人影響；不能視為代表性民調。",
-    "新聞與社群分開計數；標題反諷／轉載不直接判定多空，無讀取留言全文。",
+    "新聞與社群分開計數；Bluesky 來源另記錄，僅官方可公開搜尋貼文，無讀取留言全文。",
+    "標題反諷／轉載不直接判定多空，無取得平台授權不蒐集受限制來源。",
     "個股熱度只是對 G Top20 的實際可驗證標題對照，不更改 G 排名或 TITAN 風控。"
   ]
 }
