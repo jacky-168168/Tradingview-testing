@@ -158,8 +158,9 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     environmental=os.environ if environmental is None else environmental
     old=old or {}
     prior=old.get("items") if isinstance(old.get("items"),list) else []
-    prior=[x for x in prior if x.get("platform") in ("PTT","Threads","Instagram") and
-           sanitize(x.get("platform"),x.get("title"),x.get("url"),x.get("publishedAt"),now)]
+    prior=[sanitize(x.get("platform"),x.get("title"),x.get("url"),x.get("publishedAt"),now)
+           for x in prior if isinstance(x,dict) and x.get("platform") in ("PTT","Threads","Instagram")]
+    prior=[x for x in prior if x is not None]
     inputs=[]
     state={}
     try:
