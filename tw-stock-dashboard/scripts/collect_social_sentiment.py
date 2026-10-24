@@ -22,7 +22,7 @@ PTT_BOARD = "https://www.ptt.cc/bbs/Stock/index.html"
 PTT_PUBLIC_FEED = "https://feed.cqd.tw/ptt/Stock/title/.*"
 BLUESKY_API = "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts"
 BLUESKY_BACKUP_API = "https://api.bsky.app/xrpc/app.bsky.feed.searchPosts"
-BLUESKY_QUERIES = ("台股","台積電","CPO 台股")
+BLUESKY_QUERIES = ("台股","台積電","台指期","加權指數","台股 ETF","台股 當沖","台股 正二","CPO 股票","台灣 股票")
 STOCK_PATH = ROOT / "data/latest.json"
 NEWS_PATH = ROOT / "data/market_events/latest.json"
 OUT_PATH = ROOT / "data/social_sentiment/latest.json"
@@ -31,6 +31,10 @@ DOWN = ("看空", "空頭", "轉弱", "破底", "崩盤", "暴跌", "跌停", "�
 IGNORE = re.compile(r"^\s*(?:Re:|Fw:|\[公告\]|\[版務\])", re.I)
 REPOST = re.compile(r"^\s*(?:\[新聞\]|【新聞】|\[轉錄\]|\[情報\])", re.I)
 UNCERTAIN = re.compile(r"反指標|反串|諷刺|笑死|真的嗎|求救|已讀不回|韭菜|崩到起飛")
+INVESTMENT = re.compile(r"股票|股價|股市|台股|臺股|台指期|加權指數|股市|ETF|etf|正二|正2|反一|反1|當沖|交易|投資|買進|買入|買不起|買股|賣出|加碼|出清|持股|持有|做多|做空|多單|空單|爆倉|套牢|停損|停利|獲利|大盤|漲停|跌停|成交量|融資|融券|外資|投信|法人|股息|殖利率|營收|本益比|均線|KD|RSI|K線|期貨|期指|股災|融資維持率",re.I)
+NON_INVESTMENT = re.compile(r"運動會|員工獎金|颱風假|招募人才|徵才|新廠開幕|運動賽事")
+NEWS_TEXT = re.compile(r"^\\s*(?:#?中央社(?:即時)?新聞|財經新聞|【(?:快訊|新聞)】|\\[新聞\\]|新聞稿|快訊[：:])|中央社記者|記者.{1,18}報導|轉載",re.I)
+TAIWAN_RELEVANCE = re.compile(r"台股|臺股|台灣|臺灣|台積電|台指期|加權指數|上市櫃|臺證|證交所|投信|外資|股票|股市|股災|ETF|etf|正二|當沖|買進|套牢|均線|融資",re.I)
 ATOM = "{http://www.w3.org/2005/Atom}"
 
 def iso(value):
@@ -48,6 +52,17 @@ def score(title):
         return "中立／難判"
     up, down = any(s in text for s in UP), any(s in text for s in DOWN)
     return "偏多" if up and not down else "偏空" if down and not up else "中立／難判"
+
+def classify_discussion(text, platform="PTT"):
+    """Conservative title-only content classifier; not semantic LLM inference."""
+    value=str(text or "")
+    if REPOST.search(value) or NEWS_TEXT.search(value):
+        return "新聞轉載", False
+    if NON_INVESTMENT.search(value) and not INVESTMENT.search(value):
+        return "非投資話題", False
+    if not INVESTMENT.search(value):
+        return "非投資話題", False
+    return "投資討論", True
 
 def request(url, token=None):
     parsed = urllib.parse.urlsplit(url)
@@ -71,8 +86,10 @@ def sanitize(source, title, url, date, now, max_hours=48):
     if not link.netloc or len(str(title).strip()) < 4:
         return None
     title = re.sub(r"[\x00-\x1f]+", " ", str(title).strip())[:160]
+    content_type,eligible=classify_discussion(title,source)
     return {"platform":source, "title":title, "url":str(url)[:350], "publishedAt":t.isoformat().replace("+00:00", "Z"),
-            "stance":score(title), "contentType":"新聞轉載" if REPOST.search(title) else "公開討論",
+            "stance":score(title) if eligible else "中立／難判", "contentType":content_type,
+            "investmentEligible":eligible,
             "tone":"語意不明／疑似反諷" if UNCERTAIN.search(title) else "未驗證", "method":"標題規則（非留言全文）"}
 
 def ptt(xml, now):
@@ -199,7 +216,10 @@ def topic_heat(items,now,catalog):
 def bluesky(now, fetch=request):
     """Read public Bluesky searchPosts without auth. Verify original URI, timestamp and TW relevance."""
     rows=[]
-    for query in BLUESKY_QUERIES:
+    _,g_top=stock_catalog()
+    queries=list(BLUESKY_QUERIES)
+    queries.extend(x["name"]+" 股票" for x in g_top[:3] if len(x["name"])>=2)
+    for query in dict.fromkeys(queries):
         params=urllib.parse.urlencode({"q":query,"sort":"latest","limit":25})
         try:
             payload=json.loads(fetch(BLUESKY_API+"?"+params))
@@ -215,7 +235,7 @@ def bluesky(now, fetch=request):
             content=str(record.get("text","")).strip()
             if len(content)<4 or len(content)>6000:continue
             # Search sometimes matches English CPO unrelated to Taiwanese stocks.
-            if not re.search(r"台股|臺股|台積電|[台臺]灣|上市櫃|加權指數|2330|股票|股市|證交所|投信|外資|正二",content):continue
+            if not TAIWAN_RELEVANCE.search(content) and not any(mentions_stock(content,x) for x in g_top[:3]):continue
             handle=str(entry.get("author",{}).get("handle",""))
             uri=str(entry.get("uri",""))
             if not re.fullmatch(r"[a-zA-Z0-9.-]{3,253}",handle) or ".." in handle:continue
@@ -224,8 +244,11 @@ def bluesky(now, fetch=request):
             link="https://bsky.app/profile/"+urllib.parse.quote(handle,safe=".-")+"/post/"+match.group(1)
             item=sanitize("Bluesky",content[:160],link,record.get("createdAt"),now)
             if item:
-                item["contentType"]="公開貼文標題摘要"
-                item["method"]="Bluesky 官方公開搜尋 API（取貼文首160字，非全文留言）"
+                ctype,eligible=classify_discussion(content,"Bluesky")
+                item["contentType"]=ctype
+                item["investmentEligible"]=eligible
+                item["stance"]=score(content) if eligible else "中立／難判"
+                item["method"]="Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
                 rows.append(item)
     return unique(rows,50)
 
@@ -356,11 +379,18 @@ def collect(now=None, fetch=request, old=None, environmental=None):
         state["新聞"]["reason"]=reason
     social=unique(inputs+prior)
     news=unique(news,80)
-    social_stats=statistics(social)
-    social_stats["originalDiscussion"]=sum(x.get("contentType")!="新聞轉載" for x in social)
-    social_stats["repostedNews"]=len(social)-social_stats["originalDiscussion"]
+    # Classify every kept entry consistently, including cached records from older snapshots.
+    eligible=[x for x in social if x.get("investmentEligible") is True]
+    social_stats=statistics(eligible)
+    social_stats["rawSample"]=len(social)
+    social_stats["investmentDiscussion"]=len(eligible)
+    social_stats["originalDiscussion"]=len(eligible)
+    social_stats["repostedNews"]=sum(x.get("contentType")=="新聞轉載" for x in social)
+    social_stats["unrelated"]=sum(x.get("contentType")=="非投資話題" for x in social)
+    social_stats["platformCounts"]={k:sum(x["platform"]==k for x in eligible) for k in ("PTT","Bluesky","Threads","Instagram")}
+    social_stats["method"]="僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。"
     news_stats=statistics(news)
-    heat=topic_heat(social[:80],now,stock_catalog())
+    heat=topic_heat(eligible[:80],now,stock_catalog())
     return {"schema":1,"generatedAt":now.isoformat().replace("+00:00","Z"),
         "sources":state,"social":social_stats,"news":news_stats,"stockHeat":heat,
         "items":social[:80],"newsItems":news[:30],
@@ -368,7 +398,7 @@ def collect(now=None, fetch=request, old=None, environmental=None):
                  "標題關鍵詞易受反諷、轉載、選擇偏差與機器人影響；不能視為代表性民調。",
                  "新聞與社群分開計數；Bluesky 來源另記錄，僅官方可公開搜尋貼文，無讀取留言全文。",
                  "標題反諷／轉載不直接判定多空，無取得平台授權不蒐集受限制來源。",
-                 "個股熱度只是對 G Top20 的實際可驗證標題對照，不更改 G 排名或 TITAN 風控。"]}
+                 "個股熱度只統計有投資語境且非新聞轉貼的 G Top20 標題，不更改 G 排名或 TITAN 風控。"]}
 
 def main():
     old={}
