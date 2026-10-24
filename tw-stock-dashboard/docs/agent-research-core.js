@@ -77,16 +77,19 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
     domains[x.platform]?.test(x.url)&&a!==null&&a>=0&&a<=48*60;});
  // Real publicly traceable posts count from the first post. No minimum sample threshold.
  const sample=posts.length,bull=posts.filter(x=>x.stance==="偏多").length,bear=posts.filter(x=>x.stance==="偏空").length;
+ const current=posts.filter(x=>feeds[x.platform]?.status==="ok").length;
  const signal=sample===0?"尚無可核對的社群討論":
   bull>bear?"已有樣本｜偏多內容較多":bear>bull?"已有樣本｜偏空內容較多":
   bull+bear===0?"已有樣本｜尚無明確多空方向":"已有樣本｜多空內容接近";
- const socialStatus=sample&&fresh?signal:sample?"已有歷史樣本｜來源未在8小時內更新":signal;
+ // A refreshed JSON timestamp does not prove that the underlying feed refreshed.
+ const socialStatus=sample&&(!fresh||current===0)?"已有歷史樣本｜社群來源未成功更新":
+  sample&&current<sample?"部分來源未更新｜含歷史樣本；"+signal:signal;
  const examples=posts.slice(0,3).map(x=>({title:x.title,url:x.url,
   source:x.platform+"（公開貼文標題）",publishedAt:x.publishedAt}));
  const name=String(row?.name||""),code=String(row?.code||"");
  const mentions=posts.filter(x=>(code.length===4&&x.title.includes(code))||
   (name.length>=2&&x.title.includes(name))).length;
- return {status,score,breadth,ret20,method:"只要有1篇可核對公開貼文就視為已有樣本；資料量少僅代表少量觀察，不可推論市場共識。社群不修改 Risk Score 或 TITAN 風控。",
+ return {status,score,breadth,ret20,method:"只要有1篇可核對公開貼文就視為已有樣本；資料量少僅代表少量觀察，不可推論市場共識。來源失聯時僅供歷史查核，不代表當前情緒。社群不修改 Risk Score 或 TITAN 風控。",
   socialStatus,socialSample:sample?sample:null,socialBull:sample?bull:null,socialBear:sample?bear:null,
   socialMentions:sample?mentions:null,socialPlatforms:sample?{
    PTT:posts.filter(x=>x.platform==="PTT").length,

@@ -175,3 +175,37 @@ test("LUNA labels valid cached posts as historical instead of erasing them",()=>
  assert.equal(l.socialSample,1);
  assert.match(l.socialStatus,/已有歷史樣本/);
 });
+
+test("LUNA does not call cached PTT posts current when JSON regenerated after HTTP error",()=>{
+ const x=fixtures(),time=new Date(LIVE.getTime()-15*60000).toISOString();
+ x.social={generatedAt:time,sources:{PTT:{status:"error",reason:"HTTPError"},Threads:{status:"not_authorized"},Instagram:{status:"not_authorized"}},
+  items:[{platform:"PTT",title:"台股今天崩盤走弱",url:"https://www.ptt.cc/bbs/Stock/M.42.html",publishedAt:time,stance:"偏空"}]};
+ const l=core.analyze(x,LIVE).candidates[0].agents.luna;
+ assert.equal(l.socialSample,1,"保留真實歷史貼文供查核");
+ assert.equal(l.sourceStatus.PTT,"error");
+ assert.match(l.socialStatus,/歷史樣本/);
+ assert.match(l.socialStatus,/來源未成功更新/);
+ assert.doesNotMatch(l.socialStatus,/^已有樣本｜偏空內容較多$/);
+});
+test("LUNA distinguishes live Threads posts from cached PTT posts",()=>{
+ const x=fixtures(),time=new Date(LIVE.getTime()-15*60000).toISOString();
+ x.social={generatedAt:time,sources:{PTT:{status:"error"},Threads:{status:"ok"},Instagram:{status:"not_authorized"}},
+  items:[
+   {platform:"PTT",title:"台股大跌崩盤",url:"https://www.ptt.cc/bbs/Stock/M.42.html",publishedAt:time,stance:"偏空"},
+   {platform:"Threads",title:"台股行情突破強勢",url:"https://www.threads.net/@trader/post/xyz",publishedAt:time,stance:"偏多"}]};
+ const l=core.analyze(x,LIVE).candidates[0].agents.luna;
+ assert.equal(l.socialSample,2);
+ assert.match(l.socialStatus,/部分來源未更新/);
+});
+test("Gemini only accepts live-successful source posts as SOCIAL evidence",()=>{
+ const llm=require("../scripts/run_six_agent_llm.cjs");
+ const time=new Date(LIVE.getTime()-15*60000).toISOString();
+ const cached={generatedAt:time,sources:{PTT:{status:"error",reason:"HTTPError"}},
+  items:[{platform:"PTT",title:"台股今天崩盤走弱",url:"https://www.ptt.cc/bbs/Stock/M.42.html",publishedAt:time,stance:"偏空"}]};
+ assert.deepEqual(llm.verifiedSocialPosts(cached,LIVE),[]);
+ cached.sources.Threads={status:"ok"};
+ cached.items.push({platform:"Threads",title:"台股強勢反彈突破",url:"https://www.threads.net/@user/post/xyz",publishedAt:time,stance:"偏多"});
+ assert.deepEqual(llm.verifiedSocialPosts(cached,LIVE).map(x=>x.platform),["Threads"]);
+ cached.items.push({platform:"Threads",title:"台股創高強勢突破",url:"https://evil.example.com/post",publishedAt:time,stance:"偏多"});
+ assert.equal(llm.verifiedSocialPosts(cached,LIVE).length,1,"拒絕非官方網域的假來源");
+});
