@@ -109,6 +109,59 @@ class SocialCollectorTest(unittest.TestCase):
         self.assertEqual(result["sources"]["PTT"]["status"],"error")
         self.assertEqual(result["social"]["sample"],0)
         self.assertEqual(result["stockHeat"]["stocks"],[])
+    def test_bluesky_official_public_search_checks_original_post_and_taiwan_context(self):
+        created="2026-10-24T03:00:00Z"
+        good={"uri":"at://did:plc:testabc/app.bsky.feed.post/3lxyzabc",
+              "author":{"handle":"trader.bsky.social"},
+              "record":{"text":"台股 2330 台積電多頭突破","createdAt":created}}
+        other={"uri":"at://did:plc:testabc/app.bsky.feed.post/3lxyzabx",
+               "author":{"handle":"trader.bsky.social"},
+               "record":{"text":"CPO marketing unrelated technology","createdAt":created}}
+        evil={"uri":"at://did:plc:testabc/app.bsky.feed.post/3lxyzaby",
+              "author":{"handle":"evil.com/../"},
+              "record":{"text":"台股多頭突破","createdAt":created}}
+        responses=[]
+        def fetch(url):
+            responses.append(url)
+            return json.dumps({"posts":[good,other,evil]},ensure_ascii=False).encode()
+        rows=mod.bluesky(NOW,fetch)
+        self.assertEqual(len(responses),len(mod.BLUESKY_QUERIES))
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]["platform"],"Bluesky")
+        self.assertEqual(rows[0]["url"],"https://bsky.app/profile/trader.bsky.social/post/3lxyzabc")
+        self.assertEqual(rows[0]["stance"],"偏多")
+        self.assertIn("官方公開搜尋",rows[0]["method"])
+    def test_bluesky_rejects_future_old_and_unverifiable_post_dates(self):
+        def fetch(_):
+            samples=[]
+            for i,t in enumerate(["2026-10-25T06:00:00Z","2026-10-20T03:00:00Z",None]):
+                samples.append({"uri":"at://did:plc:abc/app.bsky.feed.post/3abc"+str(i),
+                 "author":{"handle":"valid.bsky.social"},
+                 "record":{"text":"台股未來市場突破","createdAt":t}})
+            return json.dumps({"posts":samples}).encode()
+        self.assertEqual(mod.bluesky(NOW,fetch),[])
+    def test_bluesky_api_error_keeps_explicit_missing_source_state(self):
+        def fetch(url):
+            if url.startswith(mod.BLUESKY_API):raise OSError("Bluesky 失聯")
+            return atom()
+        with patch.object(mod,"news_items",return_value=([],"沒有新新聞")):
+            data=mod.collect(now=NOW,fetch=fetch,old={},environmental={})
+        self.assertEqual(data["sources"]["Bluesky"]["status"],"error")
+        self.assertEqual(data["sources"]["PTT"]["status"],"ok")
+        self.assertEqual(data["social"]["sample"],10)
+    def test_bluesky_cache_only_retains_valid_recent_public_posts(self):
+        old={"items":[{"platform":"Bluesky","title":"台股 2330 走勢怎麼看",
+                       "url":"https://bsky.app/profile/user.bsky.social/post/3ab",
+                       "publishedAt":"2026-10-24T03:00:00Z"},
+                      {"platform":"Bluesky","title":"台股過期貼文",
+                       "url":"https://bsky.app/profile/user.bsky.social/post/3ac",
+                       "publishedAt":"2026-10-19T03:00:00Z"}]}
+        with patch.object(mod,"news_items",return_value=([],"缺值")):
+            data=mod.collect(now=NOW,fetch=lambda url:(_ for _ in ()).throw(OSError("offline")),
+                             old=old,environmental={})
+        self.assertEqual(data["sources"]["Bluesky"]["status"],"error")
+        self.assertEqual(len(data["items"]),1)
+        self.assertEqual(data["items"][0]["platform"],"Bluesky")
     def test_dont_use_old_news(self):
         with patch.object(mod,"NEWS_PATH",Path("/definitely/not/a/real/file.json")):
             rows,reason=mod.news_items(NOW)
