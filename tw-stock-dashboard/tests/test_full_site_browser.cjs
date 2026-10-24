@@ -2,7 +2,7 @@
    static Pages tree, with real Chromium at desktop and Android-like viewports. */
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 const ROOT=path.resolve(__dirname,'../docs'),BASE='http://127.0.0.1:8765/';
-const CORE=['index.html','selections.html','bubbles.html','stocks.html','upstream.html','history.html','backtest.html','tdcc-whale-weekly.html'];
+const CORE=['index.html','selections.html','bubbles.html','stocks.html','upstream.html','history.html','backtest.html','tdcc-whale-weekly.html','agent-research.html'];
 const EXT=['market-methodology.html','market-ml-stocks.html','market-cash-3y.html','n-canslim.html','txf-backtest.html','etf-allocation.html','g-backtest.html','g-persistence.html','g-pro-3y.html','g-regime-3y.html','g-regime-contrarian-3y.html','g-target.html','g-candles.html','g-compound-3y.html','g-compound-v2-3y.html','g-compound-v3-walkforward.html','etf-00631l.html'];
 const ALL=[...CORE,...EXT],checks=[],problems=[],warnings=[];
 const log=(name,ok,details)=>{const rec={name,pass:!!ok,...(details?{details}:{} )};checks.push(rec);if(!ok)problems.push(rec)};
@@ -95,6 +95,25 @@ async function main(){
 
     await test(variant+' home to linked core routes',()=>page.evaluate(()=>['./selections.html','./stocks.html','./bubbles.html','./upstream.html','./backtest.html'].every(x=>document.querySelector('a[href="'+x+'"]'))));
     if(variant==='mobile')await test('mobile market detail toggle',async()=>{const e=page.locator('#marketAdvanced');await e.evaluate(n=>n.open=true);return await e.evaluate(n=>n.open)});
+   }
+   if(file==='agent-research.html'){
+     await test(variant+' six agents render from real snapshots (research only)',async()=>{
+       await page.waitForFunction(()=>document.querySelectorAll('#agents .agent').length===6,
+         null,{timeout:15000}).catch(()=>{});
+       return page.evaluate(()=>({
+         ok:document.querySelectorAll('#agents .agent').length===6 &&
+           Number(document.getElementById('nCandidates').textContent)>=1 &&
+           Number(document.getElementById('nCandidates').textContent)<=10 &&
+           document.getElementById('warning').textContent.length>10 &&
+           document.getElementById('agents').textContent.includes('TITAN') &&
+           document.getElementById('agents').textContent.includes('NOVA'),
+         count:document.querySelectorAll('#agents .agent').length,
+         state:document.getElementById('mode')?.textContent
+       }));
+     });
+     await test(variant+' six agents do not expose broker or order actions',()=>page.evaluate(()=>
+       !document.querySelector('[data-broker-order],#buyOrder,#sellOrder') &&
+       document.querySelector('#detailIntro')?.textContent.includes('無下單功能')));
    }
    if(file==='tdcc-whale-weekly.html'){
      await test(variant+' TDCC dedicated page loads 400-lot weekly quadrants',async()=>{
