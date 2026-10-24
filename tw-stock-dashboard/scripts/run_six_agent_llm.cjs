@@ -19,6 +19,15 @@ const RULES={
 };
 function load(name){try{return JSON.parse(fs.readFileSync(path.join(docs,name),"utf8"))}catch{return {}}}
 function truncate(s,n=170){return String(s??"").slice(0,n)}
+function verifiedSocialPosts(social,now=new Date()){
+ const urls={PTT:/^https:\/\/www\.ptt\.cc\//,Threads:/^https:\/\/(?:www\.)?threads\.(?:net|com)\//,
+  Instagram:/^https:\/\/(?:www\.)?instagram\.com\//};
+ return (Array.isArray(social?.items)?social.items:[]).filter(i=>{
+  const time=Date.parse(i?.publishedAt||""),age=now.getTime()-time;
+  return i&&social?.sources?.[i.platform]?.status==="ok"&&urls[i.platform]?.test(i.url||"")&&
+   Number.isFinite(time)&&age>=0&&age<=48*3600000&&typeof i.title==="string"&&i.title.length>=4;
+ });
+}
 function compactInput(now=new Date()){
  const daily=load("data/latest.json"),intraday=load("data/g_intraday/latest.json"),
  status=load("data/g_intraday/status.json"),news=load("data/market_events/latest.json"),
@@ -28,9 +37,7 @@ function compactInput(now=new Date()){
  const recentNews=maxAge(news.generatedAt,36)&&Array.isArray(news.items)?news.items.filter(i=>i.type==="news"&&maxAge(i.publishedAt,48)).slice(0,5).map(i=>({
   title:truncate(i.title,115),time:i.publishedAt,source:truncate(i.source,55),url:i.url,confirmed:i.confirmed===true})):[];
  const socialFresh=maxAge(social.generatedAt,8);
- const verified=(Array.isArray(social.items)?social.items:[]).filter(i=>
-  ["PTT","Threads","Instagram"].includes(i.platform)&&maxAge(i.publishedAt,48)&&
-  typeof i.title==="string"&&i.title.length>=4&&typeof i.url==="string"&&/^https:\/\//.test(i.url));
+ const verified=verifiedSocialPosts(social,now);
  const usedSocial=Boolean(socialFresh&&verified.length>0);
  const posts=usedSocial?verified.slice(0,8).map(i=>({
   platform:i.platform,title:truncate(i.title,115),time:i.publishedAt,url:i.url,stance:i.stance})):[];
@@ -44,7 +51,7 @@ function compactInput(now=new Date()){
  return {checkedAt:now.toISOString(),datasetDate:rules.asOfDate,mode:rules.mode,liveVerified:rules.liveVerified,
   risks:{score:rules.source.riskScore,date:rules.source.riskDate},sources,
   candidates,news:recentNews,social:usedSocial?{stats:social.social,sourceStatus:social.sources,posts}:
-  {status:verified.length?"已有可核對歷史社群樣本，資料集未更新":"尚無可核對的公開社群討論",sourceStatus:social.sources||{}},
+  {status:(Array.isArray(social.items)&&social.items.length)?"社群來源失聯或資料集過期；歷史樣本不得作當前情緒證據":"尚無可核對的公開社群討論",sourceStatus:social.sources||{}},
   hardVeto:candidates.some(x=>x.titan.hardVeto),noTrade:true};
 }
 function decodeJson(s){const text=String(s||"").trim().replace(/^\x60\x60\x60(?:json)?\s*/i,"").replace(/\s*\x60\x60\x60$/,"");return JSON.parse(text);}
@@ -192,4 +199,4 @@ async function main(){
   datasetDate:report.evidenceDate,hardVeto:report.hardVeto}));
 }
 if(require.main===module)main().catch(e=>{console.error("SIX_LLM_FAILED",e.message);process.exitCode=1});
-module.exports={compactInput,scopedEvidence,validateResponse,deliberate,validateSnapshot,selfTest};
+module.exports={compactInput,verifiedSocialPosts,scopedEvidence,validateResponse,deliberate,validateSnapshot,selfTest};
