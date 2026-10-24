@@ -68,7 +68,7 @@ function renderSocialHeat(social){
  const host=$("lunaHeat");if(!host)return;
  host.replaceChildren();
  const stamp=social?.generatedAt?Date.parse(social.generatedAt):NaN;
- const healthy=["PTT","Threads","Instagram","Bluesky"].some(p=>social?.sources?.[p]?.status==="ok");
+ const healthy=Array.isArray(social?.items)&&social.items.some(x=>social?.sources?.[x.platform]?.status==="ok");
  const fresh=healthy&&Number.isFinite(stamp)&&Date.now()>=stamp&&Date.now()-stamp<=8*3600000;
  const entries=Array.isArray(social?.stockHeat?.stocks)?social.stockHeat.stocks:[];
  const p=append(host,"p",(fresh?"最新可核對來源":"歷史快照／來源可能過期")+
