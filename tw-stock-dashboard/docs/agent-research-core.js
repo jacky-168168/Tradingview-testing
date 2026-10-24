@@ -65,9 +65,24 @@ function vega(row){const slope=numeric(row.ma20Slope),rs=numeric(row.rs20),atr=n
   facts:["MA20 斜率："+(slope===null?"缺值":slope.toFixed(2)+"%"),"RS20："+(rs===null?"缺值":rs.toFixed(2)),
   "ATR%："+(atr===null?"缺值":atr.toFixed(2)+"%")]};
 }
-function luna(risk){const score=numeric(risk?.score),breadth=numeric(risk?.breadth),ret20=numeric(risk?.ret20);
+function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=numeric(risk?.breadth),ret20=numeric(risk?.ret20);
  const status=score===null?"資料不足":score<26?"極度偏空":score<60?"偏空觀察":score<80?"中性偏強":"偏強";
- return {status,score,breadth,ret20,method:"大盤 Risk Score／市場廣度的代理情緒指標，並非 X 社群情緒；沒有社群來源時不得捏造討論量。"};
+ const age=ageMinutes(social?.generatedAt,now),fresh=age!==null&&age>=0&&age<=8*60;
+ const feeds=social?.sources||{},stats=social?.social||{};
+ const valid=!!(fresh&&feeds.PTT?.status==="ok"&&numeric(stats.sample)!==null&&stats.sample>=8&&
+  numeric(stats.directional)!==null&&stats.directional>=5);
+ const examples=valid&&Array.isArray(social.items)?social.items.filter(x=>x?.platform==="PTT"&&
+  typeof x.url==="string"&&/^https:\/\/www\.ptt\.cc\//.test(x.url)).slice(0,3).map(x=>
+  ({title:String(x.title||""),url:x.url,source:"PTT 股票板（標題）",publishedAt:x.publishedAt})): [];
+ const name=String(row?.name||""),code=String(row?.code||"");
+ const mentions=valid&&Array.isArray(social.items)?social.items.filter(x=>x.platform==="PTT"&&
+  (code.length===4&&String(x.title||"").includes(code)||name.length>=2&&String(x.title||"").includes(name))).length:0;
+ return {status,score,breadth,ret20,method:"大盤風險情緒和社群討論分開觀察；社群不修改 Risk Score、不代表市場共識。",
+  socialStatus:valid?stats.status:fresh?(feeds.PTT?.status==="error"?"PTT 來源失聯":"公開討論樣本不足"):"社群資料缺失或過期",
+  socialSample:valid?stats.sample:null,socialBull:valid?stats.bull:null,socialBear:valid?stats.bear:null,
+  socialMentions:valid?mentions:null,newsStatus:fresh?String(social?.news?.status||"未取得"):"新聞情緒資料未確認",
+  sources:examples,sourceStatus:{PTT:feeds.PTT?.status||"not_available",Threads:feeds.Threads?.status||"not_authorized",
+   Instagram:feeds.Instagram?.status||"not_authorized"},socialAgeMinutes:age};
 }
 function titan(row,context){const veto=[],info=[];
  const risk=context.risk;
@@ -94,7 +109,7 @@ function nova(parts){const reasons=[];
  return {status:state,reasons,summary:reasons.length?reasons.slice(0,3).join("；"):"研究閘門通過，仍須確認失效點、曝險與資料時效",noTrade:true};
 }
 function analyze(input,nowInput){
- const now=nowInput instanceof Date?nowInput:new Date(),daily=input?.daily||{},intraday=input?.intraday||{},news=input?.news||{},status=input?.status||{};
+ const now=nowInput instanceof Date?nowInput:new Date(),daily=input?.daily||{},intraday=input?.intraday||{},news=input?.news||{},social=input?.social||{},status=input?.status||{};
  const trading=session(now),p=taipei(now),q=qualityCheck(intraday,status,now);
  const dailyDate=typeof daily.dataDate==="string"?daily.dataDate:null;
  const useLive=trading&&q.ok;
@@ -106,7 +121,7 @@ function analyze(input,nowInput){
  const risk=daily.risk||null;
  const sameRiskDate=!!(risk&&risk.date===(useLive?intraday.sourceCloseDate:asOfDate));
  const candidates=candidateRows.map((row,i)=>{
-  const parts={atlas:atlas(row,i+1),vega:vega(row),orion:eventLinks(row,news,now),luna:luna(risk)};
+  const parts={atlas:atlas(row,i+1),vega:vega(row),orion:eventLinks(row,news,now),luna:luna(risk,social,now,row)};
   parts.titan=titan(row,{risk,marketReady,sameRiskDate});
   parts.nova=nova(parts);
   return {code:String(row.code),name:String(row.name||row.code),market:String(row.market||""),price:numeric(row.close),theme:String(row.theme||""),
@@ -114,7 +129,7 @@ function analyze(input,nowInput){
  });
  return {version:"six-agent-rule-v0.1",checkedAt:now.toISOString(),taipeiDate:p.date,asOfDate,mode,marketSession:trading,
    liveVerified:useLive,source:{gPublishedAt:intraday.publishedAt||null,gQuality:q,officialDataDate:dailyDate,riskDate:risk?.date||null,
-   riskScore:numeric(risk?.score),newsGeneratedAt:news.generatedAt||null},
+   riskScore:numeric(risk?.score),newsGeneratedAt:news.generatedAt||null,socialGeneratedAt:social.generatedAt||null},
    candidates,counts:{candidates:candidates.length,veto:candidates.filter(x=>x.agents.titan.hardVeto).length,
    review:candidates.filter(x=>x.agents.nova.status==="研究候選（待人工審核）").length},
    policy:"僅供研究；不下單、不重排原 G 榜單。無當日有效報價、風險日期不一致或缺少失效點時不可輸出交易許可。"};

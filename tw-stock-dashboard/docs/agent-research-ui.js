@@ -30,9 +30,13 @@ function detail(c){
  const sourceList=a.orion.sources.map(x=>({...x}));const links=sourceList.map(x=>({title:x.title,url:x.url,source:x.source,publishedAt:x.publishedAt,confirmed:x.confirmed})).filter(x=>x.url);
  explainCard(host,"ORION","新聞與事件",a.orion.status,[a.orion.reason,
   "來源資料同步年齡："+(a.orion.datasetAgeMinutes===null?"不明":Math.round(a.orion.datasetAgeMinutes)+" 分鐘"),...links]);
- explainCard(host,"LUNA","市場情緒代理",a.luna.status,[
-  "市場風險分數："+fmt(a.luna.score,0)+"／100；上漲家數比率："+fmt(a.luna.breadth,1)+"%",
-  a.luna.method]);
+ explainCard(host,"LUNA","市場與公開社群討論",a.luna.status,[
+  "大盤風險分數："+fmt(a.luna.score,0)+"／100；上漲家數比率："+fmt(a.luna.breadth,1)+"%",
+  "社群標題觀察："+a.luna.socialStatus+"（PTT "+(a.luna.socialSample??"缺值")+" 篇；偏多 "+(a.luna.socialBull??"—")+"／偏空 "+(a.luna.socialBear??"—")+"）",
+  "與此股票名稱／代碼直接相關的 PTT 標題："+(a.luna.socialMentions??"無有效樣本")+" 篇",
+  "新聞標題觀察："+a.luna.newsStatus+"（獨立計數，不代表社群討論）",
+  "來源：PTT "+a.luna.sourceStatus.PTT+"；Threads "+a.luna.sourceStatus.Threads+"；Instagram "+a.luna.sourceStatus.Instagram,
+  a.luna.method,...(a.luna.sources||[])]);
  explainCard(host,"TITAN","硬性風險否決",a.titan.status,
   a.titan.veto.length?a.titan.veto.concat(a.titan.notes):[...a.titan.notes,a.titan.warning],a.titan.hardVeto?"deny":"");
  explainCard(host,"NOVA","最後證據整理",a.nova.status,[
@@ -69,11 +73,11 @@ async function load(){
  const base="./data/";
  const files=await Promise.allSettled([
   loadJson(base+"latest.json"),loadJson(base+"g_intraday/latest.json"),
-  loadJson(base+"g_intraday/status.json"),loadJson(base+"market_events/latest.json")
+  loadJson(base+"g_intraday/status.json"),loadJson(base+"market_events/latest.json"),loadJson(base+"social_sentiment/latest.json")
  ]);
- const errors=files.map((x,i)=>x.status==="rejected"?["正式日榜單","盤中 G","盤中狀態","重大新聞"][i]+"無法讀取":null).filter(Boolean);
- const [daily,intraday,status,news]=files.map(x=>x.status==="fulfilled"?x.value:{});
- const result=core.analyze({daily,intraday,status,news},new Date());current=result;
+ const errors=files.map((x,i)=>x.status==="rejected"?["正式日榜單","盤中 G","盤中狀態","重大新聞","社群情緒"][i]+"無法讀取":null).filter(Boolean);
+ const [daily,intraday,status,news,social]=files.map(x=>x.status==="fulfilled"?x.value:{});
+ const result=core.analyze({daily,intraday,status,news,social},new Date());current=result;
  $("mode").textContent=result.mode;$("asOf").textContent="來源日："+(result.asOfDate||"缺值")+"｜風險日："+(result.source.riskDate||"缺值");
  $("nCandidates").textContent=String(result.counts.candidates);
  $("nVeto").textContent=String(result.counts.veto);

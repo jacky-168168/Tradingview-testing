@@ -9,7 +9,7 @@
 | ATLAS | G 日／盤中 Top20、RS20、RVOL、成交額 | 前十名研究候選與定量證據 | 不更改 G 排序 |
 | VEGA | MA20 斜率、ATR%、相對強弱、既有訊號 | 技術結構與缺失資料 | 不發明支撐、壓力、進出價 |
 | ORION | 48 小時內重大新聞、主題／名稱 | 相關報導、來源、發布時間、是否已核實 | 新聞相符≠因果，未核實不得當事實 |
-| LUNA | Risk Score、市場廣度／20D | 市場情緒**代理**、不是社群情緒 | 無 X 社群權限時不捏造聲量 |
+| LUNA | Risk Score、市場廣度、PTT 公開 Atom、經授權 Threads／Instagram、現有新聞 JSON | 分開顯示市場風險與公開輿情；樣本門檻及來源狀態 | 社群不改 Risk Score；無授權不得捏造聲量 |
 | TITAN | 行情時效、Risk Score、ATR%、流動性、日期一致性 | **不可覆蓋的硬性否決**及風險資料缺口 | 不提供部位大小或下單 |
 | NOVA | 前五個角色的結構化報告 | 否決、等待、研究候選（待人審核） | 永遠不推翻 TITAN／不下單 |
 
@@ -33,3 +33,25 @@
 - 事件資料建立實際最早發布時間、官方公告 ID、個股映射與證據品質分級。
 - 使用官方歷史資料重建逐時 point-in-time 快照；樣本外測 TITAN 阻擋對 G 5D/10D/20D 報酬、MDD、績效的影響。不可使用當時尚未發布的新聞／資料。
 - 等付費 API 額度可用且驗證權限後，再考慮加入 ORION/NOVA 的 LLM 摘要層；模型不能改硬性風控或交易。
+
+## 公開社群氛圍 v0.2（PTT 為免費基礎來源）
+- 正式資料接入腳本：`scripts/collect_social_sentiment.py`。固定 HTTPS 白名單讀取 PTT 股票板官方 Atom 訂閱；同一連結去重，最多保留最近 48 小時的公開標題，嚴格拒絕未來時間。
+- 公開資料整理到 `docs/data/social_sentiment/latest.json`，PTT 原文網址與標題提供查核；不存作者個資、不全文爬蟲、不以標題判斷留言區共識。
+- 以保守中文看多／看空關鍵詞分類，兩種方向同時出現視為中立／難判；總樣本至少 8 篇且有方向標題至少 5 篇才展示傾向。新聞標題另計，不與社群混合成單一投票。
+- Threads 官方 `keyword_search` 需要 Meta App 及 `threads_keyword_search` 審核後的 `THREADS_ACCESS_TOKEN`；Instagram Hashtag Discovery 需要合格商業／創作者帳號，`IG_ACCESS_TOKEN` 與 `IG_USER_ID`。未授權時明示 `not_authorized`，絕不繞過登入或偽造覆蓋。
+- 每日 09:10、11:10、13:10、17:10、21:10（臺灣時間）執行 `LUNA Public Social Sentiment`，公開來源無法取得時不可將空資料說成中立；保留最多 48 小時可驗證歷史樣本。
+- LUNA 只有資料集在 8 小時內更新、PTT 收集成功且樣本數符合門檻才顯示方向；大盤風險分數與社群方向彼此獨立，任何社群觀點不能解除 TITAN 否決。
+
+## 六個真正 LLM 角色及交叉討論 v0.2
+- 使用 GitHub Models 的 `models: read` 和 Actions 內建 `GITHUB_TOKEN`，**不需要預先提供 OpenAI API Key**，前提是帳戶允許 GitHub Models 推論且有可用免費額度。
+- `scripts/run_six_agent_llm.cjs` 進行 **九次**獨立模型呼叫：ATLAS、VEGA、ORION、LUNA、TITAN 五位首輪 → NOVA 初步整合 → VEGA 與 TITAN 交叉質疑 → NOVA 最後整合。六個角色使用同一底層模型、不同系統提示與上下文；不是六個不同模型。
+- 每個輸出必須提供真實存在的來源代碼、明確不確定性及 `noTrade:true`。未完成模型執行或回應格式錯誤時 **不產生成功報告**。
+- GitHub Actions `Six Agent GitHub Models LLM Debate` 於臺灣交易日工作日 18:50 UTC+8 排程（實際國定假日仍應判斷為歷史資料），成功才發布 `docs/data/agent_llm/latest.json` 及保存 30 日 Artifact。
+- 六代理研究頁面會單獨標明「真實 LLM 推論」的時間、資料日期、獨立角色論點及反駁；不存在正式報告時只顯示「尚未驗證」，保留原本規則式六代理的運作。
+- 不改 G 選股結果、不重算正式 Risk Score、不自動下單；TITAN 的程式硬否決無法由其他五位 LLM 推翻。每篇文字只是尚待人工核實的研究意見。
+- `node tw-stock-dashboard/scripts/run_six_agent_llm.cjs --self-test` 是**模擬傳輸的離線測試**；不能把測試 9 次當成真正完成 9 次模型 API 呼叫。僅正式 GitHub Actions 有 `REAL_SIX_AGENT_MODELS_VERIFIED` 且驗證紀錄時才算實際執行成功。
+
+## 可重現測試
+- `python -m unittest discover -s tw-stock-dashboard/tests -p 'test_social_sentiment.py' -v`
+- `node --test tw-stock-dashboard/tests/test_six_agent_research.cjs`
+- `node tw-stock-dashboard/scripts/run_six_agent_llm.cjs --self-test`
