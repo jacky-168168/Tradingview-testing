@@ -49,12 +49,12 @@ footer{font-size:11px;color:#64748b;padding:20px 0 3px;line-height:1.8}.empty{pa
 <div id="agents" class="agents"></div></div>
 </section>
 <section class="card" aria-label="獨立 LLM 會議" style="margin-top:15px">
-<div class="head"><h2 class="group-title">六位 LLM 獨立分析與交叉質疑</h2><span id="llmState" class="flag">正在核對紀錄…</span></div>
-<p class="description">每次研究依序執行 ATLAS、VEGA、ORION、LUNA、TITAN、NOVA 各自獨立模型呼叫；由 VEGA、TITAN 反駁 NOVA 初稿，再由 NOVA 整理最終意見。輸出時間與資料日分別標示，且所有結論均不得覆蓋 TITAN 風控。</p>
-<div id="llmMeta" class="description">GitHub Models 已於 2026/07/30 退役；真正六代理 LLM 尚未接入其他可用模型服務。既有六角色規則式分析及 PTT／新聞仍正常運作，不顯示假模型討論。</div>
+<div class="head"><h2 class="group-title">六代理 Gemini 真實推論與交叉質疑</h2><span id="llmState" class="flag">正在核對紀錄…</span></div>
+<p class="description">已授權 Google Gemini API：五角色先各自獨立推論，NOVA 彙整，再由 VEGA、TITAN 交叉質疑，最後 NOVA 定案，合計九次模型呼叫。六個角色使用同一底層 Gemini 模型，並非六款不同模型。僅顯示經九次真實推論與資料檢查通過的報告；TITAN 風控否決不可覆蓋。</p>
+<div id="llmMeta" class="description">正在核對 Google Gemini 九次推論報告、資料來源日期與硬性風控狀態；沒有實際完成的模型報告就不顯示模擬結果。</div>
 <div id="llmDebate" class="agents" aria-live="polite"></div>
 </section>
-<footer>資料來源：既有 G 正式日資料與盤中暫估、重大市場新聞 JSON。新聞主題比對不等於已證實因果；LUNA 分開顯示市場風險及可核實的 PTT／經授權 Meta 社群樣本；社群缺值不代表市場中立。TITAN 否決不可被 NOVA 覆寫。第一版沒有呼叫付費 AI，不提供模擬或真實下單，不宣稱回測績效。離開盤中時段只顯示歷史快照；跨年度休市行事曆需要核對更新。</footer>
+<footer>資料來源：既有 G 正式日資料與盤中暫估、重大市場新聞 JSON。新聞主題比對不等於已證實因果；LUNA 分開顯示市場風險及可核實的 PTT／經授權 Meta 社群樣本；社群缺值不代表市場中立。TITAN 否決不可被 NOVA 覆寫。六代理 Gemini 研究使用獨立模型呼叫並顯示實際報告時間；不提供模擬或真實下單，不宣稱回測績效。離開盤中時段只顯示歷史快照；跨年度休市行事曆需要核對更新。</footer>
 </main>
 <script src="./agent-research-core.js"></script><script src="./agent-research-ui.js"></script><script src="./agent-llm-ui.js"></script>
 </body></html>
