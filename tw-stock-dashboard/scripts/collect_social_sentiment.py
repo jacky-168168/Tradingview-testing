@@ -2,6 +2,7 @@
 """Read-only public social sentiment collector. Fails closed; no invented discussion counts."""
 from __future__ import annotations
 import datetime as dt
+import email.utils
 import html
 import json
 import os
@@ -18,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1] / "docs"
 PTT_URL = "https://www.ptt.cc/atom/stock.xml"
 PTT_FEEDS = (PTT_URL, "https://www.ptt.cc/atom/Stock.xml")
 PTT_BOARD = "https://www.ptt.cc/bbs/Stock/index.html"
+PTT_PUBLIC_FEED = "https://feed.cqd.tw/ptt/Stock/title/.*"
 STOCK_PATH = ROOT / "data/latest.json"
 NEWS_PATH = ROOT / "data/market_events/latest.json"
 OUT_PATH = ROOT / "data/social_sentiment/latest.json"
@@ -46,7 +48,7 @@ def score(title):
 
 def request(url, token=None):
     parsed = urllib.parse.urlsplit(url)
-    if parsed.scheme != "https" or parsed.hostname not in {"www.ptt.cc", "graph.threads.net", "graph.facebook.com"}:
+    if parsed.scheme != "https" or parsed.hostname not in {"www.ptt.cc", "feed.cqd.tw", "graph.threads.net", "graph.facebook.com"}:
         raise ValueError("拒絕非白名單 HTTPS 來源")
     h = {"User-Agent": "Tradingview-testing-SocialResearch/1.0", "Accept": "application/atom+xml, text/html;q=0.9, application/json;q=0.8"}
     if token:
@@ -101,6 +103,28 @@ def ptt_board(html_bytes, now):
             out.append(row)
     return out
 
+
+def ptt_public_feed(xml,now):
+    """Third-party public feed, accepting ONLY direct original PTT stock links."""
+    root=ET.fromstring(xml)
+    entries=root.findall(ATOM+"entry")
+    if not entries:entries=root.findall("./channel/item")
+    out=[]
+    for x in entries:
+        title=x.findtext(ATOM+"title") or x.findtext("title") or ""
+        if IGNORE.search(title):continue
+        lnk=next((a.get("href") for a in x.findall(ATOM+"link") if a.get("href")),"")
+        lnk=lnk or (x.findtext("link") or "")
+        dtstr=x.findtext(ATOM+"published") or x.findtext(ATOM+"updated") or x.findtext("pubDate")
+        if dtstr and not iso(dtstr):
+            try:dtstr=email.utils.parsedate_to_datetime(dtstr).isoformat()
+            except (ValueError,TypeError):dtstr=None
+        row=sanitize("PTT",title,lnk,dtstr,now)
+        if row:
+            row["feedBasis"]="第三方公開 RSS/Atom；保留 PTT 原文連結"
+            out.append(row)
+    return out
+
 def collect_ptt(now,fetch):
     failures=[]
     for url in PTT_FEEDS:
@@ -119,7 +143,15 @@ def collect_ptt(now,fetch):
         failures.append("HTML 無48小時有效貼文")
     except Exception as exc:
         failures.append(type(exc).__name__)
-    return [],{"status":"error" if any(x not in {"Atom 無48小時有效貼文","HTML 無48小時有效貼文"} for x in failures) else "empty",
+    try:
+        rows=ptt_public_feed(fetch(PTT_PUBLIC_FEED),now)
+        if rows:
+            return rows,{"status":"ok","method":"第三方公開 PTT 訂閱備援","url":PTT_PUBLIC_FEED,
+                         "freshCount":len(rows),"feedBasis":"只保留原始 PTT URL"}
+        failures.append("第三方訂閱無有效貼文")
+    except Exception as exc:
+        failures.append(type(exc).__name__)
+    return [],{"status":"error" if any(x not in {"Atom 無48小時有效貼文","HTML 無48小時有效貼文","第三方訂閱無有效貼文"} for x in failures) else "empty",
                "reason":"；".join(failures)[:160],"url":PTT_URL,"freshCount":0}
 
 def stock_catalog():
@@ -254,6 +286,8 @@ def collect(now=None, fetch=request, old=None, environmental=None):
         if row:
             if x.get("timestampBasis")=="文章網址 ID 推算，非官方發文時間":
                 row["timestampBasis"]=x["timestampBasis"]
+            if x.get("feedBasis")=="第三方公開 RSS/Atom；保留 PTT 原文連結":
+                row["feedBasis"]=x["feedBasis"]
             cached.append(row)
     prior=cached
     inputs=[]
