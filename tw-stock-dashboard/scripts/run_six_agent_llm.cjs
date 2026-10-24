@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /* Six independent LLM role invocations + cross-challenges + final NOVA deliberation.
- * GitHub Models only on a trusted Actions runner; never submit orders or alter model G.
+ * Gemini transport runs only with an explicit authorized API secret; no model mocks in production.
  */
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict");
 const {analyze}=require("../docs/agent-research-core.js");
+const {geminiModel,validateModel,DEFAULT_MODEL}=require("./gemini_transport.cjs");
 const docs=path.resolve(__dirname,"../docs");
 const ROLES=["ATLAS","VEGA","ORION","LUNA","TITAN"];
-const MODEL=process.env.GH_MODELS_MODEL||"openai/gpt-4.1-mini";
-const BASE="https://models.github.ai/inference/chat/completions";
+const MODEL=validateModel(process.env.SIX_AGENT_GEMINI_MODEL||DEFAULT_MODEL);
 const RULES={
  ATLAS:"獨立審查 G 候選的量能、RS20 與流動性。不可更改原始排行，不能把一日熱度當長期效益。",
  VEGA:"獨立審查 MA20 斜率、ATR 波動和價量趨勢，先講失效條件與不足，不能編造入場、停損價。",
@@ -79,27 +79,7 @@ async function infer(role,context,transport){
  catch(_){throw Error("LLM role "+role+" returned non-JSON model content; fail closed")}
  return validateResponse(parsed,role,context.evidence.sources);
 }
-async function githubModel({model,messages,max_tokens,temperature,response_format}){
- const token=process.env.GITHUB_TOKEN;
- if(!token)throw Error("GitHub Models token missing: no LLM inference was executed");
- for(let attempt=0;attempt<3;attempt++){
-  const r=await fetch(BASE,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/vnd.github+json",
-   "Authorization":"Bearer "+token,"X-GitHub-Api-Version":"2022-11-28"},
-   body:JSON.stringify({model,messages,max_tokens,temperature,response_format}),signal:AbortSignal.timeout(48000)});
-  if((r.status===429||r.status===503)&&attempt<2){await delay(3500*(attempt+1));continue}
-  if(!r.ok)throw Error("GitHub Models HTTP "+r.status+"; inference incomplete; no simulated LLM output");
-  const body=await r.text();
-  let j;
-  try{j=JSON.parse(body)}
-  catch(_){throw Error("GitHub Models API returned non-JSON HTTP 200: content-type "+
-    String(r.headers.get("content-type")||"unknown").slice(0,90)+"; bytes="+body.length)}
-  const response=j?.choices?.[0]?.message?.content;
-  if(typeof response!=="string"||!response.trim())throw Error("GitHub Models returned no model answer");
-  return response;
- }
- throw Error("GitHub Models retry exhausted");
-}
-async function deliberate(evidence,transport=githubModel,wait=delay){
+async function deliberate(evidence,transport=geminiModel,wait=delay){
  assert(evidence.noTrade===true);
  const initial={};
  for(const role of ROLES){
@@ -118,16 +98,18 @@ async function deliberate(evidence,transport=githubModel,wait=delay){
  const final=await infer("NOVA",{phase:"最終討論結論",evidence,firstRound:initial,novaDraft:draft,
   critiques:questions,hardVeto:evidence.hardVeto,rule:"交叉檢查意見歧異；不得取消任何程式風險否決"},transport);
  return {schema:1,mode:"六角色獨立 LLM 推論及跨角色交叉質疑",generatedAt:new Date().toISOString(),
-  model:MODEL,provider:"GitHub Models",inferenceCalls:9,verifiedModelExecution:true,
+  model:MODEL,provider:"Google Gemini API",inferenceCalls:9,verifiedModelExecution:true,
   evidenceDate:evidence.datasetDate,sourceSummary:evidence.sources,marketMode:evidence.mode,
   inputIsLive:evidence.liveVerified,hardVeto:evidence.hardVeto,
   rounds:{initial,draft,critiques:questions,final},
   outcome:evidence.hardVeto?"程式硬性否決，不可作交易建議":"研究待人工審核，並非交易許可",
-  noTrade:true,disclaimer:"各角色共享相同模型規格但使用獨立呼叫與不同系統提示詞；不是六種不同模型。LLM 分析未經事實逐條驗證；所有文字僅供研究。"};
+  noTrade:true,disclaimer:"各角色使用同一 Gemini 模型的獨立 API 呼叫與不同提示詞；不是六種不同模型。免費額度與資料處理政策依 Google 帳戶設定；模型文字仍須人工核實。"};
 }
 function validateSnapshot(doc){assert(doc.verifiedModelExecution===true&&doc.inferenceCalls===9&&doc.noTrade===true);
  assert.equal(doc.rounds.initial.TITAN.noTrade,true);
  assert.equal(doc.rounds.final.noTrade,true);
+ assert.equal(doc.provider,"Google Gemini API");
+ assert(doc.generatedAt&&Number.isFinite(Date.parse(doc.generatedAt)));
  if(doc.hardVeto)assert.match(doc.outcome,/否決/);
  return true;}
 async function selfTest(){
@@ -147,6 +129,8 @@ async function selfTest(){
 }
 async function main(){
  if(process.argv.includes("--self-test"))return selfTest();
+ if(process.env.ENABLE_SIX_AGENT_GEMINI!=="true")throw Error("六角色 Gemini 推論未獲明確啟用；不執行外部 API");
+ if(!process.env.GEMINI_API_KEY)throw Error("缺少 GEMINI_API_KEY，不能以離線測試冒充真實模型討論");
  const evidence=compactInput();
  if(!evidence.sources.G||!evidence.sources.RISK)throw Error("缺少已核實 G 或風險來源，不啟動 AI 會議");
  const report=await deliberate(evidence);validateSnapshot(report);
