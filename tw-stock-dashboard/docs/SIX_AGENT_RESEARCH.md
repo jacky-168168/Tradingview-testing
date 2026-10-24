@@ -80,7 +80,7 @@
 - 參考：[Orca README](https://github.com/stablyai/orca)、[Worktrees](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/model/worktrees.mdx)、[Agents Feed](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/activity.mdx)。
 
 ## LUNA 社群情緒與可核對熱度 v0.5（2026-10-25）
-- 抓取次序：PTT 股票板官方小寫 Atom URL → 官方大寫 Atom URL → PTT 公開看板 HTML。HTML 備援使用永久文章網址中的 Unix 時間戳**推算**貼文時間，JSON 標示 `timestampBasis`，不能宣稱為已查核的正式發布時間。來源失敗時保留 48 小時內的有效歷史原文，否則發布空樣本及失敗狀態，**不補假的中立、偏多或偏空**。
+- 抓取次序：PTT 股票板官方小寫 Atom URL → 官方大寫 Atom URL → PTT 公開看板 HTML → 第三方公開 RSS 橋接（feed.cqd.tw，只接受 PTT 原文網址）。HTML 備援使用永久文章網址中的 Unix 時間戳**推算**貼文時間，JSON 標示 `timestampBasis`，不能宣稱為已查核的正式發布時間。來源失敗時保留 48 小時內的有效歷史原文，否則發布空樣本及失敗狀態，**不補假的中立、偏多或偏空**。
 - 標題分類：將 `[新聞]` 等轉載歸類為「新聞轉載」並維持中立；含反諷、反指標、求救等不確定字詞時保留「語意不明」。沒有自動擷取留言全文，仍是保守關鍵字判讀，不宣稱 Gemini 已對每篇留言做語意分類。
 - 從正式 G 前 20 名建立 `stockHeat`；股票比對僅接受完整四碼代號或正確公司名稱，顯示過去 24h、前 24h 的可核對標題及原文連結。無提及即缺值，不代表沒人討論。
 - `overheatWatch` 只是研究警示：近 24 小時至少三篇、其中至少三篇非新聞轉載，且個股 20 日漲幅超過 25%、量比 >= 2 或 MA20 斜率 >= 5 之一。研究頁還會驗證樣本、時間是否一致，異常來源不標榜即時訊號。不得更改 G 名次、正式大盤分數、TITAN 風控或下單。
