@@ -69,3 +69,12 @@
 - 真正啟用後預計每臺灣時間週一至週五 19:00 嘗試產生九次獨立模型呼叫的研究報告（TITAN 硬性風控不可解除）；GitHub Secrets、API 帳戶用量、模型存取權及額度皆需實際驗證後才能宣稱「真實六 LLM 已成功」。
 - 預設 Gemini 模型 `gemini-3.5-flash-lite`（新專案可用的穩定模型；舊 2.5 模型可能對新專案回傳 HTTP 404）。免費額度、頻率限制及資料處理政策由 Google 決定，請自行在 AI Studio 確認；此研究管線只使用網站公開市場資料，不送入個人持倉、密碼或帳戶資訊。
 - 開發／驗證：`node --test tw-stock-dashboard/tests/test_six_agent_research.cjs tw-stock-dashboard/tests/test_six_agent_gemini.cjs`。使用 Mock 的九輪測試不是正式 API 呼叫，只有實際輸出 `REAL_GEMINI_SIX_AGENT_VERIFIED` 才能當正式執行證據。
+
+
+## Orca 式多代理可觀測性 v0.4（來源參考：stablyai/orca）
+- 借鏡 Orca 的隔離工作區、Agents Feed 及人工審查概念；只改造台股六代理研究協調器，**沒有直接將 Orca Electron 桌面產品／CLI 部署在 GitHub Pages**。
+- 五角色首輪使用 **角色範圍內的獨立證據快照**：ATLAS G／風險、VEGA 技術／風險、ORION 個股與新聞、LUNA 社群／風險、TITAN 量價與硬否決。首輪互不看別人的文字，降低跟風與引用非職責資料。
+- NOVA 初稿、VEGA/TITAN 交叉質疑與 NOVA 結論仍使用完整證據，維持九次 Gemini 連線；循序執行避免對免費 API 突發 429。不是六種不同基礎模型。
+- 真實報告新增九輪 `executionTrace`（角色、階段、完成狀態、執行耗時、完成時間）與 `reviewAudit`（反駁是否與自身首輪逐字重複、最終稿是否照抄初稿）。**僅能辨識文字完全重複，不是語意品質分數**，有警訊必須人工審核。
+- 網頁預設收合逐輪紀錄，手機可展開。未更新的歷史快照不會假稱有執行軌跡，沒有金鑰、下單權限、持倉資訊或假績效。
+- 參考：[Orca README](https://github.com/stablyai/orca)、[Worktrees](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/model/worktrees.mdx)、[Agents Feed](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/activity.mdx)。
