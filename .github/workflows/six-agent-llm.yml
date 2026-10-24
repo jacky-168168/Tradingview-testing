@@ -1,14 +1,9 @@
-name: Six Agent GitHub Models LLM Debate
+name: Six Agent LLM Validation (Provider Retired)
+# GitHub Models was permanently retired on 2026-07-30. Do NOT run its endpoint:
+# HTTP 200 text/plain "OK" is a retirement placeholder, not inference.
+# Keep the offline/PR safeguards until a supported and authorized provider is added.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/six-agent-llm.yml'
-      - 'tw-stock-dashboard/scripts/run_six_agent_llm.cjs'
-  schedule:
-    # 18:50 Taipei weekdays, after social snapshot and official market news.
-    - cron: '50 10 * * 1-5'
   pull_request:
     paths:
       - '.github/workflows/six-agent-llm.yml'
@@ -37,7 +32,8 @@ jobs:
           node --check tw-stock-dashboard/scripts/run_six_agent_llm.cjs
           node tw-stock-dashboard/scripts/run_six_agent_llm.cjs --self-test
   inference:
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push')
+    # Deliberately disabled; no working LLM provider configured.
+    if: ${{ false }}
     needs: offline
     runs-on: ubuntu-latest
     timeout-minutes: 12

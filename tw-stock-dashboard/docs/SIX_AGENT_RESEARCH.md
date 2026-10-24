@@ -42,11 +42,18 @@
 - 每日 09:10、11:10、13:10、17:10、21:10（臺灣時間）執行 `LUNA Public Social Sentiment`，公開來源無法取得時不可將空資料說成中立；保留最多 48 小時可驗證歷史樣本。
 - LUNA 只有資料集在 8 小時內更新、PTT 收集成功且樣本數符合門檻才顯示方向；大盤風險分數與社群方向彼此獨立，任何社群觀點不能解除 TITAN 否決。
 
-## 六個真正 LLM 角色及交叉討論 v0.2
-- 使用 GitHub Models 的 `models: read` 和 Actions 內建 `GITHUB_TOKEN`，**不需要預先提供 OpenAI API Key**，前提是帳戶允許 GitHub Models 推論且有可用免費額度。
+## 重要修正：GitHub Models 已退役（2026-07-30）
+- GitHub 官方於 2026-07-01 公告 GitHub Models（包含其推論 API）在 **2026-07-30 全面終止**，官方公告：https://github.blog/changelog/2026-07-01-github-models-is-being-fully-retired-on-july-30-2026/
+- 2026-10-25 實測原 GitHub Models 端點只回傳 HTTP 200、`text/plain`、4 位元組 `OK\n`，**不是有效模型推論**。提高 Token、修改 JSON 或更換 GITHUB_TOKEN 都無法恢復已停用的服務。
+- 六角色九輪推論引擎**程式已完成、離線測試通過，但真實 LLM 推論沒有成功**；網頁維持 `verifiedModelExecution:false`，不可宣稱模型會議完成。
+- 因此停用 `Six Agent LLM Validation (Provider Retired)` 的排程與真正推論工作，僅保留手動及 PR 離線安全測試。之後要真正啟用六位 LLM，必須改接仍在營運、由使用者授權的 LLM 服務，再驗證九次 API 回應與風險閘門。
+- **不影響**每日 PTT / 財經新聞蒐集、LUNA 規則式情緒分析、G 選股、原六代理規則式研究與既有的風控。
+
+## 六個真正 LLM 角色及交叉討論 v0.2（設計完成、尚未啟用）
+- 原先設計使用 GitHub Models 和 Actions 內建 `GITHUB_TOKEN`，但此服務已於 2026-07-30 退役，**這種無金鑰推論方式不再可用**。目前沒有真正 LLM 供應商，仍需後續授權並改接。
 - `scripts/run_six_agent_llm.cjs` 進行 **九次**獨立模型呼叫：ATLAS、VEGA、ORION、LUNA、TITAN 五位首輪 → NOVA 初步整合 → VEGA 與 TITAN 交叉質疑 → NOVA 最後整合。六個角色使用同一底層模型、不同系統提示與上下文；不是六個不同模型。
 - 每個輸出必須提供真實存在的來源代碼、明確不確定性及 `noTrade:true`。未完成模型執行或回應格式錯誤時 **不產生成功報告**。
-- GitHub Actions `Six Agent GitHub Models LLM Debate` 於臺灣交易日工作日 18:50 UTC+8 排程（實際國定假日仍應判斷為歷史資料），成功才發布 `docs/data/agent_llm/latest.json` 及保存 30 日 Artifact。
+- 原 GitHub Models 的 18:50 自動排程已停止，防止無限故障重試。未來改接可用模型並驗證成功後，才可安排定時發布 `docs/data/agent_llm/latest.json` 及保存 30 日 Artifact。
 - 六代理研究頁面會單獨標明「真實 LLM 推論」的時間、資料日期、獨立角色論點及反駁；不存在正式報告時只顯示「尚未驗證」，保留原本規則式六代理的運作。
 - 不改 G 選股結果、不重算正式 Risk Score、不自動下單；TITAN 的程式硬否決無法由其他五位 LLM 推翻。每篇文字只是尚待人工核實的研究意見。
 - `node tw-stock-dashboard/scripts/run_six_agent_llm.cjs --self-test` 是**模擬傳輸的離線測試**；不能把測試 9 次當成真正完成 9 次模型 API 呼叫。僅正式 GitHub Actions 有 `REAL_SIX_AGENT_MODELS_VERIFIED` 且驗證紀錄時才算實際執行成功。

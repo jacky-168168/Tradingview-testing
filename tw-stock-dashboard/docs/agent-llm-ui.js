@@ -40,8 +40,8 @@ async function load(){
   card(host,"NOVA",doc.rounds.final,"最終研究結論（不可下單）");
  }catch(e){
   flag.textContent="LLM 未驗證／暫不可用";
-  info.textContent="目前沒有可確認的九次模型討論紀錄；"+String(e.message)+
-    "。六角色規則式研究仍可使用，不會將它偽裝成 LLM 分析。";
+  info.textContent="原 GitHub Models 服務已於 2026/07/30 全面退役；沒有可確認的九次模型討論紀錄（"+String(e.message)+
+    "）。目前保留六角色規則式研究與 PTT／新聞情緒，真正 LLM 須改接可用服務；絕不偽造推論。";
  }
 }
 $("refresh")?.addEventListener("click",()=>{void load()});
