@@ -121,8 +121,8 @@ test("LUNA keeps real social sample distinct from risk and absent Meta sources",
  x.social={generatedAt:time,sources:{PTT:{status:"ok"},Threads:{status:"not_authorized"},Instagram:{status:"not_authorized"}},
   social:{status:"偏多討論較多",sample:12,bull:8,bear:3,neutral:1,directional:11},
   news:{status:"樣本不足"},items:[
-   {platform:"PTT",title:"台積電今日看多突破",url:"https://www.ptt.cc/bbs/Stock/M.1.html",publishedAt:time},
-   ...Array.from({length:11},(_,i)=>({platform:"PTT",title:"台股第"+i+"篇",url:"https://www.ptt.cc/bbs/Stock/M."+i+".html",publishedAt:time}))]};
+   {platform:"PTT",title:"台積電今日看多突破",url:"https://www.ptt.cc/bbs/Stock/M.100.html",publishedAt:time,stance:"偏多"},
+   ...Array.from({length:11},(_,i)=>({platform:"PTT",title:"台股第"+i+"篇",url:"https://www.ptt.cc/bbs/Stock/M."+i+".html",publishedAt:time,stance:i<7?"偏多":i<10?"偏空":"中立／難判"}))]};
  const out=core.analyze(x,LIVE);
  const c=out.candidates[0].agents;
  assert.equal(c.luna.socialStatus,"已有樣本｜偏多內容較多");
