@@ -80,7 +80,8 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
  const signal=sample===0?"尚無可核對的社群討論":
   bull>bear?"已有樣本｜偏多內容較多":bear>bull?"已有樣本｜偏空內容較多":
   bull+bear===0?"已有樣本｜尚無明確多空方向":"已有樣本｜多空內容接近";
- const socialStatus=sample&&fresh?signal:sample?"已有歷史樣本｜來源未在8小時內更新":signal;
+ const currentEvidence=posts.some(x=>feeds[x.platform]?.status==="ok");
+ const socialStatus=sample&&fresh&&currentEvidence?signal:sample?"已有歷史樣本｜來源未在8小時內更新或已失聯":signal;
  const examples=posts.slice(0,3).map(x=>({title:x.title,url:x.url,
   source:x.platform+"（公開貼文標題）",publishedAt:x.publishedAt}));
  const name=String(row?.name||""),code=String(row?.code||"");
