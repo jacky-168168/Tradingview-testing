@@ -48,7 +48,13 @@ footer{font-size:11px;color:#64748b;padding:20px 0 3px;line-height:1.8}.empty{pa
 <p id="detailIntro" class="description">系統不會提供買賣指令；每個結論都有資料日期與可核對依據。</p>
 <div id="agents" class="agents"></div></div>
 </section>
-<footer>資料來源：既有 G 正式日資料與盤中暫估、重大市場新聞 JSON。新聞主題比對不等於已證實因果；LUNA 是市場風險與廣度代理，不是社群情緒分析。TITAN 否決不可被 NOVA 覆寫。第一版沒有呼叫付費 AI，不提供模擬或真實下單，不宣稱回測績效。離開盤中時段只顯示歷史快照；跨年度休市行事曆需要核對更新。</footer>
+<section class="card" aria-label="獨立 LLM 會議" style="margin-top:15px">
+<div class="head"><h2 class="group-title">六位 LLM 獨立分析與交叉質疑</h2><span id="llmState" class="flag">正在核對紀錄…</span></div>
+<p class="description">每次研究依序執行 ATLAS、VEGA、ORION、LUNA、TITAN、NOVA 各自獨立模型呼叫；由 VEGA、TITAN 反駁 NOVA 初稿，再由 NOVA 整理最終意見。輸出時間與資料日分別標示，且所有結論均不得覆蓋 TITAN 風控。</p>
+<div id="llmMeta" class="description">未有經驗證的 LLM 模型執行前，不顯示假討論。</div>
+<div id="llmDebate" class="agents" aria-live="polite"></div>
+</section>
+<footer>資料來源：既有 G 正式日資料與盤中暫估、重大市場新聞 JSON。新聞主題比對不等於已證實因果；LUNA 分開顯示市場風險及可核實的 PTT／經授權 Meta 社群樣本；社群缺值不代表市場中立。TITAN 否決不可被 NOVA 覆寫。第一版沒有呼叫付費 AI，不提供模擬或真實下單，不宣稱回測績效。離開盤中時段只顯示歷史快照；跨年度休市行事曆需要核對更新。</footer>
 </main>
 <script src="./agent-research-core.js"></script><script src="./agent-research-ui.js"></script>
 </body></html>
