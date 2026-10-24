@@ -70,10 +70,11 @@ async function run(){
  }else show("actions","Actions 無法驗證","GitHub 公開 API 暫時無法讀取；請查看 Actions 網頁。","");
  if(g.status==="fulfilled"&&mainG.status==="fulfilled"){
    const local=g.value.publishedAt,origin=mainG.value.publishedAt,age=minutesAgo(origin,now);
-   const lag=age!==null&&age>25&&dateAt(local)!==null&&dateAt(origin)!==null&&dateAt(local)<dateAt(origin);
-   show("pages",lag?"GitHub Pages 發布落後":"Pages 與 main 核對完成",
+   const behind=dateAt(local)!==null&&dateAt(origin)!==null&&dateAt(local)<dateAt(origin);
+   const lag=behind&&age!==null&&age>25;
+   show("pages",lag?"GitHub Pages 發布落後":behind?"Pages 同步中（25 分鐘寬限）":"Pages 與 main 核對完成",
      "Pages："+(local||"未知")+"\nmain："+(origin||"未知")+
-     "\n"+(lag?"主分支已發布超過25分鐘，但網站仍顯示舊榜單。":"未查到超過25分鐘的落後。"),lag?"bad":"good");
+     "\n"+(lag?"主分支已發布超過25分鐘，但網站仍顯示舊榜單。":"未查到超過25分鐘的落後。"),lag?"bad":behind?"":"good");
  }else show("pages","網站同步無法驗證","Pages 或 main JSON 無法讀取，不能宣稱部署成功。","");
  $("refresh").disabled=false;
 }
