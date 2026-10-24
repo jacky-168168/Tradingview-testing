@@ -2,6 +2,7 @@
 """Read-only public social sentiment collector. Fails closed; no invented discussion counts."""
 from __future__ import annotations
 import datetime as dt
+import html
 import json
 import os
 import re
@@ -14,12 +15,17 @@ from pathlib import Path
 
 UTC = dt.timezone.utc
 ROOT = Path(__file__).resolve().parents[1] / "docs"
-PTT_URL = "https://www.ptt.cc/atom/Stock.xml"
+PTT_URL = "https://www.ptt.cc/atom/stock.xml"
+PTT_FEEDS = (PTT_URL, "https://www.ptt.cc/atom/Stock.xml")
+PTT_BOARD = "https://www.ptt.cc/bbs/Stock/index.html"
+STOCK_PATH = ROOT / "data/latest.json"
 NEWS_PATH = ROOT / "data/market_events/latest.json"
 OUT_PATH = ROOT / "data/social_sentiment/latest.json"
 UP = ("看多", "多頭", "轉強", "突破", "創高", "噴出", "漲停", "軋空", "強勢", "反攻", "上攻", "拉升", "飆漲")
 DOWN = ("看空", "空頭", "轉弱", "破底", "崩盤", "暴跌", "跌停", "套牢", "利空", "出貨", "殺盤", "跳水", "重挫", "賣壓")
 IGNORE = re.compile(r"^\s*(?:Re:|Fw:|\[公告\]|\[版務\])", re.I)
+REPOST = re.compile(r"^\s*(?:\[新聞\]|【新聞】|\[轉錄\]|\[情報\])", re.I)
+UNCERTAIN = re.compile(r"反指標|反串|諷刺|笑死|真的嗎|求救|已讀不回|韭菜|崩到起飛")
 ATOM = "{http://www.w3.org/2005/Atom}"
 
 def iso(value):
@@ -33,6 +39,8 @@ def iso(value):
 
 def score(title):
     text = str(title)
+    if REPOST.search(text) or UNCERTAIN.search(text):
+        return "中立／難判"
     up, down = any(s in text for s in UP), any(s in text for s in DOWN)
     return "偏多" if up and not down else "偏空" if down and not up else "中立／難判"
 
@@ -40,7 +48,7 @@ def request(url, token=None):
     parsed = urllib.parse.urlsplit(url)
     if parsed.scheme != "https" or parsed.hostname not in {"www.ptt.cc", "graph.threads.net", "graph.facebook.com"}:
         raise ValueError("拒絕非白名單 HTTPS 來源")
-    h = {"User-Agent": "Tradingview-testing-SocialResearch/1.0", "Accept": "application/atom+xml, application/json;q=0.9"}
+    h = {"User-Agent": "Tradingview-testing-SocialResearch/1.0", "Accept": "application/atom+xml, text/html;q=0.9, application/json;q=0.8"}
     if token:
         h["Authorization"] = "Bearer " + token
     with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=20) as r:
@@ -59,7 +67,8 @@ def sanitize(source, title, url, date, now, max_hours=48):
         return None
     title = re.sub(r"[\x00-\x1f]+", " ", str(title).strip())[:160]
     return {"platform":source, "title":title, "url":str(url)[:350], "publishedAt":t.isoformat().replace("+00:00", "Z"),
-            "stance":score(title)}
+            "stance":score(title), "contentType":"新聞轉載" if REPOST.search(title) else "公開討論",
+            "tone":"語意不明／疑似反諷" if UNCERTAIN.search(title) else "未驗證", "method":"標題規則（非留言全文）"}
 
 def ptt(xml, now):
     root = ET.fromstring(xml)
@@ -73,6 +82,84 @@ def ptt(xml, now):
         if item:
             rows.append(item)
     return rows
+
+
+def ptt_board(html_bytes, now):
+    """HTML emergency fallback: extract public board links; post-ID time is an estimate, never official publishedAt."""
+    body=html_bytes.decode("utf-8","replace") if isinstance(html_bytes,bytes) else str(html_bytes)
+    out=[]
+    for block in re.findall(r'<div\b[^>]*class=["\'][^"\']*\btitle\b[^"\']*["\'][^>]*>(.*?)</div>',body,re.I|re.S):
+        a=re.search(r'<a\b[^>]*href=["\'](/bbs/Stock/M\.(\d{9,11})\.[^"\']+\.html)["\'][^>]*>(.*?)</a>',block,re.I|re.S)
+        if not a:continue
+        title=html.unescape(re.sub(r"<[^>]+>","",a.group(3))).strip()
+        if IGNORE.search(title):continue
+        try:published=dt.datetime.fromtimestamp(int(a.group(2)),tz=UTC).isoformat()
+        except (ValueError,OverflowError,OSError):continue
+        row=sanitize("PTT",title,"https://www.ptt.cc"+html.unescape(a.group(1)),published,now)
+        if row:
+            row["timestampBasis"]="文章網址 ID 推算，非官方發文時間"
+            out.append(row)
+    return out
+
+def collect_ptt(now,fetch):
+    failures=[]
+    for url in PTT_FEEDS:
+        try:
+            rows=ptt(fetch(url),now)
+            if rows:
+                return rows,{"status":"ok","method":"官方 Atom","url":url,"freshCount":len(rows),"timestampBasis":"Atom 發布時間"}
+            failures.append("Atom 無48小時有效貼文")
+        except Exception as exc:
+            failures.append(type(exc).__name__)
+    try:
+        rows=ptt_board(fetch(PTT_BOARD),now)
+        if rows:
+            return rows,{"status":"ok","method":"公開看板 HTML 備援","url":PTT_BOARD,
+                         "freshCount":len(rows),"timestampBasis":"網址時間戳推算，僅供研究"}
+        failures.append("HTML 無48小時有效貼文")
+    except Exception as exc:
+        failures.append(type(exc).__name__)
+    return [],{"status":"error" if any(x not in {"Atom 無48小時有效貼文","HTML 無48小時有效貼文"} for x in failures) else "empty",
+               "reason":"；".join(failures)[:160],"url":PTT_URL,"freshCount":0}
+
+def stock_catalog():
+    try:
+        data=json.loads(STOCK_PATH.read_text("utf-8"))
+        rows=data.get("models",{}).get("G",[])
+        found=[]
+        for r in rows[:20]:
+            code=str(r.get("code",""))
+            name=str(r.get("name","")).strip()
+            if not re.fullmatch(r"\d{4}",code) or not 2<=len(name)<=15:continue
+            found.append({"code":code,"name":name,"theme":str(r.get("theme",""))[:160],
+                          "ret20":r.get("ret20"),"rvol":r.get("rvol"),"ma20Slope":r.get("ma20Slope")})
+        return str(data.get("dataDate","")),found
+    except (OSError,ValueError,TypeError,AttributeError):
+        return "",[]
+
+def mentions_stock(title,row):
+    code=row["code"];name=row["name"]
+    return bool(re.search(r"(?<!\d)"+re.escape(code)+r"(?!\d)",title) or name in title)
+
+def topic_heat(items,now,catalog):
+    date,stocks=catalog
+    result=[]
+    for r in stocks:
+        hit=[x for x in items if mentions_stock(x["title"],r)]
+        if not hit:continue
+        current=sum(0 <= (now-iso(x["publishedAt"])).total_seconds()<=86400 for x in hit)
+        previous=sum(86400 < (now-iso(x["publishedAt"])).total_seconds()<=172800 for x in hit)
+        organic=sum(x.get("contentType")!="新聞轉載" for x in hit)
+        extended=(isinstance(r["ret20"],(int,float)) and r["ret20"]>=25 and
+                 ((isinstance(r["rvol"],(int,float)) and r["rvol"]>=2) or
+                  (isinstance(r["ma20Slope"],(int,float)) and r["ma20Slope"]>=5)))
+        result.append({"code":r["code"],"name":r["name"],"theme":r["theme"],"sample":len(hit),
+                       "recent24h":current,"prior24h":previous,"originalDiscussion":organic,
+                       "overheatWatch":bool(current>=3 and organic>=3 and extended),
+                       "links":[{"title":x["title"],"url":x["url"],"platform":x["platform"]} for x in hit[:3]]})
+    result.sort(key=lambda x:(-x["recent24h"],-x["sample"],x["code"]))
+    return {"sourceDate":date,"stocks":result[:10],
+            "method":"僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"}
 
 def threads(token, now):
     queries = ["台股", "股票"]
@@ -165,12 +252,8 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     prior=[x for x in prior if x is not None]
     inputs=[]
     state={}
-    try:
-        new=ptt(fetch(PTT_URL),now)
-        state["PTT"]={"status":"ok" if new else "empty","freshCount":len(new),"url":PTT_URL}
-        inputs+=new
-    except (Exception,) as ex:
-        state["PTT"]={"status":"error","reason":type(ex).__name__,"url":PTT_URL}
+    new,state["PTT"]=collect_ptt(now,fetch)
+    inputs+=new
     for name, func, args in [
         ("Threads",threads,(environmental.get("THREADS_ACCESS_TOKEN"),now)),
         ("Instagram",instagram,(environmental.get("IG_ACCESS_TOKEN"),environmental.get("IG_USER_ID",""),now))]:
@@ -191,13 +274,17 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     social=unique(inputs+prior)
     news=unique(news,80)
     social_stats=statistics(social)
+    social_stats["originalDiscussion"]=sum(x.get("contentType")!="新聞轉載" for x in social)
+    social_stats["repostedNews"]=len(social)-social_stats["originalDiscussion"]
     news_stats=statistics(news)
+    heat=topic_heat(social,now,stock_catalog())
     return {"schema":1,"generatedAt":now.isoformat().replace("+00:00","Z"),
-        "sources":state,"social":social_stats,"news":news_stats,
+        "sources":state,"social":social_stats,"news":news_stats,"stockHeat":heat,
         "items":social[:80],"newsItems":news[:30],
         "notes":["僅使用公開、實際取得且不超過48小時的資料；缺乏授權的平台顯示未授權。",
                  "標題關鍵詞易受反諷、轉載、選擇偏差與機器人影響；不能視為代表性民調。",
-                 "新聞與社群分開計數；絕不修改 G 排名或 TITAN 風控。"]}
+                 "新聞與社群分開計數；標題反諷／轉載不直接判定多空，無讀取留言全文。",
+                 "個股熱度只是對 G Top20 的實際可驗證標題對照，不更改 G 排名或 TITAN 風控。"]}
 
 def main():
     old={}
@@ -207,8 +294,7 @@ def main():
         except (ValueError,OSError):
             pass
     report=collect(old=old)
-    if report["sources"]["PTT"]["status"]=="error" and not report["items"]:
-        raise SystemExit("PTT 抓取失敗且無有效歷史樣本，拒絕發布假情緒")
+    # Missing public feeds are published as explicit unavailable status, never fabricated neutral evidence.
     OUT_PATH.parent.mkdir(parents=True,exist_ok=True)
     OUT_PATH.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n","utf-8")
     print("SOCIAL_SENTIMENT",json.dumps({"social":report["social"],"sources":report["sources"]},ensure_ascii=False))
