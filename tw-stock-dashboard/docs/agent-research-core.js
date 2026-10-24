@@ -68,19 +68,27 @@ function vega(row){const slope=numeric(row.ma20Slope),rs=numeric(row.rs20),atr=n
 function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=numeric(risk?.breadth),ret20=numeric(risk?.ret20);
  const status=score===null?"資料不足":score<26?"極度偏空":score<60?"偏空觀察":score<80?"中性偏強":"偏強";
  const age=ageMinutes(social?.generatedAt,now),fresh=age!==null&&age>=0&&age<=8*60;
- const feeds=social?.sources||{},stats=social?.social||{};
- const valid=!!(fresh&&feeds.PTT?.status==="ok"&&numeric(stats.sample)!==null&&stats.sample>=8&&
-  numeric(stats.directional)!==null&&stats.directional>=5);
- const examples=valid&&Array.isArray(social.items)?social.items.filter(x=>x?.platform==="PTT"&&
-  typeof x.url==="string"&&/^https:\/\/www\.ptt\.cc\//.test(x.url)).slice(0,3).map(x=>
-  ({title:String(x.title||""),url:x.url,source:"PTT 股票板（標題）",publishedAt:x.publishedAt})): [];
+ const feeds=social?.sources||{};
+ const domains={PTT:/^https:\/\/www\.ptt\.cc\//,Threads:/^https:\/\/(?:www\.)?threads\.(?:net|com)\//,
+  Instagram:/^https:\/\/(?:www\.)?instagram\.com\//};
+ const posts=(Array.isArray(social?.items)?social.items:[]).filter(x=>{
+  const a=ageMinutes(x?.publishedAt,now);
+  return x&&typeof x.title==="string"&&x.title.length>=4&&typeof x.url==="string"&&
+    domains[x.platform]?.test(x.url)&&a!==null&&a>=0&&a<=48*60;});
+ // Real publicly traceable posts count from the first post. No minimum sample threshold.
+ const sample=posts.length,bull=posts.filter(x=>x.stance==="偏多").length,bear=posts.filter(x=>x.stance==="偏空").length;
+ const signal=sample===0?"尚無可核對的社群討論":
+  bull>bear?"已有樣本｜偏多內容較多":bear>bull?"已有樣本｜偏空內容較多":
+  bull+bear===0?"已有樣本｜尚無明確多空方向":"已有樣本｜多空內容接近";
+ const socialStatus=sample&&fresh?signal:sample?"已有歷史樣本｜來源未在8小時內更新":signal;
+ const examples=posts.slice(0,3).map(x=>({title:x.title,url:x.url,
+  source:x.platform+"（公開貼文標題）",publishedAt:x.publishedAt}));
  const name=String(row?.name||""),code=String(row?.code||"");
- const mentions=valid&&Array.isArray(social.items)?social.items.filter(x=>x.platform==="PTT"&&
-  (code.length===4&&String(x.title||"").includes(code)||name.length>=2&&String(x.title||"").includes(name))).length:0;
- return {status,score,breadth,ret20,method:"大盤風險情緒和社群討論分開觀察；社群不修改 Risk Score、不代表市場共識。",
-  socialStatus:valid?stats.status:fresh?(feeds.PTT?.status==="error"?"PTT 來源失聯":"公開討論樣本不足"):"社群資料缺失或過期",
-  socialSample:valid?stats.sample:null,socialBull:valid?stats.bull:null,socialBear:valid?stats.bear:null,
-  socialMentions:valid?mentions:null,newsStatus:fresh?String(social?.news?.status||"未取得"):"新聞情緒資料未確認",
+ const mentions=posts.filter(x=>(code.length===4&&x.title.includes(code))||
+  (name.length>=2&&x.title.includes(name))).length;
+ return {status,score,breadth,ret20,method:"只要有1篇可核對公開貼文就視為已有樣本；資料量少僅代表少量觀察，不可推論市場共識。社群不修改 Risk Score 或 TITAN 風控。",
+  socialStatus,socialSample:sample?sample:null,socialBull:sample?bull:null,socialBear:sample?bear:null,
+  socialMentions:sample?mentions:null,newsStatus:fresh?String(social?.news?.status||"未取得"):"新聞情緒資料未確認",
   sources:examples,sourceStatus:{PTT:feeds.PTT?.status||"not_available",Threads:feeds.Threads?.status||"not_authorized",
    Instagram:feeds.Instagram?.status||"not_authorized"},socialAgeMinutes:age};
 }
