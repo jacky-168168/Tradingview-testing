@@ -35,6 +35,24 @@ jobs:
           node --test tw-stock-dashboard/tests/test_six_agent_research.cjs
           node --check tw-stock-dashboard/docs/agent-research-core.js
           node --check tw-stock-dashboard/docs/agent-research-ui.js
+      - name: Probe Bluesky public official API (PR diagnostics, non-blocking)
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          from datetime import datetime,timezone
+          p=Path("tw-stock-dashboard/scripts/collect_social_sentiment.py")
+          s=importlib.util.spec_from_file_location("luna_probe",p)
+          mod=importlib.util.module_from_spec(s);s.loader.exec_module(mod)
+          try:
+              rows=mod.bluesky(datetime.now(timezone.utc))
+              print("BLUESKY_PUBLIC_PROBE",len(rows),"original public posts across",len(mod.BLUESKY_QUERIES),"queries")
+          except Exception as err:
+              print("BLUESKY_PUBLIC_PROBE_ERROR",type(err).__name__,str(err)[:160])
+              raise
+          PY
       - name: Probe public PTT Atom URL without credentials (PR only; diagnostic)
         if: github.event_name == 'pull_request'
         continue-on-error: true
@@ -74,7 +92,7 @@ jobs:
           p=Path('tw-stock-dashboard/docs/data/social_sentiment/latest.json')
           d=json.loads(p.read_text())
           assert d['schema']==1 and d['generatedAt'] and len(d['items'])<=80
-          assert all(x['platform'] in {'PTT','Threads','Instagram'} and x['url'].startswith('https://') for x in d['items'])
+          assert all(x['platform'] in {'PTT','Threads','Instagram','Bluesky'} and x['url'].startswith('https://') for x in d['items'])
           assert all(x['platform']=='新聞' for x in d['newsItems'])
           assert d['social']['sample']>=len(d['items'])
           assert isinstance(d.get("stockHeat"),dict)
