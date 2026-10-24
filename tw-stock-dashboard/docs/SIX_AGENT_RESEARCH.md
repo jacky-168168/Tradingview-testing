@@ -97,3 +97,12 @@
 - **TradingView 投資想法**：官方明確禁止自動化蒐集，禁止把公開投資想法當資料 API 抓取；來源：https://tw.tradingview.com/support/solutions/43000674726/ 。
 - **PTT**：既有四組來源仍獨立執行，當連線失敗時保留 48h 內曾核實的歷史貼文並標示錯誤；Bluesky 的成功不代表 PTT 正常。
 - 限制：目前所有成功新資料仍需觀察實際公開貼文數是否足以代表台股散戶，無資料不代表中立。**新功能由單元測試與 GitHub Runner 真實連線診斷分別驗證**；沒有任何社群來源能修改正式 G 排名或 TITAN 否決。
+
+
+## LUNA 社群投資意圖與來源韌性 v0.7（2026-10-25）
+- 將 Bluesky 查詢擴增為 9 組台股相關主題（台股、台積電、台指期、加權指數、台股 ETF、當沖、正二、CPO 股票、台灣股票），另從已存檔正式 G Top20 讀取最多 3 個公司名稱作為研究查詢。每組最多 25 篇，不累計重複原文；官方 AppView API 限流會停止額外查詢，任何來源不能因此解除 TITAN 風控。
+- `investmentEligible` 是以保守字詞規則判斷是否具有投資語境，不宣稱 Gemini 已逐篇進行語意分類。社群貼文保留最多 80 則原文摘要及日期以供核對，但只有 `investmentEligible=true` 且 `contentType=投資討論` 的貼文計入多空樣本與 G 個股熱度。
+- 媒體轉載、台積電員工獎金、運動會、與股價無關的公司資訊仍可稽核，但統計上分成 `repostedNews` 或 `unrelated`，不得灌入看多、看空。公告及活動含實質買賣用語時仍需人工複核；不將這種簡單規則當完整語意理解。
+- `social.rawSample` 為 48 小時內公開貼文的可查證件數；`social.sample` 為真正符合投資語境的件數；`platformCounts`、`investmentDiscussion`、`repostedNews`、`unrelated` 分開列示。無投稿不代表中立，沒有拿到授權的平台持續顯示未授權。
+- Bluesky API 若只有部分查詢成功，會顯示 `partial` 和 `queryHealth`（嘗試、成功、失敗、是否限流），仍保留已核實貼文；若全部失敗，仍標示 `error`。對已確認的新貼文可使用 `partial`，但不能把其他來源失聯時的快取當成最新。
+- 舊版歷史報告繼續相容，九次 Gemini 獨立 API 推論、TITAN 硬性否決、G 正式排名、既有金融資料來源與風險計分保持不變。
