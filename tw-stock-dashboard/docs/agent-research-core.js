@@ -1,0 +1,123 @@
+/* 六代理研究引擎 v0.1｜純資料規則，沒有下單、模型呼叫或策略修改。
+ * 來源：既有 G Top20、正式日資料、重大新聞；任何資料缺漏都不會被補成看似真實的事實。
+ * Node tests: module.exports; Pages: window.SixAgentResearch.
+ */
+(function(root,factory){"use strict";const api=factory();if(typeof module!=="undefined"&&module.exports)module.exports=api;else root.SixAgentResearch=api;})(typeof globalThis==="object"?globalThis:this,function(){"use strict";
+const HOLIDAYS_2026=new Set("01-01 02-12 02-13 02-16 02-17 02-18 02-19 02-20 02-27 04-03 04-06 05-01 06-19 09-25 09-28 10-09 10-26 12-25".split(" "));
+const LIMIT={gMinutes:65,newsHours:48,newsDatasetHours:36,minTotal:1000,minValid:1000,minCoverage:.65,minExchange:.60,riskScore:60,minTurnoverB:.5,maxAtrPct:12};
+function numeric(x){return typeof x==="number"&&Number.isFinite(x)?x:null;}
+function parseDate(x){if(typeof x!=="string"||!/(?:Z|[+-]\d\d:\d\d)$/.test(x))return null;const t=Date.parse(x);return Number.isFinite(t)?t:null;}
+function ageMinutes(s,now){const t=parseDate(s);return t===null?null:(now.getTime()-t)/60000;}
+function taipei(now){const p=Object.fromEntries(new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",weekday:"short",hourCycle:"h23"}).formatToParts(now).filter(x=>x.type!=="literal").map(x=>[x.type,x.value]));return {date:p.year+"-"+p.month+"-"+p.day,year:Number(p.year),md:p.month+"-"+p.day,weekday:p.weekday,minute:Number(p.hour)*60+Number(p.minute)};}
+function session(now){const p=taipei(now);return p.year===2026&&!["Sat","Sun"].includes(p.weekday)&&!HOLIDAYS_2026.has(p.md)&&p.minute>=590&&p.minute<825;}
+function legalStocks(rows){return Array.isArray(rows)&&rows.length>=1&&rows.length<=20&&rows.every(x=>x&&/^\d{4}$/.test(String(x.code||"")));}
+function qualityCheck(g,status,now){
+ const errors=[],p=taipei(now);g=g||{};
+ if(g.asOfDate!==p.date)errors.push("不是今日盤中榜單");
+ if(g.quality!=="intraday-provisional-allmarket")errors.push("盤中資料品質標籤不符");
+ if(!legalStocks(g.rows))errors.push("榜單數量／股票代碼不合法");
+ const age=ageMinutes(g.publishedAt,now);
+ if(age===null||age<0||age>LIMIT.gMinutes)errors.push("發布時間無效、來自未來或超過65分鐘");
+ const c=g.coverage;
+ if(!c||numeric(c.total)===null||numeric(c.valid)===null||c.total<LIMIT.minTotal||c.valid<LIMIT.minValid||c.valid/c.total<LIMIT.minCoverage)errors.push("全市場有效報價或涵蓋率不足");
+ for(const market of ["上市","上櫃"]){
+  const a=c?.exchange?.[market];
+  if(!a||numeric(a.total)===null||numeric(a.valid)===null||a.total<500||a.valid/a.total<LIMIT.minExchange)errors.push(market+"報價覆蓋率不足");
+ }
+ const sTime=parseDate(status?.checkedAt),gTime=parseDate(g.publishedAt);
+ if(status?.asOfDate===p.date&&status?.status==="unavailable"&&sTime!==null&&(gTime===null||sTime>gTime))errors.push("較新盤中檢查回報 unavailable");
+ return {ok:errors.length===0,errors,ageMinutes:age,coverage:c||null};
+}
+function textTags(x){return String(x||"").split(/[、,，／/|;；\s]+/).map(t=>t.trim()).filter(t=>t.length>=2&&t.length<=18);}
+function eventLinks(row,news,now){
+ const matched=[],tags=textTags(row.theme).concat(textTags(row.subIndustry));const hay=[String(row.name||""),...tags];
+ const datasetAge=ageMinutes(news?.generatedAt,now);
+ const datasetFresh=datasetAge!==null&&datasetAge>=0&&datasetAge<=LIMIT.newsDatasetHours*60;
+ if(!datasetFresh)return {status:"資料不足",reason:"新聞資料集未在36小時內同步或時間不明",sources:[],verifiedCount:0,datasetAgeMinutes:datasetAge};
+ for(const x of (Array.isArray(news.items)?news.items:[])){
+  if(x?.type!=="news")continue;
+  const a=ageMinutes(x.publishedAt,now);
+  if(a===null||a<0||a>LIMIT.newsHours*60)continue;
+  const xtags=(Array.isArray(x.themes)?x.themes:[]).map(String);
+  const common=xtags.some(t=>t.length>=2&&hay.some(h=>h.includes(t)||t.includes(h)&&h.length>=3));
+  const nameMatch=String(row.name||"").length>=2&&String(x.title||"").includes(String(row.name));
+  if(!common&&!nameMatch)continue;
+  matched.push({title:String(x.title||""),source:String(x.source||""),url:typeof x.url==="string"&&/^https:\/\//.test(x.url)?x.url:null,publishedAt:x.publishedAt,confirmed:x.confirmed===true});
+  if(matched.length===3)break;
+ }
+ const confirmed=matched.filter(x=>x.confirmed).length;
+ return {status:confirmed?"有已核實消息":matched.length?"有相關媒體報導（未證實）":"未找到直接相關新消息",
+  reason:matched.length?"相符關鍵字不代表消息造成漲跌；消息與個股關聯仍需人工查核":"未找到近期直接關聯資訊，不推定沒有事件",
+  sources:matched,verifiedCount:confirmed,datasetAgeMinutes:datasetAge};
+}
+function atlas(row,rank){const rs=numeric(row.rs20),rvol=numeric(row.rvol),turnover=numeric(row.turnoverB);
+ const signs=[];if(rs!==null&&rs>0)signs.push("RS20 相對市場偏強");
+ if(rvol!==null&&rvol>=1.5)signs.push("量比 ≥1.5");
+ if(turnover!==null&&turnover>=LIMIT.minTurnoverB)signs.push("成交額達研究門檻");
+ return {status:signs.length>=2?"候選":"證據不足",facts:signs,rank,rs20:rs,rvol,turnoverB:turnover,
+  note:"沿用原 G 排名，六代理不重新排序正式 Top20。"};
+}
+function vega(row){const slope=numeric(row.ma20Slope),rs=numeric(row.rs20),atr=numeric(row.atrPct),close=numeric(row.close);
+ const positive=slope!==null&&slope>0&&rs!==null&&rs>0,highVol=atr!==null&&atr>LIMIT.maxAtrPct;
+ return {status:positive?(highVol?"技術偏多但波動過高":"技術條件偏多"):"技術待確認",
+  slope,rs20:rs,atrPct:atr,close,signal:typeof row.signal==="string"?row.signal:null,
+  invalidation:"缺少可驗證支撐／壓力與失效價位，不生成虛構的進出場價格。",
+  facts:["MA20 斜率："+(slope===null?"缺值":slope.toFixed(2)+"%"),"RS20："+(rs===null?"缺值":rs.toFixed(2)),
+  "ATR%："+(atr===null?"缺值":atr.toFixed(2)+"%")]};
+}
+function luna(risk){const score=numeric(risk?.score),breadth=numeric(risk?.breadth),ret20=numeric(risk?.ret20);
+ const status=score===null?"資料不足":score<26?"極度偏空":score<60?"偏空觀察":score<80?"中性偏強":"偏強";
+ return {status,score,breadth,ret20,method:"大盤 Risk Score／市場廣度的代理情緒指標，並非 X 社群情緒；沒有社群來源時不得捏造討論量。"};
+}
+function titan(row,context){const veto=[],info=[];
+ const risk=context.risk;
+ if(!risk||numeric(risk.score)===null)veto.push("缺少有效大盤風險分數");
+ else if(risk.score<LIMIT.riskScore)veto.push("大盤風險分數低於60");
+ if(!context.marketReady)veto.push("盤中資料品質不符或不是可確認的即時盤中快照");
+ if(!context.sameRiskDate)veto.push("市場風險與候選資料日期未對齊");
+ if(numeric(row.atrPct)===null)veto.push("缺少 ATR 波動率資料");
+ else if(row.atrPct>LIMIT.maxAtrPct)veto.push("ATR% 超過研究上限12%");
+ if(numeric(row.turnoverB)===null)veto.push("缺少成交額");
+ else if(row.turnoverB<LIMIT.minTurnoverB)veto.push("成交額不足");
+ info.push("缺少帳戶持倉與槓桿資料，不能推估可交易部位或實際最大虧損");
+ info.push("失效價位未經確認，不能計算真實 R 值");
+ return {status:veto.length?"否決":"通過資料前置閘門",veto,notes:info,hardVeto:veto.length>0,
+  warning:"通過研究前置閘門不代表可以下單，須另經人工風險審核。"};
+}
+function nova(parts){const reasons=[];
+ if(parts.titan.hardVeto)reasons.push("TITAN 硬性否決："+parts.titan.veto.join("；"));
+ if(parts.atlas.status!=="候選")reasons.push("ATLAS 候選證據不足");
+ if(parts.vega.status!=="技術條件偏多")reasons.push("VEGA 尚有技術或波動限制");
+ if(parts.orion.verifiedCount===0)reasons.push("ORION 未取得可驗證的個股第一手消息");
+ if(parts.luna.status==="資料不足")reasons.push("LUNA 市場情緒代理資料不足");
+ const state=parts.titan.hardVeto?"拒絕／僅回顧":reasons.length?"等待確認":"研究候選（待人工審核）";
+ return {status:state,reasons,summary:reasons.length?reasons.slice(0,3).join("；"):"研究閘門通過，仍須確認失效點、曝險與資料時效",noTrade:true};
+}
+function analyze(input,nowInput){
+ const now=nowInput instanceof Date?nowInput:new Date(),daily=input?.daily||{},intraday=input?.intraday||{},news=input?.news||{},status=input?.status||{};
+ const trading=session(now),p=taipei(now),q=qualityCheck(intraday,status,now);
+ const dailyDate=typeof daily.dataDate==="string"?daily.dataDate:null;
+ const useLive=trading&&q.ok;
+ const rows=useLive?intraday.rows:Array.isArray(daily?.models?.G)?daily.models.G:[];
+ const asOfDate=useLive?intraday.asOfDate:dailyDate;
+ const mode=useLive?"盤中暫估":trading?"盤中資料未通過，僅歷史回顧":"休市／非盤中時段，歷史研究快照";
+ const candidateRows=rows.filter(x=>x&&/^\d{4}$/.test(String(x.code||""))).slice(0,10);
+ const marketReady=useLive;
+ const risk=daily.risk||null;
+ const sameRiskDate=!!(risk&&risk.date===asOfDate);
+ const candidates=candidateRows.map((row,i)=>{
+  const parts={atlas:atlas(row,i+1),vega:vega(row),orion:eventLinks(row,news,now),luna:luna(risk)};
+  parts.titan=titan(row,{risk,marketReady,sameRiskDate});
+  parts.nova=nova(parts);
+  return {code:String(row.code),name:String(row.name||row.code),market:String(row.market||""),price:numeric(row.close),theme:String(row.theme||""),
+   sourceRank:i+1,asOfDate,agents:parts};
+ });
+ return {version:"six-agent-rule-v0.1",checkedAt:now.toISOString(),taipeiDate:p.date,asOfDate,mode,marketSession:trading,
+   liveVerified:useLive,source:{gPublishedAt:intraday.publishedAt||null,gQuality:q,officialDataDate:dailyDate,riskDate:risk?.date||null,
+   riskScore:numeric(risk?.score),newsGeneratedAt:news.generatedAt||null},
+   candidates,counts:{candidates:candidates.length,veto:candidates.filter(x=>x.agents.titan.hardVeto).length,
+   review:candidates.filter(x=>x.agents.nova.status==="研究候選（待人工審核）").length},
+   policy:"僅供研究；不下單、不重排原 G 榜單。無當日有效報價、風險日期不一致或缺少失效點時不可輸出交易許可。"};
+}
+return {analyze,session,taipei,qualityCheck,eventLinks,atlas,vega,luna,titan,nova,LIMIT};
+});
