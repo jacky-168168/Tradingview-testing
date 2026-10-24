@@ -88,7 +88,10 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
   (name.length>=2&&x.title.includes(name))).length;
  return {status,score,breadth,ret20,method:"只要有1篇可核對公開貼文就視為已有樣本；資料量少僅代表少量觀察，不可推論市場共識。社群不修改 Risk Score 或 TITAN 風控。",
   socialStatus,socialSample:sample?sample:null,socialBull:sample?bull:null,socialBear:sample?bear:null,
-  socialMentions:sample?mentions:null,newsStatus:fresh?String(social?.news?.status||"未取得"):"新聞情緒資料未確認",
+  socialMentions:sample?mentions:null,socialPlatforms:sample?{
+   PTT:posts.filter(x=>x.platform==="PTT").length,
+   Threads:posts.filter(x=>x.platform==="Threads").length,
+   Instagram:posts.filter(x=>x.platform==="Instagram").length}:null,newsStatus:fresh?String(social?.news?.status||"未取得"):"新聞情緒資料未確認",
   sources:examples,sourceStatus:{PTT:feeds.PTT?.status||"not_available",Threads:feeds.Threads?.status||"not_authorized",
    Instagram:feeds.Instagram?.status||"not_authorized"},socialAgeMinutes:age};
 }
