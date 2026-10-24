@@ -204,7 +204,7 @@ def bluesky(now, fetch=request):
         try:
             payload=json.loads(fetch(BLUESKY_API+"?"+params))
         except urllib.error.HTTPError as err:
-            if err.code not in (403,404,429):raise
+            if err.code not in (403,404):raise
             # Official alternate AppView host, not a bypass of authentication.
             payload=json.loads(fetch(BLUESKY_BACKUP_API+"?"+params))
         if not isinstance(payload,dict) or not isinstance(payload.get("posts"),list):
