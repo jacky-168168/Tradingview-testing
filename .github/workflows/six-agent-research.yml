@@ -1,0 +1,54 @@
+name: Six Agent Research Snapshot
+on:
+  workflow_dispatch:
+  schedule:
+    # 18:30 Taiwan on weekdays. Calendar guard plus data timestamps still apply.
+    - cron: '30 10 * * 1-5'
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/docs/agent-research*.js'
+      - 'tw-stock-dashboard/docs/agent-research.html'
+      - 'tw-stock-dashboard/tests/test_six_agent_research.cjs'
+      - 'tw-stock-dashboard/scripts/build_six_agent_report.cjs'
+      - '.github/workflows/six-agent-research.yml'
+permissions:
+  contents: read
+concurrency:
+  group: six-agent-research
+  cancel-in-progress: false
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify source-policy invariants and veto rules
+        run: node --test tw-stock-dashboard/tests/test_six_agent_research.cjs
+      - name: Build deterministic read-only evidence snapshot
+        run: node tw-stock-dashboard/scripts/build_six_agent_report.cjs six-agent-snapshot.json
+      - name: Validate research is never an executable trade
+        run: |
+          node - <<'JS'
+          const assert=require('node:assert/strict');
+          const doc=require('./six-agent-snapshot.json');
+          assert.equal(doc.provenance.noBrokerExecution,true);
+          assert.equal(doc.provenance.performanceClaim,null);
+          assert.equal(doc.counts.candidates,doc.candidates.length);
+          assert(doc.candidates.every(c=>c.agents.nova.noTrade&&
+            (!c.agents.titan.hardVeto||c.agents.nova.status==='拒絕／僅回顧')));
+          console.log('PASS deterministic research, zero broker integration, TITAN veto');
+          JS
+      - name: Archive non-public research evidence for future comparisons
+        uses: actions/upload-artifact@v4
+        with:
+          name: six-agent-research-snapshot
+          path: six-agent-snapshot.json
+          retention-days: 30
+          if-no-files-found: error
