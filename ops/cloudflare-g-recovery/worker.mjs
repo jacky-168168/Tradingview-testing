@@ -21,7 +21,7 @@ export function decide(now,latest,status,runs){
  const c=latest?.coverage, rows=latest?.rows;
  const valid=Array.isArray(rows)&&rows.length>=1&&rows.length<=20&&rows.every(r=>/^[0-9]{4}$/.test(String(r.code||"")));
  const coverage=!!(c&&c.total>=1000&&c.valid>=1000&&c.valid/c.total>=.65&&
-   ["上市","上櫃"].every(m=>c.exchange?.[m]?.total>0&&c.exchange[m].valid/c.exchange[m].total>=.6));
+   ["上市","上櫃"].every(m=>c.exchange?.[m]?.total>=500&&c.exchange[m].valid/c.exchange[m].total>=.6));
  const ok=(latest?.asOfDate===tw.date&&latest?.quality==="intraday-provisional-allmarket"&&valid&&coverage&&
    age!==null&&age>=0&&age<=55);
  const unavailable=(status?.status==="unavailable"&&status?.asOfDate===tw.date&&
