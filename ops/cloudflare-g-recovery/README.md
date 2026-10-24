@@ -5,7 +5,7 @@
 ## 安全部署（需使用者自己的 Cloudflare 帳戶）
 
 1. 登入 Cloudflare，先核對帳戶是否有 Workers Cron 權限及目前配額。
-2. 建立一個範圍限定為 **此儲存庫 GitHub Actions: write** 的 fine-grained GitHub PAT。儘量只授予 workflow dispatch 所需權限，不要給全帳戶 repo 寫入權。
+2. 建立一個範圍限定為 **此儲存庫 Actions: read/write、Contents: read** 的 fine-grained GitHub PAT。儘量只授予 workflow dispatch 所需權限，不要給全帳戶 repo 寫入權。
 3. 在終端安裝 Wrangler 或使用 npx，於本目錄執行 \`npx wrangler login\`。
 4. 執行 \`npx wrangler secret put GITHUB_DISPATCH_TOKEN\`，秘密只存 Cloudflare Worker Secret，絕不可提交 GitHub。
 5. 先用 \`node --test test_worker.mjs\` 驗證時間、假日、資料品質、冷卻、防止重複補跑。
