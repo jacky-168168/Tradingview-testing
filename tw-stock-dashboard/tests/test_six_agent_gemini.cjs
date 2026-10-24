@@ -1,6 +1,7 @@
 "use strict";
 const assert=require("node:assert/strict"),test=require("node:test");
 const {geminiModel,makeRequest,parseModelResponse,validateModel,DEFAULT_MODEL}=require("../scripts/gemini_transport.cjs");
+test("default Gemini model stays supported for new API projects",()=>assert.equal(DEFAULT_MODEL,"gemini-3.5-flash-lite"));
 const good={role:"LUNA",assessment:"社群已有一篇可查公開貼文，但不能推論整體投資人多空共識。",confidence:"低",evidenceRefs:["SOCIAL"],uncertainties:["單一標題不能代表留言或市場共識"],noTrade:true};
 test("authorized Gemini transport sends system/data in separate fields, never querystring key",()=>{
  const request=makeRequest({model:DEFAULT_MODEL,messages:[{role:"system",content:"不提供交易建議"},{role:"user",content:"公開市場資料"}],max_tokens:1000,temperature:.2});
