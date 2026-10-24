@@ -1,0 +1,84 @@
+name: Six Agent GitHub Models LLM Debate
+on:
+  workflow_dispatch:
+  schedule:
+    # 18:50 Taipei weekdays, after social snapshot and official market news.
+    - cron: '50 10 * * 1-5'
+  pull_request:
+    paths:
+      - '.github/workflows/six-agent-llm.yml'
+      - 'tw-stock-dashboard/scripts/run_six_agent_llm.cjs'
+      - 'tw-stock-dashboard/docs/agent-research*'
+      - 'tw-stock-dashboard/tests/test_six_agent_research.cjs'
+permissions:
+  contents: read
+concurrency:
+  group: six-agent-llm-debate
+  cancel-in-progress: false
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify six role/independent LLM calls, challenge round and data guards
+        run: |
+          node --test tw-stock-dashboard/tests/test_six_agent_research.cjs
+          node --check tw-stock-dashboard/scripts/run_six_agent_llm.cjs
+          node tw-stock-dashboard/scripts/run_six_agent_llm.cjs --self-test
+  inference:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    needs: offline
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: write
+      models: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Independent LLM role analysis and round-table challenge
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_MODELS_MODEL: openai/gpt-4.1-mini
+        run: |
+          node tw-stock-dashboard/scripts/run_six_agent_llm.cjs tw-stock-dashboard/docs/data/agent_llm/latest.json
+      - name: Validate no-trade output and nine independent API calls
+        run: |
+          node - <<'JS'
+          const fs=require('node:fs'),assert=require('node:assert/strict');
+          const {validateSnapshot}=require('./tw-stock-dashboard/scripts/run_six_agent_llm.cjs');
+          const data=JSON.parse(fs.readFileSync('tw-stock-dashboard/docs/data/agent_llm/latest.json','utf8'));
+          validateSnapshot(data);
+          assert.equal(data.provider,'GitHub Models');
+          assert.equal(data.noTrade,true);
+          assert.equal(data.rounds.final.role,'NOVA');
+          console.log('REAL_SIX_AGENT_MODELS_VERIFIED',data.inferenceCalls,data.generatedAt);
+          JS
+      - name: Archive independent role reports and red-team deliberation
+        uses: actions/upload-artifact@v4
+        with:
+          name: six-agent-llm-evidence
+          path: tw-stock-dashboard/docs/data/agent_llm/latest.json
+          retention-days: 30
+          if-no-files-found: error
+      - name: Publish read-only AI research snapshot on Pages source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/agent_llm/latest.json
+          if git diff --cached --quiet; then echo 'No new deliberation'; exit 0; fi
+          git commit -m 'data: archive six-agent LLM research discussion [skip ci]'
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 4
+          done
+          echo 'LLM report publish failed; original research remains unchanged' >&2
+          exit 1
