@@ -68,10 +68,11 @@ function renderSocialHeat(social){
  const host=$("lunaHeat");if(!host)return;
  host.replaceChildren();
  const stamp=social?.generatedAt?Date.parse(social.generatedAt):NaN;
- const fresh=Number.isFinite(stamp)&&Date.now()>=stamp&&Date.now()-stamp<=8*3600000;
+ const healthy=["PTT","Threads","Instagram"].some(p=>social?.sources?.[p]?.status==="ok");
+ const fresh=healthy&&Number.isFinite(stamp)&&Date.now()>=stamp&&Date.now()-stamp<=8*3600000;
  const entries=Array.isArray(social?.stockHeat?.stocks)?social.stockHeat.stocks:[];
  const p=append(host,"p",(fresh?"最新可核對來源":"歷史快照／來源可能過期")+
-  "｜PTT "+(social?.sources?.PTT?.status||"缺值")+"｜公開討論 "+
+  "｜PTT "+(social?.sources?.PTT?.status||"缺值")+"｜資料日 "+(social?.stockHeat?.sourceDate||"缺值")+"｜公開討論 "+
   (social?.social?.originalDiscussion??"缺值")+" 篇、新聞轉載 "+
   (social?.social?.repostedNews??"缺值")+" 篇。僅追蹤 G 前20名；無樣本不代表沒有討論。","description");
  p.setAttribute("role","status");
