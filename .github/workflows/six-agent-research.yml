@@ -1,6 +1,12 @@
 name: Six Agent Research Snapshot
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/docs/agent-research*'
+      - 'tw-stock-dashboard/tests/test_six_agent_research.cjs'
+      - 'tw-stock-dashboard/scripts/build_six_agent_report.cjs'
+      - '.github/workflows/six-agent-research.yml'
   schedule:
     # 18:30 Taiwan on weekdays. Calendar guard plus data timestamps still apply.
     - cron: '30 10 * * 1-5'
@@ -24,7 +30,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
