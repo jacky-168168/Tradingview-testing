@@ -13,6 +13,23 @@ permissions:
   contents: read
   pull-requests: read
 jobs:
+  setup-diagnostic:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      AUTOFIX_ENABLED: ${{ vars.ENABLE_AI_AUTOFIX == 'true' }}
+      REVIEW_ENABLED: ${{ vars.ENABLE_AI_REVIEW == 'true' }}
+      API_KEY_PRESENT: ${{ secrets.OPENAI_API_KEY != '' }}
+      TRUSTED_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    steps:
+      - name: Only report boolean readiness; never print any token
+        shell: bash
+        run: |
+          echo "AUTOFIX_ENABLED=$AUTOFIX_ENABLED"
+          echo "REVIEW_ENABLED=$REVIEW_ENABLED"
+          echo "API_KEY_PRESENT=$API_KEY_PRESENT"
+          echo "TRUSTED_REPOSITORY=$TRUSTED_REPOSITORY"
   deterministic-acceptance:
     runs-on: ubuntu-latest
     timeout-minutes: 12
