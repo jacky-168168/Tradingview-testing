@@ -1,43 +1,302 @@
 {
   "schema": 1,
-  "generatedAt": null,
+  "generatedAt": "2026-10-24T19:30:38.889555Z",
   "sources": {
     "PTT": {
-      "status": "not_collected",
+      "status": "ok",
+      "freshCount": 6,
       "url": "https://www.ptt.cc/atom/Stock.xml"
     },
     "Threads": {
-      "status": "not_authorized"
+      "status": "not_authorized",
+      "freshCount": 0
     },
     "Instagram": {
-      "status": "not_authorized"
+      "status": "not_authorized",
+      "freshCount": 0
     },
     "新聞": {
-      "status": "not_collected"
+      "status": "ok",
+      "freshCount": 32
     }
   },
   "social": {
-    "sample": 0,
+    "sample": 6,
     "bull": 0,
-    "bear": 0,
-    "neutral": 0,
-    "directional": 0,
-    "status": "尚未取得真實公開資料",
-    "method": "保守標題關鍵詞；不足樣本不宣稱情緒"
+    "bear": 1,
+    "neutral": 5,
+    "directional": 1,
+    "status": "樣本不足",
+    "method": "保守關鍵詞比對文章標題／公開貼文；不是全文情緒模型，也不代表市場共識"
   },
   "news": {
-    "sample": 0,
-    "bull": 0,
-    "bear": 0,
-    "neutral": 0,
-    "directional": 0,
-    "status": "尚未整理新聞情緒",
-    "method": "新聞標題與社群分開計算"
+    "sample": 32,
+    "bull": 3,
+    "bear": 4,
+    "neutral": 25,
+    "directional": 7,
+    "status": "多空討論接近",
+    "method": "保守關鍵詞比對文章標題／公開貼文；不是全文情緒模型，也不代表市場共識"
   },
-  "items": [],
-  "newsItems": [],
+  "items": [
+    {
+      "platform": "PTT",
+      "title": "[新聞] 農夫存股術1／本金不到500萬敢辭職！他存",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1792859163.A.9F1.html",
+      "publishedAt": "2026-10-24T16:26:03Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] AI疑慮與戰火風險升溫！資金轉抱美債 10",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1792855729.A.BC9.html",
+      "publishedAt": "2026-10-24T15:28:49Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] SpaceX宏大AI目標挑戰現實極限 馬斯克看",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1792842615.A.402.html",
+      "publishedAt": "2026-10-24T11:50:15Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 聯發科買在5155元慘套牢□苦主求救！眾人",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1792838123.A.F83.html",
+      "publishedAt": "2026-10-24T10:35:23Z",
+      "stance": "偏空"
+    },
+    {
+      "platform": "PTT",
+      "title": "[請益] 台股真的不會再回到三萬多點嗎？",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1792830820.A.34F.html",
+      "publishedAt": "2026-10-24T08:33:40Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 黃仁勳：記憶體需求不減",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1792827420.A.E4E.html",
+      "publishedAt": "2026-10-24T07:37:00Z",
+      "stance": "中立／難判"
+    }
+  ],
+  "newsItems": [
+    {
+      "platform": "新聞",
+      "title": "傳拿下美系大廠CPO訂單！「觸控模組廠」產品毛利率估逾40% 法人估2028年EPS達10元",
+      "url": "https://news.google.com/rss/articles/CBMitgNBVV95cUxPVjRYZmNVVng4R0l2TDIxLXBkUHN5bURzS2JzMlRSQmtTV09CVFRDQm9Qbzg0TWFBakpCR0FZM1pVUWkzSllUVHcyUFEtaTVHamNUellxTkpGb012YkRtSTdxQzZFeXlJSGtpY3FOV2g4WUktdFBXSXM2YTZXZlRhVl9mTkszNlJURFJrVVIzSE1fcXFaY0V3UHREbjFXTGp1OXZSNTZrWU1EaXFST2VkdnR1R2NCcWJHT1ZtQ2lLclozUlFuXzJJNUZmYUczSy1kaEl5bnFyTmI0bG5oZGVpdmJuZmk2U",
+      "publishedAt": "2026-10-24T15:00:00Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "SK海力士放棄Solidigm美國IPO計劃，分析師：利好美光和閃迪，緩解NAND閃存產能過剩擔憂",
+      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFBxLWc3a0c4c0h4NXRpbmxMRnBsaml1RVVDMGFaekV6WWhtenlvS3FxNjliX3ZGanZuSld3TndqSl9lS0QybmVuTmJMSTNhdXNrZ1k0dTRVRlR3dWp1LTUtdGI2X2VYc29CdWk3NUxDSHV0TWNL?oc=5",
+      "publishedAt": "2026-10-24T12:10:14Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "熱門股》被動元件大缺貨 日電貿3週翻倍漲",
+      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFBhVWZRd3pobUowN3lTMTdzVVloWkZ5ZEhtZGdVVWJXejhUaDcxUS1mc29pVC14SmFYdkl1cV9YTldqbExvX2s4dUZxV0x4UEVxbXJYR1JWYVQ?oc=5",
+      "publishedAt": "2026-10-24T11:56:31Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "大宗商品綜述：油價大漲 銅價收窄周跌幅 金價下跌",
+      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFBVd3VPZngzenFxT1NQSTZGQVplMml6SlRtRDFKMmVJWEtzTEFsZm9fQmNVdWxVa3VfTjJWQUxVeDhVZWc1eUdUdGdVVTJNWG9QV2NqNmRBcDIxbnNHekVvaGgtR1lORWpmM2JraWhsUFU0dFgy?oc=5",
+      "publishedAt": "2026-10-24T11:49:37Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "歐洲股市本周跌超1%：法國財政危機沖擊債市，AI融資擔憂與油價飆升加劇拋售",
+      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1aa0s3dXgwQ0RXcXpMdV83RVA2MlJVNlRqQWlJXzBoaXFvVmExVWlJYk9OQm0xWXJVazIwUS1OSDFPYnAyMEM0VS0zbDI5eG9TVmkzWTZzU1dnSnlsTmtMeDc4ZDZabjNlT1h1dXpXczRjdVRf?oc=5",
+      "publishedAt": "2026-10-24T11:49:37Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "〈貴金屬盤後〉金價摜破4000美元、本周重挫4% 油價漲勢鞏固Fed升息預期",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9Nc1hHUFlVa3IxVFBjYUxETVlSdjhOdnhQNVVfME5Sc2JfMGQwTF9EZUtIam5PR1dsOHBWdVozQzRBbHhKenhjRzhWbFNNMUk?oc=5",
+      "publishedAt": "2026-10-24T11:17:27Z",
+      "stance": "偏空"
+    },
+    {
+      "platform": "新聞",
+      "title": "國內油價連6凍！下周汽、柴油價格不調整中油吸收突破300億元| 聯合新聞網",
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE9pTmpzZGRnN3lnQ3pSclMxcFd5MHZwYWk2SzBuZTJ6bzhvSHB0NW1BVzROVC1EMDdQY2pRUmZpV0lnMnhNbHhncGpMRFUwVG9NRWNuUnR3?oc=5",
+      "publishedAt": "2026-10-24T11:03:46Z",
+      "stance": "偏多"
+    },
+    {
+      "platform": "新聞",
+      "title": "Fed週三會議有哪些看點？專家：短期升息壓力仍在- 股市爆料同學會",
+      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE54N1FoTHFOcHk1R2xBNERseTZoZUlaLThVMFRzd2VrNDFTaDExemhuUllBeGMyNFlEd3FqeVRwWk0zRlduTFBESlZkN29uMS1yQklEM2tZTDc?oc=5",
+      "publishedAt": "2026-10-24T10:04:04Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "Fed週三會議有哪些看點？專家：短期升息壓力仍在",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1BZVBQcVIwcGF2bkh4Y3BUZWtsWHJZcGZWMHdwMmdiTkJJVTV1Qkp6TVhJcm9Zd283eGd2eHZZa1NMVG8wdUJFLTlERHBNelE?oc=5",
+      "publishedAt": "2026-10-24T10:00:04Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "中油擴大吸收國際油價上漲 下周汽、柴油價格繼續凍漲",
+      "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9uaWFUMFg2Q0hVdFBKTm1QaWttX3F6ekhfUHUyTGk5V0o3Q2NGVXZxMjZHU2Z1UHZPLURsTkRwM0p0R25PQmFKdTBPN3h3WU95aVE?oc=5",
+      "publishedAt": "2026-10-24T09:23:39Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "CPU雙雄今年漲贏AI晶片霸主！AI Agent需求爆發 2027出貨再增逾4成",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxORXlSN1JQQmtTMzV6eTcybTVGZm5RNHJTOEtTZnZCNEJjUzhJdTAxTFlRWXFqV0ZER2lrMmcyU05oSTZ1aGkyN3hpU1JpYWFkVVRRZEhRemNkd3BQZ3hySl9lNXpEUFRuUFBmN0t5clNUMlNBdHpHRGxweFluNmRoaFVn?oc=5",
+      "publishedAt": "2026-10-24T07:13:00Z",
+      "stance": "偏空"
+    },
+    {
+      "platform": "新聞",
+      "title": "台積電Q3獲利新高股價卻跌 市場聚焦AI需求隱憂",
+      "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9PenpYdWIyaUJkU0RwaHc4YlRETk1hWG1DVU5ZT3VFOThQMkxyVWxJMzYwY2tvbmpZV2xPWmRQc3dLb1laMU52ODM2WkNDYUlDU2c?oc=5",
+      "publishedAt": "2026-10-24T06:38:25Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "台積電繳超強財報股價卻下跌？外媒給出答案",
+      "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9GYXBhLVdodmk2M2RxYnAwVURzNk1NaGRfakd5MENlaVFqZWZyeGEwbThzX1VkV3JldUxVRU5SWmhHTUMyVW1XOFM2eTZtdExTOVM1YmFfUExNRG9Jd1ZB0gFkQVVfeXFMUDBaeWdoZFVyNjBmeEZhaUFUdUs2Um5hVVhCSHpNMVhwR1N5WVBJbVh3YmRvNWtYVS1TWjdEekNUakh4ZGxFSW5OUkszeEpwZFd5NUd4Z0hQMjJ3Wk5qVGktRnEwYg?oc=5",
+      "publishedAt": "2026-10-24T06:34:00Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "Fed升息機率增 合庫︰央行「腳已在油門上」",
+      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFBNdFBTSWNMZ2dTNml0eGprQzE5RlJKbzVxZ0RyUEp4OVB0Y0VxNlhqd1ptWFB1QXhvazFIa1JPLVVWc3o4N0RBd3Q3eUZOQlktX2FGZEkyZzk?oc=5",
+      "publishedAt": "2026-10-24T06:25:52Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "iPhone Duo熱賣！IDC估蘋果明年登摺疊機王 新品與財報接力考驗股價",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBFc1NWSkRUYWM2eU1SM3pSd2NoRUdzbGlaSWdzZFZwOWVkeUNodHJCc1drbjA2d1RacUhveGpxUHpqR2MxaDZzdXJYbUszdXc?oc=5",
+      "publishedAt": "2026-10-24T05:30:04Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "低軌衛星、AI伺服器需求大爆發 工研院AI溫測技術突破高階載板製程難題",
+      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE02VWlNakk5UHdjalRVbk9KM3JjbnZJamo5SEdiclR3WHpwejBXVk5WcVotdzN1UHRaTlZoOW16SlNzdWl1Y2Jvb2stLWlRcGZjdG9QM2VGajNOZw?oc=5",
+      "publishedAt": "2026-10-24T05:20:58Z",
+      "stance": "偏多"
+    },
+    {
+      "platform": "新聞",
+      "title": "蘋果要超車輝達了？「市值只差420億美元」 iPhone Duo、11/2財報成關鍵",
+      "url": "https://news.google.com/rss/articles/CBMipwJBVV95cUxPcmw3UjBCTnprZnJYZDNmQlNLeGtzeWlya1ZXOUVOSFUzWWRqbGZjcXBhNThpN21rYUV0S0g1U09IRXBBVVRINm1GWC1ZQnltSnFhbWl3QU9oMmxaNlZDUlNGVkZEc1cwNXdyLXZzZ0MzaEF6eHZ3eVJRcGVWTlgybksxWHZfNjVoNDdFY1RSSzh3WHJBazRxQkRWVHZIUnJMdHBlaEY5Mkk0cExnVXdtOFlIRUstVTRwcVVzY2MzUHp6NmpGUG1QY1F0QVB1V3ZBdXhTaVhJYVBSY0c2dUFWSVl5ZlRSe",
+      "publishedAt": "2026-10-24T04:50:09Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "晶片股本月跌逾15% 科技三巨人財報檢驗AI投資回報Fed、油價再添考驗| 全球財經| 全球",
+      "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE9Sb0tZWDlEV3lvUThpMm5CZmZWMjdEOUhBUmN1OHBTcjdKX3RfR29jc0s3dU00aFVUMDZyUGVIV05wYklyR0NRZnNYWVpVUFJ5?oc=5",
+      "publishedAt": "2026-10-24T03:55:10Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "TPCA Show 2026 台灣電路板產業國際展覽會是什麼？PCB 展亮點與受惠概念股一次看！",
+      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPTEN0ZWRjMXdYZ1JkX3JMaF82WDVOVy1TdzY3dHJiMzRoMG9MY0tITVBwdFFGU21IZTF6WWd0ZTgxbElKMzUzbHNxRENDUGliX1YtcU9MdnJTZTRiZUpmb1pQaG1mRk9RM0dHYmVvZlUtQnBoRmdRSHFyb3Z6Q1R3dGxaWUhjU2pPQmtqek9RbzNpUlhIQm1qUXpsUXo1NzU5Q2Foc2NSQmR2VmlKTjg4Vld2ZUdBMElxNTNMWDY4TEJwWktrUXZEbG5KNTlvbjR6aVhZWnFNNDJyNkQtaFVQS0RR?oc=5",
+      "publishedAt": "2026-10-24T03:15:09Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "科技巨頭財報週來臨 市場信號混雜投資人觀望",
+      "url": "https://news.google.com/rss/articles/CBMiywJBVV95cUxQSFNsTUxhMEhjaGF6RTF2UnNfMGFUVUYtMVFaRVl1SEY5Y0ZMd3dqdzFWVzFZR3JCVC1oZWd4c2dVd2E0U0l3UDRnajRVdURXcklZcm5ZRmtyUmQ2ZjdpM3JFeEgyaWdVQWg3aUNybWpMVmk2cUFpcmc4emdOWFRmeHF3SjItRkJieFVWV093emt2RkkxdkNPQnNkeGhCRV9qeldjSkJIdkE2VmdQUGJXd2JSNHFSNmpfNmtvaTg1cHcxcTNrU0tpWXRhQ1UzVl9CdVVSVVEyZERvSVFKMmZUbUhKakg2T",
+      "publishedAt": "2026-10-24T02:31:20Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "Google TPU訂單大爆發！金像電明年EPS狂喊70元 亞馬遜也入股、AI PCB產值暴增80％",
+      "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE9PTlV0QU1SUC1ZeUJtRGlrUGN3NW5INEsyc3VMSjRVNjRGUVpPRV9lckhncHdFVUYtemZtQzkxeE9WOXZ3SzMtcGdBaw?oc=5",
+      "publishedAt": "2026-10-24T02:02:00Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "非農就業爆冷 聯準會料推遲升息",
+      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE90b3R4UlU0REtpVHVpZ2V4Vm8zM2RiT0I5ekluMjZqM0VrOUFtYndlNEQxRkNYZi1aODNZYUllajFXMng3Ym9YeHlSM2pDRWhvSWtYaTRoWUQ?oc=5",
+      "publishedAt": "2026-10-24T02:00:05Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "伊朗戰爭推升通膨！主要央行今年全面升息 美國降息只剩1次",
+      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE1yZU1JMmdZY0NHdXY2THlPdVhPYVJOaDhhRXVIQTJNYWpybjFEaE5fdW1PS1ZfZzg5TzBCOER6eVpZcDlLWlpXb2UxVTNsczF0SkYxMEdudDM?oc=5",
+      "publishedAt": "2026-10-24T01:52:25Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "輝達 AI 工廠點將！矽品 CPO 產能拚增 30 倍，欣興、京元電迎擴產爆發期",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNbGFMZ3JuZmpfSDlObWFDclZ0OEJSN05kUTROeWZFeTR6U3RsY1ZVOHhEWjg5MnpZXzdST3JId19BNjNXQkJuakZJSkpkZm5oQkdZZTZJellQdEZSYzE3b0h3Ym5iMmJoNVVneFc1NHdyMlBiWEYzdEE4eDdiNkxLNTROQmFHWFc3Slc3bWMxSmdzalJ6ZWIxRG1iQ1VkMjZFY0tscUJTUUpIZw?oc=5",
+      "publishedAt": "2026-10-24T01:05:14Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "記憶體成本疊加導致全球手機出貨暴跌20% Qualcomm將於11月啟動全球「績效導向」裁員 | 科技新情報",
+      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1uRGphRDZKU1NUZ2hCSzlzd1d0V3EwRS1uQ3Y2Q0hwVzlncjlwc2Nib091MS00aXJVTjRTM3Y5WlJxZFJmQzViX2lBWjF5NlFMSmhnV29jaFFHQQ?oc=5",
+      "publishedAt": "2026-10-23T23:35:13Z",
+      "stance": "偏空"
+    },
+    {
+      "platform": "新聞",
+      "title": "油價飆至半年新高 美股3大指數下跌",
+      "url": "https://news.google.com/rss/articles/CBMiigJBVV95cUxQZkhSY3VQODB4RThqX2V3ek9rWk8tSU81WEVOUXVGektOTkYyMFJ2aDg2cTZCTWJnaS1xLXpYMkUxN2VFem9QTVJfQV8zSS1IMjdxTVUyalNVQWZPc1MtcUZtdW9nYXlrTzVYdEI2V05ZYjZhNHhJWUlBd1hLcXpjVFdzd3lSdWFSTW0yc2stRnI2dUJGNUx6R0JMcDJHbHhfdkw5TVBZeUtGbGwzSkJWcDF2d25JTWg5VFozWUlhdGV3VzQtVVhoQXpCTDBoZHJLa0RKbGtjbHBVLWpBejhJdEFHZzBSe",
+      "publishedAt": "2026-10-23T23:27:35Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "中東局勢升溫、油價飆漲，道瓊下跌652點終止連三漲",
+      "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5xakI0UllhVzV4ZGgwNkYwWTdzdjBPY25wZ0hSUE9tN3lOdXZCN1o3ZzZMamdYdVR2Z282WTNGSmw4aW9SSkFXc2NXRk5uSWtCSUpsUm12aDhabFZ4VTd3ZUhtLUJJWVRtcmdqeGE2cUdXeGd3YlVFLUZR?oc=5",
+      "publishedAt": "2026-10-23T21:35:00Z",
+      "stance": "偏多"
+    },
+    {
+      "platform": "新聞",
+      "title": "不光搶 GPU！AI 代理需求或使 2027 年伺服器 CPU 出貨飆升 40%，Arm 市佔率將直逼 3 成",
+      "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxNS1d5MmRkMmtSSDhnWGI5bjFUMnk1WXZGWWVvcTFyTjFkMlNidDNaMHJUcnFkTWFQQV9qVzJWaEE4SERDcjZna2FoV3hkM1Vyb0pmVHJLWGRub2Q2bzZIa2hSaDVTb19qTzlFMktub0xqUlZxcDNDN2RZZ09aYzRRcFFyai12eVdkY2RDbDZzMFlHc0JzZVlBVDR3ZjlNMFF6b3YyWU1CV19vSGFxU1RwNUMzSlkzSDZWT0FJTUxteFdoOEU1NkpkWEFWcWRKTV9uN0Y0bVAtZ2JleDVmVEJuYm5FdC1wZ",
+      "publishedAt": "2026-10-23T20:29:42Z",
+      "stance": "偏空"
+    },
+    {
+      "platform": "新聞",
+      "title": "AI資料中心排擠車用電子供應 Gentex記憶體、PCB成本上漲下修毛利率財測",
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE9TTjlkSkQ5OUJvZEZMX0gwbmdUcEpLVEFrMnZBeHNOVkN1cnB0RkpYNnRTNVZ3WDFPa3FkZ3JWRHJabFE2cm1LeGphbXNpUmZ1cWRrS3V3?oc=5",
+      "publishedAt": "2026-10-23T17:46:58Z",
+      "stance": "中立／難判"
+    },
+    {
+      "platform": "新聞",
+      "title": "高階MLCC訂單滿手！「被動元件廠」高階產能滿載、全年漲幅估達30% 法人看EPS上看6.5元",
+      "url": "https://news.google.com/rss/articles/CBMivgNBVV95cUxOVFJqNERnYkZuejVubVRqZjFKQ1dPYVl1d1lOcjNLVzNGRUlRczlTVjZiQ3lnaHN3OXc5VWRvUkFlM0JuQ243c1p5TzlGQ1Exd0dNOXJLOXlmd1ZfVjNibGZpQTNaV3NUdmd6OGRHcnZJNkV0eTQ2RDExME5Ud0dIVHAzU0JaeUp1LWVXUmRyOFpfUm5fdlpGWHdCV2N4SmFTVUJ1bTdSTGdFY0prbWltUWhxUmU3UEdwOWpTcnBORG1MQ0NoaDltSDdoQnFCM1dmVUd3RFdGZHhKX25WMDlEY1EtRFZKN",
+      "publishedAt": "2026-10-23T12:30:00Z",
+      "stance": "中立／難判"
+    }
+  ],
   "notes": [
-    "此為空白初始狀態，不是已完成的資料抓取。",
-    "等待 GitHub Actions 確實擷取來源並發布有效時間戳。"
+    "僅使用公開、實際取得且不超過48小時的資料；缺乏授權的平台顯示未授權。",
+    "標題關鍵詞易受反諷、轉載、選擇偏差與機器人影響；不能視為代表性民調。",
+    "新聞與社群分開計數；絕不修改 G 排名或 TITAN 風控。"
   ]
 }
