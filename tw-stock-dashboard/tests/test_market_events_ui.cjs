@@ -11,7 +11,15 @@ for(const id of ['events','news','eventCount','newsCount','alert','freshness','f
  assert(html.includes('id="'+id+'"'),'missing '+id);
 const archived=JSON.parse(fs.readFileSync(path.join(root,'data/market_events/latest.json'),'utf8'));
 assert.equal(archived.schema,1);
-assert(archived.items.some(x=>x.id==='event-tpca-show-2026'&&x.confirmed&&x.endDate==='2026-10-22'));
+assert(Array.isArray(archived.items),'rolling official-news dataset must contain an items array');
+// The official feed rotates events out as they expire. Use a fixed dated fixture
+// for the ended-event regression, not a permanently pinned historical event.
+const endedExhibition={id:'fixture-ended-exhibition',type:'event',category:'展覽',
+ title:'TPCA Show 2026｜已結束測試',date:'2026-10-20',endDate:'2026-10-22',
+ source:'測試官方展覽',url:'https://example.com/test-ended',confirmed:true,themes:['PCB']};
+const upcomingRateMeeting={id:'fixture-fomc',type:'event',category:'總經',
+ title:'FOMC 2026｜即將舉行測試',date:'2026-10-28',endDate:'2026-10-29',
+ source:'測試聯準會',url:'https://example.com/test-fomc',confirmed:true,themes:['升降息']};
 assert(!archived.items.some(x=>x.type==='news'&&x.confirmed),'unverified news cannot be confirmed');
 // Run at a FIXED future date: an ended exhibition must not fail the entire
 // scheduled news publishing workflow. Never assert that old events must render.
@@ -25,7 +33,8 @@ const fresh=Array.from({length:23},(_,i)=>({
  date:'2026-10-24',publishedAt:new Date(Date.parse(FIXED_NOW)-(i+1)*60000).toISOString(),
  source:'測試媒體',url:'https://example.com/test/'+i,themes:['AI'],confirmed:false
 }));
-const sample={...archived,generatedAt:'2026-10-21T00:00:00+08:00',items:[...archived.items,...fresh]};
+const sample={...archived,generatedAt:'2026-10-21T00:00:00+08:00',
+ items:[endedExhibition,upcomingRateMeeting,...archived.items.filter(x=>x.type!=='event'),...fresh]};
 const nodes=new Map();
 function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',hidden:false,value:'',fn:null,
  addEventListener(type,fn){this.fn=fn},querySelectorAll(){return []}
