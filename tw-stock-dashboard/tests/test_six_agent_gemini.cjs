@@ -45,6 +45,20 @@ test("quota errors fail clearly without reporting inference success",async()=>{
  await assert.rejects(geminiModel({model:DEFAULT_MODEL,messages:[{role:"system",content:"s"},{role:"user",content:"u"}]},
  {apiKey:"x",noSleep:true,fetchFn:async()=>({ok:false,status:429})}),/429/);
 });
+test("Orca-style role isolation excludes unrelated evidence in first round",()=>{
+ const {scopedEvidence}=require("../scripts/run_six_agent_llm.cjs");
+ const evidence={checkedAt:"2026-10-25T00:00:00Z",datasetDate:"2026-10-22",mode:"歷史",liveVerified:false,
+  sources:{G:true,RISK:true,NEWS:true,SOCIAL:true},risks:{score:11},hardVeto:true,
+  candidates:[{code:"2330",name:"台積電",theme:"半導體",atlas:{rs20:12},vega:{atrPct:3},
+   orion:{verifiedCount:0},titan:{hardVeto:true}}],news:[{title:"財經新聞"}],social:{posts:[{title:"PTT"}]}};
+ const atlas=scopedEvidence(evidence,"ATLAS"),orion=scopedEvidence(evidence,"ORION"),
+  vega=scopedEvidence(evidence,"VEGA"),luna=scopedEvidence(evidence,"LUNA");
+ assert.equal(atlas.sources.NEWS,false);assert.equal(atlas.news,undefined);
+ assert.equal(orion.sources.SOCIAL,false);assert.equal(orion.social,undefined);
+ assert.equal(vega.candidates[0].atlas,undefined);
+ assert.equal(luna.social.posts.length,1);
+ assert.equal(atlas.candidates[0].vega,undefined);
+});
 test("separate script's offline mock must not be claimed to be real inference",async()=>{
  const {selfTest}=require("../scripts/run_six_agent_llm.cjs");
  await selfTest();
