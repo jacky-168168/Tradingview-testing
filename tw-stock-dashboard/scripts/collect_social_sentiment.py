@@ -247,9 +247,15 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     environmental=os.environ if environmental is None else environmental
     old=old or {}
     prior=old.get("items") if isinstance(old.get("items"),list) else []
-    prior=[sanitize(x.get("platform"),x.get("title"),x.get("url"),x.get("publishedAt"),now)
-           for x in prior if isinstance(x,dict) and x.get("platform") in ("PTT","Threads","Instagram")]
-    prior=[x for x in prior if x is not None]
+    cached=[]
+    for x in prior:
+        if not isinstance(x,dict) or x.get("platform") not in ("PTT","Threads","Instagram"):continue
+        row=sanitize(x.get("platform"),x.get("title"),x.get("url"),x.get("publishedAt"),now)
+        if row:
+            if x.get("timestampBasis")=="文章網址 ID 推算，非官方發文時間":
+                row["timestampBasis"]=x["timestampBasis"]
+            cached.append(row)
+    prior=cached
     inputs=[]
     state={}
     new,state["PTT"]=collect_ptt(now,fetch)
@@ -277,7 +283,7 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     social_stats["originalDiscussion"]=sum(x.get("contentType")!="新聞轉載" for x in social)
     social_stats["repostedNews"]=len(social)-social_stats["originalDiscussion"]
     news_stats=statistics(news)
-    heat=topic_heat(social,now,stock_catalog())
+    heat=topic_heat(social[:80],now,stock_catalog())
     return {"schema":1,"generatedAt":now.isoformat().replace("+00:00","Z"),
         "sources":state,"social":social_stats,"news":news_stats,"stockHeat":heat,
         "items":social[:80],"newsItems":news[:30],
