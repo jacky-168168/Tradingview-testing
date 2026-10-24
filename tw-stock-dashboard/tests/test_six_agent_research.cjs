@@ -115,3 +115,33 @@ test("HTML navigation, mobile viewport, aria feedback, script wiring",()=>{
  assert.ok(home.includes('href="./agent-research.html"'),"homepage link required");
  assert.match(ui,/textContent/);new Function(ui);
 });
+
+test("LUNA keeps real social sample distinct from risk and absent Meta sources",()=>{
+ const x=fixtures(),time=new Date(LIVE.getTime()-10*60000).toISOString();
+ x.social={generatedAt:time,sources:{PTT:{status:"ok"},Threads:{status:"not_authorized"},Instagram:{status:"not_authorized"}},
+  social:{status:"偏多討論較多",sample:12,bull:8,bear:3,neutral:1,directional:11},
+  news:{status:"樣本不足"},items:[
+   {platform:"PTT",title:"台積電今日看多突破",url:"https://www.ptt.cc/bbs/Stock/M.1.html",publishedAt:time},
+   ...Array.from({length:11},(_,i)=>({platform:"PTT",title:"台股第"+i+"篇",url:"https://www.ptt.cc/bbs/Stock/M."+i+".html",publishedAt:time}))]};
+ const out=core.analyze(x,LIVE);
+ const c=out.candidates[0].agents;
+ assert.equal(c.luna.socialStatus,"偏多討論較多");
+ assert.equal(c.luna.socialSample,12);
+ assert.equal(c.luna.socialMentions,1);
+ assert.equal(c.luna.sourceStatus.Threads,"not_authorized");
+ assert.equal(c.luna.sourceStatus.Instagram,"not_authorized");
+ assert.equal(c.titan.hardVeto,false);
+ assert.equal(c.nova.noTrade,true);
+});
+test("LUNA never turns stale data or disconnected PTT into social confidence",()=>{
+ const x=fixtures();
+ x.social={generatedAt:"2026-10-21T00:00:00+08:00",sources:{PTT:{status:"ok"}},
+  social:{status:"偏多討論較多",sample:100,directional:99,bull:90,bear:9},items:[]};
+ assert.equal(core.analyze(x,LIVE).candidates[0].agents.luna.socialSample,null);
+ x.social.generatedAt=LIVE.toISOString();x.social.sources.PTT.status="error";
+ assert.equal(core.analyze(x,LIVE).candidates[0].agents.luna.socialSample,null);
+});
+test("LLM role pipeline has explicit self-test and no-trade guard",async()=>{
+ const llm=require("../scripts/run_six_agent_llm.cjs");
+ await llm.selfTest();
+});
