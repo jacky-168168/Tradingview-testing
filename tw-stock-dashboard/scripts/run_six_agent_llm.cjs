@@ -28,9 +28,12 @@ function compactInput(now=new Date()){
  const recentNews=maxAge(news.generatedAt,36)&&Array.isArray(news.items)?news.items.filter(i=>i.type==="news"&&maxAge(i.publishedAt,48)).slice(0,5).map(i=>({
   title:truncate(i.title,115),time:i.publishedAt,source:truncate(i.source,55),url:i.url,confirmed:i.confirmed===true})):[];
  const socialFresh=maxAge(social.generatedAt,8);
- const usedSocial=socialFresh&&social.sources?.PTT?.status==="ok";
- const posts=usedSocial&&Array.isArray(social.items)?social.items.filter(i=>i.platform==="PTT").slice(0,8).map(i=>({
-  title:truncate(i.title,115),time:i.publishedAt,url:i.url,stance:i.stance})):[];
+ const verified=(Array.isArray(social.items)?social.items:[]).filter(i=>
+  ["PTT","Threads","Instagram"].includes(i.platform)&&maxAge(i.publishedAt,48)&&
+  typeof i.title==="string"&&i.title.length>=4&&typeof i.url==="string"&&/^https:\/\//.test(i.url));
+ const usedSocial=Boolean(socialFresh&&verified.length>0);
+ const posts=usedSocial?verified.slice(0,8).map(i=>({
+  platform:i.platform,title:truncate(i.title,115),time:i.publishedAt,url:i.url,stance:i.stance})):[];
  const candidates=rules.candidates.slice(0,3).map(c=>({
    code:c.code,name:c.name,date:c.asOfDate,sourceRank:c.sourceRank,theme:truncate(c.theme,100),
    atlas:c.agents.atlas,vega:c.agents.vega,orion:{status:c.agents.orion.status,verifiedCount:c.agents.orion.verifiedCount},
@@ -41,7 +44,7 @@ function compactInput(now=new Date()){
  return {checkedAt:now.toISOString(),datasetDate:rules.asOfDate,mode:rules.mode,liveVerified:rules.liveVerified,
   risks:{score:rules.source.riskScore,date:rules.source.riskDate},sources,
   candidates,news:recentNews,social:usedSocial?{stats:social.social,sourceStatus:social.sources,posts}:
-  {status:"PTT資料無效、來源失聯或逾8小時；不能聲稱社群情緒已確認",sourceStatus:social.sources||{}},
+  {status:verified.length?"已有可核對歷史社群樣本，資料集未更新":"尚無可核對的公開社群討論",sourceStatus:social.sources||{}},
   hardVeto:candidates.some(x=>x.titan.hardVeto),noTrade:true};
 }
 function decodeJson(s){const text=String(s||"").trim().replace(/^\x60\x60\x60(?:json)?\s*/i,"").replace(/\s*\x60\x60\x60$/,"");return JSON.parse(text);}
