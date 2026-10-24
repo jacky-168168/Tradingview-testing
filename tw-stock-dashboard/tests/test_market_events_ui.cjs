@@ -9,32 +9,39 @@ assert(main.includes('href="./market-events.html"'),'homepage must expose major-
 assert(rankings.includes('href="./market-events.html"'),'G rankings must expose major-events entry');
 for(const id of ['events','news','eventCount','newsCount','alert','freshness','filters','query','eventSection','newsSection','empty'])
  assert(html.includes('id="'+id+'"'),'missing '+id);
-const sample=JSON.parse(fs.readFileSync(path.join(root,'data/market_events/latest.json'),'utf8'));
-assert.equal(sample.schema,1);
-const tpca=sample.items.find(x=>x.id==='event-tpca-show-2026');
-assert(tpca&&tpca.confirmed&&tpca.date==='2026-10-20'&&tpca.endDate==='2026-10-22');
-assert(!sample.items.some(x=>x.type==='news'&&x.confirmed),'unverified news cannot be confirmed');
+const archived=JSON.parse(fs.readFileSync(path.join(root,'data/market_events/latest.json'),'utf8'));
+assert.equal(archived.schema,1);
+assert(archived.items.some(x=>x.id==='event-tpca-show-2026'&&x.confirmed&&x.endDate==='2026-10-22'));
+assert(!archived.items.some(x=>x.type==='news'&&x.confirmed),'unverified news cannot be confirmed');
+// Run at a FIXED future date: an ended exhibition must not fail the entire
+// scheduled news publishing workflow. Never assert that old events must render.
+const FIXED_NOW='2026-10-24T06:00:00Z';
+class FixedDate extends Date{
+ constructor(...a){super(...(a.length?a:[FIXED_NOW]))}
+ static now(){return Date.parse(FIXED_NOW)}
+}
+const fresh=Array.from({length:23},(_,i)=>({
+ id:'test-fresh-'+i,type:'news',category:'AI需求',title:'測試近期半導體新聞 '+i,
+ date:'2026-10-24',publishedAt:new Date(Date.parse(FIXED_NOW)-(i+1)*60000).toISOString(),
+ source:'測試媒體',url:'https://example.com/test/'+i,themes:['AI'],confirmed:false
+}));
+const sample={...archived,items:[...archived.items,...fresh]};
 const nodes=new Map();
 function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',hidden:false,value:'',fn:null,
-  addEventListener(type,fn){this.fn=fn},
-  querySelectorAll(){return []}
+ addEventListener(type,fn){this.fn=fn},querySelectorAll(){return []}
 });return nodes.get(id)}
 const document={getElementById:node};
-const ctx={document,fetch:async()=>({ok:true,json:async()=>sample}),setInterval:()=>{},Date,Intl,console};
+const ctx={document,fetch:async()=>({ok:true,json:async()=>sample}),setInterval:()=>{},Date:FixedDate,Intl,console};
 vm.runInNewContext(script,ctx);
 setImmediate(()=>{
- assert(node('events').innerHTML.includes('TPCA Show 2026'),'confirmed TPCA must render');
- assert(!node('news').innerHTML.includes('TPCA Show'),'events cannot be faked as news');
- const expected=Math.min(20,sample.items.filter(x=>x.type==='news').length);
- assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,expected,'market news must show up to 20 initially');
- if(sample.items.filter(x=>x.type==='news').length>20){
-   assert.equal(node('moreNews').hidden,false,'load more must appear when news exceed 20');
-   node('moreNews').fn();
-   assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,Math.min(40,sample.items.filter(x=>x.type==='news').length),'load more adds 20 results');
- }
- if(sample.status==='initializing')assert(node('alert').textContent.includes('同步尚未完成'),'initializing must be shown');
-else if(sample.status==='ok')assert(node('news').innerHTML.length>0,'live news must render');
-else assert(!node('alert').hidden,'partial/degraded source must show warning');
+ assert(!node('events').innerHTML.includes('TPCA Show 2026'),'ended exhibit must not appear');
+ assert(node('events').innerHTML.includes('FOMC'),'future official event must appear');
+ assert(!node('news').innerHTML.includes('台股反彈全看這波'),'stale 10/21 headline cannot be latest on 10/24');
+ assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,20,'first page must show 20 genuinely fresh articles');
+ assert.equal(node('moreNews').hidden,false,'load more must appear for 23 fresh articles');
+ node('moreNews').fn();
+ assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,23,'load more adds recent news only');
+ assert(node('alert').textContent.includes('新聞超過 36 小時未更新'),'stale dataset must show warning');
  assert(!node('events').innerHTML.includes('<script>'),'event output must be escaped');
- console.log('PASS verified event, isolated media claims, search UI, stock dashboard navigation');
+ console.log('PASS ended events filtered, only fresh news rendered, pagination and stale dataset warning');
 });
