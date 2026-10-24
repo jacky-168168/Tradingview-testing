@@ -209,6 +209,23 @@ test("LUNA accepts real Bluesky links, reports source counts, and keeps TITAN de
  x.daily.risk.score=11;
  assert.equal(core.analyze(x,LIVE).candidates[0].agents.titan.hardVeto,true);
 });
+test("LUNA excludes explicit non-investment posts and accepts partial API status",()=>{
+ const x=fixtures(),at=LIVE.toISOString();
+ x.social={generatedAt:at,sources:{Bluesky:{status:"partial",freshCount:2,queryHealth:{queriesFailed:2}}},
+ items:[
+ {platform:"Bluesky",title:"台積電運動會頒獎",
+  url:"https://bsky.app/profile/a.bsky.social/post/3ab",publishedAt:at,stance:"中立／難判",investmentEligible:false},
+ {platform:"Bluesky",title:"我買台積電股票又加碼了",
+  url:"https://bsky.app/profile/b.bsky.social/post/3ac",publishedAt:at,stance:"偏多",investmentEligible:true}
+ ]};
+ const r=core.analyze(x,LIVE).candidates[0].agents;
+ assert.equal(r.luna.socialSample,1);
+ assert.equal(r.luna.socialBull,1);
+ assert.equal(r.luna.socialPlatforms.Bluesky,1);
+ assert.equal(r.luna.sourceStatus.Bluesky,"partial");
+ assert.match(r.luna.socialStatus,/已有樣本/);
+ assert.equal(r.titan.hardVeto,false);
+});
 test("LUNA labels valid cached posts as historical instead of erasing them",()=>{
  const x=fixtures(),time=new Date(LIVE.getTime()-12*3600000).toISOString();
  x.social={generatedAt:time,sources:{PTT:{status:"error"}},

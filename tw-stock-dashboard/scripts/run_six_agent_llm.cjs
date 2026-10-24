@@ -13,7 +13,7 @@ const RULES={
  ATLAS:"獨立審查 G 候選的量能、RS20 與流動性。不可更改原始排行，不能把一日熱度當長期效益。",
  VEGA:"獨立審查 MA20 斜率、ATR 波動和價量趨勢，先講失效條件與不足，不能編造入場、停損價。",
  ORION:"獨立評估新聞事件及時間、來源可信度；標題相關不等於公司受惠，不能將轉載當官方。",
- LUNA:"獨立評估可核對的 PTT／Meta／Bluesky 社群標題、來源失聯、新聞轉載比例、反諷／求救及個股題材提及。不能把標題視為留言全文，沒有語意資料就保留不確定性。題材熱度不是買進理由，過熱僅作追高風險觀察；絕不改風險分數或 G 排名。",
+ LUNA:"獨立評估可核對且具有台股投資語境的 PTT／Meta／Bluesky 貼文、來源失聯、非投資話題與新聞轉載比例、反諷／求救及個股題材提及。不能把標題視為留言全文，沒有語意資料就保留不確定性。題材熱度不是買進理由，過熱僅作追高風險觀察；絕不改風險分數或 G 排名。",
  TITAN:"獨立擔任紅隊風控，優先否決來源日期不一致、G 資料不合格、波動過高與風險分數偏低；不得推翻程式的硬性否決。",
  NOVA:"嚴格整合前五位的獨立觀點與交叉質疑，點出爭點、共識、不確定性及風險；沒有任何下單權限。"
 };
@@ -29,9 +29,9 @@ function compactInput(now=new Date()){
   title:truncate(i.title,115),time:i.publishedAt,source:truncate(i.source,55),url:i.url,confirmed:i.confirmed===true})):[];
  const socialFresh=maxAge(social.generatedAt,8);
  const verified=(Array.isArray(social.items)?social.items:[]).filter(i=>
-  ["PTT","Threads","Instagram","Bluesky"].includes(i.platform)&&maxAge(i.publishedAt,48)&&
+  ["PTT","Threads","Instagram","Bluesky"].includes(i.platform)&&i.investmentEligible!==false&&maxAge(i.publishedAt,48)&&
   typeof i.title==="string"&&i.title.length>=4&&typeof i.url==="string"&&/^https:\/\//.test(i.url));
- const usedSocial=Boolean(socialFresh&&verified.some(x=>social.sources?.[x.platform]?.status==="ok"));
+ const usedSocial=Boolean(socialFresh&&verified.some(x=>["ok","partial"].includes(social.sources?.[x.platform]?.status)));
  const posts=usedSocial?verified.slice(0,8).map(i=>({
   platform:i.platform,title:truncate(i.title,115),time:i.publishedAt,url:i.url,stance:i.stance,
   contentType:i.contentType||"未分類",tone:i.tone||"未驗證"})):[];

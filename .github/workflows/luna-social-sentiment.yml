@@ -94,7 +94,10 @@ jobs:
           assert d['schema']==1 and d['generatedAt'] and len(d['items'])<=80
           assert all(x['platform'] in {'PTT','Threads','Instagram','Bluesky'} and x['url'].startswith('https://') for x in d['items'])
           assert all(x['platform']=='新聞' for x in d['newsItems'])
-          assert d['social']['sample']>=len(d['items'])
+          assert d['social']['rawSample']==len(d['items'])
+          assert d['social']['sample']<=d['social']['rawSample']
+          assert d['social']['investmentDiscussion']+d['social']['repostedNews']+d['social']['unrelated']==len(d['items'])
+          assert sum(bool(x.get('investmentEligible')) for x in d['items'])==d['social']['investmentDiscussion']
           assert isinstance(d.get("stockHeat"),dict)
           assert all(x["sample"]>=1 and x["sample"]<=len(d["items"]) and x["recent24h"]<=x["sample"] for x in d["stockHeat"]["stocks"])
           assert all(x["sample"]>=x["originalDiscussion"]>=0 for x in d["stockHeat"]["stocks"])
