@@ -21,6 +21,7 @@ PTT_FEEDS = (PTT_URL, "https://www.ptt.cc/atom/Stock.xml")
 PTT_BOARD = "https://www.ptt.cc/bbs/Stock/index.html"
 PTT_PUBLIC_FEED = "https://feed.cqd.tw/ptt/Stock/title/.*"
 BLUESKY_API = "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts"
+BLUESKY_BACKUP_API = "https://api.bsky.app/xrpc/app.bsky.feed.searchPosts"
 BLUESKY_QUERIES = ("台股","台積電","CPO 台股")
 STOCK_PATH = ROOT / "data/latest.json"
 NEWS_PATH = ROOT / "data/market_events/latest.json"
@@ -50,7 +51,7 @@ def score(title):
 
 def request(url, token=None):
     parsed = urllib.parse.urlsplit(url)
-    if parsed.scheme != "https" or parsed.hostname not in {"www.ptt.cc", "feed.cqd.tw", "public.api.bsky.app", "graph.threads.net", "graph.facebook.com"}:
+    if parsed.scheme != "https" or parsed.hostname not in {"www.ptt.cc", "feed.cqd.tw", "public.api.bsky.app", "api.bsky.app", "graph.threads.net", "graph.facebook.com"}:
         raise ValueError("拒絕非白名單 HTTPS 來源")
     h = {"User-Agent": "Tradingview-testing-SocialResearch/1.0", "Accept": "application/atom+xml, text/html;q=0.9, application/json;q=0.8"}
     if token:
@@ -199,8 +200,13 @@ def bluesky(now, fetch=request):
     """Read public Bluesky searchPosts without auth. Verify original URI, timestamp and TW relevance."""
     rows=[]
     for query in BLUESKY_QUERIES:
-        url=BLUESKY_API+"?"+urllib.parse.urlencode({"q":query,"sort":"latest","limit":25})
-        payload=json.loads(fetch(url))
+        params=urllib.parse.urlencode({"q":query,"sort":"latest","limit":25})
+        try:
+            payload=json.loads(fetch(BLUESKY_API+"?"+params))
+        except urllib.error.HTTPError as err:
+            if err.code not in (403,404,429):raise
+            # Official alternate AppView host, not a bypass of authentication.
+            payload=json.loads(fetch(BLUESKY_BACKUP_API+"?"+params))
         if not isinstance(payload,dict) or not isinstance(payload.get("posts"),list):
             raise ValueError("Bluesky API 未回傳有效 posts 陣列")
         for entry in payload["posts"]:
