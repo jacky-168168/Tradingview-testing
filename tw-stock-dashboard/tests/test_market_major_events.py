@@ -1,7 +1,7 @@
 from __future__ import annotations
 import sys
 import unittest
-from datetime import datetime
+from datetime import datetime,timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"src"))
@@ -41,6 +41,24 @@ class MajorMarketNewsTest(unittest.TestCase):
   feed=("AI需求","AI 晶片需求",r"AI|晶片",["AI"])
   xml='''<rss><channel><item><title>AI晶片需求暴增！趕緊搶進熱門股 - CMoney投資網誌</title><link>https://example.com/blog</link><source>CMoney投資網誌</source><pubDate>Fri, 16 Oct 2026 07:00:00 GMT</pubDate></item></channel></rss>'''
   self.assertEqual(parse_feed(xml.encode(),feed,now=NOW),[])
+ def test_rss_articles_older_than_48h_never_display_as_latest(self):
+  stale_time=NOW-timedelta(hours=49)
+  old_rss=f'''<rss><channel><item><title>矽晶圓廠報價上漲 最新觀察 - 經濟日報</title>
+   <link>https://example.com/old</link><source>經濟日報</source>
+   <pubDate>{stale_time.strftime("%a, %d %b %Y %H:%M:%S %z")}</pubDate></item></channel></rss>'''
+  self.assertEqual(parse_feed(old_rss.encode(),FEED,now=NOW),[])
+ def test_recent_rss_articles_must_still_pass(self):
+  self.assertEqual(len(parse_feed(XML.encode(),FEED,now=NOW)),1)
+ def test_empty_successful_feed_is_not_marked_live_with_news(self):
+  result=build(now=NOW,feeds=[[] for _ in QUERIES],prior=None)
+  self.assertEqual(result["status"],"empty")
+  self.assertEqual(result["newsCount"],0)
+  self.assertIsNone(result["newestNewsAt"])
+ def test_prior_news_not_reused_beyond_48h(self):
+  sample=parse_feed(XML.encode(),FEED,now=NOW)[0]
+  sample["publishedAt"]=(NOW-timedelta(hours=49)).isoformat()
+  result=build(now=NOW,feeds=[None],prior={"items":[sample]})
+  self.assertEqual([x for x in result["items"] if x["type"]=="news"],[])
  def test_old_items_excluded_and_no_invented_news(self):
   old=parse_feed(XML.encode(),FEED,now=NOW)[0]
   old["publishedAt"]="2026-10-01T12:00:00+08:00"
