@@ -31,7 +31,7 @@ DOWN = ("看空", "空頭", "轉弱", "破底", "崩盤", "暴跌", "跌停", "�
 IGNORE = re.compile(r"^\s*(?:Re:|Fw:|\[公告\]|\[版務\])", re.I)
 REPOST = re.compile(r"^\s*(?:\[新聞\]|【新聞】|\[轉錄\]|\[情報\])", re.I)
 UNCERTAIN = re.compile(r"反指標|反串|諷刺|笑死|真的嗎|求救|已讀不回|韭菜|崩到起飛")
-INVESTMENT = re.compile(r"股票|股價|股市|台股|臺股|台指期|加權指數|股市|ETF|etf|正二|正2|反一|反1|當沖|交易|投資|買進|買入|買不起|買股|賣出|加碼|出清|持股|持有|做多|做空|多單|空單|爆倉|套牢|停損|停利|獲利|大盤|漲停|跌停|成交量|融資|融券|外資|投信|法人|股息|殖利率|營收|本益比|均線|KD|RSI|K線|期貨|期指|股災|融資維持率",re.I)
+INVESTMENT = re.compile(r"股票|股價|股市|台股|臺股|台指期|加權指數|ETF|etf|正二|正2|反一|反1|當沖|交易|投資|買進|買入|買不起|買股|賣出|加碼|出清|持股|持有|做多|做空|多單|空單|多頭|空頭|突破|反彈|回測|走勢|看多|看空|上攻|轉強|暴跌|崩盤|漲幅|跌幅|套牢|停損|停利|獲利|大盤|漲停|跌停|成交量|融資|融券|外資|投信|法人|股息|殖利率|營收|本益比|均線|KD|RSI|K線|期貨|期指|股災|融資維持率",re.I)
 NON_INVESTMENT = re.compile(r"運動會|員工獎金|颱風假|招募人才|徵才|新廠開幕|運動賽事")
 NEWS_TEXT = re.compile(r"^\\s*(?:#?中央社(?:即時)?新聞|財經新聞|【(?:快訊|新聞)】|\\[新聞\\]|新聞稿|快訊[：:])|中央社記者|記者.{1,18}報導|轉載",re.I)
 TAIWAN_RELEVANCE = re.compile(r"台股|臺股|台灣|臺灣|台積電|台指期|加權指數|上市櫃|臺證|證交所|投信|外資|股票|股市|股災|ETF|etf|正二|當沖|買進|套牢|均線|融資",re.I)
@@ -395,7 +395,7 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     state["新聞"]={"status":"ok" if news else "unavailable","freshCount":len(news)}
     if reason:
         state["新聞"]["reason"]=reason
-    social=unique(inputs+prior)
+    social=unique(inputs+prior,80)
     news=unique(news,80)
     # Classify every kept entry consistently, including cached records from older snapshots.
     eligible=[x for x in social if x.get("investmentEligible") is True]
