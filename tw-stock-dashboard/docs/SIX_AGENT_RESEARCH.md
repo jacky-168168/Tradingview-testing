@@ -67,5 +67,5 @@
 - 原 GitHub Models 確定已退役；新增仍受支援的 Google Gemini REST API 轉接：`scripts/gemini_transport.cjs`。驗證回應 JSON，不接受純字串 `OK`、不完整模型輸出、錯誤或缺值充當成功結果。
 - `Six Agent Gemini LLM Debate` 工作流程保留離線測試；**真實推論預設停用**。要啟用需由帳戶持有人在 GitHub 儲存庫的 **Settings → Secrets and variables → Actions** 設定 Secret `GEMINI_API_KEY`，並在 Variables 新增 `ENABLE_SIX_AGENT_GEMINI=true`。**不要把金鑰貼在 ChatGPT、Issue、PR 或程式碼裡**。
 - 真正啟用後預計每臺灣時間週一至週五 19:00 嘗試產生九次獨立模型呼叫的研究報告（TITAN 硬性風控不可解除）；GitHub Secrets、API 帳戶用量、模型存取權及額度皆需實際驗證後才能宣稱「真實六 LLM 已成功」。
-- 預設 Gemini 模型 `gemini-2.5-flash-lite`。免費額度、頻率限制及資料處理政策由 Google 決定，請自行在 AI Studio 確認；此研究管線只使用網站公開市場資料，不送入個人持倉、密碼或帳戶資訊。
+- 預設 Gemini 模型 `gemini-3.5-flash-lite`（新專案可用的穩定模型；舊 2.5 模型可能對新專案回傳 HTTP 404）。免費額度、頻率限制及資料處理政策由 Google 決定，請自行在 AI Studio 確認；此研究管線只使用網站公開市場資料，不送入個人持倉、密碼或帳戶資訊。
 - 開發／驗證：`node --test tw-stock-dashboard/tests/test_six_agent_research.cjs tw-stock-dashboard/tests/test_six_agent_gemini.cjs`。使用 Mock 的九輪測試不是正式 API 呼叫，只有實際輸出 `REAL_GEMINI_SIX_AGENT_VERIFIED` 才能當正式執行證據。

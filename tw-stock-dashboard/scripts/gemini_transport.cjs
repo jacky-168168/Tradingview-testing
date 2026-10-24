@@ -6,7 +6,7 @@
 "use strict";
 const assert=require("node:assert/strict");
 const API="https://generativelanguage.googleapis.com/v1beta/models/";
-const DEFAULT_MODEL="gemini-2.5-flash-lite";
+const DEFAULT_MODEL="gemini-3.5-flash-lite";
 const OUTPUT_SCHEMA={
  type:"OBJECT",
  properties:{
