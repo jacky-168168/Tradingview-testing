@@ -104,7 +104,7 @@ function analyze(input,nowInput){
  const candidateRows=rows.filter(x=>x&&/^\d{4}$/.test(String(x.code||""))).slice(0,10);
  const marketReady=useLive;
  const risk=daily.risk||null;
- const sameRiskDate=!!(risk&&risk.date===asOfDate);
+ const sameRiskDate=!!(risk&&risk.date===(useLive?intraday.sourceCloseDate:asOfDate));
  const candidates=candidateRows.map((row,i)=>{
   const parts={atlas:atlas(row,i+1),vega:vega(row),orion:eventLinks(row,news,now),luna:luna(risk)};
   parts.titan=titan(row,{risk,marketReady,sameRiskDate});
