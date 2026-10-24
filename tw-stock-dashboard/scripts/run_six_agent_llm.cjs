@@ -71,18 +71,28 @@ async function infer(role,context,transport){
    '{"role":"'+role+'","assessment":"12-850字客觀摘要","confidence":"低","evidenceRefs":["G"],"uncertainties":["可驗證的資料限制"],"noTrade":true}。'+
    " evidenceRefs 僅允許實際存在來源中的 "+sourceRefs.join("、")+"；禁止任何股價預測、具體買賣指令、修改策略與隱藏資訊。"},
   {role:"user",content:JSON.stringify(context).slice(0,12000)}];
- return validateResponse(await transport({model:MODEL,messages,max_tokens:600,temperature:0.2}),role,context.evidence.sources);
+ // Real inference must return a structured object, never an unverified "OK".
+ const raw=await transport({model:MODEL,messages,max_tokens:1000,temperature:0.2,
+  response_format:{type:"json_object"}});
+ let parsed;
+ try{parsed=typeof raw==="string"?decodeJson(raw):raw}
+ catch(_){throw Error("LLM role "+role+" returned non-JSON model content; fail closed")}
+ return validateResponse(parsed,role,context.evidence.sources);
 }
-async function githubModel({model,messages,max_tokens,temperature}){
+async function githubModel({model,messages,max_tokens,temperature,response_format}){
  const token=process.env.GITHUB_TOKEN;
  if(!token)throw Error("GitHub Models token missing: no LLM inference was executed");
  for(let attempt=0;attempt<3;attempt++){
   const r=await fetch(BASE,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/vnd.github+json",
    "Authorization":"Bearer "+token,"X-GitHub-Api-Version":"2022-11-28"},
-   body:JSON.stringify({model,messages,max_tokens,temperature}),signal:AbortSignal.timeout(48000)});
+   body:JSON.stringify({model,messages,max_tokens,temperature,response_format}),signal:AbortSignal.timeout(48000)});
   if((r.status===429||r.status===503)&&attempt<2){await delay(3500*(attempt+1));continue}
   if(!r.ok)throw Error("GitHub Models HTTP "+r.status+"; inference incomplete; no simulated LLM output");
-  const j=await r.json();
+  const body=await r.text();
+  let j;
+  try{j=JSON.parse(body)}
+  catch(_){throw Error("GitHub Models API returned non-JSON HTTP 200: content-type "+
+    String(r.headers.get("content-type")||"unknown").slice(0,90)+"; bytes="+body.length)}
   const response=j?.choices?.[0]?.message?.content;
   if(typeof response!=="string"||!response.trim())throw Error("GitHub Models returned no model answer");
   return response;
@@ -126,8 +136,9 @@ async function selfTest(){
  let called=0;const mock=async({messages})=>{called++;const role=messages[0].content.match(/中的 (ATLAS|VEGA|ORION|LUNA|TITAN|NOVA)/)[1];
   return JSON.stringify({role,assessment:"此為測試用的資料不足與硬性風控說明，僅供研究不提供交易許可。",
    confidence:"低",evidenceRefs:["G"],uncertainties:["樣本與日期缺失"],noTrade:true})};
- const s=await deliberate(ev,mock,async()=>{});
+ const s=await deliberate(ev,async args=>{assert.equal(args.response_format?.type,"json_object");return mock(args)},async()=>{});
  assert.equal(called,9);validateSnapshot(s);
+ await assert.rejects(async()=>infer("ATLAS",{phase:"回歸測試",evidence:ev},async()=> "OK\\n"),/non-JSON/);
  assert.throws(()=>validateResponse({role:"TITAN",assessment:"x".repeat(20),confidence:"高",evidenceRefs:["SOCIAL"],
    uncertainties:["未知"],noTrade:true},"TITAN",ev.sources));
  assert.throws(()=>validateResponse({role:"NOVA",assessment:"x".repeat(20),confidence:"高",evidenceRefs:["G"],
