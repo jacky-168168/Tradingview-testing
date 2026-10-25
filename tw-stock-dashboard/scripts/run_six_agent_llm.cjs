@@ -12,7 +12,7 @@ const MODEL=validateModel(process.env.SIX_AGENT_GEMINI_MODEL||DEFAULT_MODEL);
 const RULES={
  ATLAS:"獨立審查 G 候選的量能、RS20 與流動性。不可更改原始排行，不能把一日熱度當長期效益。",
  VEGA:"獨立審查 MA20 斜率、ATR 波動和價量趨勢，先講失效條件與不足，不能編造入場、停損價。",
- ORION:"獨立評估新聞事件及時間、來源可信度；標題相關不等於公司受惠，不能將轉載當官方。",
+ ORION:"獨立評估多家台灣財經媒體的標題語氣、題材與來源時效，區分 Gemini 報導語氣判讀與未經模型驗證的關鍵詞初判。不同標題的偏利多比例不是市場看多投票；標題相關不等於公司受惠，不可推定事件因果或把轉載當官方。",
  LUNA:"獨立評估可核對且具有台股投資語境的 PTT／Meta／Bluesky 貼文；YouTube 影片標題和 Facebook 授權粉專內容屬創作者／編輯立場，不能與散戶投票混算。來源失聯、非投資話題與新聞轉載比例、反諷／求救及個股題材提及。不能把標題視為留言全文，沒有語意資料就保留不確定性。Gemini 逐篇研判與原規則立場必須分開報告，模型引用只能使用原始貼文摘要中的證據片段；樣本少不代表市場共識。題材熱度不是買進理由，過熱僅作追高風險觀察；絕不改風險分數或 G 排名。",
  TITAN:"獨立擔任紅隊風控，優先否決來源日期不一致、G 資料不合格、波動過高與風險分數偏低；不得推翻程式的硬性否決。",
  NOVA:"嚴格整合前五位的獨立觀點與交叉質疑，點出爭點、共識、不確定性及風險；沒有任何下單權限。"
@@ -22,12 +22,26 @@ function truncate(s,n=170){return String(s??"").slice(0,n)}
 function compactInput(now=new Date()){
  const daily=load("data/latest.json"),intraday=load("data/g_intraday/latest.json"),
  status=load("data/g_intraday/status.json"),news=load("data/market_events/latest.json"),
+ orionData=load("data/orion_news/latest.json"),
  social=load("data/social_sentiment/latest.json");
  const rules=analyze({daily,intraday,status,news,social},now);
  const maxAge=(v,h)=>{const d=Date.parse(v||"");return Number.isFinite(d)&&(now.getTime()-d)>=0&&(now.getTime()-d)<=h*3600000};
  const recentNews=maxAge(news.generatedAt,36)&&Array.isArray(news.items)?news.items.filter(i=>i.type==="news"&&maxAge(i.publishedAt,48)).slice(0,5).map(i=>({
   title:truncate(i.title,115),time:i.publishedAt,source:truncate(i.source,55),url:i.url,confirmed:i.confirmed===true})):[];
- const socialFresh=maxAge(social.generatedAt,8);
+ const orionFresh=maxAge(orionData.generatedAt,8);
+ const orionArticles=orionFresh&&Array.isArray(orionData.items)?orionData.items.filter(x=>
+  maxAge(x.publishedAt,48)&&typeof x.title==="string"&&typeof x.url==="string"&&
+  x.url.startsWith("https://")).slice(0,10).map(x=>({
+   title:truncate(x.title,115),time:x.publishedAt,source:truncate(x.source,50),url:x.url,
+   confirmed:false,headlineClassification:x.semantic?.tone||"未完成模型判讀",
+   evidence:x.semantic?.evidence||null,theme:x.semantic?.theme||null
+  })):[];
+ const newsroomReport=orionFresh&&orionData.semantic?.noTrade===true?
+  {status:orionData.semantic.status,classified:orionData.semantic.classified,
+   positive:orionData.semantic.positive,negative:orionData.semantic.negative,
+   neutral:orionData.semantic.neutral,sourceCount:orionData.semantic.sourceCount,
+   coverage:orionData.coverage?.healthyFeeds||0}: {status:"來源過期或未核實"};
+  const socialFresh=maxAge(social.generatedAt,8);
  const verified=(Array.isArray(social.items)?social.items:[]).filter(i=>
   ["PTT","Threads","Instagram","Bluesky"].includes(i.platform)&&i.investmentEligible!==false&&maxAge(i.publishedAt,48)&&
   typeof i.title==="string"&&i.title.length>=4&&typeof i.url==="string"&&/^https:\/\//.test(i.url));
@@ -52,10 +66,10 @@ function compactInput(now=new Date()){
    titan:{hardVeto:c.agents.titan.hardVeto,veto:c.agents.titan.veto},noTrade:true}));
  const sources={
   G:candidates.length>0,RISK:rules.source.riskScore!==null,
-  NEWS:recentNews.length>0,SOCIAL:posts.length>0};
+  NEWS:recentNews.length>0||orionArticles.length>0,SOCIAL:posts.length>0};
  return {checkedAt:now.toISOString(),datasetDate:rules.asOfDate,mode:rules.mode,liveVerified:rules.liveVerified,
   risks:{score:rules.source.riskScore,date:rules.source.riskDate},sources,
-  candidates,news:recentNews,social:usedSocial?{stats:social.social,sourceStatus:social.sources,posts,stockHeat:heat,
+  candidates,news:[...orionArticles.slice(0,8),...recentNews.slice(0,4)],orionNewsroom:newsroomReport,social:usedSocial?{stats:social.social,sourceStatus:social.sources,posts,stockHeat:heat,
    creatorMedia:media,
    semantic:(!["verified","cached","partial"].includes(social.semantic?.status))?{status:social.semantic?.status||"not_run"}:
     {status:social.semantic.status,model:social.semantic.model,
@@ -95,7 +109,7 @@ function scopedEvidence(e,role){
  });
  if(role==="ATLAS")return {...base,candidates,risks:e.risks};
  if(role==="VEGA")return {...base,candidates,risks:e.risks};
- if(role==="ORION")return {...base,candidates,news:e.news};
+ if(role==="ORION")return {...base,candidates,news:e.news,newsroom:e.orionNewsroom};
  if(role==="LUNA")return {...base,candidates,risks:e.risks,social:e.social,news:e.news};
  return {...base,candidates,risks:e.risks,hardVeto:e.hardVeto};
 }
