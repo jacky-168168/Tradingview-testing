@@ -82,6 +82,12 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
   bull+bear===0?"已有樣本｜尚無明確多空方向":"已有樣本｜多空內容接近";
  const currentEvidence=posts.some(x=>["ok","partial"].includes(feeds[x.platform]?.status));
  const socialStatus=sample&&fresh&&currentEvidence?signal:sample?"已有歷史樣本｜來源未在8小時內更新或已失聯":signal;
+ const semanticRaw=social?.semantic||{};
+ const semanticVerified=["verified","cached","partial"].includes(semanticRaw.status)&&semanticRaw.noTrade===true;
+ const semanticSummary=semanticVerified?{status:semanticRaw.status,model:semanticRaw.model,
+  classified:semanticRaw.classifiedCount??0,investment:semanticRaw.investmentCount??0,
+  bullish:semanticRaw.bullish??0,bearish:semanticRaw.bearish??0,neutral:semanticRaw.neutral??0,
+  inferenceCalls:semanticRaw.inferenceCalls??0}:{status:semanticRaw.status||"not_run",classified:0};
  const examples=posts.slice(0,3).map(x=>({title:x.title,url:x.url,
   source:x.platform+"（公開貼文標題）",publishedAt:x.publishedAt}));
  const name=String(row?.name||""),code=String(row?.code||"");
@@ -98,7 +104,7 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
   corroborated?"已有歷史樣本，來源未確認":"熱度不足／尚未驗證";
  return {status,score,breadth,ret20,method:"只要有1篇可核對公開貼文就視為已有樣本；資料量少僅代表少量觀察，不可推論市場共識。社群不修改 Risk Score 或 TITAN 風控。",
   socialStatus,socialSample:sample?sample:null,socialBull:sample?bull:null,socialBear:sample?bear:null,
-  socialMentions:sample?mentions:null,heatStatus,overheatWatch,socialPlatforms:sample?{
+  socialMentions:sample?mentions:null,semanticSummary,heatStatus,overheatWatch,socialPlatforms:sample?{
    PTT:posts.filter(x=>x.platform==="PTT").length,
    Threads:posts.filter(x=>x.platform==="Threads").length,
    Instagram:posts.filter(x=>x.platform==="Instagram").length,

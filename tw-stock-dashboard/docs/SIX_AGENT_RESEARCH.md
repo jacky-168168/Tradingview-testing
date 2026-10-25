@@ -106,3 +106,14 @@
 - `social.rawSample` 為 48 小時內公開貼文的可查證件數；`social.sample` 為真正符合投資語境的件數；`platformCounts`、`investmentDiscussion`、`repostedNews`、`unrelated` 分開列示。無投稿不代表中立，沒有拿到授權的平台持續顯示未授權。
 - Bluesky API 若只有部分查詢成功，會顯示 `partial` 和 `queryHealth`（嘗試、成功、失敗、是否限流），仍保留已核實貼文；若全部失敗，仍標示 `error`。對已確認的新貼文可使用 `partial`，但不能把其他來源失聯時的快取當成最新。
 - 舊版歷史報告繼續相容，九次 Gemini 獨立 API 推論、TITAN 硬性否決、G 正式排名、既有金融資料來源與風險計分保持不變。
+
+
+## LUNA v0.8｜每日社群研究資料庫與 Gemini 語意稽核（2026-10-25）
+- 只處理已合法取得、48 小時內、可對照原文、標記為投資討論的公開摘要。保留舊的規則式標籤，但 **Gemini 逐篇結果獨立存為 `items[].semantic` 與 `semantic` 統計**，不覆寫行情、社群規則值與 TITAN 風控。
+- `scripts/classify_luna_semantic.cjs` 向 Google Gemini 正式 `generateContent` 送出最多 16 篇新貼文、每批最多 8 篇，需 GitHub Secret `GEMINI_API_KEY`，使用結構化輸出。逐篇 `intent`、`stance`、`emotion`、`confidence`、`evidence`；證據文字必須逐字出現在來源摘要中、貼文 ID 必須完全對應，否則整批失敗。模型僅分析公開摘要，**未抓取留言全文**，沒有真實績效或操作建議。
+- 相同 URL／標題／發文時間的先前成功語意判讀可在 48 小時內快取重用，避免每 2 小時重複花 API 額度；只有實際完成 HTTP Gemini 呼叫才增加 `inferenceCalls`。金鑰缺失、API 429、逾時、拒答與輸出格式失敗均顯示 `unavailable`／`error`／`partial`，不輸出假的已驗證結果。
+- `scripts/archive_luna_history.py` 每次蒐集後更新 `docs/data/social_sentiment/history/YYYY-MM-DD.json`，同日原文網址去重並保留首次見到／最後見到時間、最近 24 次執行與來源狀態。`history/index.json` 保存近 30 個臺灣日期的每日摘要供手機頁面閱讀；沒有儲存登入權杖、私人帳戶資料或留言全文。
+- 公開 GitHub **有 Git 歷史**，即使工作樹刪除超過 30 日的 JSON 檔，Git 歷史未必同步清除；這是可稽核的有限期研究快照，不應稱為可完全刪除的私人資料庫。
+- 六代理的 LUNA 首輪會額外看到已驗證語意統計與逐篇可查核證據，但不提供任何直接下單訊號。頁面將規則式樣本、Gemini 逐篇判讀、每日歷史索引分開呈現。
+- 自動化：`LUNA Public Social Sentiment` 原排程先蒐集社群→Gemini 判讀→封存每日檔→驗證一致性→提交 GitHub→自動部署 Pages；原 `Six Agent Gemini LLM Debate` 工作日 19:00 九輪研究排程獨立，不因社群判讀自動改風控或觸發交易。
+- 測試：`python -m unittest discover -s tw-stock-dashboard/tests -p 'test_luna_archive.py' -v` 與 `node --test tw-stock-dashboard/tests/test_luna_semantic.cjs`。這些測試用 mock API，**不代表真實模型已成功**；只有 main 正式 run 顯示大於 0 的 `inferenceCalls` 與 `status=verified` 才能宣布實際跑通。
