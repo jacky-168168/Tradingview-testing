@@ -89,7 +89,7 @@ async function classify(data,previous={},options={}){
  const completed=eligible.filter(p=>p.semantic).length;
  const status=eligible.length===0?"empty":completed===eligible.length?(calls?"verified":"cached"):
    completed?"partial":failed?"error":error?"unavailable":"unavailable";
- data.semantic=summarise(posts,{status,model,
+ data.semantic=summarise(eligible,{status,model,
   inferenceCalls:calls,cachedClassifications:cached,newlyClassified:completed-cached,
   unclassified:eligible.length-completed,updatedAt:new Date(now).toISOString(),error:error||null,
   method:"真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控"});
