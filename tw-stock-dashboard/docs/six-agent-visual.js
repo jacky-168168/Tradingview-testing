@@ -8,6 +8,7 @@ const DEFS=[
  {id:"titan",name:"TITAN",role:"硬性風險否決",note:"否決優先且不能解除",icon:"shield"},
  {id:"nova",name:"NOVA",role:"多代理總結",note:"整理證據，待人審查",icon:"layers"}
 ];
+let activeMode="rules",lastResult=null,lastCandidate=null,verifiedModel=null,modelHours=null;
 const SHAPES={
  scan:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5M8 11h6m-3-3v6"/>',
  chart:'<path d="M3 20h18M5 16l4-5 4 3 6-8"/><circle cx="19" cy="6" r="1"/>',
@@ -63,6 +64,7 @@ function el(tag,cls,value){const n=document.createElement(tag);if(cls)n.classNam
 function setText(id,value){const e=document.getElementById(id);if(e)e.textContent=String(value)}
 function render(out,c){
  if(typeof document==="undefined")return;
+ lastResult=out;lastCandidate=c;
  const info=summary(out,c),hero=document.getElementById("vHero");
  if(hero)hero.dataset.tone=info.tone;
  setText("vHeadline",info.label);setText("vCaption",info.caption);
@@ -94,10 +96,49 @@ function render(out,c){
   card.append(el("div","v-agent-note",role.note));
   grid.append(card);
  }
+ if(activeMode==="model")renderModelCards();
+}
+function renderModelCards(){
+ const grid=document.getElementById("vCards");if(!grid)return;
+ if(!verifiedModel?.rounds?.initial||!verifiedModel?.rounds?.final){
+  grid.replaceChildren(el("p","v-muted","目前沒有經核實的 Gemini 六代理觀點。"));return;
+ }
+ grid.replaceChildren();
+ for(const role of DEFS){
+  const data=role.id==="nova"?verifiedModel.rounds.final:verifiedModel.rounds.initial[role.name];
+  const card=el("article","v-agent");card.dataset.role=role.id;card.dataset.llm="true";
+  const top=el("div","v-agent-top"),icon=el("span","v-icon");icon.setAttribute("aria-hidden","true");
+  icon.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+SHAPES[role.icon]+'</svg>';
+  top.append(icon);const name=el("div");name.append(el("div","v-agent-name",role.name),
+   el("div","v-agent-role","Gemini 模型觀點｜"+role.role));top.append(name);card.append(top);
+  const narrative=typeof data?.assessment==="string"?data.assessment:"未取得模型摘要";
+  const main=el("div","v-agent-main",narrative.length>86?narrative.slice(0,86)+"…":narrative);
+  main.dataset.tone=role.id==="titan"&&verifiedModel.hardVeto?"bad":"neutral";card.append(main);
+  card.append(el("div","v-agent-metric","信心："+(data?.confidence||"缺值")+"｜依據："+
+   (Array.isArray(data?.evidenceRefs)?data.evidenceRefs.join("、"):"缺值")));
+  card.append(el("div","v-agent-note",role.id==="titan"&&verifiedModel.hardVeto?
+   "模型報告的 TITAN 否決仍有效":role.id==="nova"?"最後整合｜不可下單":
+   (modelHours>26||!verifiedModel.inputIsLive?"歷史模型觀點":"來源時間請核對")));
+  grid.append(card);
+ }
+}
+function setMode(mode){
+ if(mode==="model"&&!verifiedModel)return;
+ activeMode=mode;
+ for(const [id,value] of [["vRulesBtn","rules"],["vGeminiBtn","model"]]){
+  const b=document.getElementById(id);if(b)b.setAttribute("aria-pressed",String(value===mode));
+ }
+ setText("vCardsTitle",mode==="rules"?"各代理結論｜規則式研究":
+  "各代理結論｜Gemini 模型研究（來源日 "+(verifiedModel?.evidenceDate||"缺值")+"）");
+ if(lastResult)render(lastResult,lastCandidate);else if(mode==="model")renderModelCards();
 }
 function modelReport(doc,hours){
  if(typeof document==="undefined")return;
  const ok=doc?.verifiedModelExecution===true&&doc?.inferenceCalls===9&&doc?.noTrade===true;
+ verifiedModel=ok?doc:null;modelHours=ok?hours:null;
+ const toggle=document.getElementById("vGeminiBtn");if(toggle)toggle.disabled=!ok;
+ if(!ok&&activeMode==="model")setMode("rules");
+ if(ok&&activeMode==="model")renderModelCards();
  const stale=ok&&(hours>26||!doc.inputIsLive);
  const host=document.getElementById("vModelStatus");if(!host)return;
  host.dataset.tone=ok&&stale?"warn":ok?"good":"bad";
@@ -107,5 +148,9 @@ function modelReport(doc,hours){
   month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
  setText("vModelEvidence",ok?"模型來源日："+(doc.evidenceDate||"缺值")+"｜與上方規則快照獨立":"未執行或報告驗證失敗，不顯示假結論");
 }
-return {render,modelReport,summary,descriptor,statusTone,DEFS};
+if(typeof document!=="undefined"){
+ document.getElementById("vRulesBtn")?.addEventListener("click",()=>setMode("rules"));
+ document.getElementById("vGeminiBtn")?.addEventListener("click",()=>setMode("model"));
+}
+return {render,modelReport,summary,descriptor,statusTone,DEFS,setMode};
 });
