@@ -58,7 +58,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push')
     needs: validate
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 14
     permissions:
       contents: write
     steps:
@@ -92,6 +92,12 @@ jobs:
           assert sem.get("status") in {"verified","cached","partial","error","empty","unavailable"}
           assert sem.get("noTrade") is True and sem.get("classified",0)<=len(d["items"])
           assert sum(sem.get(k,0) for k in ("positive","negative","neutral"))==sem.get("classified",0)
+          assert sem.get("eligible",0)==len(d["items"])
+          assert sem.get("classified",0)+sem.get("unclassified",0)==sem.get("eligible",0)
+          assert sem.get("inferenceCalls",0)<=sem.get("attemptedCalls",0)
+          assert 0<=sem.get("coveragePct",0)<=100
+          assert sem.get("repeatedHeadlineCount",0)<=len(d["items"])
+          assert sem.get("noTrade") is True
           index=json.loads(Path("tw-stock-dashboard/docs/data/orion_news/history/index.json").read_text("utf-8"))
           assert index["schema"]==1 and index["retentionDays"]==30 and index["days"]
           print("ORION_NEWS_VALIDATED",len(d["items"]),sem["status"],sem["inferenceCalls"],len(index["days"]))
