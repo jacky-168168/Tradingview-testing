@@ -41,6 +41,7 @@ async function load(){
   const response=await fetch("./data/agent_llm/latest.json?v="+Date.now(),{cache:"no-store",signal:AbortSignal.timeout(12000)});
   if(!response.ok)throw Error("報告尚未發布（HTTP "+response.status+"）");
   const doc=await response.json(),hours=assertReport(doc);
+  window.SixAgentVisual?.modelReport(doc,hours);
   const historical=hours>26||!doc.inputIsLive;
   flag.textContent=hours>26?"歷史報告（已過期）":historical?"歷史研究":"模型討論快照";
   info.textContent="模型："+doc.model+"｜推論呼叫："+doc.inferenceCalls+" 次｜產出（台灣時間）："+
@@ -54,6 +55,7 @@ async function load(){
   card(host,"TITAN",doc.rounds.critiques.TITAN,"風控反駁");
   card(host,"NOVA",doc.rounds.final,"最終研究結論（不可下單）");
  }catch(e){
+  window.SixAgentVisual?.modelReport(null);
   $("llmTrace")?.replaceChildren();
   flag.textContent="LLM 未驗證／暫不可用";
   info.textContent="Google Gemini 真實九輪報告尚未通過驗證或暫時無法取得（"+String(e.message)+

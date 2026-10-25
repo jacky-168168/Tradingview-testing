@@ -46,6 +46,7 @@ function detail(c){
   ...a.nova.reasons,a.nova.summary,"研究結果不構成交易允許，所有買賣決定由使用者自行判斷。"],"final");
  for(const item of host.querySelectorAll("a")){if(!/^https:\/\//.test(item.href))item.removeAttribute("href");}
  for(const n of $("candidates").querySelectorAll("button"))n.setAttribute("aria-pressed",String(n.dataset.code===selected));
+ window.SixAgentVisual?.render(current,c);
 }
 function renderList(){
  const host=$("candidates");host.replaceChildren();if(!current)return;
@@ -53,7 +54,8 @@ function renderList(){
  const chosen=current.candidates.filter(c=>filter==="all"||
   filter==="veto"&&c.agents.titan.hardVeto||filter==="wait"&&c.agents.nova.status==="等待確認"||
   filter==="review"&&c.agents.nova.status.startsWith("研究候選"));
- if(!chosen.length){append(host,"div","此條件下沒有候選標的。","empty");return;}
+ if(!chosen.length){append(host,"div","此條件下沒有候選標的。","empty");
+  window.SixAgentVisual?.render(current,null);return;}
  for(const c of chosen){
   const b=append(host,"button",null,"candidate");b.type="button";b.dataset.code=c.code;
   b.setAttribute("aria-pressed",String(c.code===selected));
@@ -64,6 +66,7 @@ function renderList(){
   b.addEventListener("click",()=>detail(c));
  }
  if(!chosen.some(x=>x.code===selected))detail(chosen[0]);
+ else detail(chosen.find(x=>x.code===selected));
 }
 function renderSemantic(social){
  const host=$("lunaSemantic");if(!host)return;host.replaceChildren();
@@ -153,6 +156,7 @@ async function load(){
  renderSemantic(social);
  void loadJson(base+"social_sentiment/history/index.json").then(renderHistory).catch(()=>renderHistory(null));
  const result=core.analyze({daily,intraday,status,news,social},new Date());current=result;
+ window.SixAgentVisual?.render(result,null);
  $("mode").textContent=result.mode;$("asOf").textContent="來源日："+(result.asOfDate||"缺值")+"｜風險日："+(result.source.riskDate||"缺值");
  $("nCandidates").textContent=String(result.counts.candidates);
  $("nVeto").textContent=String(result.counts.veto);
