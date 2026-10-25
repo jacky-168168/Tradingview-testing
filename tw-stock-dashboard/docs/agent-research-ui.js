@@ -29,6 +29,7 @@ function detail(c){
   "目前技術訊號："+(a.vega.signal||"缺值"),a.vega.invalidation]);
  const sourceList=a.orion.sources.map(x=>({...x}));const links=sourceList.map(x=>({title:x.title,url:x.url,source:x.source,publishedAt:x.publishedAt,confirmed:x.confirmed})).filter(x=>x.url);
  explainCard(host,"ORION","新聞與事件",a.orion.status,[a.orion.reason,
+  a.orion.newsroom?"台灣財經新聞標題分析：偏利多 "+a.orion.newsroom.positive+"／偏利空 "+a.orion.newsroom.negative+"／中性 "+a.orion.newsroom.neutral+"（Gemini 已判 "+a.orion.newsroom.classified+" 篇）":"跨媒體新聞風向尚未有即時經驗證的 Gemini 標題判讀",
   "來源資料同步年齡："+(a.orion.datasetAgeMinutes===null?"不明":Math.round(a.orion.datasetAgeMinutes)+" 分鐘"),...links]);
  explainCard(host,"LUNA","市場與公開社群討論",a.luna.status,[
   "大盤風險分數："+fmt(a.luna.score,0)+"／100；上漲家數比率："+fmt(a.luna.breadth,1)+"%",
@@ -183,19 +184,19 @@ async function load(){
  const base="./data/";
  const files=await Promise.allSettled([
   loadJson(base+"latest.json"),loadJson(base+"g_intraday/latest.json"),
-  loadJson(base+"g_intraday/status.json"),loadJson(base+"market_events/latest.json"),loadJson(base+"social_sentiment/latest.json")
+  loadJson(base+"g_intraday/status.json"),loadJson(base+"market_events/latest.json"),loadJson(base+"social_sentiment/latest.json"),
+  loadJson(base+"orion_news/latest.json")
  ]);
- const errors=files.map((x,i)=>x.status==="rejected"?["正式日榜單","盤中 G","盤中狀態","重大新聞","社群情緒"][i]+"無法讀取":null).filter(Boolean);
- const [daily,intraday,status,news,social]=files.map(x=>x.status==="fulfilled"?x.value:{});
- void loadJson(base+"orion_news/latest.json").then(d=>window.OrionNewsViewer?.draw(d))
-  .catch(()=>window.OrionNewsViewer?.draw(null));
+ const errors=files.map((x,i)=>x.status==="rejected"?["正式日榜單","盤中 G","盤中狀態","重大新聞","社群情緒","ORION 財經新聞"][i]+"無法讀取":null).filter(Boolean);
+ const [daily,intraday,status,news,social,orion]=files.map(x=>x.status==="fulfilled"?x.value:{});
+ window.OrionNewsViewer?.draw(orion);
  void loadJson(base+"orion_news/history/index.json").then(d=>window.OrionNewsViewer?.history(d))
   .catch(()=>window.OrionNewsViewer?.history(null));
  renderSocialHeat(social);
  renderCreatorMedia(social);
  renderSemantic(social);
  void loadJson(base+"social_sentiment/history/index.json").then(renderHistory).catch(()=>renderHistory(null));
- const result=core.analyze({daily,intraday,status,news,social},new Date());current=result;
+ const result=core.analyze({daily,intraday,status,news,social,orion},new Date());current=result;
  window.SixAgentVisual?.render(result,null);
  $("mode").textContent=result.mode;$("asOf").textContent="來源日："+(result.asOfDate||"缺值")+"｜風險日："+(result.source.riskDate||"缺值");
  $("nCandidates").textContent=String(result.counts.candidates);
