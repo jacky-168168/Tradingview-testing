@@ -75,7 +75,7 @@ setImmediate(()=>{
   node('filters').fn({target:{closest:()=>({dataset:{cat:filter}})}});
   assert(node('news').innerHTML.includes(expected),filter+' news filter should show own items');
   assert(!node('news').innerHTML.includes(excluded),filter+' filter should hide unrelated items');
-  assert.equal(node('events').hidden,true,'topic filters should not contain unrelated events');
+  assert.equal(node('eventSection').hidden,true,'topic filters should not contain unrelated events');
  }
  console.log('PASS ended events filtered, only fresh news rendered, pagination and stale dataset warning');
 });
