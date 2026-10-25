@@ -55,20 +55,47 @@ async function infer(batch,{apiKey=process.env.GEMINI_API_KEY,model=MODEL,fetchF
  }
  return out;
 }
-function summarise(data,now,model,calls,cached,error){
+/* Run through the whole verified 48h pool, not only the first 24 titles.
+   Respect official rate limits: pace requests, stop on quota errors, and resume
+   from audited per-article cache on the next scheduled run. */
+const MAX_PER_RUN=180,BATCH_SIZE=8,DEFAULT_BATCH_PAUSE_MS=4200;
+const signature=p=>String(p.title||"").trim(); // only identical real titles are interchangeable
+function summarise(data,now,model,calls,cached,error,diagnostics={}){
  const posts=data.items||[],valid=posts.filter(p=>candidate(p,now)),tagged=valid.filter(p=>p.semantic);
  const count=t=>tagged.filter(p=>p.semantic.tone===t).length;
  const status=valid.length===0?"empty":tagged.length===valid.length?(calls?"verified":"cached"):
   tagged.length?"partial":error?"error":"unavailable";
  const sourceCounts={};for(const p of valid){const k=p.source||"未註明";sourceCounts[k]=(sourceCounts[k]||0)+1;}
  const themes={};for(const p of tagged){const t=p.semantic.theme;themes[t]=(themes[t]||0)+1;}
+ const byTheme=new Map();
+ for(const p of tagged){
+  const theme=p.semantic.theme;
+  if(!byTheme.has(theme))byTheme.set(theme,{bull:[],bear:[]});
+  const rows=byTheme.get(theme),entry={title:p.title,source:p.source,url:p.url};
+  if(p.semantic.tone==="偏利多報導")rows.bull.push(entry);
+  if(p.semantic.tone==="偏利空報導")rows.bear.push(entry);
+ }
+ const contrastingThemes=[];
+ for(const [theme,pair] of byTheme.entries()){
+  const bull=pair.bull.find(x=>pair.bear.some(y=>x.url!==y.url));
+  const bear=bull&&pair.bear.find(x=>x.url!==bull.url);
+  if(bull&&bear)contrastingThemes.push({theme,bull,bear});
+ }
+  const uniq=new Set(valid.map(p=>String(p.headlineGroup||signature(p))));
+ const interpretedUniq=new Set(tagged.map(p=>String(p.headlineGroup||signature(p))));
  return {status,model,updatedAt:new Date(now).toISOString(),inferenceCalls:calls,
-  cached,eligible:valid.length,classified:tagged.length,
+  attemptedCalls:diagnostics.attemptedCalls||0,
+  cached,headlineReuse:diagnostics.headlineReuse||0,eligible:valid.length,classified:tagged.length,
   unclassified:valid.length-tagged.length,
+  coveragePct:valid.length?Math.round(tagged.length/valid.length*1000)/10:0,
+  distinctHeadlineGroups:uniq.size,classifiedHeadlineGroups:interpretedUniq.size,
+  repeatedHeadlineCount:Math.max(0,valid.length-uniq.size),
+  contrastingThemes:contrastingThemes.slice(0,5),
+  quotaLimited:diagnostics.quotaLimited===true,
   positive:count("偏利多報導"),negative:count("偏利空報導"),neutral:count("中性資訊／難判"),
   publisherCounts:sourceCounts,themeCounts:themes,sourceCount:Object.keys(sourceCounts).length,
   noTrade:true,error:error||null,
-  method:"僅分析可追溯的財經新聞標題報導語氣；不同來源篇數不代表讀者情緒、客觀市場方向或可交易性"};
+  method:"所有48小時內有效標題會逐批送 Gemini 判讀，相同標題可沿用已驗證結果。未完成時僅報已判讀樣本，不代表全體報導風向；重複標題另外標示，並非事件完全去重。"};
 }
 async function classify(data,previous={},options={}){
  const now=options.now??Date.now(),model=options.model||MODEL;
@@ -76,17 +103,50 @@ async function classify(data,previous={},options={}){
  const valid=data.items.filter(p=>candidate(p,now));
  const old=new Map((previous.items||[]).filter(p=>candidate(p,now)&&p.semantic?.model===model)
   .map(p=>[key(p),p.semantic]));
- let cached=0,calls=0,error="";
- for(const p of valid){const s=old.get(key(p));if(!s)continue;
-  try{p.semantic=check(p,s,model);cached++}catch{}}
- const todo=valid.filter(p=>!p.semantic).slice(0,24);
- if(!options.apiKey&&!process.env.GEMINI_API_KEY)error="沒有 Gemini API 金鑰";
- else for(let i=0;i<todo.length;i+=8){
-  try{const batch=todo.slice(i,i+8),results=await infer(batch,{...options,model});calls++;
-   for(const p of batch)p.semantic=results.get(key(p));
-  }catch(e){error=String(e.message).slice(0,120);break}
+ let cached=0,headlineReuse=0,calls=0,attemptedCalls=0,error="",quotaLimited=false;
+ for(const p of valid){
+  const s=old.get(key(p));
+  if(!s)continue;
+  try{p.semantic=check(p,s,model);cached++}catch{}
  }
- data.semantic=summarise(data,now,model,calls,cached,error);
+ // Identical text is an exact-match model interpretation, not an inferred news event.
+ const known=new Map();
+ for(const p of valid)if(p.semantic)known.set(signature(p),p.semantic);
+ for(const p of valid){
+  if(p.semantic)continue;
+  const s=known.get(signature(p));
+  if(!s)continue;
+  try{p.semantic={...check(p,s,model),reusedIdenticalHeadline:true};headlineReuse++}catch{}
+ }
+ const distinctPending=new Map();
+ for(const p of valid)if(!p.semantic&&!distinctPending.has(signature(p)))distinctPending.set(signature(p),p);
+ const todo=Array.from(distinctPending.values());
+ const limit=Math.min(MAX_PER_RUN,Math.max(1,Math.floor(Number(options.maxArticlesPerRun??MAX_PER_RUN)||MAX_PER_RUN)));
+ const limited=todo.slice(0,limit);
+ const interval=Math.max(0,Math.floor(options.batchIntervalMs??DEFAULT_BATCH_PAUSE_MS));
+ const sleep=options.sleepFn||((ms)=>new Promise(resolve=>setTimeout(resolve,ms)));
+ const apiKey=options.apiKey??process.env.GEMINI_API_KEY;
+ if(limited.length&&!apiKey)error="沒有 Gemini API 金鑰";
+ else for(let i=0;i<limited.length;i+=BATCH_SIZE){
+  if(i)await sleep(interval);
+  const batch=limited.slice(i,i+BATCH_SIZE);attemptedCalls++;
+  try{
+   const results=await infer(batch,{...options,apiKey,model});calls++;
+   for(const p of valid)if(!p.semantic){
+    const matching=batch.find(x=>signature(x)===signature(p));
+    if(!matching)continue;
+    const sem=results.get(key(matching));
+    p.semantic=p===matching?sem:{...check(p,sem,model),reusedIdenticalHeadline:true};
+    if(p!==matching)headlineReuse++;
+   }
+  }catch(e){
+   error=String(e.message||e).slice(0,140);
+   quotaLimited=/HTTP 429|quota|RESOURCE_EXHAUSTED/i.test(error);
+   // Do not retry quota exhaustion or mark outstanding articles as neutral.
+   break;
+  }
+ }
+ data.semantic=summarise(data,now,model,calls,cached,error,{attemptedCalls,headlineReuse,quotaLimited});
  return data;
 }
 async function main(){

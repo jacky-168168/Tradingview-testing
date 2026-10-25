@@ -30,9 +30,20 @@ function draw(doc){
  for(const [label,value] of [["標題數",doc.items.length],["已連線 RSS",String(source.healthyFeeds??0)+"／"+String(source.configuredFeeds??0)],["Gemini 已判讀",ai?meta.classified??0:"尚未完成"]]){
   const b=items(top,"div","orion-stat");items(b,"strong","",value);items(b,"span","",label);
  }
+ const progress=items(host,"div","orion-coverage");
+ const full=Number(meta.eligible??doc.items.length),classified=Number(meta.classified??0);
+ const pct=full?Math.min(100,Math.max(0,classified/full*100)):0;
+ items(progress,"span","", "Gemini 完成率："+classified+"／"+full+"（"+pct.toFixed(1)+"%）"+
+  (full===classified?"｜全部完成":"｜剩餘 "+Math.max(0,full-classified)+" 篇下一輪續判"));
+ const track=items(progress,"div","orion-bar-track"),fill=items(track,"div","orion-bar-fill orion-positive");
+ fill.style.width=pct.toFixed(1)+"%";
+ if(Number.isFinite(meta.repeatedHeadlineCount)&&meta.repeatedHeadlineCount>0)
+  items(progress,"span","", "重複標題 "+meta.repeatedHeadlineCount+" 則（只做文字完全相同的保守比對）");
  const synopsis=items(host,"p","description",(fresh?"近期新聞標題來源":"歷史快照／非即時")+
  "｜"+(ai?"Gemini 標題語氣研判":"僅關鍵詞初判（非 Gemini 判讀）")+
- "｜"+(meta.classified??0)+" 篇完成模型判讀；不能代表股票實際漲跌或媒體受眾共識。");
+ "｜"+(meta.classified??0)+" 篇完成模型判讀"+
+ (meta.status==="partial"?"，以下僅為已判讀樣本，不能推論全部新聞風向":"")+
+ "；不能代表股票實際漲跌或媒體受眾共識。");
  synopsis.setAttribute("role","status");
  const total=counts.reduce((a,x)=>a+x.n,0),bar=items(host,"div","orion-bars");
  for(const r of counts){
@@ -48,7 +59,20 @@ function draw(doc){
   const b=items(host,"div","orion-themes");
   for(const t of themes)items(b,"span","orion-theme",(t.name||"其他")+" "+(t.count||0));
  }
- const statuses=source.sources||{},sources=items(host,"details","orion-fold");
+ if(ai&&Array.isArray(meta.contrastingThemes)&&meta.contrastingThemes.length){
+  const sides=items(host,"details","orion-fold");
+  items(sides,"summary","","同題材出現正反報導（點開核對，不代表同一事件）");
+  for(const pair of meta.contrastingThemes.slice(0,5)){
+   const block=items(sides,"div","orion-article");
+   items(block,"strong","",pair.theme||"未標示題材");
+   for(const [prefix,x] of [["偏利多",pair.bull],["偏利空",pair.bear]]){
+    if(!x||!sourceOK(x.url))continue;
+    const link=items(block,"a","",prefix+"｜"+x.title);
+    link.href=x.url;link.target="_blank";link.rel="noopener noreferrer nofollow";
+   }
+  }
+ }
+  const statuses=source.sources||{},sources=items(host,"details","orion-fold");
  items(sources,"summary","", "檢視媒體來源覆蓋率與失聯狀態");
  for(const [name,state] of Object.entries(statuses)){
   items(sources,"p","small",name+"｜"+(state.status||"unknown")+"｜"+
