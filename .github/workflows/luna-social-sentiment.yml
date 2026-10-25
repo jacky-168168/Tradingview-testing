@@ -6,6 +6,8 @@ on:
     paths:
       - '.github/workflows/luna-social-sentiment.yml'
       - 'tw-stock-dashboard/scripts/collect_social_sentiment.py'
+      - 'tw-stock-dashboard/scripts/classify_luna_semantic.cjs'
+      - 'tw-stock-dashboard/scripts/archive_luna_history.py'
   schedule:
     # UTC 01:10/03:10/05:10/09:10/13:10 = Taiwan 09:10/11:10/13:10/17:10/21:10.
     - cron: '10 1,3,5,9,13 * * *'
@@ -14,6 +16,10 @@ on:
       - '.github/workflows/luna-social-sentiment.yml'
       - 'tw-stock-dashboard/scripts/collect_social_sentiment.py'
       - 'tw-stock-dashboard/tests/test_social_sentiment.py'
+      - 'tw-stock-dashboard/tests/test_luna_archive.py'
+      - 'tw-stock-dashboard/tests/test_luna_semantic.cjs'
+      - 'tw-stock-dashboard/scripts/classify_luna_semantic.cjs'
+      - 'tw-stock-dashboard/scripts/archive_luna_history.py'
       - 'tw-stock-dashboard/docs/agent-research*'
       - 'tw-stock-dashboard/tests/test_six_agent_research.cjs'
 permissions:
@@ -32,7 +38,9 @@ jobs:
       - name: Verify sources, stale-data guards and independent six-agent rules
         run: |
           python -m unittest discover -s tw-stock-dashboard/tests -p 'test_social_sentiment.py' -v
-          node --test tw-stock-dashboard/tests/test_six_agent_research.cjs
+          python -m unittest discover -s tw-stock-dashboard/tests -p 'test_luna_archive.py' -v
+          node --test tw-stock-dashboard/tests/test_luna_semantic.cjs tw-stock-dashboard/tests/test_six_agent_research.cjs
+          node --check tw-stock-dashboard/scripts/classify_luna_semantic.cjs
           node --check tw-stock-dashboard/docs/agent-research-core.js
           node --check tw-stock-dashboard/docs/agent-research-ui.js
       - name: Probe Bluesky public official API (PR diagnostics, non-blocking)
@@ -78,12 +86,26 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preserve previous semantic decisions for exact-source cache
+        run: |
+          cp tw-stock-dashboard/docs/data/social_sentiment/latest.json "$RUNNER_TEMP/luna-previous.json"
       - name: Collect verifiable public posts and authorized Meta sources
         env:
           THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           IG_USER_ID: ${{ vars.IG_USER_ID }}
         run: python tw-stock-dashboard/scripts/collect_social_sentiment.py
+      - name: Classify only new investment discussion via authorized Gemini API
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LUNA_GEMINI_MODEL: gemini-3.5-flash-lite
+          LUNA_PREVIOUS_PATH: ${{ runner.temp }}/luna-previous.json
+        run: node tw-stock-dashboard/scripts/classify_luna_semantic.cjs
+      - name: Update daily verifiable LUNA research archive
+        run: python tw-stock-dashboard/scripts/archive_luna_history.py
       - name: Reject fabricated sources, validate staleness and schema
         run: |
           python - <<'PY'
@@ -98,6 +120,15 @@ jobs:
           assert d['social']['sample']<=d['social']['rawSample']
           assert d['social']['investmentDiscussion']+d['social']['repostedNews']+d['social']['unrelated']==len(d['items'])
           assert sum(bool(x.get('investmentEligible')) for x in d['items'])==d['social']['investmentDiscussion']
+          sem=d.get('semantic',{})
+          assert sem.get('status') in {'empty','cached','verified','partial','error','unavailable'}
+          assert sem.get('noTrade') is True and sem.get('inferenceCalls',0)>=0
+          assert sem.get('classifiedCount',0)<=sem.get('candidateCount',0)
+          assert all(not x.get('semantic') or x.get('investmentEligible') is True for x in d['items'])
+          h=Path('tw-stock-dashboard/docs/data/social_sentiment/history/index.json')
+          index=json.loads(h.read_text('utf-8'))
+          assert index['schema']==1 and index['days'] and index['retentionDays']==30
+          print('LUNA_SEMANTIC_ARCHIVE_VERIFIED',sem['status'],sem.get('inferenceCalls'),len(index['days']))
           assert isinstance(d.get("stockHeat"),dict)
           assert all(x["sample"]>=1 and x["sample"]<=len(d["items"]) and x["recent24h"]<=x["sample"] for x in d["stockHeat"]["stocks"])
           assert all(x["sample"]>=x["originalDiscussion"]>=0 for x in d["stockHeat"]["stocks"])
@@ -107,9 +138,9 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add tw-stock-dashboard/docs/data/social_sentiment/latest.json
+          git add -A tw-stock-dashboard/docs/data/social_sentiment/
           if git diff --cached --quiet; then echo 'No social data change'; exit 0; fi
-          git commit -m 'data: update public LUNA social sentiment evidence [skip ci]'
+          git commit -m 'data: append LUNA research history and Gemini semantic audit [skip ci]'
           for attempt in 1 2 3; do
             git pull --rebase origin main && git push origin HEAD:main && exit 0
             sleep 3
