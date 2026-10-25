@@ -8,9 +8,9 @@ const row=(i=0)=>({id:"key"+i,title:i?"美國聯準會降息幅度仍需觀察":
 const doc=items=>({schema:1,items:structuredClone(items),generatedAt:new Date(NOW).toISOString()});
 const out=(a)=>({ok:true,status:200,json:async()=>({candidates:[{finishReason:"STOP",
  content:{parts:[{text:JSON.stringify({results:a})}]}}]})});
-const tags=rows=>rows.map((p,i)=>({id:orion.key(p),tone:i?"中性資訊／難判":"中性資訊／難判",
- theme:i?"總體／利率":"AI／半導體",confidence:"中",
- evidence:i?"降息幅度仍需觀察":"營收成長，但市場仍有疑慮"}));
+const tags=rows=>rows.map(p=>({id:orion.key(p),tone:"中性資訊／難判",
+ theme:p.title.includes("台積電")?"AI／半導體":"總體／利率",confidence:"中",
+ evidence:p.title.includes("台積電")?"營收成長，但市場仍有疑慮":"降息幅度仍需觀察"}));
 test("real-transport style Gemini output is strictly verified",async()=>{
  const d=doc([row(0),row(1)]);let count=0;
  await orion.classify(d,{},{now:NOW,apiKey:"test-only",fetchFn:async(_,args)=>{
