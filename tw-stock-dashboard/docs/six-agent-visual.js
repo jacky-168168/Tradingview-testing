@@ -74,8 +74,8 @@ function render(out,c){
  const score=safeNumber(out?.source?.riskScore),risk=document.getElementById("vRiskGauge");
  setText("vRiskValue",score===null?"—":num(score,0));
  if(risk){const pct=score===null?0:Math.min(100,Math.max(0,score));
-  risk.setAttribute("stroke-dasharray",pct+" 100");
-  risk.setAttribute("stroke",score===null?"#9ca3af":score<60?"#fecaca":"#9ef0cd");
+  risk.style.strokeDasharray=pct+" 100";
+  risk.style.stroke=score===null?"#9ca3af":score<60?"#fecaca":"#9ef0cd";
  }
  const grid=document.getElementById("vCards");if(!grid)return;grid.replaceChildren();
  for(const role of DEFS){
