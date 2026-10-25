@@ -1,0 +1,608 @@
+{
+  "version": "TDCC_WHALE_400_QUADRANTS_V1",
+  "updatedAt": "2026-10-25T06:40:00.367947+00:00",
+  "date": "2026-10-22",
+  "priorDate": "2026-10-16",
+  "twoWeeksBefore": "2026-10-08",
+  "title": "大戶換手四象限週報",
+  "thresholdPP": 1.0,
+  "minBigHolderShares": 400001,
+  "definitions": {
+    "bigHolder": "集保持股分級12～15（400,001股以上）的股數／分級17合計股數，計算持股比率",
+    "change": "上週與本週持股比率差，以百分點（pp）表示；不是大戶淨買進張數",
+    "continuedBuy": "兩段變動均達+1.00pp",
+    "turnaround": "前段≤−1.00pp、本段≥+1.00pp",
+    "exit": "前段≥+1.00pp、本段≤−1.00pp",
+    "continuedSell": "兩段變動均≤−1.00pp",
+    "price": "本週收盤漲跌＝本期相對前一期調整後收盤價的百分比（Yahoo Finance），不可取得留空",
+    "screen": "當前上市/上櫃四碼普通股（不含存託憑證及官方上市/櫃日期未滿30日的新掛牌股票），兩段絕對變動都達1pp；排除集保合計股數週變化超過3%者",
+    "differenceFromImage": "原圖額外入榜規則未揭露；此處顯示完整符合公開條件的集合，不宣稱與原圖數量相同"
+  },
+  "source": {
+    "official": "https://www.tdcc.com.tw/portal/zh/smWeb/qryStock",
+    "openData": "https://opendata.tdcc.com.tw/getOD.ashx?id=1-5",
+    "historicalArchive": "https://github.com/wirelessr/tdcc-opendata-archive",
+    "snapshotUrls": [
+      "https://raw.githubusercontent.com/wirelessr/tdcc-opendata-archive/main/snapshots/2026/2026-10-08.csv",
+      "https://raw.githubusercontent.com/wirelessr/tdcc-opendata-archive/main/snapshots/2026/2026-10-16.csv",
+      "https://raw.githubusercontent.com/wirelessr/tdcc-opendata-archive/main/snapshots/2026/2026-10-22.csv"
+    ]
+  },
+  "coverage": {
+    "referenceWeeks": 3,
+    "validTDCCStocks": [
+      4088,
+      4103,
+      4100
+    ],
+    "sharedThreeWeeks": 4070,
+    "universe": 1985,
+    "excludedReasons": {
+      "no_current_listed_otc_universe": 2088,
+      "below_one_pp_change": 1905,
+      "large_tdcc_depository_change": 25,
+      "recent_initial_listing_under_30_days": 5,
+      "depositary_receipt": 4
+    },
+    "price": {
+      "attempted": 43,
+      "paired": 43,
+      "errors": 0
+    }
+  },
+  "quadrants": {
+    "續買": {
+      "count": 10,
+      "priceCount": 10,
+      "avgPriceReturnPct": 0.44,
+      "medianPriceReturnPct": -1.25,
+      "upCount": 3,
+      "rows": [
+        {
+          "code": "6209",
+          "name": "今國光",
+          "market": "上市",
+          "previousPP": 3.17,
+          "currentPP": 6.15,
+          "bigHolderRatio": 53.868,
+          "priceReturnPct": -1.49,
+          "startConcentration": 44.556,
+          "middleConcentration": 47.722,
+          "endConcentration": 53.868
+        },
+        {
+          "code": "3354",
+          "name": "律勝",
+          "market": "上櫃",
+          "previousPP": 2.16,
+          "currentPP": 4.27,
+          "bigHolderRatio": 78.136,
+          "priceReturnPct": 19.5,
+          "startConcentration": 71.707,
+          "middleConcentration": 73.867,
+          "endConcentration": 78.136
+        },
+        {
+          "code": "3580",
+          "name": "友威科",
+          "market": "上櫃",
+          "previousPP": 2.98,
+          "currentPP": 2.38,
+          "bigHolderRatio": 21.17,
+          "priceReturnPct": -13.58,
+          "startConcentration": 15.811,
+          "middleConcentration": 18.788,
+          "endConcentration": 21.17
+        },
+        {
+          "code": "1569",
+          "name": "濱川",
+          "market": "上櫃",
+          "previousPP": 1.15,
+          "currentPP": 2.31,
+          "bigHolderRatio": 59.437,
+          "priceReturnPct": 9.25,
+          "startConcentration": 55.973,
+          "middleConcentration": 57.124,
+          "endConcentration": 59.437
+        },
+        {
+          "code": "2480",
+          "name": "敦陽科",
+          "market": "上市",
+          "previousPP": 1.05,
+          "currentPP": 1.67,
+          "bigHolderRatio": 35.119,
+          "priceReturnPct": -0.27,
+          "startConcentration": 32.395,
+          "middleConcentration": 33.446,
+          "endConcentration": 35.119
+        },
+        {
+          "code": "6278",
+          "name": "台表科",
+          "market": "上市",
+          "previousPP": 5.48,
+          "currentPP": 1.52,
+          "bigHolderRatio": 75.859,
+          "priceReturnPct": -2.68,
+          "startConcentration": 68.856,
+          "middleConcentration": 74.337,
+          "endConcentration": 75.859
+        },
+        {
+          "code": "4953",
+          "name": "緯致",
+          "market": "上櫃",
+          "previousPP": 1.03,
+          "currentPP": 1.33,
+          "bigHolderRatio": 46.609,
+          "priceReturnPct": 7.73,
+          "startConcentration": 44.25,
+          "middleConcentration": 45.282,
+          "endConcentration": 46.609
+        },
+        {
+          "code": "6269",
+          "name": "台郡",
+          "market": "上市",
+          "previousPP": 1.79,
+          "currentPP": 1.25,
+          "bigHolderRatio": 34.21,
+          "priceReturnPct": -4.02,
+          "startConcentration": 31.172,
+          "middleConcentration": 32.963,
+          "endConcentration": 34.21
+        },
+        {
+          "code": "2727",
+          "name": "王品",
+          "market": "上市",
+          "previousPP": 1.12,
+          "currentPP": 1.24,
+          "bigHolderRatio": 43.963,
+          "priceReturnPct": -1.01,
+          "startConcentration": 41.607,
+          "middleConcentration": 42.728,
+          "endConcentration": 43.963
+        },
+        {
+          "code": "2241",
+          "name": "艾姆勒",
+          "market": "上市",
+          "previousPP": 4.6,
+          "currentPP": 1.21,
+          "bigHolderRatio": 50.568,
+          "priceReturnPct": -9.07,
+          "startConcentration": 44.75,
+          "middleConcentration": 49.354,
+          "endConcentration": 50.568
+        }
+      ]
+    },
+    "回頭車": {
+      "count": 6,
+      "priceCount": 6,
+      "avgPriceReturnPct": -4.33,
+      "medianPriceReturnPct": -3.7,
+      "upCount": 0,
+      "rows": [
+        {
+          "code": "4541",
+          "name": "晟田",
+          "market": "上櫃",
+          "previousPP": -3.71,
+          "currentPP": 1.58,
+          "bigHolderRatio": 39.952,
+          "priceReturnPct": -0.51,
+          "startConcentration": 42.084,
+          "middleConcentration": 38.369,
+          "endConcentration": 39.952
+        },
+        {
+          "code": "3094",
+          "name": "聯傑",
+          "market": "上市",
+          "previousPP": -1.5,
+          "currentPP": 1.35,
+          "bigHolderRatio": 23.914,
+          "priceReturnPct": -9.23,
+          "startConcentration": 24.065,
+          "middleConcentration": 22.567,
+          "endConcentration": 23.914
+        },
+        {
+          "code": "3685",
+          "name": "元創精密",
+          "market": "上櫃",
+          "previousPP": -1.43,
+          "currentPP": 1.32,
+          "bigHolderRatio": 62.338,
+          "priceReturnPct": -8.82,
+          "startConcentration": 62.441,
+          "middleConcentration": 61.014,
+          "endConcentration": 62.338
+        },
+        {
+          "code": "3141",
+          "name": "晶宏",
+          "market": "上櫃",
+          "previousPP": -2.19,
+          "currentPP": 1.23,
+          "bigHolderRatio": 25.804,
+          "priceReturnPct": -3.24,
+          "startConcentration": 26.762,
+          "middleConcentration": 24.569,
+          "endConcentration": 25.804
+        },
+        {
+          "code": "6207",
+          "name": "雷科",
+          "market": "上櫃",
+          "previousPP": -1.76,
+          "currentPP": 1.23,
+          "bigHolderRatio": 17.549,
+          "priceReturnPct": 0.0,
+          "startConcentration": 18.076,
+          "middleConcentration": 16.32,
+          "endConcentration": 17.549
+        },
+        {
+          "code": "2489",
+          "name": "瑞軒",
+          "market": "上市",
+          "previousPP": -1.54,
+          "currentPP": 1.23,
+          "bigHolderRatio": 28.541,
+          "priceReturnPct": -4.16,
+          "startConcentration": 28.854,
+          "middleConcentration": 27.315,
+          "endConcentration": 28.541
+        }
+      ]
+    },
+    "下車": {
+      "count": 12,
+      "priceCount": 12,
+      "avgPriceReturnPct": -5.77,
+      "medianPriceReturnPct": -7.96,
+      "upCount": 3,
+      "rows": [
+        {
+          "code": "6167",
+          "name": "久正",
+          "market": "上櫃",
+          "previousPP": 55.44,
+          "currentPP": -55.33,
+          "bigHolderRatio": 44.667,
+          "priceReturnPct": 3.71,
+          "startConcentration": 44.561,
+          "middleConcentration": 100.0,
+          "endConcentration": 44.667
+        },
+        {
+          "code": "4977",
+          "name": "眾達-KY",
+          "market": "上市",
+          "previousPP": 2.03,
+          "currentPP": -2.41,
+          "bigHolderRatio": 18.458,
+          "priceReturnPct": -10.33,
+          "startConcentration": 18.839,
+          "middleConcentration": 20.865,
+          "endConcentration": 18.458
+        },
+        {
+          "code": "6217",
+          "name": "中探針",
+          "market": "上櫃",
+          "previousPP": 2.53,
+          "currentPP": -2.11,
+          "bigHolderRatio": 23.679,
+          "priceReturnPct": -18.04,
+          "startConcentration": 23.259,
+          "middleConcentration": 25.791,
+          "endConcentration": 23.679
+        },
+        {
+          "code": "3693",
+          "name": "營邦",
+          "market": "上櫃",
+          "previousPP": 1.79,
+          "currentPP": -2.08,
+          "bigHolderRatio": 50.06,
+          "priceReturnPct": -9.51,
+          "startConcentration": 50.345,
+          "middleConcentration": 52.139,
+          "endConcentration": 50.06
+        },
+        {
+          "code": "2402",
+          "name": "毅嘉",
+          "market": "上市",
+          "previousPP": 1.48,
+          "currentPP": -2.07,
+          "bigHolderRatio": 38.967,
+          "priceReturnPct": -5.13,
+          "startConcentration": 39.551,
+          "middleConcentration": 41.035,
+          "endConcentration": 38.967
+        },
+        {
+          "code": "6150",
+          "name": "撼訊",
+          "market": "上櫃",
+          "previousPP": 1.78,
+          "currentPP": -1.99,
+          "bigHolderRatio": 16.139,
+          "priceReturnPct": -6.85,
+          "startConcentration": 16.353,
+          "middleConcentration": 18.133,
+          "endConcentration": 16.139
+        },
+        {
+          "code": "6290",
+          "name": "良維",
+          "market": "上櫃",
+          "previousPP": 1.54,
+          "currentPP": -1.78,
+          "bigHolderRatio": 40.502,
+          "priceReturnPct": -9.06,
+          "startConcentration": 40.749,
+          "middleConcentration": 42.286,
+          "endConcentration": 40.502
+        },
+        {
+          "code": "4760",
+          "name": "勤凱科技",
+          "market": "上櫃",
+          "previousPP": 1.35,
+          "currentPP": -1.36,
+          "bigHolderRatio": 36.482,
+          "priceReturnPct": -13.47,
+          "startConcentration": 36.494,
+          "middleConcentration": 37.84,
+          "endConcentration": 36.482
+        },
+        {
+          "code": "2254",
+          "name": "巨鎧精密-創",
+          "market": "上市",
+          "previousPP": 1.67,
+          "currentPP": -1.19,
+          "bigHolderRatio": 93.322,
+          "priceReturnPct": 3.71,
+          "startConcentration": 92.846,
+          "middleConcentration": 94.514,
+          "endConcentration": 93.322
+        },
+        {
+          "code": "3268",
+          "name": "海德威",
+          "market": "上櫃",
+          "previousPP": 1.37,
+          "currentPP": -1.19,
+          "bigHolderRatio": 34.261,
+          "priceReturnPct": -11.09,
+          "startConcentration": 34.08,
+          "middleConcentration": 35.454,
+          "endConcentration": 34.261
+        },
+        {
+          "code": "6229",
+          "name": "研通",
+          "market": "上櫃",
+          "previousPP": 1.18,
+          "currentPP": -1.18,
+          "bigHolderRatio": 35.286,
+          "priceReturnPct": 0.0,
+          "startConcentration": 35.286,
+          "middleConcentration": 36.47,
+          "endConcentration": 35.286
+        },
+        {
+          "code": "8213",
+          "name": "志超",
+          "market": "上市",
+          "previousPP": 1.24,
+          "currentPP": -1.1,
+          "bigHolderRatio": 51.332,
+          "priceReturnPct": 6.84,
+          "startConcentration": 51.2,
+          "middleConcentration": 52.436,
+          "endConcentration": 51.332
+        }
+      ]
+    },
+    "續賣": {
+      "count": 15,
+      "priceCount": 15,
+      "avgPriceReturnPct": -5.75,
+      "medianPriceReturnPct": -7.51,
+      "upCount": 3,
+      "rows": [
+        {
+          "code": "3441",
+          "name": "聯一光電",
+          "market": "上櫃",
+          "previousPP": -1.52,
+          "currentPP": -6.27,
+          "bigHolderRatio": 18.229,
+          "priceReturnPct": -8.42,
+          "startConcentration": 26.024,
+          "middleConcentration": 24.503,
+          "endConcentration": 18.229
+        },
+        {
+          "code": "6532",
+          "name": "瑞耘",
+          "market": "上櫃",
+          "previousPP": -1.25,
+          "currentPP": -2.86,
+          "bigHolderRatio": 36.362,
+          "priceReturnPct": -6.91,
+          "startConcentration": 40.469,
+          "middleConcentration": 39.223,
+          "endConcentration": 36.362
+        },
+        {
+          "code": "6187",
+          "name": "萬潤",
+          "market": "上櫃",
+          "previousPP": -2.25,
+          "currentPP": -2.23,
+          "bigHolderRatio": 50.13,
+          "priceReturnPct": -10.64,
+          "startConcentration": 54.615,
+          "middleConcentration": 52.364,
+          "endConcentration": 50.13
+        },
+        {
+          "code": "6488",
+          "name": "環球晶",
+          "market": "上櫃",
+          "previousPP": -2.88,
+          "currentPP": -2.12,
+          "bigHolderRatio": 74.708,
+          "priceReturnPct": -8.43,
+          "startConcentration": 79.705,
+          "middleConcentration": 76.827,
+          "endConcentration": 74.708
+        },
+        {
+          "code": "8358",
+          "name": "金居",
+          "market": "上櫃",
+          "previousPP": -1.22,
+          "currentPP": -2.1,
+          "bigHolderRatio": 34.596,
+          "priceReturnPct": -7.1,
+          "startConcentration": 37.914,
+          "middleConcentration": 36.695,
+          "endConcentration": 34.596
+        },
+        {
+          "code": "6805",
+          "name": "富世達",
+          "market": "上市",
+          "previousPP": -1.22,
+          "currentPP": -1.91,
+          "bigHolderRatio": 60.686,
+          "priceReturnPct": 3.78,
+          "startConcentration": 63.807,
+          "middleConcentration": 62.591,
+          "endConcentration": 60.686
+        },
+        {
+          "code": "6533",
+          "name": "晶心科",
+          "market": "上市",
+          "previousPP": -1.99,
+          "currentPP": -1.64,
+          "bigHolderRatio": 22.552,
+          "priceReturnPct": -12.67,
+          "startConcentration": 26.185,
+          "middleConcentration": 24.191,
+          "endConcentration": 22.552
+        },
+        {
+          "code": "6538",
+          "name": "倉和",
+          "market": "上櫃",
+          "previousPP": -2.38,
+          "currentPP": -1.55,
+          "bigHolderRatio": 49.32,
+          "priceReturnPct": 0.35,
+          "startConcentration": 53.25,
+          "middleConcentration": 50.872,
+          "endConcentration": 49.32
+        },
+        {
+          "code": "4908",
+          "name": "前鼎",
+          "market": "上櫃",
+          "previousPP": -4.53,
+          "currentPP": -1.44,
+          "bigHolderRatio": 50.916,
+          "priceReturnPct": -7.73,
+          "startConcentration": 56.878,
+          "middleConcentration": 52.352,
+          "endConcentration": 50.916
+        },
+        {
+          "code": "3211",
+          "name": "順達",
+          "market": "上櫃",
+          "previousPP": -2.06,
+          "currentPP": -1.37,
+          "bigHolderRatio": 48.712,
+          "priceReturnPct": -7.51,
+          "startConcentration": 52.142,
+          "middleConcentration": 50.082,
+          "endConcentration": 48.712
+        },
+        {
+          "code": "4989",
+          "name": "榮科",
+          "market": "上市",
+          "previousPP": -3.37,
+          "currentPP": -1.35,
+          "bigHolderRatio": 15.033,
+          "priceReturnPct": 8.07,
+          "startConcentration": 19.748,
+          "middleConcentration": 16.382,
+          "endConcentration": 15.033
+        },
+        {
+          "code": "3042",
+          "name": "晶技",
+          "market": "上市",
+          "previousPP": -1.69,
+          "currentPP": -1.17,
+          "bigHolderRatio": 55.009,
+          "priceReturnPct": -9.84,
+          "startConcentration": 57.868,
+          "middleConcentration": 56.176,
+          "endConcentration": 55.009
+        },
+        {
+          "code": "8150",
+          "name": "南茂",
+          "market": "上市",
+          "previousPP": -3.62,
+          "currentPP": -1.16,
+          "bigHolderRatio": 67.252,
+          "priceReturnPct": -9.1,
+          "startConcentration": 72.026,
+          "middleConcentration": 68.411,
+          "endConcentration": 67.252
+        },
+        {
+          "code": "6139",
+          "name": "亞翔",
+          "market": "上市",
+          "previousPP": -1.78,
+          "currentPP": -1.09,
+          "bigHolderRatio": 59.714,
+          "priceReturnPct": -5.47,
+          "startConcentration": 62.588,
+          "middleConcentration": 60.806,
+          "endConcentration": 59.714
+        },
+        {
+          "code": "4590",
+          "name": "富田-創",
+          "market": "上市",
+          "previousPP": -1.25,
+          "currentPP": -1.01,
+          "bigHolderRatio": 47.379,
+          "priceReturnPct": -4.69,
+          "startConcentration": 49.641,
+          "middleConcentration": 48.387,
+          "endConcentration": 47.379
+        }
+      ]
+    }
+  },
+  "disclaimer": "TDCC 集保大戶持股級距變化不是主力實際買賣超；持股異動可能受帳戶歸戶、股本與交割等因素影響。非買賣建議，不納入 G 選股或大盤分數。"
+}
