@@ -141,7 +141,7 @@ function nova(parts){const reasons=[];
  return {status:state,reasons,summary:reasons.length?reasons.slice(0,3).join("；"):"研究閘門通過，仍須確認失效點、曝險與資料時效",noTrade:true};
 }
 function analyze(input,nowInput){
- const now=nowInput instanceof Date?nowInput:new Date(),daily=input?.daily||{},intraday=input?.intraday||{},news=input?.news||{},social=input?.social||{},status=input?.status||{};
+ const now=nowInput instanceof Date?nowInput:new Date(),daily=input?.daily||{},intraday=input?.intraday||{},news=input?.news||{},social=input?.social||{},status=input?.status||{},orion=input?.orion||{};
  const trading=session(now),p=taipei(now),q=qualityCheck(intraday,status,now);
  const dailyDate=typeof daily.dataDate==="string"?daily.dataDate:null;
  const useLive=trading&&q.ok;
@@ -151,9 +151,17 @@ function analyze(input,nowInput){
  const candidateRows=rows.filter(x=>x&&/^\d{4}$/.test(String(x.code||""))).slice(0,10);
  const marketReady=useLive;
  const risk=daily.risk||null;
+ const newsAge=ageMinutes(orion.generatedAt,now),isFreshNews=newsAge!==null&&newsAge>=0&&newsAge<=8*60;
+ const verifiedNews=isFreshNews&&orion.semantic?.noTrade===true&&["verified","cached","partial"].includes(orion.semantic?.status);
+ const newsroom=verifiedNews?{
+  positive:orion.semantic.positive||0,negative:orion.semantic.negative||0,
+  neutral:orion.semantic.neutral||0,classified:orion.semantic.classified||0,
+  sourceCount:orion.semantic.sourceCount||0,
+  status:orion.semantic.status,
+  caution:"Gemini 僅分析報導標題，不能推論股價或散戶情緒"}:null;
  const sameRiskDate=!!(risk&&risk.date===(useLive?intraday.sourceCloseDate:asOfDate));
  const candidates=candidateRows.map((row,i)=>{
-  const parts={atlas:atlas(row,i+1),vega:vega(row),orion:eventLinks(row,news,now),luna:luna(risk,social,now,row)};
+  const parts={atlas:atlas(row,i+1),vega:vega(row),orion:{...eventLinks(row,news,now),newsroom},luna:luna(risk,social,now,row)};
   parts.titan=titan(row,{risk,marketReady,sameRiskDate});
   parts.nova=nova(parts);
   return {code:String(row.code),name:String(row.name||row.code),market:String(row.market||""),price:numeric(row.close),theme:String(row.theme||""),
