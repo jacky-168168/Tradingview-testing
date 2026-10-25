@@ -97,6 +97,9 @@ jobs:
           THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           IG_USER_ID: ${{ vars.IG_USER_ID }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+          FACEBOOK_PAGE_IDS: ${{ vars.FACEBOOK_PAGE_IDS }}
         run: python tw-stock-dashboard/scripts/collect_social_sentiment.py
       - name: Classify only new investment discussion via authorized Gemini API
         env:
@@ -116,6 +119,14 @@ jobs:
           assert d['schema']==1 and d['generatedAt'] and len(d['items'])<=80
           assert all(x['platform'] in {'PTT','Threads','Instagram','Bluesky'} and x['url'].startswith('https://') for x in d['items'])
           assert all(x['platform']=='新聞' for x in d['newsItems'])
+          media=d.get('creatorMedia',[])
+          assert isinstance(media,list) and len(media)<=45
+          assert all(x['platform'] in {'YouTube','Facebook'} and x['url'].startswith('https://') and x.get('title') and x.get('publishedAt') for x in media)
+          assert all(x['url'].startswith('https://www.youtube.com/watch?v=') if x['platform']=='YouTube' else
+                     x['url'].startswith(('https://facebook.com/','https://www.facebook.com/','https://m.facebook.com/')) for x in media)
+          assert all(d['sources'][source]['freshCount']==sum(x['platform']==source for x in media)
+                     for source in ('YouTube','Facebook') if d['sources'][source]['status'] in {'ok','empty'})
+          assert all(x['platform'] not in {'YouTube','Facebook'} for x in d['items'])
           assert d['social']['rawSample']==len(d['items'])
           assert d['social']['sample']<=d['social']['rawSample']
           assert d['social']['investmentDiscussion']+d['social']['repostedNews']+d['social']['unrelated']==len(d['items'])
