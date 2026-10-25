@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "generatedAt": "2026-10-25T01:29:20.071045Z",
+  "generatedAt": "2026-10-25T02:56:48.237986Z",
   "sources": {
     "PTT": {
       "status": "ok",
       "method": "官方 Atom",
       "url": "https://www.ptt.cc/atom/stock.xml",
-      "freshCount": 6,
+      "freshCount": 7,
       "timestampBasis": "Atom 發布時間"
     },
     "Bluesky": {
@@ -29,6 +29,16 @@
       "status": "not_authorized",
       "freshCount": 0
     },
+    "YouTube": {
+      "status": "not_configured",
+      "freshCount": 0,
+      "method": "官方 Data API 需 YOUTUBE_API_KEY"
+    },
+    "Facebook": {
+      "status": "not_authorized",
+      "freshCount": 0,
+      "method": "需已審核的 Page Access Token 與粉專 IDs；不能搜尋全站公開貼文"
+    },
     "新聞": {
       "status": "ok",
       "freshCount": 32
@@ -42,10 +52,10 @@
     "directional": 0,
     "status": "已有樣本｜尚無明確多空方向",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
-    "rawSample": 10,
+    "rawSample": 11,
     "investmentDiscussion": 3,
     "originalDiscussion": 3,
-    "repostedNews": 6,
+    "repostedNews": 7,
     "unrelated": 1,
     "platformCounts": {
       "PTT": 1,
@@ -69,6 +79,17 @@
     "method": "僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"
   },
   "items": [
+    {
+      "platform": "PTT",
+      "title": "[新聞] 獨／集保打頭陣上路企業TISA 員工一年有1",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1792896487.A.236.html",
+      "publishedAt": "2026-10-25T02:48:07Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）"
+    },
     {
       "platform": "PTT",
       "title": "[新聞] 農夫存股術1／本金不到500萬敢辭職！他存",
@@ -207,6 +228,7 @@
       }
     }
   ],
+  "creatorMedia": [],
   "newsItems": [
     {
       "platform": "新聞",
@@ -542,18 +564,19 @@
   "notes": [
     "僅使用公開、實際取得且不超過48小時的資料；缺乏授權的平台顯示未授權。",
     "標題關鍵詞易受反諷、轉載、選擇偏差與機器人影響；不能視為代表性民調。",
-    "新聞與社群分開計數；Bluesky 來源另記錄，僅官方可公開搜尋貼文，無讀取留言全文。",
+    "新聞、散戶社群、YouTube 創作者標題及 Facebook 粉專發文彼此獨立，不可合併為散戶情緒投票。",
+    "YouTube／Facebook 只使用有權使用的官方 API；缺少授權或金鑰就顯示未設定。",
     "標題反諷／轉載不直接判定多空，無取得平台授權不蒐集受限制來源。",
     "個股熱度只統計有投資語境且非新聞轉貼的 G Top20 標題，不更改 G 排名或 TITAN 風控。"
   ],
   "semantic": {
-    "status": "verified",
+    "status": "cached",
     "model": "gemini-3.5-flash-lite",
-    "inferenceCalls": 1,
-    "cachedClassifications": 0,
-    "newlyClassified": 3,
+    "inferenceCalls": 0,
+    "cachedClassifications": 3,
+    "newlyClassified": 0,
     "unclassified": 0,
-    "updatedAt": "2026-10-25T01:29:23.386Z",
+    "updatedAt": "2026-10-25T02:56:51.261Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
     "candidateCount": 3,
