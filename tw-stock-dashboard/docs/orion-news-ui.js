@@ -79,9 +79,9 @@ function draw(doc){
       "必須先檢查原文內容、報導日期、作者與轉載關係，分別列出客觀事實、報導者立場、推測、可能的缺漏與利益衝突。"+
       "請特別確認兩篇是否其實討論不同事件，不可因為同一題材正反標題就宣稱事實互相矛盾。"+
       "請標明每項結論的證據來源，不能把新聞風向當成股價預測。"+
-      "\\n新聞題材："+(pair.theme||"未分類")+
-      "\\n偏利多："+pair.bull.source+"｜"+pair.bull.title+"\\n"+pair.bull.url+
-      "\\n偏利空："+pair.bear.source+"｜"+pair.bear.title+"\\n"+pair.bear.url;
+      "\n新聞題材："+(pair.theme||"未分類")+
+      "\n偏利多："+pair.bull.source+"｜"+pair.bull.title+"\n"+pair.bull.url+
+      "\n偏利空："+pair.bear.source+"｜"+pair.bear.title+"\n"+pair.bear.url;
      try{
       await navigator.clipboard.writeText(research);
       button.textContent="已複製，貼到 ChatGPT 即可深入查證";
