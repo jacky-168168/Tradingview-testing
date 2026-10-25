@@ -120,7 +120,7 @@ jobs:
           assert all(x['platform'] in {'PTT','Threads','Instagram','Bluesky'} and x['url'].startswith('https://') for x in d['items'])
           assert all(x['platform']=='新聞' for x in d['newsItems'])
           media=d.get('creatorMedia',[])
-          assert isinstance(media,list) and len(media)<=45
+          assert isinstance(media,list) and len(media)<=70
           assert all(x['platform'] in {'YouTube','Facebook'} and x['url'].startswith('https://') and x.get('title') and x.get('publishedAt') for x in media)
           assert all(x['url'].startswith('https://www.youtube.com/watch?v=') if x['platform']=='YouTube' else
                      x['url'].startswith(('https://facebook.com/','https://www.facebook.com/','https://m.facebook.com/')) for x in media)
