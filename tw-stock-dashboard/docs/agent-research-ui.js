@@ -35,6 +35,7 @@ function detail(c){
   "社群標題觀察："+a.luna.socialStatus+"（有效 "+(a.luna.socialSample??0)+" 篇；偏多 "+(a.luna.socialBull??0)+"／偏空 "+(a.luna.socialBear??0)+"）",
   "來源篇數：PTT "+(a.luna.socialPlatforms?.PTT??0)+"／Threads "+(a.luna.socialPlatforms?.Threads??0)+"／Instagram "+(a.luna.socialPlatforms?.Instagram??0)+"／Bluesky "+(a.luna.socialPlatforms?.Bluesky??0),
   "與此股票名稱／代碼直接相關的投資討論標題："+(a.luna.socialMentions??"無有效樣本")+" 篇",
+  "Gemini 逐篇判讀："+a.luna.semanticSummary.status+"；已判讀 "+(a.luna.semanticSummary.classified??0)+" 篇（與規則結果分開）",
   "個股討論熱度："+a.luna.heatStatus,
   "新聞標題觀察："+a.luna.newsStatus+"（獨立計數，不代表社群討論）",
   "來源：PTT "+a.luna.sourceStatus.PTT+"；Threads "+a.luna.sourceStatus.Threads+"；Instagram "+a.luna.sourceStatus.Instagram+"；Bluesky "+a.luna.sourceStatus.Bluesky,
@@ -63,6 +64,47 @@ function renderList(){
   b.addEventListener("click",()=>detail(c));
  }
  if(!chosen.some(x=>x.code===selected))detail(chosen[0]);
+}
+function renderSemantic(social){
+ const host=$("lunaSemantic");if(!host)return;host.replaceChildren();
+ const report=social?.semantic||{},status=report.status||"not_run";
+ const labels={verified:"本輪 Gemini API 執行成功",cached:"已核實的模型歷史判讀（本輪沒有重複呼叫）",
+  partial:"部分貼文已核實，其他未完成",error:"Gemini 判讀失敗",unavailable:"Gemini 未授權／未能執行",
+  empty:"目前沒有符合資格的投資討論",not_run:"資料來源尚未產生語意判讀"};
+ append(host,"p","狀態："+(labels[status]||"未驗證")+"｜模型："+(report.model||"缺值")+
+  "｜實際呼叫："+(report.inferenceCalls??0)+" 次｜已判讀 "+(report.classifiedCount??0)+
+  " 篇／待判讀 "+(report.unclassified??0)+" 篇。","description");
+ if(["verified","cached","partial"].includes(status)&&report.noTrade===true)
+  append(host,"p","經模型確認的投資立場：偏多 "+(report.bullish??0)+"／偏空 "+(report.bearish??0)+
+   "／不明 "+(report.neutral??0)+"（不等於市場共識；非交易訊號）。","small");
+ else append(host,"p","目前未確認可用的 Gemini 情緒統計，不以規則結果冒充 AI。","small");
+ const allowed=/^https:\/\/(?:www\.ptt\.cc|bsky\.app|(?:www\.)?threads\.(?:net|com)|(?:www\.)?instagram\.com)\//;
+ for(const item of (social?.items||[]).filter(x=>x?.semantic?.evidence).slice(0,8)){
+  const s=item.semantic;
+  const box=append(host,"div",null,"entry");
+  append(box,"p",(item.platform||"未知")+"｜"+s.intent+"｜"+s.stance+"｜"+
+   s.emotion+"｜信心："+s.confidence,"small");
+  append(box,"p","原文依據：「"+s.evidence+"」","description");
+  if(typeof item.url==="string"&&allowed.test(item.url)){
+   const a=append(box,"a","核對公開原文");a.href=item.url;a.target="_blank";a.rel="noopener noreferrer nofollow";
+  }
+ }
+}
+function renderHistory(index){
+ const host=$("lunaHistory");if(!host)return;host.replaceChildren();
+ if(index?.schema!==1||!Array.isArray(index.days)||!index.days.length){
+  append(host,"p","尚無可核對的歷史日檔。","small");return
+ }
+ append(host,"p","臺灣時間，每日最後一次更新的樣本統計。歷史原文日檔最多保留 30 天，不代表每日貼文總流量。","description");
+ for(const day of index.days.slice(0,14)){
+  if(!/^20\d{2}-\d{2}-\d{2}$/.test(day.day))continue;
+  const box=append(host,"div",null,"entry");
+  append(box,"span",day.day+"｜原始 "+day.latestRawSample+"／投資討論 "+
+   day.latestInvestmentSample+"｜Gemini "+day.semanticStatus,"small");
+  const link=append(box,"a"," 開啟日檔（JSON）");
+  link.href="./data/social_sentiment/history/"+day.day+".json";
+  link.target="_blank";link.rel="noopener noreferrer";
+ }
 }
 function renderSocialHeat(social){
  const host=$("lunaHeat");if(!host)return;
@@ -108,6 +150,8 @@ async function load(){
  const errors=files.map((x,i)=>x.status==="rejected"?["正式日榜單","盤中 G","盤中狀態","重大新聞","社群情緒"][i]+"無法讀取":null).filter(Boolean);
  const [daily,intraday,status,news,social]=files.map(x=>x.status==="fulfilled"?x.value:{});
  renderSocialHeat(social);
+ renderSemantic(social);
+ void loadJson(base+"social_sentiment/history/index.json").then(renderHistory).catch(()=>renderHistory(null));
  const result=core.analyze({daily,intraday,status,news,social},new Date());current=result;
  $("mode").textContent=result.mode;$("asOf").textContent="來源日："+(result.asOfDate||"缺值")+"｜風險日："+(result.source.riskDate||"缺值");
  $("nCandidates").textContent=String(result.counts.candidates);
