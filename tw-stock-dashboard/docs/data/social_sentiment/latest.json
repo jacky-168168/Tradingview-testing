@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-10-25T02:56:48.237986Z",
+  "generatedAt": "2026-10-25T03:03:50.710652Z",
   "sources": {
     "PTT": {
       "status": "ok",
@@ -30,9 +30,9 @@
       "freshCount": 0
     },
     "YouTube": {
-      "status": "not_configured",
-      "freshCount": 0,
-      "method": "官方 Data API 需 YOUTUBE_API_KEY"
+      "status": "ok",
+      "freshCount": 1,
+      "method": "官方 Data API 影片標題（非觀眾情緒）"
     },
     "Facebook": {
       "status": "not_authorized",
@@ -228,7 +228,17 @@
       }
     }
   ],
-  "creatorMedia": [],
+  "creatorMedia": [
+    {
+      "platform": "YouTube",
+      "title": "台股真的不會跌回3萬點？AI行情漲太快引擔憂！台積電、0050也被點名，散戶小心「聖誕樹」走勢！ #台股 #財金說人話 #台積電",
+      "url": "https://www.youtube.com/watch?v=NI0XhsK42S0",
+      "publishedAt": "2026-10-25T03:01:52Z",
+      "sourceName": "財金說人話",
+      "contentType": "創作者影片標題",
+      "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
+    }
+  ],
   "newsItems": [
     {
       "platform": "新聞",
@@ -576,7 +586,7 @@
     "cachedClassifications": 3,
     "newlyClassified": 0,
     "unclassified": 0,
-    "updatedAt": "2026-10-25T02:56:51.261Z",
+    "updatedAt": "2026-10-25T03:03:59.712Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
     "candidateCount": 3,
