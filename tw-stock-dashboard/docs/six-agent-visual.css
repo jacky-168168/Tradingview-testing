@@ -64,3 +64,10 @@
 @media(max-width:940px){.v-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.v-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.v-head h2{font-size:18px}.v-hero{padding:14px 12px;min-height:118px;gap:8px}.v-hero h3{font-size:19px}.v-risk{width:77px;height:77px}.v-risk strong{font-size:19px}.v-risk em{font-size:9px}.v-cards{gap:8px}.v-agent{padding:10px}.v-agent-main{font-size:14px}.v-agent-top{gap:6px}.v-icon{width:30px;height:30px}.v-icon svg{width:18px;height:18px}.v-agent-metric{font-size:10px}.v-agent-role{font-size:10px}.v-agent-name{font-size:12px}.v-flow-step{min-width:100%;flex:1 1 100%}.v-flow-arrow{transform:rotate(90deg);height:17px;line-height:12px}}
 @media(prefers-reduced-motion:reduce){.v-risk .v-progress{transition:none}}
+.v-switch{display:inline-flex;border:1px solid #dbe4ef;border-radius:9px;padding:3px;gap:3px;background:#f4f7fc}
+.v-switch button{background:transparent;color:#62738b;border:0;border-radius:7px;font-size:11px;padding:6px 9px;cursor:pointer;font-weight:800}
+.v-switch button[aria-pressed="true"]{color:#174f95;background:#fff;box-shadow:0 1px 4px rgba(15,23,42,.12)}
+.v-switch button:disabled{cursor:not-allowed;opacity:.5}
+.v-switch button:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+.v-agent[data-llm="true"] .v-agent-main{font-size:12px;line-height:1.6;font-weight:650;min-height:78px}
+@media(max-width:620px){.v-switch button{font-size:10px;padding:6px 7px}.v-agent[data-llm="true"] .v-agent-main{font-size:11px;min-height:105px}}
