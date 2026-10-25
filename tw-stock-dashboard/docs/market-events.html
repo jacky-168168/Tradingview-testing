@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>市場大事｜台股重大新聞與展覽行事曆</title>
-<meta name="description" content="重大科技財報、PCB／AI 展覽、半導體報價、利率、油價與黃金新聞。來源與資料日期清楚標示。">
+<meta name="description" content="重大科技財報、產業報價、升降息、原油能源、貴金屬及農產品新聞。來源與資料日期清楚標示。">
 <style>
 :root{color-scheme:light;--bg:#f5f7fb;--ink:#16263e;--muted:#6b7890;--line:#e2e8f0;--accent:#265c99}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif}a{color:inherit}
@@ -43,7 +43,7 @@ h1{font-size:27px;margin:0 0 4px;letter-spacing:-.4px}.sub{font-size:12px;color:
 </head><body>
 <div class="wrap">
 <nav class="top" aria-label="頁面導覽"><a href="./index.html">← 主頁</a><div class="toplinks"><a href="./selections.html">📋 G 選股</a><a href="./bubbles.html">🫧 資金泡泡</a></div></nav>
-<div class="head"><div><h1>🗞 市場大事</h1><div class="sub">產業展覽・科技財報・漲價訊息・AI 需求・總經事件</div></div><div id="freshness" aria-live="polite">資料讀取中…</div></div>
+<div class="head"><div><h1>🗞 市場大事</h1><div class="sub">產業展覽・科技財報・AI 需求・總經事件・原油能源・貴金屬・農產品</div></div><div id="freshness" aria-live="polite">資料讀取中…</div></div>
 <div class="filters">
   <input id="query" type="search" aria-label="搜尋市場大事" placeholder="搜尋事件、公司、產業…" autocomplete="off">
   <div class="tabs" id="filters" role="group" aria-label="主題篩選">
@@ -53,7 +53,9 @@ h1{font-size:27px;margin:0 0 4px;letter-spacing:-.4px}.sub{font-size:12px;color:
     <button class="tab" data-cat="ai" aria-pressed="false">🤖 AI／半導體</button>
     <button class="tab" data-cat="prices" aria-pressed="false">📈 產業報價</button>
     <button class="tab" data-cat="macro" aria-pressed="false">🏦 升降息</button>
-    <button class="tab" data-cat="commodities" aria-pressed="false">🛢 油價／黃金</button>
+    <button class="tab" data-cat="energy" aria-pressed="false">🛢 原油／能源</button>
+    <button class="tab" data-cat="metals" aria-pressed="false">🥇 貴金屬</button>
+    <button class="tab" data-cat="agriculture" aria-pressed="false">🌾 農產品</button>
   </div>
 </div>
 <p id="alert" role="status" hidden></p>
