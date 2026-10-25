@@ -339,7 +339,7 @@ def facebook_page_posts(page_token,page_ids,now,fetch=request):
     """Meta Graph API authorized Page posts only; no global search or personal feed scraping."""
     if not page_token or not isinstance(page_ids,str):raise ValueError("缺少 Facebook 已授權粉專設定")
     pages=[p.strip() for p in page_ids.split(",") if p.strip()]
-    if not 1<=len(pages)<=5 or len(set(pages))!=len(pages) or not all(re.fullmatch(r"\\d{3,25}",p) for p in pages):
+    if not 1<=len(pages)<=5 or len(set(pages))!=len(pages) or not all(re.fullmatch(r"\d{3,25}",p) for p in pages):
         raise ValueError("Facebook 粉專 ID 必須為 3–25 位數字，最多五個")
     rows=[]
     for page in pages:
