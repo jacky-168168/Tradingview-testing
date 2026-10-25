@@ -480,7 +480,7 @@ def collect(now=None, fetch=request, old=None, environmental=None):
                 "method":"Meta Graph API 授權粉專貼文（非一般用戶留言）"}
         except Exception as exc:
             state["Facebook"]={"status":"error","reason":type(exc).__name__,"freshCount":0}
-    creator=unique(creator,45)
+    creator=unique(creator,70)
     news,reason=news_items(now)
     state["新聞"]={"status":"ok" if news else "unavailable","freshCount":len(news)}
     if reason:
