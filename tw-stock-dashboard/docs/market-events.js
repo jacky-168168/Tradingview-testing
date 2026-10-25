@@ -23,7 +23,11 @@ function matches(x){
  if(CATEGORY==="ai"&&!((x.category==="AI需求")||(x.themes||[]).some(v=>/AI|半導體|先進封裝|CPO|GPU|HBM|PCB|晶圓/i.test(v))))return false;
  if(CATEGORY==="prices"&&x.category!=="報價")return false;
  if(CATEGORY==="macro"&&x.category!=="總經")return false;
- if(CATEGORY==="commodities"&&x.category!=="原物料")return false;
+ // Historical "原物料" entries remain searchable in their matching commodity category.
+ var legacy=x.category==="原物料",headline=String(x.title||"");
+ if(CATEGORY==="energy"&&x.category!=="原油／能源"&&!(legacy&&/油價|原油|OPEC|WTI|布蘭特|天然氣/i.test(headline)))return false;
+ if(CATEGORY==="metals"&&x.category!=="貴金屬"&&!(legacy&&/黃金|金價|白銀|銀價|鉑金|鈀金/i.test(headline)))return false;
+ if(CATEGORY==="agriculture"&&x.category!=="農產品")return false;
  var query=SEARCH.trim().toLowerCase();
  return !query||[x.title,x.source,x.category,...(x.themes||[])].join(" ").toLowerCase().includes(query);
 }

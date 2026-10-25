@@ -2,6 +2,7 @@ import datetime as dt
 import importlib.util
 import json
 import unittest
+import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from unittest.mock import patch
@@ -38,6 +39,28 @@ class TestOrionNews(unittest.TestCase):
         self.assertEqual(len(clean),1)
         self.assertEqual(len(clean[0]["id"]),20)
         self.assertEqual(len(clean[0]["headlineGroup"]),14)
+    def test_commodity_market_events_are_eligible_for_orion_handoff(self):
+        headlines=[
+            "WTI 原油供應減少帶動能源價格上漲",
+            "白銀價格大漲，鉑金與鈀金需求受關注",
+            "USDA 黃豆玉米與小麥供需報告預估歉收",
+        ]
+        with tempfile.TemporaryDirectory() as temp:
+            folder=Path(temp)/"market_events"
+            folder.mkdir(parents=True)
+            data={"generatedAt":N.isoformat(),"items":[
+                {"type":"news","title":title,
+                 "url":f"https://news.google.com/rss/articles/commodity-{i}",
+                 "source":"測試公開來源","publishedAt":(N-dt.timedelta(hours=1)).isoformat(),
+                 "themes":[["原油"],["貴金屬"],["農產品"]][i]}
+                for i,title in enumerate(headlines)
+            ]}
+            (folder/"latest.json").write_text(json.dumps(data,ensure_ascii=False),encoding="utf-8")
+            with patch.object(mod,"DATA",Path(temp)):
+                rows=mod.old_market_events(N)
+        self.assertEqual(len(rows),3)
+        self.assertEqual({x["title"] for x in rows},set(headlines))
+        self.assertTrue(all(x["channel"]=="既有系統新聞" for x in rows))
     def test_failed_feeds_report_truth_and_can_include_verified_success(self):
         def mock(url):
             if "rsscna/finance" in url:return feed()

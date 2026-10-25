@@ -7,6 +7,8 @@ const script=fs.readFileSync(path.join(root,'market-events.js'),'utf8');
 new Function(script);
 assert(main.includes('href="./market-events.html"'),'homepage must expose major-events entry');
 assert(rankings.includes('href="./market-events.html"'),'G rankings must expose major-events entry');
+for(const category of ["energy","metals","agriculture"])
+ assert(html.includes('data-cat="'+category+'"'),'market events missing '+category+' tab');
 for(const id of ['events','news','eventCount','newsCount','alert','freshness','filters','query','eventSection','newsSection','empty'])
  assert(html.includes('id="'+id+'"'),'missing '+id);
 const archived=JSON.parse(fs.readFileSync(path.join(root,'data/market_events/latest.json'),'utf8'));
@@ -33,8 +35,19 @@ const fresh=Array.from({length:23},(_,i)=>({
  date:'2026-10-24',publishedAt:new Date(Date.parse(FIXED_NOW)-(i+1)*60000).toISOString(),
  source:'測試媒體',url:'https://example.com/test/'+i,themes:['AI'],confirmed:false
 }));
+const commodities=[
+ {id:'fixture-oil',type:'news',category:'原油／能源',title:'WTI 原油最新產量上升',
+  date:'2026-10-24',publishedAt:'2026-10-24T05:00:00Z',source:'測試能源新聞',
+  url:'https://example.com/oil',themes:['WTI'],confirmed:false},
+ {id:'fixture-silver',type:'news',category:'貴金屬',title:'白銀報價最新上升',
+  date:'2026-10-24',publishedAt:'2026-10-24T05:00:00Z',source:'測試金屬新聞',
+  url:'https://example.com/silver',themes:['白銀'],confirmed:false},
+ {id:'fixture-crops',type:'news',category:'農產品',title:'黃豆 USDA 最新收成預估',
+  date:'2026-10-24',publishedAt:'2026-10-24T05:00:00Z',source:'測試農產品新聞',
+  url:'https://example.com/crops',themes:['黃豆'],confirmed:false}
+];
 const sample={...archived,generatedAt:'2026-10-21T00:00:00+08:00',
- items:[endedExhibition,upcomingRateMeeting,...archived.items.filter(x=>x.type!=='event'),...fresh]};
+ items:[endedExhibition,upcomingRateMeeting,...archived.items.filter(x=>x.type!=='event'),...fresh,...commodities]};
 const nodes=new Map();
 function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',hidden:false,value:'',fn:null,
  addEventListener(type,fn){this.fn=fn},querySelectorAll(){return []}
@@ -56,5 +69,13 @@ setImmediate(()=>{
     'load more adds only fresh items, regardless of live fixture size');
  assert(node('alert').textContent.includes('新聞超過 36 小時未更新'),'stale dataset must show warning');
  assert(!node('events').innerHTML.includes('<script>'),'event output must be escaped');
+ for(const [filter,expected,excluded] of [
+  ['energy','WTI 原油','白銀報價'],['metals','白銀報價','黃豆 USDA'],
+  ['agriculture','黃豆 USDA','WTI 原油']]){
+  node('filters').fn({target:{closest:()=>({dataset:{cat:filter}})}});
+  assert(node('news').innerHTML.includes(expected),filter+' news filter should show own items');
+  assert(!node('news').innerHTML.includes(excluded),filter+' filter should hide unrelated items');
+  assert.equal(node('eventSection').hidden,true,'topic filters should not contain unrelated events');
+ }
  console.log('PASS ended events filtered, only fresh news rendered, pagination and stale dataset warning');
 });
