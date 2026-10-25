@@ -13,7 +13,7 @@ const RULES={
  ATLAS:"獨立審查 G 候選的量能、RS20 與流動性。不可更改原始排行，不能把一日熱度當長期效益。",
  VEGA:"獨立審查 MA20 斜率、ATR 波動和價量趨勢，先講失效條件與不足，不能編造入場、停損價。",
  ORION:"獨立評估新聞事件及時間、來源可信度；標題相關不等於公司受惠，不能將轉載當官方。",
- LUNA:"獨立評估可核對且具有台股投資語境的 PTT／Meta／Bluesky 貼文、來源失聯、非投資話題與新聞轉載比例、反諷／求救及個股題材提及。不能把標題視為留言全文，沒有語意資料就保留不確定性。Gemini 逐篇研判與原規則立場必須分開報告，模型引用只能使用原始貼文摘要中的證據片段；樣本少不代表市場共識。題材熱度不是買進理由，過熱僅作追高風險觀察；絕不改風險分數或 G 排名。",
+ LUNA:"獨立評估可核對且具有台股投資語境的 PTT／Meta／Bluesky 貼文；YouTube 影片標題和 Facebook 授權粉專內容屬創作者／編輯立場，不能與散戶投票混算。來源失聯、非投資話題與新聞轉載比例、反諷／求救及個股題材提及。不能把標題視為留言全文，沒有語意資料就保留不確定性。Gemini 逐篇研判與原規則立場必須分開報告，模型引用只能使用原始貼文摘要中的證據片段；樣本少不代表市場共識。題材熱度不是買進理由，過熱僅作追高風險觀察；絕不改風險分數或 G 排名。",
  TITAN:"獨立擔任紅隊風控，優先否決來源日期不一致、G 資料不合格、波動過高與風險分數偏低；不得推翻程式的硬性否決。",
  NOVA:"嚴格整合前五位的獨立觀點與交叉質疑，點出爭點、共識、不確定性及風險；沒有任何下單權限。"
 };
@@ -41,7 +41,12 @@ function compactInput(now=new Date()){
  const heat=usedSocial&&Array.isArray(social.stockHeat?.stocks)?social.stockHeat.stocks.slice(0,5).map(x=>({
   code:x.code,name:x.name,recent24h:x.recent24h,prior24h:x.prior24h,
   originalDiscussion:x.originalDiscussion,overheatWatch:x.overheatWatch})):[];
- const candidates=rules.candidates.slice(0,3).map(c=>({
+ const media= socialFresh&&Array.isArray(social.creatorMedia)?social.creatorMedia.filter(i=>
+  ["YouTube","Facebook"].includes(i.platform)&&maxAge(i.publishedAt,48)&&
+  typeof i.title==="string"&&typeof i.url==="string").slice(0,8).map(i=>({
+   platform:i.platform,title:truncate(i.title,115),url:i.url,time:i.publishedAt,
+   sourceName:truncate(i.sourceName||i.platform,70),type:"創作者／粉專標題，非散戶情緒"})):[];
+  const candidates=rules.candidates.slice(0,3).map(c=>({
    code:c.code,name:c.name,date:c.asOfDate,sourceRank:c.sourceRank,theme:truncate(c.theme,100),
    atlas:c.agents.atlas,vega:c.agents.vega,orion:{status:c.agents.orion.status,verifiedCount:c.agents.orion.verifiedCount},
    titan:{hardVeto:c.agents.titan.hardVeto,veto:c.agents.titan.veto},noTrade:true}));
@@ -51,11 +56,12 @@ function compactInput(now=new Date()){
  return {checkedAt:now.toISOString(),datasetDate:rules.asOfDate,mode:rules.mode,liveVerified:rules.liveVerified,
   risks:{score:rules.source.riskScore,date:rules.source.riskDate},sources,
   candidates,news:recentNews,social:usedSocial?{stats:social.social,sourceStatus:social.sources,posts,stockHeat:heat,
+   creatorMedia:media,
    semantic:(!["verified","cached","partial"].includes(social.semantic?.status))?{status:social.semantic?.status||"not_run"}:
     {status:social.semantic.status,model:social.semantic.model,
      classifiedCount:social.semantic.classifiedCount,bullish:social.semantic.bullish,
      bearish:social.semantic.bearish,neutral:social.semantic.neutral}}:
-  {status:verified.length?"已有可核對歷史社群樣本，資料集未更新":"尚無可核對的公開社群討論",sourceStatus:social.sources||{}},
+  {status:verified.length?"已有可核對歷史社群樣本，資料集未更新":"尚無可核對的公開社群討論",sourceStatus:social.sources||{},creatorMedia:media},
   hardVeto:candidates.some(x=>x.titan.hardVeto),noTrade:true};
 }
 function decodeJson(s){const text=String(s||"").trim().replace(/^\x60\x60\x60(?:json)?\s*/i,"").replace(/\s*\x60\x60\x60$/,"");return JSON.parse(text);}
