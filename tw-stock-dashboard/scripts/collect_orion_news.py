@@ -78,7 +78,7 @@ def parse_feed(contents,name,section,hosts,now):
         u=urllib.parse.urlsplit(str(link).strip())
         if u.scheme!="https" or u.hostname not in hosts or not 5<=len(title)<=145:continue
         when=parse_date(x.findtext("pubDate") or x.findtext("published") or x.findtext(AT+"published")
-            or x.findtext(AT+"updated") or x.findtext("dc:date",default=None))
+            or x.findtext(AT+"updated") or x.findtext("{http://purl.org/dc/elements/1.1/}date"))
         if when is None or not -60<=(now-when).total_seconds()<=48*3600:continue
         if not FINANCE.search(title):continue
         themes=[label for label,pattern in THEMES if re.search(pattern,title,re.I)]
