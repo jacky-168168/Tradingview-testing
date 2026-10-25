@@ -65,10 +65,30 @@ function draw(doc){
   for(const pair of meta.contrastingThemes.slice(0,5)){
    const block=items(sides,"div","orion-article");
    items(block,"strong","",pair.theme||"未標示題材");
+   items(block,"p","small","同題材存在正反標題，不代表兩篇討論相同事件。請先核對原文。");
    for(const [prefix,x] of [["偏利多",pair.bull],["偏利空",pair.bear]]){
     if(!x||!sourceOK(x.url))continue;
     const link=items(block,"a","",prefix+"｜"+x.title);
     link.href=x.url;link.target="_blank";link.rel="noopener noreferrer nofollow";
+   }
+   if(pair.bull&&pair.bear&&sourceOK(pair.bull.url)&&sourceOK(pair.bear.url)){
+    const button=items(block,"button","orion-copy","複製 ChatGPT 深度查證提示");
+    button.type="button";
+    button.addEventListener("click",async()=>{
+     const research="請依據下列台灣財經報導原文進行來源查證與多空敘事分析。"+
+      "必須先檢查原文內容、報導日期、作者與轉載關係，分別列出客觀事實、報導者立場、推測、可能的缺漏與利益衝突。"+
+      "請特別確認兩篇是否其實討論不同事件，不可因為同一題材正反標題就宣稱事實互相矛盾。"+
+      "請標明每項結論的證據來源，不能把新聞風向當成股價預測。"+
+      "\\n新聞題材："+(pair.theme||"未分類")+
+      "\\n偏利多："+pair.bull.source+"｜"+pair.bull.title+"\\n"+pair.bull.url+
+      "\\n偏利空："+pair.bear.source+"｜"+pair.bear.title+"\\n"+pair.bear.url;
+     try{
+      await navigator.clipboard.writeText(research);
+      button.textContent="已複製，貼到 ChatGPT 即可深入查證";
+     }catch{
+      button.textContent="複製失敗，請手動複製兩篇原文連結";
+     }
+    });
    }
   }
  }
