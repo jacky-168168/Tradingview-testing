@@ -187,6 +187,10 @@ async function load(){
  ]);
  const errors=files.map((x,i)=>x.status==="rejected"?["正式日榜單","盤中 G","盤中狀態","重大新聞","社群情緒"][i]+"無法讀取":null).filter(Boolean);
  const [daily,intraday,status,news,social]=files.map(x=>x.status==="fulfilled"?x.value:{});
+ void loadJson(base+"orion_news/latest.json").then(d=>window.OrionNewsViewer?.draw(d))
+  .catch(()=>window.OrionNewsViewer?.draw(null));
+ void loadJson(base+"orion_news/history/index.json").then(d=>window.OrionNewsViewer?.history(d))
+  .catch(()=>window.OrionNewsViewer?.history(null));
  renderSocialHeat(social);
  renderCreatorMedia(social);
  renderSemantic(social);
