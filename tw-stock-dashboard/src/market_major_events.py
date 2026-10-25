@@ -29,8 +29,16 @@ QUERIES=[
  ("AI需求","(CoWoS OR CPO OR 光通訊 OR 先進封裝) (訂單 OR 擴產 OR 需求) when:2d",r"CoWoS|CPO|光通訊|先進封裝",["先進封裝","CPO"]),
  ("財報","台積電 (財報 OR 法說 OR 資本支出 OR 擴產) when:2d",r"台積電|TSMC|晶圓代工",["晶圓代工","半導體"]),
  ("總經","(聯準會 OR FOMC OR Fed) (升息 OR 降息 OR 利率) when:2d",r"聯準會|FOMC|Fed|央行|利率|降息|升息",["金融","科技股"]),
- ("原物料","(油價 OR OPEC OR 原油) (上漲 OR 下跌 OR 供給) when:2d",r"油價|原油|OPEC|布蘭特|WTI",["塑化","航運","能源"]),
- ("原物料","(黃金 OR 金價) (大跌 OR 上漲 OR 殖利率) when:2d",r"黃金|金價|gold",["黃金","美元","利率"]),
+ # 三大商品類別各使用獨立的新聞檢索，避免只有油價、金價而漏掉供需報告。
+ ("原油／能源","(WTI OR 布蘭特 OR Brent OR 原油 OR OPEC) (油價 OR 產量 OR 庫存 OR 減產 OR 增產 OR 供應) when:2d",r"原油|WTI|布蘭特|Brent|OPEC|油價",["原油","OPEC+","塑化","航運"]),
+ ("原油／能源","(EIA OR 美國能源資訊署) (原油庫存 OR 石油庫存 OR WTI) when:2d",r"EIA|美國能源資訊署|原油|石油|WTI",["EIA","原油","能源"]),
+ ("原油／能源","(天然氣 OR LNG OR Henry Hub) (庫存 OR 供給 OR 價格 OR 出口) when:2d",r"天然氣|LNG|Henry Hub",["天然氣","能源"]),
+ ("貴金屬","(黃金 OR 金價 OR gold) (美元 OR 殖利率 OR 升息 OR 降息 OR 漲 OR 跌) when:2d",r"黃金|金價|gold|XAU",["黃金","美元","利率"]),
+ ("貴金屬","(白銀 OR 銀價 OR silver) (漲 OR 跌 OR 需求 OR 供給 OR 報價) when:2d",r"白銀|銀價|silver|XAG",["白銀","工業需求","貴金屬"]),
+ ("貴金屬","(鉑金 OR 鈀金 OR platinum OR palladium) (價格 OR 供給 OR 需求 OR 漲 OR 跌) when:2d",r"鉑金|鈀金|platinum|palladium",["鉑金","鈀金","工業需求"]),
+ ("農產品","(黃豆 OR 大豆 OR 玉米 OR 小麥 OR soybean OR corn OR wheat) (價格 OR 收成 OR 乾旱 OR 出口 OR USDA) when:2d",r"黃豆|大豆|玉米|小麥|soybeans?|corn|wheat|USDA",["黃豆","玉米","小麥"]),
+ ("農產品","(咖啡 OR 糖價 OR 原糖 OR coffee OR sugar) (漲 OR 跌 OR 乾旱 OR 產量 OR 出口) when:2d",r"咖啡|coffee|糖價|原糖|sugar",["咖啡","原糖","食品"]),
+ ("農產品","(USDA OR 美國農業部 OR WASDE) (農產品 OR 黃豆 OR 玉米 OR 小麥 OR 穀物) when:2d",r"USDA|美國農業部|WASDE|黃豆|玉米|小麥|穀物",["USDA","農產品","供需報告"]),
  ("總經","(CPI OR PCE OR 非農) (通膨 OR 就業 OR 利率) when:2d",r"CPI|PCE|非農|通膨|就業",["總經","利率"]),
 ]
 OFFICIAL=[
@@ -54,7 +62,7 @@ OFFICIAL=[
   "themes":["升降息","美元","黃金","科技股"],"confirmed":True},
 ]
 UA="Mozilla/5.0 (compatible; MarketCatalystRadar/1.0; +https://github.com/jacky-168168/Tradingview-testing)"
-PRIORITY=re.compile(r"漲價|調漲|上調|上漲|下跌|走高|走低|漲幅|跌幅|創高|創低|大漲|大跌|暴跌|暴增|飆升|缺貨|產能|擴產|突破|訂單|需求|財報|財測|FOMC|降息|升息|開幕|展覽|停產|限產|出口管制|guidance|earnings|surge|cuts",re.I)
+PRIORITY=re.compile(r"漲價|調漲|上調|上漲|下跌|走高|走低|漲幅|跌幅|創高|創低|大漲|大跌|暴跌|暴增|飆升|缺貨|產能|擴產|突破|訂單|需求|財報|財測|FOMC|降息|升息|開幕|展覽|停產|限產|出口管制|guidance|earnings|surge|cuts|庫存|減產|增產|出口|收成|乾旱|歉收|供需|供應|禁運|播種|產量|進口|oil inventory|harvest|drought|USDA|EIA",re.I)
 
 def rss_url(q):
     return "https://news.google.com/rss/search?"+urllib.parse.urlencode({"q":q,"hl":"zh-TW","gl":"TW","ceid":"TW:zh-Hant"})
