@@ -131,3 +131,11 @@
 - 獨立 ORION Taiwanese Financial News 排程：台灣每天 08:15 至 22:15，每兩小時更新一次，保存 docs/data/orion_news/latest.json、history/YYYY-MM-DD.json 及 history/index.json 的 30 日索引；更新成功會自動部署 GitHub Pages。Git 歷史不保證永久刪除。
 - 六代理 ORION 可參考真實最新的多媒體標題與獨立模型報導語氣，TITAN 風控否決及 G 排名完全不受新聞風向改寫。報導語氣統計不是市場群眾民調，也不是交易訊號。
 - 來源條款：中央社 https://www.cna.com.tw/about/rss.aspx；自由時報 https://service.ltn.com.tw/RSS；Yahoo 股市 https://tw.finance.yahoo.com/rss-index；YouTube https://developers.google.com/youtube/data/reference/rest/v3/search/list 。
+
+
+## ORION 全量 Gemini 分批判讀與快取（2026-10-25）
+- 移除最初每輪僅判讀 24 則新聞的硬性限制；改為分析該次公開來源資料集內最多 180 則有效標題（依目前 RSS 收藏上限），以每批 8 則、批次間約 4.2 秒的安全間隔處理。若超過可用 API 速率、發生 HTTP 429 或後端錯誤，該輪立即停止但保留前面所有已核實判讀，下輪排程繼續。
+- 使用原本的 GitHub Secret GEMINI_API_KEY 和既有 gemini-3.5-flash-lite 模型，不額外收費開 OpenAI API；ChatGPT 在對話中可額外人工綜合分析矛盾新聞，但它不會在 GitHub Actions 裡免費、自主定時執行。
+- 已核實文章只要 ID、標題、發稿時間與 URL 完全匹配就沿用上輪 Gemini 判讀；來源不同但文章標題完全一致也可經引文檢核後複用判讀，標記 reusedIdenticalHeadline。不同標題、不同事件、相似題材不會強行當作相同；跨媒體轉載的同事件不同寫法仍可能重複，不能宣稱完成語意事件去重。
+- ORION semantic 新增 coveragePct、unclassified、attemptedCalls、quotaLimited、headlineReuse、distinctHeadlineGroups、repeatedHeadlineCount。完整模型判讀以前狀態為 partial，頁面僅顯示已判讀樣本的語氣比例，不應視為所有新聞或市場共識。
+- 現有 ORION 30 日標題歷史、時間查核、GitHub Pages 圖表及六代理 TITAN 風控全部保留；Actions publish timeout 由 10 分鐘增為 14 分鐘，以支援多批次正式判讀。
