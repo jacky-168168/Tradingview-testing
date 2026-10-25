@@ -124,7 +124,8 @@ def similar_headlines(a,b):
     if a==b:return True
     if len(a)<12 or len(b)<12 or min(len(a),len(b))/max(len(a),len(b))<0.72:return False
     # Do not merge different percentages, prices, dates or corporate figures.
-    if sorted(re.findall(r"\d+",a))!=sorted(re.findall(r"\d+",b)):return False
+    number=r"(?:\d+(?:\.\d+)?|[零一二三四五六七八九十百千萬億兩]+)(?:[%％]|元|點|股|天|週|年|倍|張)?"
+    if sorted(re.findall(number,a))!=sorted(re.findall(number,b)):return False
     aa={a[i:i+2] for i in range(len(a)-1)}
     bb={b[i:i+2] for i in range(len(b)-1)}
     return len(aa&bb)/max(1,len(aa|bb))>=0.82
