@@ -215,6 +215,9 @@ def save_index(report,snapshot,now=None):
       "observedHeadlines":len(snapshot["items"]),"latestArticles":len(report["items"]),
       "healthyFeeds":report["coverage"]["healthyFeeds"],
       "semanticStatus":summaries.get("status","not_run"),"classified":summaries.get("classified",0),
+      "distinctEventsClassified":summaries.get("distinctEventsClassified",0),
+      "eventCount":report.get("eventSummary",{}).get("eventCount",0),
+      "coveragePct":summaries.get("coveragePct",0),
       "positive":summaries.get("positive",0),"negative":summaries.get("negative",0),
       "neutral":summaries.get("neutral",0)}
     today=now.astimezone(TPE).date()
