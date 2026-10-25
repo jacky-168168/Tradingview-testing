@@ -38,7 +38,7 @@ test("missing key never implies AI framing verification",async()=>{
 test("model evidence must be exact source quote",async()=>{
  const d=doc([row(0)]);
  await orion.classify(d,{},{now:NOW,apiKey:"test-only",fetchFn:async()=>out([{
-  ...tags(d.items)[0],evidence:"從來沒有出現過的爆炸利多"})]});
+  ...tags(d.items)[0],evidence:"從來沒有出現過的爆炸利多"}])});
  assert.equal(d.semantic.status,"error");
  assert.equal(d.semantic.classified,0);
 });
