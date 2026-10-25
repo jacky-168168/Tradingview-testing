@@ -131,3 +131,13 @@
 - 獨立 ORION Taiwanese Financial News 排程：台灣每天 08:15 至 22:15，每兩小時更新一次，保存 docs/data/orion_news/latest.json、history/YYYY-MM-DD.json 及 history/index.json 的 30 日索引；更新成功會自動部署 GitHub Pages。Git 歷史不保證永久刪除。
 - 六代理 ORION 可參考真實最新的多媒體標題與獨立模型報導語氣，TITAN 風控否決及 G 排名完全不受新聞風向改寫。報導語氣統計不是市場群眾民調，也不是交易訊號。
 - 來源條款：中央社 https://www.cna.com.tw/about/rss.aspx；自由時報 https://service.ltn.com.tw/RSS；Yahoo 股市 https://tw.finance.yahoo.com/rss-index；YouTube https://developers.google.com/youtube/data/reference/rest/v3/search/list 。
+
+
+## ORION v1.1｜全批次補完、媒體重複報導與分歧查證（2026-10-25）
+- 取消「每輪固定僅判讀最新 24 則」的截斷，對當輪 48 小時內的所有有效標題逐批送往既有已授權 Gemini。每批 8 則、每次排程最多 30 次請求，額外設置約 7 分鐘執行預算；配額 429 或逾時則**立即停止且不繞過限流**，記錄未判讀篇數，保留已驗證結果供下輪快取繼續，不能承諾每輪一定百分之百完成。
+- 以真實文章 ID、標題、發佈時間與原文 URL 建立精準快取鍵；同篇標題 48 小時內已完成 Gemini 不重複呼叫。每次新 RSS 蒐集保留上一輪逐篇判讀；不足者繼續補齊。每批的引用文字須逐字出現在標題中，失敗時不計入情緒總量。
+- 增加 `eventGroup`、`eventSummary`：保守按標題高相似度、相同數字及 24 小時內日期合併近似事件；保留全部原文、不刪不同媒體文章。`semantic.eventTotals` 提供事件層級多空／中性統計（同事件若同時有正反或中性，事件整體視為中性），不把每次轉載當成不同事件。
+- `semantic.topicConflicts` 只標示**同題材由不同媒體、不同事件發出的正反向標題敘事**，不代表新聞事實互相矛盾。每組配兩篇可回查原始文章、模型引用文字及日期。
+- 頁面同時顯示每輪 Gemini 完成數／可分析數、完成率進度條、原始標題數與保守事件組數、事件去重後多空、分歧題材案例。未判完即標 `partial`，只用已判讀資料計算多空比例。
+- 每組分歧新增「複製 ChatGPT 深入查證提示」，把兩篇公開標題與原文連結複製，使用者可自行貼入 ChatGPT 做來源查證；**不宣稱 GitHub Actions 能直接呼叫這個 ChatGPT 對話，也不偷偷接入額外付費 OpenAI API**。
+- 原正式風控 TITAN 硬否決、G 排名、其他 LLM 與資金策略均不修改。CI Mock API 只能證明邏輯，完整新聞分析比例須以正式排程成功結果驗收，且受 Google Gemini 配額影響。
