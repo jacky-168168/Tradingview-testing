@@ -58,6 +58,26 @@ class TestOrionNews(unittest.TestCase):
         self.assertEqual(len(first["items"]),1)
         self.assertEqual(len(second["items"]),1)
         self.assertEqual(len(second["runs"]),2)
+    def test_event_groups_deduplicate_similar_headlines_but_preserve_every_article(self):
+        rows=[
+         {"id":"first","title":"台股急跌逾千點 投資人擔心下週走勢","publishedAt":"2026-10-24T23:00:00Z"},
+         {"id":"second","title":"台股急跌逾千點，投資人擔心下週走勢","publishedAt":"2026-10-24T23:15:00Z"},
+         {"id":"third","title":"台股急跌逾兩千點 投資人擔心下週走勢","publishedAt":"2026-10-24T23:15:00Z"},
+         {"id":"fourth","title":"台股急跌逾千點 投資人擔心下週走勢","publishedAt":"2026-10-23T09:00:00Z"}]
+        report=mod.mark_events(rows)
+        self.assertEqual(report["articleCount"],4)
+        self.assertEqual(report["eventCount"],3)
+        self.assertEqual(report["repostedOrSimilar"],1)
+        self.assertEqual(rows[0]["eventGroup"],rows[1]["eventGroup"])
+        self.assertNotEqual(rows[0]["eventGroup"],rows[2]["eventGroup"])
+        self.assertNotEqual(rows[0]["eventGroup"],rows[3]["eventGroup"])
+    def test_collector_preserves_headlines_and_reports_event_count(self):
+        with patch.object(mod,"old_market_events",return_value=[]):
+            r=mod.collect(N,lambda url:feed() if "rsscna/finance" in url else
+                b"<rss><channel><item><title>no valid news</title><link>https://www.cna.com.tw/news/a/1</link><pubDate>Sun, 25 Oct 2026 00:00:00 +0000</pubDate></item></channel></rss>")
+        self.assertEqual(r["eventSummary"]["articleCount"],len(r["items"]))
+        self.assertLessEqual(r["eventSummary"]["eventCount"],len(r["items"]))
+        self.assertTrue(all(x.get("eventGroup") for x in r["items"]))
     def test_no_feeds_and_stale_existing_news_cannot_be_a_real_signal(self):
         with patch.object(mod,"old_market_events",return_value=[]):
             result=mod.collect(N,lambda _:(_ for _ in ()).throw(OSError("offline")),previous={"items":[{"fake":True}]})
