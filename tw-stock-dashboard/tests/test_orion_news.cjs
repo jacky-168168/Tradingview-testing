@@ -44,11 +44,74 @@ test("model evidence must be exact source quote",async()=>{
 });
 test("partial model batch failure reports uncovered headlines instead of faking neutrality",async()=>{
  const rows=Array.from({length:9},(_,i)=>({...row(0),id:"id"+i,
+  title:row(0).title+" 報導編號 "+i,
   url:"https://www.cna.com.tw/news/afe/202610240"+i+".aspx"})),d=doc(rows);
  let requests=0;
  await orion.classify(d,{},{now:NOW,apiKey:"test-only",fetchFn:async()=>{
   requests++;if(requests===2)throw Error("quota");
-  return out(tags(rows.slice(0,8)));}});
+  return out(tags(rows.slice(0,8)));},sleepFn:async()=>{}});
  assert.equal(requests,2);assert.equal(d.semantic.status,"partial");
  assert.equal(d.semantic.classified,8);assert.equal(d.semantic.unclassified,1);
+});
+
+test("ORION no longer truncates to 24: 143 independent articles are all model-classified",async()=>{
+ const rows=Array.from({length:143},(_,i)=>({...row(0),id:"id"+i,
+  title:row(0).title+" 第 "+i+" 篇",url:"https://www.cna.com.tw/news/afe/example"+i+".aspx"}));
+ const data=doc(rows);let calls=0,rests=0;
+ await orion.classify(data,{},{now:NOW,apiKey:"test-only",
+  fetchFn:async(_,args)=>{calls++;
+   const input=JSON.parse(args.body).contents[0].parts[0].text;
+   const posted=JSON.parse(input);
+   const batch=posted.map(y=>rows.find(x=>orion.key(x)===y.id));
+   assert(batch.every(Boolean));assert(batch.length<=8);
+   return out(tags(batch));
+  },sleepFn:async(ms)=>{rests++;assert(ms>=4000)}
+ });
+ assert.equal(calls,18);assert.equal(rests,17);
+ assert.equal(data.semantic.status,"verified");assert.equal(data.semantic.classified,143);
+ assert.equal(data.semantic.unclassified,0);assert.equal(data.semantic.coveragePct,100);
+ assert.equal(data.semantic.inferenceCalls,18);assert.equal(data.semantic.attemptedCalls,18);
+});
+test("ORION reuses only exact validated headlines across sources, not falsely merging events",async()=>{
+ const a=row(0),b={...row(0),id:"other-id",source:"Yahoo股市",
+  url:"https://tw.stock.yahoo.com/news/unique-article"};
+ const c={...row(0),id:"another",title:row(0).title+" 後續有疑慮",
+  url:"https://www.cna.com.tw/news/afe/another.aspx"};
+ const d=doc([a,b,c]);let calls=0;
+ await orion.classify(d,{},{now:NOW,apiKey:"test-only",fetchFn:async(_,args)=>{
+  calls++;const ids=JSON.parse(JSON.parse(args.body).contents[0].parts[0].text);
+  return out(tags(ids.map(z=>d.items.find(p=>orion.key(p)===z.id))));
+ },sleepFn:async()=>{}});
+ assert.equal(calls,1);assert.equal(d.semantic.classified,3);
+ assert.equal(d.semantic.headlineReuse,1);
+ assert.equal(d.items[1].semantic.reusedIdenticalHeadline,true);
+ assert.equal(d.items[2].semantic.reusedIdenticalHeadline,undefined);
+});
+test("ORION next run classifies previous missing, while cached decisions do not use calls",async()=>{
+ const rows=Array.from({length:14},(_,i)=>({...row(0),id:"article"+i,
+  title:row(0).title+" 案例 "+i,url:"https://www.cna.com.tw/news/afe/art"+i+".aspx"}));
+ const first=doc(rows);
+ const api=async(_,args)=>{
+  const req=JSON.parse(JSON.parse(args.body).contents[0].parts[0].text);
+  return out(tags(req.map(r=>rows.find(p=>orion.key(p)===r.id))));
+ };
+ await orion.classify(first,{},{now:NOW,apiKey:"unit",maxArticlesPerRun:8,fetchFn:api,sleepFn:async()=>{}});
+ assert.equal(first.semantic.status,"partial");assert.equal(first.semantic.classified,8);
+ const next=doc(rows);
+ await orion.classify(next,first,{now:NOW,apiKey:"unit",fetchFn:api,sleepFn:async()=>{}});
+ assert.equal(next.semantic.status,"verified");assert.equal(next.semantic.cached,8);
+ assert.equal(next.semantic.inferenceCalls,1);assert.equal(next.semantic.classified,14);
+});
+test("Gemini quota refusal stops cleanly and preserves all source-verifiable cached results",async()=>{
+ const rows=Array.from({length:17},(_,i)=>({...row(0),id:"item"+i,
+  title:row(0).title+" 觀察 "+i,url:"https://www.cna.com.tw/news/afe/quota"+i+".aspx"}));
+ const d=doc(rows);let n=0;
+ await orion.classify(d,{},{now:NOW,apiKey:"unit",fetchFn:async(_,args)=>{
+  n++;if(n>1)return {ok:false,status:429};
+  const inp=JSON.parse(JSON.parse(args.body).contents[0].parts[0].text);
+  return out(tags(inp.map(x=>rows.find(p=>orion.key(p)===x.id))));
+ },sleepFn:async()=>{}});
+ assert.equal(n,2);assert.equal(d.semantic.status,"partial");assert.equal(d.semantic.classified,8);
+ assert.equal(d.semantic.unclassified,9);assert.equal(d.semantic.quotaLimited,true);
+ assert.match(d.semantic.error,/HTTP 429/);
 });
