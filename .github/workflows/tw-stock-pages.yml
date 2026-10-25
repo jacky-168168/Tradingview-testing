@@ -6,7 +6,7 @@ on:
     # Sunday 11:30 Asia/Taipei: fallback redeploy after TDCC 09:35 weekly collector.
     - cron: '30 3 * * 0'
   workflow_run:
-    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment']
+    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News']
     types: [completed]
     branches: [main]
   push:
@@ -15,6 +15,8 @@ on:
       - 'tw-stock-dashboard/docs/agent-research*.js'
       - 'tw-stock-dashboard/docs/agent-llm-ui.js'
       - 'tw-stock-dashboard/docs/data/social_sentiment/**'
+      - 'tw-stock-dashboard/docs/data/orion_news/**'
+      - 'tw-stock-dashboard/docs/orion-news*'
       - 'tw-stock-dashboard/docs/data/agent_llm/**'
       - 'tw-stock-dashboard/docs/*.html'
       - 'tw-stock-dashboard/docs/market-command.js'
