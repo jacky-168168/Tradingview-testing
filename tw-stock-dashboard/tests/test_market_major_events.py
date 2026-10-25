@@ -1,5 +1,6 @@
 from __future__ import annotations
 import sys
+import re
 import unittest
 from datetime import datetime,timedelta
 from pathlib import Path
@@ -69,7 +70,7 @@ class MajorMarketNewsTest(unittest.TestCase):
   ]
   candidates=[]
   for index,(category,title) in enumerate(examples):
-   spec=next(q for q in QUERIES if q[0]==category)
+   spec=next(q for q in QUERIES if q[0]==category and re.search(q[2],title,re.I))
    xml=f"""<rss><channel><item><title>{title} - 經濟日報</title>
     <link>https://example.com/commodity/{index}</link><source>經濟日報</source>
     <pubDate>Fri, 16 Oct 2026 07:00:00 GMT</pubDate></item></channel></rss>"""
