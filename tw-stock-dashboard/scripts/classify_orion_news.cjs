@@ -82,14 +82,23 @@ function summarise(data,now,model,calls,cached,error){
    method:"相同題材有不同媒體的正反標題敘事；不表示同一事實互相矛盾或可預測漲跌"});
  }
  conflicts.sort((a,b)=>(b.positive+b.negative)-(a.positive+a.negative));
- const eventGroups=new Set(tagged.map(p=>p.eventGroup||p.id));
+ const grouped=new Map();
+ for(const p of tagged){const k=p.eventGroup||p.id;(grouped.get(k)||grouped.set(k,[]).get(k)).push(p)}
+ const eventTotals={positive:0,negative:0,neutral:0};
+ for(const articles of grouped.values()){
+  const positions=new Set(articles.map(p=>p.semantic.tone));
+  if(positions.size===1&&positions.has("偏利多報導"))eventTotals.positive++;
+  else if(positions.size===1&&positions.has("偏利空報導"))eventTotals.negative++;
+  else eventTotals.neutral++;
+ }
+ const eventGroups=new Set(grouped.keys());
  return {status,model,updatedAt:new Date(now).toISOString(),inferenceCalls:calls,
   cached,eligible:valid.length,classified:tagged.length,
   unclassified:valid.length-tagged.length,
   coveragePct:valid.length?Math.round(tagged.length/valid.length*1000)/10:0,
   positive:count("偏利多報導"),negative:count("偏利空報導"),neutral:count("中性資訊／難判"),
   publisherCounts:sourceCounts,themeCounts:themes,sourceCount:Object.keys(sourceCounts).length,
-  distinctEventsClassified:eventGroups.size,topicConflicts:conflicts.slice(0,6),
+  distinctEventsClassified:eventGroups.size,eventTotals,topicConflicts:conflicts.slice(0,6),
   noTrade:true,error:error||null,
   method:"嘗試處理全部48小時有效新聞（每批8篇）；Gemini配額/時限不足則保存成功結果，下次續傳。只有經模型引用原標題核對的文章計入情緒比例；不等於股價預測或散戶情緒。"};
 }
