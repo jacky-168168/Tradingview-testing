@@ -49,6 +49,48 @@ class MajorMarketNewsTest(unittest.TestCase):
   self.assertEqual(parse_feed(old_rss.encode(),FEED,now=NOW),[])
  def test_recent_rss_articles_must_still_pass(self):
   self.assertEqual(len(parse_feed(XML.encode(),FEED,now=NOW)),1)
+ def test_commodity_query_coverage_is_independent(self):
+  expected={
+   "原油／能源":("WTI","EIA","天然氣"),
+   "貴金屬":("黃金","白銀","鉑金"),
+   "農產品":("黃豆","咖啡","USDA"),
+  }
+  for category,topics in expected.items():
+   queries=[q for q in QUERIES if q[0]==category]
+   self.assertGreaterEqual(len(queries),3,category)
+   self.assertTrue(all("when:2d" in q[1] and q[2] and q[3] for q in queries))
+   for topic in topics:
+    self.assertTrue(any(topic in q[1] for q in queries),(category,topic))
+ def test_commodity_news_are_classified_and_dated_without_inventing_confirmation(self):
+  examples=[
+   ("原油／能源","OPEC 宣布減產 原油價格上漲"),
+   ("貴金屬","白銀報價大漲 工業需求增溫"),
+   ("農產品","黃豆乾旱歉收 USDA 下修產量"),
+  ]
+  candidates=[]
+  for index,(category,title) in enumerate(examples):
+   spec=next(q for q in QUERIES if q[0]==category)
+   xml=f"""<rss><channel><item><title>{title} - 經濟日報</title>
+    <link>https://example.com/commodity/{index}</link><source>經濟日報</source>
+    <pubDate>Fri, 16 Oct 2026 07:00:00 GMT</pubDate></item></channel></rss>"""
+   rows=parse_feed(xml.encode(),spec,now=NOW)
+   self.assertEqual(len(rows),1,(category,title))
+   self.assertEqual(rows[0]["category"],category)
+   self.assertFalse(rows[0]["confirmed"])
+   candidates.extend(rows)
+  out=build(now=NOW,feeds=[candidates],prior=None)
+  self.assertEqual(len([x for x in out["items"] if x["type"]=="news"]),3)
+  self.assertEqual({x["category"] for x in out["items"] if x["type"]=="news"},
+                   {"原油／能源","貴金屬","農產品"})
+ def test_commodity_stale_headlines_do_not_pass_age_gate(self):
+  for category,word in (("原油／能源","WTI 油價上漲"),("貴金屬","黃金價格下跌"),
+                        ("農產品","黃豆收成下修")):
+   spec=next(q for q in QUERIES if q[0]==category)
+   stale=(NOW-timedelta(hours=49)).strftime("%a, %d %b %Y %H:%M:%S %z")
+   xml=f"""<rss><channel><item><title>{word} - 經濟日報</title>
+    <link>https://example.com/commodity/stale</link><source>經濟日報</source>
+    <pubDate>{stale}</pubDate></item></channel></rss>"""
+   self.assertFalse(parse_feed(xml.encode(),spec,now=NOW),category)
  def test_empty_successful_feed_is_not_marked_live_with_news(self):
   result=build(now=NOW,feeds=[[] for _ in QUERIES],prior=None)
   self.assertEqual(result["status"],"empty")
