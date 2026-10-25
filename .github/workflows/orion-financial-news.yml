@@ -58,7 +58,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push')
     needs: validate
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     permissions:
       contents: write
     steps:
@@ -88,10 +88,23 @@ jobs:
           assert isinstance(d["items"],list) and len(d["items"])<=180
           assert all(a.get("source") and a.get("url","").startswith("https://") and a.get("publishedAt") and a.get("id") for a in d["items"])
           assert len({a["url"] for a in d["items"]})==len(d["items"])
+          events=d.get("eventSummary",{})
+          assert events.get("articleCount")==len(d["items"])
+          assert 0<=events.get("eventCount",0)<=len(d["items"])
+          assert len({a["eventGroup"] for a in d["items"]})==events["eventCount"]
+          assert events.get("repostedOrSimilar")==len(d["items"])-events["eventCount"]
           sem=d.get("semantic",{})
           assert sem.get("status") in {"verified","cached","partial","error","empty","unavailable"}
           assert sem.get("noTrade") is True and sem.get("classified",0)<=len(d["items"])
           assert sum(sem.get(k,0) for k in ("positive","negative","neutral"))==sem.get("classified",0)
+          assert sem.get("unclassified",0)==len(d["items"])-sem.get("classified",0)
+          assert sem.get("inferenceCalls",0)<=30 and sem.get("batchSize")==8
+          assert 0<=sem.get("coveragePct",0)<=100
+          assert sum(sem.get("eventTotals",{}).values())==sem.get("distinctEventsClassified",0)
+          assert sem.get("distinctEventsClassified",0)<=sem.get("classified",0)
+          assert all(x["theme"] and len(x["examples"])==2 and
+                     all(a.get("url","").startswith("https://") and a.get("title") for a in x["examples"])
+                     for x in sem.get("topicConflicts",[]))
           index=json.loads(Path("tw-stock-dashboard/docs/data/orion_news/history/index.json").read_text("utf-8"))
           assert index["schema"]==1 and index["retentionDays"]==30 and index["days"]
           print("ORION_NEWS_VALIDATED",len(d["items"]),sem["status"],sem["inferenceCalls"],len(index["days"]))
