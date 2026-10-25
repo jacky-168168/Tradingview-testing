@@ -115,6 +115,39 @@ def old_market_events(now):
     except (OSError,ValueError,TypeError):return []
 
 def article_key(p):return hashlib.sha256((p["source"]+"\0"+p["url"]).encode()).hexdigest()[:20]
+def headline_fingerprint(title):
+    """Conservative event grouping for identical or near-identical headlines."""
+    return re.sub(r"[^0-9A-Za-z\u4e00-\u9fff]+","",str(title)).lower()
+
+def similar_headlines(a,b):
+    a=headline_fingerprint(a);b=headline_fingerprint(b)
+    if a==b:return True
+    if len(a)<12 or len(b)<12 or min(len(a),len(b))/max(len(a),len(b))<0.72:return False
+    # Do not merge different percentages, prices, dates or corporate figures.
+    if sorted(re.findall(r"\d+",a))!=sorted(re.findall(r"\d+",b)):return False
+    aa={a[i:i+2] for i in range(len(a)-1)}
+    bb={b[i:i+2] for i in range(len(b)-1)}
+    return len(aa&bb)/max(1,len(aa|bb))>=0.82
+
+def mark_events(items):
+    """Assign comparable-event groups without dropping articles or pretending semantic equivalence."""
+    leaders=[];counts={}
+    for item in items:
+        date=parse_date(item.get("publishedAt"))
+        group=None
+        for first in leaders:
+            earlier=parse_date(first.get("publishedAt"))
+            if date and earlier and abs((date-earlier).total_seconds())<=24*3600 and similar_headlines(item["title"],first["title"]):
+                group=first["eventGroup"];break
+        if not group:
+            group=item["id"]
+            leaders.append(item)
+        item["eventGroup"]=group
+        counts[group]=counts.get(group,0)+1
+    return {"articleCount":len(items),"eventCount":len(counts),
+        "repostedOrSimilar":len(items)-len(counts),
+        "method":"僅用高相似度標題與24小時內日期保守合併同一事件；不同敘事可能仍屬同一事件，不做未證實的語意合併"}
+
 def unique_articles(rows,limit=180):
     seen=set();items=[]
     for x in sorted(rows,key=lambda y:y["publishedAt"],reverse=True):
@@ -141,6 +174,7 @@ def collect(now=None,fetch=request_feed,previous=None):
     state["既有市場新聞"]={"status":"ok" if fallback else "empty","freshCount":len(fallback)}
     inputs+=fallback
     items=unique_articles(inputs)
+    events=mark_events(items)
     if not items and isinstance(previous,dict):
         # Failure remains explicitly visible; old data is never called fresh and never used for today's tone.
         state["history"]={"status":"no_fresh_articles","note":"可在歷史日檔查詢舊報導；不可當今天的新消息"}
@@ -152,7 +186,7 @@ def collect(now=None,fetch=request_feed,previous=None):
       "coverage":{"configuredFeeds":len(FEEDS),
         "healthyFeeds":sum(v["status"] in ("ok","empty") for k,v in state.items() if k!="既有市場新聞" and k!="history"),
         "sources":state,"allTaiwanMediaCovered":False},
-      "items":items,"ruleTone":counts,
+      "items":items,"eventSummary":events,"ruleTone":counts,
       "themes":[{"name":k,"count":v} for k,v in sorted(themes.items(),key=lambda v:-v[1])[:9]],
       "method":"跨媒體公開 RSS 標題＋既有市場新聞；只儲存標題、來源、發稿時間與原文連結。分類是報導語氣，不等於讀者情緒或股票績效；不宣稱涵蓋台灣所有媒體。"}
 
