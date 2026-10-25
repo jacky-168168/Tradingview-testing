@@ -2,6 +2,7 @@ import datetime as dt
 import importlib.util
 import json
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from unittest.mock import patch
 N=dt.datetime(2026,10,25,3,0,tzinfo=dt.timezone.utc)
@@ -30,7 +31,7 @@ class TestOrionNews(unittest.TestCase):
           <link>https://www.cna.com.tw/news/afe/202610240001.aspx</link>
           <pubDate>Sun, 25 Oct 2026 08:00:00 +0000</pubDate></item></channel></rss>"""
         self.assertEqual(mod.parse_feed(future,"中央通訊社","金融",("www.cna.com.tw",),N),[])
-        with self.assertRaises(ValueError):mod.parse_feed(b"<broken>","中央通訊社","金融",("www.cna.com.tw",),N)
+        with self.assertRaises(ET.ParseError):mod.parse_feed(b"<broken>","中央通訊社","金融",("www.cna.com.tw",),N)
     def test_dedup_source_and_ignore_repeats(self):
         rows=mod.parse_feed(feed(),"中央通訊社","產經證券",("www.cna.com.tw",),N)
         clean=mod.unique_articles(rows+rows)
