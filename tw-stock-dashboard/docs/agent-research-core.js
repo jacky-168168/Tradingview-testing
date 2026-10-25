@@ -93,7 +93,10 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
  const name=String(row?.name||""),code=String(row?.code||"");
  const mentions=posts.filter(x=>(/^\d{4}$/.test(code)&&new RegExp("(^|\\D)"+code+"(?!\\d)").test(x.title))||
   (name.length>=2&&x.title.includes(name))).length;
- const heat=(Array.isArray(social?.stockHeat?.stocks)?social.stockHeat.stocks:[]).find(x=>x.code===code&&x.name===name);
+ const creatorMedia=Array.isArray(social?.creatorMedia)?social.creatorMedia:[];
+ const creatorCounts={YouTube:creatorMedia.filter(x=>x.platform==="YouTube").length,
+  Facebook:creatorMedia.filter(x=>x.platform==="Facebook").length};
+  const heat=(Array.isArray(social?.stockHeat?.stocks)?social.stockHeat.stocks:[]).find(x=>x.code===code&&x.name===name);
  const heatCount=heat&&Number.isInteger(heat.recent24h)&&heat.recent24h>=0?heat.recent24h:null;
  const corroborated=heat&&heat.sample<=posts.length&&heatCount!==null&&mentions>=heatCount;
  const sourceHealthy=["PTT","Threads","Instagram","Bluesky"].some(k=>["ok","partial"].includes(feeds[k]?.status));
@@ -104,13 +107,14 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
   corroborated?"已有歷史樣本，來源未確認":"熱度不足／尚未驗證";
  return {status,score,breadth,ret20,method:"只要有1篇可核對公開貼文就視為已有樣本；資料量少僅代表少量觀察，不可推論市場共識。社群不修改 Risk Score 或 TITAN 風控。",
   socialStatus,socialSample:sample?sample:null,socialBull:sample?bull:null,socialBear:sample?bear:null,
-  socialMentions:sample?mentions:null,semanticSummary,heatStatus,overheatWatch,socialPlatforms:sample?{
+  socialMentions:sample?mentions:null,semanticSummary,creatorCounts,heatStatus,overheatWatch,socialPlatforms:sample?{
    PTT:posts.filter(x=>x.platform==="PTT").length,
    Threads:posts.filter(x=>x.platform==="Threads").length,
    Instagram:posts.filter(x=>x.platform==="Instagram").length,
    Bluesky:posts.filter(x=>x.platform==="Bluesky").length}:null,newsStatus:fresh?String(social?.news?.status||"未取得"):"新聞情緒資料未確認",
   sources:examples,sourceStatus:{PTT:feeds.PTT?.status||"not_available",Threads:feeds.Threads?.status||"not_authorized",
-   Instagram:feeds.Instagram?.status||"not_authorized",Bluesky:feeds.Bluesky?.status||"not_available"},socialAgeMinutes:age};
+   Instagram:feeds.Instagram?.status||"not_authorized",Bluesky:feeds.Bluesky?.status||"not_available",
+   YouTube:feeds.YouTube?.status||"not_configured",Facebook:feeds.Facebook?.status||"not_authorized"},socialAgeMinutes:age};
 }
 function titan(row,context){const veto=[],info=[];
  const risk=context.risk;
@@ -137,7 +141,7 @@ function nova(parts){const reasons=[];
  return {status:state,reasons,summary:reasons.length?reasons.slice(0,3).join("；"):"研究閘門通過，仍須確認失效點、曝險與資料時效",noTrade:true};
 }
 function analyze(input,nowInput){
- const now=nowInput instanceof Date?nowInput:new Date(),daily=input?.daily||{},intraday=input?.intraday||{},news=input?.news||{},social=input?.social||{},status=input?.status||{};
+ const now=nowInput instanceof Date?nowInput:new Date(),daily=input?.daily||{},intraday=input?.intraday||{},news=input?.news||{},social=input?.social||{},status=input?.status||{},orion=input?.orion||{};
  const trading=session(now),p=taipei(now),q=qualityCheck(intraday,status,now);
  const dailyDate=typeof daily.dataDate==="string"?daily.dataDate:null;
  const useLive=trading&&q.ok;
@@ -147,9 +151,17 @@ function analyze(input,nowInput){
  const candidateRows=rows.filter(x=>x&&/^\d{4}$/.test(String(x.code||""))).slice(0,10);
  const marketReady=useLive;
  const risk=daily.risk||null;
+ const newsAge=ageMinutes(orion.generatedAt,now),isFreshNews=newsAge!==null&&newsAge>=0&&newsAge<=8*60;
+ const verifiedNews=isFreshNews&&orion.semantic?.noTrade===true&&["verified","cached","partial"].includes(orion.semantic?.status);
+ const newsroom=verifiedNews?{
+  positive:orion.semantic.positive||0,negative:orion.semantic.negative||0,
+  neutral:orion.semantic.neutral||0,classified:orion.semantic.classified||0,
+  sourceCount:orion.semantic.sourceCount||0,
+  status:orion.semantic.status,
+  caution:"Gemini 僅分析報導標題，不能推論股價或散戶情緒"}:null;
  const sameRiskDate=!!(risk&&risk.date===(useLive?intraday.sourceCloseDate:asOfDate));
  const candidates=candidateRows.map((row,i)=>{
-  const parts={atlas:atlas(row,i+1),vega:vega(row),orion:eventLinks(row,news,now),luna:luna(risk,social,now,row)};
+  const parts={atlas:atlas(row,i+1),vega:vega(row),orion:{...eventLinks(row,news,now),newsroom},luna:luna(risk,social,now,row)};
   parts.titan=titan(row,{risk,marketReady,sameRiskDate});
   parts.nova=nova(parts);
   return {code:String(row.code),name:String(row.name||row.code),market:String(row.market||""),price:numeric(row.close),theme:String(row.theme||""),

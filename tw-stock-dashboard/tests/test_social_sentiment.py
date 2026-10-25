@@ -238,6 +238,65 @@ class SocialCollectorTest(unittest.TestCase):
         with patch.object(mod,"stock_catalog",return_value=("",[])):
             with self.assertRaises(ValueError):
                 mod.bluesky(NOW,lambda _:(_ for _ in ()).throw(OSError("offline")))
+    def test_youtube_official_search_returns_only_recent_taiwan_titles(self):
+        title={"id":{"kind":"youtube#video","videoId":"AbCdeF_0123"},
+               "snippet":{"title":"台股 台積電股價如何分析？","publishedAt":"2026-10-24T03:00:00Z",
+                          "channelTitle":"研究測試頻道"}}
+        bad={"id":{"kind":"youtube#video","videoId":"evil/../../x"},
+               "snippet":{"title":"台股會飆漲","publishedAt":"2026-10-24T03:00:00Z"}}
+        urls=[]
+        def get(url):
+            urls.append(url)
+            self.assertIn("key=fake_test_key",url)
+            return json.dumps({"items":[title,bad]},ensure_ascii=False).encode()
+        rows=mod.youtube_titles("fake_test_key",NOW,get)
+        self.assertEqual(len(urls),len(mod.YOUTUBE_SEARCH_TERMS))
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]["platform"],"YouTube")
+        self.assertEqual(rows[0]["url"],"https://www.youtube.com/watch?v=AbCdeF_0123")
+        self.assertEqual(rows[0]["sourceName"],"研究測試頻道")
+        self.assertNotIn("stance",rows[0])
+    def test_facebook_requires_authorized_page_and_original_meta_link(self):
+        def get(url,token):
+            self.assertEqual(token,"authorized_test_token")
+            self.assertTrue(url.startswith(mod.FACEBOOK_API+"123456789/posts?"))
+            return json.dumps({"data":[
+             {"message":"台股跌幅擴大，投資人觀望","created_time":"2026-10-24T03:00:00Z",
+              "permalink_url":"https://www.facebook.com/page/posts/12345"},
+             {"message":"台股會漲","created_time":"2026-10-24T03:00:00Z",
+              "permalink_url":"https://evil.example/fake"}]}).encode()
+        posts=mod.facebook_page_posts("authorized_test_token","123456789",NOW,get)
+        self.assertEqual(len(posts),1)
+        self.assertEqual(posts[0]["platform"],"Facebook")
+        self.assertNotIn("stance",posts[0])
+        with self.assertRaises(ValueError):
+            mod.facebook_page_posts("token","invalid/path",NOW,get)
+    def test_missing_creator_api_secrets_never_inflate_social_sentiment(self):
+        with patch.object(mod,"news_items",return_value=([],"無新新聞")):
+            result=mod.collect(now=NOW,fetch=lambda _:(_ for _ in ()).throw(OSError("blocked")),
+                               old={},environmental={})
+        self.assertEqual(result["sources"]["YouTube"]["status"],"not_configured")
+        self.assertEqual(result["sources"]["Facebook"]["status"],"not_authorized")
+        self.assertEqual(result["creatorMedia"],[])
+        self.assertEqual(result["social"]["rawSample"],0)
+    def test_creator_items_are_separate_even_when_source_and_social_both_relevant(self):
+        mock_youtube={"platform":"YouTube","title":"台股正式突破",
+           "url":"https://www.youtube.com/watch?v=AbCdeF_0123",
+           "publishedAt":"2026-10-24T03:00:00Z","sourceName":"投資頻道"}
+        mock_facebook={"platform":"Facebook","title":"台股跌幅觀察",
+           "url":"https://www.facebook.com/page/posts/12345",
+           "publishedAt":"2026-10-24T03:00:00Z"}
+        with patch.object(mod,"youtube_titles",return_value=[mock_youtube]),\
+             patch.object(mod,"facebook_page_posts",return_value=[mock_facebook]),\
+             patch.object(mod,"news_items",return_value=([],"無新新聞")):
+            d=mod.collect(now=NOW,fetch=lambda _:(_ for _ in ()).throw(OSError("blocked")),
+               old={},environmental={"YOUTUBE_API_KEY":"stub","FACEBOOK_PAGE_ACCESS_TOKEN":"stub",
+                                    "FACEBOOK_PAGE_IDS":"123456789"})
+        self.assertEqual(len(d["creatorMedia"]),2)
+        self.assertEqual(d["sources"]["YouTube"]["status"],"ok")
+        self.assertEqual(d["sources"]["Facebook"]["status"],"ok")
+        self.assertEqual(d["social"]["sample"],0)
+        self.assertEqual(d["stockHeat"]["stocks"],[])
     def test_dont_use_old_news(self):
         with patch.object(mod,"NEWS_PATH",Path("/definitely/not/a/real/file.json")):
             rows,reason=mod.news_items(NOW)

@@ -117,3 +117,17 @@
 - 六代理的 LUNA 首輪會額外看到已驗證語意統計與逐篇可查核證據，但不提供任何直接下單訊號。頁面將規則式樣本、Gemini 逐篇判讀、每日歷史索引分開呈現。
 - 自動化：`LUNA Public Social Sentiment` 原排程先蒐集社群→Gemini 判讀→封存每日檔→驗證一致性→提交 GitHub→自動部署 Pages；原 `Six Agent Gemini LLM Debate` 工作日 19:00 九輪研究排程獨立，不因社群判讀自動改風控或觸發交易。
 - 測試：`python -m unittest discover -s tw-stock-dashboard/tests -p 'test_luna_archive.py' -v` 與 `node --test tw-stock-dashboard/tests/test_luna_semantic.cjs`。這些測試用 mock API，**不代表真實模型已成功**；只有 main 正式 run 顯示大於 0 的 `inferenceCalls` 與 `status=verified` 才能宣布實際跑通。
+
+
+## LUNA v0.9 與 ORION 財經新聞資料庫（2026-10-25）
+### LUNA：YouTube／Facebook 官方來源
+- YouTube：使用正式 YouTube Data API search.list，搜尋最近 48 小時內的台股、台積電股票、台指期等影片標題，保存頻道名稱、影片標題、時間與原文連結。需要 GitHub Actions Secret YOUTUBE_API_KEY（Google Cloud 啟用 YouTube Data API v3），缺少時明確 not_configured。這是影片創作者內容，不是影片字幕、留言或散戶情緒。
+- Facebook：只讀取 Meta Graph API 已授權粉專的公開貼文。需要 Secret FACEBOOK_PAGE_ACCESS_TOKEN 及 Variable FACEBOOK_PAGE_IDS（最多 5 個以逗號分隔的數字粉專 ID），並須確保應用取得對應的 Page 權限。缺少授權即 not_authorized；不爬個人動態、社團、一般網友留言或全站公開粉專。
+- 二者獨立存 creatorMedia，絕不納入 PTT/Bluesky 的 social.sample、G 個股過熱判讀或散戶多空投票。頁面提供可核對原文與授權狀態。
+### ORION：多家台灣財經媒體新聞風向
+- 已設定的 RSS 來源：中央通訊社產經證券／科技、自由時報財經、ETtoday 財經、Yahoo 股市台股／國際財經，共 6 個訂閱端點、4 家主要發布機構；另參考既有市場事件 JSON。不是全部台灣媒體，會逐來源顯示 ok/empty/error 與涵蓋率。
+- 每篇最多存 145 字標題、來源、發布時間、原始文章 URL 與題材，不抓全文、不繞付費牆。來源應遵守 RSS 條款（個人、非商業用途與明確標示出處）；不得未獲授權重製內文。
+- Gemini 對新標題最多每輪分析 24 篇、每批 8 篇，分偏利多報導／偏利空報導／中性資訊難判，並列 AI/半導體、資金法人、總體利率、能源原物料、政策地緣、ETF 投資、台股行情等題材。模型必須引用原標題的逐字證據，分類不代表股價未來方向。沒有實際成功 Gemini 呼叫就不能顯示經驗證風向。
+- 獨立 ORION Taiwanese Financial News 排程：台灣每天 08:15 至 22:15，每兩小時更新一次，保存 docs/data/orion_news/latest.json、history/YYYY-MM-DD.json 及 history/index.json 的 30 日索引；更新成功會自動部署 GitHub Pages。Git 歷史不保證永久刪除。
+- 六代理 ORION 可參考真實最新的多媒體標題與獨立模型報導語氣，TITAN 風控否決及 G 排名完全不受新聞風向改寫。報導語氣統計不是市場群眾民調，也不是交易訊號。
+- 來源條款：中央社 https://www.cna.com.tw/about/rss.aspx；自由時報 https://service.ltn.com.tw/RSS；Yahoo 股市 https://tw.finance.yahoo.com/rss-index；YouTube https://developers.google.com/youtube/data/reference/rest/v3/search/list 。

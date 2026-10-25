@@ -29,6 +29,7 @@ function detail(c){
   "目前技術訊號："+(a.vega.signal||"缺值"),a.vega.invalidation]);
  const sourceList=a.orion.sources.map(x=>({...x}));const links=sourceList.map(x=>({title:x.title,url:x.url,source:x.source,publishedAt:x.publishedAt,confirmed:x.confirmed})).filter(x=>x.url);
  explainCard(host,"ORION","新聞與事件",a.orion.status,[a.orion.reason,
+  a.orion.newsroom?"台灣財經新聞標題分析：偏利多 "+a.orion.newsroom.positive+"／偏利空 "+a.orion.newsroom.negative+"／中性 "+a.orion.newsroom.neutral+"（Gemini 已判 "+a.orion.newsroom.classified+" 篇）":"跨媒體新聞風向尚未有即時經驗證的 Gemini 標題判讀",
   "來源資料同步年齡："+(a.orion.datasetAgeMinutes===null?"不明":Math.round(a.orion.datasetAgeMinutes)+" 分鐘"),...links]);
  explainCard(host,"LUNA","市場與公開社群討論",a.luna.status,[
   "大盤風險分數："+fmt(a.luna.score,0)+"／100；上漲家數比率："+fmt(a.luna.breadth,1)+"%",
@@ -39,6 +40,7 @@ function detail(c){
   "個股討論熱度："+a.luna.heatStatus,
   "新聞標題觀察："+a.luna.newsStatus+"（獨立計數，不代表社群討論）",
   "來源：PTT "+a.luna.sourceStatus.PTT+"；Threads "+a.luna.sourceStatus.Threads+"；Instagram "+a.luna.sourceStatus.Instagram+"；Bluesky "+a.luna.sourceStatus.Bluesky,
+  "另列創作者／粉專標題：YouTube "+(a.luna.creatorCounts?.YouTube??0)+"／Facebook "+(a.luna.creatorCounts?.Facebook??0)+"（不納入散戶多空）",
   a.luna.method,...(a.luna.sources||[])]);
  explainCard(host,"TITAN","硬性風險否決",a.titan.status,
   a.titan.veto.length?a.titan.veto.concat(a.titan.notes):[...a.titan.notes,a.titan.warning],a.titan.hardVeto?"deny":"");
@@ -109,6 +111,40 @@ function renderHistory(index){
   link.target="_blank";link.rel="noopener noreferrer";
  }
 }
+function renderCreatorMedia(social){
+ const host=$("lunaCreatorMedia");if(!host)return;host.replaceChildren();
+ const stamp=Date.parse(social?.generatedAt||"");
+ const recent=Number.isFinite(stamp)&&stamp<=Date.now()&&Date.now()-stamp<8*3600000;
+ const media=Array.isArray(social?.creatorMedia)?social.creatorMedia:[];
+ const states=social?.sources||{},labels={ok:"來源已成功查詢",empty:"查詢成功，48 小時內無相關內容",
+  error:"官方 API 查詢失敗",not_authorized:"未獲粉專授權",not_configured:"尚未設定 API 金鑰"};
+ append(host,"p",(recent?"近期來源紀錄":"歷史資料／尚未更新")+
+  "｜此區只顯示影片標題與粉專貼文，不把創作者觀點、點閱或按讚當成散戶投票。","description");
+ for(const platform of ["YouTube","Facebook"]){
+  const rows=media.filter(x=>x.platform===platform),state=states[platform]?.status||"not_configured";
+  const block=append(host,"div",null,"entry");
+  append(block,"div",(platform==="YouTube"?"YouTube｜影片標題":"Facebook｜授權粉專貼文")+
+   "｜"+(labels[state]||state)+"｜"+rows.length+" 筆","small");
+  if(!rows.length){
+   append(block,"p",platform==="Facebook"&&state==="not_authorized"?
+    "需 Meta 授權的 Page Access Token 和粉專 ID；尚未取得內容。":
+    platform==="YouTube"&&state==="not_configured"?
+    "需另外設定 YOUTUBE_API_KEY 才能搜尋影片；尚未取得內容。":
+    "目前沒有可顯示的新資料。","hint");
+   continue;
+  }
+  for(const item of rows.slice(0,6)){
+   const link=String(item.url||"");
+   const allowed=platform==="YouTube"?/^https:\/\/www\.youtube\.com\/watch\?v=[a-zA-Z0-9_-]{11}$/.test(link):
+    /^https:\/\/(?:www\.|m\.)?facebook\.com\//.test(link);
+   if(!allowed)continue;
+   const node=append(block,"p",null,"description"),a=append(node,"a",item.title);
+   a.href=link;a.target="_blank";a.rel="noopener noreferrer nofollow";
+   append(node,"span","｜"+(item.sourceName||platform)+"｜"+
+    (item.publishedAt?new Date(item.publishedAt).toLocaleDateString("zh-TW",{timeZone:"Asia/Taipei"}):"日期不明"),"small");
+  }
+ }
+}
 function renderSocialHeat(social){
  const host=$("lunaHeat");if(!host)return;
  host.replaceChildren();
@@ -148,14 +184,19 @@ async function load(){
  const base="./data/";
  const files=await Promise.allSettled([
   loadJson(base+"latest.json"),loadJson(base+"g_intraday/latest.json"),
-  loadJson(base+"g_intraday/status.json"),loadJson(base+"market_events/latest.json"),loadJson(base+"social_sentiment/latest.json")
+  loadJson(base+"g_intraday/status.json"),loadJson(base+"market_events/latest.json"),loadJson(base+"social_sentiment/latest.json"),
+  loadJson(base+"orion_news/latest.json")
  ]);
- const errors=files.map((x,i)=>x.status==="rejected"?["正式日榜單","盤中 G","盤中狀態","重大新聞","社群情緒"][i]+"無法讀取":null).filter(Boolean);
- const [daily,intraday,status,news,social]=files.map(x=>x.status==="fulfilled"?x.value:{});
+ const errors=files.map((x,i)=>x.status==="rejected"?["正式日榜單","盤中 G","盤中狀態","重大新聞","社群情緒","ORION 財經新聞"][i]+"無法讀取":null).filter(Boolean);
+ const [daily,intraday,status,news,social,orion]=files.map(x=>x.status==="fulfilled"?x.value:{});
+ window.OrionNewsViewer?.draw(orion);
+ void loadJson(base+"orion_news/history/index.json").then(d=>window.OrionNewsViewer?.history(d))
+  .catch(()=>window.OrionNewsViewer?.history(null));
  renderSocialHeat(social);
+ renderCreatorMedia(social);
  renderSemantic(social);
  void loadJson(base+"social_sentiment/history/index.json").then(renderHistory).catch(()=>renderHistory(null));
- const result=core.analyze({daily,intraday,status,news,social},new Date());current=result;
+ const result=core.analyze({daily,intraday,status,news,social,orion},new Date());current=result;
  window.SixAgentVisual?.render(result,null);
  $("mode").textContent=result.mode;$("asOf").textContent="來源日："+(result.asOfDate||"缺值")+"｜風險日："+(result.source.riskDate||"缺值");
  $("nCandidates").textContent=String(result.counts.candidates);

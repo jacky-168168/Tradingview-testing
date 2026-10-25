@@ -23,6 +23,9 @@ PTT_PUBLIC_FEED = "https://feed.cqd.tw/ptt/Stock/title/.*"
 BLUESKY_API = "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts"
 BLUESKY_BACKUP_API = "https://api.bsky.app/xrpc/app.bsky.feed.searchPosts"
 BLUESKY_QUERIES = ("台股","台積電","台指期","加權指數","台股 ETF","台股 當沖","台股 正二","CPO 股票","台灣 股票")
+YOUTUBE_SEARCH_API = "https://www.googleapis.com/youtube/v3/search"
+YOUTUBE_SEARCH_TERMS = ("台股","台積電 股票","台指期")
+FACEBOOK_API = "https://graph.facebook.com/v24.0/"
 STOCK_PATH = ROOT / "data/latest.json"
 NEWS_PATH = ROOT / "data/market_events/latest.json"
 OUT_PATH = ROOT / "data/social_sentiment/latest.json"
@@ -66,7 +69,7 @@ def classify_discussion(text, platform="PTT"):
 
 def request(url, token=None):
     parsed = urllib.parse.urlsplit(url)
-    if parsed.scheme != "https" or parsed.hostname not in {"www.ptt.cc", "feed.cqd.tw", "public.api.bsky.app", "api.bsky.app", "graph.threads.net", "graph.facebook.com"}:
+    if parsed.scheme != "https" or parsed.hostname not in {"www.ptt.cc", "feed.cqd.tw", "public.api.bsky.app", "api.bsky.app", "graph.threads.net", "graph.facebook.com", "www.googleapis.com"}:
         raise ValueError("拒絕非白名單 HTTPS 來源")
     h = {"User-Agent": "Tradingview-testing-SocialResearch/1.0", "Accept": "application/atom+xml, text/html;q=0.9, application/json;q=0.8"}
     if token:
@@ -303,6 +306,64 @@ def instagram(token, user_id, now):
                     entries.append(x)
     return entries
 
+def youtube_titles(api_key,now,fetch=request):
+    """Authorized YouTube Data API video titles, NOT viewer sentiment or comments."""
+    if not api_key or len(str(api_key))>250:raise ValueError("缺少有效 YouTube API 金鑰")
+    rows=[]
+    for term in YOUTUBE_SEARCH_TERMS:
+        params=urllib.parse.urlencode({"part":"snippet","type":"video","q":term,"order":"date",
+            "regionCode":"TW","relevanceLanguage":"zh-Hant","maxResults":15,
+            "publishedAfter":(now-dt.timedelta(hours=48)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "key":api_key})
+        data=json.loads(fetch(YOUTUBE_SEARCH_API+"?"+params))
+        if not isinstance(data,dict) or not isinstance(data.get("items"),list):
+            raise ValueError("YouTube API 搜尋結果格式錯誤")
+        for hit in data["items"]:
+            if not isinstance(hit,dict):continue
+            identity=hit.get("id") or {};snippet=hit.get("snippet") or {}
+            vid=str(identity.get("videoId") or "")
+            if identity.get("kind")!="youtube#video" or not re.fullmatch(r"[a-zA-Z0-9_-]{11}",vid):continue
+            title=html.unescape(str(snippet.get("title") or "")).strip()
+            published=iso(snippet.get("publishedAt"))
+            if not published or len(title)<4 or not 0<=(now-published).total_seconds()<=48*3600:continue
+            if not TAIWAN_RELEVANCE.search(title):continue
+            rows.append({"platform":"YouTube","title":title[:160],
+                "url":"https://www.youtube.com/watch?v="+vid,
+                "publishedAt":published.isoformat().replace("+00:00","Z"),
+                "sourceName":str(snippet.get("channelTitle") or "未標示頻道")[:75],
+                "contentType":"創作者影片標題",
+                "method":"YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"})
+    return unique(rows,35)
+
+def facebook_page_posts(page_token,page_ids,now,fetch=request):
+    """Meta Graph API authorized Page posts only; no global search or personal feed scraping."""
+    if not page_token or not isinstance(page_ids,str):raise ValueError("缺少 Facebook 已授權粉專設定")
+    pages=[p.strip() for p in page_ids.split(",") if p.strip()]
+    if not 1<=len(pages)<=5 or len(set(pages))!=len(pages) or not all(re.fullmatch(r"\d{3,25}",p) for p in pages):
+        raise ValueError("Facebook 粉專 ID 必須為 3–25 位數字，最多五個")
+    rows=[]
+    for page in pages:
+        params=urllib.parse.urlencode({"fields":"id,message,created_time,permalink_url",
+            "limit":25})
+        data=json.loads(fetch(FACEBOOK_API+page+"/posts?"+params,page_token))
+        if not isinstance(data,dict) or not isinstance(data.get("data"),list):
+            raise ValueError("Facebook Graph API 粉專回應格式錯誤")
+        for post in data["data"]:
+            if not isinstance(post,dict):continue
+            content=str(post.get("message") or "").strip()
+            published=iso(post.get("created_time"))
+            url=str(post.get("permalink_url") or "")
+            link=urllib.parse.urlsplit(url)
+            if link.scheme!="https" or link.hostname not in {"www.facebook.com","facebook.com","m.facebook.com"}:continue
+            if not published or not 0<=(now-published).total_seconds()<=48*3600:continue
+            if len(content)<4 or not TAIWAN_RELEVANCE.search(content):continue
+            rows.append({"platform":"Facebook","title":content[:160],"url":url[:350],
+                "publishedAt":published.isoformat().replace("+00:00","Z"),
+                "sourceName":"已授權 Facebook 粉專",
+                "contentType":"粉專公開貼文摘要",
+                "method":"Meta Graph API 已授權粉專貼文；非個人動態與留言區共識"})
+    return unique(rows,35)
+
 def news_items(now):
     if not NEWS_PATH.exists():
         return [], "新聞 JSON 缺失"
@@ -391,6 +452,35 @@ def collect(now=None, fetch=request, old=None, environmental=None):
             inputs+=new
         except Exception as ex:
             state[name]={"status":"error","reason":type(ex).__name__,"freshCount":0}
+    # These are separate creator/editorial signals, never included in retail social votes.
+    creator=[]
+    yt_key=environmental.get("YOUTUBE_API_KEY","")
+    if not yt_key:
+        state["YouTube"]={"status":"not_configured","freshCount":0,
+                          "method":"官方 Data API 需 YOUTUBE_API_KEY"}
+    else:
+        try:
+            videos=youtube_titles(yt_key,now,fetch)
+            creator+=videos
+            state["YouTube"]={"status":"ok" if videos else "empty","freshCount":len(videos),
+                              "method":"官方 Data API 影片標題（非觀眾情緒）"}
+        except Exception as exc:
+            state["YouTube"]={"status":"error","reason":type(exc).__name__,
+                              "freshCount":0}
+    fb_token=environmental.get("FACEBOOK_PAGE_ACCESS_TOKEN","")
+    fb_ids=environmental.get("FACEBOOK_PAGE_IDS","")
+    if not fb_token or not fb_ids:
+        state["Facebook"]={"status":"not_authorized","freshCount":0,
+            "method":"需已審核的 Page Access Token 與粉專 IDs；不能搜尋全站公開貼文"}
+    else:
+        try:
+            posts=facebook_page_posts(fb_token,fb_ids,now,fetch)
+            creator+=posts
+            state["Facebook"]={"status":"ok" if posts else "empty","freshCount":len(posts),
+                "method":"Meta Graph API 授權粉專貼文（非一般用戶留言）"}
+        except Exception as exc:
+            state["Facebook"]={"status":"error","reason":type(exc).__name__,"freshCount":0}
+    creator=unique(creator,70)
     news,reason=news_items(now)
     state["新聞"]={"status":"ok" if news else "unavailable","freshCount":len(news)}
     if reason:
@@ -411,10 +501,11 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     heat=topic_heat(eligible[:80],now,stock_catalog())
     return {"schema":1,"generatedAt":now.isoformat().replace("+00:00","Z"),
         "sources":state,"social":social_stats,"news":news_stats,"stockHeat":heat,
-        "items":social[:80],"newsItems":news[:30],
+        "items":social[:80],"creatorMedia":creator,"newsItems":news[:30],
         "notes":["僅使用公開、實際取得且不超過48小時的資料；缺乏授權的平台顯示未授權。",
                  "標題關鍵詞易受反諷、轉載、選擇偏差與機器人影響；不能視為代表性民調。",
-                 "新聞與社群分開計數；Bluesky 來源另記錄，僅官方可公開搜尋貼文，無讀取留言全文。",
+                 "新聞、散戶社群、YouTube 創作者標題及 Facebook 粉專發文彼此獨立，不可合併為散戶情緒投票。",
+                 "YouTube／Facebook 只使用有權使用的官方 API；缺少授權或金鑰就顯示未設定。",
                  "標題反諷／轉載不直接判定多空，無取得平台授權不蒐集受限制來源。",
                  "個股熱度只統計有投資語境且非新聞轉貼的 G Top20 標題，不更改 G 排名或 TITAN 風控。"]}
 
