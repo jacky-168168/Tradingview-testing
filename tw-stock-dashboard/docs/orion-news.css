@@ -20,3 +20,13 @@
 .orion-foot{font-size:10px;color:#657d96;line-height:1.8;margin-top:12px}
 @media(max-width:620px){.orion-bar-row{grid-template-columns:88px minmax(0,1fr) 25px}.orion-stat{padding:8px}.orion-stat strong{font-size:17px}}
 @media(prefers-reduced-motion:reduce){.orion-bar-fill{transition:none}}
+.orion-progress{width:100%;height:10px;background:#e7edf4;border-radius:99px;overflow:hidden;margin:9px 0}
+.orion-progress-fill{display:block;height:100%;background:#4c83d6;transition:width .2s}
+.orion-summary-note{margin:9px 0;font-size:11px;line-height:1.7;color:#526f8a}
+.orion-conflicts{margin:15px 0;border-top:1px solid #e3eaf4;padding-top:13px}
+.orion-divergence{border:1px solid #dce8f2;border-radius:11px;margin:8px 0;padding:11px;background:#f8fbfe}
+.orion-divergence>strong{display:block;color:#244b70;font-size:12px}
+.orion-divergence p{margin:7px 0;line-height:1.65;overflow-wrap:anywhere}
+.orion-copy{margin-top:6px;border:1px solid #b9cde6;border-radius:7px;background:#edf5ff;color:#28578d;font-size:11px;padding:7px 9px;font-weight:800;cursor:pointer}
+.orion-copy:focus-visible{outline:2px solid #225bbb;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.orion-progress-fill{transition:none}}
