@@ -234,3 +234,43 @@ test("LUNA labels valid cached posts as historical instead of erasing them",()=>
  assert.equal(l.socialSample,1);
  assert.match(l.socialStatus,/已有歷史樣本/);
 });
+
+
+test("six-agent graphic has exactly the real six repository roles and safe historical label",()=>{
+ const visual=require("../docs/six-agent-visual.js");
+ assert.deepEqual(visual.DEFS.map(x=>x.name),["ATLAS","VEGA","ORION","LUNA","TITAN","NOVA"]);
+ const r=core.analyze(fixtures(),when("2026-10-25T02:00:00Z")),c=r.candidates[0];
+ assert.equal(r.liveVerified,false);
+ assert.match(visual.summary(r,c).label,/歷史研究/);
+ assert.equal(visual.summary(r,c).tone,"warn");
+ assert.equal(visual.summary(r,null).tone,"warn");
+ assert.equal(visual.descriptor(c.agents.titan,{id:"titan"}).tone,"bad");
+ assert.match(visual.descriptor(c.agents.nova,{id:"nova"}).metric,/不提供下單許可/);
+});
+test("six-agent visual card summaries come from actual candidate fields, not fabricated values",()=>{
+ const visual=require("../docs/six-agent-visual.js"),r=core.analyze(fixtures(),LIVE);
+ const a=r.candidates[0].agents;
+ assert.match(visual.descriptor(a.atlas,{id:"atlas"}).metric,/RS20 22.5/);
+ assert.match(visual.descriptor(a.vega,{id:"vega"}).metric,/ATR 3.0%/);
+ assert.match(visual.descriptor(a.orion,{id:"orion"}).label,/未證實/);
+ assert.match(visual.descriptor(a.luna,{id:"luna"}).metric,/Gemini 未驗證/);
+ assert.equal(visual.descriptor(a.titan,{id:"titan"}).tone,"good");
+ assert.match(visual.summary(r,r.candidates[0]).caption,/仍須人工審核/);
+});
+test("research page embeds mobile visual six-agent flow and separately labeled Gemini source",()=>{
+ const visual=fs.readFileSync(path.join(docs,"six-agent-visual.js"),"utf8");
+ const css=fs.readFileSync(path.join(docs,"six-agent-visual.css"),"utf8");
+ const html=fs.readFileSync(path.join(docs,"agent-research.html"),"utf8");
+ const ui=fs.readFileSync(path.join(docs,"agent-research-ui.js"),"utf8");
+ const llm=fs.readFileSync(path.join(docs,"agent-llm-ui.js"),"utf8");
+ for(const id of ["sixAgentVisual","vCards","vHero","vRiskGauge","vRulesBtn","vGeminiBtn","llmDebate","agents"]){
+  assert.match(html,new RegExp('id="'+id+'"'));
+ }
+ assert.match(html,/six-agent-visual\.css/);assert.match(html,/six-agent-visual\.js/);
+ assert.match(html,/研究決策流程/);assert.match(css,/@media\(max-width:620px\)/);
+ assert.match(ui,/SixAgentVisual\?\.render/);assert.match(llm,/SixAgentVisual\?\.modelReport/);
+ assert.match(visual,/historical|歷史研究/);
+ assert.match(html,/展開九輪 Gemini 逐字結論/);
+ assert.match(html,/展開各代理的完整分析證據/);
+ assert.doesNotMatch(html,/PHOENIX|AURORA/);
+});
