@@ -10,14 +10,14 @@ SOURCE=Path(__file__).resolve().parents[1]/"scripts"/"collect_orion_news.py"
 spec=importlib.util.spec_from_file_location("orion_news",SOURCE)
 mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
 def feed():
-    return b"""<rss><channel><item>
+    return """<rss><channel><item>
       <title>台股大漲！台積電利多創新高</title>
       <link>https://www.cna.com.tw/news/afe/202610240001.aspx</link>
       <pubDate>Sat, 24 Oct 2026 23:00:00 +0000</pubDate>
     </item><item><title>台股跌停市場恐慌</title>
       <link>https://evil.example/unsafe</link>
       <pubDate>Sat, 24 Oct 2026 23:00:00 +0000</pubDate>
-    </item></channel></rss>"""
+    </item></channel></rss>""".encode("utf-8")
 class TestOrionNews(unittest.TestCase):
     def test_official_rss_parsing_rejects_offsite_articles_and_preserves_date(self):
         rows=mod.parse_feed(feed(),"中央通訊社","產經證券",("www.cna.com.tw",),N)
@@ -27,9 +27,9 @@ class TestOrionNews(unittest.TestCase):
         self.assertEqual(x["publishedAt"],"2026-10-24T23:00:00Z")
         self.assertIn("AI／半導體",x["themes"])
     def test_external_entity_not_followed_and_unverifiable_dates_rejected(self):
-        future=b"""<rss><channel><item><title>台股大漲</title>
+        future="""<rss><channel><item><title>台股大漲</title>
           <link>https://www.cna.com.tw/news/afe/202610240001.aspx</link>
-          <pubDate>Sun, 25 Oct 2026 08:00:00 +0000</pubDate></item></channel></rss>"""
+          <pubDate>Sun, 25 Oct 2026 08:00:00 +0000</pubDate></item></channel></rss>""".encode("utf-8")
         self.assertEqual(mod.parse_feed(future,"中央通訊社","金融",("www.cna.com.tw",),N),[])
         with self.assertRaises(ET.ParseError):mod.parse_feed(b"<broken>","中央通訊社","金融",("www.cna.com.tw",),N)
     def test_dedup_source_and_ignore_repeats(self):
