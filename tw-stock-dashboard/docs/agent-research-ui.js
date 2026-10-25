@@ -39,6 +39,7 @@ function detail(c){
   "個股討論熱度："+a.luna.heatStatus,
   "新聞標題觀察："+a.luna.newsStatus+"（獨立計數，不代表社群討論）",
   "來源：PTT "+a.luna.sourceStatus.PTT+"；Threads "+a.luna.sourceStatus.Threads+"；Instagram "+a.luna.sourceStatus.Instagram+"；Bluesky "+a.luna.sourceStatus.Bluesky,
+  "另列創作者／粉專標題：YouTube "+(a.luna.creatorCounts?.YouTube??0)+"／Facebook "+(a.luna.creatorCounts?.Facebook??0)+"（不納入散戶多空）",
   a.luna.method,...(a.luna.sources||[])]);
  explainCard(host,"TITAN","硬性風險否決",a.titan.status,
   a.titan.veto.length?a.titan.veto.concat(a.titan.notes):[...a.titan.notes,a.titan.warning],a.titan.hardVeto?"deny":"");
