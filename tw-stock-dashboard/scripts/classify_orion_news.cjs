@@ -62,13 +62,34 @@ function summarise(data,now,model,calls,cached,error){
  const status=valid.length===0?"empty":tagged.length===valid.length?(calls?"verified":"cached"):
   tagged.length?"partial":error?"error":"unavailable";
  const sourceCounts={};for(const p of valid){const k=p.source||"未註明";sourceCounts[k]=(sourceCounts[k]||0)+1;}
- const themes={};for(const p of tagged){const t=p.semantic.theme;themes[t]=(themes[t]||0)+1;}
+ const themes={},byTheme={};
+ for(const p of tagged){
+  const t=p.semantic.theme;
+  themes[t]=(themes[t]||0)+1;
+  (byTheme[t]??=[]).push(p);
+ }
+ const conflicts=[];
+ for(const [theme,articles] of Object.entries(byTheme)){
+  if(theme==="其他")continue;
+  const positives=articles.filter(x=>x.semantic.tone==="偏利多報導");
+  const negatives=articles.filter(x=>x.semantic.tone==="偏利空報導");
+  const pair=positives.flatMap(p=>negatives.map(n=>[p,n])).find(([p,n])=>
+   p.source!==n.source&&(p.eventGroup||p.id)!==(n.eventGroup||n.id));
+  if(!pair)continue;
+  conflicts.push({theme,positive:positives.length,negative:negatives.length,
+   examples:pair.map(p=>({id:p.id,source:p.source,title:p.title,url:p.url,
+    tone:p.semantic.tone,evidence:p.semantic.evidence,when:p.publishedAt})),
+   method:"相同題材有不同媒體的正反標題敘事；不表示同一事實互相矛盾或可預測漲跌"});
+ }
+ conflicts.sort((a,b)=>(b.positive+b.negative)-(a.positive+a.negative));
+ const eventGroups=new Set(tagged.map(p=>p.eventGroup||p.id));
  return {status,model,updatedAt:new Date(now).toISOString(),inferenceCalls:calls,
   cached,eligible:valid.length,classified:tagged.length,
   unclassified:valid.length-tagged.length,
   coveragePct:valid.length?Math.round(tagged.length/valid.length*1000)/10:0,
   positive:count("偏利多報導"),negative:count("偏利空報導"),neutral:count("中性資訊／難判"),
   publisherCounts:sourceCounts,themeCounts:themes,sourceCount:Object.keys(sourceCounts).length,
+  distinctEventsClassified:eventGroups.size,topicConflicts:conflicts.slice(0,6),
   noTrade:true,error:error||null,
   method:"嘗試處理全部48小時有效新聞（每批8篇）；Gemini配額/時限不足則保存成功結果，下次續傳。只有經模型引用原標題核對的文章計入情緒比例；不等於股價預測或散戶情緒。"};
 }
