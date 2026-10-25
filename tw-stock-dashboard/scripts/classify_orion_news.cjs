@@ -55,6 +55,7 @@ async function infer(batch,{apiKey=process.env.GEMINI_API_KEY,model=MODEL,fetchF
  }
  return out;
 }
+const BATCH_SIZE=8,MAX_CALLS_PER_RUN=30,TIME_BUDGET_MS=7*60*1000;
 function summarise(data,now,model,calls,cached,error){
  const posts=data.items||[],valid=posts.filter(p=>candidate(p,now)),tagged=valid.filter(p=>p.semantic);
  const count=t=>tagged.filter(p=>p.semantic.tone===t).length;
@@ -65,10 +66,11 @@ function summarise(data,now,model,calls,cached,error){
  return {status,model,updatedAt:new Date(now).toISOString(),inferenceCalls:calls,
   cached,eligible:valid.length,classified:tagged.length,
   unclassified:valid.length-tagged.length,
+  coveragePct:valid.length?Math.round(tagged.length/valid.length*1000)/10:0,
   positive:count("偏利多報導"),negative:count("偏利空報導"),neutral:count("中性資訊／難判"),
   publisherCounts:sourceCounts,themeCounts:themes,sourceCount:Object.keys(sourceCounts).length,
   noTrade:true,error:error||null,
-  method:"僅分析可追溯的財經新聞標題報導語氣；不同來源篇數不代表讀者情緒、客觀市場方向或可交易性"};
+  method:"嘗試處理全部48小時有效新聞（每批8篇）；Gemini配額/時限不足則保存成功結果，下次續傳。只有經模型引用原標題核對的文章計入情緒比例；不等於股價預測或散戶情緒。"};
 }
 async function classify(data,previous={},options={}){
  const now=options.now??Date.now(),model=options.model||MODEL;
@@ -79,14 +81,28 @@ async function classify(data,previous={},options={}){
  let cached=0,calls=0,error="";
  for(const p of valid){const s=old.get(key(p));if(!s)continue;
   try{p.semantic=check(p,s,model);cached++}catch{}}
- const todo=valid.filter(p=>!p.semantic).slice(0,24);
+ // Every unseen article is eligible; never silently truncate at 24.
+ const todo=valid.filter(p=>!p.semantic);
+ const start=Date.now();
+ const maxCalls=Math.min(30,Math.max(0,Math.floor(options.maxCalls??MAX_CALLS_PER_RUN)));
+ const budget=Math.max(0,options.timeBudgetMs??TIME_BUDGET_MS);
+ const watch=options.clock||Date.now;
  if(!options.apiKey&&!process.env.GEMINI_API_KEY)error="沒有 Gemini API 金鑰";
- else for(let i=0;i<todo.length;i+=8){
-  try{const batch=todo.slice(i,i+8),results=await infer(batch,{...options,model});calls++;
+ else for(let i=0;i<todo.length;i+=BATCH_SIZE){
+  if(calls>=maxCalls){error="單輪安全請求上限，未完成篇數留待下一次排程";break}
+  if(watch()-start>=budget){error="單輪執行時間上限，未完成篇數留待下一次排程";break}
+  try{
+   const batch=todo.slice(i,i+BATCH_SIZE),results=await infer(batch,{...options,model});calls++;
    for(const p of batch)p.semantic=results.get(key(p));
-  }catch(e){error=String(e.message).slice(0,120);break}
+  }catch(e){
+   // 429/quota must not be evaded by retry storms; next scheduled run can resume from cache.
+   error=String(e.message).slice(0,120);break;
+  }
  }
  data.semantic=summarise(data,now,model,calls,cached,error);
+ data.semantic.batchSize=BATCH_SIZE;
+ data.semantic.maxCallsPerRun=MAX_CALLS_PER_RUN;
+ data.semantic.resumable=data.semantic.unclassified>0;
  return data;
 }
 async function main(){
