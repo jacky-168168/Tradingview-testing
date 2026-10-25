@@ -109,6 +109,40 @@ function renderHistory(index){
   link.target="_blank";link.rel="noopener noreferrer";
  }
 }
+function renderCreatorMedia(social){
+ const host=$("lunaCreatorMedia");if(!host)return;host.replaceChildren();
+ const stamp=Date.parse(social?.generatedAt||"");
+ const recent=Number.isFinite(stamp)&&stamp<=Date.now()&&Date.now()-stamp<8*3600000;
+ const media=Array.isArray(social?.creatorMedia)?social.creatorMedia:[];
+ const states=social?.sources||{},labels={ok:"來源已成功查詢",empty:"查詢成功，48 小時內無相關內容",
+  error:"官方 API 查詢失敗",not_authorized:"未獲粉專授權",not_configured:"尚未設定 API 金鑰"};
+ append(host,"p",(recent?"近期來源紀錄":"歷史資料／尚未更新")+
+  "｜此區只顯示影片標題與粉專貼文，不把創作者觀點、點閱或按讚當成散戶投票。","description");
+ for(const platform of ["YouTube","Facebook"]){
+  const rows=media.filter(x=>x.platform===platform),state=states[platform]?.status||"not_configured";
+  const block=append(host,"div",null,"entry");
+  append(block,"div",(platform==="YouTube"?"YouTube｜影片標題":"Facebook｜授權粉專貼文")+
+   "｜"+(labels[state]||state)+"｜"+rows.length+" 筆","small");
+  if(!rows.length){
+   append(block,"p",platform==="Facebook"&&state==="not_authorized"?
+    "需 Meta 授權的 Page Access Token 和粉專 ID；尚未取得內容。":
+    platform==="YouTube"&&state==="not_configured"?
+    "需另外設定 YOUTUBE_API_KEY 才能搜尋影片；尚未取得內容。":
+    "目前沒有可顯示的新資料。","hint");
+   continue;
+  }
+  for(const item of rows.slice(0,6)){
+   const link=String(item.url||"");
+   const allowed=platform==="YouTube"?/^https:\/\/www\.youtube\.com\/watch\?v=[a-zA-Z0-9_-]{11}$/.test(link):
+    /^https:\/\/(?:www\.|m\.)?facebook\.com\//.test(link);
+   if(!allowed)continue;
+   const node=append(block,"p",null,"description"),a=append(node,"a",item.title);
+   a.href=link;a.target="_blank";a.rel="noopener noreferrer nofollow";
+   append(node,"span","｜"+(item.sourceName||platform)+"｜"+
+    (item.publishedAt?new Date(item.publishedAt).toLocaleDateString("zh-TW",{timeZone:"Asia/Taipei"}):"日期不明"),"small");
+  }
+ }
+}
 function renderSocialHeat(social){
  const host=$("lunaHeat");if(!host)return;
  host.replaceChildren();
@@ -153,6 +187,7 @@ async function load(){
  const errors=files.map((x,i)=>x.status==="rejected"?["正式日榜單","盤中 G","盤中狀態","重大新聞","社群情緒"][i]+"無法讀取":null).filter(Boolean);
  const [daily,intraday,status,news,social]=files.map(x=>x.status==="fulfilled"?x.value:{});
  renderSocialHeat(social);
+ renderCreatorMedia(social);
  renderSemantic(social);
  void loadJson(base+"social_sentiment/history/index.json").then(renderHistory).catch(()=>renderHistory(null));
  const result=core.analyze({daily,intraday,status,news,social},new Date());current=result;
