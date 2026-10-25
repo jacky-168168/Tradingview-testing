@@ -67,7 +67,21 @@ function summarise(data,now,model,calls,cached,error,diagnostics={}){
   tagged.length?"partial":error?"error":"unavailable";
  const sourceCounts={};for(const p of valid){const k=p.source||"未註明";sourceCounts[k]=(sourceCounts[k]||0)+1;}
  const themes={};for(const p of tagged){const t=p.semantic.theme;themes[t]=(themes[t]||0)+1;}
- const uniq=new Set(valid.map(p=>String(p.headlineGroup||signature(p))));
+ const byTheme=new Map();
+ for(const p of tagged){
+  const theme=p.semantic.theme;
+  if(!byTheme.has(theme))byTheme.set(theme,{bull:[],bear:[]});
+  const rows=byTheme.get(theme),entry={title:p.title,source:p.source,url:p.url};
+  if(p.semantic.tone==="偏利多報導")rows.bull.push(entry);
+  if(p.semantic.tone==="偏利空報導")rows.bear.push(entry);
+ }
+ const contrastingThemes=[];
+ for(const [theme,pair] of byTheme.entries()){
+  const bull=pair.bull.find(x=>pair.bear.some(y=>x.url!==y.url));
+  const bear=bull&&pair.bear.find(x=>x.url!==bull.url);
+  if(bull&&bear)contrastingThemes.push({theme,bull,bear});
+ }
+  const uniq=new Set(valid.map(p=>String(p.headlineGroup||signature(p))));
  const interpretedUniq=new Set(tagged.map(p=>String(p.headlineGroup||signature(p))));
  return {status,model,updatedAt:new Date(now).toISOString(),inferenceCalls:calls,
   attemptedCalls:diagnostics.attemptedCalls||0,
@@ -76,6 +90,7 @@ function summarise(data,now,model,calls,cached,error,diagnostics={}){
   coveragePct:valid.length?Math.round(tagged.length/valid.length*1000)/10:0,
   distinctHeadlineGroups:uniq.size,classifiedHeadlineGroups:interpretedUniq.size,
   repeatedHeadlineCount:Math.max(0,valid.length-uniq.size),
+  contrastingThemes:contrastingThemes.slice(0,5),
   quotaLimited:diagnostics.quotaLimited===true,
   positive:count("偏利多報導"),negative:count("偏利空報導"),neutral:count("中性資訊／難判"),
   publisherCounts:sourceCounts,themeCounts:themes,sourceCount:Object.keys(sourceCounts).length,
