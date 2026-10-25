@@ -134,3 +134,16 @@ test("cross-theme newsroom disagreement points to checkable opposite headlines o
  assert.equal(d.semantic.contrastingThemes[0].bull.url,a.url);
  assert.equal(d.semantic.contrastingThemes[0].bear.url,b.url);
 });
+
+
+test("ORION newsroom handoff copies real article URLs for manual ChatGPT evidence review",()=>{
+ const fs=require("node:fs"),path=require("node:path");
+ const root=path.join(__dirname,"../docs");
+ const ui=fs.readFileSync(path.join(root,"orion-news-ui.js"),"utf8");
+ const css=fs.readFileSync(path.join(root,"orion-news.css"),"utf8");
+ assert.match(ui,/navigator\.clipboard\.writeText\(research\)/);
+ assert.match(ui,/pair\.bull\.url/);assert.match(ui,/pair\.bear\.url/);
+ assert.match(ui,/sourceOK\(pair\.bull\.url\)/);
+ assert.match(ui,/來源查證/);assert.match(ui,/不能把新聞風向當成股價預測/);
+ assert.match(css,/\.orion-copy:focus-visible/);
+});
