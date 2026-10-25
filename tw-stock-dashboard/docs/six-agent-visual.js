@@ -32,8 +32,11 @@ function descriptor(data,mode){
   tone:d.status==="候選"?"good":"warn"};
  case "vega":return {label:d.status||"待確認",metric:"MA20 "+num(d.slope,1)+"%｜ATR "+num(d.atrPct,1)+"%",
   tone:statusTone(d.status||"")};
- case "orion":return {label:d.status||"缺值",metric:"核實 "+(d.verifiedCount??0)+" 則｜相關 "+(Array.isArray(d.sources)?d.sources.length:0)+" 則",
-  tone:d.verifiedCount?"good":"warn"};
+ case "orion":return {label:d.newsroom?.classified?
+  "新聞標題偏利多 "+(d.newsroom.positive??0)+"／偏利空 "+(d.newsroom.negative??0):d.status||"缺值",
+  metric:d.newsroom?.classified?"跨媒體 Gemini 已判 "+d.newsroom.classified+" 篇｜不預測股價":
+   "核實 "+(d.verifiedCount??0)+" 則｜相關 "+(Array.isArray(d.sources)?d.sources.length:0)+" 則",
+  tone:d.newsroom?.classified?"warn":d.verifiedCount?"good":"warn"};
  case "luna":{
   const v=d.semanticSummary||{},ok=["verified","cached","partial"].includes(v.status)&&
    safeNumber(v.classified)!==null;
