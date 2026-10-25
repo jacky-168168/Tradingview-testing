@@ -93,7 +93,10 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
  const name=String(row?.name||""),code=String(row?.code||"");
  const mentions=posts.filter(x=>(/^\d{4}$/.test(code)&&new RegExp("(^|\\D)"+code+"(?!\\d)").test(x.title))||
   (name.length>=2&&x.title.includes(name))).length;
- const heat=(Array.isArray(social?.stockHeat?.stocks)?social.stockHeat.stocks:[]).find(x=>x.code===code&&x.name===name);
+ const creatorMedia=Array.isArray(social?.creatorMedia)?social.creatorMedia:[];
+ const creatorCounts={YouTube:creatorMedia.filter(x=>x.platform==="YouTube").length,
+  Facebook:creatorMedia.filter(x=>x.platform==="Facebook").length};
+  const heat=(Array.isArray(social?.stockHeat?.stocks)?social.stockHeat.stocks:[]).find(x=>x.code===code&&x.name===name);
  const heatCount=heat&&Number.isInteger(heat.recent24h)&&heat.recent24h>=0?heat.recent24h:null;
  const corroborated=heat&&heat.sample<=posts.length&&heatCount!==null&&mentions>=heatCount;
  const sourceHealthy=["PTT","Threads","Instagram","Bluesky"].some(k=>["ok","partial"].includes(feeds[k]?.status));
@@ -104,13 +107,14 @@ function luna(risk,social,now,row){const score=numeric(risk?.score),breadth=nume
   corroborated?"已有歷史樣本，來源未確認":"熱度不足／尚未驗證";
  return {status,score,breadth,ret20,method:"只要有1篇可核對公開貼文就視為已有樣本；資料量少僅代表少量觀察，不可推論市場共識。社群不修改 Risk Score 或 TITAN 風控。",
   socialStatus,socialSample:sample?sample:null,socialBull:sample?bull:null,socialBear:sample?bear:null,
-  socialMentions:sample?mentions:null,semanticSummary,heatStatus,overheatWatch,socialPlatforms:sample?{
+  socialMentions:sample?mentions:null,semanticSummary,creatorCounts,heatStatus,overheatWatch,socialPlatforms:sample?{
    PTT:posts.filter(x=>x.platform==="PTT").length,
    Threads:posts.filter(x=>x.platform==="Threads").length,
    Instagram:posts.filter(x=>x.platform==="Instagram").length,
    Bluesky:posts.filter(x=>x.platform==="Bluesky").length}:null,newsStatus:fresh?String(social?.news?.status||"未取得"):"新聞情緒資料未確認",
   sources:examples,sourceStatus:{PTT:feeds.PTT?.status||"not_available",Threads:feeds.Threads?.status||"not_authorized",
-   Instagram:feeds.Instagram?.status||"not_authorized",Bluesky:feeds.Bluesky?.status||"not_available"},socialAgeMinutes:age};
+   Instagram:feeds.Instagram?.status||"not_authorized",Bluesky:feeds.Bluesky?.status||"not_available",
+   YouTube:feeds.YouTube?.status||"not_configured",Facebook:feeds.Facebook?.status||"not_authorized"},socialAgeMinutes:age};
 }
 function titan(row,context){const veto=[],info=[];
  const risk=context.risk;
