@@ -59,7 +59,20 @@ function draw(doc){
   const b=items(host,"div","orion-themes");
   for(const t of themes)items(b,"span","orion-theme",(t.name||"其他")+" "+(t.count||0));
  }
- const statuses=source.sources||{},sources=items(host,"details","orion-fold");
+ if(ai&&Array.isArray(meta.contrastingThemes)&&meta.contrastingThemes.length){
+  const sides=items(host,"details","orion-fold");
+  items(sides,"summary","","同題材出現正反報導（點開核對，不代表同一事件）");
+  for(const pair of meta.contrastingThemes.slice(0,5)){
+   const block=items(sides,"div","orion-article");
+   items(block,"strong","",pair.theme||"未標示題材");
+   for(const [prefix,x] of [["偏利多",pair.bull],["偏利空",pair.bear]]){
+    if(!x||!sourceOK(x.url))continue;
+    const link=items(block,"a","",prefix+"｜"+x.title);
+    link.href=x.url;link.target="_blank";link.rel="noopener noreferrer nofollow";
+   }
+  }
+ }
+  const statuses=source.sources||{},sources=items(host,"details","orion-fold");
  items(sources,"summary","", "檢視媒體來源覆蓋率與失聯狀態");
  for(const [name,state] of Object.entries(statuses)){
   items(sources,"p","small",name+"｜"+(state.status||"unknown")+"｜"+
