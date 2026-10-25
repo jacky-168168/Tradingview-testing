@@ -115,3 +115,22 @@ test("Gemini quota refusal stops cleanly and preserves all source-verifiable cac
  assert.equal(d.semantic.unclassified,9);assert.equal(d.semantic.quotaLimited,true);
  assert.match(d.semantic.error,/HTTP 429/);
 });
+
+test("cross-theme newsroom disagreement points to checkable opposite headlines only",async()=>{
+ const a={...row(0),title:"台積電 AI 訂單大增，市場看好",id:"bull-note"};
+ const b={...row(1),title:"台積電 AI 訂單遭質疑，投資人看空",id:"bear-note"};
+ const d=doc([a,b]);let i=0;
+ await orion.classify(d,{},{now:NOW,apiKey:"unit",fetchFn:async(_,args)=>{
+  i++;const batch=JSON.parse(JSON.parse(args.body).contents[0].parts[0].text);
+  return out(batch.map(x=>{
+   const p=d.items.find(z=>orion.key(z)===x.id);
+   return {id:x.id,tone:p.id==="bull-note"?"偏利多報導":"偏利空報導",
+    theme:"AI／半導體",confidence:"中",evidence:p.id==="bull-note"?"AI 訂單大增":"AI 訂單遭質疑"};
+  }));
+ },sleepFn:async()=>{}});
+ assert.equal(i,1);assert.equal(d.semantic.classified,2);
+ assert.equal(d.semantic.contrastingThemes.length,1);
+ assert.equal(d.semantic.contrastingThemes[0].theme,"AI／半導體");
+ assert.equal(d.semantic.contrastingThemes[0].bull.url,a.url);
+ assert.equal(d.semantic.contrastingThemes[0].bear.url,b.url);
+});
