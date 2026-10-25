@@ -30,9 +30,26 @@ function draw(doc){
  for(const [label,value] of [["標題數",doc.items.length],["已連線 RSS",String(source.healthyFeeds??0)+"／"+String(source.configuredFeeds??0)],["Gemini 已判讀",ai?meta.classified??0:"尚未完成"]]){
   const b=items(top,"div","orion-stat");items(b,"strong","",value);items(b,"span","",label);
  }
+ const completeness=doc.items.length?Math.round((meta.classified||0)/doc.items.length*1000)/10:0;
+ const eventCount=doc.eventSummary?.eventCount;
  const synopsis=items(host,"p","description",(fresh?"近期新聞標題來源":"歷史快照／非即時")+
  "｜"+(ai?"Gemini 標題語氣研判":"僅關鍵詞初判（非 Gemini 判讀）")+
- "｜"+(meta.classified??0)+" 篇完成模型判讀；不能代表股票實際漲跌或媒體受眾共識。");
+ "｜已判讀 "+(meta.classified??0)+"／"+doc.items.length+" 篇（"+
+ completeness+"%）｜待分析 "+(meta.unclassified??Math.max(0,doc.items.length-(meta.classified??0)))+
+ " 篇｜保守事件去重 "+(eventCount??"缺值")+" 組。");
+ const progress=items(host,"div","orion-progress");
+ progress.setAttribute("role","progressbar");progress.setAttribute("aria-label","ORION Gemini 新聞標題判讀完成率");
+ progress.setAttribute("aria-valuemin","0");progress.setAttribute("aria-valuemax","100");
+ progress.setAttribute("aria-valuenow",String(completeness));
+ const progressFill=items(progress,"span","orion-progress-fill");
+ progressFill.style.width=String(completeness)+"%";
+ if(ai&&doc.eventSummary?.eventCount){
+  const n=meta.eventTotals||{};
+  items(host,"p","orion-summary-note","同事件保守去重後、已判讀事件 "+
+   (meta.distinctEventsClassified??0)+" 組：偏利多 "+(n.positive??0)+
+   "／偏利空 "+(n.negative??0)+"／混合或中性 "+(n.neutral??0)+
+   "。上方柱狀圖仍為逐篇標題，不可當作媒體民調。");
+ }
  synopsis.setAttribute("role","status");
  const total=counts.reduce((a,x)=>a+x.n,0),bar=items(host,"div","orion-bars");
  for(const r of counts){
@@ -54,7 +71,38 @@ function draw(doc){
   items(sources,"p","small",name+"｜"+(state.status||"unknown")+"｜"+
    (state.freshCount??0)+" 篇");
  }
- const articles=items(host,"div","orion-articles");
+ const conflicts=Array.isArray(meta.topicConflicts)?meta.topicConflicts:[];
+ const divergent=items(host,"section","orion-conflicts");
+ items(divergent,"h3","orion-mini-title","跨媒體題材觀點分歧（已驗證標題）");
+ if(!ai||!conflicts.length){
+  items(divergent,"p","small","目前沒有足夠的跨媒體正反標題作為對照；不代表市場沒有分歧。");
+ }else for(const conflict of conflicts.slice(0,5)){
+  const sec=items(divergent,"div","orion-divergence");
+  items(sec,"strong","",conflict.theme+"｜偏利多 "+conflict.positive+"、偏利空 "+conflict.negative);
+  items(sec,"p","small","這是同題材不同敘事，不代表新聞事實互相矛盾。");
+  const prompts=[];
+  for(const row of (conflict.examples||[]).slice(0,2)){
+   if(!sourceOK(row.url))continue;
+   const p=items(sec,"p","small");
+   const link=items(p,"a","",row.tone+"｜"+row.source+"｜"+row.title);
+   link.href=row.url;link.target="_blank";link.rel="noopener noreferrer nofollow";
+   prompts.push(row);
+  }
+  if(prompts.length===2){
+   const btn=items(sec,"button","orion-copy","複製 ChatGPT 深入查證提示");
+   btn.type="button";
+   btn.addEventListener("click",async()=>{
+    const body="請根據以下公開新聞標題和原文網址，深入查證同一題材的多空敘事。" +
+     "請先開啟並核對原始報導，再區分客觀事實、媒體／專家觀點、推測與未驗證處；" +
+     "比較消息日期、事件是否相同、是否轉載、資料缺漏與可能利益衝突。" +
+     "不可把標題傾向當成股價預測，不要編造內文。\n題材："+conflict.theme+"\n"+
+     prompts.map((p,i)=>(i+1)+". "+p.source+"｜"+p.tone+"｜"+p.title+"\n"+p.url).join("\n");
+    try{await navigator.clipboard.writeText(body);btn.textContent="已複製，貼到 ChatGPT 即可研究";}
+    catch{btn.textContent="複製未成功，請使用原文連結";}
+   });
+  }
+ }
+  const articles=items(host,"div","orion-articles");
  items(articles,"h3","orion-mini-title","最新可核對財經新聞");
  const newest=doc.items.filter(x=>sourceOK(x.url)).slice(0,10);
  for(const a of newest){
