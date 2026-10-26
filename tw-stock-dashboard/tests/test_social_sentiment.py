@@ -122,7 +122,7 @@ class SocialCollectorTest(unittest.TestCase):
         votes=mod.ptt_board_reactions(html.encode())
         self.assertEqual(votes[original]["pushScore"],100)
         self.assertEqual(votes[original]["pushLabel"],"爆")
-        self.assertEqual(mod.score("[新聞] 台股暴跌"),"偏空")
+        self.assertEqual(mod.score("[新聞] 台股暴跌"),"中立／難判")
         self.assertEqual(mod.classify_discussion("[新聞] 台股暴跌"),("新聞轉載",False))
     def test_stock_heat_rejects_news_copy_and_substring_collision(self):
         catalog=("2026-10-24",[{"code":"2330","name":"台積電","theme":"半導體","ret20":35,"rvol":3,"ma20Slope":8}])
