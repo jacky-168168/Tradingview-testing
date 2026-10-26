@@ -98,6 +98,23 @@ class SocialCollectorTest(unittest.TestCase):
         self.assertEqual(d["social"]["sample"],0)
         self.assertEqual(d["social"]["repostedNews"],1)
         self.assertNotIn("pushScore",d["pttNewsItems"][0])
+    def test_board_supplements_delayed_atom_without_faking_official_time(self):
+        newer=int((NOW-dt.timedelta(hours=1)).timestamp())
+        rss='''<feed xmlns="http://www.w3.org/2005/Atom"><entry>
+        <title>[新聞] 台股空頭跌停</title>
+        <link href="https://www.ptt.cc/bbs/Stock/M.1792918324.A.ABC.html"/>
+        <updated>2026-10-24T03:00:00Z</updated></entry></feed>'''.encode()
+        board=f'''<div class="r-ent"><div class="nrec"><span class="hl f1">爆</span></div>
+        <div class="title"><a href="/bbs/Stock/M.{newer}.A.DEF.html">[新聞] 台股明開盤補跌</a></div></div>'''.encode()
+        with patch.object(mod,"news_items",return_value=([],"無")):
+            result=mod.collect(now=NOW,fetch=lambda u:board if u==mod.PTT_BOARD else
+                               rss if u in mod.PTT_FEEDS else b'{}',old={},environmental={})
+        self.assertEqual(len(result["pttNewsItems"]),2)
+        by_url={x["url"]:x for x in result["pttNewsItems"]}
+        board_post=by_url[f"https://www.ptt.cc/bbs/Stock/M.{newer}.A.DEF.html"]
+        self.assertIn("推算",board_post["timestampBasis"])
+        self.assertEqual(board_post["pushScore"],100)
+        self.assertEqual(result["social"]["sample"],0)
     def test_ptt_public_push_labels_are_optional_and_not_sentiment(self):
         original="https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html"
         html='''<div class="r-ent"><div class="nrec"><span class="hl f1">爆</span></div>
