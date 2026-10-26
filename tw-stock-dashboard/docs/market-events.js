@@ -28,6 +28,7 @@ function matches(x){
  if(CATEGORY==="energy"&&x.category!=="原油／能源"&&!(legacy&&/油價|原油|OPEC|WTI|布蘭特|天然氣/i.test(headline)))return false;
  if(CATEGORY==="metals"&&x.category!=="貴金屬"&&!(legacy&&/黃金|金價|白銀|銀價|鉑金|鈀金/i.test(headline)))return false;
  if(CATEGORY==="agriculture"&&x.category!=="農產品")return false;
+ if(CATEGORY==="ptt"&&x.category!=="PTT轉載")return false;
  var query=SEARCH.trim().toLowerCase();
  return !query||[x.title,x.source,x.category,...(x.themes||[])].join(" ").toLowerCase().includes(query);
 }
