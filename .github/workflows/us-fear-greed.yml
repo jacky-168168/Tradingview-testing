@@ -91,7 +91,9 @@ jobs:
           fg=json.loads((root/'us_fear_greed/history.json').read_text('utf-8'))
           spx=json.loads((root/'us_options/history.json').read_text('utf-8'))
           assert fg['asOf']==fg['rows'][-1][0], 'fear & greed last date mismatch'
-          assert fg['cnnHistoricalLast']<=fg['asOf'] and fg['spxLast']<=fg['asOf']\n          assert fg['asOf']==max(fg['cnnHistoricalLast'],fg['spxLast'])\n          assert fg['rows'][-1][1] is not None or fg['rows'][-1][2] is not None
+          assert fg['cnnHistoricalLast']<=fg['asOf'] and fg['spxLast']<=fg['asOf']
+          assert fg['asOf']==max(fg['cnnHistoricalLast'],fg['spxLast'])
+          assert fg['rows'][-1][1] is not None or fg['rows'][-1][2] is not None
           print('INDEPENDENT_FEAR_GREED_SPX',fg['asOf'],len(fg['rows']))
           PY
       - name: Configure Pages
