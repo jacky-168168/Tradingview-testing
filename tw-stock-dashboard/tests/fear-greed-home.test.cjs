@@ -1,6 +1,6 @@
 "use strict";
 const test=require("node:test"),assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path");
-const {validate,recent,zone,explain}=require("../docs/fear-greed-home.js");
+const {validate,recent,zone,explain,lineSegments}=require("../docs/fear-greed-home.js");
 const dates=Array.from({length:400},(_,i)=>new Date(Date.UTC(2025,0,1+i)).toISOString().slice(0,10));
 const rows=dates.map((d,i)=>[d,35+i%45,5000+i*2]);
 const doc={version:"US_CNN_FEAR_GREED_SPX_V1",columns:["date","fearGreed","spx"],asOf:dates.at(-1),rows};
@@ -18,6 +18,14 @@ test("independent missing values display as gaps rather than invented numbers",(
  const reverse={...partial,rows:rows.map((r,i)=>i===399?[r[0],null,r[2]]:r)};
  assert.equal(validate(reverse).at(-1)[1],null);
  assert.throws(()=>validate({...partial,rows:rows.map((r,i)=>i===399?[r[0],null,null]:r)}),/範圍/);
+});
+test("2026-10-26 independent dates draw gaps instead of a fake zero or connected price",()=>{
+ const samples=[["2026-10-22",32,5000],["2026-10-23",null,5010],["2026-10-24",30,null],
+  ["2026-10-25",null,null],["2026-10-26",35,null]];
+ assert.deepEqual(lineSegments(samples,1),[[[0,32]],[[2,30]],[[4,35]]]);
+ assert.deepEqual(lineSegments(samples,2),[[[0,5000],[1,5010]]]);
+ assert.deepEqual(lineSegments(samples.map(r=>[r[0],null,r[2]]),1),[]);
+ assert.throws(()=>lineSegments([["2026-10-26",NaN,5000]],1),/無效數值/);
 });
 test("zone labels and range choices",()=>{
  assert.equal(zone(0).label,"極度恐懼");
