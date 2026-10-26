@@ -43,7 +43,7 @@ h1{font-size:27px;margin:0 0 4px;letter-spacing:-.4px}.sub{font-size:12px;color:
 </head><body>
 <div class="wrap">
 <nav class="top" aria-label="頁面導覽"><a href="./index.html">← 主頁</a><div class="toplinks"><a href="./selections.html">📋 G 選股</a><a href="./bubbles.html">🫧 資金泡泡</a></div></nav>
-<div class="head"><div><h1>🗞 市場大事</h1><div class="sub">產業展覽・科技財報・AI 需求・總經事件・原油能源・貴金屬・農產品</div></div><div id="freshness" aria-live="polite">資料讀取中…</div></div>
+<div class="head"><div><h1>🗞 市場大事</h1><div class="sub">產業展覽・科技財報・AI 需求・總經事件・原油能源・貴金屬・農產品・PTT 新聞轉載</div></div><div id="freshness" aria-live="polite">資料讀取中…</div></div>
 <div class="filters">
   <input id="query" type="search" aria-label="搜尋市場大事" placeholder="搜尋事件、公司、產業…" autocomplete="off">
   <div class="tabs" id="filters" role="group" aria-label="主題篩選">
@@ -56,12 +56,13 @@ h1{font-size:27px;margin:0 0 4px;letter-spacing:-.4px}.sub{font-size:12px;color:
     <button class="tab" data-cat="energy" aria-pressed="false">🛢 原油／能源</button>
     <button class="tab" data-cat="metals" aria-pressed="false">🥇 貴金屬</button>
     <button class="tab" data-cat="agriculture" aria-pressed="false">🌾 農產品</button>
+    <button class="tab" data-cat="ptt" aria-pressed="false">💬 PTT 新聞轉載</button>
   </div>
 </div>
 <p id="alert" role="status" hidden></p>
 <section id="eventSection"><div class="section"><h2>即將發生</h2><span class="count" id="eventCount">—</span></div><div id="events" class="grid"></div></section>
 <section id="newsSection"><div class="section"><h2>最新重大新聞</h2><span class="count" id="newsCount">—</span></div><div id="news" class="grid"></div><button id="moreNews" class="more" type="button" hidden>顯示更多 ↓</button></section>
 <div id="empty" hidden>沒有符合的事件或新聞，請試試其他關鍵字。</div>
-<div class="footer">日期均以台灣時間呈現。活動日期以主辦單位公告為準；新聞為外部媒體標題與來源連結，未經獨立查核，不代表消息已證實，也不代表相關族群必然上漲或下跌。</div>
+<div class="footer">PTT 項目為論壇轉載標題，並非原始媒體或鄉民情緒統計；推文熱度若無可靠資訊不顯示。日期均以台灣時間呈現。活動日期以主辦單位公告為準；新聞為外部媒體標題與來源連結，未經獨立查核，不代表消息已證實，也不代表相關族群必然上漲或下跌。</div>
 </div><script src="./market-events.js"></script>
 </body></html>
