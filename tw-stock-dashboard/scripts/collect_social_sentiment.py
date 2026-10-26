@@ -446,16 +446,23 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     inputs=[]
     state={}
     new,state["PTT"]=collect_ptt(now,fetch)
-    inputs+=new
-    # Optional public board push labels: keep them separate from directional sentiment.
+    # Supplement the Atom set with recent public board articles when Atom lags.
+    # URL-derived timestamps are explicitly estimates and never claimed official.
     try:
-        reactions=ptt_board_reactions(fetch(PTT_BOARD))
-        state["PTT"]["pushLabelsFound"]=len(reactions)
+        board_html=fetch(PTT_BOARD)
+        extra=ptt_board(board_html,now)
+        new=unique(new+extra,110)
+        reactions=ptt_board_reactions(board_html)
         for x in new:
             if x["url"] in reactions:x.update(reactions[x["url"]])
+        state["PTT"]["boardFreshCount"]=len(extra)
+        state["PTT"]["pushLabelsFound"]=len(reactions)
+        state["PTT"]["freshCount"]=len(new)
+        if new and state["PTT"]["status"]!="ok":state["PTT"]["status"]="partial"
     except Exception:
         state["PTT"]["pushLabelsFound"]=0
         state["PTT"]["pushLabelsStatus"]="unavailable"
+    inputs+=new
     try:
         diagnostic={}
         found=bluesky(now,fetch,diagnostic)
