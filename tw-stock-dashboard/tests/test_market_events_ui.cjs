@@ -7,7 +7,7 @@ const script=fs.readFileSync(path.join(root,'market-events.js'),'utf8');
 new Function(script);
 assert(main.includes('href="./market-events.html"'),'homepage must expose major-events entry');
 assert(rankings.includes('href="./market-events.html"'),'G rankings must expose major-events entry');
-for(const category of ["energy","metals","agriculture"])
+for(const category of ["energy","metals","agriculture","ptt"])
  assert(html.includes('data-cat="'+category+'"'),'market events missing '+category+' tab');
 for(const id of ['events','news','eventCount','newsCount','alert','freshness','filters','query','eventSection','newsSection','empty'])
  assert(html.includes('id="'+id+'"'),'missing '+id);
@@ -42,6 +42,9 @@ const commodities=[
  {id:'fixture-silver',type:'news',category:'貴金屬',title:'白銀報價最新上升',
   date:'2026-10-24',publishedAt:'2026-10-24T05:00:00Z',source:'測試金屬新聞',
   url:'https://example.com/silver',themes:['白銀'],confirmed:false},
+ {id:'fixture-ptt',type:'news',category:'PTT轉載',title:'[新聞] 台股明開盤恐補跌千點',
+  date:'2026-10-24',publishedAt:'2026-10-24T05:00:00Z',source:'PTT 股票板（新聞轉載）',
+  url:'https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html',themes:['PTT'],confirmed:false},
  {id:'fixture-crops',type:'news',category:'農產品',title:'黃豆 USDA 最新收成預估',
   date:'2026-10-24',publishedAt:'2026-10-24T05:00:00Z',source:'測試農產品新聞',
   url:'https://example.com/crops',themes:['黃豆'],confirmed:false}
@@ -71,7 +74,7 @@ setImmediate(()=>{
  assert(!node('events').innerHTML.includes('<script>'),'event output must be escaped');
  for(const [filter,expected,excluded] of [
   ['energy','WTI 原油','白銀報價'],['metals','白銀報價','黃豆 USDA'],
-  ['agriculture','黃豆 USDA','WTI 原油']]){
+  ['agriculture','黃豆 USDA','WTI 原油'],['ptt','台股明開盤恐補跌','黃豆 USDA']]){
   node('filters').fn({target:{closest:()=>({dataset:{cat:filter}})}});
   assert(node('news').innerHTML.includes(expected),filter+' news filter should show own items');
   assert(!node('news').innerHTML.includes(excluded),filter+' filter should hide unrelated items');
