@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "generatedAt": "2026-10-26T14:30:09.052484Z",
+  "generatedAt": "2026-10-26T19:55:13.459140Z",
   "coverage": {
     "configuredFeeds": 7,
-    "healthyFeeds": 7,
+    "healthyFeeds": 6,
     "sources": {
       "中央通訊社／產經證券": {
         "status": "ok",
-        "freshCount": 12,
+        "freshCount": 11,
         "feed": "https://feeds.feedburner.com/rsscna/finance"
       },
       "中央通訊社／科技": {
@@ -27,31 +27,701 @@
       },
       "Yahoo股市／台股": {
         "status": "ok",
-        "freshCount": 47,
+        "freshCount": 48,
         "feed": "https://tw.stock.yahoo.com/rss?category=tw-market"
       },
       "Yahoo股市／國際財經": {
         "status": "ok",
-        "freshCount": 34,
+        "freshCount": 39,
         "feed": "https://tw.stock.yahoo.com/rss?category=intl-markets"
       },
       "PTT股票板（轉載）／新聞轉載": {
-        "status": "ok",
-        "freshCount": 5,
+        "status": "error",
+        "freshCount": 0,
+        "error": "TimeoutError",
         "feed": "https://www.ptt.cc/atom/stock.xml"
       },
       "PTT轉載快照備援": {
         "status": "ok",
-        "freshCount": 8
+        "freshCount": 10
       },
       "既有市場新聞": {
         "status": "ok",
-        "freshCount": 29
+        "freshCount": 35
       }
     },
     "allTaiwanMediaCovered": false
   },
   "items": [
+    {
+      "title": "連假後台股補跌千點？哲哲點名6檔「可逢低布局」",
+      "url": "https://tw.news.yahoo.com/%E9%80%A3%E5%81%87%E5%BE%8C%E5%8F%B0%E8%82%A1%E8%A3%9C%E8%B7%8C%E5%8D%83%E9%BB%9E-%E5%93%B2%E5%93%B2%E9%BB%9E%E5%90%8D6%E6%AA%94-%E5%8F%AF%E9%80%A2%E4%BD%8E%E5%B8%83%E5%B1%80-191500404.html",
+      "publishedAt": "2026-10-26T19:15:00Z",
+      "source": "Yahoo股市",
+      "channel": "台股",
+      "themes": [
+        "台股／行情"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "d852ca0477d39e4047b0",
+      "headlineGroup": "4cc63e01a87f01",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利空報導",
+        "theme": "台股／行情",
+        "confidence": "高",
+        "evidence": "連假後台股補跌千點",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "美債殖利率回落！Fed暫停升息理由受考驗 華許如何說服市場？",
+      "url": "https://tw.stock.yahoo.com/news/%E7%BE%8E%E5%82%B5%E6%AE%96%E5%88%A9%E7%8E%87%E5%9B%9E%E8%90%BD-fed%E6%9A%AB%E5%81%9C%E5%8D%87%E6%81%AF%E7%90%86%E7%94%B1%E5%8F%97%E8%80%83%E9%A9%97-%E8%8F%AF%E8%A8%B1%E5%A6%82%E4%BD%95%E8%AA%AA%E6%9C%8D%E5%B8%82%E5%A0%B4-190006187.html",
+      "publishedAt": "2026-10-26T19:00:06Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [
+        "總體／利率",
+        "ETF／投資"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "2678cd5a6b4c8ee1e27a",
+      "headlineGroup": "33f2229e93949f",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "中性資訊／難判",
+        "theme": "總體／利率",
+        "confidence": "中",
+        "evidence": "美債殖利率回落",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "[新聞] AI太燒錢！Meta擬籌950億美元 輝達等三",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793039079.A.83A.html",
+      "publishedAt": "2026-10-26T18:24:39Z",
+      "source": "PTT 股票板（新聞轉載）",
+      "channel": "既有系統新聞",
+      "themes": [
+        "PTT",
+        "台股"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "d86390f86079d0c3d864",
+      "headlineGroup": "268699133909ff",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利空報導",
+        "theme": "AI／半導體",
+        "confidence": "中",
+        "evidence": "AI太燒錢！Meta擬籌950億美元",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "九合一選前賣壓湧現？分析師警告：台股恐回測3萬5000點",
+      "url": "https://tw.news.yahoo.com/%E4%B9%9D%E5%90%88-%E9%81%B8%E5%89%8D%E8%B3%A3%E5%A3%93%E6%B9%A7%E7%8F%BE-%E5%88%86%E6%9E%90%E5%B8%AB%E8%AD%A6%E5%91%8A-%E5%8F%B0%E8%82%A1%E6%81%90%E5%9B%9E%E6%B8%AC3%E8%90%AC5000%E9%BB%9E-181500836.html",
+      "publishedAt": "2026-10-26T18:15:00Z",
+      "source": "Yahoo股市",
+      "channel": "台股",
+      "themes": [
+        "台股／行情"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "5e4c4433fe8f1c250f36",
+      "headlineGroup": "5b6b75ecc27f80",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利空報導",
+        "theme": "台股／行情",
+        "confidence": "高",
+        "evidence": "台股恐回測3萬5000點",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "頂尖經濟學家表示債券投資人正在替聯準會執行職責 不需要再升息",
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFAwQ2pmSEluZFhMVVRFYm03LW5IaEx2MVRLbGxuNFFjRUR2REtsdm9sbFBPRmhpZml6eUNrak4yZFBQQThUdTNqTmtsVGg5Ylo0MTVkOHN3?oc=5",
+      "publishedAt": "2026-10-26T17:50:09Z",
+      "source": "Business Insider Taiwan",
+      "channel": "既有系統新聞",
+      "themes": [
+        "金融",
+        "科技股"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "72c2356088dbe74a77f1",
+      "headlineGroup": "a04408034b0f2f",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "總體／利率",
+        "confidence": "中",
+        "evidence": "不需要再升息",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "台股週報》外資再砍2300億 半導體族群承壓",
+      "url": "https://tw.news.yahoo.com/%E5%8F%B0%E8%82%A1%E9%80%B1%E5%A0%B1-%E5%A4%96%E8%B3%87%E5%86%8D%E7%A0%8D2300%E5%84%84-%E5%8D%8A%E5%B0%8E%E9%AB%94%E6%97%8F%E7%BE%A4%E6%89%BF%E5%A3%93-173735309.html",
+      "publishedAt": "2026-10-26T17:37:35Z",
+      "source": "Yahoo股市",
+      "channel": "台股",
+      "themes": [
+        "AI／半導體",
+        "資金／法人",
+        "台股／行情"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "2e98c3e2bb6ea5ad8d22",
+      "headlineGroup": "130e77f766c0cf",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利空報導",
+        "theme": "資金／法人",
+        "confidence": "高",
+        "evidence": "外資再砍2300億 半導體族群承壓",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "快訊／台股開盤穩了？美股4大指數開高走高 費半上漲372點",
+      "url": "https://finance.ettoday.net/news/3261254",
+      "publishedAt": "2026-10-26T17:34:00Z",
+      "source": "ETtoday",
+      "channel": "財經",
+      "themes": [
+        "台股／行情"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "b060f40937393e9c7c44",
+      "headlineGroup": "b3dad9a19e6ab6",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "台股／行情",
+        "confidence": "中",
+        "evidence": "美股4大指數開高走高 費半上漲372點",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "國際油價小幅回落 歐洲股市收盤揚升",
+      "url": "https://ec.ltn.com.tw/article/breakingnews/5619630",
+      "publishedAt": "2026-10-26T17:30:06Z",
+      "source": "自由時報",
+      "channel": "財經",
+      "themes": [
+        "能源／原物料",
+        "台股／行情"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "cab8a828bc8b77c34641",
+      "headlineGroup": "987aea4cb5f1ae",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "能源／原物料",
+        "confidence": "中",
+        "evidence": "歐洲股市收盤揚升",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "國際油價小幅回落 歐洲股市收盤揚升",
+      "url": "https://www.cna.com.tw/news/afe/202610270003.aspx",
+      "publishedAt": "2026-10-26T17:21:52Z",
+      "source": "中央通訊社",
+      "channel": "產經證券",
+      "themes": [
+        "能源／原物料",
+        "台股／行情"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "2984a74ad3ce25f2f869",
+      "headlineGroup": "987aea4cb5f1ae",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "能源／原物料",
+        "confidence": "中",
+        "evidence": "歐洲股市收盤揚升",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向",
+        "reusedIdenticalHeadline": true
+      }
+    },
+    {
+      "title": "《強勢美股特報》MSM,ANF,DY,COKE等4檔",
+      "url": "https://tw.stock.yahoo.com/news/%E5%BC%B7%E5%8B%A2%E7%BE%8E%E8%82%A1%E7%89%B9%E5%A0%B1-msm-anf-dy-coke%E7%AD%894%E6%AA%94-170400830.html",
+      "publishedAt": "2026-10-26T17:04:00Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "e7a0849915d743c7c8d8",
+      "headlineGroup": "a1902217300194",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "台股／行情",
+        "confidence": "中",
+        "evidence": "強勢美股特報",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "快訊／台股免驚了？Anthropic申請IPO激勵 美股強勢反彈",
+      "url": "https://tw.news.yahoo.com/%E5%BF%AB%E8%A8%8A-%E5%8F%B0%E8%82%A1%E5%85%8D%E9%A9%9A%E4%BA%86-anthropic%E7%94%B3%E8%AB%8Bipo%E6%BF%80%E5%8B%B5-%E7%BE%8E%E8%82%A1%E5%BC%B7%E5%8B%A2%E5%8F%8D%E5%BD%88-164600294.html",
+      "publishedAt": "2026-10-26T16:46:00Z",
+      "source": "Yahoo股市",
+      "channel": "台股",
+      "themes": [
+        "台股／行情"
+      ],
+      "headlineRuleTone": "偏多",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "34afd6e0a2689eddc1c1",
+      "headlineGroup": "d69ff25d88e01f",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "台股／行情",
+        "confidence": "中",
+        "evidence": "美股強勢反彈",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "AI獨角獸Anthropic遞交IPO申請！美股開盤走高 聚焦科技巨頭財報",
+      "url": "https://tw.news.yahoo.com/ai%E7%8D%A8%E8%A7%92%E7%8D%B8anthropic%E9%81%9E%E4%BA%A4ipo%E7%94%B3%E8%AB%8B-%E7%BE%8E%E8%82%A1%E9%96%8B%E7%9B%A4%E8%B5%B0%E9%AB%98-%E8%81%9A%E7%84%A6%E7%A7%91%E6%8A%80%E5%B7%A8%E9%A0%AD%E8%B2%A1%E5%A0%B1-162255428.html",
+      "publishedAt": "2026-10-26T16:22:55Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [
+        "AI／半導體"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "05d84bf3acfde1e30963",
+      "headlineGroup": "b7627d3a2dba66",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "AI／半導體",
+        "confidence": "高",
+        "evidence": "AI獨角獸Anthropic遞交IPO申請！美股開盤走高",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "《強勢美股特報》LITE,FIX,P,CIEN等9檔",
+      "url": "https://tw.stock.yahoo.com/news/%E5%BC%B7%E5%8B%A2%E7%BE%8E%E8%82%A1%E7%89%B9%E5%A0%B1-lite-fix-p-cien%E7%AD%899%E6%AA%94-160900786.html",
+      "publishedAt": "2026-10-26T16:09:00Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "121f33e58bc91e7ad70c",
+      "headlineGroup": "96f45e7c01dc9f",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "台股／行情",
+        "confidence": "中",
+        "evidence": "強勢美股特報",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "中國AI泡沫破裂散戶重傷！科創50四個月暴跌40％ 市值蒸發近16兆",
+      "url": "https://ec.ltn.com.tw/article/breakingnews/5619607",
+      "publishedAt": "2026-10-26T15:53:59Z",
+      "source": "自由時報",
+      "channel": "財經",
+      "themes": [
+        "AI／半導體"
+      ],
+      "headlineRuleTone": "偏空",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "d63718d0a06716d2fb02",
+      "headlineGroup": "783380bbfb8716",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利空報導",
+        "theme": "AI／半導體",
+        "confidence": "高",
+        "evidence": "中國AI泡沫破裂散戶重傷！科創50四個月暴跌40％",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "通膨升溫為何不升息？Fed傳聲筒揭本周料按兵不動原因- 股市爆料同學會",
+      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE5wNERGcmNVdnlhcFVLV09CVnpWYjdpM2lJSWdvLUgxN0lvekN4YlFBOW44NVRpWkNtZy1zVmNQNUQxYS0wdmFKeG9oMnpGXzg2NE9fVjl4X24?oc=5",
+      "publishedAt": "2026-10-26T15:48:28Z",
+      "source": "CMoney",
+      "channel": "既有系統新聞",
+      "themes": [
+        "金融",
+        "科技股"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "f5649b29cba5e11a0a7e",
+      "headlineGroup": "c1aef06a25343d",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "中性資訊／難判",
+        "theme": "總體／利率",
+        "confidence": "高",
+        "evidence": "通膨升溫為何不升息？Fed傳聲筒揭本周料按兵不動原因",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "台股明天開盤有戲？美股迎科技股買氣回溫全面飆漲 台積電ADR漲逾2%",
+      "url": "https://tw.stock.yahoo.com/news/%E5%8F%B0%E8%82%A1%E6%98%8E%E5%A4%A9%E9%96%8B%E7%9B%A4%E6%9C%89%E6%88%B2-%E7%BE%8E%E8%82%A1%E8%BF%8E%E7%A7%91%E6%8A%80%E8%82%A1%E8%B2%B7%E6%B0%A3%E5%9B%9E%E6%BA%AB%E5%85%A8%E9%9D%A2%E9%A3%86%E6%BC%B2-%E5%8F%B0%E7%A9%8D%E9%9B%BBadr%E6%BC%B2%E9%80%BE2-154500626.html",
+      "publishedAt": "2026-10-26T15:45:00Z",
+      "source": "Yahoo股市",
+      "channel": "台股",
+      "themes": [
+        "AI／半導體",
+        "台股／行情"
+      ],
+      "headlineRuleTone": "偏多",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "64d768fcfd781fcd5884",
+      "headlineGroup": "0d10a9130d5cde",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "台股／行情",
+        "confidence": "高",
+        "evidence": "美股迎科技股買氣回溫全面飆漲 台積電ADR漲逾2%",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "通膨升溫為何不升息？Fed傳聲筒揭本周料按兵不動原因",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE51OGhfVWVwa0pObUg2VlJyYUdmTm5JUF92NWJVZjA2a0ZoWkcwcFlUbHdvelhZczNHZEUyRl81b1VWY0tkdlV4Z0djWm5jb0k?oc=5",
+      "publishedAt": "2026-10-26T15:40:03Z",
+      "source": "鉅亨網",
+      "channel": "既有系統新聞",
+      "themes": [
+        "金融",
+        "科技股"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "fdb199f06edcb2246865",
+      "headlineGroup": "675504f3a9f5a4",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "中性資訊／難判",
+        "theme": "總體／利率",
+        "confidence": "高",
+        "evidence": "通膨升溫為何不升息？Fed傳聲筒揭本周料按兵不動原因",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "AI財報、聯準會關鍵決策與期中選舉：股市迎來關鍵兩週",
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBOUjBkYkt1U1E2bkFHemtiT2ZFMDN3NFpxZGNGYnRrWnN6Q2FvWEYybXBPNWxDX0NJS1FMckFzeGJKOVZONmJfMzEyeHhEYm0yV1prbkFn?oc=5",
+      "publishedAt": "2026-10-26T15:28:49Z",
+      "source": "Business Insider Taiwan",
+      "channel": "既有系統新聞",
+      "themes": [
+        "金融",
+        "科技股"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "bc7fa68dc7996deb9f92",
+      "headlineGroup": "c2842730e67ba8",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "中性資訊／難判",
+        "theme": "總體／利率",
+        "confidence": "高",
+        "evidence": "AI財報、聯準會關鍵決策與期中選舉：股市迎來關鍵兩週",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "巴西左派總統連任成功後股匯雙殺 股市開盤挫近17%",
+      "url": "https://www.cna.com.tw/news/aopl/202610260258.aspx",
+      "publishedAt": "2026-10-26T15:07:31Z",
+      "source": "中央通訊社",
+      "channel": "產經證券",
+      "themes": [
+        "台股／行情"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "5f860fcdbe6b1c8093ae",
+      "headlineGroup": "92960ce85aeb12",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利空報導",
+        "theme": "政策／地緣",
+        "confidence": "高",
+        "evidence": "巴西左派總統連任成功後股匯雙殺 股市開盤挫近17%",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "AI熱潮助攻 ASML今年對荷蘭經濟貢獻估達1.6%",
+      "url": "https://www.cna.com.tw/news/aopl/202610260257.aspx",
+      "publishedAt": "2026-10-26T15:06:29Z",
+      "source": "中央通訊社",
+      "channel": "產經證券",
+      "themes": [
+        "AI／半導體"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "75ac0c8dcf04661796ae",
+      "headlineGroup": "359f9a9c7e1e2d",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "AI／半導體",
+        "confidence": "高",
+        "evidence": "AI熱潮助攻 ASML今年對荷蘭經濟貢獻估達1.6%",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "《強勢美股特報》BAH,PBF,DOCN,P等10檔",
+      "url": "https://tw.stock.yahoo.com/news/%E5%BC%B7%E5%8B%A2%E7%BE%8E%E8%82%A1%E7%89%B9%E5%A0%B1-bah-pbf-docn-p%E7%AD%8910%E6%AA%94-150600636.html",
+      "publishedAt": "2026-10-26T15:06:00Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "51296f43634dfcfa3bc5",
+      "headlineGroup": "5c9804d179770c",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "台股／行情",
+        "confidence": "中",
+        "evidence": "《強勢美股特報》BAH,PBF,DOCN,P等10檔",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "DHL：中國等亞洲國家AI產品運輸增長 推高國際運價",
+      "url": "https://tw.stock.yahoo.com/news/dhl-%E4%B8%AD%E5%9C%8B%E7%AD%89%E4%BA%9E%E6%B4%B2%E5%9C%8B%E5%AE%B6ai%E7%94%A2%E5%93%81%E9%81%8B%E8%BC%B8%E5%A2%9E%E9%95%B7-%E6%8E%A8%E9%AB%98%E5%9C%8B%E9%9A%9B%E9%81%8B%E5%83%B9-145621393.html",
+      "publishedAt": "2026-10-26T14:56:21Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [
+        "AI／半導體"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "acb74d5d986b8d38121b",
+      "headlineGroup": "7e95a25d0cd2e1",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "AI／半導體",
+        "confidence": "高",
+        "evidence": "DHL：中國等亞洲國家AI產品運輸增長 推高國際運價",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "[新聞] 長鑫科技傳拒絕蘋果、台灣製造商記憶體訂",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793026348.A.244.html",
+      "publishedAt": "2026-10-26T14:52:28Z",
+      "source": "PTT股票板（轉載）",
+      "channel": "LUNA 已驗證新聞轉載",
+      "themes": [
+        "AI／半導體"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "LUNA 近期 PTT Stock 原文連結；轉貼新聞不計入散戶情緒",
+      "id": "12a1dc5670710c48fbbf",
+      "headlineGroup": "b6b8d09e7d8377",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利空報導",
+        "theme": "AI／半導體",
+        "confidence": "高",
+        "evidence": "[新聞] 長鑫科技傳拒絕蘋果、台灣製造商記憶體訂",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "DHL：中國等亞洲國家AI產品運輸增長 推高國際運價",
+      "url": "https://tw.news.yahoo.com/dhl-%E4%B8%AD%E5%9C%8B%E7%AD%89%E4%BA%9E%E6%B4%B2%E5%9C%8B%E5%AE%B6ai%E7%94%A2%E5%93%81%E9%81%8B%E8%BC%B8%E5%A2%9E%E9%95%B7-%E6%8E%A8%E9%AB%98%E5%9C%8B%E9%9A%9B%E9%81%8B%E5%83%B9-144518824.html",
+      "publishedAt": "2026-10-26T14:45:18Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [
+        "AI／半導體"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "546ecae7d2a55e9ef005",
+      "headlineGroup": "7e95a25d0cd2e1",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "AI／半導體",
+        "confidence": "高",
+        "evidence": "DHL：中國等亞洲國家AI產品運輸增長 推高國際運價",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向",
+        "reusedIdenticalHeadline": true
+      }
+    },
+    {
+      "title": "今日白銀價格：根據 FXStreet 數據，白銀上漲",
+      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOOUhFOUNZMVRob2c2S05yQks3MHVkQWpod3RCdW5BNmJ5b1d2bUN3TGE4NXZYR3ByMmVPeVhudDcxcnNCa2JNaFZQY3Z5bUtxX0luMnhONG9aamVQTmdIWHpSeGoyZGxoYWpIQXh0WUFzOEl2eGJoZ3V0a1dRYXlDbVdrQ2ZlVG5Cam9GUG9UQS1FUDVPam1sRmRRR1M5azI0VzlMVmEtRTZrUWkzbFlTb2ViS2pZc0ZCa3BoS3FkS3lVV1E?oc=5",
+      "publishedAt": "2026-10-26T14:42:58Z",
+      "source": "www.tmgm.com",
+      "channel": "既有系統新聞",
+      "themes": [
+        "白銀",
+        "工業需求",
+        "貴金屬"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "81edba33cc6b45f8466b",
+      "headlineGroup": "b8331ff49dc7c6",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "能源／原物料",
+        "confidence": "高",
+        "evidence": "今日白銀價格：根據 FXStreet 數據，白銀上漲",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "AI撐起標普500獲利成長！輝達、美光貢獻34％增幅 成最大推手",
+      "url": "https://ec.ltn.com.tw/article/breakingnews/5619558",
+      "publishedAt": "2026-10-26T14:35:23Z",
+      "source": "自由時報",
+      "channel": "財經",
+      "themes": [
+        "AI／半導體"
+      ],
+      "headlineRuleTone": "偏多",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "ff983bc26860a610e0c7",
+      "headlineGroup": "0a4db11dac4dec",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "AI／半導體",
+        "confidence": "高",
+        "evidence": "AI撐起標普500獲利成長！輝達、美光貢獻34％增幅 成最大推手",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "黑海和平談判預期升溫，俄羅斯小麥出口價格下滑 作者 Investing.com",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBtcGtKbElJSXJHbDVOa1ZqSnFSdnJmbjM0SU5KQkVjNTlIaEFJYV9QeF9Vc3lseHNGcHhSRXF6bGlTaV9LVTB0Z0FGdGU3bDBDY0I5ZlBDX2dYdGU3bUZhRjA2YW1wNmdDLTJEUUQxNGhFVVlmQ2c?oc=5",
+      "publishedAt": "2026-10-26T14:31:30Z",
+      "source": "Investing.com 香港 - 股市報價& 財經新聞",
+      "channel": "既有系統新聞",
+      "themes": [
+        "黃豆",
+        "玉米",
+        "小麥"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "1c2da41145dbde535e58",
+      "headlineGroup": "8737a451a33845",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "中性資訊／難判",
+        "theme": "能源／原物料",
+        "confidence": "中",
+        "evidence": "黑海和平談判預期升溫，俄羅斯小麥出口價格下滑",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "蘋果股票財報發布後或波動3.6%，期權數據顯示 作者 Investing.com",
+      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE1IbkhNRVlsYXJYbEZURDFMLWdDbTc0blBfRjc5cW45Ym52U0dRZGtIbms4VDZkbHNFQ3pQXzFRTXFybE1LTkN2LTcwSjNWQmFndGh1enRQUnNqMWJEU28wOFlhZGZwV2Zud0tFdjI0VkQwZ2lSOUpj?oc=5",
+      "publishedAt": "2026-10-26T14:30:07Z",
+      "source": "Investing.com 香港 - 股市報價& 財經新聞",
+      "channel": "既有系統新聞",
+      "themes": [
+        "美國科技",
+        "AI",
+        "台積電供應鏈"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "507671e9ea305a6fb8ec",
+      "headlineGroup": "bc396bffe22304",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "中性資訊／難判",
+        "theme": "其他",
+        "confidence": "中",
+        "evidence": "蘋果股票財報發布後或波動3.6%",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "Anthropic遞交IPO申請引市場注目 美股開高",
+      "url": "https://tw.stock.yahoo.com/news/anthropic%E9%81%9E%E4%BA%A4ipo%E7%94%B3%E8%AB%8B%E5%BC%95%E5%B8%82%E5%A0%B4%E6%B3%A8%E7%9B%AE-%E7%BE%8E%E8%82%A1%E9%96%8B%E9%AB%98-142818792.html",
+      "publishedAt": "2026-10-26T14:28:18Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "becfd282b024ca5c44b2",
+      "headlineGroup": "1175692aaf6297",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "AI／半導體",
+        "confidence": "中",
+        "evidence": "Anthropic遞交IPO申請引市場注目 美股開高",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "Anthropic公開IPO遞件 那斯達克上市股票代碼ANT",
+      "url": "https://tw.stock.yahoo.com/news/anthropic%E5%85%AC%E9%96%8Bipo%E9%81%9E%E4%BB%B6-%E9%82%A3%E6%96%AF%E9%81%94%E5%85%8B%E4%B8%8A%E5%B8%82%E8%82%A1%E7%A5%A8%E4%BB%A3%E7%A2%BCant-142816041.html",
+      "publishedAt": "2026-10-26T14:28:16Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "192b4628fd242ac4df05",
+      "headlineGroup": "07cbc50c59b9a3",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "中性資訊／難判",
+        "theme": "AI／半導體",
+        "confidence": "中",
+        "evidence": "Anthropic公開IPO遞件 那斯達克上市股票代碼ANT",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
     {
       "title": "EPS衝刺22.6元、目標價喊到277.5元！「這檔老AI」逆勢台股外資、自營商瘋搶 國家隊卻下殺15.91億元",
       "url": "https://tw.stock.yahoo.com/news/eps%E8%A1%9D%E5%88%BA22-6%E5%85%83-%E7%9B%AE%E6%A8%99%E5%83%B9%E5%96%8A%E5%88%B0277-5%E5%85%83-%E9%80%99%E6%AA%94%E8%80%81ai-142500117.html",
@@ -66,7 +736,58 @@
       "headlineRuleTone": "中立／待判",
       "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
       "id": "21390eb325de0471faaf",
-      "headlineGroup": "b97a7f6b0220a6"
+      "headlineGroup": "b97a7f6b0220a6",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "中性資訊／難判",
+        "theme": "AI／半導體",
+        "confidence": "中",
+        "evidence": "EPS衝刺22.6元、目標價喊到277.5元",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "台股以及世界的「全村希望」？ Anthropic上市招股書描繪驚人的增長爆發力",
+      "url": "https://tw.news.yahoo.com/%E5%8F%B0%E8%82%A1%E4%BB%A5%E5%8F%8A%E4%B8%96%E7%95%8C%E7%9A%84-%E5%85%A8%E6%9D%91%E5%B8%8C%E6%9C%9B-anthropic%E4%B8%8A%E5%B8%82%E6%8B%9B%E8%82%A1%E6%9B%B8%E6%8F%8F%E7%B9%AA%E9%A9%9A%E4%BA%BA%E7%9A%84%E5%A2%9E%E9%95%B7%E7%88%86%E7%99%BC%E5%8A%9B-141520165.html",
+      "publishedAt": "2026-10-26T14:15:20Z",
+      "source": "Yahoo股市",
+      "channel": "台股",
+      "themes": [
+        "台股／行情"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "b9eb807e9c9aff0c6e21",
+      "headlineGroup": "f5bd95073cacd8",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "AI／半導體",
+        "confidence": "中",
+        "evidence": "Anthropic上市招股書描繪驚人的增長爆發力",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "Anthropic公開IPO遞件 那斯達克上市股票代碼ANT",
+      "url": "https://www.cna.com.tw/news/aopl/202610260247.aspx",
+      "publishedAt": "2026-10-26T14:14:05Z",
+      "source": "中央通訊社",
+      "channel": "產經證券",
+      "themes": [],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "184054c7dacaed4fa978",
+      "headlineGroup": "07cbc50c59b9a3",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "中性資訊／難判",
+        "theme": "AI／半導體",
+        "confidence": "中",
+        "evidence": "Anthropic公開IPO遞件 那斯達克上市股票代碼ANT",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向",
+        "reusedIdenticalHeadline": true
+      }
     },
     {
       "title": "Anthropic公開IPO遞件 那斯達克上市股票代碼ANT",
@@ -78,7 +799,38 @@
       "headlineRuleTone": "中立／待判",
       "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
       "id": "e3c17b672be786e2ac51",
-      "headlineGroup": "07cbc50c59b9a3"
+      "headlineGroup": "07cbc50c59b9a3",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "中性資訊／難判",
+        "theme": "AI／半導體",
+        "confidence": "中",
+        "evidence": "Anthropic公開IPO遞件 那斯達克上市股票代碼ANT",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向",
+        "reusedIdenticalHeadline": true
+      }
+    },
+    {
+      "title": "多家機構示警美股風險！貝萊德降至中性、AI仍獲看好、美銀警告估值偏高",
+      "url": "https://tw.stock.yahoo.com/news/%E5%A4%9A%E5%AE%B6%E6%A9%9F%E6%A7%8B%E7%A4%BA%E8%AD%A6%E7%BE%8E%E8%82%A1%E9%A2%A8%E9%9A%AA-%E8%B2%9D%E8%90%8A%E5%BE%B7%E9%99%8D%E8%87%B3%E4%B8%AD%E6%80%A7-ai%E4%BB%8D%E7%8D%B2%E7%9C%8B%E5%A5%BD-%E7%BE%8E%E9%8A%80%E8%AD%A6%E5%91%8A%E4%BC%B0%E5%80%BC%E5%81%8F%E9%AB%98-141004164.html",
+      "publishedAt": "2026-10-26T14:10:04Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [
+        "AI／半導體"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "470725b942bcdebb0387",
+      "headlineGroup": "0fd9f79020667a",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "中性資訊／難判",
+        "theme": "AI／半導體",
+        "confidence": "中",
+        "evidence": "多家機構示警美股風險！貝萊德降至中性、AI仍獲看好、美銀警告估值偏高",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
     },
     {
       "title": "美股早盤反彈了！台積電與記憶體類股勁揚",
@@ -92,7 +844,27 @@
       "headlineRuleTone": "偏多",
       "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
       "id": "025958798ed12c448f28",
-      "headlineGroup": "178ff4fa887b62"
+      "headlineGroup": "178ff4fa887b62",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "台股／行情",
+        "confidence": "高",
+        "evidence": "美股早盤反彈了！台積電與記憶體類股勁揚",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
+      }
+    },
+    {
+      "title": "《強勢美股特報》TSLA,DOW,CMG,ROST等10檔",
+      "url": "https://tw.stock.yahoo.com/news/p-%E5%BC%B7%E5%8B%A2%E7%BE%8E%E8%82%A1%E7%89%B9%E5%A0%B1-tsla-dow-cmg-140700477.html",
+      "publishedAt": "2026-10-26T14:07:00Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "5e954adcb4bfc541cd60",
+      "headlineGroup": "710286cfbfd235"
     },
     {
       "title": "台股不用皮皮剉？科技股回神 美股反彈了",
@@ -124,6 +896,34 @@
       "headlineGroup": "e4c4b3ba8b84cc"
     },
     {
+      "title": "Evercore預覽亞馬遜第三季財報：業績料符合或略超預期 作者 Investing.com",
+      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1Vd3BfdXpEVVlGdTY0M1cza1dwOWVIUnpEdWhiUEFQNE1ncEI0ZzNnSGlxbEZUaWIxVmVjdWRNVkRrbDAxQnZWbTJLUnhENXAzMFFncUozY0NMbHJlNzhuMFA4TmFLVUk1N0RXb2JiUW1PaGw4?oc=5",
+      "publishedAt": "2026-10-26T13:59:10Z",
+      "source": "Investing.com 香港 - 股市報價& 財經新聞",
+      "channel": "既有系統新聞",
+      "themes": [
+        "美國科技",
+        "AI",
+        "台積電供應鏈"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "210c4607260159226cd3",
+      "headlineGroup": "acdf77b8ce3d8b"
+    },
+    {
+      "title": "Anthropic股票上市樂觀情緒點火 美股週一開盤漲、部分收復科技股跌幅",
+      "url": "https://tw.news.yahoo.com/anthropic%E8%82%A1%E7%A5%A8%E4%B8%8A%E5%B8%82%E6%A8%82%E8%A7%80%E6%83%85%E7%B7%92%E9%BB%9E%E7%81%AB-%E7%BE%8E%E8%82%A1%E9%80%B1-%E9%96%8B%E7%9B%A4%E6%BC%B2-%E9%83%A8%E5%88%86%E6%94%B6%E5%BE%A9%E7%A7%91%E6%8A%80%E8%82%A1%E8%B7%8C%E5%B9%85-135721319.html",
+      "publishedAt": "2026-10-26T13:57:21Z",
+      "source": "Yahoo股市",
+      "channel": "國際財經",
+      "themes": [],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "cc3ebd1f50530f2b0429",
+      "headlineGroup": "a1012700d1adaa"
+    },
+    {
       "title": "快訊／馬斯克送輝達利多！不懼巴西大選震盪 美股開盤「4指數全漲」",
       "url": "https://tw.news.yahoo.com/%E5%BF%AB%E8%A8%8A-%E9%A6%AC%E6%96%AF%E5%85%8B%E9%80%81%E8%BC%9D%E9%81%94%E5%88%A9%E5%A4%9A-%E4%B8%8D%E6%87%BC%E5%B7%B4%E8%A5%BF%E5%A4%A7%E9%81%B8%E9%9C%87%E7%9B%AA-%E7%BE%8E%E8%82%A1%E9%96%8B%E7%9B%A4-4%E6%8C%87%E6%95%B8%E5%85%A8%E6%BC%B2-135300147.html",
       "publishedAt": "2026-10-26T13:53:00Z",
@@ -139,6 +939,27 @@
     },
     {
       "title": "Anthropic遞交IPO申請引市場注目 美股開高",
+      "url": "https://www.cna.com.tw/news/afe/202610260242.aspx",
+      "publishedAt": "2026-10-26T13:50:52Z",
+      "source": "中央通訊社",
+      "channel": "產經證券",
+      "themes": [],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "9df3d04d3e31d0de077b",
+      "headlineGroup": "1175692aaf6297",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "AI／半導體",
+        "confidence": "中",
+        "evidence": "Anthropic遞交IPO申請引市場注目 美股開高",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向",
+        "reusedIdenticalHeadline": true
+      }
+    },
+    {
+      "title": "Anthropic遞交IPO申請引市場注目 美股開高",
       "url": "https://tw.news.yahoo.com/anthropic%E9%81%9E%E4%BA%A4ipo%E7%94%B3%E8%AB%8B%E5%BC%95%E5%B8%82%E5%A0%B4%E6%B3%A8%E7%9B%AE-%E7%BE%8E%E8%82%A1%E9%96%8B%E9%AB%98-135052262.html",
       "publishedAt": "2026-10-26T13:50:52Z",
       "source": "Yahoo股市",
@@ -147,22 +968,30 @@
       "headlineRuleTone": "中立／待判",
       "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
       "id": "37a9fb41e3f356133b60",
-      "headlineGroup": "1175692aaf6297"
+      "headlineGroup": "1175692aaf6297",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "tone": "偏利多報導",
+        "theme": "AI／半導體",
+        "confidence": "中",
+        "evidence": "Anthropic遞交IPO申請引市場注目 美股開高",
+        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向",
+        "reusedIdenticalHeadline": true
+      }
     },
     {
-      "title": "台股明天還有救？ 美股4大指數齊揚 台積電ADR小漲0.5％",
+      "title": "台股明天有救了？ 費半上衝2％ 那指大漲300點",
       "url": "https://tw.stock.yahoo.com/news/%E5%8F%B0%E8%82%A1%E6%98%8E%E5%A4%A9%E9%82%84%E6%9C%89%E6%95%91-%E7%BE%8E%E8%82%A14%E5%A4%A7%E6%8C%87%E6%95%B8%E9%BD%8A%E6%8F%9A-%E5%8F%B0%E7%A9%8D%E9%9B%BBadr%E5%B0%8F%E6%BC%B20-5-134533689.html",
       "publishedAt": "2026-10-26T13:45:33Z",
       "source": "Yahoo股市",
       "channel": "台股",
       "themes": [
-        "AI／半導體",
         "台股／行情"
       ],
-      "headlineRuleTone": "中立／待判",
+      "headlineRuleTone": "偏多",
       "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
       "id": "152e5babdd53ab9456da",
-      "headlineGroup": "abfef59c42ce0b"
+      "headlineGroup": "e1de26f4445e73"
     },
     {
       "title": "〈美股早盤〉Anthropic搶上市點燃AI熱情！晶片股帶頭反彈 主要指數開高",
@@ -179,18 +1008,66 @@
       "headlineGroup": "854f2c9a5d4e97"
     },
     {
+      "title": "Meta擬股權融資最高950億美元 因應AI擴張資本支出",
+      "url": "https://www.cna.com.tw/news/aopl/202610260238.aspx",
+      "publishedAt": "2026-10-26T13:39:43Z",
+      "source": "中央通訊社",
+      "channel": "產經證券",
+      "themes": [
+        "AI／半導體",
+        "資金／法人",
+        "總體／利率"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
+      "id": "8ea681313e70330fe065",
+      "headlineGroup": "4a25edba7924e6"
+    },
+    {
       "title": "[新聞] AI新創Anthropic遞交IPO申請 估值達1.5",
       "url": "https://www.ptt.cc/bbs/Stock/M.1793021600.A.400.html",
       "publishedAt": "2026-10-26T13:33:20Z",
       "source": "PTT股票板（轉載）",
-      "channel": "新聞轉載",
+      "channel": "LUNA 已驗證新聞轉載",
       "themes": [
         "AI／半導體"
       ],
       "headlineRuleTone": "中立／待判",
-      "method": "PTT Stock 原文標題（新聞轉載，非獨立媒體報導／非鄉民情緒）",
+      "method": "LUNA 近期 PTT Stock 原文連結；轉貼新聞不計入散戶情緒",
       "id": "e005527674fc5f0b6020",
       "headlineGroup": "cf80f0c1913195"
+    },
+    {
+      "title": "黃金暴跌後重新站上4000大關！ETF持倉量重升至1億盎司以上，盯緊這一關鍵防線 作者 FX168",
+      "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE5iMGxjSF9SY1JNQzFpYmJlQnUwVUFSUDQ4NDc1S0QtYk82MnFZU2FRWTRGNXl2eXhhTDlycDA4TlhGV1hsal9lY3QtMi0tNzBJekJBU0NETXE5UGhtZ1BvS1ljYkt6cVRlQnNKUDFCdw?oc=5",
+      "publishedAt": "2026-10-26T13:28:31Z",
+      "source": "Investing.com 香港 - 股市報價& 財經新聞",
+      "channel": "既有系統新聞",
+      "themes": [
+        "黃金",
+        "美元",
+        "利率"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "91b795c59f01b074355b",
+      "headlineGroup": "79197551cca521"
+    },
+    {
+      "title": "谷歌財報前跌至近三個月低點，失守330美元，GOOGL恐再跌15%",
+      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPdlZtNmdicUpTNklIZEViZUZJbG5LNHhWVnYyckpGTFctUC1JekJjeldMNmRURkV2Mjk4YnhtWjlIcGtWcHc2VTVoTFBoOURYQWpLWjA3UE1GNzJHNG00UlI2Y0lLSk9KSUZ2RHZfTGhEcXNzLUpjcW1YUHF6M0xwWXBDaWFfZDB6a2FKRW5yTVJGaTRoQXMtdjhjcjdYbXVuSGlsVXNsVnRzempxaHRGd1JEa2lfUWR0RmJnNnFIdkFuY1k?oc=5",
+      "publishedAt": "2026-10-26T13:23:14Z",
+      "source": "TradingKey",
+      "channel": "既有系統新聞",
+      "themes": [
+        "美國科技",
+        "AI",
+        "台積電供應鏈"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "e8667c3895a2fb0c26e4",
+      "headlineGroup": "213bf2040e4b9e"
     },
     {
       "title": "台股週二面臨補跌考驗！專家曝「週年慶降價布局名單」",
@@ -413,6 +1290,23 @@
       }
     },
     {
+      "title": "油價突然下跌！伊朗將與沙國、土耳其、巴基斯坦會談 川普保留攻伊選項",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1oUDBjaEpKWmpFWHVaX2lSRHlBWGZKWlgybGVOWGw1S1lFZzNsTm94dUNmZFN0LTdZcFlmZDhVUGYyek1wMnoxM0syaERyWG8?oc=5",
+      "publishedAt": "2026-10-26T11:12:33Z",
+      "source": "鉅亨網",
+      "channel": "既有系統新聞",
+      "themes": [
+        "原油",
+        "OPEC+",
+        "塑化",
+        "航運"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "07230dc7c0d23f780f11",
+      "headlineGroup": "88dc13bec59f97"
+    },
+    {
       "title": "台股大跌1069點！三大法人殺近3千億元卻136億元「搶這檔」 外資、自營商掃瘋了…群創、仁寶也中",
       "url": "https://tw.stock.yahoo.com/news/%E5%8F%B0%E8%82%A1%E5%A4%A7%E8%B7%8C1069%E9%BB%9E-%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E6%AE%BA%E8%BF%913%E5%8D%83%E5%84%84%E5%85%83%E5%8D%BB136%E5%84%84%E5%85%83-%E6%90%B6%E9%80%99%E6%AA%94-%E5%A4%96%E8%B3%87-%E8%87%AA%E7%87%9F%E5%95%86%E6%8E%83%E7%98%8B%E4%BA%86-111000976.html",
       "publishedAt": "2026-10-26T11:10:00Z",
@@ -500,18 +1394,64 @@
       }
     },
     {
+      "title": "川普再促降息 稱美成長飆、無通膨",
+      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE5RNmtYa0VCdmd5WU1NbzFHVTZ0VFl6SzI3bTBIOVI2U1pZWGVPVGJwZHNKU3ZlSVpQbnVKNmNqYWhteGF1Z0poLS1WXy1IS05mN0M0Rl9TZDg?oc=5",
+      "publishedAt": "2026-10-26T10:58:06Z",
+      "source": "自由時報",
+      "channel": "既有系統新聞",
+      "themes": [
+        "金融",
+        "科技股"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "344f4086d809963d4aeb",
+      "headlineGroup": "d4f3c9147a9a8d"
+    },
+    {
+      "title": "到2028年，AI數據中心會出現供過於求嗎？SemiAnalysis 對 GPU 供應與電力限制的分析",
+      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNOTFCRkx1REdkSVc5WUUzanZuZFZJZ2VmdEF2OFBfbVp1NXBUUFp5RWJQVndOVi00NE04cjFTWXFLWGxJQTF1MVdPVHZrcWdaVVRyR05GbVlFTFY0OUFldFRzQ3NiY2xuejRycFowN1E3SE9pWGx5UnRVSHg3QUd6Rks2Y2l5RV9RaVE?oc=5",
+      "publishedAt": "2026-10-26T10:56:04Z",
+      "source": "KuCoin",
+      "channel": "既有系統新聞",
+      "themes": [
+        "AI伺服器",
+        "半導體"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "1cf1fc9791e69049c271",
+      "headlineGroup": "73df6131ef657e"
+    },
+    {
       "title": "[新聞] 影音／台股明開盤大補跌？若「恐慌情緒+",
       "url": "https://www.ptt.cc/bbs/Stock/M.1793012023.A.CDC.html",
       "publishedAt": "2026-10-26T10:53:43Z",
       "source": "PTT股票板（轉載）",
-      "channel": "新聞轉載",
+      "channel": "LUNA 已驗證新聞轉載",
       "themes": [
         "台股／行情"
       ],
-      "headlineRuleTone": "偏空",
-      "method": "PTT Stock 原文標題（新聞轉載，非獨立媒體報導／非鄉民情緒）",
+      "headlineRuleTone": "中立／待判",
+      "method": "LUNA 近期 PTT Stock 原文連結；轉貼新聞不計入散戶情緒",
       "id": "94fbcdec8e1dbdf1c8e2",
       "headlineGroup": "d0c0a183e6d036"
+    },
+    {
+      "title": "比特幣 8 萬美元保衛戰遇「超級週」！Fed 利率決議、 Google 微軟財報、 PCE 通膨連環登場",
+      "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE1uNFhYTmJWcElzX2NwWnl0ajhabzE5YzJCYXR2NWluTmtwZl9JcDhRZTVRTE5kcXAzT2NhUTR2dzYtdnZWNVdqYUlyR3JtT2tCTDBXNEd1U2xoTWNyTk5lTDdlZm9ETlpES1dpYjlsbHd1MHlZSmo4c1Z2VQ?oc=5",
+      "publishedAt": "2026-10-26T10:38:24Z",
+      "source": "區塊客",
+      "channel": "既有系統新聞",
+      "themes": [
+        "美國科技",
+        "AI",
+        "台積電供應鏈"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "377255bb315d4eb25dc4",
+      "headlineGroup": "643e0a6b910ee3"
     },
     {
       "title": "路透：越南首座晶片廠難達明年試產目標 未敲定ASML設備採購",
@@ -617,21 +1557,6 @@
       "headlineGroup": "6ef8b1de996907"
     },
     {
-      "title": "SemiAnalysis創始人：輝達HBM、先進封裝用量佔比已下降，2027年或繼續下滑！半導體供應鏈2028年或仍緊張，AI最大瓶頸是晶片基板",
-      "url": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE9TeHhZT2dKMTJQQ1RzWi1Nb29WMjI4WVdnbGlnNjZGenJZNDVWdElnQnhDR0Q4YS0yemZZOXktQjljTjlyN1VYbw?oc=5",
-      "publishedAt": "2026-10-26T09:38:45Z",
-      "source": "鉅亨號",
-      "channel": "既有系統新聞",
-      "themes": [
-        "記憶體",
-        "HBM"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "434b9210948e1999271b",
-      "headlineGroup": "47cb9157aac343"
-    },
-    {
       "title": "台股明「開獎」! 台股、國際股市數據一次看",
       "url": "https://tw.news.yahoo.com/%E5%8F%B0%E8%82%A1%E6%98%8E-%E9%96%8B%E7%8D%8E-%E5%8F%B0%E8%82%A1-%E5%9C%8B%E9%9A%9B%E8%82%A1%E5%B8%82%E6%95%B8%E6%93%9A-%E6%AC%A1%E7%9C%8B-090354569.html",
       "publishedAt": "2026-10-26T09:36:00Z",
@@ -660,6 +1585,22 @@
       "headlineGroup": "ca01fadd3524a9"
     },
     {
+      "title": "FXStreet數據顯示，白銀價格（白銀/美元）在10月26日上漲",
+      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOeTg4UUhmX1RLb3FKN19VQWxGTHlpOHV2TXpIVWlqZXYzejlQM2VUZEg4djIwZkdDaGhjb0JBT01WNHJTa0drcmpUd2FRS2xtSk1lOHU1bDJjRVdkZzlHU01Eb2t5a1hNaThSdXNONDFPX2EyMVVwakY2OVU1TUFodm5CVm1hZGRvY0ZjZldZd0hQdVlPYm1pajUzOE5ILV9kZHBBUDhQLW1OTFp1OFHSAbMBQVVfeXFMT0oyUkx6NURTUTFOVExkWnFqeVJ3cmpkZzJBMFl0OGpTT1pSME0tTjhzdmdOS0xmYW5DdlhZZlpNT1ZaZ2laMGRCdXZBODNpeDV3TF9IcUNTTHV",
+      "publishedAt": "2026-10-26T09:25:19Z",
+      "source": "FXStreet",
+      "channel": "既有系統新聞",
+      "themes": [
+        "白銀",
+        "工業需求",
+        "貴金屬"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "7a38ebeb6a589e0e5002",
+      "headlineGroup": "63ad4e56787b46"
+    },
+    {
       "title": "消費低迷和企業獲利疲軟 大摩：中國股市還會再跌10％至15％",
       "url": "https://ec.ltn.com.tw/article/breakingnews/5619297",
       "publishedAt": "2026-10-26T09:22:20Z",
@@ -672,6 +1613,21 @@
       "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
       "id": "236b2bf4edc5c527be53",
       "headlineGroup": "a309a6ae3c0448"
+    },
+    {
+      "title": "中東緊張局勢緩和、聯準會暫停升息預期升溫，道瓊期貨走高",
+      "url": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxQM0hkSjNwbEtxcDV6VXoybUNSQmN1WG5TQVA1Y1ZGWXlxWFRoU3FRV1ZOcGc4Q3VHUEZwRVFMTlRYRTRqR1lhc1pFX0NtWW5hYTlFdVk1cVhkRDEyczJWYlpiQXJUdUZJQ25GR0JzRHVKQVVGa3VyX1RvVDRWd0ZycHV2V2l4Nm54d21yOGdvQWxLS0E5UUNRMkQ2aUNXWWkyRkMxT2FPNUthOGtzMlVHcmd5dWl5SV9IQWctZC0wYkVDUHNhT0pCWWwzTWc2N3kzUFEtOEdJOXBmZmox?oc=5",
+      "publishedAt": "2026-10-26T09:20:48Z",
+      "source": "www.tmgm.com",
+      "channel": "既有系統新聞",
+      "themes": [
+        "金融",
+        "科技股"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "22cc4b64f322c55949fb",
+      "headlineGroup": "7a26943d908ad6"
     },
     {
       "title": "市場等待科技業財報與央行決策出爐 亞股收盤走勢不一",
@@ -688,19 +1644,20 @@
       "headlineGroup": "3d02f86399bece"
     },
     {
-      "title": "比特幣價格預測：五連跌失守8萬美元關口，FOMC會議逼近恐下探7.5萬美元",
-      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQNUVjTzlfYU1nSUpzeDl4TWpkNUZTZ2JHNkhlTFlQU1pxU0E3dWxVemJEaDVOVjBqdUNVTWFpY1lRU1NFbDJWSXlZckNYUVJhRU5ZZHBVU243UWxjSjh4TUFSVkJDMmFTempfRGxLN0duNjgzVFRsZDUxQzFFMDRBMlp6d0tlOExTX0w0ei1GOEF4U0U5dDBjanc3MWRyT1FxUDJWWnY5anVoa0MtdkxMa0t3czlQVDZWeGotVTdxS3Q5TlpaeVJV?oc=5",
-      "publishedAt": "2026-10-26T09:03:07Z",
-      "source": "TradingKey",
+      "title": "韓股收盤跌1.46%，科技財報周前外資賣超近7,000億韓元",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1jTFI0M2xoNzZUSFZfUU1WNDBJa0kyeEk5ejdtSWZabVFnZlFnOFVrQkxOd0ZxdWhFT0h2WTVybDBYaTVHZzFiVWZFRHNQOGM?oc=5",
+      "publishedAt": "2026-10-26T09:00:23Z",
+      "source": "鉅亨網",
       "channel": "既有系統新聞",
       "themes": [
-        "金融",
-        "科技股"
+        "美國科技",
+        "AI",
+        "台積電供應鏈"
       ],
       "headlineRuleTone": "中立／待判",
       "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "5dd8bf235631a429a6b7",
-      "headlineGroup": "5b98a2edfeb653"
+      "id": "584f3605faf4e94dd2f5",
+      "headlineGroup": "3db221ea1b79fe"
     },
     {
       "title": "SpaceX籌1.3兆買輝達晶片！馬斯克預言：200家公司恐大規模倒閉",
@@ -787,22 +1744,6 @@
       "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
       "id": "65b74ad486fc692fe2bc",
       "headlineGroup": "0b66cc5d486240"
-    },
-    {
-      "title": "股票：科技股財報公布前全球股市承壓 - 德意志銀行",
-      "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQYzZGaVJaWnd1VHZETXhvd2wxQ0xpZ2VQNnplM0h0M0t4Qk1lMUVNNTlOU1NlS0pRV0tLV2ZXZFZycmRXcnBKREZhT1dKZkhVdnhzZy1kdVpJdlEyNEFpZ25TSVRLVDJQRUsybzFaOHhuSHZtRnUyaUY2dXJNQmRHWlpyS2U3emRhN1F4Y1otU3JGYU9YVmwwT0o1ZUJVRjUzSXhYeEh6MHVQTVZNTjdsczkxMDZnUnFWaFk4RVE2MFNRQdIBwgFBVV95cUxQYzZGaVJaWnd1VHZETXhvd2wxQ0xpZ2VQNnplM0h0M0t4Qk1lMUVNNTlOU1NlS0pRV0tLV2ZXZFZycmRXcnB",
-      "publishedAt": "2026-10-26T08:35:47Z",
-      "source": "FXStreet",
-      "channel": "既有系統新聞",
-      "themes": [
-        "美國科技",
-        "AI",
-        "台積電供應鏈"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "c2653686c9b282b5e295",
-      "headlineGroup": "3c47b11bf42c1a"
     },
     {
       "title": "美伊衝突導致亞洲能源供應受擾！沙國原油這時起存放新加坡",
@@ -935,21 +1876,6 @@
       "headlineGroup": "1e717c3d79318a"
     },
     {
-      "title": "2330 台積電 - 接下來兩週注意FOMC會議、大型財報、美國期中選舉！ - 股市爆料同學會",
-      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE45RllIRS1YcnI3dFRLVGQ0WHUwd0ZhRmpxQ0FKMVJRX28xeTNyTEZUX25OYVo0TkIwQ0UwU3ItSmpNVGJaNExxOTJmdWlUSWhBMnlCTXFNXzQ?oc=5",
-      "publishedAt": "2026-10-26T07:50:40Z",
-      "source": "CMoney",
-      "channel": "既有系統新聞",
-      "themes": [
-        "晶圓代工",
-        "半導體"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "3df15fbb1ab93bde7340",
-      "headlineGroup": "6a1b01b4a94e3d"
-    },
-    {
       "title": "台股迎綠光？亞股週一反彈無力尾盤再度下殺",
       "url": "https://tw.news.yahoo.com/%E5%8F%B0%E8%82%A1%E8%BF%8E%E7%B6%A0%E5%85%89-%E4%BA%9E%E8%82%A1%E9%80%B1-%E5%8F%8D%E5%BD%88%E7%84%A1%E5%8A%9B%E5%B0%BE%E7%9B%A4%E5%86%8D%E5%BA%A6%E4%B8%8B%E6%AE%BA-074942869.html",
       "publishedAt": "2026-10-26T07:49:42Z",
@@ -962,6 +1888,23 @@
       "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
       "id": "086bb859e8283e284754",
       "headlineGroup": "674d2dece696de"
+    },
+    {
+      "title": "葉門叛軍襲沙烏地加劇中東供應疑慮 油價大漲",
+      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE1XUk0xeHBPZjVpSmNHUTIyZU9QcFMwcXFyN2cxcS1jQkFWYWl3STczempYV19BVnhiS2s5YTRtN1VaTkNBMDVKeEFURzgycm03X1VickFmZjI?oc=5",
+      "publishedAt": "2026-10-26T07:44:37Z",
+      "source": "自由時報",
+      "channel": "既有系統新聞",
+      "themes": [
+        "原油",
+        "OPEC+",
+        "塑化",
+        "航運"
+      ],
+      "headlineRuleTone": "中立／待判",
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "aa8c2ca3c8a9cb6d2d61",
+      "headlineGroup": "381cf5c6b9891b"
     },
     {
       "title": "沙烏地原油2027下半年起存放新加坡 強化亞洲供應安全",
@@ -1021,23 +1964,6 @@
       "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
       "id": "139c426bb831c6f24216",
       "headlineGroup": "224e7737743042"
-    },
-    {
-      "title": "國際油價大暴跌！原因出在「美伊1大消息」",
-      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFBIeV9OZnhMTzRxX3FiRkRqUjZwUjhtZGhrVGJYb2prS1NLZ2wtVncwQ21WRkFzRlM4c0FyQTJZaTFvdEozNTcwSlBRblBXdk9UYlFwUDhKOXE?oc=5",
-      "publishedAt": "2026-10-26T07:25:46Z",
-      "source": "自由時報",
-      "channel": "既有系統新聞",
-      "themes": [
-        "原油",
-        "OPEC+",
-        "塑化",
-        "航運"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "996bee44be7c4043b1b0",
-      "headlineGroup": "074042d3aceaea"
     },
     {
       "title": "中國老乾媽引進AI替代5百多名員工 網友怒吼展開抵制",
@@ -1153,23 +2079,6 @@
       "headlineGroup": "142f6568fec286"
     },
     {
-      "title": "星明年儲沙特原油 應對供應中斷風險",
-      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE5xSlFxeVBOXzRHT3RXdDVtMkR5dFZaR2otWV9DU1AtaDN4b3doS3E4cEZRVkFkVmZOR0JNYkpnaU9SaDlaX3JaUXByb2VVZUIxdC1nUm9B0gFbQVVfeXFMT2FDYktxTUYzaHVlVFhUclBoNWNxS25ZNWhrYzFjYjhtUXVrY0dqbHJhOVA0Mk1BOWYxSFJFa3BSZUgtUFRxMGxtNTBmZjRMMjFnNDBINUwteFRRSQ?oc=5",
-      "publishedAt": "2026-10-26T06:53:00Z",
-      "source": "商業電台",
-      "channel": "既有系統新聞",
-      "themes": [
-        "原油",
-        "OPEC+",
-        "塑化",
-        "航運"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "eb2270b1001b9759387f",
-      "headlineGroup": "6bf7005d2230d3"
-    },
-    {
       "title": "油價從近六個月高點回落 跌幅約2%",
       "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE9oaXdZSTk2OVhDS29VRUh0WTVFTDVpUVd5SHc5RFZ6dWg4QWV0Y0ZuWFBjX0sxMHhDWG5oUTNjY1BTUDBXUlhpM0V5bFJqcmloMV9TbzJfX2dqRnhmOFVXckl30gFnQVVfeXFMUHlhVHpscE43Y0J2dmhGaEhCNXBvbDF1TTJSUkJRVXl3dWtZcDN4WHozMUxpbzllNWdIdTdPdFU2dXJfeW42anVMZjRBRmVVUzgwcEhYQ1pTMDBQQzhYTkJkaVJWanJnYw?oc=5",
       "publishedAt": "2026-10-26T06:49:00Z",
@@ -1217,21 +2126,6 @@
       "headlineGroup": "0dedaa49c4ec88"
     },
     {
-      "title": "聯準會10月不升息？9月PCE同步來襲！黃金多空決戰一觸即發",
-      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9sTzd5QThpRkxWREhaVGVseW9aWU5uWDZGdk5qMVVGOGZnWHhMN1lSOXFMcHVqZHFFRGIwY3oyZ2pmTU1JZGgwdE1JZFNtZFN0ZUlUTnI1MFB4cHcxUGw3czFKWmNBZHhBQU83RXlwYnF6VHB2?oc=5",
-      "publishedAt": "2026-10-26T06:35:21Z",
-      "source": "Mitrade",
-      "channel": "既有系統新聞",
-      "themes": [
-        "金融",
-        "科技股"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "4a130db0d061db93975d",
-      "headlineGroup": "04114108d49809"
-    },
-    {
       "title": "台股27日有探底壓力 法人：半年線支撐受考驗",
       "url": "https://tw.stock.yahoo.com/news/%E5%8F%B0%E8%82%A127%E6%97%A5%E6%9C%89%E6%8E%A2%E5%BA%95%E5%A3%93%E5%8A%9B-%E6%B3%95%E4%BA%BA-%E5%8D%8A%E5%B9%B4%E7%B7%9A%E6%94%AF%E6%92%90%E5%8F%97%E8%80%83%E9%A9%97-063513196.html",
       "publishedAt": "2026-10-26T06:35:13Z",
@@ -1261,38 +2155,9 @@
       "headlineGroup": "783b36e276abe6"
     },
     {
-      "title": "台股27日有探底壓力 法人：半年線支撐受考驗",
-      "url": "https://www.cna.com.tw/news/afe/202610260120.aspx",
-      "publishedAt": "2026-10-26T06:34:20Z",
-      "source": "中央通訊社",
-      "channel": "產經證券",
-      "themes": [
-        "台股／行情"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "224eff48ece1b0bd4774",
-      "headlineGroup": "01cb3a949e02de"
-    },
-    {
-      "title": "比特幣跌破 8 萬美元，市場等聯準會本週會議找 12 月升息線索",
-      "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBwMWJqUHg0SjJodjlPQk5aazdIcVVXV1pvd2xFcHI4UVFVckFfV0tfN1pkUnFZNzdPUDIwZlB1Q3RRTVhWcjZsMVlTYVRZUG1NbzVNckxSVHZnelB2?oc=5",
-      "publishedAt": "2026-10-26T06:32:12Z",
-      "source": "鏈新聞 ABMedia",
-      "channel": "既有系統新聞",
-      "themes": [
-        "金融",
-        "科技股"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "7b374fb44c66ba0a21a1",
-      "headlineGroup": "fd26891da37d7a"
-    },
-    {
       "title": "營運重心轉向低軌衛星、光模塊！「HDI板大廠」再瞄準AI伺服器供應鏈 海內外同步擴產挹注產能",
       "url": "https://news.google.com/rss/articles/CBMilwRBVV95cUxORVlDbzhaZUFCUDUydlNzaGMtV21CMnh4QmpyZ1JhalhhNUh6UXVacW5pcnFPdkZmdkZvMXMxNEhFWFBLLXl5dUcwOHhKTVZnLVhLWHc1WFNnbUc1dW9EWFNXV0Z6TlNQeEpHTVBRemhJQ3BjQWkzWXdhT1ZqMnBtYkFvdjhWQ2VHczY3NkFObzRfTFRGZnNJMTR5TzRlaktEVVNHeXlQSFRZZUtYNlZWSV9wYkZjb2pNdHhzLU8tb1F3SXJkOXJoR1NzVU5IR3JjODJETFRJYUtsM0NDNVFKc3JTOXl1dDc2TTAyU0k5X25GM01GTTR1dEZib3hIUGludGR3VzRldnBOZ0x",
-      "publishedAt": "2026-10-26T06:28:57Z",
+      "publishedAt": "2026-10-26T06:25:00Z",
       "source": "Yahoo股市",
       "channel": "既有系統新聞",
       "themes": [
@@ -1303,44 +2168,6 @@
       "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
       "id": "974c01df05fcc01492cf",
       "headlineGroup": "aa0fa4e710435a"
-    },
-    {
-      "title": "AI財富浪潮帶動美國慈善捐贈 資金流向備受關注",
-      "url": "https://www.cna.com.tw/news/aopl/202610260119.aspx",
-      "publishedAt": "2026-10-26T06:27:17Z",
-      "source": "中央通訊社",
-      "channel": "產經證券",
-      "themes": [
-        "AI／半導體"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "e4f5de0a31f5d2ef884f",
-      "headlineGroup": "ad4ed139bb832d"
-    },
-    {
-      "title": "科技巨頭財報與Fed決策登場 美股漲勢面臨考驗",
-      "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTFBfZVB6OVdiSWlpNjhvc2ZBOUlmRi05TC01R2I1V1RuRkowVEduNkQzcjMtSHNETkg2S3RaTjF5eExKeGo2VGdzUmdlWQ?oc=5",
-      "publishedAt": "2026-10-26T06:25:56Z",
-      "source": "三立新聞",
-      "channel": "既有系統新聞",
-      "themes": [
-        "美國科技",
-        "AI",
-        "台積電供應鏈"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "8a0954c19a6bc5fb2d5b",
-      "headlineGroup": "525d4aa67819cc",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "中性資訊／難判",
-        "theme": "總體／利率",
-        "confidence": "高",
-        "evidence": "科技巨頭財報與Fed決策登場 美股漲勢面臨考驗",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
     },
     {
       "title": "股票一買就套牢？專家揭「1訊號」看懂股價突破時機",
@@ -1367,39 +2194,6 @@
       "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
       "id": "0ab236c8bfb3e15b9e51",
       "headlineGroup": "b10b0f77d58edf"
-    },
-    {
-      "title": "晶片業財報掀牌 市場緊盯關鍵48小時",
-      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1fM0tZdUJHWW5ZNzh3OGxacVJnaVBkOHNCUkNHZDRBa1BnUWNFbEpBcUV6SDI3ZkdURDhwcGdYNWkyRkQ3UlY5b1NINDNSRzNvZGtkWEpXTDVCQUltTkpZdHFqRThTbHPSAWdBVV95cUxNXzNLWXVCR1luWTc4dzhsWnFSZ2lQZDhzQlJDR2Q0QWtQZ1FjRWxKQXFFekgyN2ZHVEQ4cHBnWDVpMkZEN1JWOW9TSDQzUkczb2RrZFhKV0w1QkFJbU5KWXRxakU4U2xz?oc=5",
-      "publishedAt": "2026-10-26T06:00:00Z",
-      "source": "世界新聞網",
-      "channel": "既有系統新聞",
-      "themes": [
-        "美國科技",
-        "AI",
-        "台積電供應鏈"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "6ffa923c36566addd58e",
-      "headlineGroup": "2c336620278e22"
-    },
-    {
-      "title": "巴拉特石油公司高管：隨着中東原油供應改善，已逐步恢復從該地區的採購。預計11月中東原油供應",
-      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNdWFjY1d4SlZubW9ZX01ORHpoaGcxQmRBSV9TbHpJbGJhdTMwSHZrWlB3TExyYmg5NFdrVUEyXzY1UEJ4eWVHaFZyUTdTWC1mM0Iwcm5od1hVdWZEbmtWX09qMUdMOXNlVWY0YUwwNmVPV0xZcjk2RGkwbUZabjJpUXpQUXR6R2pXcjdobElTcWl6Q3k3SEk4dXFYYW5YZjJrYkdaVTA5akozRzBvT1BNVUNCWQ?oc=5",
-      "publishedAt": "2026-10-26T05:49:03Z",
-      "source": "富途牛牛",
-      "channel": "既有系統新聞",
-      "themes": [
-        "原油",
-        "OPEC+",
-        "塑化",
-        "航運"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "a48516d78145d11562f2",
-      "headlineGroup": "8b111cfcb22350"
     },
     {
       "title": "中國又找到賺全球錢的新方法？這筆AI大單揭「新商機」",
@@ -1445,77 +2239,6 @@
       "headlineGroup": "c3e98368747e16"
     },
     {
-      "title": "日本GMO外匯交易伺服器遭駭 股價重挫逾15％",
-      "url": "https://ec.ltn.com.tw/article/breakingnews/5618952",
-      "publishedAt": "2026-10-26T05:07:43Z",
-      "source": "自由時報",
-      "channel": "財經",
-      "themes": [
-        "台股／行情"
-      ],
-      "headlineRuleTone": "偏空",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "a6ec7ff5bf677c9b9ed5",
-      "headlineGroup": "7e43e5945d907e"
-    },
-    {
-      "title": "怕利率上升決定「砸積蓄提前還房貸」 他如今超後悔代價曝光了",
-      "url": "https://ec.ltn.com.tw/article/breakingnews/5618959",
-      "publishedAt": "2026-10-26T05:07:07Z",
-      "source": "自由時報",
-      "channel": "財經",
-      "themes": [],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "b509a42aac063866ba06",
-      "headlineGroup": "90d947f5344776"
-    },
-    {
-      "title": "討論牆 | Fed維持4.25-4.50%利率不變，鮑威爾發言謹慎，9月降息預期降溫",
-      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5WWE9jLTNoaWNSTW9TeFpLVWZYb185LUNtRmtCTmo5WmVPUV9CdFhkTXRDMEZzMGctV2lLWXNtNXgyQ3I4R1ZfNEFXUlYyMC1MVkhycG1LS0hmY1ZmTG42Y0hwbm0?oc=5",
-      "publishedAt": "2026-10-26T05:05:28Z",
-      "source": "LINE TODAY",
-      "channel": "既有系統新聞",
-      "themes": [
-        "金融",
-        "科技股"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "b16e910ad1fe23c3ad91",
-      "headlineGroup": "af0cf6c94ced4d"
-    },
-    {
-      "title": "AI股先飆升後暴跌近5成！4大類股誰最值得撿便宜 美媒答案「令人意外」",
-      "url": "https://ec.ltn.com.tw/article/breakingnews/5618739",
-      "publishedAt": "2026-10-26T05:02:32Z",
-      "source": "自由時報",
-      "channel": "財經",
-      "themes": [
-        "AI／半導體"
-      ],
-      "headlineRuleTone": "偏空",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "70f4fab77914840ed848",
-      "headlineGroup": "88cf28b7b739aa"
-    },
-    {
-      "title": "全球股市觀望科技巨頭財報 油價自半年高點回落",
-      "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTFB2YmNDRDFMM3hkYmRiNGxVaXlCdG1FY1J6azFnZTY2aFpoa3J2TjllU3pwbUU1Nl96MjZuNVZoOHhYM0JROEV1U1pzb2kyQlBMSDJ1THVOZi1xQThPNXh1T3M0b1VFdw?oc=5",
-      "publishedAt": "2026-10-26T04:46:23Z",
-      "source": "民視財經網",
-      "channel": "既有系統新聞",
-      "themes": [
-        "美國科技",
-        "AI",
-        "台積電供應鏈"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "fabd8a73459cb8352a95",
-      "headlineGroup": "3feb3ac0272235"
-    },
-    {
       "title": "AI大腦發威產線異常狂降9成 鴻海聯手輝達秀「智造」實力",
       "url": "https://tw.news.yahoo.com/ai%E5%A4%A7%E8%85%A6%E7%99%BC%E5%A8%81%E7%94%A2%E7%B7%9A%E7%95%B0%E5%B8%B8%E7%8B%82%E9%99%8D9%E6%88%90-%E9%B4%BB%E6%B5%B7%E8%81%AF%E6%89%8B%E8%BC%9D%E9%81%94%E7%A7%80-%E6%99%BA%E9%80%A0-%E5%AF%A6%E5%8A%9B-044300234.html",
       "publishedAt": "2026-10-26T04:43:00Z",
@@ -1531,20 +2254,6 @@
     },
     {
       "title": "鴻海採用輝達AI技術 提升模型訓練和智慧工廠效率",
-      "url": "https://www.cna.com.tw/news/afe/202610260091.aspx",
-      "publishedAt": "2026-10-26T04:41:14Z",
-      "source": "中央通訊社",
-      "channel": "產經證券",
-      "themes": [
-        "AI／半導體"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "6738815cf9077b254e9e",
-      "headlineGroup": "02271194811c1b"
-    },
-    {
-      "title": "鴻海採用輝達AI技術 提升模型訓練和智慧工廠效率",
       "url": "https://tw.news.yahoo.com/%E9%B4%BB%E6%B5%B7%E6%8E%A1%E7%94%A8%E8%BC%9D%E9%81%94ai%E6%8A%80%E8%A1%93-%E6%8F%90%E5%8D%87%E6%A8%A1%E5%9E%8B%E8%A8%93%E7%B7%B4%E5%92%8C%E6%99%BA%E6%85%A7%E5%B7%A5%E5%BB%A0%E6%95%88%E7%8E%87-044114974.html",
       "publishedAt": "2026-10-26T04:41:14Z",
       "source": "Yahoo股市",
@@ -1556,22 +2265,6 @@
       "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
       "id": "e2ff5e077b067ea6bbf3",
       "headlineGroup": "02271194811c1b"
-    },
-    {
-      "title": "黃金在4000美元上方維持溫和反彈漲幅，美聯儲加息押注限制上行空間",
-      "url": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxOYXE2X2RFZ3I3ajYtc2dFZlpPWDI4RUJMZ2xmRkdqUVc3WU9RdGk5TlVMb3p2Y093U1paR2pLVE10UzRPNkl6b0dleFlaVkpaZTNpZVI4VncxLWY2WkFHVnlxWi1LQXpiVWd6NVFKNEhDLWg4XzFmejNJN1lVWkkyX3Z4Y0hVbHNKZFFTVXR1UzNHbTVzNEhXNm54Um5vNHNQOUZxTlZFeFdLX2gxeHFmTzRMNUtkT08zZzZ0STJvLW0zT1J0aG9meVFLemNIUzRjajE1MmRmenBlNHpMMTVQeDVfWXJzeXdibWFPYy1Id9IB9AFBVV95cUxPS2pCQ3FyU1pITzFTZVBHNnF",
-      "publishedAt": "2026-10-26T04:35:57Z",
-      "source": "FXStreet",
-      "channel": "既有系統新聞",
-      "themes": [
-        "黃金",
-        "美元",
-        "利率"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "d7b4840620ce29c0a1d8",
-      "headlineGroup": "eea25c81e6694b"
     },
     {
       "title": "AI資本支出引爆美股賣壓！台股連假後恐補跌 分析師曝止跌關鍵",
@@ -1616,12 +2309,12 @@
       "url": "https://www.ptt.cc/bbs/Stock/M.1792988519.A.2D6.html",
       "publishedAt": "2026-10-26T04:21:59Z",
       "source": "PTT股票板（轉載）",
-      "channel": "新聞轉載",
+      "channel": "LUNA 已驗證新聞轉載",
       "themes": [
         "AI／半導體"
       ],
       "headlineRuleTone": "中立／待判",
-      "method": "PTT Stock 原文標題（新聞轉載，非獨立媒體報導／非鄉民情緒）",
+      "method": "LUNA 近期 PTT Stock 原文連結；轉貼新聞不計入散戶情緒",
       "id": "dd8260102a9848e83d48",
       "headlineGroup": "0773ef6479ec44"
     },
@@ -1646,16 +2339,21 @@
       }
     },
     {
-      "title": "賣鎧俠持股獲利可觀 SK海力士擬發3940億特別股利回饋股東",
-      "url": "https://www.cna.com.tw/news/aopl/202610260083.aspx",
-      "publishedAt": "2026-10-26T04:06:56Z",
-      "source": "中央通訊社",
-      "channel": "產經證券",
-      "themes": [],
+      "title": "爲何原油供應增加，油價卻降不下來？",
+      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQcW12d3ktUXJBd0dPcU5rTGtCV2Z3WDdRbm1DTndERVIwU043anRtWkdnM1NDSUpTclZhSzVtM3FQMHdEdm1Rd0JXR0VFajFEMWxmdWRhT0FxOHdVcUVwMDNuX2NHb2dfckdDbmxEUzhwc0Q3U3p0STBnakozWVNxX3R1THlXWllzakphUWdIMG1ISjM2dmx2UQ?oc=5",
+      "publishedAt": "2026-10-26T04:12:00Z",
+      "source": "富途牛牛",
+      "channel": "既有系統新聞",
+      "themes": [
+        "原油",
+        "OPEC+",
+        "塑化",
+        "航運"
+      ],
       "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "c5896000e555c3984517",
-      "headlineGroup": "2090d5ca34992e"
+      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
+      "id": "6cbec7ca0cc180653861",
+      "headlineGroup": "5a7c5da5f88f18"
     },
     {
       "title": "GPU需求從24張砍到4張，韓國三家新創攪動AI半導體版圖",
@@ -1762,28 +2460,6 @@
     },
     {
       "title": "科技巨頭財報與Fed決策登場 美股漲勢面臨考驗",
-      "url": "https://www.cna.com.tw/news/aopl/202610260062.aspx",
-      "publishedAt": "2026-10-26T03:01:10Z",
-      "source": "中央通訊社",
-      "channel": "產經證券",
-      "themes": [
-        "總體／利率"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "aad65b4c66e06bb71179",
-      "headlineGroup": "525d4aa67819cc",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "中性資訊／難判",
-        "theme": "總體／利率",
-        "confidence": "高",
-        "evidence": "科技巨頭財報與Fed決策登場 美股漲勢面臨考驗",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "科技巨頭財報與Fed決策登場 美股漲勢面臨考驗",
       "url": "https://tw.news.yahoo.com/%E7%A7%91%E6%8A%80%E5%B7%A8%E9%A0%AD%E8%B2%A1%E5%A0%B1%E8%88%87fed%E6%B1%BA%E7%AD%96%E7%99%BB%E5%A0%B4-%E7%BE%8E%E8%82%A1%E6%BC%B2%E5%8B%A2%E9%9D%A2%E8%87%A8%E8%80%83%E9%A9%97-030110650.html",
       "publishedAt": "2026-10-26T03:01:10Z",
       "source": "Yahoo股市",
@@ -1864,44 +2540,6 @@
         "evidence": "康寧黑科技插旗CPO！誰被取代、誰奪王座？",
         "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
       }
-    },
-    {
-      "title": "SpaceX籌1.3兆買輝達AI晶片 馬斯克預言：「新雲端」掀整併潮",
-      "url": "https://tw.news.yahoo.com/spacex%E7%B1%8C1-3%E5%85%86%E8%B2%B7%E8%BC%9D%E9%81%94ai%E6%99%B6%E7%89%87-%E9%A6%AC%E6%96%AF%E5%85%8B%E9%A0%90%E8%A8%80-%E6%96%B0%E9%9B%B2%E7%AB%AF-%E6%8E%80%E6%95%B4%E4%BD%B5%E6%BD%AE-020100740.html",
-      "publishedAt": "2026-10-26T02:01:00Z",
-      "source": "Yahoo股市",
-      "channel": "國際財經",
-      "themes": [
-        "AI／半導體"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "250436c2cab634b35e19",
-      "headlineGroup": "58bbf4ffdbf332",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利多報導",
-        "theme": "AI／半導體",
-        "confidence": "中",
-        "evidence": "SpaceX籌1.3兆買輝達AI晶片 馬斯克預言：「新雲端」掀整併潮",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "白銀價格預測：白銀/美元在避險需求緩和之際跌破54.00美元",
-      "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxPSWJqdjYwZVZ2U2V0d0NqRmFOX0tCRzBSQkk5VEVrNG9BMldlV1k4ajA2VnNIaFZVQTBzbTdmVzNyYlI0Sm50WkltVlB5cUJEdXRTTElXLXRVeU1YU09ZWVRrcUJwbUpMVDBPanJ1SDFkY2daQkt1ZlFZZnlfdGtlYmo0azZTRXZuWWp1UnJ3MTNsb3ZqRGxKWUJZYkp3WU9wcUZ4cEw4bjZQYzRFOTRPRnZ3cXJaYVN1TFhqVy1pcUxyQXdYVkpCUURNd1B6d9IB0wFBVV95cUxQQTNhVHZYVzV4aHlOdDRreElZSlVXTU1RMzZPZ0pZbE91VEg3YlVyQUNQa25hOFhpMTR",
-      "publishedAt": "2026-10-26T01:57:11Z",
-      "source": "FXStreet",
-      "channel": "既有系統新聞",
-      "themes": [
-        "白銀",
-        "工業需求",
-        "貴金屬"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "8745f3f9ecadb80db04e",
-      "headlineGroup": "1d0e34fd5836ad"
     },
     {
       "title": "台股恐下殺千點！周四才是生死日 台積電、PCB、記憶體誰先彈？",
@@ -1985,26 +2623,6 @@
       "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
       "id": "b65e8942b4f905cf6b89",
       "headlineGroup": "7532b4c49fdd3c"
-    },
-    {
-      "title": "SK海力士股東樂翻！傳特別股息達16兆韓元 金額為去年7倍",
-      "url": "https://tw.news.yahoo.com/sk%E6%B5%B7%E5%8A%9B%E5%A3%AB%E8%82%A1%E6%9D%B1%E6%A8%82%E7%BF%BB-%E5%82%B3%E7%89%B9%E5%88%A5%E8%82%A1%E6%81%AF%E9%81%9416%E5%85%86%E9%9F%93%E5%85%83-%E9%87%91%E9%A1%8D%E7%82%BA%E5%8E%BB%E5%B9%B47%E5%80%8D-013656255.html",
-      "publishedAt": "2026-10-26T01:36:56Z",
-      "source": "Yahoo股市",
-      "channel": "國際財經",
-      "themes": [],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "aae068aa20b6acd5efa6",
-      "headlineGroup": "0bc53631fb4a47",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利多報導",
-        "theme": "AI／半導體",
-        "confidence": "高",
-        "evidence": "SK海力士股東樂翻！傳特別股息達16兆韓元 金額為去年7倍",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
     },
     {
       "title": "名師操盤》台股明開盤決戰！關鍵點位不能破 2檔千張大戶加碼股逆襲",
@@ -2096,50 +2714,6 @@
       }
     },
     {
-      "title": "馬斯克稱SpaceX籌得400億美元 預測新興雲端面臨整併潮",
-      "url": "https://tw.stock.yahoo.com/news/%E9%A6%AC%E6%96%AF%E5%85%8B%E7%A8%B1spacex%E7%B1%8C%E5%BE%97400%E5%84%84%E7%BE%8E%E5%85%83-%E9%A0%90%E6%B8%AC%E6%96%B0%E8%88%88%E9%9B%B2%E7%AB%AF%E9%9D%A2%E8%87%A8%E6%95%B4%E4%BD%B5%E6%BD%AE-004525659.html",
-      "publishedAt": "2026-10-26T00:45:25Z",
-      "source": "Yahoo股市",
-      "channel": "國際財經",
-      "themes": [
-        "總體／利率"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "f5079f6cbbee59ad40e8",
-      "headlineGroup": "257fc66d279db5",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "中性資訊／難判",
-        "theme": "其他",
-        "confidence": "中",
-        "evidence": "馬斯克稱SpaceX籌得400億美元 預測新興雲端面臨整併潮",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "昇達科看好低軌衛星擴張 AI帶動太空運算及資料中心應用",
-      "url": "https://www.cna.com.tw/news/afe/202610260028.aspx",
-      "publishedAt": "2026-10-26T00:43:56Z",
-      "source": "中央通訊社",
-      "channel": "產經證券",
-      "themes": [
-        "AI／半導體"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "40cd173c40ff2ef184e4",
-      "headlineGroup": "f659e352c79f3e",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利多報導",
-        "theme": "AI／半導體",
-        "confidence": "高",
-        "evidence": "昇達科看好低軌衛星擴張 AI帶動太空運算及資料中心應用",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
       "title": "1分鐘讀財經》散戶趁台股修正撿便宜！5大族群錯過可惜",
       "url": "https://tw.stock.yahoo.com/news/1%E5%88%86%E9%90%98%E8%AE%80%E8%B2%A1%E7%B6%93-%E6%95%A3%E6%88%B6%E8%B6%81%E5%8F%B0%E8%82%A1%E4%BF%AE%E6%AD%A3%E6%92%BF%E4%BE%BF%E5%AE%9C-5%E5%A4%A7%E6%97%8F%E7%BE%A4%E9%8C%AF%E9%81%8E%E5%8F%AF%E6%83%9C-004110154.html",
       "publishedAt": "2026-10-26T00:41:10Z",
@@ -2206,72 +2780,6 @@
       }
     },
     {
-      "title": "馬斯克稱SpaceX籌得400億美元 預測新興雲端面臨整併潮",
-      "url": "https://www.cna.com.tw/news/aopl/202610260022.aspx",
-      "publishedAt": "2026-10-26T00:24:43Z",
-      "source": "中央通訊社",
-      "channel": "產經證券",
-      "themes": [
-        "總體／利率"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "72769272accb21f07cc7",
-      "headlineGroup": "257fc66d279db5",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "中性資訊／難判",
-        "theme": "其他",
-        "confidence": "中",
-        "evidence": "馬斯克稱SpaceX籌得400億美元 預測新興雲端面臨整併潮",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "馬斯克稱SpaceX籌得400億美元 預測新興雲端面臨整併潮",
-      "url": "https://tw.news.yahoo.com/%E9%A6%AC%E6%96%AF%E5%85%8B%E7%A8%B1spacex%E7%B1%8C%E5%BE%97400%E5%84%84%E7%BE%8E%E5%85%83-%E9%A0%90%E6%B8%AC%E6%96%B0%E8%88%88%E9%9B%B2%E7%AB%AF%E9%9D%A2%E8%87%A8%E6%95%B4%E4%BD%B5%E6%BD%AE-002443159.html",
-      "publishedAt": "2026-10-26T00:24:43Z",
-      "source": "Yahoo股市",
-      "channel": "國際財經",
-      "themes": [
-        "總體／利率"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "96b8f45f4e71cd311d3b",
-      "headlineGroup": "257fc66d279db5",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "中性資訊／難判",
-        "theme": "其他",
-        "confidence": "中",
-        "evidence": "馬斯克稱SpaceX籌得400億美元 預測新興雲端面臨整併潮",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "馬斯克豪砸1.2兆 SpaceX籌資搶購輝達AI晶片",
-      "url": "https://tw.news.yahoo.com/%E9%A6%AC%E6%96%AF%E5%85%8B%E8%B1%AA%E7%A0%B81-2%E5%85%86-spacex%E7%B1%8C%E8%B3%87%E6%90%B6%E8%B3%BC%E8%BC%9D%E9%81%94ai%E6%99%B6%E7%89%87-001834892.html",
-      "publishedAt": "2026-10-26T00:18:34Z",
-      "source": "Yahoo股市",
-      "channel": "國際財經",
-      "themes": [
-        "AI／半導體"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "b80e21771c21fde8b59a",
-      "headlineGroup": "af69a848c4bf60",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利多報導",
-        "theme": "AI／半導體",
-        "confidence": "高",
-        "evidence": "馬斯克豪砸1.2兆 SpaceX籌資搶購輝達AI晶片",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
       "title": "台股震盪守4萬6000點 投信：AI長線行情仍可期",
       "url": "https://tw.news.yahoo.com/%E5%8F%B0%E8%82%A1%E9%9C%87%E7%9B%AA%E5%AE%884%E8%90%AC6000%E9%BB%9E-%E6%8A%95%E4%BF%A1-ai%E9%95%B7%E7%B7%9A%E8%A1%8C%E6%83%85%E4%BB%8D%E5%8F%AF%E6%9C%9F-001703616.html",
       "publishedAt": "2026-10-26T00:17:03Z",
@@ -2292,44 +2800,6 @@
         "theme": "AI／半導體",
         "confidence": "高",
         "evidence": "台股震盪守4萬6000點 投信：AI長線行情仍可期",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "【財經縱覽】：WTI原油大漲逾4%，黃金跌破4000關口！�美債息率暫緩跌勢、歐美股市全線承壓",
-      "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE9sbm1Fb0hZNG9lWTNyMUV6eTlRT0JWaVRXQ3V3Q3NxR25NamJhQnp6S2NSSXVRcmpZcWlmNmFTcXo1aDR6WW1feXZTcDZkMGZka2tjaXdhaUczclVLdE5sMG9JTm5zZURjWjBYT3cydG5VbEVoT2VmWXhjSXp1QkE?oc=5",
-      "publishedAt": "2026-10-26T00:11:15Z",
-      "source": "Mitrade",
-      "channel": "既有系統新聞",
-      "themes": [
-        "黃金",
-        "美元",
-        "利率"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "2c419ff8bbb6d654a7e3",
-      "headlineGroup": "193b09b99a566a"
-    },
-    {
-      "title": "投顧示警：台美股市短線波動大 降低槓桿操作",
-      "url": "https://tw.news.yahoo.com/%E6%8A%95%E9%A1%A7%E7%A4%BA%E8%AD%A6-%E5%8F%B0%E7%BE%8E%E8%82%A1%E5%B8%82%E7%9F%AD%E7%B7%9A%E6%B3%A2%E5%8B%95%E5%A4%A7-%E9%99%8D%E4%BD%8E%E6%A7%93%E6%A1%BF%E6%93%8D%E4%BD%9C-000750718.html",
-      "publishedAt": "2026-10-26T00:07:50Z",
-      "source": "Yahoo股市",
-      "channel": "國際財經",
-      "themes": [
-        "台股／行情"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "1d39194c0ad54e6fec51",
-      "headlineGroup": "e4fccc28d13685",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利空報導",
-        "theme": "台股／行情",
-        "confidence": "高",
-        "evidence": "投顧示警：台美股市短線波動大 降低槓桿操作",
         "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
       }
     },
@@ -2379,28 +2849,6 @@
       }
     },
     {
-      "title": "AI跌倒、美債吃飽？全球資金爭奪戰 市場用錢投票",
-      "url": "https://tw.stock.yahoo.com/news/ai%E8%B7%8C%E5%80%92-%E7%BE%8E%E5%82%B5%E5%90%83%E9%A3%BD-%E5%85%A8%E7%90%83%E8%B3%87%E9%87%91%E7%88%AD%E5%A5%AA%E6%88%B0-%E5%B8%82%E5%A0%B4%E7%94%A8%E9%8C%A2%E6%8A%95%E7%A5%A8-225003803.html",
-      "publishedAt": "2026-10-25T22:50:03Z",
-      "source": "Yahoo股市",
-      "channel": "國際財經",
-      "themes": [
-        "AI／半導體"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "b3fb5685e90d4b394538",
-      "headlineGroup": "7f48ea60ec5d3b",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "中性資訊／難判",
-        "theme": "資金／法人",
-        "confidence": "高",
-        "evidence": "AI跌倒、美債吃飽？全球資金爭奪戰 市場用錢投票",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
       "title": "台股季線支撐弱 法人建議減少槓桿",
       "url": "https://tw.news.yahoo.com/%E5%8F%B0%E8%82%A1%E5%AD%A3%E7%B7%9A%E6%94%AF%E6%92%90%E5%BC%B1-%E6%B3%95%E4%BA%BA%E5%BB%BA%E8%AD%B0%E6%B8%9B%E5%B0%91%E6%A7%93%E6%A1%BF-223810243.html",
       "publishedAt": "2026-10-25T22:38:10Z",
@@ -2442,28 +2890,6 @@
         "theme": "AI／半導體",
         "confidence": "高",
         "evidence": "台股重量級法說會登場！聯發科、台達電、聯電上陣 AI需求能變獲利？",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "AI業搶貨！航空運價急漲一成 長榮航：還有調升空間",
-      "url": "https://tw.news.yahoo.com/ai%E6%A5%AD%E6%90%B6%E8%B2%A8-%E8%88%AA%E7%A9%BA%E9%81%8B%E5%83%B9%E6%80%A5%E6%BC%B2-%E6%88%90-%E9%95%B7%E6%A6%AE%E8%88%AA-%E9%82%84%E6%9C%89%E8%AA%BF%E5%8D%87%E7%A9%BA%E9%96%93-223810298.html",
-      "publishedAt": "2026-10-25T22:38:10Z",
-      "source": "Yahoo股市",
-      "channel": "國際財經",
-      "themes": [
-        "AI／半導體"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "9c99c7af7a3bad6ef893",
-      "headlineGroup": "295a3b20d0d1ea",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利多報導",
-        "theme": "AI／半導體",
-        "confidence": "高",
-        "evidence": "AI業搶貨！航空運價急漲一成",
         "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
       }
     },
@@ -2512,166 +2938,28 @@
       }
     },
     {
-      "title": "台股周年慶大打折！0050與台積電跌出甜甜價？「大立光、欣興、台光電全享折扣」分析師示警：先避開2類虛胖族群",
-      "url": "https://tw.stock.yahoo.com/news/%E5%8F%B0%E8%82%A1%E5%91%A8%E5%B9%B4%E6%85%B6%E5%A4%A7%E6%89%93%E6%8A%98-0050%E8%88%87%E5%8F%B0%E7%A9%8D%E9%9B%BB%E8%B7%8C%E5%87%BA%E7%94%9C%E7%94%9C%E5%83%B9-%E5%A4%A7%E7%AB%8B%E5%85%89-%E6%AC%A3%E8%88%88-%E5%8F%B0%E5%85%89%E9%9B%BB%E5%85%A8%E4%BA%AB%E6%8A%98%E6%89%A3-220030132.html",
-      "publishedAt": "2026-10-25T22:00:30Z",
-      "source": "Yahoo股市",
-      "channel": "台股",
-      "themes": [
-        "AI／半導體",
-        "ETF／投資",
-        "台股／行情"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "48f0ba4dd2a020bad103",
-      "headlineGroup": "2b0f88b20d8ad3",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "中性資訊／難判",
-        "theme": "台股／行情",
-        "confidence": "中",
-        "evidence": "台股周年慶大打折！0050與台積電跌出甜甜價？",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "台股EPS成長大降速！明年台股恐換主角 它鎖定中小AI利基股",
-      "url": "https://tw.news.yahoo.com/%E5%8F%B0%E8%82%A1eps%E6%88%90%E9%95%B7%E5%A4%A7%E9%99%8D%E9%80%9F-%E6%98%8E%E5%B9%B4%E5%8F%B0%E8%82%A1%E6%81%90%E6%8F%9B%E4%B8%BB%E8%A7%92-%E5%AE%83%E9%8E%96%E5%AE%9A%E4%B8%AD%E5%B0%8Fai%E5%88%A9%E5%9F%BA%E8%82%A1-202500384.html",
-      "publishedAt": "2026-10-25T20:25:00Z",
-      "source": "Yahoo股市",
-      "channel": "台股",
-      "themes": [
-        "AI／半導體",
-        "台股／行情"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "ec332bacf08a026f1d7d",
-      "headlineGroup": "ce0d3cf29a3e39",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利空報導",
-        "theme": "台股／行情",
-        "confidence": "高",
-        "evidence": "台股EPS成長大降速！明年台股恐換主角 它鎖定中小AI利基股",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "美期中選舉未定 台股恐一路震盪",
-      "url": "https://tw.news.yahoo.com/%E7%BE%8E%E6%9C%9F%E4%B8%AD%E9%81%B8%E8%88%89%E6%9C%AA%E5%AE%9A-%E5%8F%B0%E8%82%A1%E6%81%90-%E8%B7%AF%E9%9C%87%E7%9B%AA-201000863.html",
-      "publishedAt": "2026-10-25T20:10:00Z",
-      "source": "Yahoo股市",
-      "channel": "台股",
-      "themes": [
-        "政策／地緣",
-        "台股／行情"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "897a025b5aa9d599e6db",
-      "headlineGroup": "58e3c69998b871",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利空報導",
-        "theme": "台股／行情",
-        "confidence": "高",
-        "evidence": "美期中選舉未定 台股恐一路震盪",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "別只押台積電！它從晶片一路吃到AI散熱 規模較去年成長118%",
-      "url": "https://tw.news.yahoo.com/%E5%88%A5%E5%8F%AA%E6%8A%BC%E5%8F%B0%E7%A9%8D%E9%9B%BB-%E5%AE%83%E5%BE%9E%E6%99%B6%E7%89%87-%E8%B7%AF%E5%90%83%E5%88%B0ai%E6%95%A3%E7%86%B1-%E8%A6%8F%E6%A8%A1%E8%BC%83%E5%8E%BB%E5%B9%B4%E6%88%90%E9%95%B7118-172500763.html",
-      "publishedAt": "2026-10-25T17:25:00Z",
-      "source": "Yahoo股市",
-      "channel": "台股",
-      "themes": [
-        "AI／半導體"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "41d1b7f00c556e24c863",
-      "headlineGroup": "ad542633ed5bc2",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利多報導",
-        "theme": "AI／半導體",
-        "confidence": "高",
-        "evidence": "它從晶片一路吃到AI散熱 規模較去年成長118%",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "不是AI股！曝台股還沒殺完「壓力將持續」 元大投顧董事長：這兩類股才能逆勢突圍",
-      "url": "https://tw.news.yahoo.com/%E4%B8%8D%E6%98%AFai%E8%82%A1-%E6%9B%9D%E5%8F%B0%E8%82%A1%E9%82%84%E6%B2%92%E6%AE%BA%E5%AE%8C-%E5%A3%93%E5%8A%9B%E5%B0%87%E6%8C%81%E7%BA%8C-%E5%85%83%E5%A4%A7%E6%8A%95%E9%A1%A7%E8%91%A3%E4%BA%8B%E9%95%B7-%E9%80%99%E5%85%A9%E9%A1%9E%E8%82%A1%E6%89%8D%E8%83%BD%E9%80%86%E5%8B%A2%E7%AA%81%E5%9C%8D-165334831.html",
-      "publishedAt": "2026-10-25T16:53:34Z",
-      "source": "Yahoo股市",
-      "channel": "台股",
-      "themes": [
-        "AI／半導體",
-        "台股／行情"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "de6b6d3accc785ee2595",
-      "headlineGroup": "e613f099ab308c",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利空報導",
-        "theme": "台股／行情",
-        "confidence": "中",
-        "evidence": "曝台股還沒殺完「壓力將持續」",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
       "title": "[新聞] 美股23小時交易新制即將上路 五大券商搶Q",
       "url": "https://www.ptt.cc/bbs/Stock/M.1792939133.A.697.html",
       "publishedAt": "2026-10-25T14:38:53Z",
       "source": "PTT股票板（轉載）",
-      "channel": "新聞轉載",
+      "channel": "LUNA 已驗證新聞轉載",
       "themes": [],
       "headlineRuleTone": "中立／待判",
-      "method": "PTT Stock 原文標題（新聞轉載，非獨立媒體報導／非鄉民情緒）",
+      "method": "LUNA 近期 PTT Stock 原文連結；轉貼新聞不計入散戶情緒",
       "id": "aa9c1ce75452891634f3",
       "headlineGroup": "f6aa4b094b12f6"
-    },
-    {
-      "title": "貿聯-KY（3665）EPS創單季新高，AI伺服器訂單動能如... - 股市爆料同學會",
-      "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE91cXE2NDBDQVVQcGM1a05FRXpuXzBqZlhWdXdJWV83dHcxZ0wtRTZxQ1ByRTNsT2FoVF9VQVBkTGZ3MHBaTWJ5WjZGWEx3YWwtdGpTYTlKNXUyUk52R0VzUGdIaDZUQkhwVUdnVThrMmQwMmNYejRzcGxyUQ?oc=5",
-      "publishedAt": "2026-10-25T12:14:01Z",
-      "source": "CMoney",
-      "channel": "既有系統新聞",
-      "themes": [
-        "AI伺服器",
-        "半導體"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "既有市場事件 JSON 標題，僅作第二來源，無即時全文",
-      "id": "5aa4cee1ab259d091474",
-      "headlineGroup": "f45a782c596b15",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利多報導",
-        "theme": "AI／半導體",
-        "confidence": "高",
-        "evidence": "貿聯-KY（3665）EPS創單季新高，AI伺服器訂單動能如",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
     },
     {
       "title": "[新聞] 投資者聽信買晶片股慘賠？經濟學家任澤平",
       "url": "https://www.ptt.cc/bbs/Stock/M.1792929198.A.079.html",
       "publishedAt": "2026-10-25T11:53:18Z",
       "source": "PTT股票板（轉載）",
-      "channel": "新聞轉載",
+      "channel": "LUNA 已驗證新聞轉載",
       "themes": [
         "AI／半導體"
       ],
       "headlineRuleTone": "中立／待判",
-      "method": "PTT Stock 原文標題（新聞轉載，非獨立媒體報導／非鄉民情緒）",
+      "method": "LUNA 近期 PTT Stock 原文連結；轉貼新聞不計入散戶情緒",
       "id": "93d09a21caaa9cda01d2",
       "headlineGroup": "e11b54c33e640a"
     },
@@ -2929,59 +3217,25 @@
         "evidence": "AI價值鏈延伸至應用端 科技股選股聚焦獲利、商業模式",
         "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
       }
-    },
-    {
-      "title": "中華電信成「買房神隊友」！女主播揭友人存股近20年 獲利破800萬",
-      "url": "https://finance.ettoday.net/news/3260357",
-      "publishedAt": "2026-10-24T16:32:00Z",
-      "source": "ETtoday",
-      "channel": "財經",
-      "themes": [],
-      "headlineRuleTone": "中立／待判",
-      "method": "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向",
-      "id": "b40217950802ba94859b",
-      "headlineGroup": "802efe071ddd54",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "tone": "偏利多報導",
-        "theme": "ETF／投資",
-        "confidence": "高",
-        "evidence": "中華電信成「買房神隊友」",
-        "method": "Gemini 逐篇研判財經新聞標題語氣，不是價格預測、整篇新聞驗證或市場真實方向"
-      }
-    },
-    {
-      "title": "[新聞] AI疑慮與戰火風險升溫！資金轉抱美債 10",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1792855729.A.BC9.html",
-      "publishedAt": "2026-10-24T15:28:49Z",
-      "source": "PTT股票板（轉載）",
-      "channel": "LUNA 已驗證新聞轉載",
-      "themes": [
-        "AI／半導體"
-      ],
-      "headlineRuleTone": "中立／待判",
-      "method": "LUNA 近期 PTT Stock 原文連結；轉貼新聞不計入散戶情緒",
-      "id": "55ecfa41d6951229b7e6",
-      "headlineGroup": "02ffe2f5084e1d"
     }
   ],
   "ruleTone": {
-    "偏多": 8,
-    "偏空": 7,
-    "中立／待判": 149
+    "偏多": 12,
+    "偏空": 5,
+    "中立／待判": 154
   },
   "themes": [
     {
       "name": "AI／半導體",
-      "count": 67
+      "count": 64
     },
     {
       "name": "台股／行情",
-      "count": 53
+      "count": 56
     },
     {
       "name": "總體／利率",
-      "count": 13
+      "count": 11
     },
     {
       "name": "ETF／投資",
@@ -2989,22 +3243,22 @@
     },
     {
       "name": "資金／法人",
+      "count": 8
+    },
+    {
+      "name": "金融",
       "count": 6
     },
     {
-      "name": "原油",
+      "name": "科技股",
       "count": 6
     },
     {
-      "name": "OPEC+",
+      "name": "美國科技",
       "count": 6
     },
     {
-      "name": "塑化",
-      "count": 6
-    },
-    {
-      "name": "航運",
+      "name": "AI",
       "count": 6
     }
   ],
@@ -3012,43 +3266,69 @@
   "semantic": {
     "status": "partial",
     "model": "gemini-3.5-flash-lite",
-    "updatedAt": "2026-10-26T14:30:11.344Z",
-    "inferenceCalls": 0,
-    "attemptedCalls": 1,
-    "cached": 70,
-    "headlineReuse": 0,
-    "eligible": 164,
-    "classified": 70,
-    "unclassified": 94,
-    "coveragePct": 42.7,
-    "distinctHeadlineGroups": 156,
-    "classifiedHeadlineGroups": 65,
+    "updatedAt": "2026-10-26T19:55:33.227Z",
+    "inferenceCalls": 4,
+    "attemptedCalls": 5,
+    "cached": 51,
+    "headlineReuse": 6,
+    "eligible": 171,
+    "classified": 89,
+    "unclassified": 82,
+    "coveragePct": 52,
+    "distinctHeadlineGroups": 163,
+    "classifiedHeadlineGroups": 82,
     "repeatedHeadlineCount": 8,
     "contrastingThemes": [
       {
-        "theme": "AI／半導體",
+        "theme": "台股／行情",
         "bull": {
-          "title": "【美股盤前】馬斯克送「1大利多」 分析師喊：輝達股價翻倍",
-          "source": "Yahoo股市",
-          "url": "https://tw.news.yahoo.com/%E7%BE%8E%E8%82%A1%E7%9B%A4%E5%89%8D-%E9%A6%AC%E6%96%AF%E5%85%8B%E9%80%81-1%E5%A4%A7%E5%88%A9%E5%A4%9A-%E5%88%86%E6%9E%90%E5%B8%AB%E5%96%8A-%E8%BC%9D%E9%81%94%E8%82%A1%E5%83%B9%E7%BF%BB%E5%80%8D-121500207.html"
+          "title": "快訊／台股開盤穩了？美股4大指數開高走高 費半上漲372點",
+          "source": "ETtoday",
+          "url": "https://finance.ettoday.net/news/3261254"
         },
         "bear": {
-          "title": "半導體成韓國經濟命脈！韓央行警告：AI退燒恐重擊國運",
-          "source": "自由時報",
-          "url": "https://ec.ltn.com.tw/article/breakingnews/5619463"
+          "title": "連假後台股補跌千點？哲哲點名6檔「可逢低布局」",
+          "source": "Yahoo股市",
+          "url": "https://tw.news.yahoo.com/%E9%80%A3%E5%81%87%E5%BE%8C%E5%8F%B0%E8%82%A1%E8%A3%9C%E8%B7%8C%E5%8D%83%E9%BB%9E-%E5%93%B2%E5%93%B2%E9%BB%9E%E5%90%8D6%E6%AA%94-%E5%8F%AF%E9%80%A2%E4%BD%8E%E5%B8%83%E5%B1%80-191500404.html"
         }
       },
       {
-        "theme": "台股／行情",
+        "theme": "總體／利率",
         "bull": {
-          "title": "台股明天免驚？美股盤前止跌翻紅了",
-          "source": "自由時報",
-          "url": "https://ec.ltn.com.tw/article/breakingnews/5619351"
+          "title": "頂尖經濟學家表示債券投資人正在替聯準會執行職責 不需要再升息",
+          "source": "Business Insider Taiwan",
+          "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFAwQ2pmSEluZFhMVVRFYm03LW5IaEx2MVRLbGxuNFFjRUR2REtsdm9sbFBPRmhpZml6eUNrak4yZFBQQThUdTNqTmtsVGg5Ylo0MTVkOHN3?oc=5"
         },
         "bear": {
-          "title": "台股月跌3700點! 連假前夜盤再瀉 週二面臨補跌壓力?週二開盤剉咧等",
+          "title": "中國面臨接班、經濟和財政3重危機 恐形成完美風暴衝擊全球",
+          "source": "自由時報",
+          "url": "https://ec.ltn.com.tw/article/breakingnews/5619441"
+        }
+      },
+      {
+        "theme": "AI／半導體",
+        "bull": {
+          "title": "AI獨角獸Anthropic遞交IPO申請！美股開盤走高 聚焦科技巨頭財報",
           "source": "Yahoo股市",
-          "url": "https://tw.stock.yahoo.com/news/%E5%8F%B0%E8%82%A1%E6%9C%88%E8%B7%8C3700%E9%BB%9E-%E9%80%A3%E5%81%87%E5%89%8D%E5%A4%9C%E7%9B%A4%E5%86%8D%E7%80%89-%E9%80%B1%E4%BA%8C%E9%9D%A2%E8%87%A8%E8%A3%9C%E8%B7%8C%E5%A3%93%E5%8A%9B-%E9%80%B1%E4%BA%8C%E9%96%8B%E7%9B%A4%E5%89%89%E5%92%A7%E7%AD%89-121637862.html"
+          "url": "https://tw.news.yahoo.com/ai%E7%8D%A8%E8%A7%92%E7%8D%B8anthropic%E9%81%9E%E4%BA%A4ipo%E7%94%B3%E8%AB%8B-%E7%BE%8E%E8%82%A1%E9%96%8B%E7%9B%A4%E8%B5%B0%E9%AB%98-%E8%81%9A%E7%84%A6%E7%A7%91%E6%8A%80%E5%B7%A8%E9%A0%AD%E8%B2%A1%E5%A0%B1-162255428.html"
+        },
+        "bear": {
+          "title": "[新聞] AI太燒錢！Meta擬籌950億美元 輝達等三",
+          "source": "PTT 股票板（新聞轉載）",
+          "url": "https://www.ptt.cc/bbs/Stock/M.1793039079.A.83A.html"
+        }
+      },
+      {
+        "theme": "資金／法人",
+        "bull": {
+          "title": "2檔台股被相中！外媒揭1原因喊「把握時機快卡位」",
+          "source": "Yahoo股市",
+          "url": "https://tw.news.yahoo.com/2%E6%AA%94%E5%8F%B0%E8%82%A1%E8%A2%AB%E7%9B%B8%E4%B8%AD-%E5%A4%96%E5%AA%92%E6%8F%AD1%E5%8E%9F%E5%9B%A0%E5%96%8A-%E6%8A%8A%E6%8F%A1%E6%99%82%E6%A9%9F%E5%BF%AB%E5%8D%A1%E4%BD%8D-112200546.html"
+        },
+        "bear": {
+          "title": "台股週報》外資再砍2300億 半導體族群承壓",
+          "source": "Yahoo股市",
+          "url": "https://tw.news.yahoo.com/%E5%8F%B0%E8%82%A1%E9%80%B1%E5%A0%B1-%E5%A4%96%E8%B3%87%E5%86%8D%E7%A0%8D2300%E5%84%84-%E5%8D%8A%E5%B0%8E%E9%AB%94%E6%97%8F%E7%BE%A4%E6%89%BF%E5%A3%93-173735309.html"
         }
       },
       {
@@ -3059,66 +3339,52 @@
           "url": "https://tw.news.yahoo.com/%E5%A5%A7%E8%BF%AA%E7%A0%B840%E5%84%84%E7%BE%8E%E5%85%83%E8%B5%B4%E7%BE%8E%E8%A8%AD%E9%A6%96%E5%BA%A7%E7%B5%84%E8%A3%9D%E5%BB%A0-%E5%B7%9D%E6%99%AE%E8%87%AA%E8%B1%AA-%E5%9B%A0%E7%82%BA%E9%97%9C%E7%A8%85%E4%BB%96%E5%80%91%E6%89%8D%E4%BE%86-023700627.html"
         },
         "bear": {
-          "title": "又點名台灣偷走晶片！川普直指「價格低得離譜」 還嗆美歷任總統",
-          "source": "自由時報",
-          "url": "https://ec.ltn.com.tw/article/breakingnews/5619309"
-        }
-      },
-      {
-        "theme": "ETF／投資",
-        "bull": {
-          "title": "台股樂觀指數創新高！42%國人靠「股票基金獲利」翻轉家庭財務",
-          "source": "Yahoo股市",
-          "url": "https://tw.news.yahoo.com/%E5%8F%B0%E8%82%A1%E6%A8%82%E8%A7%80%E6%8C%87%E6%95%B8%E5%89%B5%E6%96%B0%E9%AB%98-42-%E5%9C%8B%E4%BA%BA%E9%9D%A0-%E8%82%A1%E7%A5%A8%E5%9F%BA%E9%87%91%E7%8D%B2%E5%88%A9-%E7%BF%BB%E8%BD%89%E5%AE%B6%E5%BA%AD%E8%B2%A1%E5%8B%99-002724404.html"
-        },
-        "bear": {
-          "title": "一卡車美股小型股慘套11.6萬！他持股一片綠猶豫停損 網勸：改投大型股",
-          "source": "Yahoo股市",
-          "url": "https://tw.stock.yahoo.com/news/%E5%8D%A1%E8%BB%8A%E7%BE%8E%E8%82%A1%E5%B0%8F%E5%9E%8B%E8%82%A1%E6%85%98%E5%A5%9711-6%E8%90%AC-%E4%BB%96%E6%8C%81%E8%82%A1-%E7%89%87%E7%B6%A0%E7%8C%B6%E8%B1%AB%E5%81%9C%E6%90%8D-%E7%B6%B2%E5%8B%B8-094000157.html"
+          "title": "巴西左派總統連任成功後股匯雙殺 股市開盤挫近17%",
+          "source": "中央通訊社",
+          "url": "https://www.cna.com.tw/news/aopl/202610260258.aspx"
         }
       }
     ],
     "quotaLimited": false,
-    "positive": 25,
-    "negative": 20,
-    "neutral": 25,
+    "positive": 37,
+    "negative": 23,
+    "neutral": 29,
     "publisherCounts": {
-      "Yahoo股市": 75,
-      "自由時報": 22,
-      "PTT股票板（轉載）": 10,
-      "中央通訊社": 19,
-      "鉅亨號": 2,
-      "TradingKey": 2,
-      "工商時報": 1,
-      "FXStreet": 3,
-      "TVBS新聞網": 1,
-      "CMoney": 2,
+      "Yahoo股市": 80,
+      "PTT 股票板（新聞轉載）": 1,
+      "Business Insider Taiwan": 2,
       "ETtoday": 11,
-      "Investing.com 香港 - 股市報價& 財經新聞": 1,
-      "商業電台": 1,
+      "自由時報": 23,
+      "中央通訊社": 18,
+      "CMoney": 1,
+      "鉅亨網": 3,
+      "PTT股票板（轉載）": 10,
+      "www.tmgm.com": 3,
+      "Investing.com 香港 - 股市報價& 財經新聞": 5,
+      "TradingKey": 2,
+      "KuCoin": 1,
+      "區塊客": 1,
+      "鉅亨號": 1,
+      "FXStreet": 1,
+      "工商時報": 1,
+      "TVBS新聞網": 1,
       "大紀元": 1,
-      "www.tmgm.com": 1,
-      "Mitrade": 2,
       "BigGo 財經": 2,
-      "鏈新聞 ABMedia": 1,
-      "三立新聞": 1,
-      "世界新聞網": 1,
       "富途牛牛": 1,
-      "LINE TODAY": 1,
-      "民視財經網": 1,
       "TradingView": 1,
       "MacroMicro": 1
     },
     "themeCounts": {
-      "總體／利率": 8,
-      "AI／半導體": 27,
-      "台股／行情": 17,
+      "台股／行情": 21,
+      "總體／利率": 11,
+      "AI／半導體": 37,
       "資金／法人": 4,
-      "其他": 6,
-      "政策／地緣": 3,
-      "ETF／投資": 5
+      "能源／原物料": 4,
+      "政策／地緣": 4,
+      "其他": 4,
+      "ETF／投資": 4
     },
-    "sourceCount": 25,
+    "sourceCount": 23,
     "noTrade": true,
     "error": "ORION evidence not found verbatim in headline",
     "method": "所有48小時內有效標題會逐批送 Gemini 判讀，相同標題可沿用已驗證結果。未完成時僅報已判讀樣本，不代表全體報導風向；重複標題另外標示，並非事件完全去重。"
