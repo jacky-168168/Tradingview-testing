@@ -77,7 +77,7 @@ class TestOrionNews(unittest.TestCase):
         self.assertEqual(len(rows),1)
         self.assertEqual(rows[0]["url"],url)
         self.assertEqual(rows[0]["source"],"PTT股票板（轉載）")
-        self.assertEqual(rows[0]["headlineRuleTone"],"中立／待判")
+        self.assertEqual(rows[0]["headlineRuleTone"],"偏空")
     def test_ptt_luna_fallback_requires_timestamp_origin_and_nonexpired_headline(self):
         article={"platform":"PTT","contentType":"新聞轉載","title":"[新聞] 台股明開盤恐補跌千點",
                  "url":"https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html",
