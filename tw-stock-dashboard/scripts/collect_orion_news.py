@@ -28,6 +28,7 @@ FEEDS=(
  ("ETtoday","財經","https://feeds.feedburner.com/ettoday/finance",("finance.ettoday.net","www.ettoday.net")),
  ("Yahoo股市","台股","https://tw.stock.yahoo.com/rss?category=tw-market",("tw.stock.yahoo.com","tw.finance.yahoo.com","tw.news.yahoo.com")),
  ("Yahoo股市","國際財經","https://tw.stock.yahoo.com/rss?category=intl-markets",("tw.stock.yahoo.com","tw.finance.yahoo.com","tw.news.yahoo.com")),
+ ("PTT股票板（轉載）","新聞轉載","https://www.ptt.cc/atom/stock.xml",("www.ptt.cc",)),
 )
 AT="{http://www.w3.org/2005/Atom}"
 FINANCE=re.compile(r"台股|臺股|台指|加權|上櫃|股市|股票|股價|股息|基金|股利|期貨|金融|央行|利率|匯率|美元|債券|科技|晶片|半導體|台積電|AI|ETF|景氣|GDP|就業|經濟|通膨|關稅|營收|獲利|財報|法說|銀行|投資|能源|油價|原油|WTI|布蘭特|Brent|OPEC|EIA|天然氣|黃金|金價|白銀|銀價|鉑金|鈀金|黃豆|大豆|玉米|小麥|USDA|WASDE|農產品|穀物|糖價|原糖|咖啡期貨|咖啡價格|外資|投信|上市|全球市場|美股|美債",re.I)
@@ -59,7 +60,7 @@ def clean_title(value):
 
 def request_feed(url):
     u=urllib.parse.urlsplit(url)
-    if u.scheme!="https" or u.hostname not in {"feeds.feedburner.com","news.ltn.com.tw","tw.stock.yahoo.com"}:
+    if u.scheme!="https" or u.hostname not in {"feeds.feedburner.com","news.ltn.com.tw","tw.stock.yahoo.com","www.ptt.cc"}:
         raise ValueError("RSS 來源未在白名單")
     r=urllib.request.Request(url,headers={"User-Agent":"LUNA-ORION-Research-RSS/1.0",
         "Accept":"application/rss+xml,application/atom+xml,application/xml;q=0.9"})
@@ -80,6 +81,7 @@ def parse_feed(contents,name,section,hosts,now):
         when=parse_date(x.findtext("pubDate") or x.findtext("published") or x.findtext(AT+"published")
             or x.findtext(AT+"updated") or x.findtext("{http://purl.org/dc/elements/1.1/}date"))
         if when is None or not -60<=(now-when).total_seconds()<=48*3600:continue
+        if name=="PTT股票板（轉載）" and not re.match(r"^\s*\[新聞\]",title,re.I):continue
         if not FINANCE.search(title):continue
         themes=[label for label,pattern in THEMES if re.search(pattern,title,re.I)]
         tone="偏多" if BULLISH.search(title) and not BEARISH.search(title) else \
@@ -88,7 +90,7 @@ def parse_feed(contents,name,section,hosts,now):
             "publishedAt":when.isoformat().replace("+00:00","Z"),
             "source":name,"channel":section,"themes":themes[:4],
             "headlineRuleTone":tone,
-            "method":"來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向"})
+            "method":("PTT Stock 原文標題（新聞轉載，非獨立媒體報導／非鄉民情緒）" if name=="PTT股票板（轉載）" else "來源網站的公開 RSS 標題；關鍵詞初判，不代表股價方向")})
     return rows
 
 def old_market_events(now):
@@ -114,6 +116,31 @@ def old_market_events(now):
         return rows
     except (OSError,ValueError,TypeError):return []
 
+def old_ptt_news(now):
+    """Read-only LUNA snapshot fallback: independently verified original PTT links only."""
+    path=DATA/"social_sentiment/latest.json"
+    try:
+        data=json.loads(path.read_text("utf-8"))
+        generated=parse_date(data.get("generatedAt"))
+        if not generated or not 0<=(now-generated).total_seconds()<=36*3600:return []
+        result=[]
+        for x in data.get("items",[]):
+            if not isinstance(x,dict) or x.get("platform")!="PTT" or x.get("contentType")!="新聞轉載":continue
+            title=clean_title(x.get("title"))
+            uri=urllib.parse.urlsplit(str(x.get("url") or ""))
+            published=parse_date(x.get("publishedAt"))
+            if uri.scheme!="https" or uri.hostname!="www.ptt.cc" or not re.fullmatch(r"/bbs/Stock/M\.[^/]+\.html",uri.path):continue
+            if not re.match(r"^\s*\[新聞\]",title,re.I) or not FINANCE.search(title):continue
+            if not published or not -60<=(now-published).total_seconds()<=48*3600:continue
+            result.append({"title":title,"url":str(x["url"])[:400],
+                "publishedAt":published.isoformat().replace("+00:00","Z"),
+                "source":"PTT股票板（轉載）","channel":"LUNA 已驗證新聞轉載",
+                "themes":[label for label,pattern in THEMES if re.search(pattern,title,re.I)][:4],
+                "headlineRuleTone":"中立／待判",
+                "method":"LUNA 近期 PTT Stock 原文連結；轉貼新聞不計入散戶情緒"})
+        return result
+    except (OSError,ValueError,TypeError):return []
+
 def article_key(p):return hashlib.sha256((p["source"]+"\0"+p["url"]).encode()).hexdigest()[:20]
 def unique_articles(rows,limit=180):
     seen=set();items=[]
@@ -137,6 +164,9 @@ def collect(now=None,fetch=request_feed,previous=None):
             inputs.extend(rows)
         except Exception as exc:
             state[key]={"status":"error","freshCount":0,"error":type(exc).__name__,"feed":url}
+    ptt_fallback=old_ptt_news(now)
+    state["PTT轉載快照備援"]={"status":"ok" if ptt_fallback else "empty","freshCount":len(ptt_fallback)}
+    inputs+=ptt_fallback
     fallback=old_market_events(now)
     state["既有市場新聞"]={"status":"ok" if fallback else "empty","freshCount":len(fallback)}
     inputs+=fallback
@@ -144,17 +174,18 @@ def collect(now=None,fetch=request_feed,previous=None):
     if not items and isinstance(previous,dict):
         # Failure remains explicitly visible; old data is never called fresh and never used for today's tone.
         state["history"]={"status":"no_fresh_articles","note":"可在歷史日檔查詢舊報導；不可當今天的新消息"}
+    feed_keys={name+"／"+section for name,section,_,_ in FEEDS}
     counts={k:sum(x["headlineRuleTone"]==k for x in items) for k in ("偏多","偏空","中立／待判")}
     themes={}
     for x in items:
         for t in x["themes"]:themes[t]=themes.get(t,0)+1
     return {"schema":1,"generatedAt":now.isoformat().replace("+00:00","Z"),
       "coverage":{"configuredFeeds":len(FEEDS),
-        "healthyFeeds":sum(v["status"] in ("ok","empty") for k,v in state.items() if k!="既有市場新聞" and k!="history"),
+        "healthyFeeds":sum(v["status"] in ("ok","empty") for k,v in state.items() if k in feed_keys),
         "sources":state,"allTaiwanMediaCovered":False},
       "items":items,"ruleTone":counts,
       "themes":[{"name":k,"count":v} for k,v in sorted(themes.items(),key=lambda v:-v[1])[:9]],
-      "method":"跨媒體公開 RSS 標題＋既有市場新聞；只儲存標題、來源、發稿時間與原文連結。分類是報導語氣，不等於讀者情緒或股票績效；不宣稱涵蓋台灣所有媒體。"}
+      "method":"財經公開 RSS、PTT 股票板新聞轉載標題、既有市場新聞及 LUNA 快照備援；保留原始來源網址與時間。PTT 轉載非原始媒體報導且不列入散戶情緒投票；標題不代表事件已證實或市場方向。"}
 
 def archive(report,now=None,old=None):
     now=now or dt.datetime.now(UTC)
