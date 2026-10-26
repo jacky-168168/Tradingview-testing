@@ -61,6 +61,38 @@ class TestOrionNews(unittest.TestCase):
         self.assertEqual(len(rows),3)
         self.assertEqual({x["title"] for x in rows},set(headlines))
         self.assertTrue(all(x["channel"]=="既有系統新聞" for x in rows))
+    def test_ptt_feed_accepts_original_stock_news_only(self):
+        url="https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html"
+        raw=f"""<feed xmlns="http://www.w3.org/2005/Atom">
+          <entry><title>[新聞] 台股明開盤恐補跌千點 外資賣超</title>
+            <link href="{url}"/><updated>2026-10-25T02:00:00Z</updated></entry>
+          <entry><title>[討論] 台股明天反彈？</title>
+            <link href="https://www.ptt.cc/bbs/Stock/M.1792918344.A.AAA.html"/>
+            <updated>2026-10-25T02:00:00Z</updated></entry>
+          <entry><title>[新聞] 台股暴跌惡意偽造網址</title>
+            <link href="https://evil.example/bbs/Stock/M.1792918344.A.html"/>
+            <updated>2026-10-25T02:00:00Z</updated></entry>
+        </feed>""".encode()
+        rows=mod.parse_feed(raw,"PTT股票板（轉載）","新聞轉載",("www.ptt.cc",),N)
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]["url"],url)
+        self.assertEqual(rows[0]["source"],"PTT股票板（轉載）")
+        self.assertEqual(rows[0]["headlineRuleTone"],"偏空")
+    def test_ptt_luna_fallback_requires_timestamp_origin_and_nonexpired_headline(self):
+        article={"platform":"PTT","contentType":"新聞轉載","title":"[新聞] 台股明開盤恐補跌千點",
+                 "url":"https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html",
+                 "publishedAt":"2026-10-25T02:00:00Z"}
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)/"social_sentiment";root.mkdir()
+            (root/"latest.json").write_text(json.dumps({"generatedAt":N.isoformat(),
+                "items":[article,{**article,"url":"https://not-ptt.example/bbs/Stock/M.fake.html"},
+                         {**article,"publishedAt":"2026-10-22T02:00:00Z"},
+                         {**article,"contentType":"投資討論"}]},ensure_ascii=False),encoding="utf-8")
+            with patch.object(mod,"DATA",Path(folder)):
+                rows=mod.old_ptt_news(N)
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]["channel"],"LUNA 已驗證新聞轉載")
+        self.assertEqual(len(mod.unique_articles(rows+rows)),1)
     def test_failed_feeds_report_truth_and_can_include_verified_success(self):
         def mock(url):
             if "rsscna/finance" in url:return feed()

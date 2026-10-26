@@ -50,6 +50,31 @@ class MajorMarketNewsTest(unittest.TestCase):
   self.assertEqual(parse_feed(old_rss.encode(),FEED,now=NOW),[])
  def test_recent_rss_articles_must_still_pass(self):
   self.assertEqual(len(parse_feed(XML.encode(),FEED,now=NOW)),1)
+ def test_ptt_atom_posts_include_only_current_original_news_reposts(self):
+  from market_major_events import parse_ptt_stock_news
+  raw='''<feed xmlns="http://www.w3.org/2005/Atom">
+   <entry><title>[新聞] 台股明開盤恐補跌千點</title>
+    <link href="https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html"/>
+    <updated>2026-10-16T07:00:00Z</updated></entry>
+   <entry><title>[閒聊] 台股明開盤</title>
+    <link href="https://www.ptt.cc/bbs/Stock/M.1792918325.A.BBD.html"/>
+    <updated>2026-10-16T07:00:00Z</updated></entry>
+   <entry><title>[新聞] 台股暴跌 假文章</title>
+    <link href="https://evil.example/bbs/Stock/M.1792918326.A.BBD.html"/>
+    <updated>2026-10-16T07:00:00Z</updated></entry>
+   </feed>'''
+  result=parse_ptt_stock_news(raw.encode(),now=NOW)
+  self.assertEqual(len(result),1)
+  self.assertEqual(result[0]["category"],"PTT轉載")
+  self.assertEqual(result[0]["originType"],"forum_repost")
+  self.assertFalse(result[0]["confirmed"])
+ def test_ptt_atom_excludes_expired_news(self):
+  from market_major_events import parse_ptt_stock_news
+  raw='''<feed xmlns="http://www.w3.org/2005/Atom"><entry>
+   <title>[新聞] 台股明開盤恐補跌千點</title>
+   <link href="https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html"/>
+   <updated>2026-10-13T07:00:00Z</updated></entry></feed>'''
+  self.assertEqual(parse_ptt_stock_news(raw.encode(),now=NOW),[])
  def test_commodity_query_coverage_is_independent(self):
   expected={
    "原油／能源":("WTI","EIA","天然氣"),

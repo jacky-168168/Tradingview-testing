@@ -119,6 +119,13 @@ jobs:
           assert d['schema']==1 and d['generatedAt'] and len(d['items'])<=80
           assert all(x['platform'] in {'PTT','Threads','Instagram','Bluesky'} and x['url'].startswith('https://') for x in d['items'])
           assert all(x['platform']=='新聞' for x in d['newsItems'])
+          reposts=d.get('pttNewsItems',[])
+          assert isinstance(reposts,list) and len(reposts)<=40
+          assert all(x['platform']=='PTT' and x['contentType']=='新聞轉載' and
+                     x['investmentEligible'] is False and x['url'].startswith('https://www.ptt.cc/bbs/Stock/')
+                     for x in reposts)
+          assert len({x['url'] for x in reposts})==len(reposts)
+          assert all('pushScore' not in x or isinstance(x['pushScore'],int) for x in reposts)
           media=d.get('creatorMedia',[])
           assert isinstance(media,list) and len(media)<=70
           assert all(x['platform'] in {'YouTube','Facebook'} and x['url'].startswith('https://') and x.get('title') and x.get('publishedAt') for x in media)
