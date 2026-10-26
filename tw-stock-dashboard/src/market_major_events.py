@@ -62,6 +62,8 @@ OFFICIAL=[
   "themes":["升降息","美元","黃金","科技股"],"confirmed":True},
 ]
 UA="Mozilla/5.0 (compatible; MarketCatalystRadar/1.0; +https://github.com/jacky-168168/Tradingview-testing)"
+PTT_ATOM="https://www.ptt.cc/atom/stock.xml"
+PTT_NEWS=re.compile(r"台股|臺股|台指|加權|台積電|股價|股市|美股|期貨|金融|ETF|股票|關稅|利率|油價|晶片|AI|半導體|暴跌|補跌",re.I)
 PRIORITY=re.compile(r"漲價|調漲|上調|上漲|下跌|走高|走低|漲幅|跌幅|創高|創低|大漲|大跌|暴跌|暴增|飆升|缺貨|產能|擴產|突破|訂單|需求|財報|財測|FOMC|降息|升息|開幕|展覽|停產|限產|出口管制|guidance|earnings|surge|cuts|庫存|減產|增產|出口|收成|乾旱|歉收|供需|供應|禁運|播種|產量|進口|oil inventory|harvest|drought|USDA|EIA",re.I)
 
 def rss_url(q):
@@ -105,13 +107,43 @@ def parse_feed(xml,feed,now=None):
          "themes":themes,"confirmed":False})
     return result
 
+def parse_ptt_stock_news(xml,now=None):
+    """Only original timestamped PTT Stock [新聞] links; NOT verified journalism or social votes."""
+    now=now or datetime.now(TZ)
+    root=ET.fromstring(xml)
+    entries=root.findall("{http://www.w3.org/2005/Atom}entry")
+    if not entries:raise ValueError("PTT Atom 無項目")
+    output=[]
+    for post in entries[:90]:
+        title=" ".join((post.findtext("{http://www.w3.org/2005/Atom}title") or "").split())[:180]
+        if not re.match(r"^\[新聞\]",title) or not PTT_NEWS.search(title):continue
+        url=next((x.get("href") for x in post.findall("{http://www.w3.org/2005/Atom}link") if x.get("href")),"")
+        uri=urllib.parse.urlsplit(url)
+        if uri.scheme!="https" or uri.hostname!="www.ptt.cc" or not re.fullmatch(r"/bbs/Stock/M\.[^/]+\.html",uri.path):continue
+        published=post.findtext("{http://www.w3.org/2005/Atom}published") or post.findtext("{http://www.w3.org/2005/Atom}updated")
+        try:stamp=datetime.fromisoformat(str(published).replace("Z","+00:00")).astimezone(TZ)
+        except (TypeError,ValueError):continue
+        if stamp>now+timedelta(minutes=5) or stamp<now-timedelta(hours=FRESH_NEWS_HOURS):continue
+        output.append({"id":"news-ptt-"+hashlib.sha256(url.encode()).hexdigest()[:16],
+          "type":"news","category":"PTT轉載","title":title,"date":stamp.strftime("%Y-%m-%d"),
+          "publishedAt":stamp.isoformat(timespec="seconds"),
+          "source":"PTT 股票板（新聞轉載）","url":url,"themes":["PTT","台股"],
+          "confirmed":False,"originType":"forum_repost"})
+    return output
+
+def fetch_ptt_stock_news():
+    req=urllib.request.Request(PTT_ATOM,headers={"User-Agent":UA,"Accept":"application/atom+xml,application/xml"})
+    with urllib.request.urlopen(req,timeout=14) as response:raw=response.read(900_000)
+    return parse_ptt_stock_news(raw)
+
 def build(now=None,feeds=None,prior=None):
     now=now or datetime.now(TZ)
-    stats={"success":0,"total":len(QUERIES)}
+    stats={"success":0,"total":len(QUERIES)+(1 if feeds is None else 0)}
     found=[]
     if feeds is None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
             futures=[pool.submit(fetch_feed,q) for q in QUERIES]
+            futures.append(pool.submit(fetch_ptt_stock_news))
             for future in concurrent.futures.as_completed(futures):
                 try:found.extend(future.result());stats["success"]+=1
                 except Exception as exc:print("FEED_UNAVAILABLE",str(exc)[:180],file=sys.stderr)
