@@ -46,10 +46,21 @@ function explain(rows){
  return {date:last[0],value:last[1],zone:mood,delta5:delta,delta1:d1,spx5:r5,spx20:r20,
   title,guide,risk,summary:"近5交易日：情緒 "+(delta>=0?"+":"")+delta.toFixed(1)+" 分；S&P 500 "+pct(r5)+"。"};
 }
+function lineSegments(rows,column){
+ const segments=[];let segment=[];
+ for(let i=0;i<rows.length;i++){
+  const v=rows[i][column];
+  if(v===null){if(segment.length)segments.push(segment);segment=[];continue;}
+  if(!Number.isFinite(v))throw Error("圖表資料不得包含無效數值");
+  segment.push([i,v]);
+ }
+ if(segment.length)segments.push(segment);
+ return segments;
+}
 const E=(tag,props={},text)=>{const e=document.createElementNS(NS,tag);for(const [k,v]of Object.entries(props))e.setAttribute(k,String(v));if(text!==undefined)e.textContent=text;return e};
 const WIDTH=1000,LEFT=52,RIGHT=20,BOTTOM=24,TOP=13;
 function plot(svg,rows,column,isFear){
- const height=isFear?206:148,minX=LEFT,maxX=WIDTH-RIGHT,values=rows.map(x=>x[column]).filter(v=>v!==null),lo=isFear?0:Math.min(...values),hi=isFear?100:Math.max(...values);
+ const height=isFear?206:148,minX=LEFT,maxX=WIDTH-RIGHT,values=rows.map(x=>x[column]).filter(v=>v!==null),lo=isFear?0:values.length?Math.min(...values):0,hi=isFear?100:values.length?Math.max(...values):1;
  const span=hi-lo||1,pad=isFear?0:span*0.08,minY=lo-pad,maxY=hi+pad;
  const y=v=>height-BOTTOM-(v-minY)/(maxY-minY)*(height-TOP-BOTTOM);
  const x=i=>minX+(i/(rows.length-1))*(maxX-minX);
@@ -63,15 +74,20 @@ function plot(svg,rows,column,isFear){
   svg.appendChild(E("line",{x1:minX,x2:maxX,y1:Y,y2:Y,stroke:"#59718c","stroke-opacity":".35","stroke-dasharray":"5 6"}));
   svg.appendChild(E("text",{x:minX-7,y:Y+4,"text-anchor":"end",fill:"#cbd5e1","font-size":"12"},isFear?String(Math.round(v)):String(Math.round(v).toLocaleString("en-US"))));
  }
- const points=rows.map((r,i)=>x(i).toFixed(2)+","+y(r[column]).toFixed(2)).join(" ");
- svg.appendChild(E("polyline",{points,fill:"none",stroke:isFear?"#f8bd62":"#60cb98","stroke-width":isFear?3:2.6,"stroke-linejoin":"round","stroke-linecap":"round"}));
+ for(const segment of lineSegments(rows,column)){
+  if(segment.length<2){
+   const [i,v]=segment[0];svg.appendChild(E("circle",{cx:x(i),cy:y(v),r:"2.8",fill:isFear?"#f8bd62":"#60cb98"}));continue;
+  }
+  const points=segment.map(([i,v])=>x(i).toFixed(2)+","+y(v).toFixed(2)).join(" ");
+  svg.appendChild(E("polyline",{points,fill:"none",stroke:isFear?"#f8bd62":"#60cb98","stroke-width":isFear?3:2.6,"stroke-linejoin":"round","stroke-linecap":"round"}));
+ }
  for(let i=0;i<5;i++){
   const idx=Math.round((rows.length-1)*i/4);
   svg.appendChild(E("text",{x:x(idx),y:height-4,"text-anchor":i===0?"start":i===4?"end":"middle",fill:"#aebdd0","font-size":"12"},rows[idx][0].slice(2).replace(/-/g,"/")));
  }
  const line=E("line",{x1:x(rows.length-1),x2:x(rows.length-1),y1:TOP,y2:height-BOTTOM,stroke:"#f8fafc","stroke-dasharray":"4 5",opacity:".7"});
  const point=E("circle",{cx:x(rows.length-1),cy:rows.at(-1)[column]===null?0:y(rows.at(-1)[column]),r:"5",fill:isFear?"#f8bd62":"#60cb98",stroke:"#1e293b","stroke-width":"2"});
- svg.append(line,point);
+ svg.append(line,point);if(rows.at(-1)[column]===null)point.setAttribute("visibility","hidden");
  return {select(i){line.setAttribute("x1",x(i));line.setAttribute("x2",x(i));point.setAttribute("cx",x(i));point.setAttribute("cy",rows[i][column]===null?0:y(rows[i][column]));point.setAttribute("visibility",rows[i][column]===null?"hidden":"visible");},nearest(px){return Math.max(0,Math.min(rows.length-1,Math.round((px-minX)/(maxX-minX)*(rows.length-1))))}};
 }
 function build(){
@@ -127,7 +143,7 @@ function build(){
    if(!response.ok)throw Error("HTTP "+response.status);
    data=await response.json();rows=validate(data);
    const freshness=scope.USMarketFreshness?.warning(data.asOf)||{stale:false,message:""};
-   $("fgSource").textContent="CNN Fear & Greed／S&P 500｜CNN資料日 "+String(data.cnnHistoricalLast||"未知")+"｜SPX資料日 "+String(data.spxLast||"未知")+"｜最後共同收盤日："+data.asOf+"｜歷史 "+rows.length+" 筆";
+   $("fgSource").textContent="CNN Fear & Greed／S&P 500｜CNN資料日 "+String(data.cnnHistoricalLast||"未知")+"｜SPX資料日 "+String(data.spxLast||"未知")+"｜最新資料日："+data.asOf+"｜歷史 "+rows.length+" 筆";
    const alert=$("fgMarketFreshness");
    if(alert){alert.hidden=!freshness.stale;alert.textContent=freshness.message;}
    output.textContent="美股情緒是風險背景，不能直接視為台股買進或賣出訊號。低分不等於立即見底，高分也不代表必跌。";
@@ -140,7 +156,7 @@ function build(){
  retry.addEventListener("click",load);
  void load();
 }
-const api={validate,recent,zone,explain};
+const api={validate,recent,zone,explain,lineSegments};
 scope.USFearGreed=api;
 if(typeof module!=="undefined"&&module.exports)module.exports=api;
 if(typeof document!=="undefined"){
