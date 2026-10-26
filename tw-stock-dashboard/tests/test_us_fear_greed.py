@@ -22,7 +22,7 @@ class TestUSFearGreed(unittest.TestCase):
     def test_missing_score_not_fake_zero(self):
         c,s=self.fixtures();c["fear_and_greed_historical"]["data"][12]["y"]=None
         o=to_archive(c,s)
-        self.assertEqual(len(o["rows"]),255)
+        self.assertEqual(len(o["rows"]),len(s["rows"]))
         self.assertIsNone(next(r for r in o["rows"] if r[0]==(datetime(2025,1,13,tzinfo=timezone.utc).date().isoformat()))[1])
         self.assertGreater(next(r for r in o["rows"] if r[0]=="2025-01-13")[2],100)
     def test_one_source_can_be_newer(self):
