@@ -85,6 +85,28 @@ class SocialCollectorTest(unittest.TestCase):
             item=mod.sanitize("PTT",text,"https://www.ptt.cc/bbs/Stock/M.1.html","2026-10-24T03:00:00Z",NOW)
             self.assertEqual(item["stance"],"中立／難判")
         self.assertEqual(mod.score("多頭漲停突破"),"偏多")
+    def test_ptt_repost_is_listed_as_news_not_survey_voter(self):
+        raw='''<feed xmlns="http://www.w3.org/2005/Atom"><entry>
+          <title>[新聞] 台股明開盤恐補跌千點</title>
+          <link href="https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html"/>
+          <updated>2026-10-24T03:00:00Z</updated></entry></feed>'''.encode()
+        with patch.object(mod,"news_items",return_value=([],"無新聞")):
+            d=mod.collect(now=NOW,fetch=lambda url:raw if url in mod.PTT_FEEDS else
+                b"<div class='title'></div>",old={},environmental={})
+        self.assertEqual(len(d["pttNewsItems"]),1)
+        self.assertEqual(d["pttNewsItems"][0]["contentType"],"新聞轉載")
+        self.assertEqual(d["social"]["sample"],0)
+        self.assertEqual(d["social"]["repostedNews"],1)
+        self.assertNotIn("pushScore",d["pttNewsItems"][0])
+    def test_ptt_public_push_labels_are_optional_and_not_sentiment(self):
+        original="https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html"
+        html='''<div class="r-ent"><div class="nrec"><span class="hl f1">爆</span></div>
+            <div class="title"><a href="/bbs/Stock/M.1792918324.A.BBD.html">[新聞] 台股明開盤</a></div></div>'''
+        votes=mod.ptt_board_reactions(html.encode())
+        self.assertEqual(votes[original]["pushScore"],100)
+        self.assertEqual(votes[original]["pushLabel"],"爆")
+        self.assertEqual(mod.score("[新聞] 台股暴跌"),"偏空")
+        self.assertEqual(mod.classify_discussion("[新聞] 台股暴跌"),("新聞轉載",False))
     def test_stock_heat_rejects_news_copy_and_substring_collision(self):
         catalog=("2026-10-24",[{"code":"2330","name":"台積電","theme":"半導體","ret20":35,"rvol":3,"ma20Slope":8}])
         titles=["[討論] 2330 又噴","[討論] 2330 強勢","[新聞] 台積電爆漲"]
