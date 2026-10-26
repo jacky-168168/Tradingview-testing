@@ -427,10 +427,17 @@ jobs:
                   assert blob_sha(js)==j.group(1) and blob_sha(css)==c.group(1),'Asset content mismatch'
                   assert b'history.json' in js and b'ArrowLeft' in js
                   history=json.loads(read('data/research/us_fear_greed/history.json?fg-check='+str(time.time())))
-                  assert history['version']=='US_CNN_FEAR_GREED_SPX_V1'
+                  assert history['version'] in ('US_CNN_FEAR_GREED_SPX_V1','US_CNN_FEAR_GREED_SPX_V2')
                   assert history['columns']==['date','fearGreed','spx']
                   assert len(history['rows'])>=1000 and history['rows'][-1][0]==history['asOf']
-                  assert all(0<=r[1]<=100 and r[2]>100 for r in history['rows'])
+                  assert all(isinstance(r,list) and len(r)==3 and (r[1] is not None or r[2] is not None)
+                             and (r[1] is None or (isinstance(r[1],(int,float)) and not isinstance(r[1],bool) and 0<=r[1]<=100))
+                             and (r[2] is None or (isinstance(r[2],(int,float)) and not isinstance(r[2],bool) and r[2]>100))
+                             for r in history['rows'])
+                  if history['version']=='US_CNN_FEAR_GREED_SPX_V1':
+                      assert all(r[1] is not None and r[2] is not None for r in history['rows'])
+                  else:
+                      assert history['asOf']==max(history['cnnHistoricalLast'],history['spxLast'])
                   assert 'https://edition.cnn.com/markets/fear-and-greed' in html
                   print('PASS LIVE CNN Fear & Greed / SPX',len(history['rows']),'rows, asOf',history['asOf'])
                   break
