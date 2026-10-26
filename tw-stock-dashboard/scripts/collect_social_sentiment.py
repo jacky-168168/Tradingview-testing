@@ -1,0 +1,565 @@
+#!/usr/bin/env python3
+"""Read-only public social sentiment collector. Fails closed; no invented discussion counts."""
+from __future__ import annotations
+import datetime as dt
+import email.utils
+import html
+import json
+import os
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+UTC = dt.timezone.utc
+ROOT = Path(__file__).resolve().parents[1] / "docs"
+PTT_URL = "https://www.ptt.cc/atom/stock.xml"
+PTT_FEEDS = (PTT_URL, "https://www.ptt.cc/atom/Stock.xml")
+PTT_BOARD = "https://www.ptt.cc/bbs/Stock/index.html"
+PTT_PUBLIC_FEED = "https://feed.cqd.tw/ptt/Stock/title/.*"
+BLUESKY_API = "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts"
+BLUESKY_BACKUP_API = "https://api.bsky.app/xrpc/app.bsky.feed.searchPosts"
+BLUESKY_QUERIES = ("台股","台積電","台指期","加權指數","台股 ETF","台股 當沖","台股 正二","CPO 股票","台灣 股票")
+YOUTUBE_SEARCH_API = "https://www.googleapis.com/youtube/v3/search"
+YOUTUBE_SEARCH_TERMS = ("台股","台積電 股票","台指期")
+FACEBOOK_API = "https://graph.facebook.com/v24.0/"
+STOCK_PATH = ROOT / "data/latest.json"
+NEWS_PATH = ROOT / "data/market_events/latest.json"
+OUT_PATH = ROOT / "data/social_sentiment/latest.json"
+UP = ("看多", "多頭", "轉強", "突破", "創高", "噴出", "漲停", "軋空", "強勢", "反攻", "上攻", "拉升", "飆漲")
+DOWN = ("看空", "空頭", "轉弱", "破底", "崩盤", "暴跌", "跌停", "套牢", "利空", "出貨", "殺盤", "跳水", "重挫", "賣壓")
+IGNORE = re.compile(r"^\s*(?:Re:|Fw:|\[公告\]|\[版務\])", re.I)
+REPOST = re.compile(r"^\s*(?:\[新聞\]|【新聞】|\[轉錄\]|\[情報\])", re.I)
+UNCERTAIN = re.compile(r"反指標|反串|諷刺|笑死|真的嗎|求救|已讀不回|韭菜|崩到起飛")
+INVESTMENT = re.compile(r"股票|股價|股市|台股|臺股|台指期|加權指數|ETF|etf|正二|正2|反一|反1|當沖|交易|投資|買進|買入|買不起|買股|賣出|加碼|出清|持股|持有|做多|做空|多單|空單|多頭|空頭|突破|反彈|回測|走勢|看多|看空|上攻|轉強|暴跌|崩盤|漲幅|跌幅|套牢|停損|停利|獲利|大盤|漲停|跌停|成交量|融資|融券|外資|投信|法人|股息|殖利率|營收|本益比|均線|KD|RSI|K線|期貨|期指|股災|融資維持率",re.I)
+NON_INVESTMENT = re.compile(r"運動會|員工獎金|颱風假|招募人才|徵才|新廠開幕|運動賽事")
+NEWS_TEXT = re.compile(r"^\s*(?:#?中央社(?:即時)?新聞|財經新聞|【(?:快訊|新聞)】|\[新聞\]|新聞稿|快訊[：:])|中央社記者|記者.{1,18}報導|轉載",re.I)
+TAIWAN_RELEVANCE = re.compile(r"台股|臺股|台灣|臺灣|台積電|台指期|加權指數|上市櫃|證交所|臺證|0050|0056|00631L|00675L|00878|00919",re.I)
+ATOM = "{http://www.w3.org/2005/Atom}"
+
+def iso(value):
+    if not value:
+        return None
+    try:
+        obj = dt.datetime.fromisoformat(str(value).strip().replace("Z", "+00:00"))
+        return obj.astimezone(UTC) if obj.tzinfo else None
+    except (ValueError, TypeError):
+        return None
+
+def score(title):
+    text = str(title)
+    if REPOST.search(text) or UNCERTAIN.search(text):
+        return "中立／難判"
+    up, down = any(s in text for s in UP), any(s in text for s in DOWN)
+    return "偏多" if up and not down else "偏空" if down and not up else "中立／難判"
+
+def classify_discussion(text, platform="PTT"):
+    """Conservative title-only content classifier; not semantic LLM inference."""
+    value=str(text or "")
+    if REPOST.search(value) or NEWS_TEXT.search(value):
+        return "新聞轉載", False
+    if NON_INVESTMENT.search(value) and not INVESTMENT.search(value):
+        return "非投資話題", False
+    if not INVESTMENT.search(value):
+        return "非投資話題", False
+    return "投資討論", True
+
+def request(url, token=None):
+    parsed = urllib.parse.urlsplit(url)
+    if parsed.scheme != "https" or parsed.hostname not in {"www.ptt.cc", "feed.cqd.tw", "public.api.bsky.app", "api.bsky.app", "graph.threads.net", "graph.facebook.com", "www.googleapis.com"}:
+        raise ValueError("拒絕非白名單 HTTPS 來源")
+    h = {"User-Agent": "Tradingview-testing-SocialResearch/1.0", "Accept": "application/atom+xml, text/html;q=0.9, application/json;q=0.8"}
+    if token:
+        h["Authorization"] = "Bearer " + token
+    with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=20) as r:
+        return r.read(1_500_000)
+
+def sanitize(source, title, url, date, now, max_hours=48):
+    t = iso(date)
+    if t is None or (now-t).total_seconds() < -60 or (now-t).total_seconds() > max_hours*3600:
+        return None
+    link = urllib.parse.urlsplit(str(url))
+    allowed = {"PTT": {"www.ptt.cc"}, "Threads": {"www.threads.net", "threads.net", "www.threads.com", "threads.com"},
+               "Instagram": {"www.instagram.com", "instagram.com"}, "Bluesky": {"bsky.app"}, "新聞": None}
+    if link.scheme != "https" or (allowed[source] is not None and link.hostname not in allowed[source]):
+        return None
+    if not link.netloc or len(str(title).strip()) < 4:
+        return None
+    title = re.sub(r"[\x00-\x1f]+", " ", str(title).strip())[:160]
+    content_type,eligible=classify_discussion(title,source)
+    return {"platform":source, "title":title, "url":str(url)[:350], "publishedAt":t.isoformat().replace("+00:00", "Z"),
+            "stance":score(title) if eligible else "中立／難判", "contentType":content_type,
+            "investmentEligible":eligible,
+            "tone":"語意不明／疑似反諷" if UNCERTAIN.search(title) else "未驗證", "method":"標題規則（非留言全文）"}
+
+def ptt(xml, now):
+    root = ET.fromstring(xml)
+    rows = []
+    for entry in root.findall(ATOM+"entry"):
+        title = (entry.findtext(ATOM+"title") or "").strip()
+        if IGNORE.search(title):
+            continue
+        link = next((x.get("href") for x in entry.findall(ATOM+"link") if x.get("href")), "")
+        item = sanitize("PTT", title, link, entry.findtext(ATOM+"published") or entry.findtext(ATOM+"updated"), now)
+        if item:
+            rows.append(item)
+    return rows
+
+
+def ptt_board(html_bytes, now):
+    """HTML emergency fallback: extract public board links; post-ID time is an estimate, never official publishedAt."""
+    body=html_bytes.decode("utf-8","replace") if isinstance(html_bytes,bytes) else str(html_bytes)
+    out=[]
+    for block in re.findall(r'<div\b[^>]*class=["\'][^"\']*\btitle\b[^"\']*["\'][^>]*>(.*?)</div>',body,re.I|re.S):
+        a=re.search(r'<a\b[^>]*href=["\'](/bbs/Stock/M\.(\d{9,11})\.[^"\']+\.html)["\'][^>]*>(.*?)</a>',block,re.I|re.S)
+        if not a:continue
+        title=html.unescape(re.sub(r"<[^>]+>","",a.group(3))).strip()
+        if IGNORE.search(title):continue
+        try:published=dt.datetime.fromtimestamp(int(a.group(2)),tz=UTC).isoformat()
+        except (ValueError,OverflowError,OSError):continue
+        row=sanitize("PTT",title,"https://www.ptt.cc"+html.unescape(a.group(1)),published,now)
+        if row:
+            row["timestampBasis"]="文章網址 ID 推算，非官方發文時間"
+            out.append(row)
+    return out
+
+
+def ptt_public_feed(xml,now):
+    """Third-party public feed, accepting ONLY direct original PTT stock links."""
+    root=ET.fromstring(xml)
+    entries=root.findall(ATOM+"entry")
+    if not entries:entries=root.findall("./channel/item")
+    out=[]
+    for x in entries:
+        title=x.findtext(ATOM+"title") or x.findtext("title") or ""
+        if IGNORE.search(title):continue
+        lnk=next((a.get("href") for a in x.findall(ATOM+"link") if a.get("href")),"")
+        lnk=lnk or (x.findtext("link") or "")
+        dtstr=x.findtext(ATOM+"published") or x.findtext(ATOM+"updated") or x.findtext("pubDate")
+        if dtstr and not iso(dtstr):
+            try:dtstr=email.utils.parsedate_to_datetime(dtstr).isoformat()
+            except (ValueError,TypeError):dtstr=None
+        row=sanitize("PTT",title,lnk,dtstr,now)
+        if row:
+            row["feedBasis"]="第三方公開 RSS/Atom；保留 PTT 原文連結"
+            out.append(row)
+    return out
+
+def collect_ptt(now,fetch):
+    failures=[]
+    for url in PTT_FEEDS:
+        try:
+            rows=ptt(fetch(url),now)
+            if rows:
+                return rows,{"status":"ok","method":"官方 Atom","url":url,"freshCount":len(rows),"timestampBasis":"Atom 發布時間"}
+            failures.append("Atom 無48小時有效貼文")
+        except Exception as exc:
+            failures.append(type(exc).__name__)
+    try:
+        rows=ptt_board(fetch(PTT_BOARD),now)
+        if rows:
+            return rows,{"status":"ok","method":"公開看板 HTML 備援","url":PTT_BOARD,
+                         "freshCount":len(rows),"timestampBasis":"網址時間戳推算，僅供研究"}
+        failures.append("HTML 無48小時有效貼文")
+    except Exception as exc:
+        failures.append(type(exc).__name__)
+    try:
+        rows=ptt_public_feed(fetch(PTT_PUBLIC_FEED),now)
+        if rows:
+            return rows,{"status":"ok","method":"第三方公開 PTT 訂閱備援","url":PTT_PUBLIC_FEED,
+                         "freshCount":len(rows),"feedBasis":"只保留原始 PTT URL"}
+        failures.append("第三方訂閱無有效貼文")
+    except Exception as exc:
+        failures.append(type(exc).__name__)
+    return [],{"status":"error" if any(x not in {"Atom 無48小時有效貼文","HTML 無48小時有效貼文","第三方訂閱無有效貼文"} for x in failures) else "empty",
+               "reason":"；".join(failures)[:160],"url":PTT_URL,"freshCount":0}
+
+def ptt_board_reactions(page):
+    """Read visible PTT Stock board push labels; don't invent unavailable scores."""
+    body=page.decode("utf-8","replace") if isinstance(page,bytes) else str(page)
+    counts={}
+    for block in re.split(r'<div\s+class=["\']r-ent["\']',body,flags=re.I)[1:]:
+        m=re.search(r'href=["\'](/bbs/Stock/M\.[^"\']+\.html)["\']',block,re.I)
+        if not m:continue
+        v=re.search(r'class=["\'][^"\']*\bnrec\b[^"\']*["\'][^>]*>(.*?)</div>',block,re.I|re.S)
+        if not v:continue
+        raw=re.sub(r'<[^>]+>','',v.group(1)).strip()
+        if raw=="爆":score=100
+        elif re.fullmatch(r"\d{1,2}",raw):score=int(raw)
+        elif re.fullmatch(r"X\d",raw):score=-10*int(raw[1:])
+        else:continue
+        counts["https://www.ptt.cc"+html.unescape(m.group(1))]={
+            "pushScore":score,"pushLabel":raw,"pushBasis":"PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"}
+    return counts
+
+def stock_catalog():
+    try:
+        data=json.loads(STOCK_PATH.read_text("utf-8"))
+        rows=data.get("models",{}).get("G",[])
+        found=[]
+        for r in rows[:20]:
+            code=str(r.get("code",""))
+            name=str(r.get("name","")).strip()
+            if not re.fullmatch(r"\d{4}",code) or not 2<=len(name)<=15:continue
+            found.append({"code":code,"name":name,"theme":str(r.get("theme",""))[:160],
+                          "ret20":r.get("ret20"),"rvol":r.get("rvol"),"ma20Slope":r.get("ma20Slope")})
+        return str(data.get("dataDate","")),found
+    except (OSError,ValueError,TypeError,AttributeError):
+        return "",[]
+
+def mentions_stock(title,row):
+    code=row["code"];name=row["name"]
+    return bool(re.search(r"(?<!\d)"+re.escape(code)+r"(?!\d)",title) or name in title)
+
+def topic_heat(items,now,catalog):
+    date,stocks=catalog
+    result=[]
+    for r in stocks:
+        hit=[x for x in items if mentions_stock(x["title"],r)]
+        if not hit:continue
+        current=sum(0 <= (now-iso(x["publishedAt"])).total_seconds()<=86400 for x in hit)
+        previous=sum(86400 < (now-iso(x["publishedAt"])).total_seconds()<=172800 for x in hit)
+        organic=sum(x.get("contentType")!="新聞轉載" for x in hit)
+        extended=(isinstance(r["ret20"],(int,float)) and r["ret20"]>=25 and
+                 ((isinstance(r["rvol"],(int,float)) and r["rvol"]>=2) or
+                  (isinstance(r["ma20Slope"],(int,float)) and r["ma20Slope"]>=5)))
+        result.append({"code":r["code"],"name":r["name"],"theme":r["theme"],"sample":len(hit),
+                       "recent24h":current,"prior24h":previous,"originalDiscussion":organic,
+                       "overheatWatch":bool(current>=3 and organic>=3 and extended),
+                       "links":[{"title":x["title"],"url":x["url"],"platform":x["platform"]} for x in hit[:3]]})
+    result.sort(key=lambda x:(-x["recent24h"],-x["sample"],x["code"]))
+    return {"sourceDate":date,"stocks":result[:10],
+            "method":"僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"}
+
+def bluesky(now, fetch=request, diagnostic=None):
+    """Public Bluesky search; preserve valid queries if later search fails or rate-limits."""
+    rows=[]
+    state=diagnostic if diagnostic is not None else {}
+    state.update({"queriesAttempted":0,"queriesSucceeded":0,"queriesFailed":0,"rateLimited":False})
+    _,g_top=stock_catalog()
+    queries=list(BLUESKY_QUERIES)
+    queries.extend(x["name"]+" 股票" for x in g_top[:3] if len(x["name"])>=2)
+    for query in dict.fromkeys(queries):
+        state["queriesAttempted"]+=1
+        params=urllib.parse.urlencode({"q":query,"sort":"latest","limit":25})
+        try:
+            try:
+                payload=json.loads(fetch(BLUESKY_API+"?"+params))
+            except urllib.error.HTTPError as err:
+                if err.code not in (403,404):raise
+                payload=json.loads(fetch(BLUESKY_BACKUP_API+"?"+params))
+            if not isinstance(payload,dict) or not isinstance(payload.get("posts"),list):
+                raise ValueError("Bluesky API 未回傳有效 posts 陣列")
+        except urllib.error.HTTPError as err:
+            state["queriesFailed"]+=1
+            if err.code==429:
+                state["rateLimited"]=True
+                break
+            continue
+        except (ValueError,TypeError,urllib.error.URLError,OSError):
+            state["queriesFailed"]+=1
+            continue
+        state["queriesSucceeded"]+=1
+        for entry in payload["posts"]:
+            if not isinstance(entry,dict) or not isinstance(entry.get("record"),dict):continue
+            record=entry["record"]
+            content=str(record.get("text","")).strip()
+            if len(content)<4 or len(content)>6000:continue
+            # Search sometimes matches English CPO unrelated to Taiwanese stocks.
+            if not TAIWAN_RELEVANCE.search(content) and not any(mentions_stock(content,x) for x in g_top[:3]):continue
+            handle=str(entry.get("author",{}).get("handle",""))
+            uri=str(entry.get("uri",""))
+            if not re.fullmatch(r"[a-zA-Z0-9.-]{3,253}",handle) or ".." in handle:continue
+            match=re.fullmatch(r"at://did:[a-z0-9:._-]+/app\.bsky\.feed\.post/([a-zA-Z0-9]+)",uri)
+            if not match:continue
+            link="https://bsky.app/profile/"+urllib.parse.quote(handle,safe=".-")+"/post/"+match.group(1)
+            item=sanitize("Bluesky",content[:160],link,record.get("createdAt"),now)
+            if item:
+                ctype,eligible=classify_discussion(content,"Bluesky")
+                item["contentType"]=ctype
+                item["investmentEligible"]=eligible
+                item["stance"]=score(content) if eligible else "中立／難判"
+                item["method"]="Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+                rows.append(item)
+    if state["queriesSucceeded"]==0:
+        raise ValueError("Bluesky 官方查詢全部失敗或遭限流，沒有可驗證的新資料")
+    return unique(rows,80)
+
+def threads(token, now):
+    queries = ["台股", "股票"]
+    entries = []
+    for q in queries:
+        url = "https://graph.threads.net/v1.0/keyword_search?" + urllib.parse.urlencode({
+            "q":q,"search_type":"RECENT","fields":"id,text,permalink,timestamp","limit":25})
+        data = json.loads(request(url, token))
+        if not isinstance(data.get("data"), list):
+            raise ValueError("Threads 搜尋沒有有效 data")
+        for row in data["data"]:
+            entry = sanitize("Threads", row.get("text",""), row.get("permalink",""), row.get("timestamp"), now)
+            if entry:
+                entries.append(entry)
+    return entries
+
+def instagram(token, user_id, now):
+    if not re.fullmatch(r"\d+",user_id):
+        raise ValueError("Instagram user id 格式錯誤")
+    entries=[]
+    for tag in ["台股", "股票"]:
+        base="https://graph.facebook.com/v24.0/"
+        lookup=base+"ig_hashtag_search?"+urllib.parse.urlencode({"user_id":user_id,"q":tag})
+        ids=json.loads(request(lookup,token)).get("data",[])
+        for d in ids[:1]:
+            hid=str(d.get("id",""))
+            if not hid.isdigit():
+                continue
+            url=base+hid+"/recent_media?"+urllib.parse.urlencode({
+                "user_id":user_id,"fields":"id,caption,permalink,timestamp","limit":25})
+            result=json.loads(request(url,token))
+            for row in result.get("data",[]):
+                x=sanitize("Instagram",row.get("caption",""),row.get("permalink",""),row.get("timestamp"),now)
+                if x:
+                    entries.append(x)
+    return entries
+
+def youtube_titles(api_key,now,fetch=request):
+    """Authorized YouTube Data API video titles, NOT viewer sentiment or comments."""
+    if not api_key or len(str(api_key))>250:raise ValueError("缺少有效 YouTube API 金鑰")
+    rows=[]
+    for term in YOUTUBE_SEARCH_TERMS:
+        params=urllib.parse.urlencode({"part":"snippet","type":"video","q":term,"order":"date",
+            "regionCode":"TW","relevanceLanguage":"zh-Hant","maxResults":15,
+            "publishedAfter":(now-dt.timedelta(hours=48)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "key":api_key})
+        data=json.loads(fetch(YOUTUBE_SEARCH_API+"?"+params))
+        if not isinstance(data,dict) or not isinstance(data.get("items"),list):
+            raise ValueError("YouTube API 搜尋結果格式錯誤")
+        for hit in data["items"]:
+            if not isinstance(hit,dict):continue
+            identity=hit.get("id") or {};snippet=hit.get("snippet") or {}
+            vid=str(identity.get("videoId") or "")
+            if identity.get("kind")!="youtube#video" or not re.fullmatch(r"[a-zA-Z0-9_-]{11}",vid):continue
+            title=html.unescape(str(snippet.get("title") or "")).strip()
+            published=iso(snippet.get("publishedAt"))
+            if not published or len(title)<4 or not 0<=(now-published).total_seconds()<=48*3600:continue
+            if not TAIWAN_RELEVANCE.search(title):continue
+            rows.append({"platform":"YouTube","title":title[:160],
+                "url":"https://www.youtube.com/watch?v="+vid,
+                "publishedAt":published.isoformat().replace("+00:00","Z"),
+                "sourceName":str(snippet.get("channelTitle") or "未標示頻道")[:75],
+                "contentType":"創作者影片標題",
+                "method":"YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"})
+    return unique(rows,35)
+
+def facebook_page_posts(page_token,page_ids,now,fetch=request):
+    """Meta Graph API authorized Page posts only; no global search or personal feed scraping."""
+    if not page_token or not isinstance(page_ids,str):raise ValueError("缺少 Facebook 已授權粉專設定")
+    pages=[p.strip() for p in page_ids.split(",") if p.strip()]
+    if not 1<=len(pages)<=5 or len(set(pages))!=len(pages) or not all(re.fullmatch(r"\d{3,25}",p) for p in pages):
+        raise ValueError("Facebook 粉專 ID 必須為 3–25 位數字，最多五個")
+    rows=[]
+    for page in pages:
+        params=urllib.parse.urlencode({"fields":"id,message,created_time,permalink_url",
+            "limit":25})
+        data=json.loads(fetch(FACEBOOK_API+page+"/posts?"+params,page_token))
+        if not isinstance(data,dict) or not isinstance(data.get("data"),list):
+            raise ValueError("Facebook Graph API 粉專回應格式錯誤")
+        for post in data["data"]:
+            if not isinstance(post,dict):continue
+            content=str(post.get("message") or "").strip()
+            published=iso(post.get("created_time"))
+            url=str(post.get("permalink_url") or "")
+            link=urllib.parse.urlsplit(url)
+            if link.scheme!="https" or link.hostname not in {"www.facebook.com","facebook.com","m.facebook.com"}:continue
+            if not published or not 0<=(now-published).total_seconds()<=48*3600:continue
+            if len(content)<4 or not TAIWAN_RELEVANCE.search(content):continue
+            rows.append({"platform":"Facebook","title":content[:160],"url":url[:350],
+                "publishedAt":published.isoformat().replace("+00:00","Z"),
+                "sourceName":"已授權 Facebook 粉專",
+                "contentType":"粉專公開貼文摘要",
+                "method":"Meta Graph API 已授權粉專貼文；非個人動態與留言區共識"})
+    return unique(rows,35)
+
+def news_items(now):
+    if not NEWS_PATH.exists():
+        return [], "新聞 JSON 缺失"
+    try:
+        data=json.loads(NEWS_PATH.read_text("utf-8"))
+        generated=iso(data.get("generatedAt"))
+        if not generated or not 0 <= (now-generated).total_seconds() <= 36*3600:
+            return [], "新聞資料集過期或生成時間無效"
+        out=[]
+        for item in data.get("items",[]):
+            if item.get("type") != "news":
+                continue
+            x=sanitize("新聞",item.get("title",""),item.get("url",""),item.get("publishedAt"),now)
+            if x:
+                out.append(x)
+        return out, None
+    except (OSError,ValueError,TypeError,KeyError):
+        return [], "新聞 JSON 解析失敗"
+
+def unique(rows, limit=120):
+    seen=set()
+    out=[]
+    for x in sorted(rows,key=lambda e:e["publishedAt"],reverse=True):
+        link=x["url"].split("?",1)[0]
+        if link in seen:
+            continue
+        seen.add(link)
+        out.append(x)
+        if len(out)>=limit:
+            break
+    return out
+
+def statistics(items):
+    bull=sum(x["stance"]=="偏多" for x in items)
+    bear=sum(x["stance"]=="偏空" for x in items)
+    neutral=len(items)-bull-bear
+    directional=bull+bear
+    state=("尚無有效討論" if not items else
+        "已有樣本｜偏多討論較多" if bull>bear else
+        "已有樣本｜偏空討論較多" if bear>bull else
+        "已有樣本｜尚無明確多空方向" if directional==0 else
+        "已有樣本｜多空討論接近")
+    return {"sample":len(items),"bull":bull,"bear":bear,"neutral":neutral,"directional":directional,
+            "status":state,"method":"只要有一篇有效公開貼文就視為已有樣本；關鍵詞僅供觀察，篇數少不代表市場共識，也不是留言全文分析"}
+
+def collect(now=None, fetch=request, old=None, environmental=None):
+    now=now or dt.datetime.now(UTC)
+    environmental=os.environ if environmental is None else environmental
+    old=old or {}
+    prior=old.get("items") if isinstance(old.get("items"),list) else []
+    cached=[]
+    for x in prior:
+        if not isinstance(x,dict) or x.get("platform") not in ("PTT","Threads","Instagram","Bluesky"):continue
+        row=sanitize(x.get("platform"),x.get("title"),x.get("url"),x.get("publishedAt"),now)
+        if row:
+            if x.get("timestampBasis")=="文章網址 ID 推算，非官方發文時間":
+                row["timestampBasis"]=x["timestampBasis"]
+            if x.get("feedBasis")=="第三方公開 RSS/Atom；保留 PTT 原文連結":
+                row["feedBasis"]=x["feedBasis"]
+            cached.append(row)
+    prior=cached
+    inputs=[]
+    state={}
+    new,state["PTT"]=collect_ptt(now,fetch)
+    # Supplement the Atom set with recent public board articles when Atom lags.
+    # URL-derived timestamps are explicitly estimates and never claimed official.
+    try:
+        board_html=fetch(PTT_BOARD)
+        extra=ptt_board(board_html,now)
+        new=unique(new+extra,110)
+        reactions=ptt_board_reactions(board_html)
+        for x in new:
+            if x["url"] in reactions:x.update(reactions[x["url"]])
+        state["PTT"]["boardFreshCount"]=len(extra)
+        state["PTT"]["pushLabelsFound"]=len(reactions)
+        state["PTT"]["freshCount"]=len(new)
+        if new and state["PTT"]["status"]!="ok":state["PTT"]["status"]="partial"
+    except Exception:
+        state["PTT"]["pushLabelsFound"]=0
+        state["PTT"]["pushLabelsStatus"]="unavailable"
+    inputs+=new
+    try:
+        diagnostic={}
+        found=bluesky(now,fetch,diagnostic)
+        state["Bluesky"]={"status":("partial" if diagnostic["queriesFailed"] else "ok") if found else
+                          ("partial" if diagnostic["queriesFailed"] else "empty"),
+                          "freshCount":len(found),"queryHealth":diagnostic,
+                          "method":"官方公開 app.bsky.feed.searchPosts","url":BLUESKY_API}
+        inputs+=found
+    except Exception as exc:
+        state["Bluesky"]={"status":"error","reason":type(exc).__name__,"freshCount":0,"url":BLUESKY_API}
+    for name, func, args in [
+        ("Threads",threads,(environmental.get("THREADS_ACCESS_TOKEN"),now)),
+        ("Instagram",instagram,(environmental.get("IG_ACCESS_TOKEN"),environmental.get("IG_USER_ID",""),now))]:
+        configured=all(args[:-1])
+        if not configured:
+            state[name]={"status":"not_authorized","freshCount":0}
+            continue
+        try:
+            new=func(*args)
+            state[name]={"status":"ok" if new else "empty","freshCount":len(new)}
+            inputs+=new
+        except Exception as ex:
+            state[name]={"status":"error","reason":type(ex).__name__,"freshCount":0}
+    # These are separate creator/editorial signals, never included in retail social votes.
+    creator=[]
+    yt_key=environmental.get("YOUTUBE_API_KEY","")
+    if not yt_key:
+        state["YouTube"]={"status":"not_configured","freshCount":0,
+                          "method":"官方 Data API 需 YOUTUBE_API_KEY"}
+    else:
+        try:
+            videos=youtube_titles(yt_key,now,fetch)
+            creator+=videos
+            state["YouTube"]={"status":"ok" if videos else "empty","freshCount":len(videos),
+                              "method":"官方 Data API 影片標題（非觀眾情緒）"}
+        except Exception as exc:
+            state["YouTube"]={"status":"error","reason":type(exc).__name__,
+                              "freshCount":0}
+    fb_token=environmental.get("FACEBOOK_PAGE_ACCESS_TOKEN","")
+    fb_ids=environmental.get("FACEBOOK_PAGE_IDS","")
+    if not fb_token or not fb_ids:
+        state["Facebook"]={"status":"not_authorized","freshCount":0,
+            "method":"需已審核的 Page Access Token 與粉專 IDs；不能搜尋全站公開貼文"}
+    else:
+        try:
+            posts=facebook_page_posts(fb_token,fb_ids,now,fetch)
+            creator+=posts
+            state["Facebook"]={"status":"ok" if posts else "empty","freshCount":len(posts),
+                "method":"Meta Graph API 授權粉專貼文（非一般用戶留言）"}
+        except Exception as exc:
+            state["Facebook"]={"status":"error","reason":type(exc).__name__,"freshCount":0}
+    creator=unique(creator,70)
+    news,reason=news_items(now)
+    state["新聞"]={"status":"ok" if news else "unavailable","freshCount":len(news)}
+    if reason:
+        state["新聞"]["reason"]=reason
+    social=unique(inputs+prior,80)
+    news=unique(news,80)
+    ptt_news=[x for x in social if x.get("platform")=="PTT" and x.get("contentType")=="新聞轉載"]
+    # Only rank by visible board push score when actually supplied; otherwise newest first.
+    ptt_news.sort(key=lambda x:(x.get("pushScore",-999),x["publishedAt"]),reverse=True)
+    # Classify every kept entry consistently, including cached records from older snapshots.
+    eligible=[x for x in social if x.get("investmentEligible") is True]
+    social_stats=statistics(eligible)
+    social_stats["rawSample"]=len(social)
+    social_stats["investmentDiscussion"]=len(eligible)
+    social_stats["originalDiscussion"]=len(eligible)
+    social_stats["repostedNews"]=sum(x.get("contentType")=="新聞轉載" for x in social)
+    social_stats["unrelated"]=sum(x.get("contentType")=="非投資話題" for x in social)
+    social_stats["platformCounts"]={k:sum(x["platform"]==k for x in eligible) for k in ("PTT","Bluesky","Threads","Instagram")}
+    social_stats["method"]="僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。"
+    news_stats=statistics(news)
+    heat=topic_heat(eligible[:80],now,stock_catalog())
+    return {"schema":1,"generatedAt":now.isoformat().replace("+00:00","Z"),
+        "sources":state,"social":social_stats,"news":news_stats,"stockHeat":heat,
+        "items":social[:80],"creatorMedia":creator,"newsItems":news[:30],
+        "pttNewsItems":ptt_news[:40],
+        "notes":["僅使用公開、實際取得且不超過48小時的資料；缺乏授權的平台顯示未授權。",
+                 "標題關鍵詞易受反諷、轉載、選擇偏差與機器人影響；不能視為代表性民調。",
+                 "PTT 新聞轉載另存 pttNewsItems，不計入鄉民多空投票；公開看板推文標籤若無法取得不得推測人氣。",
+                 "新聞、散戶社群、YouTube 創作者標題及 Facebook 粉專發文彼此獨立，不可合併為散戶情緒投票。",
+                 "YouTube／Facebook 只使用有權使用的官方 API；缺少授權或金鑰就顯示未設定。",
+                 "標題反諷／轉載不直接判定多空，無取得平台授權不蒐集受限制來源。",
+                 "個股熱度只統計有投資語境且非新聞轉貼的 G Top20 標題，不更改 G 排名或 TITAN 風控。"]}
+
+def main():
+    old={}
+    if OUT_PATH.exists():
+        try:
+            old=json.loads(OUT_PATH.read_text("utf-8"))
+        except (ValueError,OSError):
+            pass
+    report=collect(old=old)
+    # Missing public feeds are published as explicit unavailable status, never fabricated neutral evidence.
+    OUT_PATH.parent.mkdir(parents=True,exist_ok=True)
+    OUT_PATH.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n","utf-8")
+    print("SOCIAL_SENTIMENT",json.dumps({"social":report["social"],"sources":report["sources"]},ensure_ascii=False))
+
+if __name__=="__main__":
+    main()

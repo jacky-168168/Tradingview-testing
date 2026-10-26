@@ -18,7 +18,7 @@ def parse(s):
     except (TypeError,ValueError):return None
 def session(now):
     n=now.astimezone(TZ)
-    return n.weekday()<5 and not(n.year==2026 and n.strftime("%m-%d") in CLOSED_2026) and time(9,50)<=n.time()<time(13,44)
+    return n.weekday()<5 and not(n.year==2026 and n.strftime("%m-%d") in CLOSED_2026) and time(9,50)<=n.time()<time(13,45)
 def assess(now,latest,status,runs,pages=None):
     latest=latest if isinstance(latest,dict) else {}
     status=status if isinstance(status,dict) else {}
@@ -26,7 +26,7 @@ def assess(now,latest,status,runs,pages=None):
     published=parse(latest.get("publishedAt"))
     age=(now-published).total_seconds()/60 if published else None
     if latest.get("asOfDate")!=today or latest.get("quality")!="intraday-provisional-allmarket":errors.append("今日盤中 G 快照缺失或品質標籤錯誤")
-    if age is None or age< -5 or age>65:errors.append("盤中榜單超過 65 分鐘未更新（目前距今 "+(str(round(age)) if age is not None else "未知")+" 分鐘）")
+    if age is None or age<0 or age>65:errors.append("盤中榜單超過 65 分鐘未更新（目前距今 "+(str(round(age)) if age is not None else "未知")+" 分鐘）")
     rows=latest.get("rows")
     if not isinstance(rows,list) or not 1<=len(rows)<=20 or any(not isinstance(r,dict) or not str(r.get("code","")).strip() for r in rows):errors.append("盤中榜單空白或格式不合法")
     try:
@@ -37,12 +37,12 @@ def assess(now,latest,status,runs,pages=None):
             if b<500 or a/b<.60:errors.append(f"{market}報價覆蓋率不足 {a}/{b}")
     except (KeyError,TypeError,ValueError,ZeroDivisionError):errors.append("有效報價覆蓋率缺失或格式錯誤")
     failure=parse(status.get("checkedAt"))
-    if status.get("asOfDate")==today and status.get("status")=="unavailable" and failure and (not published or failure>published+timedelta(minutes=10)):
+    if status.get("asOfDate")==today and status.get("status")=="unavailable" and failure and (not published or failure>published):
         errors.append("最新重選失敗："+str(status.get("message") or "不明原因")[:140])
     recent=[r for r in (runs or []) if r.get("name")=="TW Stock Dashboard" and (t:=parse(r.get("created_at"))) and 0<=(now-t).total_seconds()<95*60]
     if not recent:errors.append("最近95分鐘無 TW Stock Dashboard 工作紀錄，排程可能未觸發")
     active=any(r.get("status") in ("queued","waiting","in_progress","pending","requested") for r in recent)
-    if pages is not None and published and age is not None and age>25:
+    if pages is not None and published:
         page_at=parse(pages.get("publishedAt")) if isinstance(pages,dict) else None
         if not page_at or published-page_at>timedelta(minutes=25):errors.append("GitHub Pages 榜單比原始檔落後超過25分鐘")
     return {"ok":not errors,"errors":errors,"date":today,"publishedAt":latest.get("publishedAt"),

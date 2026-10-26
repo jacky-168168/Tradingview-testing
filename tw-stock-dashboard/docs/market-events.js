@@ -23,7 +23,12 @@ function matches(x){
  if(CATEGORY==="ai"&&!((x.category==="AI需求")||(x.themes||[]).some(v=>/AI|半導體|先進封裝|CPO|GPU|HBM|PCB|晶圓/i.test(v))))return false;
  if(CATEGORY==="prices"&&x.category!=="報價")return false;
  if(CATEGORY==="macro"&&x.category!=="總經")return false;
- if(CATEGORY==="commodities"&&x.category!=="原物料")return false;
+ // Historical "原物料" entries remain searchable in their matching commodity category.
+ var legacy=x.category==="原物料",headline=String(x.title||"");
+ if(CATEGORY==="energy"&&x.category!=="原油／能源"&&!(legacy&&/油價|原油|OPEC|WTI|布蘭特|天然氣/i.test(headline)))return false;
+ if(CATEGORY==="metals"&&x.category!=="貴金屬"&&!(legacy&&/黃金|金價|白銀|銀價|鉑金|鈀金/i.test(headline)))return false;
+ if(CATEGORY==="agriculture"&&x.category!=="農產品")return false;
+ if(CATEGORY==="ptt"&&x.category!=="PTT轉載")return false;
  var query=SEARCH.trim().toLowerCase();
  return !query||[x.title,x.source,x.category,...(x.themes||[])].join(" ").toLowerCase().includes(query);
 }
@@ -36,11 +41,18 @@ function card(x,today){
  '<div class="foot"><span class="source" title="'+esc(x.source)+'">'+esc(x.source)+'</span><a class="openlink" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">來源 ↗</a></div>'+
  (themes?'<div class="themes" style="margin-top:10px">'+themes+'</div>':"")+'</article>';
 }
+// The feed may be cached or its workflow may be stuck. Never label old
+// headlines as the newest news simply because a JSON file is still available.
+var NEWS_MAX_AGE_MS=48*60*60*1000;
+function newsIsFresh(x){
+ var t=Date.parse(String(x.publishedAt||"")),age=Date.now()-t;
+ return Number.isFinite(t)&&age>=-5*60*1000&&age<=NEWS_MAX_AGE_MS;
+}
 function render(){
  var items=Array.isArray(DATA&&DATA.items)?DATA.items:[],today=nowTW();
  var relevant=items.filter(x=>x&&x.title&&x.date&&x.source&&x.url&&matches(x));
  var events=relevant.filter(x=>x.type==="event"&&dateDiff(x.endDate||x.date,today)>=0).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,12);
- var news=relevant.filter(x=>x.type==="news").sort((a,b)=>String(b.publishedAt||"").localeCompare(String(a.publishedAt||"")));
+ var news=relevant.filter(x=>x.type==="news"&&newsIsFresh(x)).sort((a,b)=>String(b.publishedAt||"").localeCompare(String(a.publishedAt||"")));
  $("events").innerHTML=events.map(x=>card(x,today)).join("");
  $("news").innerHTML=news.slice(0,VISIBLE).map(x=>card(x,today)).join("");
  $("moreNews").hidden=news.length<=VISIBLE;
@@ -48,13 +60,16 @@ function render(){
  $("eventSection").hidden=!events.length;$("newsSection").hidden=!news.length;
  $("eventCount").textContent=events.length+" 件";$("newsCount").textContent=news.length+" 則";
  $("empty").hidden=events.length+news.length>0;
+ $("empty").textContent="最近 48 小時沒有符合條件的重大新聞或未來活動；舊新聞不會冒充最新消息。";
  var generated=DATA&&DATA.generatedAt||"",state=DATA&&DATA.status||"";
- $("freshness").textContent=generated?"更新 "+dateTW(generated)+" "+generated.slice(11,16):"活動資料已載入";
+ $("freshness").textContent=generated?"資料同步 "+dateTW(generated)+" "+generated.slice(11,16)+(DATA.newestNewsAt?"｜最新文章 "+dateTW(DATA.newestNewsAt)+" "+DATA.newestNewsAt.slice(11,16):""):"新聞資料尚未載入";
  var note="";
  if(state==="initializing")note="新聞同步尚未完成，以下僅為官方活動。";
  else if(state==="degraded")note="新聞來源暫時無法更新，僅供查看已保存資料。";
  else if(state==="partial")note="部分新聞來源暫時無法讀取。";
+ else if(state==="empty")note="已完成新聞來源檢查，但沒有符合最近 48 小時條件的新文章。";
  if(generated&&Date.now()-Date.parse(generated)>36*3600000)note=(note?note+" ":"")+"⚠ 新聞超過 36 小時未更新。";
+ if(!news.length&&items.some(x=>x.type==="news"))note=(note?note+" ":"")+"已隱藏超過 48 小時的舊新聞。";
  $("alert").textContent=note;$("alert").hidden=!note;
 }
 async function load(){

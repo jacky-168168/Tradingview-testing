@@ -1,0 +1,93 @@
+name: Six Agent Gemini LLM Debate
+# Safe by default: no API calls unless user explicitly connects Gemini and enables the variable.
+on:
+  workflow_dispatch:
+  schedule:
+    # Taiwan weekdays 19:00, after social and official market updates.
+    - cron: '0 11 * * 1-5'
+  pull_request:
+    paths:
+      - '.github/workflows/six-agent-llm.yml'
+      - 'tw-stock-dashboard/scripts/run_six_agent_llm.cjs'
+      - 'tw-stock-dashboard/scripts/gemini_transport.cjs'
+      - 'tw-stock-dashboard/docs/agent-research*'
+      - 'tw-stock-dashboard/docs/agent-llm-ui.js'
+      - 'tw-stock-dashboard/tests/test_six_agent_research.cjs'
+      - 'tw-stock-dashboard/tests/test_six_agent_gemini.cjs'
+permissions:
+  contents: read
+concurrency:
+  group: six-agent-llm-debate
+  cancel-in-progress: false
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify role prompts, conservative source guards, independent challenge and Gemini transport
+        run: |
+          node --test tw-stock-dashboard/tests/test_six_agent_research.cjs tw-stock-dashboard/tests/test_six_agent_gemini.cjs
+          node --check tw-stock-dashboard/scripts/run_six_agent_llm.cjs
+          node --check tw-stock-dashboard/scripts/gemini_transport.cjs
+          node --check tw-stock-dashboard/docs/agent-research-core.js
+          node --check tw-stock-dashboard/docs/agent-research-ui.js
+  inference:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') &&
+      vars.ENABLE_SIX_AGENT_GEMINI == 'true'
+    needs: offline
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Six independent Gemini AI roles and evidence-based debate
+        env:
+          ENABLE_SIX_AGENT_GEMINI: 'true'
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SIX_AGENT_GEMINI_MODEL: gemini-3.5-flash-lite
+        run: |
+          node tw-stock-dashboard/scripts/run_six_agent_llm.cjs tw-stock-dashboard/docs/data/agent_llm/latest.json
+      - name: Verify true 9-call AI report and no-trade policy
+        run: |
+          node - <<'JS'
+          const fs=require('node:fs'),assert=require('node:assert/strict');
+          const {validateSnapshot}=require('./tw-stock-dashboard/scripts/run_six_agent_llm.cjs');
+          const j=JSON.parse(fs.readFileSync('tw-stock-dashboard/docs/data/agent_llm/latest.json','utf8'));
+          validateSnapshot(j);
+          assert.equal(j.provider,'Google Gemini API');
+          assert.equal(j.rounds.final.role,'NOVA');
+          assert.equal(j.noTrade,true);
+          console.log('REAL_GEMINI_SIX_AGENT_VERIFIED',j.inferenceCalls,j.generatedAt);
+          JS
+      - name: Archive actually executed nine-call model evidence for audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: six-agent-llm-evidence
+          path: tw-stock-dashboard/docs/data/agent_llm/latest.json
+          retention-days: 30
+          if-no-files-found: error
+      - name: Commit independently analyzed report to Pages source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/agent_llm/latest.json
+          if git diff --cached --quiet; then echo 'No new research'; exit 0; fi
+          git commit -m 'data: archive six-role Gemini deliberation [skip ci]'
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 4
+          done
+          echo 'Gemini research publication failed; do not report deployment success' >&2
+          exit 1

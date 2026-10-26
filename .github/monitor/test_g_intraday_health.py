@@ -15,6 +15,7 @@ def runs():
 class TestWatchdog(unittest.TestCase):
     def test_healthy(self):self.assertTrue(assess(now,live(),{},runs())["ok"])
     def test_stale(self):self.assertFalse(assess(now,live(66),{},runs())["ok"])
+    def test_future_published_at(self):self.assertFalse(assess(now,live(-1),{},runs())["ok"])
     def test_missing_today(self):self.assertFalse(assess(now,live(1440),{},runs())["ok"])
     def test_missing_job(self):self.assertTrue(any("工作紀錄" in x for x in assess(now,live(),{},[])["errors"]))
     def test_low_otc(self):self.assertTrue(any("上櫃" in x for x in assess(now,live(0,1000,360),{},runs())["errors"]))
@@ -23,6 +24,14 @@ class TestWatchdog(unittest.TestCase):
         self.assertFalse(assess(now,d,{},runs())["ok"])
     def test_failed_latest(self):
         d=live(20);s={"asOfDate":"2026-10-15","status":"unavailable","checkedAt":now.isoformat(),"message":"MIS"}
+        self.assertTrue(any("重選失敗" in x for x in assess(now,d,s,runs())["errors"]))
+    def test_pages_stale_even_when_fresh_main_snapshot(self):
+        # Every 30m the repository may refresh; stale Pages must still alert.
+        self.assertTrue(any("Pages" in x for x in assess(now,live(2),{},runs(),live(50))["errors"]))
+    def test_unavailable_one_minute_after_success(self):
+        d=live(2)
+        s={"asOfDate":"2026-10-15","status":"unavailable",
+           "checkedAt":(now-timedelta(minutes=1)).isoformat(),"message":"TWSE MIS outage"}
         self.assertTrue(any("重選失敗" in x for x in assess(now,d,s,runs())["errors"]))
     def test_pages_stale(self):
         self.assertTrue(any("Pages" in x for x in assess(now,live(30),{},runs(),live(80))["errors"]))

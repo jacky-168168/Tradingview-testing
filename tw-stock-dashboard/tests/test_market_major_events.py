@@ -1,7 +1,8 @@
 from __future__ import annotations
 import sys
+import re
 import unittest
-from datetime import datetime
+from datetime import datetime,timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"src"))
@@ -41,6 +42,91 @@ class MajorMarketNewsTest(unittest.TestCase):
   feed=("AI需求","AI 晶片需求",r"AI|晶片",["AI"])
   xml='''<rss><channel><item><title>AI晶片需求暴增！趕緊搶進熱門股 - CMoney投資網誌</title><link>https://example.com/blog</link><source>CMoney投資網誌</source><pubDate>Fri, 16 Oct 2026 07:00:00 GMT</pubDate></item></channel></rss>'''
   self.assertEqual(parse_feed(xml.encode(),feed,now=NOW),[])
+ def test_rss_articles_older_than_48h_never_display_as_latest(self):
+  stale_time=NOW-timedelta(hours=49)
+  old_rss=f'''<rss><channel><item><title>矽晶圓廠報價上漲 最新觀察 - 經濟日報</title>
+   <link>https://example.com/old</link><source>經濟日報</source>
+   <pubDate>{stale_time.strftime("%a, %d %b %Y %H:%M:%S %z")}</pubDate></item></channel></rss>'''
+  self.assertEqual(parse_feed(old_rss.encode(),FEED,now=NOW),[])
+ def test_recent_rss_articles_must_still_pass(self):
+  self.assertEqual(len(parse_feed(XML.encode(),FEED,now=NOW)),1)
+ def test_ptt_atom_posts_include_only_current_original_news_reposts(self):
+  from market_major_events import parse_ptt_stock_news
+  raw='''<feed xmlns="http://www.w3.org/2005/Atom">
+   <entry><title>[新聞] 台股明開盤恐補跌千點</title>
+    <link href="https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html"/>
+    <updated>2026-10-16T07:00:00Z</updated></entry>
+   <entry><title>[閒聊] 台股明開盤</title>
+    <link href="https://www.ptt.cc/bbs/Stock/M.1792918325.A.BBD.html"/>
+    <updated>2026-10-16T07:00:00Z</updated></entry>
+   <entry><title>[新聞] 台股暴跌 假文章</title>
+    <link href="https://evil.example/bbs/Stock/M.1792918326.A.BBD.html"/>
+    <updated>2026-10-16T07:00:00Z</updated></entry>
+   </feed>'''
+  result=parse_ptt_stock_news(raw.encode(),now=NOW)
+  self.assertEqual(len(result),1)
+  self.assertEqual(result[0]["category"],"PTT轉載")
+  self.assertEqual(result[0]["originType"],"forum_repost")
+  self.assertFalse(result[0]["confirmed"])
+ def test_ptt_atom_excludes_expired_news(self):
+  from market_major_events import parse_ptt_stock_news
+  raw='''<feed xmlns="http://www.w3.org/2005/Atom"><entry>
+   <title>[新聞] 台股明開盤恐補跌千點</title>
+   <link href="https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html"/>
+   <updated>2026-10-13T07:00:00Z</updated></entry></feed>'''
+  self.assertEqual(parse_ptt_stock_news(raw.encode(),now=NOW),[])
+ def test_commodity_query_coverage_is_independent(self):
+  expected={
+   "原油／能源":("WTI","EIA","天然氣"),
+   "貴金屬":("黃金","白銀","鉑金"),
+   "農產品":("黃豆","咖啡","USDA"),
+  }
+  for category,topics in expected.items():
+   queries=[q for q in QUERIES if q[0]==category]
+   self.assertGreaterEqual(len(queries),3,category)
+   self.assertTrue(all("when:2d" in q[1] and q[2] and q[3] for q in queries))
+   for topic in topics:
+    self.assertTrue(any(topic in q[1] for q in queries),(category,topic))
+ def test_commodity_news_are_classified_and_dated_without_inventing_confirmation(self):
+  examples=[
+   ("原油／能源","OPEC 宣布減產 原油價格上漲"),
+   ("貴金屬","白銀報價大漲 工業需求增溫"),
+   ("農產品","黃豆乾旱歉收 USDA 下修產量"),
+  ]
+  candidates=[]
+  for index,(category,title) in enumerate(examples):
+   spec=next(q for q in QUERIES if q[0]==category and re.search(q[2],title,re.I))
+   xml=f"""<rss><channel><item><title>{title} - 經濟日報</title>
+    <link>https://example.com/commodity/{index}</link><source>經濟日報</source>
+    <pubDate>Fri, 16 Oct 2026 07:00:00 GMT</pubDate></item></channel></rss>"""
+   rows=parse_feed(xml.encode(),spec,now=NOW)
+   self.assertEqual(len(rows),1,(category,title))
+   self.assertEqual(rows[0]["category"],category)
+   self.assertFalse(rows[0]["confirmed"])
+   candidates.extend(rows)
+  out=build(now=NOW,feeds=[candidates],prior=None)
+  self.assertEqual(len([x for x in out["items"] if x["type"]=="news"]),3)
+  self.assertEqual({x["category"] for x in out["items"] if x["type"]=="news"},
+                   {"原油／能源","貴金屬","農產品"})
+ def test_commodity_stale_headlines_do_not_pass_age_gate(self):
+  for category,word in (("原油／能源","WTI 油價上漲"),("貴金屬","黃金價格下跌"),
+                        ("農產品","黃豆收成下修")):
+   spec=next(q for q in QUERIES if q[0]==category)
+   stale=(NOW-timedelta(hours=49)).strftime("%a, %d %b %Y %H:%M:%S %z")
+   xml=f"""<rss><channel><item><title>{word} - 經濟日報</title>
+    <link>https://example.com/commodity/stale</link><source>經濟日報</source>
+    <pubDate>{stale}</pubDate></item></channel></rss>"""
+   self.assertFalse(parse_feed(xml.encode(),spec,now=NOW),category)
+ def test_empty_successful_feed_is_not_marked_live_with_news(self):
+  result=build(now=NOW,feeds=[[] for _ in QUERIES],prior=None)
+  self.assertEqual(result["status"],"empty")
+  self.assertEqual(result["newsCount"],0)
+  self.assertIsNone(result["newestNewsAt"])
+ def test_prior_news_not_reused_beyond_48h(self):
+  sample=parse_feed(XML.encode(),FEED,now=NOW)[0]
+  sample["publishedAt"]=(NOW-timedelta(hours=49)).isoformat()
+  result=build(now=NOW,feeds=[None],prior={"items":[sample]})
+  self.assertEqual([x for x in result["items"] if x["type"]=="news"],[])
  def test_old_items_excluded_and_no_invented_news(self):
   old=parse_feed(XML.encode(),FEED,now=NOW)[0]
   old["publishedAt"]="2026-10-01T12:00:00+08:00"

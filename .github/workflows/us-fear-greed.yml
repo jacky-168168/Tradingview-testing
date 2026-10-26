@@ -43,7 +43,7 @@ jobs:
           PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_us_fear_greed.py' -v
           node --check tw-stock-dashboard/docs/fear-greed-home.js
           node --test tw-stock-dashboard/tests/fear-greed-home.test.cjs
-      - name: Refresh CNN historical sentiments and aligned SPX
+      - name: Refresh independently dated CNN sentiments and SPX
         run: python -u tw-stock-dashboard/src/update_us_fear_greed.py
       - name: Validate source freshness and no fabricated data
         run: |
@@ -104,3 +104,28 @@ jobs:
           path: tw-stock-dashboard/docs
       - name: Deploy Pages
         uses: actions/deploy-pages@v4
+      - name: Verify live Pages contains the newest dated Fear and Greed close
+        run: |
+          python - <<'PY'
+          import json,time,urllib.request
+          from pathlib import Path
+          archive=Path("tw-stock-dashboard/docs/data/research/us_fear_greed/history.json")
+          expected=json.loads(archive.read_text("utf-8"))
+          url="https://jacky-168168.github.io/Tradingview-testing/data/research/us_fear_greed/history.json"
+          observed="no response"
+          for n in range(12):
+              try:
+                  req=urllib.request.Request(url+"?validate="+str(time.time_ns()),headers={"Cache-Control":"no-cache","User-Agent":"US-Fear-Greed-Pages-Date-Validator"})
+                  with urllib.request.urlopen(req,timeout=25) as response:
+                      live=json.loads(response.read())
+                  observed=str(live.get("asOf"))
+                  if live.get("asOf")==expected["asOf"] and live.get("rows",[])[-1:]==expected["rows"][-1:]:
+                      print("LIVE_FEAR_GREED_DATE_OK",observed,"source",live.get("sourceLink"))
+                      break
+              except (OSError,ValueError,KeyError,IndexError) as error:
+                  observed=repr(error)
+              print("LIVE_FEAR_GREED_DATE_NOT_UPDATED",n+1,"want",expected["asOf"],"got",observed,flush=True)
+              time.sleep(10)
+          else:
+              raise SystemExit("GitHub Pages still serves older Fear and Greed than the latest published archive: expected="+expected["asOf"]+" observed="+observed)
+          PY

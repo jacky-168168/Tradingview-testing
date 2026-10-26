@@ -1,0 +1,117 @@
+name: ORION Taiwanese Financial News
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/orion-financial-news.yml'
+      - 'tw-stock-dashboard/scripts/collect_orion_news.py'
+      - 'tw-stock-dashboard/scripts/classify_orion_news.cjs'
+      - 'tw-stock-dashboard/scripts/archive_orion_news.py'
+  schedule:
+    # Taipei 08:15–22:15, every two hours
+    - cron: '15 0,2,4,6,8,10,12,14 * * *'
+  pull_request:
+    paths:
+      - '.github/workflows/orion-financial-news.yml'
+      - 'tw-stock-dashboard/scripts/*orion_news*'
+      - 'tw-stock-dashboard/tests/test_orion_news.py'
+      - 'tw-stock-dashboard/tests/test_orion_news.cjs'
+      - 'tw-stock-dashboard/docs/orion-news*'
+      - 'tw-stock-dashboard/docs/agent-research*'
+permissions:
+  contents: read
+concurrency:
+  group: orion-financial-news
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test Taiwan news source parsing and independent Gemini interpretation
+        run: |
+          python -m unittest discover -s tw-stock-dashboard/tests -p 'test_orion_news.py' -v
+          node --test tw-stock-dashboard/tests/test_orion_news.cjs
+          node --check tw-stock-dashboard/scripts/classify_orion_news.cjs
+          node --check tw-stock-dashboard/docs/orion-news-ui.js
+      - name: Probe Taiwan financial RSS from GitHub Runner, PR only
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import importlib.util
+          from datetime import datetime,timezone
+          p="tw-stock-dashboard/scripts/collect_orion_news.py"
+          s=importlib.util.spec_from_file_location("orion_probe",p)
+          mod=importlib.util.module_from_spec(s);s.loader.exec_module(mod)
+          r=mod.collect(datetime.now(timezone.utc))
+          print("ORION_PUBLIC_RSS_PROBE",len(r["items"]),r["coverage"]["healthyFeeds"])
+          for name,d in r["coverage"]["sources"].items():print("ORION_SOURCE",name,d["status"],d["freshCount"])
+          assert r["coverage"]["healthyFeeds"]>=1,"All public financial RSS feeds unavailable"
+          PY
+  publish:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push')
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Cache previous source-grounded Gemini results
+        run: cp tw-stock-dashboard/docs/data/orion_news/latest.json "$RUNNER_TEMP/orion-previous.json"
+      - name: Collect public Taiwan financial headline RSS
+        run: python tw-stock-dashboard/scripts/collect_orion_news.py
+      - name: Analyze newsroom headline framing with Gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ORION_GEMINI_MODEL: gemini-3.5-flash-lite
+          ORION_PREVIOUS_PATH: ${{ runner.temp }}/orion-previous.json
+        run: node tw-stock-dashboard/scripts/classify_orion_news.cjs
+      - name: Build 30-day historical ORION news database
+        run: python tw-stock-dashboard/scripts/archive_orion_news.py
+      - name: Reject forged references or inconsistent news counts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("tw-stock-dashboard/docs/data/orion_news/latest.json").read_text("utf-8"))
+          assert d["schema"]==1 and d["coverage"]["allTaiwanMediaCovered"] is False
+          assert isinstance(d["items"],list) and len(d["items"])<=180
+          assert all(a.get("source") and a.get("url","").startswith("https://") and a.get("publishedAt") and a.get("id") for a in d["items"])
+          assert len({a["url"] for a in d["items"]})==len(d["items"])
+          sem=d.get("semantic",{})
+          assert sem.get("status") in {"verified","cached","partial","error","empty","unavailable"}
+          assert sem.get("noTrade") is True and sem.get("classified",0)<=len(d["items"])
+          assert sum(sem.get(k,0) for k in ("positive","negative","neutral"))==sem.get("classified",0)
+          assert sem.get("eligible",0)==len(d["items"])
+          assert sem.get("classified",0)+sem.get("unclassified",0)==sem.get("eligible",0)
+          assert sem.get("inferenceCalls",0)<=sem.get("attemptedCalls",0)
+          assert 0<=sem.get("coveragePct",0)<=100
+          assert sem.get("repeatedHeadlineCount",0)<=len(d["items"])
+          assert sem.get("noTrade") is True
+          index=json.loads(Path("tw-stock-dashboard/docs/data/orion_news/history/index.json").read_text("utf-8"))
+          assert index["schema"]==1 and index["retentionDays"]==30 and index["days"]
+          print("ORION_NEWS_VALIDATED",len(d["items"]),sem["status"],sem["inferenceCalls"],len(index["days"]))
+          PY
+      - name: Publish read-only ORION news research JSON
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A tw-stock-dashboard/docs/data/orion_news/
+          if git diff --cached --quiet; then echo 'No new ORION data'; exit 0; fi
+          git commit -m 'data: update ORION Taiwan financial news and semantic audit [skip ci]'
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 3
+          done
+          echo 'ORION publisher failed; do not claim current data' >&2
+          exit 1

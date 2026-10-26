@@ -1,0 +1,122 @@
+import datetime as dt
+import importlib.util
+import json
+import unittest
+import tempfile
+import xml.etree.ElementTree as ET
+from pathlib import Path
+from unittest.mock import patch
+N=dt.datetime(2026,10,25,3,0,tzinfo=dt.timezone.utc)
+SOURCE=Path(__file__).resolve().parents[1]/"scripts"/"collect_orion_news.py"
+spec=importlib.util.spec_from_file_location("orion_news",SOURCE)
+mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+def feed():
+    return """<rss><channel><item>
+      <title>台股大漲！台積電利多創新高</title>
+      <link>https://www.cna.com.tw/news/afe/202610240001.aspx</link>
+      <pubDate>Sat, 24 Oct 2026 23:00:00 +0000</pubDate>
+    </item><item><title>台股跌停市場恐慌</title>
+      <link>https://evil.example/unsafe</link>
+      <pubDate>Sat, 24 Oct 2026 23:00:00 +0000</pubDate>
+    </item></channel></rss>""".encode("utf-8")
+class TestOrionNews(unittest.TestCase):
+    def test_official_rss_parsing_rejects_offsite_articles_and_preserves_date(self):
+        rows=mod.parse_feed(feed(),"中央通訊社","產經證券",("www.cna.com.tw",),N)
+        self.assertEqual(len(rows),1)
+        x=rows[0];self.assertEqual(x["source"],"中央通訊社")
+        self.assertEqual(x["headlineRuleTone"],"偏多")
+        self.assertEqual(x["publishedAt"],"2026-10-24T23:00:00Z")
+        self.assertIn("AI／半導體",x["themes"])
+    def test_external_entity_not_followed_and_unverifiable_dates_rejected(self):
+        future="""<rss><channel><item><title>台股大漲</title>
+          <link>https://www.cna.com.tw/news/afe/202610240001.aspx</link>
+          <pubDate>Sun, 25 Oct 2026 08:00:00 +0000</pubDate></item></channel></rss>""".encode("utf-8")
+        self.assertEqual(mod.parse_feed(future,"中央通訊社","金融",("www.cna.com.tw",),N),[])
+        with self.assertRaises(ET.ParseError):mod.parse_feed(b"<broken>","中央通訊社","金融",("www.cna.com.tw",),N)
+    def test_dedup_source_and_ignore_repeats(self):
+        rows=mod.parse_feed(feed(),"中央通訊社","產經證券",("www.cna.com.tw",),N)
+        clean=mod.unique_articles(rows+rows)
+        self.assertEqual(len(clean),1)
+        self.assertEqual(len(clean[0]["id"]),20)
+        self.assertEqual(len(clean[0]["headlineGroup"]),14)
+    def test_commodity_market_events_are_eligible_for_orion_handoff(self):
+        headlines=[
+            "WTI 原油供應減少帶動能源價格上漲",
+            "白銀價格大漲，鉑金與鈀金需求受關注",
+            "USDA 黃豆玉米與小麥供需報告預估歉收",
+        ]
+        with tempfile.TemporaryDirectory() as temp:
+            folder=Path(temp)/"market_events"
+            folder.mkdir(parents=True)
+            data={"generatedAt":N.isoformat(),"items":[
+                {"type":"news","title":title,
+                 "url":f"https://news.google.com/rss/articles/commodity-{i}",
+                 "source":"測試公開來源","publishedAt":(N-dt.timedelta(hours=1)).isoformat(),
+                 "themes":[["原油"],["貴金屬"],["農產品"]][i]}
+                for i,title in enumerate(headlines)
+            ]}
+            (folder/"latest.json").write_text(json.dumps(data,ensure_ascii=False),encoding="utf-8")
+            with patch.object(mod,"DATA",Path(temp)):
+                rows=mod.old_market_events(N)
+        self.assertEqual(len(rows),3)
+        self.assertEqual({x["title"] for x in rows},set(headlines))
+        self.assertTrue(all(x["channel"]=="既有系統新聞" for x in rows))
+    def test_ptt_feed_accepts_original_stock_news_only(self):
+        url="https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html"
+        raw=f"""<feed xmlns="http://www.w3.org/2005/Atom">
+          <entry><title>[新聞] 台股明開盤恐補跌千點 外資賣超</title>
+            <link href="{url}"/><updated>2026-10-25T02:00:00Z</updated></entry>
+          <entry><title>[討論] 台股明天反彈？</title>
+            <link href="https://www.ptt.cc/bbs/Stock/M.1792918344.A.AAA.html"/>
+            <updated>2026-10-25T02:00:00Z</updated></entry>
+          <entry><title>[新聞] 台股暴跌惡意偽造網址</title>
+            <link href="https://evil.example/bbs/Stock/M.1792918344.A.html"/>
+            <updated>2026-10-25T02:00:00Z</updated></entry>
+        </feed>""".encode()
+        rows=mod.parse_feed(raw,"PTT股票板（轉載）","新聞轉載",("www.ptt.cc",),N)
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]["url"],url)
+        self.assertEqual(rows[0]["source"],"PTT股票板（轉載）")
+        self.assertEqual(rows[0]["headlineRuleTone"],"偏空")
+    def test_ptt_luna_fallback_requires_timestamp_origin_and_nonexpired_headline(self):
+        article={"platform":"PTT","contentType":"新聞轉載","title":"[新聞] 台股明開盤恐補跌千點",
+                 "url":"https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html",
+                 "publishedAt":"2026-10-25T02:00:00Z"}
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)/"social_sentiment";root.mkdir()
+            (root/"latest.json").write_text(json.dumps({"generatedAt":N.isoformat(),
+                "items":[article,{**article,"url":"https://not-ptt.example/bbs/Stock/M.fake.html"},
+                         {**article,"publishedAt":"2026-10-22T02:00:00Z"},
+                         {**article,"contentType":"投資討論"}]},ensure_ascii=False),encoding="utf-8")
+            with patch.object(mod,"DATA",Path(folder)):
+                rows=mod.old_ptt_news(N)
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]["channel"],"LUNA 已驗證新聞轉載")
+        self.assertEqual(len(mod.unique_articles(rows+rows)),1)
+    def test_failed_feeds_report_truth_and_can_include_verified_success(self):
+        def mock(url):
+            if "rsscna/finance" in url:return feed()
+            raise OSError("unavailable")
+        with patch.object(mod,"old_market_events",return_value=[]):
+            result=mod.collect(N,mock)
+        self.assertEqual(result["coverage"]["healthyFeeds"],1)
+        self.assertEqual(len(result["items"]),1)
+        self.assertEqual(result["coverage"]["allTaiwanMediaCovered"],False)
+        self.assertEqual(result["coverage"]["sources"]["自由時報／財經"]["status"],"error")
+        self.assertEqual(result["ruleTone"]["偏多"],1)
+    def test_archive_daily_dedupe_and_runs(self):
+        with patch.object(mod,"old_market_events",return_value=[]):
+            report=mod.collect(N,lambda url:feed() if "rsscna/finance" in url else b"<rss><channel></channel></rss>")
+        first=mod.archive(report,now=N)
+        second=mod.archive(report,now=N+dt.timedelta(minutes=8),old=first)
+        self.assertEqual(first["day"],"2026-10-25")
+        self.assertEqual(len(first["items"]),1)
+        self.assertEqual(len(second["items"]),1)
+        self.assertEqual(len(second["runs"]),2)
+    def test_no_feeds_and_stale_existing_news_cannot_be_a_real_signal(self):
+        with patch.object(mod,"old_market_events",return_value=[]):
+            result=mod.collect(N,lambda _:(_ for _ in ()).throw(OSError("offline")),previous={"items":[{"fake":True}]})
+        self.assertEqual(result["items"],[])
+        self.assertEqual(result["coverage"]["healthyFeeds"],0)
+        self.assertEqual(result["coverage"]["sources"]["history"]["status"],"no_fresh_articles")
+if __name__=="__main__":unittest.main()
