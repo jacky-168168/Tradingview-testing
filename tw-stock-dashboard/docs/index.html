@@ -421,7 +421,7 @@ function overnightPreviewModel(r,f,today,minutes){
  if(!/^20\d{2}-\d{2}-\d{2}$/.test(nextDate)||nextDate<=cashDate)return fail("夜盤對應的下一個交易日尚未確認。");
  if(nextDate<today||(nextDate===today&&minutes>=9*60))return fail("夜盤盤前推估已過期；現貨開盤後應以當日行情重新判斷。");
  const lag=(Date.parse(nextDate+"T00:00:00+08:00")-Date.parse(cashDate+"T00:00:00+08:00"))/86400000;
- if(!Number.isFinite(lag)||lag>12)return fail("下一交易日距離太長，暫停盤前推估。");
+ if(!Number.isFinite(lag)||lag>4)return fail("跨越多日休市，舊 TX 夜盤不能作今日盤前分數；須等待當日成交價。");
  const pct=cmp.pct;
  const adjustment=MarketCommand.txScoreDelta(pct);
  const score=Math.max(0,Math.min(100,base+adjustment));
@@ -445,7 +445,8 @@ function nextEntryPreview(){
  el.className="txf-entry";
  const live=verifiedTXNow(TX_LIVE);
  if(live){const tone=live.pct<=-0.5?"stop":live.pct<0.5?"warn":null;if(tone)el.classList.add(tone);el.textContent="📊 今日台指期 08:45 開盤後已取得同日報價："+futDisplay(live.last)+" 點｜相對參考價 "+(live.pct>=0?"+":"")+live.pct.toFixed(2)+"%；僅行情觀察，非正式 Risk Score。";return;}
- if(!cmp||f.asOfDate!==DATA?.risk?.date||String(f.night?.reportQueryDate||"")<taipeiDate()){
+ const lag=(Date.parse(taipeiDate()+"T12:00:00+08:00")-Date.parse(String(f.asOfDate||"")+"T12:00:00+08:00"))/86400000;
+ if(!cmp||!Number.isFinite(lag)||lag>4||f.asOfDate!==DATA?.risk?.date||String(f.night?.reportQueryDate||"")<taipeiDate()){
    el.classList.add("warn");el.textContent="⏳ 等待最近交易日的官方完整夜盤；舊期貨資料不得代表下個交易日。";return}
  const value=futDisplay(Math.abs(cmp.pct),2);
  if(cmp.pct<=-1){el.classList.add("stop");el.textContent="🔴 台指期夜盤較日盤跌 "+value+"%｜期貨偏弱，下一交易日先觀察開盤（未回測）";return}
@@ -468,10 +469,11 @@ async function loadTXIntraday(){
   if(!res.ok)throw Error("尚未發布當日盤前報價");
   TX_LIVE=await res.json();
   const q=verifiedTXNow(TX_LIVE);
+  if(window.MarketCommand)MarketCommand.applyTXLive(q?TX_LIVE:null);
   if(!q)throw Error(TX_LIVE?.reason||"當日報價未通過日期或時效驗證");
-  target.textContent="📈 今日 TX 近月成交 "+futDisplay(q.last)+"｜相對參考價 "+(q.points>=0?"+":"")+futDisplay(q.points,0)+" 點（"+(q.pct>=0?"+":"")+futDisplay(q.pct,2)+"%）｜成交 "+new Date(q.time).toLocaleTimeString("zh-TW",{timeZone:"Asia/Taipei",hour12:false})+"｜Yahoo 第三方行情，可能延遲；非正式現貨風控。";
+  target.textContent="📈 今日 TX 近月成交 "+futDisplay(q.last)+"｜相對參考價 "+(q.points>=0?"+":"")+futDisplay(q.points,0)+" 點（"+(q.pct>=0?"+":"")+futDisplay(q.pct,2)+"%）｜成交 "+new Date(q.time).toLocaleTimeString("zh-TW",{timeZone:"Asia/Taipei",hour12:false})+"｜第三方 TX 報價（可能延遲），非正式現貨風控。";
  }catch(e){
-  TX_LIVE=null;
+  TX_LIVE=null;if(window.MarketCommand)MarketCommand.applyTXLive(null);
   target.textContent="⚠ 今日 TX 08:45 後報價尚未驗證："+e.message+"；不沿用舊日盤前價。";
  }
  nextEntryPreview();
