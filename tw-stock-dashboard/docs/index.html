@@ -38,8 +38,8 @@
 <link rel="stylesheet" href="./market-compact.css?v=65481d6d48f4">
 <link rel="stylesheet" href="./dynamic-exposure.css">
 <link rel="stylesheet" href="./fear-greed-home.css?v=842f00c777d9">
-<script src="./market-compact.js?v=75be6984f70e"></script>
-<script src="./market-command.js?v=aaf17fade59c"></script>
+<script src="./market-compact.js?v=65d21fa25c55"></script>
+<script src="./market-command.js?v=10a4a6ec9338"></script>
 <script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
 <script defer src="./us-market-freshness.js?v=de836e1500a9"></script>
@@ -100,7 +100,7 @@
  <div class="compact-score-sources" aria-label="分數來源，校正為獨立研究">
   <div class="compact-source"><span class="compact-source-label">正式收盤</span><strong id="compactOfficial">—</strong><small>原始 Risk Score</small></div>
   <div class="compact-source" id="compactResearch" data-verified="false"><span class="compact-source-label">校正參考</span><strong id="compactAdjusted">—</strong><small>獨立研究，不參與運算</small></div>
-  <div class="compact-source" id="compactNightCell" hidden><span class="compact-source-label">TX 夜盤調整</span><strong id="compactNight">—</strong><small>未經獨立回測</small></div>
+  <div class="compact-source" id="compactNightCell" hidden><span class="compact-source-label">TX 情境調整</span><strong id="compactNight">—</strong><small>未經獨立回測</small></div>
  </div>
  <div class="compact-explain" id="compactEquation">校正研究不參與正式分數或夜盤參考計算。</div>
  </details>
@@ -515,7 +515,7 @@ function renderHomeG(){
  left.append(a,theme);score.appendChild(suffix);row.append(left,score);box.appendChild(row);}
 }
 function renderPanels(){var p=DATA&&DATA.panels||{},f=p.institutionFlow||{buy:[],sell:[]};buyRows.innerHTML=(f.buy||[]).map(panelRow).join("")||'<div class="sub">--</div>';sellRows.innerHTML=(f.sell||[]).map(panelRow).join("")||'<div class="sub">--</div>';instSource.textContent=p.institutionSource||"";var quality=DATA&&DATA.institutionQuality||{},valid=quality.status==="complete"&&quality.date===DATA.dataDate&&quality.missingRanked===0;document.getElementById("instCoverage").textContent=valid?"✅ 官方上市 "+quality.listedRows+" 筆／上櫃 "+quality.otcRows+" 筆；榜單法人缺漏 0 檔。":"⚠ 法人完整性未經當日驗證，請勿將缺值視為零。";var hs=p.topicHeat||[];themeRows.innerHTML=hs.length?hs.map(function(x){return '<div class="row"><span><b>'+esc(x.theme)+'</b></span><span class="'+C(x.avgRet)+'">'+(Number(x.avgRet)>=0?"+":"")+N(x.avgRet)+'%</span></div>'}).join(""):'<div class="sub">--</div>';themeSource.textContent=p.topicSource||""}
-function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);var freshness=MarketCommand.evaluate(DATA.risk||{},DATA.marketIntelligence||null);marketMeta.textContent="最新資料日 "+(DATA.dataDate||"--")+(freshness.stale?" ｜ ⚠ 今日正式資料待同步":" ｜ 官方現貨盤後資料，非即時交易建議");var more=document.getElementById("marketMetaDetails");if(more)more.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),ageWarning=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5),isStale=freshness.stale||ageWarning;staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent=freshness.stale?"⚠ 今日大盤正式分數尚未同步，最新完整資料日為 "+(last.d||"未知")+"；目前分數只能看歷史，不能當作今日新倉許可。若遇交易所休市，請等下個交易日更新。":"⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
+function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);var freshness=MarketCommand.evaluate(DATA.risk||{},DATA.marketIntelligence||null);marketMeta.textContent="最新資料日 "+(DATA.dataDate||"--")+(freshness.stale?" ｜ ⚠ 今日正式資料待同步":" ｜ 官方現貨盤後資料，非即時交易建議");var more=document.getElementById("marketMetaDetails");if(more)more.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),ageWarning=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5),isStale=freshness.stale||ageWarning;staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent=freshness.stale?"⚠ 今日正式現貨 Risk Score 尚未同步，最新完整資料日為 "+(last.d||"未知")+"；前次正式分數只能看歷史，盤中 TX 參考試算不作新倉許可。若遇交易所休市，請等下個交易日更新。":"⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
 async function loadIntradayMarketBreadth(){
  try{const res=await fetch("./data/g_intraday/latest.json?v="+Date.now(),{cache:"no-store"});if(!res.ok)throw new Error("No published live G quotes");
    const snap=await res.json();if(window.MarketCommand)MarketCommand.applyIntraday(snap);
