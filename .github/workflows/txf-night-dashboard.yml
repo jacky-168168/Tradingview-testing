@@ -88,6 +88,8 @@ jobs:
       - name: Verify same-day quote parser rejects stale/auction quotes
         working-directory: tw-stock-dashboard
         run: PYTHONPATH=src python -m unittest discover -s tests -p 'test_futures_preopen.py' -v
+      - name: Verify same-day TX quote appears on homepage without rendering failure
+        run: node tw-stock-dashboard/tests/test_txf_live_ui.cjs
       - name: Fetch verified TX same-day quote (08:45+ only)
         working-directory: tw-stock-dashboard
         env:
