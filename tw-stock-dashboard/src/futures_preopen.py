@@ -8,12 +8,14 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import json
+import os
 import re
 import requests
 from bs4 import BeautifulSoup
 from config import DATA_DIR
 
 URL = "https://tw.stock.yahoo.com/future/futures.html?fumr=futurefull"
+FUGLE_URL = "https://api.fugle.tw/marketdata/v1.0/futopt/intraday/quote/TXF1!"
 OUT = DATA_DIR / "futures" / "intraday.json"
 TZ = ZoneInfo("Asia/Taipei")
 MAX_AGE = timedelta(minutes=25)
@@ -80,24 +82,82 @@ def parse_quote(html: str, now: datetime) -> dict:
         "disclaimer": "非期交所授權即時API，僅為第三方當日報價快照；不寫回現貨正式風控／F2。"
     }
 
+def parse_fugle_quote(data: dict, now: datetime) -> dict:
+    """Fugle authenticated futures REST quote, real executed trade only (no auction)."""
+    now = now.astimezone(TZ)
+    if not isinstance(data, dict) or data.get("date") != now.date().isoformat():
+        raise QuoteUnavailable("富果期貨資料日不符今日")
+    if data.get("exchange") != "TAIFEX" or not re.fullmatch(r"TXF[A-L]\d", str(data.get("symbol",""))):
+        raise QuoteUnavailable("富果回應非 TXF 近月月份合約")
+    if data.get("isTrial"):
+        raise QuoteUnavailable("富果只提供試撮盤，尚無正式成交")
+    stamp = data.get("closeTime") or (data.get("lastTrade") or {}).get("time")
+    if not isinstance(stamp, (int, float)) or stamp <= 0:
+        raise QuoteUnavailable("富果缺少可核對的正式成交時間")
+    observed = datetime.fromtimestamp(stamp / 1000000, tz=TZ)
+    age = now - observed
+    if observed.date() != now.date() or not timedelta(0) <= age <= MAX_AGE:
+        raise QuoteUnavailable("富果今日 TX 報價過期或為未來時間")
+    mins = observed.hour*60+observed.minute
+    if not (8*60+45 <= mins < 13*60+45):
+        raise QuoteUnavailable("富果成交時間不在當日日盤")
+    try:
+        last = float(data.get("closePrice") or (data.get("lastTrade") or {}).get("price"))
+        reference = float(data.get("previousClose"))
+    except (TypeError, ValueError):
+        raise QuoteUnavailable("富果成交價或前收盤價缺失")
+    if not (10000 <= last <= 100000 and 10000 <= reference <= 100000):
+        raise QuoteUnavailable("富果成交價／前收盤價異常")
+    points = round(last - reference, 2)
+    return {
+        "status":"ok", "quality":"dated-third-party-snapshot",
+        "asOfDate": now.date().isoformat(), "symbol":"WTX&",
+        "contract":data["symbol"], "product":"TX-near-month",
+        "last":last, "reference":reference, "changePoints":points,
+        "changePct":round(points/reference*100,3),
+        "quoteTime":observed.isoformat(), "fetchedAt":now.isoformat(timespec="seconds"),
+        "maxAgeMinutes":25, "source":"富果期貨行情 API（正式成交資料）",
+        "sourceUrl":"https://developer.fugle.tw/docs/data-futopt/http-api/intraday/quote/",
+        "disclaimer":"第三方期貨報價；正式現貨 Risk Score／F2 不隨此資料改寫。"
+    }
+
 def run(now: datetime | None = None):
     now = (now or datetime.now(TZ)).astimezone(TZ)
     mins = now.hour*60+now.minute
     if now.weekday() >= 5 or not (8*60+45 <= mins <= 13*60+45):
         print("TX_INTRADAY_OUTSIDE_DAY_SESSION", now.isoformat())
         return
-    try:
-        r = requests.get(URL, headers=USER_AGENT, timeout=20, params={"t":str(int(now.timestamp()))})
-        r.raise_for_status()
-        result = parse_quote(r.text, now)
-        print("TX_INTRADAY_VERIFIED", result["quoteTime"], result["last"], result["changePct"])
-    except (requests.RequestException, QuoteUnavailable, ValueError, IndexError) as exc:
+    result = None
+    errors = []
+    key = os.environ.get("FUGLE_API_KEY","").strip()
+    if key:
+        try:
+            r = requests.get(FUGLE_URL, headers={"X-API-KEY":key}, timeout=15)
+            r.raise_for_status()
+            result = parse_fugle_quote(r.json(), now)
+        except (requests.RequestException, QuoteUnavailable, ValueError, KeyError, TypeError) as exc:
+            errors.append("Fugle: "+str(exc)[:110])
+    else:
+        errors.append("未設定 FUGLE_API_KEY")
+    if result is None:
+        for target in (URL,"https://tw.finance.yahoo.com/future/futures.html?fumr=futurefull"):
+            try:
+                r = requests.get(target, headers=USER_AGENT, timeout=15, params={"t":str(int(now.timestamp()))})
+                r.raise_for_status()
+                result = parse_quote(r.text, now)
+                result["sourceUrl"] = target
+                break
+            except (requests.RequestException, QuoteUnavailable, ValueError, IndexError) as exc:
+                errors.append("Yahoo: "+str(exc)[:100])
+    if result is None:
         result = {
             "status": "unavailable", "quality": "no-valid-current-quote",
             "asOfDate": now.date().isoformat(), "checkedAt": now.isoformat(timespec="seconds"),
-            "reason": str(exc)[:240], "sourceUrl": URL
+            "reason": "；".join(errors)[:240], "sourceUrl":FUGLE_URL if key else URL
         }
         print("TX_INTRADAY_UNAVAILABLE", result["reason"])
+    else:
+        print("TX_INTRADAY_VERIFIED", result["quoteTime"], result["last"], result["changePct"], result["source"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
     if OUT.exists():
         old = json.loads(OUT.read_text(encoding="utf-8"))
