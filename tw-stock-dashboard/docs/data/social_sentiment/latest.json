@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-10-27T01:50:56.986031Z",
+  "generatedAt": "2026-10-27T04:58:27.128829Z",
   "sources": {
     "PTT": {
       "status": "ok",
@@ -8,12 +8,12 @@
       "url": "https://www.ptt.cc/atom/stock.xml",
       "freshCount": 15,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 3,
-      "pushLabelsFound": 5
+      "boardFreshCount": 5,
+      "pushLabelsFound": 7
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 16,
+      "freshCount": 18,
       "queryHealth": {
         "queriesAttempted": 12,
         "queriesSucceeded": 12,
@@ -47,21 +47,21 @@
     }
   },
   "social": {
-    "sample": 12,
+    "sample": 13,
     "bull": 0,
     "bear": 2,
-    "neutral": 10,
+    "neutral": 11,
     "directional": 2,
     "status": "已有樣本｜偏空討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
-    "rawSample": 46,
-    "investmentDiscussion": 12,
-    "originalDiscussion": 12,
-    "repostedNews": 29,
+    "rawSample": 48,
+    "investmentDiscussion": 13,
+    "originalDiscussion": 13,
+    "repostedNews": 30,
     "unrelated": 5,
     "platformCounts": {
       "PTT": 3,
-      "Bluesky": 9,
+      "Bluesky": 10,
       "Threads": 0,
       "Instagram": 0
     }
@@ -81,6 +81,65 @@
     "method": "僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"
   },
   "items": [
+    {
+      "platform": "Bluesky",
+      "title": "去你的台股統一廢物",
+      "url": "https://bsky.app/profile/suikaels.bsky.social/post/3mytfqp6vks2h",
+      "publishedAt": "2026-10-27T04:31:58.272000Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "投資意見",
+        "stance": "偏空",
+        "emotion": "恐慌",
+        "confidence": "中",
+        "evidence": "去你的台股統一廢物",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "Bluesky",
+      "title": "#中央社即時新聞 財經新聞 11:10 台股漲逾500點後翻黑 科技權值股失色 （中央社記者潘智義台北27日電）台股今天開高走低，台積電開盤跌破半年線，10時44分左右，加權指數達45963.40點，跌78.03點，跌幅0.17%，成交金額新台幣5285.65億元。 https://www.cna.com.tw/",
+      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mytcvlrrz7v2",
+      "publishedAt": "2026-10-27T03:40:55Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 大摩：欣興與輝達的協議有助降低潛在產能",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793071259.A.EDB.html",
+      "publishedAt": "2026-10-27T03:20:59Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 33,
+      "pushLabel": "33",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 因俄烏戰爭繞路4年 繼華航後 長榮也飛回",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793067923.A.004.html",
+      "publishedAt": "2026-10-27T02:25:23Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 43,
+      "pushLabel": "43",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
     {
       "platform": "Bluesky",
       "title": "#中央社即時新聞 財經新聞 09:03 台股開盤漲169.77點 （中央社台北27日電）台北股市今天開盤漲169.77點，加權股價指數為46211.2點，成交金額新台幣126.52億元。1151027 https://www.cna.com.tw/news/afe/202610270021.aspx #新聞",
@@ -153,8 +212,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 12,
-      "pushLabel": "12",
+      "pushScore": 27,
+      "pushLabel": "27",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -192,8 +251,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 99,
-      "pushLabel": "99",
+      "pushScore": 100,
+      "pushLabel": "爆",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -681,37 +740,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 川普50％機率對伊朗丟核彈！預言家示警：",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1792899611.A.9B6.html",
-      "publishedAt": "2026-10-25T03:40:11Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 獨／集保打頭陣上路企業TISA 員工一年有1",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1792896487.A.236.html",
-      "publishedAt": "2026-10-25T02:48:07Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "Anthropic上半年虧損約807億美元，營業現金卻流入約39億；台股AI要查收款",
-      "url": "https://www.youtube.com/watch?v=bYlZLNcFlvw",
-      "publishedAt": "2026-10-27T01:49:51Z",
-      "sourceName": "陶猗",
+      "title": "輝達正式宣布Spectrum-X CPO #ai #輝達 #台股 #潛力股",
+      "url": "https://www.youtube.com/watch?v=RO_jklyyhzk",
+      "publishedAt": "2026-10-27T04:41:59Z",
+      "sourceName": "市場分析師",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1065,6 +1102,34 @@
     },
     {
       "platform": "PTT",
+      "title": "[新聞] 因俄烏戰爭繞路4年 繼華航後 長榮也飛回",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793067923.A.004.html",
+      "publishedAt": "2026-10-27T02:25:23Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 43,
+      "pushLabel": "43",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 大摩：欣興與輝達的協議有助降低潛在產能",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793071259.A.EDB.html",
+      "publishedAt": "2026-10-27T03:20:59Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 33,
+      "pushLabel": "33",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
       "title": "[新聞] 台股開盤壓力大？美股費半暴漲2.8%　郭",
       "url": "https://www.ptt.cc/bbs/Stock/M.1793062729.A.D69.html",
       "publishedAt": "2026-10-27T00:58:49Z",
@@ -1073,8 +1138,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 12,
-      "pushLabel": "12",
+      "pushScore": 27,
+      "pushLabel": "27",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1296,28 +1361,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 川普50％機率對伊朗丟核彈！預言家示警：",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1792899611.A.9B6.html",
-      "publishedAt": "2026-10-25T03:40:11Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 獨／集保打頭陣上路企業TISA 員工一年有1",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1792896487.A.236.html",
-      "publishedAt": "2026-10-25T02:48:07Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1333,19 +1376,19 @@
     "status": "verified",
     "model": "gemini-3.5-flash-lite",
     "inferenceCalls": 1,
-    "cachedClassifications": 9,
-    "newlyClassified": 3,
+    "cachedClassifications": 12,
+    "newlyClassified": 1,
     "unclassified": 0,
-    "updatedAt": "2026-10-27T01:50:59.944Z",
+    "updatedAt": "2026-10-27T04:58:30.647Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 12,
-    "classifiedCount": 12,
-    "investmentCount": 3,
+    "candidateCount": 13,
+    "classifiedCount": 13,
+    "investmentCount": 4,
     "bullish": 0,
-    "bearish": 0,
+    "bearish": 1,
     "neutral": 3,
-    "originalRuleCount": 12,
+    "originalRuleCount": 13,
     "noTrade": true
   }
 }
