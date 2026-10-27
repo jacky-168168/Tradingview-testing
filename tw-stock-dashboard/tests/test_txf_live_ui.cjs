@@ -9,7 +9,7 @@ const runner=new Function("Date","document","TX_LIVE","FUTURES","DATA","sameCont
 function render(last,reference=46234){
  const classes=[],el={className:"",textContent:"",classList:{add(v){if(!v)throw Error("Empty class token");classes.push(v)}}};
  const q={status:"ok",quality:"dated-third-party-snapshot",asOfDate:"2026-10-27",symbol:"WTX&",quoteTime:"2026-10-27T09:00:40+08:00",last,reference};
- const node=runner(FakeDate,{getElementById:()=>el},q,null,{risk:{date:"2026-10-22"}},()=>null,v=>String(v),()=>"2026-10-27");
+ const node=runner(FakeDate,{getElementById:()=>el},q,null,{risk:{date:"2026-10-22"}},()=>null,v=>Number(v).toLocaleString('en-US'),()=>"2026-10-27");
  return {node,classes};
 }
 const rising=render(46636);
