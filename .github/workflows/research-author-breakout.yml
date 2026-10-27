@@ -123,6 +123,9 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          # The parallel diagnostics job may have published a formerly untracked file.
+          # Rebase requires a clean working tree; only discard this generated copy.
+          git checkout -- tw-stock-dashboard/docs/data/research/author_breakout/author_samples.json 2>/dev/null || rm -f tw-stock-dashboard/docs/data/research/author_breakout/author_samples.json
           git add tw-stock-dashboard/docs/data/research/author_breakout/backtest_summary.json tw-stock-dashboard/docs/data/research/author_breakout/backtest_trades.json
           if ! git diff --cached --quiet; then
             git commit -m 'research: publish verified 2023-2026 author breakout ATR RR backtest'
