@@ -354,6 +354,7 @@
 <section class="card brief-card brief-futures" aria-label="隔日盤前期貨風險">
  <div class="brief-head"><div><div class="small-title">02 · 隔日盤前參考</div><div class="brief-title">台指期夜盤是否增添風險？</div></div><span class="brief-mode">TX</span></div>
  <div id="futuresSub" class="sub brief-data-status" role="status">正在核對期交所資料…</div>
+ <div id="txfLiveQuote" class="sub brief-data-status" role="status">今日 08:45 後台指期報價：尚未驗證</div>
  <div id="nextEntry" class="txf-entry brief-txf-entry">正在讀取夜盤風險觀察…</div>
  <div class="brief-explain">夜盤有助於掌握隔夜波動，<strong>但不能取代已回測的現貨分數</strong>，也不能保證隔日漲跌。</div>
  <details class="detail-stack" id="txfDetails"><summary>查看期貨數字、盤前試算與走勢 <span class="disclosure-hint">進階</span></summary>
@@ -395,7 +396,7 @@ function taipeiDate(){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tai
 function dayInfo(){var d=String(DATA&&DATA.dataDate||DATA&&DATA.risk&&DATA.risk.date||'');var today=taipeiDate();var weekend=["Sat","Sun"].includes(new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Taipei",weekday:"short"}).format(new Date()));var label=d===today?'📅 '+d+'｜當日交易日資料':(weekend?'⏸ 週末休市｜':'⏸ 尚無今日交易日資料｜')+'最近交易日 '+(d||'未知')+'（非即時訊號）';return {d:d,today:today,weekend:weekend,isCurrent:d===today,label:label}}
 function renderRisk(){var state=dayInfo();riskDataStatus.textContent=state.label;revDataStatus.textContent=state.label;var r=DATA&&DATA.risk||{};riskScore.textContent=Number.isFinite(Number(r.score))?r.score:"--";riskState.textContent=r.state||"尚未分析";var s=Number(r.score||0);riskLight.style.background=s>=60?"#dcfce7":s>=45?"#fef3c7":"#fee2e2";riskLight.style.color=s>=60?"#16a34a":s>=45?"#d97706":"#dc2626";var g2=r.f2Gate||{};riskAdvice.textContent=(state.isCurrent?"現貨風控：":"前次收盤 "+state.d+" 歷史風控：")+(s>=75?"強勢多頭。":s>=60?"Risk ON。":s>=45?"Neutral。":"Risk OFF。")+" F2："+(g2.reason||"尚未分析")+(state.isCurrent?"":"｜並非今日盤中進場許可");riskWarning.style.display=s<60?"block":"none";const mode=r.mode||"NORMAL";revMode.textContent=mode==="TOP"?"頂部觀察":mode==="BOTTOM"?"底部觀察":"一般狀態";const names={"⚪ Normal":"⚪ 未見明確反轉","⚪ Top Watch":"⚪ 頂部觀察中，尚未確認轉弱","⚪ Bottom Watch":"⚪ 底部觀察中，尚未確認反轉","🟡 Overbought Watch":"🟡 短線過熱，留意追價","🟣 Oversold Watch":"🟣 超跌觀察，尚未確認反彈","🟣 Extreme Oversold":"🟣 極端超跌，等待反轉確認","🟠 Bottom Reversal Attempt":"🟠 底部反轉嘗試中","🟢 Strong Bottom Reversal":"🟢 強底部反轉已確認","🟠 Top Reversal Attempt":"🟠 頂部轉弱嘗試中","🔴 Strong Top Reversal":"🔴 頂部反轉警戒","🔴 Extreme Overbought":"🔴 極端過熱"};revState.textContent=names[r.activeState]||r.activeState||"⚪ 未見明確反轉";var top=r.mode==="TOP";extremeLabel.textContent=top?"過熱程度（非反轉分數）":"超跌程度（非反轉分數）";confirmLabel.textContent=top?"頂部確認（6/9 為強訊號）":"底部反轉確認（6/9 為強訊號）";extreme.textContent=(top?(r.overboughtScore||0):(r.oversoldScore||0))+"/9";document.getElementById("confirm").textContent=(top?(r.topConfirmScore||0):(r.bottomConfirmScore||0))+"/9";dist.textContent="距MA20 "+P(r.distMA20);dayret.textContent=(state.isCurrent?"當日 ":"資料日 ")+P(r.dayRet);closepos.textContent="收盤位置 "+P(r.closePosition,1);idx.textContent=N(r.index);ma5.textContent=N(r.ma5);ma20.textContent=N(r.ma20);r5.textContent=P(r.ret5);r5.className="metric-value "+C(r.ret5);r20.textContent=P(r.ret20);r20.className="metric-value "+C(r.ret20);breadth.textContent=P(r.breadth,1);foreign.textContent=N(r.foreign,1)+" 億";foreign.className="metric-value "+C(r.foreign);trend.textContent=r.trend||"--"}
 function panelRow(x){return '<div class="row"><span><b>'+esc(x.code)+" "+esc(x.name)+'</b></span><span>'+N(x.lots,0)+' 張</span></div>'}
-let FUTURES=null;
+let FUTURES=null,TX_LIVE=null;
 function futDisplay(v,digits){const x=Number(v);return v!=null&&Number.isFinite(x)?x.toLocaleString("zh-TW",{minimumFractionDigits:digits||0,maximumFractionDigits:digits||0}):"--"}
 // 台指期日夜盤比較完全使用 TX 同日期、同到期月份的兩個交易時段，不混合加權現貨 Risk Score。
 function sameContractTX(f){
@@ -442,6 +443,8 @@ function renderOpeningPreview(){
 function nextEntryPreview(){
  const f=FUTURES||{},cmp=sameContractTX(f),el=document.getElementById("nextEntry");
  el.className="txf-entry";
+ const live=verifiedTXNow(TX_LIVE);
+ if(live){el.classList.add(live.pct<=-0.5?"stop":live.pct>=0.5?"":"warn");el.textContent="📊 今日台指期 08:45 開盤後已取得同日報價："+futDisplay(live.last)+" 點｜相對參考價 "+(live.pct>=0?"+":"")+live.pct.toFixed(2)+"%；僅行情觀察，非正式 Risk Score。";return;}
  if(!cmp||f.asOfDate!==DATA?.risk?.date||String(f.night?.reportQueryDate||"")<taipeiDate()){
    el.classList.add("warn");el.textContent="⏳ 等待最近交易日的官方完整夜盤；舊期貨資料不得代表下個交易日。";return}
  const value=futDisplay(Math.abs(cmp.pct),2);
@@ -449,6 +452,29 @@ function nextEntryPreview(){
  if(cmp.pct<=-0.5){el.classList.add("warn");el.textContent="🟠 台指期夜盤較日盤跌 "+value+"%｜期貨短線偏弱，留意開盤波動（未回測）";return}
  if(cmp.pct>=0.5){el.textContent="🟢 台指期夜盤較日盤漲 "+value+"%｜期貨偏強，仍需等下一交易日開盤確認（未回測）";return}
  el.textContent="🟡 台指期夜盤較日盤"+(cmp.pct>=0?"漲 ":"跌 ")+value+"%｜期貨偏中性；僅供參考（未回測）";
+}
+function verifiedTXNow(q){
+ if(!q||q.status!=="ok"||q.quality!=="dated-third-party-snapshot"||q.asOfDate!==taipeiDate()||q.symbol!=="WTX&")return null;
+ const d=new Date(q.quoteTime),age=Date.now()-d.getTime();
+ if(!Number.isFinite(d.getTime())||age<0||age>25*60000)return null;
+ const a=Number(q.last),b=Number(q.reference);
+ if(!Number.isFinite(a)||!Number.isFinite(b)||a<=0||b<=0)return null;
+ return {last:a,reference:b,points:a-b,pct:(a-b)/b*100,date:q.asOfDate,time:q.quoteTime};
+}
+async function loadTXIntraday(){
+ const target=document.getElementById("txfLiveQuote");
+ try{
+  const res=await fetch("./data/futures/intraday.json?v="+Date.now(),{cache:"no-store"});
+  if(!res.ok)throw Error("尚未發布當日盤前報價");
+  TX_LIVE=await res.json();
+  const q=verifiedTXNow(TX_LIVE);
+  if(!q)throw Error(TX_LIVE?.reason||"當日報價未通過日期或時效驗證");
+  target.textContent="📈 今日 TX 近月成交 "+futDisplay(q.last)+"｜相對參考價 "+(q.points>=0?"+":"")+futDisplay(q.points,0)+" 點（"+(q.pct>=0?"+":"")+futDisplay(q.pct,2)+"%）｜成交 "+new Date(q.time).toLocaleTimeString("zh-TW",{timeZone:"Asia/Taipei",hour12:false})+"｜Yahoo 第三方行情，可能延遲；非正式現貨風控。";
+ }catch(e){
+  TX_LIVE=null;
+  target.textContent="⚠ 今日 TX 08:45 後報價尚未驗證："+e.message+"；不沿用舊日盤前價。";
+ }
+ nextEntryPreview();
 }
 async function loadFutures(){
  try{
@@ -471,6 +497,7 @@ async function loadFutures(){
   FUTURES=null;if(window.MarketCommand)MarketCommand.applyFutures(null);futuresSub.textContent="⏳ 官方台指期盤後資料暫不可用："+err.message+"；可點下方連結查看即時行情";
   txfDay.textContent=txfNight.textContent=txfChange.textContent=txfOfficial.textContent=txfContract.textContent="--";
  }
+ await loadTXIntraday();
  nextEntryPreview();
  renderOpeningPreview();
 }
