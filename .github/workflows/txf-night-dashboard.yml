@@ -88,6 +88,9 @@ jobs:
       - name: Fetch official TAIFEX completed sessions
         working-directory: tw-stock-dashboard
         run: PYTHONPATH=src python src/futures_night.py
+      - name: Verify same-day quote parser rejects stale/auction quotes
+        working-directory: tw-stock-dashboard
+        run: PYTHONPATH=src python -m unittest discover -s tests -p 'test_futures_preopen.py' -v
       - name: Fetch verified TX same-day quote (08:45+ only)
         working-directory: tw-stock-dashboard
         run: PYTHONPATH=src python -u src/futures_preopen.py
