@@ -90,6 +90,10 @@ jobs:
         run: PYTHONPATH=src python -m unittest discover -s tests -p 'test_futures_preopen.py' -v
       - name: Verify same-day TX quote appears on homepage without rendering failure
         run: node tw-stock-dashboard/tests/test_txf_live_ui.cjs
+      - name: Verify reopen after market holidays never inherits old TX risk baseline
+        run: |
+          node tw-stock-dashboard/tests/test_tx_holiday_open.cjs
+          node tw-stock-dashboard/tests/test_market_open_breadth.cjs
       - name: Fetch verified TX same-day quote (08:45+ only)
         working-directory: tw-stock-dashboard
         env:
