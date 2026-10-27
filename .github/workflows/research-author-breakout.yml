@@ -1,0 +1,135 @@
+name: Author Breakout ATR RR Three-Year Research
+on:
+  workflow_dispatch:
+    inputs:
+      max_symbols:
+        description: '0=完整現有上市上櫃母體；其他數字僅供非代表性的快速測試'
+        required: false
+        default: '0'
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/research_author_breakout.py'
+      - 'tw-stock-dashboard/tests/test_research_author_breakout.py'
+      - '.github/workflows/research-author-breakout.yml'
+permissions:
+  contents: write
+concurrency:
+  group: author-breakout-rr-research
+  cancel-in-progress: false
+jobs:
+  samples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Verify script and regression tests without data fetching
+        working-directory: tw-stock-dashboard
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m py_compile src/research_author_breakout.py
+          python -m unittest discover -s tests -p 'test_research_author_breakout.py' -v
+      - name: Compute 19 original signals with as-of historical ATR
+        working-directory: tw-stock-dashboard
+        run: python src/research_author_breakout.py --diagnostics-only
+      - name: Validate original signals
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path('tw-stock-dashboard/docs/data/research/author_breakout/author_samples.json').read_text())
+          assert j['count']==19 and len(j['samples'])==19
+          assert 0.9<j['medians']['riskATR']<1.2
+          assert any(v['code']=='8086' and abs(v['riskPct']-7.2848)<.01 for v in j['samples'])
+          print('PASS: all 19 original samples; no future price required')
+          PY
+      - name: Publish frozen sample diagnostics
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/author_breakout/author_samples.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish as-of 19 author breakout RR ATR samples'
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore shared historical Taiwan stock market caches
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Test and run historical breakout candidates
+        working-directory: tw-stock-dashboard
+        env:
+          PYTHONPATH: src
+          MAX_SYMBOLS: ${{ github.event.inputs.max_symbols || '0' }}
+        run: |
+          python -m unittest discover -s tests -p 'test_research_author_breakout.py' -v
+          python -u src/research_author_breakout.py --max-symbols "$MAX_SYMBOLS"
+      - name: Verify results before publishing
+        env:
+          MAX_SYMBOLS: ${{ github.event.inputs.max_symbols || '0' }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path('tw-stock-dashboard/docs/data/research/author_breakout')
+          j=json.loads((root/'backtest_summary.json').read_text())
+          trades=json.loads((root/'backtest_trades.json').read_text())
+          assert j['status']=='historical_backtest_completed'
+          assert len(j['models'])==6 and len(trades['models'])==6
+          assert j['testedUniverse']>=19
+          assert j['usablePriceSeries']>=min(19,j['testedUniverse'])
+          if int(os.environ['MAX_SYMBOLS'])==0:
+            assert j['scope']=='FULL_CURRENT_UNIVERSE'
+            assert j['usablePriceSeries']>=900, 'Insufficient full-market coverage: no publication'
+          assert sum(j['models'][name]['executed'] for name in j['models'])>0
+          print('PASS validated signal backtest:',j['testedUniverse'],j['usablePriceSeries'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: author-breakout-research-output
+          path: tw-stock-dashboard/docs/data/research/author_breakout
+          retention-days: 30
+      - name: Publish verified new research only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/author_breakout/backtest_summary.json tw-stock-dashboard/docs/data/research/author_breakout/backtest_trades.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: publish verified 2023-2026 author breakout ATR RR backtest'
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*7)); continue; }
+              if git push origin HEAD:main; then exit 0; fi
+              sleep $((i*7))
+            done
+            exit 1
+          fi
