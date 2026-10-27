@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-10-27T04:58:27.128829Z",
+  "generatedAt": "2026-10-27T06:12:28.264537Z",
   "sources": {
     "PTT": {
       "status": "ok",
@@ -8,12 +8,12 @@
       "url": "https://www.ptt.cc/atom/stock.xml",
       "freshCount": 15,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 5,
-      "pushLabelsFound": 7
+      "boardFreshCount": 7,
+      "pushLabelsFound": 9
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 18,
+      "freshCount": 19,
       "queryHealth": {
         "queriesAttempted": 12,
         "queriesSucceeded": 12,
@@ -47,21 +47,21 @@
     }
   },
   "social": {
-    "sample": 13,
+    "sample": 14,
     "bull": 0,
     "bear": 2,
-    "neutral": 11,
+    "neutral": 12,
     "directional": 2,
     "status": "已有樣本｜偏空討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
-    "rawSample": 48,
-    "investmentDiscussion": 13,
-    "originalDiscussion": 13,
+    "rawSample": 50,
+    "investmentDiscussion": 14,
+    "originalDiscussion": 14,
     "repostedNews": 30,
-    "unrelated": 5,
+    "unrelated": 6,
     "platformCounts": {
       "PTT": 3,
-      "Bluesky": 10,
+      "Bluesky": 11,
       "Threads": 0,
       "Instagram": 0
     }
@@ -81,6 +81,54 @@
     "method": "僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"
   },
   "items": [
+    {
+      "platform": "PTT",
+      "title": "[閒聊] 2026/10/27 盤後閒聊",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793080841.A.619.html",
+      "publishedAt": "2026-10-27T06:00:41Z",
+      "stance": "中立／難判",
+      "contentType": "非投資話題",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 84,
+      "pushLabel": "84",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "#公視新聞網 13:54 美股收紅激勵台股早盤開高走低 盤中震盪跌破4萬6關卡 台股今（27）日開高走低，早盤以4萬6211點開出，上漲170點。分析師表示，受到美股4大指數與費城半導體指數大漲反彈激勵影響，亞股、韓股和台股都以紅盤開出，不過台股隨後呈現震盪走勢，跌破4萬6000點關卡；英特爾前執行長季辛格今日出席",
+      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mytkgckckfb2",
+      "publishedAt": "2026-10-27T05:55:30Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "美股收紅激勵台股早盤開高走低 盤中震盪跌破4萬6關卡",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 微軟突然「放手」：6 萬員工可拿補償走人，AI 燒錢 1750",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793077772.A.522.html",
+      "publishedAt": "2026-10-27T05:09:32Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 32,
+      "pushLabel": "32",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
     {
       "platform": "Bluesky",
       "title": "去你的台股統一廢物",
@@ -122,8 +170,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 33,
-      "pushLabel": "33",
+      "pushScore": 37,
+      "pushLabel": "37",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -136,8 +184,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 43,
-      "pushLabel": "43",
+      "pushScore": 53,
+      "pushLabel": "53",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -212,8 +260,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 27,
-      "pushLabel": "27",
+      "pushScore": 28,
+      "pushLabel": "28",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -250,10 +298,7 @@
       "contentType": "非投資話題",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "pushScore": 100,
-      "pushLabel": "爆",
-      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
@@ -729,26 +774,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] SpaceX 400億美元融資卡關",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1792908515.A.60C.html",
-      "publishedAt": "2026-10-25T06:08:35Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "輝達正式宣布Spectrum-X CPO #ai #輝達 #台股 #潛力股",
-      "url": "https://www.youtube.com/watch?v=RO_jklyyhzk",
-      "publishedAt": "2026-10-27T04:41:59Z",
-      "sourceName": "市場分析師",
+      "title": "台股盤後報｜20261027【華南永昌證券】",
+      "url": "https://www.youtube.com/watch?v=vJpoA6vaHJE",
+      "publishedAt": "2026-10-27T06:10:14Z",
+      "sourceName": "華南永昌綜合證券",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1110,8 +1144,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 43,
-      "pushLabel": "43",
+      "pushScore": 53,
+      "pushLabel": "53",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1124,8 +1158,22 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 33,
-      "pushLabel": "33",
+      "pushScore": 37,
+      "pushLabel": "37",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 微軟突然「放手」：6 萬員工可拿補償走人，AI 燒錢 1750",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793077772.A.522.html",
+      "publishedAt": "2026-10-27T05:09:32Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 32,
+      "pushLabel": "32",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1138,8 +1186,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 27,
-      "pushLabel": "27",
+      "pushScore": 28,
+      "pushLabel": "28",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1350,17 +1398,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] SpaceX 400億美元融資卡關",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1792908515.A.60C.html",
-      "publishedAt": "2026-10-25T06:08:35Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1376,19 +1413,19 @@
     "status": "verified",
     "model": "gemini-3.5-flash-lite",
     "inferenceCalls": 1,
-    "cachedClassifications": 12,
+    "cachedClassifications": 13,
     "newlyClassified": 1,
     "unclassified": 0,
-    "updatedAt": "2026-10-27T04:58:30.647Z",
+    "updatedAt": "2026-10-27T06:12:33.018Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 13,
-    "classifiedCount": 13,
+    "candidateCount": 14,
+    "classifiedCount": 14,
     "investmentCount": 4,
     "bullish": 0,
     "bearish": 1,
     "neutral": 3,
-    "originalRuleCount": 13,
+    "originalRuleCount": 14,
     "noTrade": true
   }
 }
