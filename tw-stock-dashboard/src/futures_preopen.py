@@ -43,7 +43,7 @@ def parse_quote(html: str, now: datetime) -> dict:
     if not row_match:
         raise QuoteUnavailable("找不到台指期近一 WTX& 報價")
     row = row_match.group(1)
-    tokens = re.findall(r"\d{1,3}(?:,\d{3})*(?:\.\d+)?%?|\d{2}:\d{2}:\d{2}|-", row)
+    tokens = re.findall(r"\d{2}:\d{2}:\d{2}|\d{1,3}(?:,\d{3})*(?:\.\d+)?%?", row)
     # Yahoo table: bid, ask, last, change, change%, volume, open, high,
     # low, basis, reference, open-interest, execution-time.
     if len(tokens) < 13:
@@ -51,10 +51,10 @@ def parse_quote(html: str, now: datetime) -> dict:
     def price(v):
         try: return float(v.replace(",", ""))
         except ValueError: raise QuoteUnavailable("無效的報價數字")
-    last, reference = price(tokens[2]), price(tokens[10])
+    last, reference = price(tokens[2]), price(tokens[-3])
     if not (10000 <= last <= 100000 and 10000 <= reference <= 100000):
         raise QuoteUnavailable("台指期成交價或參考價異常")
-    tm = re.fullmatch(r"\d{2}:\d{2}:\d{2}", tokens[12])
+    tm = next((re.fullmatch(r"\d{2}:\d{2}:\d{2}", v) for v in tokens if ":" in v), None)
     if not tm:
         raise QuoteUnavailable("找不到台指期成交時刻")
     try:
