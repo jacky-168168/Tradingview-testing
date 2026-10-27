@@ -169,6 +169,52 @@ jobs:
         if: steps.mode.outputs.mode != 'full' || steps.official.outputs.ready == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify published intraday data and uncached market score assets
+        if: steps.mode.outputs.mode != 'full' || steps.official.outputs.ready == 'true'
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,re,time,urllib.request
+          from pathlib import Path
+          base=os.environ['PAGES_URL'].rstrip('/')
+          root=Path('tw-stock-dashboard/docs/data')
+          prior=json.loads((root/'latest.json').read_text('utf-8'))
+          tx=json.loads((root/'futures/intraday.json').read_text('utf-8'))
+          def read(path):
+              req=urllib.request.Request(base+'/'+path,headers={'User-Agent':'TW-Market-Publish-Check/1.0','Cache-Control':'no-cache'})
+              with urllib.request.urlopen(req,timeout=20) as res:
+                  if res.status!=200:raise RuntimeError('HTTP '+str(res.status)+' '+path)
+                  return res.read()
+          for attempt in range(1,13):
+              try:
+                  v='?fresh='+str(time.time())
+                  html=read('index.html'+v).decode('utf-8')
+                  for name,marker in [('market-command.js','intradayIndicativeScore'),
+                                      ('market-compact.js','今日 TX 盤中參考試算')]:
+                      m=re.search(re.escape(name)+r'\?v=([a-f0-9]{12})',html)
+                      assert m,'missing script version '+name
+                      raw=read(name+'?v='+m.group(1))
+                      sha=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()[:12]
+                      assert sha==m.group(1),'stale script '+name
+                      assert marker in raw.decode('utf-8'),'provisional-score fix missing '+name
+                  published=json.loads(read('data/latest.json'+v))
+                  assert published['dataDate']>=prior['dataDate'],'published official data date regressed'
+                  if published['dataDate']==prior['dataDate']:
+                      assert str(published.get('intradayUpdatedAt',''))>=str(prior.get('intradayUpdatedAt','')),'published intraday data behind current scan'
+                  if tx.get('status')=='ok':
+                      public_tx=json.loads(read('data/futures/intraday.json'+v))
+                      assert public_tx.get('asOfDate','')>=tx.get('asOfDate',''),'published TX date regressed'
+                      if public_tx.get('asOfDate')==tx.get('asOfDate'):
+                          assert public_tx.get('quoteTime','')>=tx.get('quoteTime',''),'published TX quote is older'
+                  print('PASS deployed homepage scores, market scripts and data freshness',
+                        published['dataDate'],published.get('intradayUpdatedAt'))
+                  break
+              except Exception as exc:
+                  print('Market publish smoke retry',attempt,'/12',repr(exc),flush=True)
+                  if attempt==12:raise
+                  time.sleep(5)
+          PY
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
