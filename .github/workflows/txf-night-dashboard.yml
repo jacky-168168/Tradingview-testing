@@ -93,6 +93,7 @@ jobs:
       - name: Verify reopen after market holidays never inherits old TX risk baseline
         run: |
           node tw-stock-dashboard/tests/test_tx_holiday_open.cjs
+          node --check tw-stock-dashboard/tests/test_market_holiday_hero.cjs
           node tw-stock-dashboard/tests/test_market_holiday_hero.cjs
           node tw-stock-dashboard/tests/test_market_open_breadth.cjs
       - name: Fetch verified TX same-day quote (08:45+ only)
