@@ -123,6 +123,17 @@ jobs:
         if: steps.mode.outputs.mode == 'intraday'
         working-directory: tw-stock-dashboard
         run: PYTHONPATH=src python -m unittest discover -s tests -p 'test_intraday_quote_integrity.py' -v
+      # Independent backup for the TX-only scheduled workflow. A missed cron tick
+      # must not leave today's market reference blank while G quotes refresh.
+      # Fail the quote closed, not the stock scan; never invent a TX price.
+      - name: Refresh verified same-day TX alongside each intraday market scan
+        if: steps.mode.outputs.mode == 'intraday'
+        working-directory: tw-stock-dashboard
+        env:
+          FUGLE_API_KEY: ${{ secrets.FUGLE_API_KEY }}
+        run: |
+          PYTHONPATH=src python -m unittest discover -s tests -p 'test_futures_preopen.py' -q
+          PYTHONPATH=src python src/futures_preopen.py
       - name: Fast intraday Top20 price refresh
         if: steps.mode.outputs.mode == 'intraday'
         working-directory: tw-stock-dashboard
