@@ -140,6 +140,18 @@ function verifiedTXIntraday(q,now=new Date()){
     !Number.isFinite(Number(q.changePoints))||Math.abs(points-Number(q.changePoints))>1)return null;
  return {date:t.date,time:q.quoteTime,last,reference:ref,points,pct,source:q.source||"第三方期貨報價"};
 }
+// Indicative, NOT official Risk Score: previous verified cash close + same-day TX move.
+// Never used by F/F2/G, and never shown when the TX snapshot is stale.
+function intradayIndicativeScore(r,live,now=new Date()){
+ const t=taipeiParts(now),d=String(r?.date||""),base=Number(r?.score);
+ if(!live||live.date!==t.date||!d||d>=t.date||!Number.isFinite(base)||base<0||base>100)return null;
+ const age=(Date.parse(t.date+"T12:00:00+08:00")-Date.parse(d+"T12:00:00+08:00"))/86400000;
+ if(!Number.isFinite(age)||age>8||age<1)return null;
+ const delta=txScoreDelta(live.pct);
+ if(delta==null)return null;
+ return {score:Math.max(0,Math.min(100,base+delta)),base,delta,referenceDate:d,
+  source:"前次有效現貨 Risk Score＋今日已核對 TX 漲跌分級；未經樣本外驗證，不作進場許可"};
+}
 function postOpenState(r,now=new Date(),night=null,breadth=null,live=null){
  const t=taipeiParts(now),weekday=twWeekday(now);
  if(!r?.date||r.date>=t.date||t.minute<540||t.minute>=1050||["Sat","Sun"].includes(weekday)||
@@ -204,14 +216,14 @@ function scoreGuidance(score,{reference=false,level="WAIT",historical=false}={})
  if(reference&&Number(score)>=60)return {title:"今日操作：先確認現貨（"+Number(score)+" 分）",text:"盤前基準位於「"+band.label+"」區，但 TX 夜盤加減分未經獨立回測；需等今天現貨與個股買點確認，不能直接放行新倉。",tone:"wait",band};
  return {title:"今日操作："+band.title+"（"+Number(score)+" 分）",text:band.body+(reference?" 本數字僅作昨收＋已完成 TX 夜盤參考基準，不是正式盤中 Risk Score。":""),tone:band.tone,band};
 }
-function drawScoreGuide({officialScore,officialDate,currentScore,reference,level,date}){
+function drawScoreGuide({officialScore,officialDate,currentScore,reference,provisional=false,level,date}){
  const container=$("commandTradeGuide"),comparison=$("commandGuideCompare");
  if(!container)return;
  const valid=officialScore!=null&&Number.isFinite(Number(officialScore)),current=currentScore!=null&&Number.isFinite(Number(currentScore));
  const guide=scoreGuidance(current?Number(currentScore):null,{reference,level,historical:!reference&&date!==officialDate});
  container.dataset.tone=guide.tone;
  txt("commandGuideTitle",guide.title);txt("commandGuideText",guide.text);
- txt("commandGuideSource",reference?"下次交易日盤前基準｜非正式分數":current&&date===officialDate?"今日正式收盤 Risk Score":"歷史參考／今日未確認");
+ txt("commandGuideSource",provisional?"今日盤中 TX 參考試算｜非正式、未回測":reference?"下次交易日盤前基準｜非正式分數":current&&date===officialDate?"今日正式收盤 Risk Score":"歷史參考／今日未確認");
  if(comparison){
   comparison.replaceChildren();
   const add=(label,value,meaning)=>{
@@ -221,7 +233,7 @@ function drawScoreGuide({officialScore,officialDate,currentScore,reference,level
   };
   if(reference&&valid&&current){
    add("前次正式｜"+officialDate,Number(officialScore)+"/100",scoreBand(Number(officialScore))?.label||"歷史參考");
-   add("下次交易日盤前基準｜"+date,Number(currentScore)+"/100",(guide.band?.label||"資料不足")+"｜"+(level==="STOP"?"暫緩新倉":"等待現貨確認"));
+   add((provisional?"今日盤中參考｜":"下次交易日盤前基準｜")+date,Number(currentScore)+"/100",(guide.band?.label||"資料不足")+"｜"+(level==="STOP"?"暫緩新倉":"等待現貨確認"));
    comparison.hidden=false;
   }else comparison.hidden=true;
  }
@@ -229,20 +241,22 @@ function drawScoreGuide({officialScore,officialDate,currentScore,reference,level
 function draw(data,diag){
  const panel=$("marketCommand");if(!panel)return;
  const r=data?.risk||{},now=new Date(),val=Number(r.score),x=evaluate(r,diag,now),verified=verifiedNightPreview(r,currentFutures,now),pre=marketPremarket(r,verified,now)||(currentFutures?null:marketPremarket(r,currentPremarket,now)),txToday=verifiedTXIntraday(currentTXLive,now),night=txToday?null:overnightRisk(currentFutures,r,now),breadthLive=tradedBreadth(currentIntraday,now),post=pre?null:postOpenState(r,now,night,breadthLive,txToday),d=pre?{...x.decision,...pre}:post?{...x.decision,...post}:x.decision,info=x.diag?.marketHealth||{};
- const weekendNeedsNight=!pre&&x.weekend&&r?.date&&x.today>r.date;
+ const indicative=!pre&&post?intradayIndicativeScore(r,txToday,now):null;
+  const weekendNeedsNight=!pre&&x.weekend&&r?.date&&x.today>r.date;
  panel.dataset.level=d.level;panel.dataset.premarket=pre?"true":"false";panel.className="market-command market-compact cmd-"+d.level.toLowerCase();
  txt("commandStatus",d.headline);
  txt("commandAction",d.action);
- txt("commandScore",pre?String(pre.score):post?.baseline?String(post.baseline.score):weekendNeedsNight||post||x.stale?"—":Number.isFinite(val)&&r.score!=null?String(val):"—");
- txt("commandScoreDescription",pre?"下次交易日盤前基準｜未回測":weekendNeedsNight?"週末盤前資料待核對，正式分數僅供歷史參考":post?.baseline?"昨收＋夜盤｜今日基準（未回測）":post?.txLive?"當日台指報價已驗證｜正式現貨分數待確認":post?"今日 Risk Score 尚未建立":x.stale?"正式分數待更新":strength(val)+"｜盤後正式分數");
- txt("commandCashReference",pre?"昨收正式 "+pre.base+"/100（"+pre.referenceDate+"）｜台指期調整 "+pre.deltaLabel+" 分":post?.baseline?"昨收正式 "+post.baseline.base+"/100（"+post.baseline.date+"） "+(post.baseline.delta>=0?"+":"")+post.baseline.delta+" 分（已完成 TX 夜盤 "+post.baseline.pct.toFixed(2)+"%）＝今日盤前基準 "+post.baseline.score+"/100":x.stale?"今日正式 Risk Score 尚未建立；"+(r.date||"未知")+" 的 "+val+" 分僅供歷史參考":post?.txLive?"今日 TX "+post.txLive.last.toLocaleString("en-US")+" 點（"+(post.txLive.pct>=0?"+":"")+post.txLive.pct.toFixed(2)+"%）｜歷史現貨 Risk Score "+val+" 分（"+r.date+"）不代表今日":post?"昨收歷史 Risk Score "+val+"/100（"+(r.date||"未知")+"）｜非今日盤中":weekendNeedsNight?"已核對的正式收盤 "+r.score+"/100；週末下個交易日盤前資料待確認，不以舊分數取代":"");
+ txt("commandScore",pre?String(pre.score):post?.baseline?String(post.baseline.score):indicative?String(indicative.score):weekendNeedsNight||post||x.stale?"—":Number.isFinite(val)&&r.score!=null?String(val):"—");
+ txt("commandScoreDescription",pre?"下次交易日盤前基準｜未回測":weekendNeedsNight?"週末盤前資料待核對，正式分數僅供歷史參考":post?.baseline?"昨收＋夜盤｜今日基準（未回測）":indicative?"今日 TX 盤中參考試算｜非正式、未回測":post?.txLive?"當日台指報價已驗證｜正式現貨分數待確認":post?"今日 Risk Score 尚未建立":x.stale?"正式分數待更新":strength(val)+"｜盤後正式分數");
+ txt("commandCashReference",pre?"昨收正式 "+pre.base+"/100（"+pre.referenceDate+"）｜台指期調整 "+pre.deltaLabel+" 分":post?.baseline?"昨收正式 "+post.baseline.base+"/100（"+post.baseline.date+"） "+(post.baseline.delta>=0?"+":"")+post.baseline.delta+" 分（已完成 TX 夜盤 "+post.baseline.pct.toFixed(2)+"%）＝今日盤前基準 "+post.baseline.score+"/100":indicative?"盤中參考試算 "+indicative.score+"/100＝"+indicative.referenceDate+" 正式 "+indicative.base+" 分 "+(indicative.delta>=0?"+":"")+indicative.delta+" 分（今日 TX "+txToday.pct.toFixed(2)+"%）；未回測、不授權進場":x.stale?"今日正式 Risk Score 尚未建立；"+(r.date||"未知")+" 的 "+val+" 分僅供歷史參考":post?.txLive?"今日 TX "+post.txLive.last.toLocaleString("en-US")+" 點（"+(post.txLive.pct>=0?"+":"")+post.txLive.pct.toFixed(2)+"%）｜歷史現貨 Risk Score "+val+" 分（"+r.date+"）不代表今日":post?"昨收歷史 Risk Score "+val+"/100（"+(r.date||"未知")+"）｜非今日盤中":weekendNeedsNight?"已核對的正式收盤 "+r.score+"/100；週末下個交易日盤前資料待確認，不以舊分數取代":"");
  const ref=$("commandCashReference");if(ref)ref.hidden=!pre&&!post&&!x.stale&&!weekendNeedsNight;
- const fill=$("commandScoreFill");if(fill)fill.style.width=(pre?pre.score:post?.baseline?post.baseline.score:weekendNeedsNight||post||x.stale?0:r.score==null||!Number.isFinite(val)?0:Math.max(0,Math.min(100,val)))+"%";
+ const fill=$("commandScoreFill");if(fill)fill.style.width=(pre?pre.score:post?.baseline?post.baseline.score:indicative?indicative.score:weekendNeedsNight||post||x.stale?0:r.score==null||!Number.isFinite(val)?0:Math.max(0,Math.min(100,val)))+"%";
  const date=x.marketDate||"未知";
  txt("commandAsOf",pre?"下次交易日 "+pre.targetDate+"｜現貨最後收盤 "+pre.referenceDate:post?"今日 "+x.today+" 盤中｜昨收資料 "+date:x.stale?"⚠ 最新正式資料 "+date+"｜今日盤後資料待同步":"最新已收盤 "+date+(x.weekend?"｜今日休市":"｜非即時交易訊號"));
  let timeNote=pre?"僅TX已完成夜盤，非08:58即時期貨":post?.baseline?"昨日收盤＋昨夜 TX｜今日參考基準":post?.txLive?"今日台指期成交已核對｜現貨分數待確認":post?"今日盤中風險核對｜非正式分數":x.weekend?"休市日：下個交易日的盤前參考":x.today===date?"已完成的現貨市場評估":"最近資料日：非即時盤中訊號";
  if(x.stale&&!post)timeNote="資料延遲／官方資料待同步｜暫停進場判斷";
- txt("commandTiming",timeNote);
+ if(indicative)timeNote="今日 TX 盤中參考試算｜非正式 Risk Score｜每次刷新重新核對";
+  txt("commandTiming",timeNote);
  const breadth=Number(r.breadth);
  txt("commandBreadth",post?(post.breadth?post.breadth.pct.toFixed(1)+"%":"—"):x.stale?"—":r.breadth==null||!Number.isFinite(breadth)?"—":breadth.toFixed(1)+"%");
  txt("commandBreadthSub",post?(post.breadth?"今日實際成交 "+post.breadth.sample+" 檔；盤中暫估":"昨收 "+date+" 為 "+(Number.isFinite(breadth)?breadth.toFixed(1)+"%":"—")+"，今天尚未取得"):x.stale?"今日尚未取得":info.breadth5Pct!=null?"近5日平均 "+Number(info.breadth5Pct).toFixed(1)+"%":"TWSE 上漲家數比例");
@@ -263,11 +277,11 @@ function draw(data,diag){
    const bold=document.createElement("strong");bold.textContent=f.title||String(f.code||"");row.appendChild(bold);
    if(f.detail){const detail=document.createElement("span");detail.textContent=f.detail;row.appendChild(detail)}full.appendChild(row)}}
  }
- txt("commandLogic",post?.baseline?"今日參考基準＝昨日正式 "+post.baseline.base+" 分 "+(post.baseline.delta>=0?"+":"")+post.baseline.delta+" 分，根據對應今日的同月台指期夜盤調整，故為 "+post.baseline.score+"/100；基準不會因日內價格波動變動，今日現貨廣度另以警示表示，不修改正式 F／F2／G，調整門檻尚未獨立回測。":x.stale?"交易日已進入收盤後，但官方收盤資料尚未完整同步；僅顯示上次已核對分數，不改動 F／F2／G 原始策略或補入推測法人數值。":pre?"盤前情境 "+pre.base+" "+pre.deltaLabel+" = "+pre.score+"/100。"+pre.source+"，調整規則尚未通過獨立回測；正式 F／F2／G 仍用現貨分數。":post?"今日現貨資料尚未齊全，前一交易日現貨分數不自動放行新倉。":post?"只將今天的 MIS 實際成交廣度及前一晚官方台指期作風險警示；昨日 Risk Score 不具今日即時效力。":x.diag?"已核對市場廣度、波動、前高和反轉監測；僅原始 Risk Score 曾參與既有進場回測。":"目前顯示經核對的原始收盤 Risk Score；延伸市場診斷尚未同步，暫不推測其他指標。");
- const reference=!!(pre||post?.baseline);
- const currentScore=pre?Number(pre.score):post?.baseline?Number(post.baseline.score):weekendNeedsNight||x.stale||post?null:r.score==null?null:Number(r.score);
- if(scope.MarketCompact)scope.MarketCompact.render({score:currentScore,officialScore:r.score,officialDate:r.date,level:d.level,reference,date:pre?.targetDate||post?.baseline?.target||x.today,delta:pre?.adjustment??post?.baseline?.delta??null,stale:x.stale,post:!!post,weekend:x.weekend,nightPending:!!weekendNeedsNight});
- drawScoreGuide({officialScore:r.score,officialDate:r.date,currentScore,reference,level:d.level,date:pre?.targetDate||x.today});
+ txt("commandLogic",indicative?"今日 TX 參考試算＝前次正式 "+indicative.base+" 分＋今日台指期 "+indicative.delta+" 分；此為未經樣本外驗證的顯示估算，不能視為今日正式 Risk Score 或交易放行條件。":post?.baseline?"今日參考基準＝昨日正式 "+post.baseline.base+" 分 "+(post.baseline.delta>=0?"+":"")+post.baseline.delta+" 分，根據對應今日的同月台指期夜盤調整，故為 "+post.baseline.score+"/100；基準不會因日內價格波動變動，今日現貨廣度另以警示表示，不修改正式 F／F2／G，調整門檻尚未獨立回測。":x.stale?"交易日已進入收盤後，但官方收盤資料尚未完整同步；僅顯示上次已核對分數，不改動 F／F2／G 原始策略或補入推測法人數值。":pre?"盤前情境 "+pre.base+" "+pre.deltaLabel+" = "+pre.score+"/100。"+pre.source+"，調整規則尚未通過獨立回測；正式 F／F2／G 仍用現貨分數。":post?"今日現貨資料尚未齊全，前一交易日現貨分數不自動放行新倉。":post?"只將今天的 MIS 實際成交廣度及前一晚官方台指期作風險警示；昨日 Risk Score 不具今日即時效力。":x.diag?"已核對市場廣度、波動、前高和反轉監測；僅原始 Risk Score 曾參與既有進場回測。":"目前顯示經核對的原始收盤 Risk Score；延伸市場診斷尚未同步，暫不推測其他指標。");
+ const reference=!!(pre||post?.baseline||indicative);
+ const currentScore=pre?Number(pre.score):post?.baseline?Number(post.baseline.score):indicative?Number(indicative.score):weekendNeedsNight||x.stale||post?null:r.score==null?null:Number(r.score);
+ if(scope.MarketCompact)scope.MarketCompact.render({score:currentScore,officialScore:r.score,officialDate:r.date,level:d.level,reference,provisional:!!indicative,date:pre?.targetDate||post?.baseline?.target||x.today,delta:pre?.adjustment??post?.baseline?.delta??indicative?.delta??null,stale:x.stale,post:!!post,weekend:x.weekend,nightPending:!!weekendNeedsNight});
+ drawScoreGuide({officialScore:r.score,officialDate:r.date,currentScore,reference,provisional:!!indicative,level:d.level,date:pre?.targetDate||x.today});
  if(scope.MarketSentiment)scope.MarketSentiment.render({officialScore:r.score,officialDate:r.date,currentScore,reference,stale:x.stale,post:!!post,updated:data?.generatedAt,risk:r});
  const btn=$("commandPrimaryLink");
  if(btn){btn.href="./selections.html";btn.textContent=d.level==="READY"?"查看 G／D 強勢股候選 →":d.level==="REVERSAL"?"查看個股 Bottom 反轉候選 →":"查看選股名單（僅觀察） →";}
@@ -313,6 +327,6 @@ async function checkMl(){
   txt("commandAi",x.advisoryEligible?"AI 候選僅通過方向研究；不參與買進判斷":"AI 回測未證明穩定增益，正式買進判斷維持規則式");
  }catch(_err){txt("commandAi","AI 尚未通過可供正式使用的驗證");}
 }
-scope.MarketCommand={evaluate,fallback,refresh,checkMl,verifiedNightPreview,applyPremarket,applyFutures,applyIntraday,applyTXLive,verifiedTXIntraday,marketPremarket,postOpenState,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
-if(typeof module!=="undefined"&&module.exports)module.exports={fallback,evaluate,verifiedNightPreview,marketPremarket,postOpenState,verifiedTXIntraday,taipeiParts,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
+scope.MarketCommand={evaluate,fallback,refresh,checkMl,verifiedNightPreview,applyPremarket,applyFutures,applyIntraday,applyTXLive,verifiedTXIntraday,marketPremarket,postOpenState,intradayIndicativeScore,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
+if(typeof module!=="undefined"&&module.exports)module.exports={fallback,evaluate,verifiedNightPreview,marketPremarket,postOpenState,intradayIndicativeScore,verifiedTXIntraday,taipeiParts,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
 })(typeof window!=="undefined"?window:globalThis);
