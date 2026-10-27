@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-10-27T14:45:59.864144Z",
+  "generatedAt": "2026-10-27T15:18:19.893135Z",
   "sources": {
     "PTT": {
       "status": "ok",
@@ -8,8 +8,8 @@
       "url": "https://www.ptt.cc/atom/stock.xml",
       "freshCount": 18,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 1,
-      "pushLabelsFound": 2
+      "boardFreshCount": 2,
+      "pushLabelsFound": 3
     },
     "Bluesky": {
       "status": "ok",
@@ -81,6 +81,20 @@
     "method": "僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"
   },
   "items": [
+    {
+      "platform": "PTT",
+      "title": "[新聞] 中東緊張局勢露曙光 台指期夜盤大漲500點",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793113712.A.660.html",
+      "publishedAt": "2026-10-27T15:08:32Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 7,
+      "pushLabel": "7",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
     {
       "platform": "PTT",
       "title": "[情報] 美股標普500指數 黃金八日",
@@ -885,26 +899,15 @@
         "evidence": "10/26~11/1週表 10/26(週一) 連假的最後一天，中午就來開台",
         "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
       }
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 歐盟將對更多中國產業實施進口配額或加徵",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1792940400.A.B7E.html",
-      "publishedAt": "2026-10-25T15:00:00Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "《有人賣一張台積電，抵我五年薪水》- 股票4萬6千多點離我很遠，我還在便利商店湊那幾點",
-      "url": "https://www.youtube.com/watch?v=kJkEul-fjY8",
-      "publishedAt": "2026-10-27T14:43:29Z",
-      "sourceName": "布魯斯旺沒有字幕的音樂實驗",
+      "title": "台股大震盪！劇烈洗盤908點…小漲46點 「關鍵審判周」美韓巨頭財報定生死？@TaiwanLBJnews        #short",
+      "url": "https://www.youtube.com/watch?v=NUYCJjdVNuw",
+      "publishedAt": "2026-10-27T15:15:30Z",
+      "sourceName": "57東森財經新聞",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1242,6 +1245,20 @@
     }
   ],
   "pttNewsItems": [
+    {
+      "platform": "PTT",
+      "title": "[新聞] 中東緊張局勢露曙光 台指期夜盤大漲500點",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793113712.A.660.html",
+      "publishedAt": "2026-10-27T15:08:32Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 7,
+      "pushLabel": "7",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
     {
       "platform": "PTT",
       "title": "[情報] 美股標普500指數 黃金八日",
@@ -1615,17 +1632,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 歐盟將對更多中國產業實施進口配額或加徵",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1792940400.A.B7E.html",
-      "publishedAt": "2026-10-25T15:00:00Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1638,13 +1644,13 @@
     "個股熱度只統計有投資語境且非新聞轉貼的 G Top20 標題，不更改 G 排名或 TITAN 風控。"
   ],
   "semantic": {
-    "status": "verified",
+    "status": "cached",
     "model": "gemini-3.5-flash-lite",
-    "inferenceCalls": 1,
-    "cachedClassifications": 10,
-    "newlyClassified": 2,
+    "inferenceCalls": 0,
+    "cachedClassifications": 12,
+    "newlyClassified": 0,
     "unclassified": 0,
-    "updatedAt": "2026-10-27T14:46:06.545Z",
+    "updatedAt": "2026-10-27T15:18:23.407Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
     "candidateCount": 12,
