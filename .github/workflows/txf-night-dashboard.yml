@@ -5,8 +5,14 @@ on:
     branches: [main]
     paths:
       - 'tw-stock-dashboard/src/futures_night.py'
+      - 'tw-stock-dashboard/src/futures_preopen.py'
       - '.github/workflows/txf-night-dashboard.yml'
   schedule:
+    # TX starts real trading at 08:45 Taipei; quote checks at 08:50/08:58,
+    # with recovery after the 09:00 cash-market opening. GitHub cron best-effort.
+    - cron: '50,58 0 * * 1-5'
+    - cron: '8,25,45 1 * * 1-5'
+    - cron: '5,35 2-5 * * 1-5'
     # Completed after-hours report: 05:15, 05:40, 05:45,
     # 06:15, 07:15, 08:15, 09:15 Asia/Taipei.
     # UTC Friday night = Taipei Saturday morning; keep Fri nights.
@@ -82,13 +88,16 @@ jobs:
       - name: Fetch official TAIFEX completed sessions
         working-directory: tw-stock-dashboard
         run: PYTHONPATH=src python src/futures_night.py
+      - name: Fetch verified TX same-day quote (08:45+ only)
+        working-directory: tw-stock-dashboard
+        run: PYTHONPATH=src python -u src/futures_preopen.py
       - name: Archive dated TX futures snapshot
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tw-stock-dashboard/docs/data/futures/latest.json
+          git add tw-stock-dashboard/docs/data/futures/latest.json tw-stock-dashboard/docs/data/futures/intraday.json
           if ! git diff --cached --quiet; then
             git commit -m "data: official TX futures day and afterhours market preview"
             for n in 1 2 3 4; do
