@@ -392,6 +392,16 @@ jobs:
                   assert 'label:"極度偏空"' in code and 'label:"偏空觀察"' in code,"CDN is serving cached old gauge labels"
                   digest=hashlib.sha1(b"blob "+str(len(data)).encode()+b"\0"+data).hexdigest()[:12]
                   assert digest==match.group(1),"HTML version does not match deployed JS content"
+                  # Live CDN must serve the exact fixed scripts, not a cached prior UI.
+                  for asset,marker in (("market-command.js","intradayIndicativeScore"),
+                                       ("market-compact.js","今日 TX 盤中參考試算")):
+                      m=re.search(re.escape(asset)+r'\?v=([0-9a-f]{12})',html)
+                      assert m,"missing versioned dashboard asset: "+asset
+                      raw=read(base+"/"+asset+"?v="+m.group(1))
+                      observed=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()[:12]
+                      assert observed==m.group(1),"stale deployed dashboard asset "+asset
+                      assert marker in raw.decode("utf-8"),"dashboard fix absent on live Pages: "+asset
+                  print("PASS live market-command / market-compact hash and TX provisional guard")
                   print("PASS live Pages HTML+JS show 偏空觀察 / 極度偏空; hash "+digest)
                   break
               except (AssertionError,TimeoutError,urllib.error.URLError,UnicodeError,RuntimeError) as exc:
