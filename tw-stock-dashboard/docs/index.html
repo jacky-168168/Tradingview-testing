@@ -444,7 +444,7 @@ function nextEntryPreview(){
  const f=FUTURES||{},cmp=sameContractTX(f),el=document.getElementById("nextEntry");
  el.className="txf-entry";
  const live=verifiedTXNow(TX_LIVE);
- if(live){el.classList.add(live.pct<=-0.5?"stop":live.pct>=0.5?"":"warn");el.textContent="📊 今日台指期 08:45 開盤後已取得同日報價："+futDisplay(live.last)+" 點｜相對參考價 "+(live.pct>=0?"+":"")+live.pct.toFixed(2)+"%；僅行情觀察，非正式 Risk Score。";return;}
+ if(live){const tone=live.pct<=-0.5?"stop":live.pct<0.5?"warn":null;if(tone)el.classList.add(tone);el.textContent="📊 今日台指期 08:45 開盤後已取得同日報價："+futDisplay(live.last)+" 點｜相對參考價 "+(live.pct>=0?"+":"")+live.pct.toFixed(2)+"%；僅行情觀察，非正式 Risk Score。";return;}
  if(!cmp||f.asOfDate!==DATA?.risk?.date||String(f.night?.reportQueryDate||"")<taipeiDate()){
    el.classList.add("warn");el.textContent="⏳ 等待最近交易日的官方完整夜盤；舊期貨資料不得代表下個交易日。";return}
  const value=futDisplay(Math.abs(cmp.pct),2);
