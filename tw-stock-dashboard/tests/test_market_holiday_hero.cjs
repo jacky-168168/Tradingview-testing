@@ -35,5 +35,5 @@ const q={status:'ok',quality:'dated-third-party-snapshot',asOfDate:'2026-10-27',
  assert(!element('commandFullFlags').children.some(x=>/盤前基準 0/.test(x.children?.[0]?.textContent||'')),'No stale zero-score chip');
  app.applyTXLive({...q,quoteTime:'2026-10-22T09:04:55+08:00'});
  assert.doesNotMatch(element('commandCashReference').textContent,/46,809/,'Old TX is refused');
- console.log('PASS 10/27 actual hero renders pending, verified today's TX +1.24%, no old overnight zero');
+ console.log('PASS 10/27 actual hero renders pending, verified current TX +1.24%, no old overnight zero');
 })().catch(e=>{console.error(e);process.exitCode=1});
