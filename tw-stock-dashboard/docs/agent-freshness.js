@@ -5,7 +5,7 @@ function dateTW(at){return new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"nu
 function fullTW(s){const ms=Date.parse(s||"");return Number.isFinite(ms)?new Intl.DateTimeFormat("zh-TW",{timeZone:TZ,hour12:false,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}).format(new Date(ms)):"無可驗證時間"}
 function validDay(s){return typeof s==="string"&&/^20\d{2}-\d{2}-\d{2}$/.test(s)?s:null}
 function recent(ts,now,hours){const d=Date.parse(ts||"");return Number.isFinite(d)&&d<=now.getTime()&&now.getTime()-d<=hours*3600000}
-function makeRow(name,source,label,day,stamp,now,extra="",valid=true){
+function makeRow(name,source,day,stamp,now,extra="",valid=true){
  const today=dateTW(now),known=validDay(day),isToday=known===today;
  const ok=valid&&isToday&&(stamp===null||recent(stamp,now,8));
  const state=!valid?"來源不完整":!known?"日期未確認":ok?"今日來源已更新":"歷史來源／未完成今日更新";
