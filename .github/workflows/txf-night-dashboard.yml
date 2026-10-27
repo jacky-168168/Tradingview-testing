@@ -90,6 +90,8 @@ jobs:
         run: PYTHONPATH=src python -m unittest discover -s tests -p 'test_futures_preopen.py' -v
       - name: Fetch verified TX same-day quote (08:45+ only)
         working-directory: tw-stock-dashboard
+        env:
+          FUGLE_API_KEY: ${{ secrets.FUGLE_API_KEY }}
         run: PYTHONPATH=src python -u src/futures_preopen.py
       - name: Fetch official TAIFEX completed sessions (independent of live quote)
         working-directory: tw-stock-dashboard
