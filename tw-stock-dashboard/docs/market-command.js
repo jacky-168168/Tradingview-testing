@@ -159,7 +159,7 @@ function postOpenState(r,now=new Date(),night=null,breadth=null,live=null){
  else if(night?.pct<=-.5){headline="🟠 夜盤偏弱｜今日現貨尚待確認";action="夜盤偏弱，仍缺今天的可靠市場廣度，不宜以昨日分數追價。";}
  if(live){
   flags.unshift({code:"TODAY_TX_VERIFIED",title:"今日台指期 "+(live.pct>=0?"+":"")+live.pct.toFixed(2)+"%",severity:live.pct<=-.5?"caution":"info",
-   detail:"10/27 等當日已成交近月 TX "+live.last.toLocaleString("en-US")+" 點，參考價 "+live.reference.toLocaleString("en-US")+"，成交 "+live.time+"；不是昨夜報價，不能直接換算現貨 Risk Score。"});
+   detail:"當日近月 TX 已成交 "+live.last.toLocaleString("en-US")+" 點，參考價 "+live.reference.toLocaleString("en-US")+"，成交 "+live.time+"；不是昨夜報價，不能直接換算現貨 Risk Score。"});
   if(live.pct<=-1){
    level="STOP";headline="⛔ 今日 TX 跌 "+Math.abs(live.pct).toFixed(2)+"%｜風控待確認";
    action="台指期當日已成交且相對參考價下跌；先控管曝險，等待今日現貨市場廣度及風險模型更新。";
