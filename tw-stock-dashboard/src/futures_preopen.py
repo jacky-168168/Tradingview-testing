@@ -87,7 +87,7 @@ def parse_fugle_quote(data: dict, now: datetime) -> dict:
     now = now.astimezone(TZ)
     if not isinstance(data, dict) or data.get("date") != now.date().isoformat():
         raise QuoteUnavailable("富果期貨資料日不符今日")
-    if data.get("exchange") != "TAIFEX" or not re.fullmatch(r"TXF[A-L]\d", str(data.get("symbol",""))):
+    if data.get("exchange") != "TAIFEX" or not re.fullmatch(r"TXF[FGHJKMNQUVXZ]\d", str(data.get("symbol",""))):
         raise QuoteUnavailable("富果回應非 TXF 近月月份合約")
     if data.get("isTrial"):
         raise QuoteUnavailable("富果只提供試撮盤，尚無正式成交")
