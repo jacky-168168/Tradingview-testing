@@ -85,15 +85,15 @@ jobs:
           print("PASS TX expiry rollover 20261021 -> 202611, matched both OpenAPI and HTML")
           print("PASS holiday crossover TX day=49349, night=48705, day delta=-644, official settlement delta=-652")
           PY
-      - name: Fetch official TAIFEX completed sessions
-        working-directory: tw-stock-dashboard
-        run: PYTHONPATH=src python src/futures_night.py
       - name: Verify same-day quote parser rejects stale/auction quotes
         working-directory: tw-stock-dashboard
         run: PYTHONPATH=src python -m unittest discover -s tests -p 'test_futures_preopen.py' -v
       - name: Fetch verified TX same-day quote (08:45+ only)
         working-directory: tw-stock-dashboard
         run: PYTHONPATH=src python -u src/futures_preopen.py
+      - name: Fetch official TAIFEX completed sessions (independent of live quote)
+        working-directory: tw-stock-dashboard
+        run: PYTHONPATH=src python src/futures_night.py
       - name: Archive dated TX futures snapshot
         shell: bash
         run: |
