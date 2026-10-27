@@ -2,7 +2,7 @@ import sys, unittest
 from datetime import datetime, timedelta
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"src"))
-from futures_preopen import parse_quote, QuoteUnavailable
+from futures_preopen import parse_quote, parse_fugle_quote, QuoteUnavailable
 NOW=datetime.fromisoformat("2026-10-27T08:55:00+08:00")
 def fixture(day="2026/10/27",when="08:53:12"):
     return """<html><body><h2>即時期指報價</h2><div>資料時間：%s</div>
@@ -21,6 +21,18 @@ class TestVerifiedQuote(unittest.TestCase):
         self.assertEqual(q["reference"],46234)
         self.assertEqual(q["changePoints"],-580)
         self.assertEqual(q["quoteTime"],"2026-10-27T08:53:12+08:00")
+    def test_fugle_close_only_not_auction(self):
+        observed=int(datetime.fromisoformat("2026-10-27T08:53:12+08:00").timestamp()*1000000)
+        info={"date":"2026-10-27","exchange":"TAIFEX","symbol":"TXFX6",
+              "closePrice":45654,"previousClose":46234,"closeTime":observed}
+        q=parse_fugle_quote(info,NOW)
+        self.assertEqual(q["last"],45654)
+        self.assertEqual(q["changePoints"],-580)
+        self.assertEqual(q["contract"],"TXFX6")
+        with self.assertRaises(QuoteUnavailable):
+            parse_fugle_quote({**info,"isTrial":True},NOW)
+        with self.assertRaises(QuoteUnavailable):
+            parse_fugle_quote({**info,"date":"2026-10-22"},NOW)
     def test_old_date_rejected(self):
         with self.assertRaises(QuoteUnavailable):parse_quote(fixture(day="2026/10/22"),NOW)
     def test_old_quote_rejected(self):
