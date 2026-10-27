@@ -191,7 +191,8 @@ def main():
         prev=json.loads(OUT.read_text(encoding="utf-8"))
         if prev.get("asOfDate","")>output["asOfDate"]:raise RuntimeError("New data older than previously published")
         if prev.get("asOfDate")==output["asOfDate"] and prev.get("quality")=="paired-day-night" and not night:
-            raise RuntimeError("Do not replace a paired night with incomplete session data")
+            print("TAIFEX_NIGHT_FEED_PENDING: retaining last complete paired session, no overwrite")
+            return
         # A polling retry is NOT a new market observation. Keep fetchedAt
         # unchanged until the exchange publishes a different verified result.
         if prev.get("asOfDate")==output["asOfDate"] and prev.get("quality")==output["quality"] and prev.get("day")==output["day"] and prev.get("night")==output["night"]:
