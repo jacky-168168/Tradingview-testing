@@ -1,46 +1,33 @@
 {
   "version": "MARKET_DECISION_SUPPORT_2026_10_V1",
-  "asOf": "2026-10-27",
-  "riskScore": 17,
-  "originalRiskState": "🔴 Risk OFF",
-  "marketMode": "BOTTOM",
+  "asOf": "2026-10-28",
+  "riskScore": 57,
+  "originalRiskState": "🟡 Neutral",
+  "marketMode": "NORMAL",
   "marketHealth": {
-    "breadthTodayPct": 47.0,
-    "breadth5Pct": 35.3,
-    "breadth10Pct": 42.4,
-    "breadthChangeVsPrev5Pts": -14.1,
-    "advanceDecline10Sum": -1546,
-    "indexRet10Pct": -6.52,
+    "breadthTodayPct": 71.8,
+    "breadth5Pct": 46.5,
+    "breadth10Pct": 44.1,
+    "breadthChangeVsPrev5Pts": 4.7,
+    "advanceDecline10Sum": -1199,
+    "indexRet10Pct": -4.6,
     "indexBreadthDivergence": false,
-    "riskScore3MA": 26.7,
-    "riskScore5SessionChange": -24.0,
-    "realizedVol20AnnualPct": 20.0,
-    "volatilityHistoryPercentile": 44.6,
-    "distancePrior120HighPct": -7.75,
+    "riskScore3MA": 28.3,
+    "riskScore5SessionChange": 46.0,
+    "realizedVol20AnnualPct": 21.2,
+    "volatilityHistoryPercentile": 47.6,
+    "distancePrior120HighPct": -5.87,
     "prior120HighType": "盤中最高價",
-    "distanceMA20Pct": -3.94,
-    "previousScore": 11,
-    "sourceHistoryDays": 738
+    "distanceMA20Pct": -1.87,
+    "previousScore": 17,
+    "sourceHistoryDays": 739
   },
   "decision": {
-    "level": "STOP",
-    "headline": "🔴 暫不建議一般新倉",
-    "action": "市場尚未達到60分基準；等待趨勢回升或另行確認反轉。",
+    "level": "WAIT",
+    "headline": "🟡 觀察等待｜未達進場門檻",
+    "action": "50–59分屬中性偏弱，先觀察市場參與度與個股訊號。",
     "primaryGate": ">=60 Risk Score, with separate Strong Bottom exception",
-    "flags": [
-      {
-        "code": "WEAK_BREADTH",
-        "severity": "caution",
-        "title": "市場參與度偏弱",
-        "detail": "近5交易日上漲家數平均不足45%，強勢股追價需要更謹慎。"
-      },
-      {
-        "code": "SCORE_DECELERATION",
-        "severity": "caution",
-        "title": "五日大盤分數快速下降",
-        "detail": "Risk Score 相較5個交易日前下降至少20分；需留意多頭動能轉弱，但原分數和策略門檻不變。"
-      }
-    ],
+    "flags": [],
     "scope": "盤後下一交易日的個股進場評估，不是當日即時交易許可"
   },
   "research": {
