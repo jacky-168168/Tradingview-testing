@@ -5,6 +5,10 @@ on:
   schedule:
     # Sunday 11:30 Asia/Taipei fallback; TDCC completion event also deploys late reruns.
     - cron: '30 3 * * 0'
+    # Daily 23:50 Asia/Taipei safety net: a bot-dispatched LUNA run can succeed
+    # and commit data without a subsequent workflow_run Pages deployment.
+    # This is intentionally once daily to avoid repeated production deploys.
+    - cron: '50 15 * * *'
   workflow_run:
     workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'TDCC Whale Shareholder Weekly', 'Retry Date-Locked TWSE History with Throttling']
     types: [completed]
