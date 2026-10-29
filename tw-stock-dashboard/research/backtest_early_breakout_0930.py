@@ -77,7 +77,7 @@ def fetch_one(code):
             nextday=byday[dates[j+1]]
             ne=nextday.between_time("13:25","13:30")
             nn=nextday.between_time("09:30","09:30")
-            rec={"code":code,"date":date,"entryTime":"09:30","entry":round(entry,4),"signal":round(signal,4),
+            rec={"code":code,"date":date,"nextDate":dates[j+1],"nextDateMaxTime":nextday.index.max().strftime("%H:%M"),"nextDateBars":len(nextday),"nextDateCloseBars":len(ne),"entryTime":"09:30","entry":round(entry,4),"signal":round(signal,4),
                  "priorHigh":round(prevhigh,4),"gainAt0930Pct":round(gain,3),
                  "earlyRvol20":round(volratio,3),"vwap":round(vwap,4),
                  "netSameDayPct":round(net_pct(entry,float(exitbar["Close"].iloc[-1])),4),
