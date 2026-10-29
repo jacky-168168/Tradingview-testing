@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-10-29T14:38:38.720201Z",
+  "generatedAt": "2026-10-29T16:02:00.838244Z",
   "sources": {
     "PTT": {
       "status": "ok",
@@ -8,12 +8,12 @@
       "url": "https://www.ptt.cc/atom/stock.xml",
       "freshCount": 20,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 4,
-      "pushLabelsFound": 6
+      "boardFreshCount": 6,
+      "pushLabelsFound": 7
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 41,
+      "freshCount": 40,
       "queryHealth": {
         "queriesAttempted": 12,
         "queriesSucceeded": 12,
@@ -47,20 +47,20 @@
     }
   },
   "social": {
-    "sample": 10,
+    "sample": 11,
     "bull": 1,
     "bear": 3,
-    "neutral": 6,
+    "neutral": 7,
     "directional": 4,
     "status": "已有樣本｜偏空討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
     "rawSample": 80,
-    "investmentDiscussion": 10,
-    "originalDiscussion": 10,
-    "repostedNews": 60,
+    "investmentDiscussion": 11,
+    "originalDiscussion": 11,
+    "repostedNews": 59,
     "unrelated": 10,
     "platformCounts": {
-      "PTT": 0,
+      "PTT": 1,
       "Bluesky": 10,
       "Threads": 0,
       "Instagram": 0
@@ -81,6 +81,40 @@
     "method": "僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"
   },
   "items": [
+    {
+      "platform": "PTT",
+      "title": "[請益] 投信買賣超的數值竟然會調整嗎",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793287387.A.DA9.html",
+      "publishedAt": "2026-10-29T15:23:07Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 5,
+      "pushLabel": "5",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "無法判斷",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "中",
+        "evidence": "[請益] 投信買賣超的數值竟然會調整嗎",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "PTT",
+      "title": "[情報] 主動ETF/外資共同買賣超排行 (10/29)",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793287097.A.8BB.html",
+      "publishedAt": "2026-10-29T15:18:17Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）"
+    },
     {
       "platform": "Bluesky",
       "title": "📢 美國聯準會決議利率按兵不動，符合市場預期，不過Alphabet獲利失色，投資人對於AI鉅額支出的擔憂再起，熱錢再度匯出，台灣股匯應聲下挫，新台幣匯率盤中貶值近1.8角，不過央行出手調節，終場收在32.492元，貶7.4分，匯價終止連2升。",
@@ -111,8 +145,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 22,
-      "pushLabel": "22",
+      "pushScore": 8,
+      "pushLabel": "8",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -125,8 +159,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 5,
-      "pushLabel": "5",
+      "pushScore": 6,
+      "pushLabel": "6",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -139,8 +173,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 89,
-      "pushLabel": "89",
+      "pushScore": 99,
+      "pushLabel": "99",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -588,8 +622,8 @@
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
       "timestampBasis": "文章網址 ID 推算，非官方發文時間",
-      "pushScore": 99,
-      "pushLabel": "99",
+      "pushScore": 100,
+      "pushLabel": "爆",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1041,36 +1075,14 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 中國雲端巨頭瘋搶記憶體！阿里、騰訊傳要",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793187228.A.9C2.html",
-      "publishedAt": "2026-10-28T11:33:48Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 燒光1.5兆！美伊戰爭軍費失控飆升 傳川普",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793186923.A.CCC.html",
-      "publishedAt": "2026-10-28T11:28:43Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "【全集】Google燒錢血洗美股牽動台股狂瀉！AI拉扯淘汰賽不管科技巨頭輸贏台鏈都受惠！？ - 黃世聰 張禹宣 張甄薇 張家豪 童奕霆 劉寶傑《寶傑點兵》2026.10.29",
-      "url": "https://www.youtube.com/watch?v=31yXJW0N5Hk",
-      "publishedAt": "2026-10-29T14:30:28Z",
+      "title": "台股跌667點失季線 台積電跌10元守2400關卡",
+      "url": "https://www.youtube.com/watch?v=bHh1QO1NpEI",
+      "publishedAt": "2026-10-29T15:31:48Z",
       "sourceName": "57東森財經新聞",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
@@ -1419,8 +1431,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 89,
-      "pushLabel": "89",
+      "pushScore": 99,
+      "pushLabel": "99",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1433,9 +1445,20 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 5,
-      "pushLabel": "5",
+      "pushScore": 6,
+      "pushLabel": "6",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[情報] 主動ETF/外資共同買賣超排行 (10/29)",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793287097.A.8BB.html",
+      "publishedAt": "2026-10-29T15:18:17Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
@@ -1843,17 +1866,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 主動ETF/外資共同買賣超排行 (10/28)",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793204387.A.E39.html",
-      "publishedAt": "2026-10-28T16:19:47Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1869,19 +1881,19 @@
     "status": "verified",
     "model": "gemini-3.5-flash-lite",
     "inferenceCalls": 1,
-    "cachedClassifications": 8,
-    "newlyClassified": 2,
+    "cachedClassifications": 10,
+    "newlyClassified": 1,
     "unclassified": 0,
-    "updatedAt": "2026-10-29T14:38:44.380Z",
+    "updatedAt": "2026-10-29T16:02:18.466Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 10,
-    "classifiedCount": 10,
+    "candidateCount": 11,
+    "classifiedCount": 11,
     "investmentCount": 0,
     "bullish": 0,
     "bearish": 0,
     "neutral": 0,
-    "originalRuleCount": 10,
+    "originalRuleCount": 11,
     "noTrade": true
   }
 }
