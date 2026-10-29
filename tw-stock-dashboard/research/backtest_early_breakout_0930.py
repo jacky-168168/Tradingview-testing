@@ -50,13 +50,13 @@ def fetch_one(code):
             if len(g)>=6:byday[d]=g
         dates=sorted(byday)
         rows=[]
-        for j in range(20,len(dates)-1):
+        for j in range(20,len(dates)):
             date=dates[j]; day=byday[date]; prev=byday[dates[j-1]]
             b=day.between_time("09:00","09:25")
             nextbar=day.between_time("09:30","09:30")
             exitbar=day.between_time("13:25","13:30")
-            if len(b)<5 or nextbar.empty or exitbar.empty: continue
-            if not (day.index.max().strftime("%H:%M")>="13:25"):continue
+            if len(b)<5 or nextbar.empty: continue
+            if j < len(dates)-1 and day.index.max().strftime("%H:%M")<"13:20":continue
             prevclose=float(prev["Close"].iloc[-1]);prevhigh=float(prev["High"].max())
             signal=float(b["Close"].iloc[-1]);entry=float(nextbar["Open"].iloc[0])
             if not 0<prevclose or not 0<entry or signal<=prevhigh:continue
@@ -74,15 +74,20 @@ def fetch_one(code):
             vwap=float((typical*b["Volume"]).sum()/max(b["Volume"].sum(),1))
             avgValue=sum(float((g["Close"]*g["Volume"]).sum()) for g in h)/20
             if avgValue<10000000 or signal<10:continue
-            nextday=byday[dates[j+1]]
-            ne=nextday.between_time("13:25","13:30")
-            nn=nextday.between_time("09:30","09:30")
-            rec={"code":code,"date":date,"nextDate":dates[j+1],"nextDateMaxTime":nextday.index.max().strftime("%H:%M"),"nextDateBars":len(nextday),"nextDateCloseBars":len(ne),"entryTime":"09:30","entry":round(entry,4),"signal":round(signal,4),
+            complete=day.index.max().strftime("%H:%M")>="13:20"
+            nextdate=dates[j+1] if j+1<len(dates) else None
+            nextday=byday[nextdate] if nextdate else None
+            next_complete=nextday is not None and nextday.index.max().strftime("%H:%M")>="13:20"
+            nn=nextday.between_time("09:30","09:30") if nextday is not None else None
+            rec={"code":code,"date":date,"sessionComplete":complete,"nextDate":nextdate,
+                 "nextDateMaxTime":nextday.index.max().strftime("%H:%M") if nextday is not None else None,
+                 "entryTime":"09:30","entry":round(entry,4),"signal":round(signal,4),
                  "priorHigh":round(prevhigh,4),"gainAt0930Pct":round(gain,3),
                  "earlyRvol20":round(volratio,3),"vwap":round(vwap,4),
-                 "netSameDayPct":round(net_pct(entry,float(exitbar["Close"].iloc[-1])),4),
-                 "netNextClosePct":round(net_pct(entry,float(ne["Close"].iloc[-1])),4) if not ne.empty and nextday.index.max().strftime("%H:%M")>="13:25" else None,
-                 "netNext0930Pct":round(net_pct(entry,float(nn["Open"].iloc[0])),4) if not nn.empty else None}
+                 "exitLastBarTime":day.index.max().strftime("%H:%M"),
+                 "netSameDayPct":round(net_pct(entry,float(day["Close"].iloc[-1])),4) if complete else None,
+                 "netNextClosePct":round(net_pct(entry,float(nextday["Close"].iloc[-1])),4) if next_complete else None,
+                 "netNext0930Pct":round(net_pct(entry,float(nn["Open"].iloc[0])),4) if nn is not None and not nn.empty else None}
             rows.append(rec)
         return code,rows,None
     except Exception as exc:return code,[],type(exc).__name__+": "+str(exc)[:120]
@@ -106,7 +111,7 @@ def main():
             else:success+=1;signals.extend(found)
     group_results={}
     for group,codes in (("random_listed",set(sample)),("six_pictured",set(WATCH)),("combined",set(universe))):
-        base=[r for r in signals if r["code"] in codes]
+        base=[r for r in signals if r["code"] in codes and r["sessionComplete"]]
         records={}
         for variant in VARIANTS:
             subset=[r for r in base if variant=="breakout" or
@@ -126,11 +131,12 @@ def main():
         "rules":{"signalTime":"09:30","returnAtSignalMinPct":2.5,"breakYesterdayHigh":True,
                  "rvolThreshold":2,"vwapFilter":True,"avgDailyTurnoverMinTWD":10000000,
                  "excludeLimitUpAtEntryPct":9.8,"minPrice":10,
-                 "fill":"09:30 bar open, not 09:25 close","exit":"same-day last 13:25/13:30 bar and next-day close or 09:30",
+                 "fill":"09:30 bar open, not 09:25 close","exit":"same-day last observed bar after 13:20 (5m, NOT necessarily official 13:30 auction), next day same convention, or 09:30",
                  "brokerFeeOneWayPct":FEE_SIDE*100,"sellTaxPct":SELL_TAX*100,"slippageOneWayPct":SLIP_SIDE*100,
                  "costAtFlatPricePct":round(net_pct(100,100),3)},
         "results":group_results,
-        "caveats":["Yahoo intraday bars may be missing or adjusted, 5m OHLC and 09:30 opening price do not guarantee tradable fills.",
+        "today0930Candidates":{"date":datetime.now(TZ).strftime("%Y-%m-%d"),"allRandomPlusSix":[r for r in signals if not r["sessionComplete"] and r["date"]==datetime.now(TZ).strftime("%Y-%m-%d")],"picturedSix":[r for r in signals if not r["sessionComplete"] and r["date"]==datetime.now(TZ).strftime("%Y-%m-%d") and r["code"] in WATCH]},
+        "caveats":["Yahoo intraday bars may be missing or adjusted; last available 5m bar can be earlier than official closing auction; 09:30 opening price does not guarantee tradable fills.",
          "The full 1,988-stock market is not covered; random sample excludes OTC except explicit pictured 6233/8240.",
          "Last 60 calendar days only, earlier 20 sessions serve as warm-up; single-window sample is not out-of-sample.",
          "Trade returns are equal-weight hypothetical signal returns, not portfolio returns; simultaneous signals can exceed capital.",
