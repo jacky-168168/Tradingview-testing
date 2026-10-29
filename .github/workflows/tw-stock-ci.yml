@@ -67,3 +67,5 @@ jobs:
         run: PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_published_research_integrity.py' -v
       - name: Verify watchdog own tests
         run: python -m unittest discover -s .github/monitor -p 'test_*.py' -v
+      - name: Verify Pages publishing trigger regressions
+        run: python -m unittest discover -s .github/agent -p 'test_*pages_trigger.py' -v

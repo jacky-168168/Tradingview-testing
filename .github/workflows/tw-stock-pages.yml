@@ -6,7 +6,7 @@ on:
     # Sunday 11:30 Asia/Taipei fallback; TDCC completion event also deploys late reruns.
     - cron: '30 3 * * 0'
   workflow_run:
-    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'TDCC Whale Shareholder Weekly']
+    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'TDCC Whale Shareholder Weekly', 'Retry Date-Locked TWSE History with Throttling']
     types: [completed]
     branches: [main]
   push:
@@ -32,6 +32,8 @@ on:
       - 'tw-stock-dashboard/docs/tdcc-whale-weekly.js'
       - 'tw-stock-dashboard/docs/tdcc-whale-weekly.css'
       - 'tw-stock-dashboard/docs/data/research/tdcc_whales/**'
+      - 'tw-stock-dashboard/docs/data/research/g_regime_3y/**'
+      - 'tw-stock-dashboard/docs/data/research/market_history_extended/**'
       - 'tw-stock-dashboard/tests/test_tdcc_whale_ui.cjs'
       - 'tw-stock-dashboard/docs/fear-greed-home.css'
       - 'tw-stock-dashboard/docs/data/research/us_fear_greed/**'
