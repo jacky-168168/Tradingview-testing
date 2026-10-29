@@ -1,0 +1,29 @@
+name: Early 09:30 Breakout 5m Backtest
+on:
+  push:
+    branches:
+      - research/early-breakout-20261029
+    paths:
+      - '.github/workflows/early-0930-breakout-backtest.yml'
+      - 'tw-stock-dashboard/research/backtest_early_breakout_0930.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check 'yfinance>=0.2.60,<2' 'pandas>=2,<3' requests
+      - run: python tw-stock-dashboard/research/backtest_early_breakout_0930.py --self-test
+      - run: python tw-stock-dashboard/research/backtest_early_breakout_0930.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: early-breakout-0930-results
+          path: tw-stock-dashboard/docs/data/research/early_breakout_0930/backtest.json
+          if-no-files-found: warn
