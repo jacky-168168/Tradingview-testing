@@ -10,4 +10,6 @@
 
 | 2026-10-29（P2，待驗證） | 歷史市場研究 JSON 在 05:53～06:33 更新 main，但最近確認的 Pages 仍是 03:33 部署，研究資料可能延遲對外發布 | [歷史重試成功 #40780415668](https://github.com/jacky-168168/Tradingview-testing/actions/runs/40780415668) 更新研究摘要；[Pages #40755307916](https://github.com/jacky-168168/Tradingview-testing/actions/runs/40755307916) 先完成。部署 SHA `dfda0d62` 至 main `8ea10055` 差 3 筆研究資料提交；Pages 原 `workflow_run` 未監聽歷史重試，而 Actions `GITHUB_TOKEN` 推送不會觸發下游 `push`。公開 Pages JSON 尚未完成獨立 HTTP 讀取，不宣稱已證實線上內容落後 | 延伸既有草稿 PR #164：新增每日歷史重試完成事件與研究資料路徑監聽，保留成功且 main 才部署的閘門；避免監聽每半小時的收集器造成過度部署；未經審核不部署 | `.github/agent/test_history_pages_trigger.py`、`.github/agent/test_tdcc_pages_trigger.py`，PR CI 與合併後 Pages 實際讀取待驗證 |
 
+| 2026-10-29 23:39（P2，發布銜接待驗證） | LUNA 22:39 成功更新 main 的社群研究資料，但至 23:39 未見其後 Pages 部署紀錄；不等同已證實 CDN 舊資料 | [LUNA #40893478263](https://github.com/jacky-168168/Tradingview-testing/actions/runs/40893478263) 22:39 成功，main `2aaa0fee` 於 22:39 提交；最近 [Pages #40877818819](https://github.com/jacky-168168/Tradingview-testing/actions/runs/40877818819) 為 20:59 成功。LUNA 已在 Pages `workflow_run` 監聽清單中，但本次未觀察到完成事件觸發的 Pages run；GitHub 平台事件缺席根因未證實 | 延伸既有 Pages 草稿 PR #164，保留原完成事件與 main/success/非 PR 閘門，額外於臺灣每日 23:50 設定一次低頻備援部署；人工審核前不合併、不部署 | `.github/agent/test_luna_pages_fallback.py`；PR 獨立 CI 與合併後真實 Pages/JSON 驗證待完成 |
+
 每次 P1/P2 修復後新增一筆，必須提供 Actions run、原始輸入、可重現步驟與驗收連結；不可自行編造「根本原因」。
