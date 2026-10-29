@@ -40,6 +40,11 @@ class LunaPagesFallbackTests(unittest.TestCase):
         self.assertIn("  workflow_dispatch:\n", self.pages)
         self.assertIn("  cancel-in-progress: true", self.pages)
 
+    def test_regression_runs_in_independent_python_ci(self):
+        ci = (ROOT / ".github/workflows/tw-stock-ci.yml").read_text(encoding="utf-8")
+        self.assertIn("-p 'test_luna_pages_fallback.py'", ci)
+        self.assertIn(".github/agent/test_luna_pages_fallback.py", ci)
+
 
 if __name__ == "__main__":
     unittest.main()
