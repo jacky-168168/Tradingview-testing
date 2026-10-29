@@ -12,7 +12,7 @@ import yfinance as yf
 TZ=ZoneInfo("Asia/Taipei")
 OUT=Path("tw-stock-dashboard/docs/data/research/early_breakout_0930/backtest.json")
 SEED=20261029
-N_RANDOM=180
+N_RANDOM=500
 WATCH=["2352","2491","8240","6233","7750","2465"]
 OTC={"8240","6233"}
 FEE_SIDE=0.001425
@@ -62,8 +62,8 @@ def fetch_one(code):
             if not 0<prevclose or not 0<entry or signal<=prevhigh:continue
             gain=(signal/prevclose-1)*100
             if gain<2.5:continue
-            # Conservatively exclude likely limit-up unfillable entries.
-            if entry/prevclose>=1.098:continue
+            # Conservatively exclude near-limit-up entries incl. tick-size rounding (9.6% or more).
+            if entry/prevclose>=1.096:continue
             h=[byday[x] for x in dates[j-20:j]]
             earlyVol=[float(g.between_time("09:00","09:25")["Volume"].sum()) for g in h]
             if len(earlyVol)<20 or min(earlyVol)<=0:continue
@@ -130,7 +130,7 @@ def main():
                     "bias":"Survivorship bias: today's listed universe; six featured stocks were chosen after seeing their rise and are evaluated separately; random is listed-only."},
         "rules":{"signalTime":"09:30","returnAtSignalMinPct":2.5,"breakYesterdayHigh":True,
                  "rvolThreshold":2,"vwapFilter":True,"avgDailyTurnoverMinTWD":10000000,
-                 "excludeLimitUpAtEntryPct":9.8,"minPrice":10,
+                 "excludeLimitUpAtEntryPct":9.6,"minPrice":10,
                  "fill":"09:30 bar open, not 09:25 close","exit":"same-day last observed bar after 13:20 (5m, NOT necessarily official 13:30 auction), next day same convention, or 09:30",
                  "brokerFeeOneWayPct":FEE_SIDE*100,"sellTaxPct":SELL_TAX*100,"slippageOneWayPct":SLIP_SIDE*100,
                  "costAtFlatPricePct":round(net_pct(100,100),3)},
