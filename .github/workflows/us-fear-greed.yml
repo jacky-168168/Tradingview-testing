@@ -1,4 +1,4 @@
-name: CNN Fear Greed US Market Chart
+name: WantGoo Fear Greed US Market Chart
 on:
   workflow_dispatch:
   # Rebuild once the actual S&P 500 archive publisher finishes, preventing
@@ -8,12 +8,12 @@ on:
     types: [completed]
   schedule:
     # Taipei Tue-Sat 08:15, 10:15, 12:15, 14:15, 16:15.
-    # Retries matter because CNN and the SPX archive have independent delays.
+    # Retries matter because WantGoo and the SPX archive have independent delays.
     - cron: '15 0,2,4,6,8 * * 2-6'
     # Taipei Mon-Fri 20:15: final catch-up / post-holiday audit.
     - cron: '15 12 * * 1-5'
   push:
-    branches: [main, feat/fear-greed-home-replace-20261018]
+    branches: [main, fix/wantgoo-fear-greed-source-20261022]
     paths:
       - 'tw-stock-dashboard/src/update_us_fear_greed.py'
       - 'tw-stock-dashboard/tests/test_us_fear_greed.py'
@@ -24,7 +24,7 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: cnn-fear-greed-research
+  group: wantgoo-fear-greed-research
   cancel-in-progress: false
 jobs:
   update:
@@ -43,7 +43,7 @@ jobs:
           PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_us_fear_greed.py' -v
           node --check tw-stock-dashboard/docs/fear-greed-home.js
           node --test tw-stock-dashboard/tests/fear-greed-home.test.cjs
-      - name: Refresh CNN historical sentiments and aligned SPX
+      - name: Refresh WantGoo observed sentiments and aligned SPX
         run: python -u tw-stock-dashboard/src/update_us_fear_greed.py
       - name: Validate source freshness and no fabricated data
         run: |
@@ -52,17 +52,20 @@ jobs:
           from pathlib import Path
           p=Path('tw-stock-dashboard/docs/data/research/us_fear_greed/history.json')
           x=json.loads(p.read_text())
-          assert x['version']=='US_CNN_FEAR_GREED_SPX_V1'
+          assert x['version']=='US_WANTGOO_FEAR_GREED_SPX_V1'
+          assert x['sourceLink']=='https://www.wantgoo.com/global/macroeconomics/fearandgreed'
+          assert x['legacyCount']>=150 and x['wantgooCount']>=2
+          assert x['wantgooHistoricalLast']==x['asOf']
           assert x['columns']==['date','fearGreed','spx']
           assert len(x['rows'])>=150
           assert x['rows'][-1][0]==x['asOf']
           assert len(set(r[0] for r in x['rows']))==len(x['rows'])
-          print('CNN_FEAR_GREED_VALID',x['asOf'],'rows',len(x['rows']))
+          print('WANTGOO_FEAR_GREED_VALID',x['asOf'],'rows',len(x['rows']))
           PY
       - name: Save verified historical data artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cnn-fear-greed-spx-history
+          name: wantgoo-fear-greed-spx-history
           path: tw-stock-dashboard/docs/data/research/us_fear_greed/history.json
           retention-days: 90
       - name: Publish research snapshot on main only
@@ -72,7 +75,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add tw-stock-dashboard/docs/data/research/us_fear_greed/history.json
           if ! git diff --cached --quiet; then
-            git commit -m 'data: refresh confirmed CNN Fear Greed and S&P500 market history'
+            git commit -m 'data: refresh verified WantGoo Fear Greed and S&P500'
             for i in 1 2 3; do
               git pull --rebase origin main || { git rebase --abort || true; sleep $((i*4)); continue; }
               if git push origin HEAD:main; then exit 0; fi
@@ -81,6 +84,7 @@ jobs:
             exit 1
           fi
       - name: Verify latest checked-in record before deployment
+        if: github.ref == 'refs/heads/main'
         run: |
           git fetch origin main
           git checkout -B main origin/main
@@ -95,12 +99,15 @@ jobs:
           print('ALIGNED_FEAR_GREED_SPX',fg['asOf'],len(fg['rows']))
           PY
       - name: Configure Pages
+        if: github.ref == 'refs/heads/main'
         uses: actions/configure-pages@v5
       - name: Upload verified site snapshot
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: tw-stock-dashboard/docs
       - name: Deploy Pages
+        if: github.ref == 'refs/heads/main'
         uses: actions/deploy-pages@v4
       - name: Verify live Pages contains the newest dated Fear and Greed close
         run: |

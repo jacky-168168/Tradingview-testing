@@ -1,111 +1,219 @@
 #!/usr/bin/env python3
-"""CNN Fear & Greed plus dated S&P500: display only, never a TW stock trading gate.
-Source is CNN page's public, undocumented graphdata endpoint.
-No interpolation, no made-up values, no API score advertised as real-time.
+"""WantGoo Fear & Greed daily observations plus dated S&P 500 (display only).
+
+Use public WantGoo page values for new observations. Existing CNN historical
+observations before the cutover remain as explicitly labelled legacy history.
+Never relabel legacy values, backfill missing scores, or use as TW Risk Score.
 """
 from __future__ import annotations
-import json,math,urllib.request
-from datetime import datetime,timezone
+
+import json
+import math
+import re
+import urllib.request
+from datetime import date, datetime, timezone
+from html.parser import HTMLParser
 from pathlib import Path
 
-BASE=Path(__file__).resolve().parents[1]
-SOURCE="https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2022-01-01"
-SPX=BASE/"docs/data/research/us_options/history.json"
-OUT=BASE/"docs/data/research/us_fear_greed/history.json"
-HEADERS={
-    "Accept":"application/json, text/plain, */*",
-    "Referer":"https://edition.cnn.com/markets/fear-and-greed",
-    "Origin":"https://edition.cnn.com",
-    "User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+BASE = Path(__file__).resolve().parents[1]
+SOURCE = "https://www.wantgoo.com/global/macroeconomics/fearandgreed"
+LEGACY_SOURCE = "https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2022-01-01"
+CUTOVER_DATE = "2026-10-15"
+VERSION = "US_WANTGOO_FEAR_GREED_SPX_V1"
+SPX = BASE / "docs/data/research/us_options/history.json"
+OUT = BASE / "docs/data/research/us_fear_greed/history.json"
+HEADERS = {
+    "Accept": "text/html,application/xhtml+xml",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
 }
-COMPONENTS={
-    "market_momentum_sp500":"市場動能",
-    "stock_price_strength":"股價強弱",
-    "stock_price_breadth":"市場廣度",
-    "put_call_options":"Put／Call選擇權",
-    "market_volatility_vix":"VIX波動",
-    "safe_haven_demand":"避險需求",
-    "junk_bond_demand":"高收益債需求",
-}
-def source_date(epoch):
-    """CNN historical x is Unix milliseconds; daily US market date recorded in UTC."""
-    return datetime.fromtimestamp(float(epoch)/1000,timezone.utc).date().isoformat()
-def valid_score(v):
-    if isinstance(v,bool):return None
-    try:n=float(v)
-    except (TypeError,ValueError):return None
-    return round(n,3) if math.isfinite(n) and 0<=n<=100 else None
-def cnn_series(doc):
-    hist=doc.get("fear_and_greed_historical") if isinstance(doc,dict) else None
-    if not isinstance(hist,dict) or not isinstance(hist.get("data"),list):
-        raise ValueError("CNN fear_and_greed_historical.data missing")
-    rows={}
-    for x in hist["data"]:
-        if not isinstance(x,dict):continue
+
+# Match the public dated table, not the undated current headline. S&P 500
+# alongside each row prevents accidentally treating sidebar numbers as scores.
+ROW = re.compile(
+    r"(20\d{2}/\d{2}/\d{2})\s*"
+    r"(極度恐懼|極度貪婪|恐懼|貪婪|中立)\s*"
+    r"(\d{1,3}(?:\.\d+)?)\s*([\d,]+\.\d{1,4})(?![\d/])"
+)
+
+
+class VisibleText(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.parts = []
+        self.hidden_depth = 0
+
+    def handle_starttag(self, tag, attrs):
+        if tag in {"script", "style", "noscript"}:
+            self.hidden_depth += 1
+
+    def handle_endtag(self, tag):
+        if tag in {"script", "style", "noscript"} and self.hidden_depth:
+            self.hidden_depth -= 1
+
+    def handle_data(self, data):
+        if not self.hidden_depth and data.strip():
+            self.parts.append(data.strip())
+
+
+def valid_score(value):
+    if isinstance(value, bool):
+        return None
+    try:
+        n = float(value)
+    except (TypeError, ValueError):
+        return None
+    return round(n, 3) if math.isfinite(n) and 0 <= n <= 100 else None
+
+
+def wantgoo_series(html):
+    reader = VisibleText()
+    reader.feed(html)
+    text = " ".join(reader.parts)
+    rows = {}
+    for match in ROW.finditer(text):
+        raw_date, label, score_raw, price_raw = match.groups()
         try:
-            d=source_date(x["x"]);score=valid_score(x.get("y"))
-            if score is not None and "2021-01-01"<=d<=datetime.now(timezone.utc).date().isoformat():
-                rows[d]=score
-        except (KeyError,OverflowError,TypeError,ValueError):continue
-    if len(rows)<150:raise ValueError("CNN Fear & Greed insufficient historical points")
+            d = date.fromisoformat(raw_date.replace("/", "-")).isoformat()
+            score = valid_score(score_raw)
+            price = float(price_raw.replace(",", ""))
+        except ValueError:
+            continue
+        if score is None or not math.isfinite(price) or price <= 100:
+            continue
+        # Reject contradictory duplicated rows instead of silently replacing.
+        value = (score, round(price, 3))
+        if d in rows and rows[d] != value:
+            raise ValueError("WantGoo conflicting duplicate date: " + d)
+        rows[d] = value
+    if len(rows) < 2:
+        raise ValueError("WantGoo public dated history table unavailable or too short")
+    if max(rows) > datetime.now(timezone.utc).date().isoformat():
+        raise ValueError("WantGoo has future dated observations")
     return rows
-def to_archive(cnn,spx):
-    points=cnn_series(cnn)
-    if not isinstance(spx,dict) or spx.get("columns")!=["date","spx","dixPct","gex"]:
+
+
+def spx_series(doc):
+    if not isinstance(doc, dict) or doc.get("columns") != ["date", "spx", "dixPct", "gex"]:
         raise ValueError("Existing S&P500 historical data missing or schema changed")
-    us={}
-    for r in spx.get("rows",[]):
-        if not isinstance(r,list) or len(r)!=4:continue
+    rows = {}
+    for row in doc.get("rows", []):
+        if not isinstance(row, list) or len(row) != 4:
+            continue
         try:
-            d=str(r[0]);v=float(r[1])
-            if math.isfinite(v) and v>100:us[d]=round(v,3)
-        except (TypeError,ValueError):continue
-    if len(us)<500:raise ValueError("S&P500 archive too short")
-    common=sorted(set(us)&set(points))
-    if len(common)<150:raise ValueError("CNN and S&P500 overlap too short")
-    cnn_latest=max(points)
-    spx_latest=max(us)
-    if abs((datetime.fromisoformat(spx_latest)-datetime.fromisoformat(cnn_latest)).days)>10:
-        raise ValueError("CNN and SPX latest dates materially inconsistent")
-    last=common[-1]
-    # Never silently turn an already-available US session into an older chart:
-    # the two independent providers must both contain the newest dated close.
-    # A missing side fails this attempt; the workflow retries after US SPX finishes.
-    if last!=spx_latest or last!=cnn_latest:
-        raise ValueError("US_MARKET_DATE_NOT_ALIGNED: joined="+last+" CNN="+cnn_latest+" SPX="+spx_latest)
-    components={}
-    for key,title in COMPONENTS.items():
-        raw=cnn.get(key) or {}
-        score=valid_score(raw.get("score")) if isinstance(raw,dict) else None
-        if score is not None:components[key]={"label":title,"score":score}
-    # Latest headline is separate from the confirmed end-of-day, aligned history.
-    headline=cnn.get("fear_and_greed") or {}
-    src_ts=str(headline.get("timestamp") or "") if isinstance(headline,dict) else ""
-    rows=[[d,points[d],us[d]] for d in common]
+            d = date.fromisoformat(str(row[0])).isoformat()
+            price = float(row[1])
+            if math.isfinite(price) and price > 100:
+                rows[d] = round(price, 3)
+        except (ValueError, TypeError):
+            continue
+    if len(rows) < 500:
+        raise ValueError("S&P500 archive too short")
+    return rows
+
+
+def previous_series(old):
+    if not isinstance(old, dict) or old.get("version") not in (
+        "US_CNN_FEAR_GREED_SPX_V1", VERSION
+    ):
+        raise ValueError("Existing Fear & Greed archive format not recognized")
+    if old.get("columns") != ["date", "fearGreed", "spx"]:
+        raise ValueError("Existing Fear & Greed archive columns changed")
+    legacy, observed = {}, {}
+    for row in old.get("rows", []):
+        if not isinstance(row, list) or len(row) != 3:
+            continue
+        try:
+            d = date.fromisoformat(str(row[0])).isoformat()
+            score = valid_score(row[1])
+            if score is None:
+                continue
+            if d < CUTOVER_DATE:
+                legacy[d] = score
+            elif old["version"] == VERSION:
+                observed[d] = score
+        except (TypeError, ValueError):
+            continue
+    if len(legacy) < 150:
+        raise ValueError("Legacy CNN history missing; cannot silently erase history")
+    return legacy, observed
+
+
+def to_archive(wantgoo, spx_doc, old):
+    us = spx_series(spx_doc)
+    legacy, observed = previous_series(old)
+    incoming = {d: val for d, val in wantgoo.items() if d >= CUTOVER_DATE}
+    if len(incoming) < 2:
+        raise ValueError("WantGoo has insufficient observations after cutover")
+    # Check independently provided prices for the same market date.
+    for d, (_, wantgoo_spx) in incoming.items():
+        if d in us and abs(wantgoo_spx - us[d]) > 5:
+            raise ValueError(f"WantGoo vs S&P500 close differs materially: {d} WantGoo={wantgoo_spx} SPX={us[d]}")
+    observed.update({d: v[0] for d, v in incoming.items()})
+    latest_wantgoo = max(incoming)
+    latest_spx = max(us)
+    if latest_wantgoo != latest_spx:
+        raise ValueError("US_MARKET_DATE_NOT_ALIGNED: WantGoo=" + latest_wantgoo +
+                         " SPX=" + latest_spx)
+    points = {**legacy, **observed}
+    common = sorted(set(points) & set(us))
+    if len(common) < 150 or common[-1] != latest_wantgoo:
+        raise ValueError("WantGoo / S&P500 verified history too short or stale")
     return {
-        "version":"US_CNN_FEAR_GREED_SPX_V1","source":SOURCE,
-        "sourceLink":"https://edition.cnn.com/markets/fear-and-greed",
-        "spxSource":"SqueezeMetrics DIX.csv / indexed S&P 500 settlement (display only)",
-        "updatedAt":datetime.now(timezone.utc).isoformat(),
-        "cnnTimestamp":src_ts,"cnnHistoricalLast":cnn_latest,"spxLast":spx_latest,
-        "asOf":last,"columns":["date","fearGreed","spx"],"rows":rows,
-        "components":components,
-        "disclaimer":"Confirmed matched US market daily observations; no same-day forward fill, no TA stock Risk Score integration.",
+        "version": VERSION,
+        "source": SOURCE,
+        "sourceLink": SOURCE,
+        "legacySource": LEGACY_SOURCE,
+        "legacyUntil": max(legacy),
+        "wantgooFrom": min(observed),
+        "spxSource": "SqueezeMetrics DIX.csv / indexed S&P 500 settlement (display only)",
+        "updatedAt": datetime.now(timezone.utc).isoformat(),
+        "wantgooHistoricalLast": latest_wantgoo,
+        "spxLast": latest_spx,
+        "asOf": common[-1],
+        "columns": ["date", "fearGreed", "spx"],
+        "rows": [[d, points[d], us[d]] for d in common],
+        "legacyCount": sum(d < CUTOVER_DATE for d in common),
+        "wantgooCount": sum(d >= CUTOVER_DATE for d in common),
+        "components": {},
+        "disclaimer": "WantGoo observations since 2026-10-15; older historical scores came from CNN. "
+                      "Display only; no trading gate, no interpolation, no future fill.",
     }
-def fetch_cnn():
-    req=urllib.request.Request(SOURCE,headers=HEADERS,method="GET")
-    with urllib.request.urlopen(req,timeout=40) as res:
-        if res.status!=200:raise RuntimeError("CNN HTTP "+str(res.status))
-        raw=res.read(8_000_001)
-    if len(raw)>8_000_000:raise ValueError("CNN response unexpectedly large")
-    try:return json.loads(raw)
-    except json.JSONDecodeError as exc:raise ValueError("CNN response not JSON") from exc
+
+
+def fetch_wantgoo():
+    request = urllib.request.Request(SOURCE, headers=HEADERS, method="GET")
+    with urllib.request.urlopen(request, timeout=40) as response:
+        if response.status != 200:
+            raise RuntimeError("WantGoo HTTP " + str(response.status))
+        body = response.read(4_000_001)
+        encoding = response.headers.get_content_charset() or "utf-8"
+    if len(body) > 4_000_000:
+        raise ValueError("WantGoo response unexpectedly large")
+    return body.decode(encoding, errors="strict")
+
+
 def main():
-    cnn=fetch_cnn()
-    spx=json.loads(SPX.read_text(encoding="utf-8"))
-    result=to_archive(cnn,spx)
-    OUT.parent.mkdir(parents=True,exist_ok=True)
-    OUT.write_text(json.dumps(result,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
-    print("US CNN fear&greed verified history",len(result["rows"]),"sessions",
-          "asOf",result["asOf"],"CNN",result["cnnHistoricalLast"],"SPX",result["spxLast"])
-if __name__=="__main__":main()
+    html = fetch_wantgoo()
+    wantgoo = wantgoo_series(html)
+    spx = json.loads(SPX.read_text(encoding="utf-8"))
+    previous = json.loads(OUT.read_text(encoding="utf-8"))
+    result = to_archive(wantgoo, spx, previous)
+    # Atomic on-disk replace: an HTML/layout/schema change must not destroy
+    # the last verified archive.
+    import os
+    temp = OUT.with_suffix(".json.tmp")
+    try:
+        temp.write_text(json.dumps(result, ensure_ascii=False, separators=(",", ":")) + "\n",
+                        encoding="utf-8")
+        os.replace(temp, OUT)
+    finally:
+        if temp.exists():
+            temp.unlink()
+    print("US WantGoo Fear & Greed verified", len(result["rows"]), "sessions",
+          "asOf", result["asOf"], "WantGoo", result["wantgooHistoricalLast"],
+          "SPX", result["spxLast"], "legacy", result["legacyCount"])
+
+
+if __name__ == "__main__":
+    main()
