@@ -1,19 +1,19 @@
 {
   "schema": 1,
-  "generatedAt": "2026-10-31T12:21:59.949686Z",
+  "generatedAt": "2026-10-31T15:17:18.684164Z",
   "sources": {
     "PTT": {
       "status": "ok",
       "method": "官方 Atom",
       "url": "https://www.ptt.cc/atom/stock.xml",
-      "freshCount": 16,
+      "freshCount": 15,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 3,
-      "pushLabelsFound": 4
+      "boardFreshCount": 5,
+      "pushLabelsFound": 6
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 32,
+      "freshCount": 33,
       "queryHealth": {
         "queriesAttempted": 12,
         "queriesSucceeded": 12,
@@ -57,11 +57,11 @@
     "rawSample": 80,
     "investmentDiscussion": 13,
     "originalDiscussion": 13,
-    "repostedNews": 56,
-    "unrelated": 11,
+    "repostedNews": 58,
+    "unrelated": 9,
     "platformCounts": {
-      "PTT": 5,
-      "Bluesky": 8,
+      "PTT": 4,
+      "Bluesky": 9,
       "Threads": 0,
       "Instagram": 0
     }
@@ -83,6 +83,51 @@
   "items": [
     {
       "platform": "PTT",
+      "title": "[新聞] OpenAI奧特曼：個人電腦上裝記憶體太浪費",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793459392.A.3F2.html",
+      "publishedAt": "2026-10-31T15:09:52Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）"
+    },
+    {
+      "platform": "PTT",
+      "title": "[情報] 聯發科 2026Q3 法說會逐字稿(英翻中)",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793454792.A.EA9.html",
+      "publishedAt": "2026-10-31T13:53:12Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 18,
+      "pushLabel": "18",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "一番賞本來就是他媽賭博我不如去做台股戰士",
+      "url": "https://bsky.app/profile/suikaels.bsky.social/post/3mz6e4furwk2l",
+      "publishedAt": "2026-10-31T13:02:00.795000Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "非投資內容",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "一番賞本來就是他媽賭博我不如去做台股戰士",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "PTT",
       "title": "[創作] 小時級別波浪，細微波失敗",
       "url": "https://www.ptt.cc/bbs/Stock/M.1793449292.A.F13.html",
       "publishedAt": "2026-10-31T12:21:32Z",
@@ -91,7 +136,9 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "timestampBasis": "文章網址 ID 推算，非官方發文時間"
+      "pushScore": 4,
+      "pushLabel": "4",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
       "platform": "PTT",
@@ -103,8 +150,8 @@
       "investmentEligible": true,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 23,
-      "pushLabel": "23",
+      "pushScore": 72,
+      "pushLabel": "72",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
@@ -1039,57 +1086,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[創作] GOOG勇者",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793342752.A.7BD.html",
-      "publishedAt": "2026-10-30T06:45:52Z",
-      "stance": "中立／難判",
-      "contentType": "非投資話題",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[創作] 台股套起來",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793341836.A.870.html",
-      "publishedAt": "2026-10-30T06:30:36Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "非投資內容",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "[創作] 台股套起來",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "PTT",
-      "title": "[創作] 海力士廣告",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793341805.A.E81.html",
-      "publishedAt": "2026-10-30T06:30:05Z",
-      "stance": "中立／難判",
-      "contentType": "非投資話題",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "【崩盤警報】美股連環殺!台股該逃命還是抄底?  2026.10.31  謝晨彥分析師",
-      "url": "https://www.youtube.com/watch?v=RUurBDHFK3Q",
-      "publishedAt": "2026-10-31T12:00:09Z",
-      "sourceName": "謝晨彥分析師-摩爾證券投顧",
+      "title": "Google砸2000億美元，台股卻殺到跌停！真正賺走AI鈔票的，竟是這家公司！#台股 #台股分析 #ai概念股 #google #amazon #tpu #ai晶片 #股票 #半導體 #abf載板",
+      "url": "https://www.youtube.com/watch?v=fdhh14U0QDo",
+      "publishedAt": "2026-10-31T14:50:31Z",
+      "sourceName": "台股大爆點",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1427,6 +1432,31 @@
     }
   ],
   "pttNewsItems": [
+    {
+      "platform": "PTT",
+      "title": "[情報] 聯發科 2026Q3 法說會逐字稿(英翻中)",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793454792.A.EA9.html",
+      "publishedAt": "2026-10-31T13:53:12Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 18,
+      "pushLabel": "18",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] OpenAI奧特曼：個人電腦上裝記憶體太浪費",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793459392.A.3F2.html",
+      "publishedAt": "2026-10-31T15:09:52Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）"
+    },
     {
       "platform": "PTT",
       "title": "[新聞] 快逃？華爾街點名2檔AI股恐腰斬 台灣人",
@@ -1844,28 +1874,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 1030 上市外資買賣超排行",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793348159.A.097.html",
-      "publishedAt": "2026-10-30T08:15:59Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 10/30 本週 SCFI 指數 +0.16%",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793347722.A.B0A.html",
-      "publishedAt": "2026-10-30T08:08:42Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1881,10 +1889,10 @@
     "status": "verified",
     "model": "gemini-3.5-flash-lite",
     "inferenceCalls": 1,
-    "cachedClassifications": 11,
-    "newlyClassified": 2,
+    "cachedClassifications": 12,
+    "newlyClassified": 1,
     "unclassified": 0,
-    "updatedAt": "2026-10-31T12:22:03.053Z",
+    "updatedAt": "2026-10-31T15:17:22.414Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
     "candidateCount": 13,
