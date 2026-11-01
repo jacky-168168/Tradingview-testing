@@ -1,19 +1,18 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-01T07:26:05.846719Z",
+  "generatedAt": "2026-11-01T10:44:03.146892Z",
   "sources": {
     "PTT": {
-      "status": "ok",
-      "method": "官方 Atom",
+      "status": "error",
+      "reason": "HTTPError；HTTPError；HTTPError；HTTPError",
       "url": "https://www.ptt.cc/atom/stock.xml",
-      "freshCount": 13,
-      "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 4,
-      "pushLabelsFound": 8
+      "freshCount": 0,
+      "pushLabelsFound": 0,
+      "pushLabelsStatus": "unavailable"
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 26,
+      "freshCount": 22,
       "queryHealth": {
         "queriesAttempted": 12,
         "queriesSucceeded": 12,
@@ -47,21 +46,21 @@
     }
   },
   "social": {
-    "sample": 17,
+    "sample": 16,
     "bull": 1,
-    "bear": 4,
+    "bear": 3,
     "neutral": 12,
-    "directional": 5,
+    "directional": 4,
     "status": "已有樣本｜偏空討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
-    "rawSample": 80,
-    "investmentDiscussion": 17,
-    "originalDiscussion": 17,
-    "repostedNews": 54,
+    "rawSample": 73,
+    "investmentDiscussion": 16,
+    "originalDiscussion": 16,
+    "repostedNews": 48,
     "unrelated": 9,
     "platformCounts": {
       "PTT": 5,
-      "Bluesky": 12,
+      "Bluesky": 11,
       "Threads": 0,
       "Instagram": 0
     }
@@ -101,10 +100,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "pushScore": 4,
-      "pushLabel": "4",
-      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "Bluesky",
@@ -155,10 +151,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "pushScore": 29,
-      "pushLabel": "29",
-      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "Bluesky",
@@ -180,10 +173,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "pushScore": 17,
-      "pushLabel": "17",
-      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
@@ -1036,101 +1026,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "📢 市場擔憂AI投資變現能力，台股今天開低震盪，盤中跌逾1600點，終場下跌1156.5點，收在45211.83點，失守半年線45314點，但守住45000點關卡；指標股台達電、華新科、友達收跌停，AI股疲軟。台股週線連3跌、月線收黑。",
-      "url": "https://bsky.app/profile/cnataiwan.nzcow.com/post/3mz3liq75lx27",
-      "publishedAt": "2026-10-30T10:36:11.202163Z",
-      "stance": "偏空",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "新聞轉載",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "📢 市場擔憂AI投資變現能力，台股今天開低震盪，盤中跌逾1600點，終場下跌1156.5點",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2465 麗臺 9月自結:1.59 Q3:4.03",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793355761.A.4A9.html",
-      "publishedAt": "2026-10-30T10:22:41Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 快逃啊？台股急殺千點 金管會出面信心",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793355571.A.D71.html",
-      "publishedAt": "2026-10-30T10:19:31Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 台股重挫千點金管會4項喊話「基本面較去",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793355354.A.D92.html",
-      "publishedAt": "2026-10-30T10:15:54Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2006 東和鋼鐵 115年Q3:2.4 累計:6.47",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793355194.A.5DC.html",
-      "publishedAt": "2026-10-30T10:13:14Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2323 中環 買聯亞、新盛力，賣聯亞 賺",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793355059.A.491.html",
-      "publishedAt": "2026-10-30T10:10:59Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2026/10/30 注意處置股清單",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793354895.A.BE8.html",
-      "publishedAt": "2026-10-30T10:08:15Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "#投資 #股市 #成長股 #持股調整 #investment #台股 #股票 #ai #科技股 #黃仁勳 #台積電",
-      "url": "https://www.youtube.com/watch?v=6LjfnIOf8CM",
-      "publishedAt": "2026-11-01T07:02:45Z",
-      "sourceName": "臺股主線操盤手",
+      "title": "#ai概念股 #investment #stock #台股 #台積電 #股市教學 #taiwanstocks #台積電",
+      "url": "https://www.youtube.com/watch?v=j6ywiFDND18",
+      "publishedAt": "2026-11-01T10:30:42Z",
+      "sourceName": "Jia Yan",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1470,31 +1374,14 @@
   "pttNewsItems": [
     {
       "platform": "PTT",
-      "title": "[新聞] 市場不在乎期中選舉？歷史數據顯示：不",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793513511.A.4E1.html",
-      "publishedAt": "2026-11-01T06:11:51Z",
+      "title": "[情報] [情報] Deepseek 提出 Super-agent: 邁",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793517475.A.463.html",
+      "publishedAt": "2026-11-01T07:17:55Z",
       "stance": "中立／難判",
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "pushScore": 29,
-      "pushLabel": "29",
-      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 買不到桶裝油 炸物店臨時停售薯條 食品行",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793509849.A.CB5.html",
-      "publishedAt": "2026-11-01T05:10:49Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "pushScore": 17,
-      "pushLabel": "17",
-      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
@@ -1505,16 +1392,24 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "pushScore": 4,
-      "pushLabel": "4",
-      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
-      "title": "[情報] [情報] Deepseek 提出 Super-agent: 邁",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793517475.A.463.html",
-      "publishedAt": "2026-11-01T07:17:55Z",
+      "title": "[新聞] 市場不在乎期中選舉？歷史數據顯示：不",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793513511.A.4E1.html",
+      "publishedAt": "2026-11-01T06:11:51Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 買不到桶裝油 炸物店臨時停售薯條 食品行",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793509849.A.CB5.html",
+      "publishedAt": "2026-11-01T05:10:49Z",
       "stance": "中立／難判",
       "contentType": "新聞轉載",
       "investmentEligible": false,
@@ -1905,17 +1800,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2465 麗臺 9月自結:1.59 Q3:4.03",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793355761.A.4A9.html",
-      "publishedAt": "2026-10-30T10:22:41Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1928,22 +1812,22 @@
     "個股熱度只統計有投資語境且非新聞轉貼的 G Top20 標題，不更改 G 排名或 TITAN 風控。"
   ],
   "semantic": {
-    "status": "verified",
+    "status": "cached",
     "model": "gemini-3.5-flash-lite",
-    "inferenceCalls": 1,
-    "cachedClassifications": 15,
-    "newlyClassified": 2,
+    "inferenceCalls": 0,
+    "cachedClassifications": 16,
+    "newlyClassified": 0,
     "unclassified": 0,
-    "updatedAt": "2026-11-01T07:26:11.683Z",
+    "updatedAt": "2026-11-01T10:44:12.586Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 17,
-    "classifiedCount": 17,
+    "candidateCount": 16,
+    "classifiedCount": 16,
     "investmentCount": 2,
     "bullish": 0,
     "bearish": 1,
     "neutral": 1,
-    "originalRuleCount": 17,
+    "originalRuleCount": 16,
     "noTrade": true
   }
 }
