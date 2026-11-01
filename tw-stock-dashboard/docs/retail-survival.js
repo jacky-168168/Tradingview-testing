@@ -4,14 +4,14 @@ const $=id=>document.getElementById(id);
 const el=$('retailSurvival');if(!el)return;
 const canvas=$('retailChart'),ctx=canvas.getContext('2d'),tip=$('retailTooltip');
 const scope=$('retailScope'),days=$('retailDays'),fmt=new Intl.NumberFormat('zh-TW',{maximumFractionDigits:2});
-const state={rows:[],view:[],type:'overall',count:60,selected:-1,plot:null};
+const state={rows:[],view:[],type:'listed',count:60,selected:-1,plot:null};
 const n=v=>Number(v),ok=v=>Number.isFinite(n(v)),num=v=>ok(v)?fmt.format(n(v)):'—';
 const signed=v=>ok(v)?(v>0?'+':'')+Number(v).toFixed(2):'—';
 const nowDay=()=>{const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const obj={};parts.forEach(p=>obj[p.type]=p.value);return obj.year+'-'+obj.month+'-'+obj.day};
 function valid(r){return r&&/^20\d{2}-\d{2}-\d{2}$/.test(r.date)&&['listed','otc','overall','indexClose'].every(k=>ok(r[k]))&&n(r.overall)>75&&n(r.overall)<400&&n(r.indexClose)>3000}
 function delta(i){return i>0?state.view[i][state.type]-state.view[i-1][state.type]:null}
 function metric(row){return row?n(row[state.type]):null}
-function updateStats(){const rows=state.rows;if(!rows.length)return;const i=rows.length-1,r=rows[i],before=rows[i-1],d=before?n(r[state.type])-n(before[state.type]):null;
+function updateStats(){const rows=state.rows.filter(r=>ok(r[state.type])&&n(r[state.type])>75);if(!rows.length)return;const i=rows.length-1,r=rows[i],before=rows[i-1],d=before?n(r[state.type])-n(before[state.type]):null;
  $('retailCurrent').textContent=num(r[state.type])+'%';
  $('retailChange').textContent=d===null?'—':signed(d)+' 個百分點';
  $('retailChange').className=d!==null?(d>=0?'retail-positive':'retail-negative'):'';
@@ -23,7 +23,7 @@ function updateStats(){const rows=state.rows;if(!rows.length)return;const i=rows
  $('retailStatus').className='retail-status'+(stale?'':' ok');
  $('retailStatus').textContent=stale?'資料已超過 5 個日曆日，請勿視為最新盤後指標。':'最新已收錄交易日 '+r.date+'；未公布的新交易日不會提前填值。';
 }
-function table(){const a=state.rows.slice(-7).reverse(),all=state.rows;let html='';
+function table(){const all=state.rows.filter(r=>ok(r[state.type])&&n(r[state.type])>75),a=all.slice(-7).reverse();let html='';
  for(const r of a){const i=all.indexOf(r),prior=all[i-1],d=prior?n(r[state.type])-n(prior[state.type]):null;const cls=d===null?'':d>=0?'retail-positive':'retail-negative';
  html+='<tr><td>'+r.date.slice(5)+'</td><td>'+num(r.indexClose)+'</td><td>'+num(r[state.type])+'%</td><td class="'+cls+'">'+(d===null?'—':signed(d))+'</td></tr>';}
  $('retailTbody').innerHTML=html;
@@ -75,7 +75,7 @@ async function load(){try{
  $('retailSourceLink').href=data.source&&/^https:\/\//.test(data.source.url)?data.source.url:'https://www.istock.tw/post/twmarginrequirement_more';
  render();
  }catch(e){$('retailStatus').textContent='融資維持率無法載入：'+e.message+'。不顯示推測數字。';$('retailStatus').className='retail-status';}}
-function render(){state.view=state.rows.slice(-state.count);state.selected=-1;tip.hidden=true;updateStats();table();draw();}
+function render(){state.view=state.rows.filter(r=>ok(r[state.type])&&n(r[state.type])>75).slice(-state.count);state.selected=-1;tip.hidden=true;if(!state.view.length){$('retailStatus').textContent='所選市場別目前沒有可核對資料。';return;}updateStats();table();draw();}
 scope.addEventListener('change',()=>{state.type=scope.value;render();});
 days.addEventListener('change',()=>{state.count=Number(days.value);render();});
 canvas.addEventListener('pointermove',ev=>{if(!state.plot||!state.view.length)return;const rect=canvas.getBoundingClientRect(),p=(ev.clientX-rect.left-state.plot.left)/state.plot.plotW;showTip(Math.min(state.view.length-1,Math.max(0,Math.floor(p*state.view.length))));});
