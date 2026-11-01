@@ -47,11 +47,11 @@ class TPExTests(unittest.TestCase):
         self.assertEqual(result["otcCoverage"],1)
     def test_quote_coverage_is_checked(self):
         f=fixture()
-        f.quotes=f.quotes[:350]
+        for q in f.quotes[350:]:q["Close"]="--"
         with self.assertRaisesRegex(RuntimeError,"涵蓋不足"):
             t.main("2026-10-30",f)
     def test_roc_day(self):
         self.assertEqual(t.roc_to_iso("1151030"),"2026-10-30")
         self.assertEqual(t.iso_to_roc("2026-10-30"),"115/10/30")
-        with self.assertRaises(ValueError):t.roc_to_iso("1151031")
+        with self.assertRaises(ValueError):t.roc_to_iso("1151032")
 if __name__=="__main__":unittest.main()
