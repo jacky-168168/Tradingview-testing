@@ -94,6 +94,8 @@ def main():
  if day not in indexes:raise RuntimeError("TWSE FMTQIK 未核對到與融資報表相同交易日的指數")
  print("TWSE_DERIVED",day,"listed",ratio,"match",len(matched),"coverage",round(coverage,4),"index",indexes[day])
  return {"date":day,"listed":ratio,"otc":None,"overall":None,"indexClose":round(indexes[day],2),
-         "provenance":"TWSE 公開日資料自行計算，僅上市"}
+         "listedLoanTwd":round(loan),"listedCollateralTwd":round(collateral),
+         "listedCoverage":round(coverage,6),"listedMatched":len(matched),"listedPositive":len(positive),
+         "provenance":"TWSE 上市公開日資料自行計算"}
 if __name__=="__main__":
  print(main())
