@@ -24,8 +24,9 @@ def valid(row):
         datetime.strptime(day, "%Y-%m-%d")
         if not DATE_RE.fullmatch(day) or day > datetime.now(TZ).date().isoformat():
             return False
-        nums = [float(row[k]) for k in ("listed", "otc", "overall", "indexClose")]
-        return all(math.isfinite(v) for v in nums) and all(75 < v < 400 for v in nums[:3]) and 3000 < nums[3] < 100000
+        nums = [float(row[k]) for k in ("listed", "otc", "overall") if row.get(k) is not None]
+        ix = float(row["indexClose"])
+        return bool(nums) and all(math.isfinite(v) and 75 < v < 400 for v in nums) and math.isfinite(ix) and 3000 < ix < 100000
     except (KeyError, ValueError, TypeError):
         return False
 
@@ -99,15 +100,27 @@ def main():
         except (OSError, ValueError):
             pass
     old = {r["date"]:r for r in existing.get("rows", []) if isinstance(r, dict) and valid(r)}
-    r = requests.get(SOURCE, headers=HEADERS, timeout=35)
-    r.raise_for_status()
-    incoming = parse_source(r.text)
+    used_fallback = False
+    try:
+        r = requests.get(SOURCE, headers=HEADERS, timeout=35)
+        r.raise_for_status()
+        incoming = parse_source(r.text)
+        for row in incoming:
+            row["provenance"] = "愛玩股第三方盤後估算（上市／上櫃／整體）"
+    except (requests.RequestException, RuntimeError, ValueError) as exc:
+        print("RETAIL_SOURCE_UNAVAILABLE", repr(exc), "; 嘗試 TWSE 官方原始資料計算上市維持率")
+        from retail_twse_fallback import main as compute_twse
+        incoming = [compute_twse()]
+        used_fallback = True
     if old and incoming[-1]["date"] < max(old):
         raise RuntimeError(f"來源資料倒退：來源 {incoming[-1]['date']}，現有 {max(old)}；拒絕覆寫")
     candles = get_candles()
     for row in incoming:
         day = row["date"]
         old_record = old.get(day, {})
+        if used_fallback and old_record:
+            # 同日期尚有已核對的上市櫃資料時保留，不能將空值改寫為零。
+            row = {**old_record, **{k:v for k,v in row.items() if v is not None}}
         # 同一天比對公開來源與 Yahoo 收盤，不吻合時不接入 K 棒。
         candle = candles.get(day)
         if candle and abs(candle["indexOhlcClose"] / row["indexClose"] - 1) <= 0.015:
@@ -124,10 +137,11 @@ def main():
     payload = {
         "schema":"retail-survival-v1",
         "source":{
-            "name":"愛玩股大盤融資維持率歷史資料（依TWSE與TPEx公開資料估算）",
+            "name":"上市：TWSE 原始資料自行計算；整體／上櫃：愛玩股第三方估算",
             "url":SOURCE,
             "method":"各市場融資股票市值／融資金額餘額；非券商個別整戶維持率",
-            "classification":"第三方估算、盤後",
+            "classification":"盤後推估；每筆 provenance 標示計算來源",
+            "listedSource":"https://www.twse.com.tw/exchangeReport/MI_MARGN?selectType=MS",
             "indexOhlcSource":"Yahoo Finance ^TWII，與資料源指數收盤核對後採用"
         },
         "asOf":rows[-1]["date"],
