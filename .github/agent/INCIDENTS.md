@@ -7,3 +7,5 @@
 | 2026-10-21 | 主排程時間由 :00/:30 調整後 CI 失敗 | 舊測試寫死 cron 值 | 排程測試跟實際規格同步、避免過度指定字面值 | \`test_intraday_schedule.cjs\` |
 
 每次 P1/P2 修復後新增一筆，必須提供 Actions run、原始輸入、可重現步驟與驗收連結；不可自行編造「根本原因」。
+
+| 2026-11-01 | ORION 最新新聞 174 篇，僅 152 篇判讀；第 6 次 Gemini 批次遇到未逐字出現在標題的 evidence，後續 22 篇未處理（[Actions #41310371001](https://github.com/jacky-168168/Tradingview-testing/actions/runs/41310371001)） | `infer()` 對單篇不合格 evidence 直接 throw，`classify()` 對整批失敗立即 break，造成一筆模型引文錯誤放大成批次中斷；外部 Gemini 為何生成該引文未確認 | 保留逐字來源驗證；只拒絕該篇，不讓其他有效判讀及後續批次被丟棄，仍標 `partial` 且不補造中性標籤 | `test_orion_news.cjs`：單篇錯引文隔離與後續批次；PR CI 需獨立驗收 |
