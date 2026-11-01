@@ -47,6 +47,8 @@
 <script defer src="./vix-home.js?v=cc61084cae03"></script>
 
 
+<link rel="stylesheet" href="./retail-survival.css?v=1">
+<script defer src="./retail-survival.js?v=1"></script>
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -205,6 +207,54 @@
  </details>
 </details>
 </section>
+<section id="retailSurvival" class="card retail-survival" aria-label="散戶存活率與大盤融資維持率">
+  <div class="retail-head">
+    <div>
+      <h2>📉 散戶存活率｜大盤融資維持率</h2>
+      <p class="retail-muted">加權指數日 K 與融資維持率雙軸對照；維持率為盤後統計推估，並不是實際散戶存活人數比例。</p>
+    </div>
+    <div class="retail-controls">
+      <label for="retailScope" class="retail-muted">市場別</label>
+      <select id="retailScope" aria-label="融資維持率市場範圍">
+        <option value="overall" selected>上市櫃整體</option>
+        <option value="listed">上市</option>
+        <option value="otc">上櫃</option>
+      </select>
+      <label for="retailDays" class="retail-muted">區間</label>
+      <select id="retailDays" aria-label="圖表顯示交易日數">
+        <option value="20">近 20 日</option>
+        <option value="60" selected>近 60 日</option>
+        <option value="120">近 120 日</option>
+        <option value="260">近 1 年</option>
+      </select>
+    </div>
+  </div>
+  <div class="retail-stats" aria-label="融資風險數據摘要">
+    <div class="retail-stat"><span>融資維持率</span><strong id="retailCurrent">—</strong><small>上市櫃整體（預設）</small></div>
+    <div class="retail-stat"><span>較前交易日</span><strong id="retailChange">—</strong><small>單位：百分點</small></div>
+    <div class="retail-stat"><span>加權指數收盤</span><strong id="retailIndex">—</strong><small>日 K 僅於 OHLC 驗證後顯示</small></div>
+    <div class="retail-stat"><span>維持率資料日</span><strong id="retailDate">—</strong><small>非盤中即時更新</small></div>
+  </div>
+  <div class="retail-plot" aria-label="上方加權指數走勢、下方融資維持率">
+    <canvas id="retailChart" role="img" aria-label="上方加權指數真實日 K 或收盤走勢，下方融資維持率折線及 160% 參考線；滑鼠移入或觸控可查明細"></canvas>
+    <div id="retailTooltip" class="retail-tip" hidden></div>
+  </div>
+  <div class="retail-legend">
+    <span><b style="background:#d93641"></b>大盤上漲 K</span>
+    <span><b style="background:#15803d"></b>大盤下跌 K</span>
+    <span><b style="background:#132a60"></b>維持率</span>
+    <span><b style="background:#1780c1"></b>160% 觀察線</span>
+  </div>
+  <div class="retail-table-wrap">
+    <table class="retail-table" aria-label="最近七筆融資維持率每日明細">
+      <thead><tr><th>日期</th><th>加權指數</th><th>融資維持率</th><th>日變化（百分點）</th></tr></thead>
+      <tbody id="retailTbody"><tr><td colspan="4">正在讀取盤後資料…</td></tr></tbody>
+    </table>
+  </div>
+  <p id="retailStatus" class="retail-status" role="status">正在核對資料日期與來源…</p>
+  <div class="retail-source"><span id="retailAsOf">資料日確認中</span> · 資料來源：<a id="retailSourceLink" href="https://www.istock.tw/post/twmarginrequirement_more" rel="noopener noreferrer" target="_blank">愛玩股融資維持率歷史資料</a>（依 TWSE／TPEx 公開行情及融資資料計算的第三方估算）；加權指數 OHLC 另以 Yahoo Finance 核對。顯示的 160% 是可視化觀察線，並非個人整戶追繳門檻；個人維持率以券商實際計算為準。資料不足時不虛構 K 線或最新數值。</div>
+</section>
+
 <section class="card fg-panel" id="fearGreedPanel" aria-label="美股 CNN 恐懼與貪婪指數及標普500走勢">
  <div class="fg-top">
   <div>
