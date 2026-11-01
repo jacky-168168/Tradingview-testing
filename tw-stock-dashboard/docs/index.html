@@ -216,8 +216,8 @@
     <div class="retail-controls">
       <label for="retailScope" class="retail-muted">市場別</label>
       <select id="retailScope" aria-label="融資維持率市場範圍">
-        <option value="overall" selected>上市櫃整體</option>
-        <option value="listed">上市</option>
+        <option value="overall">上市櫃整體</option>
+        <option value="listed" selected>上市</option>
         <option value="otc">上櫃</option>
       </select>
       <label for="retailDays" class="retail-muted">區間</label>
@@ -230,7 +230,7 @@
     </div>
   </div>
   <div class="retail-stats" aria-label="融資風險數據摘要">
-    <div class="retail-stat"><span>融資維持率</span><strong id="retailCurrent">—</strong><small>上市櫃整體（預設）</small></div>
+    <div class="retail-stat"><span>融資維持率</span><strong id="retailCurrent">—</strong><small>上市（預設，可切換整體／上櫃）</small></div>
     <div class="retail-stat"><span>較前交易日</span><strong id="retailChange">—</strong><small>單位：百分點</small></div>
     <div class="retail-stat"><span>加權指數收盤</span><strong id="retailIndex">—</strong><small>日 K 僅於 OHLC 驗證後顯示</small></div>
     <div class="retail-stat"><span>維持率資料日</span><strong id="retailDate">—</strong><small>非盤中即時更新</small></div>
@@ -252,7 +252,7 @@
     </table>
   </div>
   <p id="retailStatus" class="retail-status" role="status">正在核對資料日期與來源…</p>
-  <div class="retail-source"><span id="retailAsOf">資料日確認中</span> · 資料來源：<a id="retailSourceLink" href="https://www.istock.tw/post/twmarginrequirement_more" rel="noopener noreferrer" target="_blank">愛玩股融資維持率歷史資料</a>（依 TWSE／TPEx 公開行情及融資資料計算的第三方估算）；加權指數 OHLC 另以 Yahoo Finance 核對。顯示的 160% 是可視化觀察線，並非個人整戶追繳門檻；個人維持率以券商實際計算為準。資料不足時不虛構 K 線或最新數值。</div>
+  <div class="retail-source"><span id="retailAsOf">資料日確認中</span> · 資料來源：<a id="retailSourceLink" href="https://www.istock.tw/post/twmarginrequirement_more" rel="noopener noreferrer" target="_blank">愛玩股融資維持率歷史資料</a>（歷史整體／上櫃）；最新上市數據可由 TWSE 公開融資餘額與價格自行計算。兩者均為市場推估值；加權指數 OHLC 另以 Yahoo Finance 核對。顯示的 160% 是可視化觀察線，並非個人整戶追繳門檻；個人維持率以券商實際計算為準。資料不足時不虛構 K 線或最新數值。</div>
 </section>
 
 <section class="card fg-panel" id="fearGreedPanel" aria-label="美股 CNN 恐懼與貪婪指數及標普500走勢">
