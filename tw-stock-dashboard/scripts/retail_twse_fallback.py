@@ -25,6 +25,7 @@ def value(x):
 def date_of(raw):
  text=str(raw or "")
  m=re.search(r"(\d{3,4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日",text)
+ if not m:m=re.search(r"(?<!\d)(\d{3,4})[/-](\d{1,2})[/-](\d{1,2})(?!\d)",text)
  if m:
   y=int(m[1]);return f"{y+(1911 if y<1911 else 0):04d}-{int(m[2]):02d}-{int(m[3]):02d}"
  m=re.search(r"(20\d{2})(\d\d)(\d\d)",text)
