@@ -100,27 +100,49 @@ def main():
         except (OSError, ValueError):
             pass
     old = {r["date"]:r for r in existing.get("rows", []) if isinstance(r, dict) and valid(r)}
-    used_fallback = False
+    from retail_twse_fallback import main as compute_twse
+    from retail_tpex import main as compute_tpex
+    # TWSE 為錨點，且與加權指數收盤必須為相同交易日。
+    listed = compute_twse()
+    day = listed["date"]
+    row = {**listed, "otc":None, "overall":None,
+           "provenanceByScope":{"listed":"TWSE 原始資料自行計算"}}
     try:
-        r = requests.get(SOURCE, headers=HEADERS, timeout=35)
-        r.raise_for_status()
-        incoming = parse_source(r.text)
-        for row in incoming:
-            row["provenance"] = "愛玩股第三方盤後估算（上市／上櫃／整體）"
-    except (requests.RequestException, RuntimeError, ValueError) as exc:
-        print("RETAIL_SOURCE_UNAVAILABLE", repr(exc), "; 嘗試 TWSE 官方原始資料計算上市維持率")
-        from retail_twse_fallback import main as compute_twse
-        incoming = [compute_twse()]
-        used_fallback = True
-    if old and incoming[-1]["date"] < max(old):
-        raise RuntimeError(f"來源資料倒退：來源 {incoming[-1]['date']}，現有 {max(old)}；拒絕覆寫")
+        otc = compute_tpex(expected_day=day)
+        row.update(otc)
+        loan_total = listed["listedLoanTwd"] + otc["otcLoanTwd"]
+        collateral_total = listed["listedCollateralTwd"] + otc["otcCollateralTwd"]
+        if loan_total <= 0:
+            raise RuntimeError("上市櫃合併融資金額無效")
+        total_ratio = round(collateral_total / loan_total * 100, 2)
+        if not 95 < total_ratio < 350:
+            raise RuntimeError("上市櫃整體維持率異常")
+        row["overall"] = total_ratio
+        row["provenanceByScope"] = {
+            "listed":"TWSE 原始資料自行計算",
+            "otc":"TPEx 原始資料自行計算",
+            "overall":"TWSE + TPEx 融資金額加權計算"}
+        print("ALL_MARKET_DERIVED",day,"listed",row["listed"],"otc",row["otc"],
+              "overall",total_ratio,"loanTwd",loan_total,flush=True)
+    except Exception as exc:
+        # OTC 源不可用時可保留已公開的上市數據，但不可用上市值代替整體值。
+        row["otcError"] = str(exc)[:260]
+        print("TPEx_UPDATE_FAILED",repr(exc),"; 不捏造上櫃／整體維持率",flush=True)
+    incoming = [row]
+    if old and day < max(old):
+        raise RuntimeError(f"官方來源資料日期倒退：{day}，現有 {max(old)}；拒絕覆寫")
     candles = get_candles()
     for row in incoming:
         day = row["date"]
         old_record = old.get(day, {})
-        if used_fallback and old_record:
-            # 同日期尚有已核對的上市櫃資料時保留，不能將空值改寫為零。
+        if old_record:
+            # 同日期仍保留來源相符的歷史 OHLC；缺失的 OTC 不能冒稱為新一日官方計算。
             row = {**old_record, **{k:v for k,v in row.items() if v is not None}}
+            if row.get("otcError"):
+                row["provenanceByScope"] = {
+                    "listed":"TWSE 原始資料自行計算",
+                    "otc":"既有歷史資料（本輪 TPEx 無法驗證）" if old_record.get("otc") is not None else "未確認",
+                    "overall":"既有歷史資料（本輪 TPEx 無法驗證）" if old_record.get("overall") is not None else "未確認"}
         # 同一天比對公開來源與 Yahoo 收盤，不吻合時不接入 K 棒。
         candle = candles.get(day)
         if candle and abs(candle["indexOhlcClose"] / row["indexClose"] - 1) <= 0.015:
@@ -137,11 +159,13 @@ def main():
     payload = {
         "schema":"retail-survival-v1",
         "source":{
-            "name":"上市：TWSE 原始資料自行計算；整體／上櫃：愛玩股第三方估算",
+            "name":"TWSE 上市與 TPEx 上櫃原始資料；上市櫃整體以融資金額加權計算",
             "url":SOURCE,
             "method":"各市場融資股票市值／融資金額餘額；非券商個別整戶維持率",
-            "classification":"盤後推估；每筆 provenance 標示計算來源",
+            "classification":"盤後公開資料自行計算；每筆 provenanceByScope 標示來源",
             "listedSource":"https://www.twse.com.tw/exchangeReport/MI_MARGN?selectType=MS",
+            "otcSource":"https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal_result.php?l=zh-tw&o=htm",
+            "tpexOpenApi":"https://www.tpex.org.tw/openapi/",
             "indexOhlcSource":"Yahoo Finance ^TWII，與資料源指數收盤核對後採用"
         },
         "asOf":rows[-1]["date"],
@@ -154,7 +178,7 @@ def main():
     temp.write_text(new, encoding="utf-8")
     temp.replace(TARGET)
     print("RET_SURVIVAL_OK",payload["asOf"],"records",len(rows),
-          "trueOhlc",sum("indexOpen" in x for x in rows),"source",SOURCE)
+          "trueOhlc",sum("indexOpen" in x for x in rows),"sources","TWSE+TPEx")
 if __name__ == "__main__":
     try:
         main()
