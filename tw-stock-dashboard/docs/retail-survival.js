@@ -75,7 +75,7 @@ async function load(){try{
  $('retailSourceLink').href=data.source&&/^https:\/\//.test(data.source.url)?data.source.url:'https://www.istock.tw/post/twmarginrequirement_more';
  render();
  }catch(e){$('retailStatus').textContent='融資維持率無法載入：'+e.message+'。不顯示推測數字。';$('retailStatus').className='retail-status';}}
-function render(){state.view=state.rows.filter(r=>ok(r[state.type])&&n(r[state.type])>75).slice(-state.count);state.selected=-1;tip.hidden=true;if(!state.view.length){$('retailStatus').textContent='所選市場別目前沒有可核對資料。';return;}updateStats();table();draw();}
+function render(){const link=$('retailSourceLink');link.href=state.type==='listed'?'https://www.twse.com.tw/exchangeReport/MI_MARGN?selectType=MS':'https://www.istock.tw/post/twmarginrequirement_more';link.textContent=state.type==='listed'?'臺灣證交所融資原始資料（上市）':'愛玩股融資維持率歷史資料（整體／上櫃）';state.view=state.rows.filter(r=>ok(r[state.type])&&n(r[state.type])>75).slice(-state.count);state.selected=-1;tip.hidden=true;if(!state.view.length){$('retailStatus').textContent='所選市場別目前沒有可核對資料。';return;}updateStats();table();draw();}
 scope.addEventListener('change',()=>{state.type=scope.value;render();});
 days.addEventListener('change',()=>{state.count=Number(days.value);render();});
 canvas.addEventListener('pointermove',ev=>{if(!state.plot||!state.view.length)return;const rect=canvas.getBoundingClientRect(),p=(ev.clientX-rect.left-state.plot.left)/state.plot.plotW;showTip(Math.min(state.view.length-1,Math.max(0,Math.floor(p*state.view.length))));});
