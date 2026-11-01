@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const el=$('retailSurvival');if(!el)return;
 const canvas=$('retailChart'),ctx=canvas.getContext('2d'),tip=$('retailTooltip');
 const scope=$('retailScope'),days=$('retailDays'),fmt=new Intl.NumberFormat('zh-TW',{maximumFractionDigits:2});
-const state={rows:[],view:[],type:'listed',count:60,selected:-1,plot:null};
+const state={rows:[],view:[],type:'overall',count:60,selected:-1,plot:null};
 const n=v=>Number(v),ok=v=>Number.isFinite(n(v)),num=v=>ok(v)?fmt.format(n(v)):'—';
 const signed=v=>ok(v)?(v>0?'+':'')+Number(v).toFixed(2):'—';
 const nowDay=()=>{const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const obj={};parts.forEach(p=>obj[p.type]=p.value);return obj.year+'-'+obj.month+'-'+obj.day};
