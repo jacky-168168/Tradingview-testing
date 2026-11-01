@@ -42,6 +42,28 @@ test("model evidence must be exact source quote",async()=>{
  assert.equal(d.semantic.status,"error");
  assert.equal(d.semantic.classified,0);
 });
+test("one unverifiable Gemini citation cannot discard valid siblings or later batches",async()=>{
+ const rows=Array.from({length:10},(_,i)=>({...row(0),id:"isolated"+i,
+  title:row(0).title+" 新聞 "+i,url:"https://www.cna.com.tw/news/afe/isolated"+i+".aspx"}));
+ const d=doc(rows);let requests=0;
+ await orion.classify(d,{},{now:NOW,apiKey:"test-only",fetchFn:async(_,args)=>{
+  requests++;
+  const posted=JSON.parse(JSON.parse(args.body).contents[0].parts[0].text);
+  const current=posted.map(z=>rows.find(p=>orion.key(p)===z.id));
+  assert(current.every(Boolean));
+  const results=tags(current);
+  if(requests===1)results[3].evidence="這句完全不存在於來源標題";
+  return out(results);
+ },sleepFn:async()=>{}});
+ assert.equal(requests,2);
+ assert.equal(d.semantic.status,"partial");
+ assert.equal(d.semantic.classified,9);
+ assert.equal(d.semantic.unclassified,1);
+ assert.match(d.semantic.error,/ORION validation rejected 1 headline/);
+ assert.equal(d.items[3].semantic,undefined);
+ assert(d.items[0].semantic&&d.items[9].semantic);
+});
+
 test("partial model batch failure reports uncovered headlines instead of faking neutrality",async()=>{
  const rows=Array.from({length:9},(_,i)=>({...row(0),id:"id"+i,
   title:row(0).title+" 報導編號 "+i,
