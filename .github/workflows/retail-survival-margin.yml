@@ -32,6 +32,28 @@ jobs:
           python-version: '3.12'
       - name: Install HTML parser
         run: python -m pip install requests==2.32.5 beautifulsoup4==4.14.2
+      - name: Probe official TPEx endpoint schemas (public fields only)
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import requests
+          paths=['tpex_mainboard_margin_balance','tpex_mainboard_quotes','tpex_mainboard_daily_close_quotes','tpex_margin_trading_marginspot']
+          for p in paths:
+              try:
+                  url='https://www.tpex.org.tw/openapi/v1/'+p
+                  r=requests.get(url,timeout=22,headers={'User-Agent':'Mozilla/5.0','Accept':'application/json'})
+                  print('TPEX_PROBE',p,'http',r.status_code,'bytes',len(r.content))
+                  r.raise_for_status()
+                  j=r.json()
+                  print('TPEX_PROBE_SHAPE',p,'kind',type(j).__name__,'length',len(j))
+                  if isinstance(j,list) and j:
+                      print('TPEX_PROBE_FIRST',p,str(j[0])[:1600])
+                      print('TPEX_PROBE_LAST',p,str(j[-1])[:1000])
+                  elif isinstance(j,dict):
+                      print('TPEX_PROBE_FIELDS',p,list(j)[:35],str(j)[:1900])
+              except Exception as e:
+                  print('TPEX_PROBE_ERROR',p,repr(e))
+          PY
       - name: Refresh sourced maintenance ratio and validated TAIEX OHLC
         run: python tw-stock-dashboard/scripts/update_retail_survival.py
       - name: Check data integrity
