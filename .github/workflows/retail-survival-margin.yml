@@ -1,0 +1,81 @@
+name: Retail Survival Margin Chart
+on:
+  workflow_dispatch:
+  schedule:
+    # 臺灣時間週一至週五 22:20 與 23:20。
+    - cron: '20 14,15 * * 1-5'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: retail-survival-publish
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install HTML parser
+        run: python -m pip install requests==2.32.5 beautifulsoup4==4.14.2
+      - name: Refresh sourced maintenance ratio and validated TAIEX OHLC
+        run: python tw-stock-dashboard/scripts/update_retail_survival.py
+      - name: Check data integrity
+        run: |
+          python - <<'PY'
+          import json,datetime,pathlib
+          p=pathlib.Path('tw-stock-dashboard/docs/data/retail_survival/latest.json')
+          d=json.loads(p.read_text('utf-8'))
+          a=d['rows']
+          assert len(a)>=12 and a==sorted(a,key=lambda r:r['date'])
+          assert d['asOf']==a[-1]['date']
+          assert all(75<r['overall']<400 and 3000<r['indexClose']<100000 for r in a)
+          assert a[-1]['date']<=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).date().isoformat()
+          print('retail_survival validated:',d['asOf'],'days:',len(a))
+          PY
+      - name: Commit new market observations
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/retail_survival/latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update sourced retail survival margin history"
+            ok=0
+            for attempt in 1 2 3 4; do
+              git pull --rebase -X theirs origin main || { git rebase --abort || true; sleep 5; continue; }
+              if git push origin HEAD:main; then ok=1; break; fi
+              sleep 6
+            done
+            [ "$ok" = 1 ] || exit 1
+          else
+            git pull --ff-only origin main
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - uses: actions/deploy-pages@v4
+        id: deployment
+      - name: Verify deployed margin data is not older
+        env:
+          SITE: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request
+          from pathlib import Path
+          old=json.loads(Path('tw-stock-dashboard/docs/data/retail_survival/latest.json').read_text('utf-8'))
+          req=urllib.request.Request(os.environ['SITE'].rstrip('/')+'/data/retail_survival/latest.json?v='+str(time.time()),headers={'Cache-Control':'no-cache'})
+          with urllib.request.urlopen(req,timeout=25) as f:
+              data=json.loads(f.read())
+          assert data['asOf']>=old['asOf'], 'Pages margin JSON behind repository'
+          print('Published retail survival:',data['asOf'])
+          PY
