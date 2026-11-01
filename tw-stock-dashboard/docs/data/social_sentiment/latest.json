@@ -1,19 +1,19 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-01T05:59:48.145941Z",
+  "generatedAt": "2026-11-01T07:26:05.846719Z",
   "sources": {
     "PTT": {
       "status": "ok",
       "method": "官方 Atom",
       "url": "https://www.ptt.cc/atom/stock.xml",
-      "freshCount": 14,
+      "freshCount": 13,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 2,
-      "pushLabelsFound": 6
+      "boardFreshCount": 4,
+      "pushLabelsFound": 8
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 29,
+      "freshCount": 26,
       "queryHealth": {
         "queriesAttempted": 12,
         "queriesSucceeded": 12,
@@ -47,21 +47,21 @@
     }
   },
   "social": {
-    "sample": 16,
-    "bull": 0,
-    "bear": 3,
-    "neutral": 13,
-    "directional": 3,
+    "sample": 17,
+    "bull": 1,
+    "bear": 4,
+    "neutral": 12,
+    "directional": 5,
     "status": "已有樣本｜偏空討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
     "rawSample": 80,
-    "investmentDiscussion": 16,
-    "originalDiscussion": 16,
-    "repostedNews": 55,
+    "investmentDiscussion": 17,
+    "originalDiscussion": 17,
+    "repostedNews": 54,
     "unrelated": 9,
     "platformCounts": {
-      "PTT": 6,
-      "Bluesky": 10,
+      "PTT": 5,
+      "Bluesky": 12,
       "Threads": 0,
       "Instagram": 0
     }
@@ -81,6 +81,85 @@
     "method": "僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"
   },
   "items": [
+    {
+      "platform": "PTT",
+      "title": "[情報] [情報] Deepseek 提出 Super-agent: 邁",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793517475.A.463.html",
+      "publishedAt": "2026-11-01T07:17:55Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 郭哲榮：再跌破4萬點砸幾千萬買0050　 點",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793517020.A.EC9.html",
+      "publishedAt": "2026-11-01T07:10:20Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 4,
+      "pushLabel": "4",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "📢 台股今年表現亮眼，截至10月22日，持有人數突破百萬的證券增至8檔，0050與台積電各增逾100萬名持有人，部分正2、主動式ETF受益人數翻數倍。專家認為，相較韓國股市因槓桿交易引發劇烈震盪，台股有國內資金承接，「台灣投資人有撐住」。",
+      "url": "https://bsky.app/profile/cnataiwan.nzcow.com/post/3mza7pc2vbk22",
+      "publishedAt": "2026-11-01T06:48:25.047659Z",
+      "stance": "偏多",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "台股今年表現亮眼，截至10月22日，持有人數突破百萬的證券增至8檔",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "Bluesky",
+      "title": "📢 AI投資變現能力引爆市場疑慮，全球科技股賣壓再起，台股10月下挫2728.3點、失守半年線。投顧分析，美國大型雲端服務供應商（CSP）資本支出仍持續上修，AI需求基本面未轉弱，但市場開始重新檢視投資回收期與企業現金流，短線台股面臨修正壓力，後續能否守住45000點成為觀察指標。",
+      "url": "https://bsky.app/profile/cnataiwan.nzcow.com/post/3mza6hjnjd726",
+      "publishedAt": "2026-11-01T06:26:10.822315Z",
+      "stance": "偏空",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "AI投資變現能力引爆市場疑慮，全球科技股賣壓再起，台股10月下挫2728.3點",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 市場不在乎期中選舉？歷史數據顯示：不",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793513511.A.4E1.html",
+      "publishedAt": "2026-11-01T06:11:51Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 29,
+      "pushLabel": "29",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
     {
       "platform": "Bluesky",
       "title": "#中央社即時新聞 財經新聞 11:48 AI變現疑慮引爆科技股賣壓 法人：台股45000點保衛戰 （中央社記者江明晏台北1日電）AI投資變現能力引爆市場疑慮，全球科技股賣壓再起，台股10月下挫2728.3點、失守半年線。投顧分析，美國大型雲端服務供應商（CSP）資本支出仍持續上修，AI需求基本面未轉弱，但市場開始重",
@@ -102,8 +181,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 10,
-      "pushLabel": "10",
+      "pushScore": 17,
+      "pushLabel": "17",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1043,79 +1122,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[創作]  台股人能飛！！！",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793352751.A.809.html",
-      "publishedAt": "2026-10-30T09:32:31Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "非投資內容",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "[創作]  台股人能飛！！！",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 炒股慘賠！30歲男竟「狠殺櫻花妹」　行兇",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793349346.A.2C3.html",
-      "publishedAt": "2026-10-30T08:35:46Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 第3季 GDP 成長率上修至14.36% 連四季雙",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793348937.A.3AD.html",
-      "publishedAt": "2026-10-30T08:28:57Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 15:26 台股挫跌1156點失守半年線 週線月線同步收黑 （中央社記者江明晏台北30日電）市場擔憂AI投資變現能力，台股今天開低震盪，盤中跌逾1600點，終場下跌1156.5點，收在45211.83點，失守半年線45314點，但守住45000點關卡；指標股台達電、華新科、友達收跌停，A",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mz3dwenq3cx2",
-      "publishedAt": "2026-10-30T08:20:31Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 15:05 三大法人賣超台股1398.44億元 （中央社台北30日電）台股今天跌1156.5點，收在45211.83點，成交值新台幣8777.3億元。三大法人外資及陸資賣超、投信買超、自營商賣超，合計賣超1398.44億元。 https://www.cna.com.tw/news/af",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mz3dvpmcccu2",
-      "publishedAt": "2026-10-30T08:20:07Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "#台積電 #ai #台股 #潛力股 #台灣",
-      "url": "https://www.youtube.com/watch?v=cl0rczA4h-8",
-      "publishedAt": "2026-11-01T05:53:23Z",
-      "sourceName": "Min",
+      "title": "#投資 #股市 #成長股 #持股調整 #investment #台股 #股票 #ai #科技股 #黃仁勳 #台積電",
+      "url": "https://www.youtube.com/watch?v=6LjfnIOf8CM",
+      "publishedAt": "2026-11-01T07:02:45Z",
+      "sourceName": "臺股主線操盤手",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1455,6 +1470,20 @@
   "pttNewsItems": [
     {
       "platform": "PTT",
+      "title": "[新聞] 市場不在乎期中選舉？歷史數據顯示：不",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793513511.A.4E1.html",
+      "publishedAt": "2026-11-01T06:11:51Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 29,
+      "pushLabel": "29",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
       "title": "[新聞] 買不到桶裝油 炸物店臨時停售薯條 食品行",
       "url": "https://www.ptt.cc/bbs/Stock/M.1793509849.A.CB5.html",
       "publishedAt": "2026-11-01T05:10:49Z",
@@ -1463,9 +1492,34 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 10,
-      "pushLabel": "10",
+      "pushScore": 17,
+      "pushLabel": "17",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 郭哲榮：再跌破4萬點砸幾千萬買0050　 點",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793517020.A.EC9.html",
+      "publishedAt": "2026-11-01T07:10:20Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 4,
+      "pushLabel": "4",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[情報] [情報] Deepseek 提出 Super-agent: 邁",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1793517475.A.463.html",
+      "publishedAt": "2026-11-01T07:17:55Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
@@ -1862,39 +1916,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 快逃啊？台股急殺千點 金管會出面信心",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793355571.A.D71.html",
-      "publishedAt": "2026-10-30T10:19:31Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 台股重挫千點金管會4項喊話「基本面較去",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793355354.A.D92.html",
-      "publishedAt": "2026-10-30T10:15:54Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2006 東和鋼鐵 115年Q3:2.4 累計:6.47",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793355194.A.5DC.html",
-      "publishedAt": "2026-10-30T10:13:14Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1910,19 +1931,19 @@
     "status": "verified",
     "model": "gemini-3.5-flash-lite",
     "inferenceCalls": 1,
-    "cachedClassifications": 14,
+    "cachedClassifications": 15,
     "newlyClassified": 2,
     "unclassified": 0,
-    "updatedAt": "2026-11-01T05:59:53.539Z",
+    "updatedAt": "2026-11-01T07:26:11.683Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 16,
-    "classifiedCount": 16,
+    "candidateCount": 17,
+    "classifiedCount": 17,
     "investmentCount": 2,
     "bullish": 0,
     "bearish": 1,
     "neutral": 1,
-    "originalRuleCount": 16,
+    "originalRuleCount": 17,
     "noTrade": true
   }
 }
