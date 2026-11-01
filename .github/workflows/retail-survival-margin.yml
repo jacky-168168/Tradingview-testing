@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/retail-survival-margin.yml'
+      - 'tw-stock-dashboard/scripts/retail_tpex.py'
+      - 'tw-stock-dashboard/scripts/retail_twse_fallback.py'
+      - 'tw-stock-dashboard/scripts/update_retail_survival.py'
+      - 'tw-stock-dashboard/tests/test_retail_tpex.py'
   workflow_dispatch:
   schedule:
     # 臺灣時間週一至週五 22:20 與 23:20。
@@ -32,29 +36,9 @@ jobs:
           python-version: '3.12'
       - name: Install HTML parser
         run: python -m pip install requests==2.32.5 beautifulsoup4==4.14.2
-      - name: Probe official TPEx endpoint schemas (public fields only)
-        continue-on-error: true
-        run: |
-          python - <<'PY'
-          import requests
-          paths=['tpex_mainboard_margin_balance','tpex_mainboard_quotes','tpex_mainboard_daily_close_quotes','tpex_margin_trading_marginspot']
-          for p in paths:
-              try:
-                  url='https://www.tpex.org.tw/openapi/v1/'+p
-                  r=requests.get(url,timeout=22,headers={'User-Agent':'Mozilla/5.0','Accept':'application/json'})
-                  print('TPEX_PROBE',p,'http',r.status_code,'bytes',len(r.content))
-                  r.raise_for_status()
-                  j=r.json()
-                  print('TPEX_PROBE_SHAPE',p,'kind',type(j).__name__,'length',len(j))
-                  if isinstance(j,list) and j:
-                      print('TPEX_PROBE_FIRST',p,str(j[0])[:1600])
-                      print('TPEX_PROBE_LAST',p,str(j[-1])[:1000])
-                  elif isinstance(j,dict):
-                      print('TPEX_PROBE_FIELDS',p,list(j)[:35],str(j)[:1900])
-              except Exception as e:
-                  print('TPEX_PROBE_ERROR',p,repr(e))
-          PY
-      - name: Refresh sourced maintenance ratio and validated TAIEX OHLC
+      - name: Validate official TPEx parsing and safety conditions
+        run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_retail_tpex.py' -v
+      - name: Refresh TWSE and TPEx official margin maintenance and validated TAIEX OHLC
         run: python tw-stock-dashboard/scripts/update_retail_survival.py
       - name: Check data integrity
         run: |
@@ -65,7 +49,11 @@ jobs:
           a=d['rows']
           assert len(a)>=12 and a==sorted(a,key=lambda r:r['date'])
           assert d['asOf']==a[-1]['date']
-          assert all(75<r['overall']<400 and 3000<r['indexClose']<100000 for r in a)
+          assert all(3000<r['indexClose']<100000 and any(75<r.get(k,0)<400 for k in ('listed','otc','overall') if isinstance(r.get(k),(int,float))) for r in a)
+          last=a[-1]
+          if all(isinstance(last.get(k),(int,float)) for k in ('listed','otc','overall')):
+              total=round((last['listedCollateralTwd']+last['otcCollateralTwd'])/(last['listedLoanTwd']+last['otcLoanTwd'])*100,2) if all(k in last for k in ('listedCollateralTwd','otcCollateralTwd','listedLoanTwd','otcLoanTwd')) else None
+              if total is not None:assert abs(last['overall']-total)<0.011
           assert a[-1]['date']<=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).date().isoformat()
           print('retail_survival validated:',d['asOf'],'days:',len(a))
           PY
