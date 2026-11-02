@@ -6,7 +6,7 @@ or published official daily snapshots are modified.
 """
 from __future__ import annotations
 import json, math, os, sys
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -47,6 +47,11 @@ def get_last_cash(target,read):
         except ValueError:
             continue
         if 1<=gap<=7:candidates.append((day,risk,name))
+    # Never silently freeze a stale close from two sessions ago. Holiday gaps
+    # need an independently verified calendar path, otherwise fail closed.
+    target_date=datetime.fromisoformat(target).date()
+    prior_weekday=target_date-timedelta(days=3 if target_date.weekday()==0 else 1)
+    candidates=[row for row in candidates if row[0]==prior_weekday.isoformat()]
     if not candidates:raise RuntimeError("NO_RECENT_DATE_MATCHED_OFFICIAL_CASH_RISK")
     candidates.sort(key=lambda x:(x[0], x[2].startswith("market_risk_close/")),reverse=True)
     return candidates[0]
