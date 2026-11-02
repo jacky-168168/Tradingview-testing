@@ -44,6 +44,7 @@ on:
       - 'tw-stock-dashboard/tests/test_homepage_intraday_score.cjs'
       - 'tw-stock-dashboard/tests/test_market_close_score.cjs'
       - 'tw-stock-dashboard/tests/test_market_close_live_render.cjs'
+      - 'tw-stock-dashboard/tests/test_premarket_frozen_render.cjs'
       - 'tw-stock-dashboard/tests/test_intraday_schedule.cjs'
       - 'tw-stock-dashboard/docs/market-command.css'
       - 'tw-stock-dashboard/docs/data/research/market_entry_playbook/**'
@@ -103,6 +104,7 @@ jobs:
           node tw-stock-dashboard/tests/test_market_compact.cjs
           node tw-stock-dashboard/tests/test_market_close_score.cjs
           node tw-stock-dashboard/tests/test_market_close_live_render.cjs
+          node tw-stock-dashboard/tests/test_premarket_frozen_render.cjs
           node tw-stock-dashboard/tests/test_homepage_intraday_score.cjs
           node tw-stock-dashboard/tests/test_weekend_premarket_score.cjs
           python3 tw-stock-dashboard/tests/test_market_homepage_layout.py
