@@ -566,10 +566,20 @@ function renderHomeG(){
 }
 function renderPanels(){var p=DATA&&DATA.panels||{},f=p.institutionFlow||{buy:[],sell:[]};buyRows.innerHTML=(f.buy||[]).map(panelRow).join("")||'<div class="sub">--</div>';sellRows.innerHTML=(f.sell||[]).map(panelRow).join("")||'<div class="sub">--</div>';instSource.textContent=p.institutionSource||"";var quality=DATA&&DATA.institutionQuality||{},valid=quality.status==="complete"&&quality.date===DATA.dataDate&&quality.missingRanked===0;document.getElementById("instCoverage").textContent=valid?"✅ 官方上市 "+quality.listedRows+" 筆／上櫃 "+quality.otcRows+" 筆；榜單法人缺漏 0 檔。":"⚠ 法人完整性未經當日驗證，請勿將缺值視為零。";var hs=p.topicHeat||[];themeRows.innerHTML=hs.length?hs.map(function(x){return '<div class="row"><span><b>'+esc(x.theme)+'</b></span><span class="'+C(x.avgRet)+'">'+(Number(x.avgRet)>=0?"+":"")+N(x.avgRet)+'%</span></div>'}).join(""):'<div class="sub">--</div>';themeSource.textContent=p.topicSource||""}
 function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);var freshness=MarketCommand.evaluate(DATA.risk||{},DATA.marketIntelligence||null);marketMeta.textContent="最新資料日 "+(DATA.dataDate||"--")+(freshness.stale?" ｜ ⚠ 今日正式資料待同步":" ｜ 官方現貨盤後資料，非即時交易建議");var more=document.getElementById("marketMetaDetails");if(more)more.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),ageWarning=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5),isStale=freshness.stale||ageWarning;staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent=freshness.stale?"⚠ 今日正式現貨 Risk Score 尚未同步，最新完整資料日為 "+(last.d||"未知")+"；前次正式分數只能看歷史，盤中 TX 參考試算不作新倉許可。若遇交易所休市，請等下個交易日更新。":"⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
+let liveBreadthRefreshBusy=false;
 async function loadIntradayMarketBreadth(){
- try{const res=await fetch("./data/g_intraday/latest.json?v="+Date.now(),{cache:"no-store"});if(!res.ok)throw new Error("No published live G quotes");
-   const snap=await res.json();if(window.MarketCommand)MarketCommand.applyIntraday(snap);
- }catch(_){if(window.MarketCommand)MarketCommand.applyIntraday(null)}
+ if(liveBreadthRefreshBusy)return;
+ liveBreadthRefreshBusy=true;
+ try{
+   const res=await fetch("./data/g_intraday/latest.json?v="+Date.now(),{cache:"no-store"});
+   if(!res.ok)throw new Error("盤中市場資料 HTTP "+res.status);
+   const snap=await res.json();
+   if(window.MarketCommand)MarketCommand.applyIntraday(snap);
+   const b=snap?.indicativeQuoteBreadth?.total||{},c=snap?.coverage||{};
+   console.info("盤中市場廣度",snap?.asOfDate,snap?.publishedAt,"樣本",b.sample,"上漲",b.up,"有效報價",c.valid+"/"+c.total);
+ }catch(e){
+   console.warn("盤中市場廣度載入失敗（保留原狀，稍後重試）",e);
+ }finally{liveBreadthRefreshBusy=false}
 }
 async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();MarketCommand.refresh(DATA);DynamicExposure.refresh(DATA);MarketCommand.checkMl();renderPanels();renderHomeG();renderMeta();await loadFutures();await loadIntradayMarketBreadth()}catch(e){marketMeta.textContent="市場資料載入失敗："+e.message;futuresSub.textContent="市場資料暫時不可用，請稍後重新載入。"}finally{loading.classList.remove("show")}}
 // At 08:30–08:59 revisit the latest COMPLETED exchange session; this
@@ -594,5 +604,7 @@ document.getElementById("txfLiveChart").addEventListener("toggle",function(){
 MarketSentiment.mount();DynamicExposure.init();// Refresh both the live data and dashboard JavaScript. Merely calling load()
 // kept stale scripts active in open mobile tabs after Pages deployments.
 reload.onclick=()=>{const url=new URL(location.href);url.searchParams.set("appRefresh",String(Date.now()));location.replace(url.toString())};load();setInterval(load,90000);
+// 獨立巡檢：盤中數據不受夜盤或正式盤後整包更新是否成功影響。
+setInterval(()=>{const m=localClock();if(m>=540&&m<=840)void loadIntradayMarketBreadth()},30000);
 </script>
 </body></html>
