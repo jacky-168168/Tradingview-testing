@@ -2,6 +2,7 @@
    static Pages tree, with real Chromium at desktop and Android-like viewports. */
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 const ROOT=path.resolve(__dirname,'../docs'),BASE='http://127.0.0.1:8765/';
+const {classifyLocalAssetError}=require('./local_asset_404_policy.cjs');
 const CORE=['index.html','selections.html','bubbles.html','stocks.html','upstream.html','history.html','backtest.html','tdcc-whale-weekly.html','agent-research.html'];
 const EXT=['market-methodology.html','market-ml-stocks.html','market-cash-3y.html','n-canslim.html','txf-backtest.html','etf-allocation.html','g-backtest.html','g-persistence.html','g-pro-3y.html','g-regime-3y.html','g-regime-contrarian-3y.html','g-target.html','g-candles.html','g-compound-3y.html','g-compound-v2-3y.html','g-compound-v3-walkforward.html','etf-00631l.html'];
 const ALL=[...CORE,...EXT],checks=[],problems=[],warnings=[];
@@ -24,7 +25,9 @@ async function visit(ctx,file,variant,delay=600){
  await page.goto(BASE+file,{waitUntil:'domcontentloaded',timeout:28000});await page.waitForTimeout(delay);
  await test(variant+' '+file+' HTTP success',async()=>(await page.locator('body').count())===1&&!(await page.locator('body').innerText()).includes('404 File not found'));
  await test(variant+' '+file+' no JS exception',async()=>jsErrors.length?{ok:false,jsErrors}:true);
- await test(variant+' '+file+' no local asset 4xx',async()=>httpErrors.length?{ok:false,httpErrors}:true);
+ const unexpected=httpErrors.filter(e=>classifyLocalAssetError(e,ROOT,fs.existsSync)==='unexpected');
+ if(httpErrors.length>unexpected.length)warnings.push({name:variant+' '+file+' optional premarket snapshot not yet published',count:httpErrors.length-unexpected.length});
+ await test(variant+' '+file+' no local asset 4xx',async()=>unexpected.length?{ok:false,httpErrors:unexpected}:true);
  if(variant==='mobile')await test('mobile '+file+' no body overflow',async()=>page.evaluate(()=>{
  const width=window.innerWidth,scroll=document.documentElement.scrollWidth;
  const offenders=[...document.querySelectorAll('body *')].filter(el=>{const r=el.getBoundingClientRect();return r.right>width+12&&r.width>0}).sort((a,b)=>b.getBoundingClientRect().right-a.getBoundingClientRect().right).slice(0,12).map(el=>({tag:el.tagName,id:el.id,cls:String(el.className?.baseVal||el.className||'').slice(0,85),x:Math.round(el.getBoundingClientRect().x),r:Math.round(el.getBoundingClientRect().right),width:Math.round(el.getBoundingClientRect().width)}));
