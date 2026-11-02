@@ -76,6 +76,23 @@ async function main(){
         detail.textContent.length>20&&scale.querySelectorAll('.cmd-trade-guide-band').length===5&&
         guide.textContent.includes('分數解讀與操作方向'));
     }));
+    await test(variant+' validated same-day quote breadth displays numeric homepage score',async()=>{
+      const live=JSON.parse(fs.readFileSync(path.join(ROOT,'data/g_intraday/latest.json'),'utf8'));
+      if(!live.indicativeQuoteBreadth)return true; // Older archived JSON predates separate breadth estimate.
+      const {indicativeMarketBreadthScore}=require('../docs/market-command.js');
+      const score=indicativeMarketBreadthScore(live,new Date());
+      if(!score)return true; // Outside trading hours or stale, never demand invented live score.
+      await page.waitForFunction(expected=>
+        document.getElementById('compactScore')?.textContent.trim()===String(expected),score.score,{timeout:12500});
+      const got=await page.evaluate(()=>{
+        return {number:document.getElementById('compactScore')?.textContent.trim(),
+          type:document.getElementById('compactScoreType')?.textContent.trim(),
+          detail:document.getElementById('compactEquation')?.textContent.trim(),
+          official:document.getElementById('compactOfficial')?.textContent.trim()};
+      });
+      return Number(got.number)===score.score&&got.type.includes('非正式 Risk Score')&&
+        got.detail.includes('委託價估計')&&got.official!=='—';
+    });
     await test(variant+' institution/source render',()=>page.evaluate(()=>document.getElementById('instSource').textContent.length>0&&document.getElementById('buyRows').textContent.length>0&&document.getElementById('sellRows').textContent.length>0));
     await test(variant+' CNN Fear Greed still renders when retired DIX latest.json is unavailable',async()=>{
       const x=await ctx.newPage();
