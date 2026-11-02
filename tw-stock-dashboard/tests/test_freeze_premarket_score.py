@@ -35,7 +35,7 @@ class FixedPremarketScoreTests(unittest.TestCase):
         self.assertEqual(snap["adjustment"],0)
         self.assertIsNone(snap["txPct"])
     def test_matched_official_night_only(self):
-        self.previous(42);self.tx(night=44000)
+        self.previous(42);self.tx(night=44750)
         snap=m.build(datetime(2026,11,3,8,45,tzinfo=TZ))
         self.assertEqual(snap["score"],34)
         self.assertEqual(snap["adjustment"],-8)
