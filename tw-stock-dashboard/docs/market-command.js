@@ -241,7 +241,7 @@ function drawScoreGuide({officialScore,officialDate,currentScore,reference,provi
  const container=$("commandTradeGuide"),comparison=$("commandGuideCompare");
  if(!container)return;
  const valid=officialScore!=null&&Number.isFinite(Number(officialScore)),current=currentScore!=null&&Number.isFinite(Number(currentScore));
- const guide=breadthProvisional?{title:"今日報價廣度 "+Number(currentScore)+"/100｜僅供觀察",text:"上漲報價佔比是當日市場廣度，包含合理委託價估計，不能等同正式 Risk Score 或作為交易放行條件。",tone:Number(currentScore)<35?"stop":"neutral",band:null}:scoreGuidance(current?Number(currentScore):null,{reference,level,historical:!reference&&date!==officialDate});
+ const guide=breadthProvisional?{title:"今日操作：盤中報價廣度 "+Number(currentScore)+"/100｜僅供觀察",text:"上漲報價佔比是當日市場廣度，包含合理委託價估計，不能等同正式 Risk Score 或作為交易放行條件。",tone:Number(currentScore)<35?"stop":"neutral",band:null}:scoreGuidance(current?Number(currentScore):null,{reference,level,historical:!reference&&date!==officialDate});
  container.dataset.tone=guide.tone;
  txt("commandGuideTitle",guide.title);txt("commandGuideText",guide.text);
  txt("commandGuideSource",breadthProvisional?"今日上漲報價比例｜非正式 Risk Score":provisional?"今日盤中 TX 參考試算｜非正式、未回測":reference?"下次交易日盤前基準｜非正式分數":current&&date===officialDate?"今日正式收盤 Risk Score":"歷史參考／今日未確認");
