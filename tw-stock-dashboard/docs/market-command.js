@@ -261,6 +261,11 @@ function drawScoreGuide({officialScore,officialDate,currentScore,reference,provi
 }
 function draw(data,diag){
  const panel=$("marketCommand");if(!panel)return;
+ // Independent official TWSE close can be ready before the full ~2,000-stock pipeline.
+ // Only the display Risk Score uses this dated snapshot; F/F2/G selectors remain untouched.
+ const fast=validatedOfficialClose(currentOfficialClose,new Date());
+ const fallbackOfficial=fast&&String(fast.asOfDate)>String(data?.risk?.date||"");
+ if(fallbackOfficial){data={...data,dataDate:fast.asOfDate,risk:fast.risk,marketIntelligence:null};diag=null}
  const r=data?.risk||{},now=new Date(),val=Number(r.score),x=evaluate(r,diag,now),verified=verifiedNightPreview(r,currentFutures,now),pre=marketPremarket(r,verified,now)||(currentFutures?null:marketPremarket(r,currentPremarket,now)),txToday=verifiedTXIntraday(currentTXLive,now),night=txToday?null:overnightRisk(currentFutures,r,now),breadthLive=tradedBreadth(currentIntraday,now),post=pre?null:postOpenState(r,now,night,breadthLive,txToday),d=pre?{...x.decision,...pre}:post?{...x.decision,...post}:x.decision,info=x.diag?.marketHealth||{};
  const indicative=!pre&&post?intradayIndicativeScore(r,txToday,now):null;
   const quoteScore=!pre&&post?indicativeMarketBreadthScore(currentIntraday,now):null;
@@ -309,6 +314,11 @@ function draw(data,diag){
  const reference=!!(pre||post?.baseline||indicative)&&!quoteScore;
  const currentScore=quoteScore?quoteScore.score:pre?Number(pre.score):post?.baseline?Number(post.baseline.score):indicative?Number(indicative.score):weekendNeedsNight||x.stale||post?null:r.score==null?null:Number(r.score);
  if(scope.MarketCompact)scope.MarketCompact.render({score:currentScore,officialScore:r.score,officialDate:r.date,level:d.level,reference,provisional:!!indicative&&!quoteScore,breadthProvisional:!!quoteScore,breadthSample:quoteScore?.sample,breadthProxy:quoteScore?.bookProxy,date:pre?.targetDate||post?.baseline?.target||x.today,delta:pre?.adjustment??post?.baseline?.delta??indicative?.delta??null,stale:x.stale,post:!!post,weekend:x.weekend,nightPending:!!weekendNeedsNight});
+ if(fallbackOfficial){
+   txt("compactScoreType","今日大盤正式 Risk Score｜TWSE 公開資料核對");
+   txt("commandScoreDescription","今日大盤 Risk Score 已核對｜完整選股榜單可能尚未更新");
+   txt("commandTiming","獨立盤後大盤分數；不覆寫選股、F／F2／G 的正式資料");
+ }
  drawScoreGuide({officialScore:r.score,officialDate:r.date,currentScore,reference,provisional:!!indicative&&!quoteScore,breadthProvisional:!!quoteScore,level:d.level,date:pre?.targetDate||x.today});
  if(scope.MarketSentiment)scope.MarketSentiment.render({officialScore:r.score,officialDate:r.date,currentScore:quoteScore?r.score:currentScore,reference:quoteScore?false:reference,breadthProvisional:!!quoteScore,stale:x.stale,post:!!post,updated:data?.generatedAt,risk:r});
  const btn=$("commandPrimaryLink");
@@ -334,7 +344,27 @@ async function loadStrategyEvidence(){
  })();
  return strategyEvidencePending;
 }
-let currentData=null,currentDiag=null,currentPremarket=null,currentFutures=null,currentIntraday=null,currentTXLive=null,fetchToken=0;
+let currentData=null,currentDiag=null,currentPremarket=null,currentFutures=null,currentIntraday=null,currentTXLive=null,currentOfficialClose=null,fetchToken=0;
+function validatedOfficialClose(snapshot,now=new Date()){
+ const risk=snapshot?.risk||{},day=taipeiParts(now).date,reported=String(snapshot?.asOfDate||""),
+   score=risk.score,close=Number(risk.index),official=Number(snapshot?.source?.officialIndexClose),
+   published=Date.parse(snapshot?.publishedAt||"");
+ if(snapshot?.quality!=="official-twse-close-risk-v1"||
+    !/^20\d{2}-\d{2}-\d{2}$/.test(reported)||reported!==String(risk.date||"")||
+    reported>day||typeCheckScore(score)===false||!Number.isFinite(close)||close<=3000||
+    !Number.isFinite(official)||Math.abs(close/official-1)>.002||
+    !Number.isFinite(published)||published>now.getTime()+5*60000)return null;
+ const ageDays=(Date.parse(day+"T12:00:00+08:00")-Date.parse(reported+"T12:00:00+08:00"))/86400000;
+ if(!Number.isFinite(ageDays)||ageDays<0||ageDays>8)return null;
+ return snapshot;
+}
+function typeCheckScore(value){return Number.isInteger(value)&&value>=0&&value<=100}
+function applyOfficialClose(snapshot){
+ const verified=validatedOfficialClose(snapshot);
+ if(verified)currentOfficialClose=verified;
+ if(currentData)draw(currentData,currentDiag);
+ return Boolean(verified);
+}
 function applyFutures(f){currentFutures=f;if(currentData)draw(currentData,currentDiag)}
 function applyIntraday(g){currentIntraday=g;if(currentData)draw(currentData,currentDiag)}
 function applyTXLive(q){currentTXLive=q;if(currentData)draw(currentData,currentDiag)}
@@ -355,6 +385,6 @@ async function checkMl(){
   txt("commandAi",x.advisoryEligible?"AI 候選僅通過方向研究；不參與買進判斷":"AI 回測未證明穩定增益，正式買進判斷維持規則式");
  }catch(_err){txt("commandAi","AI 尚未通過可供正式使用的驗證");}
 }
-scope.MarketCommand={indicativeMarketBreadthScore,evaluate,fallback,refresh,checkMl,verifiedNightPreview,applyPremarket,applyFutures,applyIntraday,applyTXLive,verifiedTXIntraday,marketPremarket,postOpenState,intradayIndicativeScore,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
-if(typeof module!=="undefined"&&module.exports)module.exports={indicativeMarketBreadthScore,fallback,evaluate,verifiedNightPreview,marketPremarket,postOpenState,intradayIndicativeScore,verifiedTXIntraday,taipeiParts,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance};
+scope.MarketCommand={indicativeMarketBreadthScore,evaluate,fallback,refresh,checkMl,verifiedNightPreview,applyPremarket,applyFutures,applyIntraday,applyTXLive,applyOfficialClose,verifiedTXIntraday,marketPremarket,postOpenState,intradayIndicativeScore,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance,validatedOfficialClose};
+if(typeof module!=="undefined"&&module.exports)module.exports={indicativeMarketBreadthScore,fallback,evaluate,verifiedNightPreview,marketPremarket,postOpenState,intradayIndicativeScore,verifiedTXIntraday,taipeiParts,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance,validatedOfficialClose};
 })(typeof window!=="undefined"?window:globalThis);
