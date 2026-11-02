@@ -36,21 +36,21 @@ const complete={dataDate:'2026-11-03',risk:{date:'2026-11-03',score:72,breadth:6
  assert.equal(el('compactScore').textContent,'—','No valid morning reference must not fall back to 11/02 Risk Score');
  assert.match(el('compactAction').textContent,/盤前基準未建立/);
  assert.equal(app.applyFrozenPremarket(p),true);
- assert.equal(el('compactScore').textContent,'12','Daily morning snapshot must show as only hero score');
+ assert.equal(String(el('compactScore').textContent),'12','Daily morning snapshot must show as only hero score');
  assert.match(el('compactScoreType').textContent,/固定基準/);
  assert.equal(app.applyFrozenPremarket({...p,asOfDate:'2026-11-02',targetDate:'2026-11-02'}),false);
- assert.equal(el('compactScore').textContent,'12','Mismatched date must not replace locked score');
+ assert.equal(String(el('compactScore').textContent),'12','Mismatched date must not replace locked score');
  app.applyIntraday({quality:'intraday-provisional-allmarket',asOfDate:'2026-11-03'});
  app.applyFutures(null);
  app.applyTXLive(null);
- assert.equal(el('compactScore').textContent,'12','Other sources must not overwrite premarket snapshot');
+ assert.equal(String(el('compactScore').textContent),'12','Other sources must not overwrite premarket snapshot');
  await app.refresh(complete);
- assert.equal(el('compactScore').textContent,'12','Different officially completed close score cannot replace morning reference');
+ assert.equal(String(el('compactScore').textContent),'12','Different officially completed close score cannot replace morning reference');
  const official={quality:'official-twse-close-risk-v1',asOfDate:'2026-11-03',publishedAt:'2026-11-03T19:30:00+08:00',
   risk:{date:'2026-11-03',score:72,index:45321},source:{officialIndexClose:45321}};
  assert.equal(app.applyOfficialClose(official),true);
- assert.equal(el('compactScore').textContent,'12','Evening official 72 must not replace locked morning 12');
- assert.equal(el('commandScore').textContent,'12','Detailed command score must match frozen morning');
+ assert.equal(String(el('compactScore').textContent),'12','Evening official 72 must not replace locked morning 12');
+ assert.equal(String(el('commandScore').textContent),'12','Detailed command score must match frozen morning');
  assert.equal(el('marketCommand').dataset.premarket,'true');
  assert.match(el('compactSession').textContent,/2026-11-03/);
  assert.ok(html.includes('data-fixed-premarket="true"'));
