@@ -21,8 +21,8 @@ const curr={date:'2026-11-03',indexClose:43307.54,listed:178.27,otc:156.76,overa
 test('market financing decreases by 307.74 億 despite rising but unverified maintenance ratio',()=>{
  const change=(financingAmount(curr,'overall')-financingAmount(prev,'overall'))/1e8;
  assert.equal(Math.round(change*100)/100,-307.74);
- assert.equal(Math.round((financingAmount(curr,'listed')-financingAmount(prev,'listed'))/1e6)/100,-229.25);
- assert.equal(Math.round((financingAmount(curr,'otc')-financingAmount(prev,'otc'))/1e6)/100,-78.49);
+ assert.equal(Math.round(((financingAmount(curr,'listed')-financingAmount(prev,'listed'))/1e8)*100)/100,-229.25);
+ assert.equal(Math.round(((financingAmount(curr,'otc')-financingAmount(prev,'otc'))/1e8)*100)/100,-78.49);
 });
 test('split market choices do not mix missing or partial balances',()=>{
  assert.equal(financingAmount(curr,'listed'),curr.listedLoanTwd);
