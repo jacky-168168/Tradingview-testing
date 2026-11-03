@@ -114,6 +114,17 @@ def main():
     text = json.dumps(payload,ensure_ascii=False,indent=2,allow_nan=False)+"\n"
     temp.write_text(text,encoding="utf-8")
     temp.replace(TARGET)
+    # Immutable official-close archive allows the next day's homepage to
+    # recover the prior close even if 'latest' advances this evening.
+    dated=TARGET.parent/(payload["asOfDate"]+".json")
+    if dated.exists():
+        current=json.loads(dated.read_text(encoding="utf-8"))
+        if current.get("quality")!=QUALITY or current.get("asOfDate")!=payload["asOfDate"]:
+            raise RuntimeError("OFFICIAL_ARCHIVE_DATE_CONFLICT")
+    else:
+        stage=dated.with_suffix(".json.tmp")
+        stage.write_text(text,encoding="utf-8")
+        stage.replace(dated)
     risk=payload["risk"]
     print("OFFICIAL_CLOSE_RISK_PUBLISHED",payload["asOfDate"],"score",risk["score"],
           "breadth",risk["breadth"],"foreign",risk["foreign"],"index",risk["index"],flush=True)
