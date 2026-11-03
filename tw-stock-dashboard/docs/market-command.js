@@ -352,10 +352,12 @@ function validateFrozenPremarket(q,now=new Date()){
  if(q?.quality!=="fixed-premarket-reference-v1"||date!==today||
     q?.lockedForTradingDate!==date||!/^20\d{2}-\d{2}-\d{2}$/.test(base)||base>=date||
     !Number.isInteger(q?.score)||s<0||s>100||!Number.isInteger(q?.baseScore)||b<0||b>100||
-    !Number.isInteger(q?.adjustment)||!Number.isFinite(time)||time>now.getTime()+5*60000||
-    taipeiParts(new Date(time)).date!==date)return null;
- const minutes=taipeiParts(new Date(time)).minute;
- if(minutes<450||minutes>=540)return null; // must have been locked BEFORE cash opening at 09:00
+    !Number.isInteger(q?.adjustment)||!Number.isFinite(time)||time>now.getTime()+5*60000)return null;
+ const released=taipeiParts(new Date(time)),mode=String(q?.calculationMode||"before-open");
+ const isPrebuild=mode==="after-close-prebuild"&&released.date<date&&released.minute>=1050;
+ const isPreopen=mode==="before-open"&&released.date===date&&released.minute<540;
+ const isRecovered=(mode==="late-recovery"||mode==="browser-recovery")&&released.date===date;
+ if(!isPrebuild&&!isPreopen&&!isRecovered)return null;
  const days=(Date.parse(date+"T12:00:00+08:00")-Date.parse(base+"T12:00:00+08:00"))/86400000;
  if(!Number.isFinite(days)||days<1||days>7)return null;
  if(q.txPct==null){
@@ -366,6 +368,21 @@ function validateFrozenPremarket(q,now=new Date()){
  }
  if(s!==Math.max(0,Math.min(100,b+delta)))return null;
  return q;
+}
+function recoverFrozenFromOfficial(official,now=new Date()){
+ const today=taipeiParts(now).date,proof=validatedOfficialClose(official,now);
+ if(!proof||!proof.asOfDate||proof.asOfDate>=today)return null;
+ const gap=(Date.parse(today+"T12:00:00+08:00")-Date.parse(proof.asOfDate+"T12:00:00+08:00"))/86400000;
+ if(!Number.isFinite(gap)||gap<1||gap>5)return null;
+ const base=proof.risk.score;
+ const row={
+  quality:"fixed-premarket-reference-v1",targetDate:today,lockedForTradingDate:today,
+  publishedAt:now.toISOString(),calculationMode:"browser-recovery",
+  score:base,baseScore:base,baseDate:proof.asOfDate,adjustment:0,txPct:null,txSource:null,
+  source:"前次已驗證正式收盤 Risk Score，缺少盤前排程檔案時補建；未納入未核對 TX",
+  cashSource:"market_risk_close/latest.json",method:"FIXED_REFERENCE_NOT_OFFICIAL_INTRADAY_RISK"
+ };
+ return validateFrozenPremarket(row,now);
 }
 function applyFrozenPremarket(q){
  const frozen=validateFrozenPremarket(q,new Date());
@@ -399,12 +416,13 @@ function renderFrozenPremarket(now=new Date()){
  const score=p.score, low=score<60,level=score<26?"STOP":score<60?"WAIT":"WAIT";
  const caption=score<26?"盤前極度偏空":score<60?"盤前偏空觀察":score<80?"盤前偏強參考":"盤前偏強參考";
  const delta=p.adjustment>=0?"＋"+p.adjustment:String(p.adjustment);
- const detail="基礎 "+p.baseScore+" 分（正式收盤 "+p.baseDate+"）"+(p.txPct!=null?"；已核對 TX 夜盤 "+(p.txPct>=0?"+":"")+Number(p.txPct).toFixed(2)+"%，調整 "+delta+" 分":"；無合格 TX 夜盤，未調整")+"。盤前固定 "+score+" 分，不隨當日現貨變化。";
+ const detail="基礎 "+p.baseScore+" 分（正式收盤 "+p.baseDate+"）"+(p.txPct!=null?"；已核對 TX 夜盤 "+(p.txPct>=0?"+":"")+Number(p.txPct).toFixed(2)+"%，調整 "+delta+" 分":"；無合格 TX 夜盤，未調整")+"。本日固定參考 "+score+" 分，不隨當日現貨變化。"+(p.calculationMode==="late-recovery"||p.calculationMode==="browser-recovery"?" 本日原定盤前更新未完成，此值為事後依前收盤補建，並非 08:45 即時報價。":"");
  txt("compactScore",score);txt("commandScore",score);
  txt("compactAction",caption);
  txt("compactScoreType","當日盤前固定基準｜非正式盤中 Risk Score");
  txt("compactBand",scope.MarketCommand?.scoreBand?.(score)?.label||caption);
- txt("compactSession",p.targetDate+"｜08:00～09:00 盤前建立、當日固定");
+ const creation=p.calculationMode==="after-close-prebuild"?"前日收盤後預建":p.calculationMode==="late-recovery"?"盤前排程失效後補建":p.calculationMode==="browser-recovery"?"首頁自動備援": "當日開盤前建立";
+ txt("compactSession",p.targetDate+"｜"+creation+"｜全天固定");
  txt("compactOfficial",p.baseScore);
  txt("compactNight",delta);
  const nightEl=$("compactNightCell");if(nightEl)nightEl.hidden=p.txPct==null;
@@ -415,7 +433,7 @@ function renderFrozenPremarket(now=new Date()){
  txt("commandScoreDescription","盤前固定參考分數｜不是今日正式收盤 Risk Score");
  txt("commandCashReference",detail);
  txt("commandAsOf","盤前基準日 "+p.targetDate+"｜基礎現貨資料日 "+p.baseDate);
- txt("commandTiming","盤前凍結，當天不更新主分數");
+ txt("commandTiming",creation+"（"+p.publishedAt+"）｜當天不更新主分數");
  txt("commandLogic",detail+"盤中廣度及正式收盤 Risk Score 不參與此主分數顯示，F／F2／G 原始策略完全不變。");
  txt("commandGuideSource","盤前固定基準｜僅供風險觀察");
  txt("commandGuideTitle",caption+"（"+score+" 分）");
@@ -468,6 +486,6 @@ async function checkMl(){
   txt("commandAi",x.advisoryEligible?"AI 候選僅通過方向研究；不參與買進判斷":"AI 回測未證明穩定增益，正式買進判斷維持規則式");
  }catch(_err){txt("commandAi","AI 尚未通過可供正式使用的驗證");}
 }
-scope.MarketCommand={indicativeMarketBreadthScore,evaluate,fallback,refresh,checkMl,verifiedNightPreview,applyPremarket,applyFutures,applyIntraday,applyTXLive,applyOfficialClose,applyFrozenPremarket,validateFrozenPremarket,verifiedTXIntraday,marketPremarket,postOpenState,intradayIndicativeScore,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance,validatedOfficialClose};
-if(typeof module!=="undefined"&&module.exports)module.exports={indicativeMarketBreadthScore,fallback,evaluate,verifiedNightPreview,marketPremarket,postOpenState,intradayIndicativeScore,verifiedTXIntraday,taipeiParts,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance,validatedOfficialClose,validateFrozenPremarket};
+scope.MarketCommand={indicativeMarketBreadthScore,evaluate,fallback,refresh,checkMl,verifiedNightPreview,applyPremarket,applyFutures,applyIntraday,applyTXLive,applyOfficialClose,applyFrozenPremarket,validateFrozenPremarket,recoverFrozenFromOfficial,verifiedTXIntraday,marketPremarket,postOpenState,intradayIndicativeScore,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance,validatedOfficialClose};
+if(typeof module!=="undefined"&&module.exports)module.exports={indicativeMarketBreadthScore,fallback,evaluate,verifiedNightPreview,marketPremarket,postOpenState,intradayIndicativeScore,verifiedTXIntraday,taipeiParts,overnightRisk,tradedBreadth,txScoreDelta,scoreBand,scoreGuidance,validatedOfficialClose,validateFrozenPremarket,recoverFrozenFromOfficial};
 })(typeof window!=="undefined"?window:globalThis);
