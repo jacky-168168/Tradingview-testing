@@ -80,6 +80,17 @@ class SameDaySourcedRateTest(unittest.TestCase):
         self.assertIn("istock.tw",row["ratioSource"])
         self.assertAlmostEqual((LOAN_LISTED*row["listed"]+LOAN_OTC*row["otc"])/(LOAN_LISTED+LOAN_OTC),row["overall"],places=1)
 
+    def test_committed_11_03_observation_is_correct_and_sourced(self):
+        history = json.loads((ROOT / "docs/data/retail_survival/latest.json").read_text(encoding="utf-8"))
+        fixed = next(r for r in history["rows"] if r["date"] == "2026-11-03")
+        self.assertEqual((fixed["listed"],fixed["otc"],fixed["overall"]),(162.67,156.80,161.22))
+        self.assertEqual(fixed["ratioSourceDate"],"2026-11-03")
+        self.assertNotIn("listedCollateralTwd",fixed)
+        prev = next(r for r in history["rows"] if r["date"] == "2026-11-02")
+        amount_delta = ((fixed["listedLoanTwd"]+fixed["otcLoanTwd"])
+                        -(prev["listedLoanTwd"]+prev["otcLoanTwd"]))/1e8
+        self.assertAlmostEqual(amount_delta,-307.73531,places=4)
+
     def test_stale_third_party_date_rejected(self):
         with self.assertRaisesRegex(RuntimeError,"尚未更新"):
             self.refresh(html(last="2026-11-02"))
