@@ -18,7 +18,7 @@ LOAN_OTC = 196562898000
 
 
 def html(last="2026-11-03", index=43307.5, overall=161.22):
-    days = ["2026-10-15"] + DAYS
+    days = ["2026-10-14", "2026-10-15"] + DAYS
     rows = []
     for day in days:
         a,b,c,ix = (162.67,156.80,overall,index) if day=="2026-11-03" else (171.70,167.25,170.60,44920.1)
