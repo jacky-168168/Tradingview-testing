@@ -39,7 +39,7 @@
 <link rel="stylesheet" href="./dynamic-exposure.css">
 <link rel="stylesheet" href="./fear-greed-home.css?v=842f00c777d9">
 <script src="./market-compact.js?v=0e2e4857251f"></script>
-<script src="./market-command.js?v=acdc5067bebb"></script>
+<script src="./market-command.js?v=80f3abe33544"></script>
 <script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
 <script defer src="./us-market-freshness.js?v=de836e1500a9"></script>
@@ -568,17 +568,47 @@ function renderPanels(){var p=DATA&&DATA.panels||{},f=p.institutionFlow||{buy:[]
 function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);var freshness=MarketCommand.evaluate(DATA.risk||{},DATA.marketIntelligence||null);marketMeta.textContent="最新資料日 "+(DATA.dataDate||"--")+(freshness.stale?" ｜ ⚠ 今日正式資料待同步":" ｜ 官方現貨盤後資料，非即時交易建議");var more=document.getElementById("marketMetaDetails");if(more)more.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),ageWarning=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5),isStale=freshness.stale||ageWarning;staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent=freshness.stale?"⚠ 今日正式現貨 Risk Score 尚未同步，最新完整資料日為 "+(last.d||"未知")+"；前次正式分數只能看歷史，盤中 TX 參考試算不作新倉許可。若遇交易所休市，請等下個交易日更新。":"⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
 let liveBreadthRefreshBusy=false;
 async function loadFrozenPremarket(){
- try{
-   const response=await fetch("./data/market_premarket/latest.json?v="+Date.now(),{cache:"no-store"});
-   if(!response.ok){
-     if(response.status!==404)console.warn("盤前固定分數取得失敗",response.status);
-     return;
-   }
-   const frozen=await response.json();
-   if(window.MarketCommand&&MarketCommand.applyFrozenPremarket(frozen))
-     console.info("盤前固定基準",frozen.targetDate,frozen.score,"基礎",frozen.baseDate);
-   else console.info("盤前資料日期與今日不符，不沿用前次分數",frozen?.targetDate);
- }catch(err){console.warn("盤前固定基準讀取失敗；不以盤中／盤後數字代替",err)}
+ const today=taipeiDate();
+ let confirmed=false;
+ const sources=["./data/market_premarket/"+today+".json","./data/market_premarket/latest.json"];
+ // A date-keyed archive is authoritative. latest.json may already point to tomorrow
+ // after today's close, but must never erase the fixed score of today's session.
+ for(const url of sources){
+   try{
+     const res=await fetch(url+"?v="+Date.now(),{cache:"no-store"});
+     if(!res.ok)continue;
+     const record=await res.json();
+     if(window.MarketCommand&&MarketCommand.applyFrozenPremarket(record)){
+       confirmed=true;
+       console.info("今日固定盤前基準",today,record.score,"來源",record.baseDate,record.calculationMode);
+       break;
+     }
+   }catch(error){console.warn("盤前快照讀取失敗",url,error)}
+ }
+ if(confirmed)return;
+ // If cron NEVER fired, recover a plainly labelled previous CLOSE reference.
+ // It does not pretend to be an 08:45 quote or overwrite any A/D/F/F2/G gate.
+ const history=["./data/market_risk_close/latest.json"];
+ const prior=new Date(today+"T12:00:00+08:00");
+ for(let i=1;i<=5;i++){
+   const d=new Date(prior.getTime()-i*86400000);
+   const key=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(d);
+   history.push("./data/market_risk_close/"+key+".json");
+ }
+ for(const source of history){
+   try{
+     const res=await fetch(source+"?v="+Date.now(),{cache:"no-store"});
+     if(!res.ok)continue;
+     const proof=await res.json();
+     const recovered=window.MarketCommand?.recoverFrozenFromOfficial(proof);
+     if(recovered&&MarketCommand.applyFrozenPremarket(recovered)){
+       confirmed=true;
+       console.warn("盤前 GitHub 排程未產生 JSON；使用前次核對收盤分數恢復當日固定參考",recovered.targetDate,recovered.score,recovered.baseDate);
+       break;
+     }
+   }catch(error){console.warn("盤前備援官方資料讀取失敗",source,error)}
+ }
+ if(!confirmed)console.error("當日盤前基準缺失且沒有合格的前收盤來源；不捏造分數");
 }
 async function loadOfficialCloseRisk(){
  try{
