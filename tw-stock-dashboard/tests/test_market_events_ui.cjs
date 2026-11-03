@@ -73,7 +73,7 @@ setImmediate(()=>{
  assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,20,'first page must show 20 genuinely fresh articles');
  assert.equal(node('moreNews').hidden,false,'load more must appear for 23 fresh articles');
  node('moreNews').fn();
- const freshTotal=sample.items.filter(x=>x.type==='news'&&Number.isFinite(Date.parse(x.publishedAt))&&
+ const freshTotal=sample.items.filter(x=>x.type==='news'&&x.originType!=='foreign_original'&&Number.isFinite(Date.parse(x.publishedAt))&&
    Date.parse(FIXED_NOW)-Date.parse(x.publishedAt)>=-5*60000&&
    Date.parse(FIXED_NOW)-Date.parse(x.publishedAt)<=48*3600000).length;
  assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,Math.min(40,freshTotal),
