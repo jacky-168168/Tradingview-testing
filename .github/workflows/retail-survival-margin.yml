@@ -10,6 +10,7 @@ on:
       - 'tw-stock-dashboard/scripts/update_retail_survival.py'
       - 'tw-stock-dashboard/tests/test_retail_tpex.py'
       - 'tw-stock-dashboard/tests/test_retail_twse_freshness.py'
+      - 'tw-stock-dashboard/tests/test_retail_survival_sourced_ratio.py'
       - 'tw-stock-dashboard/scripts/check_retail_survival_freshness.py'
       - 'tw-stock-dashboard/tests/test_retail_survival_freshness.py'
   workflow_dispatch:
@@ -48,7 +49,9 @@ jobs:
         run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_retail_survival_freshness.py' -v
       - name: Validate same-day official TWSE balance and quote integrity
         run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_retail_twse_freshness.py' -v
-      - name: Refresh TWSE and TPEx official margin maintenance and validated TAIEX OHLC
+      - name: Test sourced maintenance rates against official date and amount
+        run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_retail_survival_sourced_ratio.py' -v
+      - name: Refresh independently verified maintenance rates and dated TWSE/TPEx financing amounts
         run: python tw-stock-dashboard/scripts/update_retail_survival.py
       - name: Check data integrity
         run: |
@@ -63,7 +66,7 @@ jobs:
           last=a[-1]
           if all(isinstance(last.get(k),(int,float)) for k in ('listed','otc','overall')):
               total=round((last['listedCollateralTwd']+last['otcCollateralTwd'])/(last['listedLoanTwd']+last['otcLoanTwd'])*100,2) if all(k in last for k in ('listedCollateralTwd','otcCollateralTwd','listedLoanTwd','otcLoanTwd')) else None
-              if total is not None:assert abs(last['overall']-total)<0.011
+              if total is not None and not last.get('ratioSource'):assert abs(last['overall']-total)<0.011
           assert a[-1]['date']<=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).date().isoformat()
           print('retail_survival validated:',d['asOf'],'days:',len(a))
           PY
