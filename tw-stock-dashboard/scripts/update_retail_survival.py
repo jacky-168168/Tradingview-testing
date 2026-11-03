@@ -128,8 +128,6 @@ def main():
         row["otcLoanTwd"] = otc["otcLoanTwd"]
         # An independently calculated OTC rate is a cross-check, not the
         # displayed series. Large disagreements fail closed.
-        if abs(row["otc"] - otc["otc"]) > 2:
-            raise RuntimeError(f"愛玩股／TPEx 上櫃維持率差距過大：{row['otc']} vs {otc['otc']}")
     except Exception as exc:
         # Even when individual OTC quotes lag, the official OTC loan may
         # already be available for a dated amount-change comparison.
@@ -142,6 +140,9 @@ def main():
             row["otcLoanTwd"] = round(parse_loan_html(otc_response.text, day))
         except Exception as loan_exc:
             print("TPEX_OFFICIAL_LOAN_UNAVAILABLE", repr(loan_exc), flush=True)
+    else:
+        if abs(row["otc"] - otc["otc"]) > 2:
+            raise RuntimeError(f"愛玩股／TPEx 上櫃維持率差距過大：{row['otc']} vs {otc['otc']}")
     if row.get("otcLoanTwd"):
         # Check that the independently sourced overall value agrees with the
         # money-weighted published component ratios.
@@ -161,7 +162,7 @@ def main():
         if old_record:
             # Do not carry prior-day collateral, matched sample sizes or
             # calculated coverage into a freshly source-verified ratio.
-            unverified = {"listedCollateralTwd", "otcCollateralTwd", "listedCoverage", "otcCoverage",
+            unverified = {"listedCollateralTwd", "otcCollateralTwd", "otcLoanTwd", "listedCoverage", "otcCoverage",
                           "listedMatched", "otcMatched", "listedPositive", "otcPositive",
                           "otcSource", "provenance", "otcError", "ratioSource", "ratioSourceDate",
                           "ratioVerification", "provenanceByScope"}
