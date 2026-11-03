@@ -634,7 +634,31 @@ async function loadIntradayMarketBreadth(){
    console.warn("盤中市場廣度載入失敗（保留原狀，稍後重試）",e);
  }finally{liveBreadthRefreshBusy=false}
 }
-async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();MarketCommand.refresh(DATA);DynamicExposure.refresh(DATA);MarketCommand.checkMl();renderPanels();renderHomeG();renderMeta();await loadFrozenPremarket();await loadOfficialCloseRisk();await loadFutures();await loadIntradayMarketBreadth()}catch(e){marketMeta.textContent="市場資料載入失敗："+e.message;futuresSub.textContent="市場資料暫時不可用，請稍後重新載入。"}finally{loading.classList.remove("show")}}
+async function load(){
+ loading.classList.add("show");
+ try{
+   const response=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});
+   if(!response.ok)throw new Error("HTTP "+response.status);
+   DATA=await response.json();
+   renderRisk();MarketCommand.refresh(DATA);DynamicExposure.refresh(DATA);
+   MarketCommand.checkMl();renderPanels();renderHomeG();renderMeta();
+ }catch(e){
+   marketMeta.textContent="完整市場資料載入失敗："+e.message+"；盤前固定基準仍獨立載入。";
+   futuresSub.textContent="完整選股資料暫時不可用，盤前參考分數不受影響。";
+   if(!DATA){
+     DATA={dataDate:"",risk:{date:"",score:null}};
+     try{MarketCommand.refresh(DATA)}catch(error){console.warn("盤前獨立顯示容器初始化失敗",error)}
+   }
+ }finally{
+   // Each data source is independent: a broken full-stock JSON must not block
+   // the date-keyed premarket score, and a failed TX API must not block it either.
+   await loadFrozenPremarket();
+   await loadOfficialCloseRisk();
+   await loadFutures();
+   await loadIntradayMarketBreadth();
+   loading.classList.remove("show");
+ }
+}
 // At 08:30–08:59 revisit the latest COMPLETED exchange session; this
 // is not a live 08:58 quote stream. At 09:00 retire the provisional view.
 setInterval(function(){
