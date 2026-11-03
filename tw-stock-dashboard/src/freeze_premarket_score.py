@@ -95,6 +95,8 @@ def build(now,read=None):
                 print("PREMARKET_ALREADY_FROZEN",target,existing["score"],flush=True)
                 return existing
     base_day,risk,origin=get_last_cash(target,read)
+    if here.weekday()<5 and here.time()>=time(17,30) and base_day!=here.date().isoformat():
+        raise RuntimeError('OFFICIAL_TODAY_NOT_READY_FOR_TOMORROW_PREBUILD: '+base_day)
     base=risk["score"]
     tx=matched_tx(target,base_day,read)
     delta=tx_delta(tx["pct"]) if tx else 0
