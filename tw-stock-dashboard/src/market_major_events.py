@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
+from market_global_news import GLOBAL_FEEDS, fetch_global_feed
 
 TZ=ZoneInfo("Asia/Taipei")
 OUTPUT=Path(__file__).resolve().parents[1]/"docs/data/market_events/latest.json"
@@ -138,15 +139,21 @@ def fetch_ptt_stock_news():
 
 def build(now=None,feeds=None,prior=None):
     now=now or datetime.now(TZ)
-    stats={"success":0,"total":len(QUERIES)+(1 if feeds is None else 0)}
+    stats={"success":0,"total":len(QUERIES)+(1+len(GLOBAL_FEEDS) if feeds is None else 0),"foreignSuccess":0}
     found=[]
     if feeds is None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
-            futures=[pool.submit(fetch_feed,q) for q in QUERIES]
-            futures.append(pool.submit(fetch_ptt_stock_news))
+            futures={pool.submit(fetch_feed,q):"local" for q in QUERIES}
+            futures[pool.submit(fetch_ptt_stock_news)]="ptt"
+            for spec in GLOBAL_FEEDS:
+                futures[pool.submit(fetch_global_feed,spec)]="foreign"
             for future in concurrent.futures.as_completed(futures):
-                try:found.extend(future.result());stats["success"]+=1
-                except Exception as exc:print("FEED_UNAVAILABLE",str(exc)[:180],file=sys.stderr)
+                try:
+                    found.extend(future.result())
+                    stats["success"]+=1
+                    if futures[future]=="foreign":stats["foreignSuccess"]+=1
+                except Exception as exc:
+                    print("FEED_UNAVAILABLE",futures[future],str(exc)[:180],file=sys.stderr)
     else:
         for batch in feeds:
             if batch is not None:found.extend(batch);stats["success"]+=1
@@ -163,12 +170,18 @@ def build(now=None,feeds=None,prior=None):
             if timedelta(0)<=now-t<=timedelta(hours=FRESH_NEWS_HOURS):
                 dedup[item["id"]]=item
     ranked=sorted(dedup.values(),key=lambda x:x["publishedAt"],reverse=True)
-    counts={};news=[]
+    # Reserve capacity for international reporting so local articles cannot
+    # crowd out geopolitical and US-policy headlines in a busy news cycle.
+    counts={};foreign_news=[];local_news=[]
     for item in ranked:
         category=item["category"]
         if counts.get(category,0)>=6:continue
-        news.append(item);counts[category]=counts.get(category,0)+1
-        if len(news)>=48:break
+        is_foreign=item.get("originType")=="foreign_original"
+        target=foreign_news if is_foreign else local_news
+        if len(target)>=(24 if is_foreign else 48):continue
+        target.append(item)
+        counts[category]=counts.get(category,0)+1
+    news=sorted(foreign_news+local_news,key=lambda x:x["publishedAt"],reverse=True)
     events=[dict(e) for e in OFFICIAL if
       now.date()-timedelta(days=2)<=datetime.fromisoformat(e["endDate"]).date() and
       datetime.fromisoformat(e["date"]).date()<=now.date()+timedelta(days=60)]
@@ -177,6 +190,8 @@ def build(now=None,feeds=None,prior=None):
     if not news and stats["success"]:state="empty" if stats["success"]==stats["total"] else "partial"
     return {"schema":1,"generatedAt":now.isoformat(timespec="seconds"),
       "status":state,"feedsOk":stats["success"],"feedsTotal":stats["total"],
+      "foreignFeedsOk":stats["foreignSuccess"],"foreignFeedsTotal":len(GLOBAL_FEEDS) if feeds is None else 0,
+      "foreignNewsCount":len(foreign_news),
       "freshnessHours":FRESH_NEWS_HOURS,"newsCount":len(news),
       "newestNewsAt":news[0]["publishedAt"] if news else None,
       "items":sorted(events,key=lambda x:x["date"])+news}

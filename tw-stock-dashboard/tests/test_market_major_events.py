@@ -132,4 +132,48 @@ class MajorMarketNewsTest(unittest.TestCase):
   old["publishedAt"]="2026-10-01T12:00:00+08:00"
   result=build(now=NOW,feeds=[None],prior={"items":[old]})
   self.assertEqual(len([x for x in result["items"] if x["type"]=="news"]),0)
+
+class GlobalSourceRegressionTest(unittest.TestCase):
+ def _rss(self,source_domain="https://www.reuters.com",when="Fri, 16 Oct 2026 07:00:00 GMT"):
+  return f"""<rss><channel>
+   <item><title>Trump tariffs on chip imports cause fresh trade-policy uncertainty - Reuters</title>
+    <link>https://news.google.com/rss/articles/example</link>
+    <source url="{source_domain}">Reuters</source><pubDate>{when}</pubDate></item>
+   <item><title>World Cup football results - Reuters</title>
+    <link>https://news.google.com/rss/articles/sport</link>
+    <source url="https://www.reuters.com">Reuters</source><pubDate>{when}</pubDate></item>
+   </channel></rss>""".encode()
+ def test_only_foreign_original_publisher_and_conditional_market_note(self):
+  from market_global_news import GLOBAL_FEEDS,parse_global_feed
+  spec=GLOBAL_FEEDS[0]
+  rows=parse_global_feed(self._rss(),spec,now=NOW)
+  self.assertEqual(len(rows),1)
+  item=rows[0]
+  self.assertEqual(item["category"],"國際政策")
+  self.assertEqual(item["source"],"Reuters")
+  self.assertEqual(item["originType"],"foreign_original")
+  self.assertIn("半導體",item["impactAssets"])
+  self.assertIn("未驗證",item["impactStatus"])
+  self.assertFalse(item["confirmed"])
+ def test_domestic_publisher_must_be_blocked_even_inside_google_rss(self):
+  from market_global_news import GLOBAL_FEEDS,parse_global_feed
+  self.assertEqual(parse_global_feed(self._rss("https://www.udn.com"),GLOBAL_FEEDS[0],now=NOW),[])
+ def test_stale_foreign_news_must_be_blocked(self):
+  from market_global_news import GLOBAL_FEEDS,parse_global_feed
+  older=(NOW-timedelta(hours=49)).strftime("%a, %d %b %Y %H:%M:%S %z")
+  self.assertFalse(parse_global_feed(self._rss(when=older),GLOBAL_FEEDS[0],now=NOW))
+ def test_geopolitics_elections_and_fed_have_distinct_impact(self):
+  from market_global_news import classify,LINKS
+  self.assertEqual(classify("Iran missile attacks cause war escalation"),"地緣政治")
+  self.assertEqual(classify("US midterm election shifts Congress balance"),"美國選舉")
+  self.assertEqual(classify("Federal Reserve interest rate decision moves bond yields"),"國際總經")
+  self.assertEqual(len(LINKS),4)
+ def test_foreign_items_survive_local_news_capacity(self):
+  from market_global_news import GLOBAL_FEEDS,parse_global_feed
+  candidate=parse_global_feed(self._rss(),GLOBAL_FEEDS[0],now=NOW)[0]
+  records=build(now=NOW,feeds=[[candidate]],prior=None)
+  self.assertEqual(records["foreignNewsCount"],1)
+  self.assertEqual(records["newsCount"],1)
+  self.assertEqual(records["items"][-1]["originType"],"foreign_original")
+
 if __name__=="__main__":unittest.main()

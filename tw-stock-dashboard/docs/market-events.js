@@ -1,6 +1,6 @@
 (function(){
 "use strict";
-var DATA=null,CATEGORY="all",SEARCH="",VISIBLE=20,URL="./data/market_events/latest.json";
+var DATA=null,CATEGORY="all",SEARCH="",VISIBLE=20,GLOBAL_VISIBLE=12,URL="./data/market_events/latest.json";
 var $=id=>document.getElementById(id);
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function safeUrl(s){return /^https:\/\//i.test(String(s||""))?s:"#"}
@@ -17,7 +17,9 @@ function dateLabel(x,today){
  var stamp=String(x.publishedAt||"");
  return dateTW(x.date)+(stamp.length>=16?" "+stamp.slice(11,16):"");
 }
+function isGlobal(x){return x.originType==="foreign_original"||["地緣政治","美國選舉","國際政策","國際總經"].includes(x.category)}
 function matches(x){
+ if(CATEGORY==="global"&&!isGlobal(x))return false;
  if(CATEGORY==="event"&&x.type!=="event")return false;
  if(CATEGORY==="earnings"&&x.category!=="財報")return false;
  if(CATEGORY==="ai"&&!((x.category==="AI需求")||(x.themes||[]).some(v=>/AI|半導體|先進封裝|CPO|GPU|HBM|PCB|晶圓/i.test(v))))return false;
@@ -30,16 +32,17 @@ function matches(x){
  if(CATEGORY==="agriculture"&&x.category!=="農產品")return false;
  if(CATEGORY==="ptt"&&x.category!=="PTT轉載")return false;
  var query=SEARCH.trim().toLowerCase();
- return !query||[x.title,x.source,x.category,...(x.themes||[])].join(" ").toLowerCase().includes(query);
+ return !query||[x.title,x.source,x.category,x.impactAssets,x.impactNote,...(x.themes||[])].join(" ").toLowerCase().includes(query);
 }
 function card(x,today){
  var themes=(x.themes||[]).slice(0,4).map(t=>'<span class="theme">'+esc(t)+'</span>').join("");
  var stamp=dateLabel(x,today),category=x.type==="event"?"🗓 官方活動":esc(x.category||"新聞");
  var href=safeUrl(x.url);
+ var impact=isGlobal(x)?'<div class="impact"><b>可能連動｜'+esc(x.impactLevel||"持續觀察")+'</b><div>觀察資產：'+esc(x.impactAssets||"待判斷")+'</div><div>'+esc(x.impactNote||"需觀察實際市場反應")+'</div><small>'+esc(x.impactStatus||"尚未驗證價格反應")+'</small></div>':"";
  return '<article class="item '+(x.type==="event"?"event":"news")+'"><div class="meta"><span class="cat">'+category+'</span><time>'+esc(stamp)+'</time></div>'+
  '<h3><a href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+esc(x.title)+'</a></h3>'+
  '<div class="foot"><span class="source" title="'+esc(x.source)+'">'+esc(x.source)+'</span><a class="openlink" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">來源 ↗</a></div>'+
- (themes?'<div class="themes" style="margin-top:10px">'+themes+'</div>':"")+'</article>';
+ (themes?'<div class="themes" style="margin-top:10px">'+themes+'</div>':"")+impact+'</article>';
 }
 // The feed may be cached or its workflow may be stuck. Never label old
 // headlines as the newest news simply because a JSON file is still available.
@@ -53,12 +56,19 @@ function render(){
  var relevant=items.filter(x=>x&&x.title&&x.date&&x.source&&x.url&&matches(x));
  var events=relevant.filter(x=>x.type==="event"&&dateDiff(x.endDate||x.date,today)>=0).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,12);
  var news=relevant.filter(x=>x.type==="news"&&newsIsFresh(x)).sort((a,b)=>String(b.publishedAt||"").localeCompare(String(a.publishedAt||"")));
+ var foreign=news.filter(isGlobal),local=news.filter(x=>!isGlobal(x));
  $("events").innerHTML=events.map(x=>card(x,today)).join("");
- $("news").innerHTML=news.slice(0,VISIBLE).map(x=>card(x,today)).join("");
- $("moreNews").hidden=news.length<=VISIBLE;
- $("moreNews").textContent="顯示更多（剩餘 "+Math.max(0,news.length-VISIBLE)+" 則） ↓";
- $("eventSection").hidden=!events.length;$("newsSection").hidden=!news.length;
- $("eventCount").textContent=events.length+" 件";$("newsCount").textContent=news.length+" 則";
+ $("globalNews").innerHTML=foreign.length?foreign.slice(0,GLOBAL_VISIBLE).map(x=>card(x,today)).join(""):
+  '<div class="item">最近 48 小時沒有符合條件的國際政經新聞；不會以舊文章填補。</div>';
+ $("moreGlobal").hidden=foreign.length<=GLOBAL_VISIBLE;
+ $("moreGlobal").textContent="顯示更多國際新聞（剩餘 "+Math.max(0,foreign.length-GLOBAL_VISIBLE)+" 則） ↓";
+ $("news").innerHTML=local.slice(0,VISIBLE).map(x=>card(x,today)).join("");
+ $("moreNews").hidden=local.length<=VISIBLE;
+ $("moreNews").textContent="顯示更多（剩餘 "+Math.max(0,local.length-VISIBLE)+" 則） ↓";
+ $("eventSection").hidden=!events.length;$("newsSection").hidden=!local.length;
+ $("globalSection").hidden=!(CATEGORY==="all"||CATEGORY==="global"||foreign.length);
+ $("eventCount").textContent=events.length+" 件";$("newsCount").textContent=local.length+" 則";
+ $("globalCount").textContent=foreign.length+" 則";
  $("empty").hidden=events.length+news.length>0;
  $("empty").textContent="最近 48 小時沒有符合條件的重大新聞或未來活動；舊新聞不會冒充最新消息。";
  var generated=DATA&&DATA.generatedAt||"",state=DATA&&DATA.status||"";
@@ -68,6 +78,7 @@ function render(){
  else if(state==="degraded")note="新聞來源暫時無法更新，僅供查看已保存資料。";
  else if(state==="partial")note="部分新聞來源暫時無法讀取。";
  else if(state==="empty")note="已完成新聞來源檢查，但沒有符合最近 48 小時條件的新文章。";
+ if(DATA&&DATA.foreignFeedsTotal>0&&DATA.foreignFeedsOk===0)note=(note?note+" ":"")+"⚠ 國際新聞來源目前全數讀取失敗。";
  if(generated&&Date.now()-Date.parse(generated)>36*3600000)note=(note?note+" ":"")+"⚠ 新聞超過 36 小時未更新。";
  if(!news.length&&items.some(x=>x.type==="news"))note=(note?note+" ":"")+"已隱藏超過 48 小時的舊新聞。";
  $("alert").textContent=note;$("alert").hidden=!note;
@@ -87,11 +98,12 @@ async function load(){
 }
 $("filters").addEventListener("click",e=>{
  var btn=e.target.closest("button[data-cat]");if(!btn)return;
- CATEGORY=btn.dataset.cat;VISIBLE=20;
+ CATEGORY=btn.dataset.cat;VISIBLE=20;GLOBAL_VISIBLE=12;
  $("filters").querySelectorAll("button[data-cat]").forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"));
  render();
 });
 $("query").addEventListener("input",e=>{SEARCH=e.target.value;VISIBLE=20;render()});
 $("moreNews").addEventListener("click",()=>{VISIBLE+=20;render()});
+$("moreGlobal").addEventListener("click",()=>{GLOBAL_VISIBLE+=12;render()});
 load();setInterval(load,15*60*1000);
 })();
