@@ -84,12 +84,18 @@ jobs:
           assert abs(p['risk']['index']/p['source']['officialIndexClose']-1)<.002
           print('OFFICIAL_RISK_SNAPSHOT_VALID',p['asOfDate'],p['risk']['score'])
           PY
+      - name: Prebuild the NEXT trading day's immutable main homepage reference
+        if: steps.collect.outputs.ready == 'true'
+        working-directory: tw-stock-dashboard
+        run: |
+          python src/freeze_premarket_score.py
+          python -m unittest discover -s tests -p 'test_freeze_premarket_score.py' -v
       - name: Commit verified standalone Risk Score
         if: steps.collect.outputs.ready == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tw-stock-dashboard/docs/data/market_risk_close/latest.json
+          git add tw-stock-dashboard/docs/data/market_risk_close/latest.json tw-stock-dashboard/docs/data/market_premarket/
           if ! git diff --cached --quiet; then
             git commit -m "Publish independent TWSE official close Risk Score"
             success=0
