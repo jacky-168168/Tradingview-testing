@@ -12,6 +12,7 @@ URLS={
 "close":"https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL",
 "loan":"https://www.twse.com.tw/exchangeReport/MI_MARGN",
 "index":"https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK",
+"datedMargin":"https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN",
 }
 def get(url,params=None):
  r=requests.get(url,params=params,headers=HEAD,timeout=28)
@@ -33,6 +34,42 @@ def date_of(raw):
  m=re.search(r"(?<!\d)(\d{3})(\d\d)(\d\d)(?!\d)",text)
  if m:return f"{int(m[1])+1911:04d}-{m[2]}-{m[3]}"
  return None
+def dated_balances(day):
+ # Undated OpenAPI stock-level balances may lag the dated official loan.
+ # Request the matching day's official stock report instead of guessing.
+ data=get(URLS["datedMargin"],{"date":day.replace("-",""),"selectType":"ALL","response":"json"})
+ if not isinstance(data,dict) or data.get("stat")!="OK":
+  raise RuntimeError("TWSE 指定交易日逐檔融資報表非 OK")
+ report_day=date_of(data.get("date")) or date_of(data.get("title"))
+ if report_day!=day:
+  raise RuntimeError(f"TWSE 逐檔融資日期不一致：{report_day} != {day}")
+ for tab in data.get("tables") or []:
+  cols=[str(v).strip() for v in tab.get("fields") or []]
+  if not cols or "股票代號" not in cols[0]:continue
+  positions=[i for i,c in enumerate(cols) if "今日餘額" in c]
+  if not positions:continue
+  pos=positions[0] # first: margin, later repeated occurrence: short-selling
+  balances={}
+  for row in tab.get("data") or []:
+   if not isinstance(row,list) or len(row)<=pos:continue
+   code=str(row[0]).strip()
+   lots=value(row[pos])
+   if re.fullmatch(r"\d{4}",code) and lots is not None and lots>=0:
+    balances[code]=lots
+  if len(balances)<500:
+   raise RuntimeError(f"TWSE 指定日期逐檔融資樣本不足：{len(balances)}")
+  return balances
+ raise RuntimeError("TWSE 指定日期逐檔融資報表缺少融資今日餘額")
+
+def verified_quotes(quote,day):
+ if not isinstance(quote,list):
+  raise RuntimeError("TWSE 個股收盤行情格式錯誤")
+ # STOCK_DAY_ALL's Date is explicit and must match the loan and balances.
+ dates={date_of(row.get("Date")) for row in quote if isinstance(row,dict) and row.get("Code")}
+ if dates!={day}:
+  raise RuntimeError(f"TWSE 逐檔收盤日不一致：{sorted(str(d) for d in dates)} != {day}")
+ return quote
+
 def main():
  summary=get(URLS["loan"],{"response":"json","selectType":"MS"})
  if summary.get("stat")!="OK":raise RuntimeError("TWSE 融資金額報表非 OK")
@@ -54,16 +91,8 @@ def main():
     v=value(row[pos])
     if v and v>10_000_000:loan=v*1000
  if not loan:raise RuntimeError("TWSE 融資總借款金額缺失")
- margin=get(URLS["margin"])
- quote=get(URLS["close"])
- if not isinstance(margin,list) or not isinstance(quote,list):
-  raise RuntimeError("TWSE 個股行情或融資餘額格式錯誤")
- balances={}
- for row in margin:
-  if not isinstance(row,dict):continue
-  code=str(row.get("股票代號") or "").strip()
-  lots=value(row.get("融資今日餘額"))
-  if code and lots is not None and lots>=0:balances[code]=lots
+ balances=dated_balances(day)
+ quote=verified_quotes(get(URLS["close"]),day)
  closes={}
  for row in quote:
   if not isinstance(row,dict):continue
