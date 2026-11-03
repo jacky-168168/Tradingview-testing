@@ -95,7 +95,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tw-stock-dashboard/docs/data/market_risk_close/latest.json tw-stock-dashboard/docs/data/market_premarket/
+          git add -A tw-stock-dashboard/docs/data/market_risk_close/ tw-stock-dashboard/docs/data/market_premarket/
           if ! git diff --cached --quiet; then
             git commit -m "Publish independent TWSE official close Risk Score"
             success=0
