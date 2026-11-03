@@ -9,6 +9,7 @@ on:
       - 'tw-stock-dashboard/scripts/retail_twse_fallback.py'
       - 'tw-stock-dashboard/scripts/update_retail_survival.py'
       - 'tw-stock-dashboard/tests/test_retail_tpex.py'
+      - 'tw-stock-dashboard/tests/test_retail_twse_freshness.py'
       - 'tw-stock-dashboard/scripts/check_retail_survival_freshness.py'
       - 'tw-stock-dashboard/tests/test_retail_survival_freshness.py'
   workflow_dispatch:
@@ -45,6 +46,8 @@ jobs:
         run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_retail_tpex.py' -v
       - name: Test margin freshness and late-source safeguards
         run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_retail_survival_freshness.py' -v
+      - name: Validate same-day official TWSE balance and quote integrity
+        run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_retail_twse_freshness.py' -v
       - name: Refresh TWSE and TPEx official margin maintenance and validated TAIEX OHLC
         run: python tw-stock-dashboard/scripts/update_retail_survival.py
       - name: Check data integrity
