@@ -23,6 +23,11 @@ h1{font-size:27px;margin:0 0 4px;letter-spacing:-.4px}.sub{font-size:12px;color:
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
 .item{position:relative;background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px 16px;box-shadow:0 2px 14px rgba(26,47,82,.035);min-width:0}
 .item:hover{border-color:#a3bcda}
+.global{border-left:4px solid #345fa1}
+.impact{margin:12px 0 0;padding:10px 11px;border-top:1px solid var(--line);color:#40546b;font-size:12px;line-height:1.65}
+.impact b{color:#223d66}
+.impact small{display:block;color:#77879a;margin-top:4px;font-size:10px}
+.global-intro{color:var(--muted);font-size:12px;margin:-3px 0 12px;line-height:1.7}
 .event{border-left:4px solid #c88735}
 .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:11px;margin-bottom:9px}
 .cat{font-weight:800;color:#906123}.item.news .cat{color:#345d8f}
@@ -43,11 +48,12 @@ h1{font-size:27px;margin:0 0 4px;letter-spacing:-.4px}.sub{font-size:12px;color:
 </head><body>
 <div class="wrap">
 <nav class="top" aria-label="頁面導覽"><a href="./index.html">← 主頁</a><div class="toplinks"><a href="./selections.html">📋 G 選股</a><a href="./bubbles.html">🫧 資金泡泡</a></div></nav>
-<div class="head"><div><h1>🗞 市場大事</h1><div class="sub">產業展覽・科技財報・AI 需求・總經事件・原油能源・貴金屬・農產品・PTT 新聞轉載</div></div><div id="freshness" aria-live="polite">資料讀取中…</div></div>
+<div class="head"><div><h1>🗞 市場大事</h1><div class="sub">國際戰爭・美國選舉・川普政策・全球金融・產業展覽・原物料・PTT 新聞轉載</div></div><div id="freshness" aria-live="polite">資料讀取中…</div></div>
 <div class="filters">
   <input id="query" type="search" aria-label="搜尋市場大事" placeholder="搜尋事件、公司、產業…" autocomplete="off">
   <div class="tabs" id="filters" role="group" aria-label="主題篩選">
     <button class="tab" data-cat="all" aria-pressed="true">全部</button>
+    <button class="tab" data-cat="global" aria-pressed="false">🌍 國際政經（國外來源）</button>
     <button class="tab" data-cat="event" aria-pressed="false">🗓 展覽活動</button>
     <button class="tab" data-cat="earnings" aria-pressed="false">📊 科技財報</button>
     <button class="tab" data-cat="ai" aria-pressed="false">🤖 AI／半導體</button>
@@ -60,9 +66,12 @@ h1{font-size:27px;margin:0 0 4px;letter-spacing:-.4px}.sub{font-size:12px;color:
   </div>
 </div>
 <p id="alert" role="status" hidden></p>
+<section id="globalSection"><div class="section"><h2>🌍 國際政經與股市連動</h2><span class="count" id="globalCount">—</span></div>
+<p class="global-intro">只收國外媒體與美國官方公告；顯示可能影響資產及傳導原因，不代表股價已發生連動。英文標題保留原文以利查證。</p>
+<div id="globalNews" class="grid"></div><button id="moreGlobal" class="more" type="button" hidden>顯示更多國際新聞 ↓</button></section>
 <section id="eventSection"><div class="section"><h2>即將發生</h2><span class="count" id="eventCount">—</span></div><div id="events" class="grid"></div></section>
 <section id="newsSection"><div class="section"><h2>最新重大新聞</h2><span class="count" id="newsCount">—</span></div><div id="news" class="grid"></div><button id="moreNews" class="more" type="button" hidden>顯示更多 ↓</button></section>
 <div id="empty" hidden>沒有符合的事件或新聞，請試試其他關鍵字。</div>
-<div class="footer">PTT 項目為論壇轉載標題，並非原始媒體或鄉民情緒統計；推文熱度若無可靠資訊不顯示。日期均以台灣時間呈現。活動日期以主辦單位公告為準；新聞為外部媒體標題與來源連結，未經獨立查核，不代表消息已證實，也不代表相關族群必然上漲或下跌。</div>
+<div class="footer">國際政經專區僅採國外媒體及官方來源，不混入台灣媒體轉載。連動分析僅為條件式推演，未比對即時股價、匯價或油價，不代表已發生實際行情。PTT 項目為論壇轉載標題，並非原始媒體或鄉民情緒統計；推文熱度若無可靠資訊不顯示。日期均以台灣時間呈現。活動日期以主辦單位公告為準；新聞為外部媒體標題與來源連結，未經獨立查核，不代表消息已證實，也不代表相關族群必然上漲或下跌。</div>
 </div><script src="./market-events.js"></script>
 </body></html>
