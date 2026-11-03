@@ -70,7 +70,7 @@ def verified_quotes(quote,day):
   raise RuntimeError(f"TWSE 逐檔收盤日不一致：{sorted(str(d) for d in dates)} != {day}")
  return quote
 
-def main():
+def official_summary():
  summary=get(URLS["loan"],{"response":"json","selectType":"MS"})
  if summary.get("stat")!="OK":raise RuntimeError("TWSE 融資金額報表非 OK")
  day=date_of(summary.get("date")) or date_of(summary.get("title"))
@@ -91,6 +91,26 @@ def main():
     v=value(row[pos])
     if v and v>10_000_000:loan=v*1000
  if not loan:raise RuntimeError("TWSE 融資總借款金額缺失")
+ # 指數月報：驗證當日加權收盤，不使用當日日期冒充「報表日期」。
+ idx=get(URLS["index"],{"response":"json","date":day.replace("-","")})
+ if idx.get("stat")!="OK":raise RuntimeError("TWSE FMTQIK 指數月報非 OK")
+ indexes={}
+ for tab in [idx]+list(idx.get("tables") or []):
+  cols=tab.get("fields") or []
+  candidates=[i for i,x in enumerate(cols) if "發行量加權股價指數" in str(x)]
+  for row in tab.get("data") or []:
+   if not isinstance(row,list) or not row or not candidates:continue
+   d=date_of(row[0])
+   if d and len(row)>candidates[0]:
+    close=value(row[candidates[0]])
+    if close and 3000<close<100000:indexes[d]=close
+ if day not in indexes:raise RuntimeError("TWSE FMTQIK 未核對到與融資報表相同交易日的指數")
+ return {"date":day,"listedLoanTwd":round(loan),"indexClose":round(indexes[day],2)}
+
+def main():
+ official=official_summary()
+ day=official["date"]
+ loan=official["listedLoanTwd"]
  balances=dated_balances(day)
  quote=verified_quotes(get(URLS["close"]),day)
  closes={}
@@ -107,22 +127,9 @@ def main():
  collateral=sum(lots*1000*closes[code] for code,lots in matched.items())
  ratio=round(collateral/loan*100,2)
  if not 95<ratio<350:raise RuntimeError(f"上市維持率不合理：{ratio}")
- # 指數月報：驗證當日加權收盤，不使用當日日期冒充「報表日期」。
- idx=get(URLS["index"],{"response":"json","date":day.replace("-","")})
- if idx.get("stat")!="OK":raise RuntimeError("TWSE FMTQIK 指數月報非 OK")
- indexes={}
- for tab in [idx]+list(idx.get("tables") or []):
-  cols=tab.get("fields") or []
-  candidates=[i for i,x in enumerate(cols) if "發行量加權股價指數" in str(x)]
-  for row in tab.get("data") or []:
-   if not isinstance(row,list) or not row or not candidates:continue
-   d=date_of(row[0])
-   if d and len(row)>candidates[0]:
-    close=value(row[candidates[0]])
-    if close and 3000<close<100000:indexes[d]=close
- if day not in indexes:raise RuntimeError("TWSE FMTQIK 未核對到與融資報表相同交易日的指數")
- print("TWSE_DERIVED",day,"listed",ratio,"match",len(matched),"coverage",round(coverage,4),"index",indexes[day])
- return {"date":day,"listed":ratio,"otc":None,"overall":None,"indexClose":round(indexes[day],2),
+ # Index close was independently checked by the TWSE daily index report.
+ print("TWSE_DERIVED",day,"listed",ratio,"match",len(matched),"coverage",round(coverage,4),"index",official["indexClose"])
+ return {"date":day,"listed":ratio,"otc":None,"overall":None,"indexClose":official["indexClose"],
          "listedLoanTwd":round(loan),"listedCollateralTwd":round(collateral),
          "listedCoverage":round(coverage,6),"listedMatched":len(matched),"listedPositive":len(positive),
          "provenance":"TWSE 上市公開日資料自行計算"}
