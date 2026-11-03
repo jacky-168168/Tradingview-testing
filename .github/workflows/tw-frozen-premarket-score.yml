@@ -7,10 +7,15 @@ on:
       - '.github/workflows/tw-frozen-premarket-score.yml'
       - 'tw-stock-dashboard/src/freeze_premarket_score.py'
       - 'tw-stock-dashboard/tests/test_freeze_premarket_score.py'
+  workflow_run:
+    workflows: ['TW Stock Dashboard']
+    types: [completed]
+    branches: [main]
   schedule:
-    # 08:27, 08:42, 08:57 Asia/Taipei on weekdays.
-    # Only the first date-verified publication is kept for each day.
+    # Morning freeze plus timed late-recovery slots if upstream cron failed.
     - cron: '27,42,57 0 * * 1-5'
+    - cron: '27,57 1-3 * * 1-5'
+    - cron: '27 4 * * 1-5'
 permissions:
   contents: write
   pages: write
@@ -20,6 +25,11 @@ concurrency:
   cancel-in-progress: false
 jobs:
   freeze:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.head_branch == 'main' &&
+       (github.event.workflow_run.conclusion == 'success' ||
+        github.event.workflow_run.conclusion == 'failure'))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment:
@@ -34,25 +44,30 @@ jobs:
           python-version: '3.12'
       - name: Test date, previous-close and TX pairing safeguards
         run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_freeze_premarket_score.py' -v
-      - name: Freeze morning-only reference score
+      - name: Freeze or recover immutable date-keyed premarket score
         id: freeze
         run: |
           python tw-stock-dashboard/src/freeze_premarket_score.py
           python - <<'PY'
           import json,os
-          from datetime import datetime,time
+          from datetime import datetime
           from pathlib import Path
           from zoneinfo import ZoneInfo
+          import sys
+          sys.path.insert(0,'tw-stock-dashboard/src')
+          from freeze_premarket_score import target_day
           now=datetime.now(ZoneInfo('Asia/Taipei'))
-          path=Path('tw-stock-dashboard/docs/data/market_premarket/latest.json')
+          target=target_day(now)
+          path=Path('tw-stock-dashboard/docs/data/market_premarket')/(target+'.json')
           ok=False
-          if now.weekday()<5 and time(7,30)<=now.time()<time(9,0) and path.exists():
+          if path.exists():
               j=json.loads(path.read_text(encoding='utf-8'))
               ok=(j.get('quality')=='fixed-premarket-reference-v1' and
-                  j.get('targetDate')==now.date().isoformat() and
-                  j.get('lockedForTradingDate')==j.get('targetDate') and
+                  j.get('targetDate')==target and
+                  j.get('lockedForTradingDate')==target and
                   type(j.get('score')) is int and 0<=j['score']<=100 and
-                  j.get('baseDate','')<j['targetDate'])
+                  j.get('baseDate','')<target)
+          print('PREMARKET_TARGET',target,'archive',path,'ready',ok)
           with open(os.environ['GITHUB_OUTPUT'],'a') as f:f.write('ready='+str(ok).lower()+'\n')
           print('PREMARKET_READY',now.isoformat(),'publish',ok)
           PY
@@ -61,7 +76,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tw-stock-dashboard/docs/data/market_premarket/latest.json
+          git add -A tw-stock-dashboard/docs/data/market_premarket/
           if ! git diff --cached --quiet; then
             git commit -m "Freeze today premarket risk reference"
             ok=0
@@ -91,11 +106,18 @@ jobs:
           python - <<'PY'
           import json,os,time,urllib.request
           from pathlib import Path
-          snap=json.loads(Path('tw-stock-dashboard/docs/data/market_premarket/latest.json').read_text('utf-8'))
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          import sys
+          sys.path.insert(0,'tw-stock-dashboard/src')
+          from freeze_premarket_score import target_day
+          target=target_day(datetime.now(ZoneInfo('Asia/Taipei')))
+          snap=json.loads((Path('tw-stock-dashboard/docs/data/market_premarket')/(target+'.json')).read_text('utf-8'))
           base=os.environ['SITE'].rstrip('/')
+          url=base+'/data/market_premarket/'+target+'.json'
           for attempt in range(12):
               try:
-                  req=urllib.request.Request(base+'/data/market_premarket/latest.json?v='+str(time.time()),
+                  req=urllib.request.Request(url+'?v='+str(time.time()),
                       headers={'Cache-Control':'no-cache','User-Agent':'TW-Premarket-Verification'})
                   with urllib.request.urlopen(req,timeout=20) as response:
                       remote=json.loads(response.read())
