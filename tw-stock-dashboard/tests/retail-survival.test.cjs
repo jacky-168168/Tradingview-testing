@@ -48,4 +48,5 @@ test('homepage explicitly separates financing balance from maintenance-rate poin
  assert.match(html,/維持率較前交易日/);
  assert.match(js,/融資金額增減與維持率變化是兩個不同指標/);
  assert.match(js,/疑似混用前一交易日/);
+ assert.match(js,/\$\('retailCurrent'\)\.textContent='待確認'/,'Unverified current ratio must show pending rather than yesterday value');
 });
