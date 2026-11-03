@@ -45,6 +45,17 @@ function updateStats(){
  const rows=validRatios(state.rows,state.type);
  const latest=state.rows.at(-1);
  const suspicious=suspiciousMargin(latest,state.rows.at(-2),state.type);
+ if(suspicious){
+  $('retailCurrent').textContent='待確認';
+  $('retailChange').textContent='—';
+  $('retailChange').className='';
+  $('retailIndex').textContent=num(latest.indexClose);
+  $('retailDate').textContent=latest.date+'（待確認）';
+  $('retailAsOf').textContent='維持率資料日 '+latest.date+'（尚未通過同日驗證）';
+  $('retailStatus').className='retail-status';
+  $('retailStatus').textContent='⚠ '+latest.date+' 維持率疑似混用前一交易日擔保市值，暫停顯示當日維持率及日變化；融資借款金額增減使用已取得的官方金額資料，兩者不是同一指標。';
+  return;
+ }
  if(!rows.length){
   $('retailCurrent').textContent='待確認';$('retailChange').textContent='—';
   $('retailDate').textContent='—';$('retailStatus').className='retail-status';
