@@ -89,7 +89,7 @@ def parse_global_feed(raw,spec,now=None):
             if source_el is None or not _host_ok(
                 urllib.parse.urlsplit(source_el.get("url","")).hostname,spec["site"]):
                 continue
-        stamp=el.findtext(ns+"updated" if atom else "pubDate") or el.findtext(ns+"published" if atom else "dc:date",default="")
+        stamp=el.findtext(ns+"updated" if atom else "pubDate") or el.findtext(ns+"published" if atom else "{http://purl.org/dc/elements/1.1/}date",default="")
         try:
             t=(datetime.fromisoformat(stamp.replace("Z","+00:00")) if atom
                else parsedate_to_datetime(stamp)).astimezone(TZ)
