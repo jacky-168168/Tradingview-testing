@@ -65,6 +65,9 @@ jobs:
           print('TAIFEX_INDEX_PORTAL',len(html))
           links=re.findall(r'<script[^>]*src=["\\x27]([^"\\x27]+)',html,re.I)
           print('TAIFEX_PORTAL_SCRIPTS',links[-30:])
+          print('TAIFEX_PORTAL_INLINE_TAIL_BEGIN')
+          print(html[-16000:])
+          print('TAIFEX_PORTAL_INLINE_TAIL_END')
           for match in list(re.finditer(r'(vix|volatility|chart|ajax|api/|history|threeYear|_3year)',html,re.I))[-45:]:
               left=max(0,match.start()-90);right=min(len(html),match.end()+210)
               print('TAIFEX_PORTAL_FRAGMENT',re.sub(r'\\s+',' ',html[left:right])[:310])
