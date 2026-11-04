@@ -1,0 +1,94 @@
+name: Taiwan VIXTWN Homepage Data
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/tw-vix.yml'
+      - 'tw-stock-dashboard/src/tw_vix.py'
+      - 'tw-stock-dashboard/docs/tw-vix-home.js'
+      - 'tw-stock-dashboard/docs/tw-vix-home.css'
+      - 'tw-stock-dashboard/docs/index.html'
+      - 'tw-stock-dashboard/tests/test_tw_vix.py'
+      - 'tw-stock-dashboard/tests/tw-vix-home.test.cjs'
+      - 'tw-stock-dashboard/docs/data/research/tw_vix/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/tw-vix.yml'
+      - 'tw-stock-dashboard/src/tw_vix.py'
+      - 'tw-stock-dashboard/docs/tw-vix-home.js'
+      - 'tw-stock-dashboard/docs/tw-vix-home.css'
+  workflow_dispatch:
+  schedule:
+    # Taipei weekdays: 09:10/09:40 through 13:40; then 14:10 and 16:10.
+    # Scheduled event can be delayed; source timestamp is always displayed.
+    - cron: '10,40 1-5 * * 1-5'
+    - cron: '10 6,8 * * 1-5'
+
+permissions:
+  contents: read
+concurrency:
+  group: taiwan-vix-source
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify Taiwan VIX parser with fixed-time offline fixtures
+        run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_tw_vix.py' -v
+      - name: Verify homepage JavaScript and visual safeguards
+        run: |
+          node --check tw-stock-dashboard/docs/tw-vix-home.js
+          node --test tw-stock-dashboard/tests/tw-vix-home.test.cjs
+  refresh:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch public VIXTWN quote with timestamp and source validation
+        run: python tw-stock-dashboard/src/tw_vix.py
+      - name: Verify generated observation and provenance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path('tw-stock-dashboard/docs/data/research/tw_vix/latest.json').read_text('utf-8'))
+          assert j['version']=='TW_VIX_WANTGOO_QUOTES_V1'
+          assert j['sourceUrl']=='https://www.wantgoo.com/index/vixtwn'
+          assert j['asOfDate']==j['rows'][-1]['date']
+          assert j['sourceObservationAt'].startswith(j['asOfDate']+'T')
+          print('TW_VIX_VALIDATED',j['sourceObservationAt'],j['rows'][-1]['value'])
+          PY
+      - name: Save dated public observation to main after review-approved workflow exists
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/tw_vix/latest.json
+          if git diff --cached --quiet; then
+            echo 'No new VIX observation; no commit required'
+            exit 0
+          fi
+          git commit -m 'Refresh date-checked Taiwan VIXTWN public observation'
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              echo 'TW_VIX_PUBLISHED_TO_MAIN'
+              exit 0
+            fi
+            git rebase --abort || true
+            sleep $((i*5))
+          done
+          echo 'TW_VIX_PUBLISH_FAILED: cannot safely fast-forward main' >&2
+          exit 1
