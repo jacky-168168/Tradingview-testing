@@ -6,7 +6,7 @@ on:
     # Sunday 11:30 Asia/Taipei: fallback redeploy after TDCC 09:35 weekly collector.
     - cron: '30 3 * * 0'
   workflow_run:
-    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News']
+    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'Taiwan VIXTWN Homepage Data']
     types: [completed]
     branches: [main]
   push:
@@ -462,6 +462,43 @@ jobs:
                   break
               except Exception as e:
                   print('CNN Fear & Greed Pages check',attempt,'/12',repr(e),flush=True)
+                  if attempt==12:raise
+                  time.sleep(5)
+          PY
+      - name: Verify deployed Taiwan VIX 360-session dataset and selectable homepage chart
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request
+          from pathlib import Path
+          base=os.environ['PAGES_URL'].rstrip('/')
+          local=json.loads(Path('tw-stock-dashboard/docs/data/research/tw_vix/latest.json').read_text('utf-8'))
+          assert local['version']=='TW_VIX_TAIFEX_DAILY_V1'
+          assert local['quality']=='official-taifex-daily-close'
+          assert len(local['rows'])>=360,'Local official VIX history still below 360 sessions'
+          def get(path):
+              request=urllib.request.Request(base+'/'+path,headers={
+                  'User-Agent':'TAIFEX-VIX-360-Pages-Smoke/1.0','Cache-Control':'no-cache'})
+              with urllib.request.urlopen(request,timeout=25) as res:return res.read()
+          for attempt in range(1,13):
+              try:
+                  home=get('index.html?vix360='+str(time.time())).decode('utf-8')
+                  for period in (30,60,90,120,360):
+                      assert 'data-tw-vix-range="'+str(period)+'"' in home,'Missing VIX range '+str(period)
+                  assert 'id="twVixChartCaption"' in home
+                  script=get('tw-vix-home.js?vix360='+str(time.time())).decode('utf-8')
+                  assert 'function chooseRange' in script and 'selectedRange' in script
+                  remote=json.loads(get('data/research/tw_vix/latest.json?vix360='+str(time.time())))
+                  assert remote['version']==local['version'] and remote['quality']==local['quality']
+                  assert len(remote['rows'])==len(local['rows']) and len(remote['rows'])>=360
+                  assert remote['asOfDate']==local['asOfDate']
+                  assert remote['rows'][-1]['value']==local['rows'][-1]['value']
+                  assert remote['rows'][0]['date']==local['rows'][0]['date']
+                  print('PASS LIVE TAIFEX VIX 360',remote['asOfDate'],remote['rows'][-1]['value'],len(remote['rows']))
+                  break
+              except Exception as exc:
+                  print('Pages Taiwan VIX attempt',attempt,repr(exc),flush=True)
                   if attempt==12:raise
                   time.sleep(5)
           PY
