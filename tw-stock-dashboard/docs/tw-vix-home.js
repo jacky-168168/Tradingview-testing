@@ -4,13 +4,19 @@
 const URL="./data/research/tw_vix/latest.json";
 const $=id=>typeof document==="undefined"?null:document.getElementById(id);
 const money=v=>Number(v).toFixed(2);
+const RANGES=Object.freeze([30,60,90,120,360]);
+let selectedRange=60,lastPayload=null;
+function chooseRange(rows,count){
+ if(!RANGES.includes(count))throw Error("不支援的 VIX 圖表區間");
+ return rows.length>=count?rows.slice(-count):[];
+}
 function taiwanDate(now=new Date()){
  const parts=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(now);
  const map=Object.fromEntries(parts.map(x=>[x.type,x.value]));
  return [map.year,map.month,map.day].join("-");
 }
 function check(payload){
- if(!payload||payload.version!=="TW_VIX_TAIFEX_DAILY_V1"||!Array.isArray(payload.rows)||!payload.rows.length||payload.rows.length>260)
+ if(!payload||payload.version!=="TW_VIX_TAIFEX_DAILY_V1"||!Array.isArray(payload.rows)||!payload.rows.length||payload.rows.length>400)
   throw Error("台股 VIX 資料格式無效");
  if(payload.sourceUrl!=="https://www.taifex.com.tw/cht/7/vixDaily3MNew")throw Error("台股 VIX 來源驗證失敗");
  let prior="",clean=[];
@@ -18,8 +24,8 @@ function check(payload){
   const r=payload.rows[i];
   if(!r||typeof r.date!=="string"||!/^20\d{2}-\d{2}-\d{2}$/.test(r.date)||r.date<=prior||
     !/^(?:0\d|1\d|2[0-3]):[0-5]\d$/.test(r.time||"")||
-    !["value","closeMinuteAverage"].every(k=>typeof r[k]==="number"&&Number.isFinite(r[k])&&r[k]>=5&&r[k]<=150)||
-    Math.abs(r.value-r.closeMinuteAverage)>10)throw Error("期交所 VIX 官方日收盤資料不正確");
+    !(typeof r.value==="number"&&Number.isFinite(r.value)&&r.value>=5&&r.value<=150)||
+    !(r.closeMinuteAverage===null||(typeof r.closeMinuteAverage==="number"&&Number.isFinite(r.closeMinuteAverage)&&r.closeMinuteAverage>=5&&r.closeMinuteAverage<=150&&Math.abs(r.value-r.closeMinuteAverage)<=10)))throw Error("期交所 VIX 官方日收盤資料不正確");
   if(i>0){
    const prev=clean.at(-1).value;
    if(typeof r.change!=="number"||typeof r.changePct!=="number"||
@@ -53,7 +59,7 @@ function timeStatus(payload,now=new Date()){
  return {text:"期交所官方日收盤 "+last.date+" "+last.time+"（非盤中即時 VIX）"+
    (last.date===today?"":"；今天收盤尚未取得或非交易日"),stale:false};
 }
-function plot(svg,rows){
+function plot(svg,rows,count=60){
  svg.replaceChildren();
  const NS="http://www.w3.org/2000/svg", make=(name,attrs,text)=>{
   const e=document.createElementNS(NS,name);
@@ -62,11 +68,12 @@ function plot(svg,rows){
   svg.appendChild(e);return e;
  };
  svg.setAttribute("viewBox","0 0 760 115");
- if(rows.length<2){
-  make("text",{x:380,y:55,"text-anchor":"middle",fill:"#a8bfd5","font-size":15},"歷史觀測正在累積，暫不繪製推測走勢");
+ const rowsToShow=chooseRange(rows,count);
+ if(!rowsToShow.length){
+  make("text",{x:380,y:55,"text-anchor":"middle",fill:"#a8bfd5","font-size":15},`目前僅有 ${rows.length} 筆官方交易日資料，尚不足 ${count} 日`);
   return;
  }
- const rowsToShow=rows.slice(-60),vals=rowsToShow.map(r=>r.value),lo=Math.min(...vals),hi=Math.max(...vals);
+ const vals=rowsToShow.map(r=>r.value),lo=Math.min(...vals),hi=Math.max(...vals);
  const pad=Math.max(1.3,(hi-lo)*.18),left=52,right=740,top=12,bottom=91;
  const x=i=>left+(right-left)*i/(rowsToShow.length-1),y=v=>bottom-(v-(lo-pad))/(hi-lo+2*pad)*(bottom-top);
  for(let i=0;i<=2;i++){const v=lo-pad+(hi-lo+2*pad)*i/2,yy=y(v);
@@ -79,7 +86,16 @@ function plot(svg,rows){
  make("text",{x:right,y:109,"text-anchor":"end",fill:"#b4c6da","font-size":11},rowsToShow.at(-1).date.slice(5).replace("-","/"));
 }
 function render(payload,now=new Date()){
- const rows=check(payload),current=rows.at(-1),signal=mood(current),fresh=timeStatus(payload,now);
+ const rows=check(payload);
+ lastPayload=payload;
+ const current=rows.at(-1),signal=mood(current),fresh=timeStatus(payload,now);
+ const buttons=[...document.querySelectorAll("[data-tw-vix-range]")];
+ for(const b of buttons){const on=Number(b.dataset.twVixRange)===selectedRange;b.classList.toggle("is-active",on);b.setAttribute("aria-pressed",String(on));}
+ const available=rows.length>=selectedRange;
+ const caption=$("twVixChartCaption");
+ if(caption)caption.textContent=available?`近 ${selectedRange} 個期交所官方交易日收盤（${rows.at(-selectedRange).date}～${rows.at(-1).date}），共 ${selectedRange} 筆。`:`目前僅 ${rows.length} 筆官方交易日資料，尚不足 ${selectedRange} 日；不以較短歷史冒充所選區間。`;
+ const extra=$("twVixRangeStatus");
+ if(extra)extra.textContent=available?`已顯示 ${selectedRange} 個官方交易日。`:`${selectedRange} 日資料不足（現有 ${rows.length} 筆）`; 
  const val=$("twVixValue"),change=$("twVixChange"),chart=$("twVixChart");
  if(!val||!change||!chart)return;
  val.textContent=money(current.value);
@@ -93,7 +109,7 @@ function render(payload,now=new Date()){
  $("twVixGuide").textContent=signal.text;
  $("twVixStatus").textContent=fresh.text+"｜資料：臺灣期貨交易所官方日收盤";
  $("twVixStatus").dataset.stale=String(fresh.stale);
- plot(chart,rows);
+ plot(chart,rows,selectedRange);
 }
 async function load(){
  const status=$("twVixStatus");if(!status)return;
@@ -108,9 +124,18 @@ async function load(){
   const change=$("twVixChange");if(change)change.textContent="—";
  }
 }
-if(typeof module!=="undefined"&&module.exports)module.exports={check,percentile,mood,timeStatus,taiwanDate};
+if(typeof module!=="undefined"&&module.exports)module.exports={check,percentile,mood,timeStatus,taiwanDate,chooseRange,RANGES};
 if(typeof document!=="undefined"){
- const boot=()=>{if(!$("twVixPanel"))return;$("twVixRetry")?.addEventListener("click",load);void load();};
+ const boot=()=>{if(!$("twVixPanel"))return;
+  $("twVixRetry")?.addEventListener("click",load);
+  for(const b of document.querySelectorAll("[data-tw-vix-range]")){
+   b.addEventListener("click",()=>{const value=Number(b.dataset.twVixRange);
+    if(!RANGES.includes(value))return;
+    selectedRange=value;
+    if(lastPayload)render(lastPayload);
+   });
+  }
+  void load();};
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot();
 }
 })(typeof window!=="undefined"?window:globalThis);

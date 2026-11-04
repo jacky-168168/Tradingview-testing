@@ -84,6 +84,26 @@ async function main(){
         checks.detailLength>20&&checks.scaleBands===5&&checks.hasHeading;
       return ok?true:{ok:false,...checks};
     }));
+    await test(variant+' Taiwan VIX ranges switch 30 and 360 sessions without inventing data',async()=>{
+      await page.waitForFunction(()=>document.getElementById('twVixChartCaption')?.textContent.includes('60'),null,{timeout:10000});
+      const observed=JSON.parse(fs.readFileSync(path.join(ROOT,'data/research/tw_vix/latest.json'),'utf8')).rows.length;
+      await page.locator('button[data-tw-vix-range="360"]').click();
+      const long=await page.evaluate(()=>({
+        pressed:document.querySelector('button[data-tw-vix-range="360"]')?.getAttribute('aria-pressed'),
+        caption:document.getElementById('twVixChartCaption')?.textContent||'',
+        line:!!document.querySelector('#twVixChart polyline')
+      }));
+      await page.locator('button[data-tw-vix-range="30"]').click();
+      const short=await page.evaluate(()=>({
+        pressed:document.querySelector('button[data-tw-vix-range="30"]')?.getAttribute('aria-pressed'),
+        caption:document.getElementById('twVixChartCaption')?.textContent||'',
+        line:!!document.querySelector('#twVixChart polyline')
+      }));
+      const longExpected=observed>=360 ? (long.line&&long.caption.includes('共 360 筆')) :
+        (!long.line&&long.caption.includes('尚不足 360 日'));
+      return long.pressed==='true'&&short.pressed==='true'&&longExpected&&
+        short.line&&short.caption.includes('共 30 筆');
+    });
     await test(variant+' validated same-day quote breadth displays numeric homepage score',async()=>{
       const live=JSON.parse(fs.readFileSync(path.join(ROOT,'data/g_intraday/latest.json'),'utf8'));
       if(!live.indicativeQuoteBreadth)return true; // Older archived JSON predates separate breadth estimate.
