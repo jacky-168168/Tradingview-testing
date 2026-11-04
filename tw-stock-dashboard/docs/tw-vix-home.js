@@ -10,20 +10,28 @@ function taiwanDate(now=new Date()){
  return [map.year,map.month,map.day].join("-");
 }
 function check(payload){
- if(!payload||payload.version!=="TW_VIX_WANTGOO_QUOTES_V1"||!Array.isArray(payload.rows)||!payload.rows.length||payload.rows.length>260)
+ if(!payload||payload.version!=="TW_VIX_TAIFEX_DAILY_V1"||!Array.isArray(payload.rows)||!payload.rows.length||payload.rows.length>260)
   throw Error("台股 VIX 資料格式無效");
- if(payload.sourceUrl!=="https://www.wantgoo.com/index/vixtwn")throw Error("台股 VIX 來源驗證失敗");
+ if(payload.sourceUrl!=="https://www.taifex.com.tw/cht/7/vixDaily3MNew")throw Error("台股 VIX 來源驗證失敗");
  let prior="",clean=[];
- for(const r of payload.rows){
+ for(let i=0;i<payload.rows.length;i++){
+  const r=payload.rows[i];
   if(!r||typeof r.date!=="string"||!/^20\d{2}-\d{2}-\d{2}$/.test(r.date)||r.date<=prior||
-     !/^(?:0\d|1\d|2[0-3]):[0-5]\d$/.test(r.time||"")||
-     !["value","change","changePct"].every(k=>typeof r[k]==="number"&&Number.isFinite(r[k]))||
-     r.value<5||r.value>150||r.value-r.change<=0||
-     Math.abs(r.changePct-100*r.change/(r.value-r.change))>.25)throw Error("台股 VIX 日期／價格／變動驗證失敗");
+    !/^(?:0\d|1\d|2[0-3]):[0-5]\d$/.test(r.time||"")||
+    !["value","closeMinuteAverage"].every(k=>typeof r[k]==="number"&&Number.isFinite(r[k])&&r[k]>=5&&r[k]<=150)||
+    Math.abs(r.value-r.closeMinuteAverage)>10)throw Error("期交所 VIX 官方日收盤資料不正確");
+  if(i>0){
+   const prev=clean.at(-1).value;
+   if(typeof r.change!=="number"||typeof r.changePct!=="number"||
+     !Number.isFinite(r.change)||!Number.isFinite(r.changePct)||
+     Math.abs(r.change-(r.value-prev))>.011||
+     Math.abs(r.changePct-(r.value/prev-1)*100)>.015)throw Error("期交所 VIX 收盤漲跌驗算失敗");
+  }else if(r.change!==null||r.changePct!==null)throw Error("無前日資料卻宣稱漲跌");
   clean.push(r);prior=r.date;
  }
- if(payload.asOfDate!==prior||payload.sourceObservationAt!==prior+"T"+clean.at(-1).time+":00+08:00")
-  throw Error("台股 VIX 來源時間與資料不符");
+ if(payload.quality!=="official-taifex-daily-close"||payload.asOfDate!==prior||
+   payload.sourceObservationAt!==prior+"T"+clean.at(-1).time+":00+08:00")
+  throw Error("台股 VIX 官方來源時間與資料不符");
  return clean;
 }
 function percentile(rows,days){
@@ -32,20 +40,18 @@ function percentile(rows,days){
  return Math.round(values.filter(v=>v<=values.at(-1)).length/values.length*100);
 }
 function mood(row){
- if(row.change>=.25)return {label:"波動升溫",tone:"up",text:"臺指選擇權預期波動較前交易日上升，避險壓力可能增加；高 VIX 不代表底部已確認。"};
- if(row.change<=-.25)return {label:"波動降溫觀察",tone:"down",text:"預期波動較前交易日下降，可搭配加權指數止跌、上漲家數及 Nasdaq／VXN 是否轉穩觀察；不能單獨當作進場信號。"};
- return {label:"波動觀察",tone:"flat",text:"預期波動變化有限；請搭配美股 VIX、Nasdaq 與臺股 Risk Score 觀察。"};
+ if(row.change===null)return {label:"前日無資料",tone:"flat",text:"樣本首日無前一交易日官方收盤，不能憑空計算漲跌。"};
+ if(row.change>=.25)return {label:"波動升溫",tone:"up",text:"期交所 VIX 官方日收盤較前一交易日上升，避險壓力可能增加；高 VIX 不代表底部已確認。"};
+ if(row.change<=-.25)return {label:"波動降溫觀察",tone:"down",text:"期交所 VIX 官方日收盤下降，可配合加權指數與 Nasdaq 觀察，但不能單獨當作進場信號。"};
+ return {label:"波動變化有限",tone:"flat",text:"臺股預期波動變化有限；需同時看 Nasdaq、VXN 與大盤 Risk Score，不能直接推斷指數方向。"};
 }
 function timeStatus(payload,now=new Date()){
  const last=payload.rows.at(-1),minute=(now.getTime()-Date.parse(payload.sourceObservationAt))/60000;
- const date=taiwanDate(now),twTime=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Taipei",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(now);
- const live=twTime>="09:00"&&twTime<="13:45"&&now.getUTCDay()!==0&&now.getUTCDay()!==6;
- if(!Number.isFinite(minute)||minute< -5)return {text:"資料日期異常，無法判定新鮮度",stale:true};
- if(live&&last.date!==date)return {text:"盤中來源尚未更新到今日（保留前次觀測）",stale:true};
- if(live&&minute>65)return {text:"盤中來源超過 65 分鐘，非即時報價",stale:true};
- if(last.date!==date)return {text:"歷史觀測值（"+last.date+"），非今天即時數據",stale:true};
- if(minute>120)return {text:"今天較早的觀測值（非即時）",stale:false};
- return {text:"今日來源報價（可能延遲，不保證即時）",stale:false};
+ if(!Number.isFinite(minute)||minute< -5)return {text:"期交所 VIX 收盤日期無法驗證",stale:true};
+ const today=taiwanDate(now);
+ if(minute>8*86400/1440)return {text:"期交所官方收盤資料超過 8 個日曆日，可能停止更新",stale:true};
+ return {text:"期交所官方日收盤 "+last.date+" "+last.time+"（非盤中即時 VIX）"+
+   (last.date===today?"":"；今天收盤尚未取得或非交易日"),stale:false};
 }
 function plot(svg,rows){
  svg.replaceChildren();
@@ -77,7 +83,7 @@ function render(payload,now=new Date()){
  const val=$("twVixValue"),change=$("twVixChange"),chart=$("twVixChart");
  if(!val||!change||!chart)return;
  val.textContent=money(current.value);
- change.textContent=(current.change>0?"+":"")+money(current.change)+"（"+(current.changePct>0?"+":"")+money(current.changePct)+"%）";
+ change.textContent=current.change===null?"—":(current.change>0?"+":"")+money(current.change)+"（"+(current.changePct>0?"+":"")+money(current.changePct)+"%）";
  change.dataset.tone=signal.tone;
  $("twVixMood").textContent=signal.label;
  $("twVixMood").dataset.tone=signal.tone;
@@ -85,7 +91,7 @@ function render(payload,now=new Date()){
  $("twVixP60").textContent=percentile(rows,60)===null?"待累積":percentile(rows,60)+"%";
  $("twVixAt").textContent=current.date+" "+current.time+"（臺灣時間）";
  $("twVixGuide").textContent=signal.text;
- $("twVixStatus").textContent=fresh.text+"｜玩股網 VIXTWN（非期交所正式收盤）";
+ $("twVixStatus").textContent=fresh.text+"｜資料：臺灣期貨交易所官方日收盤";
  $("twVixStatus").dataset.stale=String(fresh.stale);
  plot(chart,rows);
 }
