@@ -53,24 +53,24 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Inspect TAIFEX 3-year public VIX chart (diagnostic, no publication)
+      - name: Probe official TAIFEX public 3-year VIX series
         run: |
           python - <<'PY'
-          import re
-          import urllib.request
-          url='https://www.taifex.com.tw/indes/index.aspx'
-          request=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'})
-          with urllib.request.urlopen(request,timeout=20) as response:
-              html=response.read(3000000).decode('utf-8-sig',errors='replace')
-          print('TAIFEX_INDEX_PORTAL',len(html))
-          links=re.findall(r'<script[^>]*src=["\\x27]([^"\\x27]+)',html,re.I)
-          print('TAIFEX_PORTAL_SCRIPTS',links[-30:])
-          print('TAIFEX_PORTAL_INLINE_TAIL_BEGIN')
-          print(html[-16000:])
-          print('TAIFEX_PORTAL_INLINE_TAIL_END')
-          for match in list(re.finditer(r'(vix|volatility|chart|ajax|api/|history|threeYear|_3year)',html,re.I))[-45:]:
-              left=max(0,match.start()-90);right=min(len(html),match.end()+210)
-              print('TAIFEX_PORTAL_FRAGMENT',re.sub(r'\\s+',' ',html[left:right])[:310])
+          import json,urllib.request
+          url='https://www.taifex.com.tw/indes/index.aspx/GetStockDayPrices'
+          payload=json.dumps({'syid':'TAIWANVIX','flag':'MS','startDate':'2025/03/01','endDate':'2026/11/03'}).encode()
+          request=urllib.request.Request(url,data=payload,method='POST',headers={
+              'User-Agent':'Mozilla/5.0','Content-Type':'application/json; charset=utf-8',
+              'Accept':'application/json','Referer':'https://www.taifex.com.tw/indes/index.aspx'})
+          try:
+              with urllib.request.urlopen(request,timeout=30) as response:
+                  obj=json.load(response)
+              data=json.loads(obj['d'])
+              trend=data.get('TrendData') or []
+              print('TAIFEX_3Y_API_OK',len(trend),'keys',list(data),'first',trend[:2],'last',trend[-2:])
+          except Exception as exc:
+              print('TAIFEX_3Y_API_FAILED',type(exc).__name__,str(exc)[:300])
+              raise
           PY
       - name: Fetch real TAIFEX official VIX closes in isolated PR runner (never publish)
         run: python tw-stock-dashboard/src/tw_vix.py
