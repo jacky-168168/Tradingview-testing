@@ -51,3 +51,27 @@ test("previous official close is labelled, not simulated as intraday quote",()=>
  const future={...sample,sourceObservationAt:"2026-11-05T13:45:00+08:00"};
  assert.equal(home.timeStatus(future,now).stale,true);
 });
+
+test("VIX chart has five selectable official trading-day windows",()=>{
+ const expected=[30,60,90,120,360];
+ assert.deepEqual(home.RANGES,expected);
+ for(const n of expected){
+  assert.match(html,new RegExp('data-tw-vix-range="'+n+'"'));
+ }
+ assert.match(html,/id="twVixChartCaption"/);
+ assert.match(html,/id="twVixRangeStatus"/);
+ assert.match(html,/data-tw-vix-range="60" class="is-active" aria-pressed="true"/);
+});
+test("360 official observations must be present to show 360-day chart; do not repeat 62 days",()=>{
+ assert.equal(home.chooseRange(sample.rows,30).length,30);
+ assert.equal(home.chooseRange(sample.rows,60).length,60);
+ for(const range of [90,120,360])assert.deepEqual(home.chooseRange(sample.rows,range),[]);
+ const history=Array.from({length:400},(_,i)=>({date:String(i),value:10+i/10}));
+ for(const n of [30,60,90,120,360]){
+  const selected=home.chooseRange(history,n);
+  assert.equal(selected.length,n);
+  assert.deepEqual(selected[0],history.at(-n));
+  assert.deepEqual(selected.at(-1),history.at(-1));
+ }
+ assert.throws(()=>home.chooseRange(history,100));
+});
