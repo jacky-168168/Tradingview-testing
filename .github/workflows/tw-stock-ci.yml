@@ -4,6 +4,7 @@ on:
     paths:
       - 'tw-stock-dashboard/**'
       - '.github/workflows/tw-stock-*.yml'
+      - '.github/agent/test_luna_pages_fallback.py'
   push:
     branches: [main]
     paths:
@@ -14,6 +15,7 @@ on:
       - 'tw-stock-dashboard/requirements.txt'
       - '.github/monitor/**'
       - '.github/workflows/tw-stock-*.yml'
+      - '.github/agent/test_luna_pages_fallback.py'
   schedule:
     # Daily regression independently checks main, not just open PRs. 20:00 Taipei.
     - cron: '0 12 * * *'
@@ -67,3 +69,7 @@ jobs:
         run: PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_published_research_integrity.py' -v
       - name: Verify watchdog own tests
         run: python -m unittest discover -s .github/monitor -p 'test_*.py' -v
+      - name: Verify Pages publishing trigger regressions
+        run: python -m unittest discover -s .github/agent -p 'test_*pages_trigger.py' -v
+      - name: Verify LUNA Pages fallback regression
+        run: python -m unittest discover -s .github/agent -p 'test_luna_pages_fallback.py' -v
