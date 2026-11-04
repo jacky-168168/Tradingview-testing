@@ -45,6 +45,8 @@
 <script defer src="./us-market-freshness.js?v=de836e1500a9"></script>
 <script defer src="./fear-greed-home.js?v=c8cea7d26984"></script>
 <script defer src="./vix-home.js?v=cc61084cae03"></script>
+<link rel="stylesheet" href="./tw-vix-home.css?v=20261104">
+<script defer src="./tw-vix-home.js?v=20261104"></script>
 
 
 <link rel="stylesheet" href="./retail-survival.css?v=1">
@@ -206,6 +208,32 @@
   </details>
  </details>
 </details>
+</section>
+<section class="card tw-vix" id="twVixPanel" aria-label="台股 VIXTWN 選擇權波動率與恐慌觀察">
+ <div class="tw-vix-top">
+  <div>
+   <div class="tw-vix-tag">TAIWAN VIX · 臺指選擇權預期波動</div>
+   <h2>🇹🇼 台股 VIX｜恐慌與波動觀察</h2>
+   <p class="tw-vix-sub">衡量臺股未來 30 天預期波動，獨立於大盤 Risk Score；高 VIX 不等於底部，仍須觀察反轉確認。</p>
+  </div>
+  <div class="tw-vix-links">
+   <a href="https://www.wantgoo.com/index/vixtwn" target="_blank" rel="noopener noreferrer">玩股網 VIXTWN 報價</a>
+   <a href="https://www.taifex.com.tw/cht/7/vixDaily3MNew" target="_blank" rel="noopener noreferrer">期交所官方收盤資料</a>
+   <button type="button" id="twVixRetry" aria-label="重新載入台股 VIX 數據">重新讀取</button>
+  </div>
+ </div>
+ <div class="tw-vix-grid" aria-label="臺指選擇權波動率摘要">
+  <div class="tw-vix-stat tw-vix-stat--main"><span>台股 VIXTWN</span><strong id="twVixValue">—</strong><small>來源報價，非自行推算指數</small></div>
+  <div class="tw-vix-stat"><span>較前交易日變化</span><strong id="twVixChange">—</strong><small id="twVixMood">核對中…</small></div>
+  <div class="tw-vix-stat"><span>近 20 觀測交易日百分位</span><strong id="twVixP20">—</strong><small>需要至少 20 筆同來源日期</small></div>
+  <div class="tw-vix-stat"><span>近 60 觀測交易日百分位</span><strong id="twVixP60">—</strong><small>需要至少 60 筆同來源日期</small></div>
+ </div>
+ <div class="tw-vix-at">資料觀測時間：<strong id="twVixAt">讀取中…</strong></div>
+ <div class="tw-vix-status" id="twVixStatus" role="status" aria-live="polite">正在核對台股 VIX 資料日期…</div>
+ <svg class="tw-vix-chart" id="twVixChart" role="img" aria-label="台股 VIX 歷史觀測值走勢；樣本不足時不繪製假線" preserveAspectRatio="xMidYMid meet"></svg>
+ <p class="tw-vix-chart-caption">近 60 個已存檔觀測交易日，非官方收盤日線；資料不足時僅顯示待累積狀態。</p>
+ <p class="tw-vix-guide" id="twVixGuide">同時觀察 Nasdaq、VXN／美股 VIX、台股上漲家數與底部反轉確認；不因單一高 VIX 就進場。</p>
+ <p class="tw-vix-foot">來源分級：玩股網公開 VIXTWN 報價（可能延遲），官方定義參照臺灣期貨交易所；不影響 Risk Score、G／G Pro／F 與回測。盤中值不等於官方結算收盤值。</p>
 </section>
 <section id="retailSurvival" class="card retail-survival" aria-label="散戶存活率與大盤融資維持率">
   <div class="retail-head">
