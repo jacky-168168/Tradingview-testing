@@ -43,7 +43,7 @@ jobs:
           PYTHONPATH=tw-stock-dashboard/src python -m unittest discover -s tw-stock-dashboard/tests -p 'test_us_fear_greed.py' -v
           node --check tw-stock-dashboard/docs/fear-greed-home.js
           node --test tw-stock-dashboard/tests/fear-greed-home.test.cjs
-      - name: Refresh CNN historical sentiments and aligned SPX
+      - name: Refresh independently dated CNN sentiments and SPX
         run: python -u tw-stock-dashboard/src/update_us_fear_greed.py
       - name: Validate source freshness and no fabricated data
         run: |
@@ -52,7 +52,7 @@ jobs:
           from pathlib import Path
           p=Path('tw-stock-dashboard/docs/data/research/us_fear_greed/history.json')
           x=json.loads(p.read_text())
-          assert x['version']=='US_CNN_FEAR_GREED_SPX_V1'
+          assert x['version']=='US_CNN_FEAR_GREED_SPX_V2'
           assert x['columns']==['date','fearGreed','spx']
           assert len(x['rows'])>=150
           assert x['rows'][-1][0]==x['asOf']
@@ -91,8 +91,10 @@ jobs:
           fg=json.loads((root/'us_fear_greed/history.json').read_text('utf-8'))
           spx=json.loads((root/'us_options/history.json').read_text('utf-8'))
           assert fg['asOf']==fg['rows'][-1][0], 'fear & greed last date mismatch'
-          assert spx['asOf']==fg['asOf'], 'Fear & Greed must match latest S&P 500 session before publishing'
-          print('ALIGNED_FEAR_GREED_SPX',fg['asOf'],len(fg['rows']))
+          assert fg['cnnHistoricalLast']<=fg['asOf'] and fg['spxLast']<=fg['asOf']
+          assert fg['asOf']==max(fg['cnnHistoricalLast'],fg['spxLast'])
+          assert fg['rows'][-1][1] is not None or fg['rows'][-1][2] is not None
+          print('INDEPENDENT_FEAR_GREED_SPX',fg['asOf'],len(fg['rows']))
           PY
       - name: Configure Pages
         uses: actions/configure-pages@v5
