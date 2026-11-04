@@ -49,7 +49,7 @@ function timeStatus(payload,now=new Date()){
  const last=payload.rows.at(-1),minute=(now.getTime()-Date.parse(payload.sourceObservationAt))/60000;
  if(!Number.isFinite(minute)||minute< -5)return {text:"期交所 VIX 收盤日期無法驗證",stale:true};
  const today=taiwanDate(now);
- if(minute>8*86400/1440)return {text:"期交所官方收盤資料超過 8 個日曆日，可能停止更新",stale:true};
+ if(minute>8*24*60)return {text:"期交所官方收盤資料超過 8 個日曆日，可能停止更新",stale:true};
  return {text:"期交所官方日收盤 "+last.date+" "+last.time+"（非盤中即時 VIX）"+
    (last.date===today?"":"；今天收盤尚未取得或非交易日"),stale:false};
 }
