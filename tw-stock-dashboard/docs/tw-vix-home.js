@@ -24,8 +24,8 @@ function check(payload){
   const r=payload.rows[i];
   if(!r||typeof r.date!=="string"||!/^20\d{2}-\d{2}-\d{2}$/.test(r.date)||r.date<=prior||
     !/^(?:0\d|1\d|2[0-3]):[0-5]\d$/.test(r.time||"")||
-    !["value","closeMinuteAverage"].every(k=>typeof r[k]==="number"&&Number.isFinite(r[k])&&r[k]>=5&&r[k]<=150)||
-    Math.abs(r.value-r.closeMinuteAverage)>10)throw Error("期交所 VIX 官方日收盤資料不正確");
+    !(typeof r.value==="number"&&Number.isFinite(r.value)&&r.value>=5&&r.value<=150)||
+    !(r.closeMinuteAverage===null||(typeof r.closeMinuteAverage==="number"&&Number.isFinite(r.closeMinuteAverage)&&r.closeMinuteAverage>=5&&r.closeMinuteAverage<=150&&Math.abs(r.value-r.closeMinuteAverage)<=10)))throw Error("期交所 VIX 官方日收盤資料不正確");
   if(i>0){
    const prev=clean.at(-1).value;
    if(typeof r.change!=="number"||typeof r.changePct!=="number"||
