@@ -113,7 +113,7 @@ class TaifexDailyVixTest(unittest.TestCase):
         portal=parse_portal(json.dumps(payload).encode("utf-8"),NOW)
         monthly=[{**r,"closeMinuteAverage":25.01} for r in portal[-45:]]
         monthly[0]["value"]=29.0
-        with self.assertRaisesRegex(ValueError,"數值不符"):
+        with self.assertRaisesRegex(ValueError,"資料不一致"):
             reconcile_portal_to_months(portal,[monthly])
 
     def test_committed_daily_official_seed(self):
