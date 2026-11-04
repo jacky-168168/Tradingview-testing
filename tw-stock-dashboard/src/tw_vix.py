@@ -154,15 +154,26 @@ def validate(payload):
 
 def fetch_history(now):
     start=(now.date()-timedelta(days=700)).strftime("%Y/%m/%d")
-    end=now.date().strftime("%Y/%m/%d")
-    args=json.dumps({"syid":"TAIWANVIX","flag":"MS","startDate":start,"endDate":end}).encode("utf-8")
-    req=Request(HISTORY_API,data=args,method="POST",headers={
-        "User-Agent":"Mozilla/5.0 (compatible; Tradingview-testing-TaiwanVIX/1.0)",
-        "Content-Type":"application/json; charset=utf-8","Accept":"application/json",
-        "Referer":HISTORY_PAGE})
-    with urlopen(req,timeout=35) as response:raw=response.read(MAX_BYTES+1)
-    if len(raw)>MAX_BYTES:raise ValueError("期交所指數專區資料檔超出限制")
-    return parse_portal(raw,now)
+    # The public chart can respond with an empty dataset for an unfinished
+    # trading day. Retry date-scoped earlier end dates, never simulate today's
+    # VIX using yesterday's value.
+    errors=[]
+    for day_offset in range(4):
+        end=(now.date()-timedelta(days=day_offset)).strftime("%Y/%m/%d")
+        args=json.dumps({"syid":"TAIWANVIX","flag":"MS","startDate":start,"endDate":end}).encode("utf-8")
+        req=Request(HISTORY_API,data=args,method="POST",headers={
+            "User-Agent":"Mozilla/5.0 (compatible; Tradingview-testing-TaiwanVIX/1.0)",
+            "Content-Type":"application/json; charset=utf-8","Accept":"application/json",
+            "Referer":HISTORY_PAGE})
+        try:
+            with urlopen(req,timeout=35) as response:raw=response.read(MAX_BYTES+1)
+            if len(raw)>MAX_BYTES:raise ValueError("期交所指數專區資料檔超出限制")
+            rows=parse_portal(raw,now)
+            print("TAIFEX_PORTAL_VERIFIED_END",end,"last",rows[-1]["date"],flush=True)
+            return rows
+        except (ValueError,KeyError,TimeoutError,OSError) as exc:
+            errors.append(end+":"+type(exc).__name__)
+    raise RuntimeError("期交所三年歷史查詢均無法驗證："+", ".join(errors))
 
 def main():
     now=datetime.now(TZ)
