@@ -45,8 +45,8 @@
 <script defer src="./us-market-freshness.js?v=de836e1500a9"></script>
 <script defer src="./fear-greed-home.js?v=c8cea7d26984"></script>
 <script defer src="./vix-home.js?v=cc61084cae03"></script>
-<link rel="stylesheet" href="./tw-vix-home.css?v=20261104">
-<script defer src="./tw-vix-home.js?v=20261104"></script>
+<link rel="stylesheet" href="./tw-vix-home.css?v=20261104-range2">
+<script defer src="./tw-vix-home.js?v=20261104-range2"></script>
 
 
 <link rel="stylesheet" href="./retail-survival.css?v=1">
@@ -230,8 +230,19 @@
  </div>
  <div class="tw-vix-at">資料觀測時間：<strong id="twVixAt">讀取中…</strong></div>
  <div class="tw-vix-status" id="twVixStatus" role="status" aria-live="polite">正在核對台股 VIX 資料日期…</div>
+ <div class="tw-vix-range-head">
+  <div class="tw-vix-range-name">VIX 歷史走勢區間 <small>以期交所實際交易日計算</small></div>
+  <div class="tw-vix-range-buttons" role="group" aria-label="選擇台股 VIX 歷史走勢交易日數">
+   <button type="button" data-tw-vix-range="30" aria-pressed="false">30 日</button>
+   <button type="button" data-tw-vix-range="60" class="is-active" aria-pressed="true">60 日</button>
+   <button type="button" data-tw-vix-range="90" aria-pressed="false">90 日</button>
+   <button type="button" data-tw-vix-range="120" aria-pressed="false">120 日</button>
+   <button type="button" data-tw-vix-range="360" aria-pressed="false">360 日</button>
+  </div>
+ </div>
+ <p class="tw-vix-range-status" id="twVixRangeStatus" aria-live="polite">圖表區間讀取中…</p>
  <svg class="tw-vix-chart" id="twVixChart" role="img" aria-label="台股 VIX 歷史觀測值走勢；樣本不足時不繪製假線" preserveAspectRatio="xMidYMid meet"></svg>
- <p class="tw-vix-chart-caption">近 60 個已核對期交所官方日收盤；樣本不足時顯示待累積，不捏造歷史。</p>
+ <p class="tw-vix-chart-caption" id="twVixChartCaption">近 60 個期交所官方交易日；可切換 30／60／90／120／360 日。不以不足的歷史資料冒充指定區間。</p>
  <p class="tw-vix-guide" id="twVixGuide">同時觀察 Nasdaq、VXN／美股 VIX、台股上漲家數與底部反轉確認；不因單一高 VIX 就進場。</p>
  <p class="tw-vix-foot">來源：臺灣期貨交易所 VIX 官方歷史收盤檔；非即時行情。盤中資訊請另開玩股網確認。本卡不修改 Risk Score、G／G Pro／F 或回測結果。</p>
 </section>
