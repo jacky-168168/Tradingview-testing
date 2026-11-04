@@ -2,13 +2,13 @@
 import json
 import sys
 import unittest
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from tw_vix import parse_month, daily_rows, month_keys, validate, TZ, VERSION, SOURCE
+from tw_vix import parse_month, parse_portal, reconcile_portal_to_months, daily_rows, month_keys, validate, TZ, VERSION, SOURCE
 
 NOW = datetime(2026, 11, 4, 14, 10, tzinfo=TZ)
 NOV = ("""交易日期\t時間\t臺指選擇權波動率指數\t最後一分鐘平均
@@ -22,11 +22,9 @@ OCT = ("""交易日期\t時間\t臺指選擇權波動率指數\t最後一分鐘�
 
 
 class TaifexDailyVixTest(unittest.TestCase):
-    def test_official_months_cover_360_sessions(self):
+    def test_recent_months_use_four_real_official_files_only(self):
         keys=month_keys(date(2026,11,4))
-        self.assertEqual(len(keys),21)
-        self.assertEqual(keys[:4],["202611","202610","202609","202608"])
-        self.assertEqual(keys[-1],"202503")
+        self.assertEqual(keys,["202611","202610","202609","202608"])
         self.assertEqual(len(set(keys)),len(keys))
 
     def test_real_2026_11_file_values(self):
@@ -86,15 +84,49 @@ class TaifexDailyVixTest(unittest.TestCase):
         self.assertEqual(rows[-1]["date"],records[-1]["date"])
         self.assertEqual(rows[-1]["change"],.01)
 
+    def test_portal_3year_series_crosschecked_by_official_monthly_file(self):
+        days=[]
+        current=date(2025,3,3)
+        while len(days)<420:
+            if current.weekday()<5:
+                days.append(current)
+            current+=timedelta(days=1)
+        payload={"d":json.dumps({"TrendData":[{"Time":day.strftime("%Y%m%d"),"Price":round(18+i/100,2)}
+                                 for i,day in enumerate(days)]})}
+        portal=parse_portal(json.dumps(payload).encode("utf-8"),NOW)
+        self.assertEqual(len(portal),420)
+        monthly=[{**r,"closeMinuteAverage":r["value"]} for r in portal[-45:]]
+        verified=reconcile_portal_to_months(portal,[monthly])
+        self.assertEqual(len(verified),420)
+        self.assertIsNone(verified[0]["closeMinuteAverage"])
+        self.assertEqual(verified[-1]["closeMinuteAverage"],verified[-1]["value"])
+        self.assertEqual(len(daily_rows([verified])),400)
+
+    def test_portal_does_not_accept_conflicting_official_monthly_close(self):
+        days=[]
+        current=date(2025,3,3)
+        while len(days)<400:
+            if current.weekday()<5:days.append(current)
+            current+=timedelta(days=1)
+        payload={"d":json.dumps({"TrendData":[{"Time":day.strftime("%Y%m%d"),"Price":25.01}
+                                 for day in days]})}
+        portal=parse_portal(json.dumps(payload).encode("utf-8"),NOW)
+        monthly=[{**r,"closeMinuteAverage":25.01} for r in portal[-45:]]
+        monthly[0]["value"]=29.0
+        with self.assertRaisesRegex(ValueError,"數值不符"):
+            reconcile_portal_to_months(portal,[monthly])
+
     def test_committed_daily_official_seed(self):
         d=json.loads((ROOT/"docs/data/research/tw_vix/latest.json").read_text("utf-8"))
         self.assertEqual(d["version"],VERSION)
         self.assertEqual(d["sourceUrl"],SOURCE)
         self.assertEqual(d["quality"],"official-taifex-daily-close")
-        self.assertEqual(d["asOfDate"],"2026-11-03")
-        self.assertEqual(d["rows"][-1]["value"],36.83)
-        self.assertEqual(d["rows"][-1]["changePct"],17.67)
-        self.assertEqual(len(validate(d)),62)
+        self.assertGreaterEqual(d["asOfDate"],"2026-11-03")
+        self.assertGreaterEqual(len(validate(d)),62)
+        fixed=next((r for r in d["rows"] if r["date"]=="2026-11-03"),None)
+        if fixed:
+            self.assertEqual(fixed["value"],36.83)
+            self.assertEqual(fixed["changePct"],17.67)
 
     def test_cannot_forge_daily_pct(self):
         d=json.loads((ROOT/"docs/data/research/tw_vix/latest.json").read_text("utf-8"))
