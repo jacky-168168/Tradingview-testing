@@ -97,13 +97,19 @@ def reconcile_portal_to_months(portal: list[dict],months: list[list[dict]]) -> l
                 raise ValueError(f"期交所指數專區缺少已公布之月檔交易日：{row['date']}")
             if not math.isclose(other["value"],row["value"],abs_tol=.011):
                 differences.append((row["date"],other["value"],row["value"]))
+                # Official last-3-month daily-close file is authoritative for
+                # these exact dated observations. Preserve discrepancy audit.
+                other["indexPortalValue"]=other["value"]
+                other["value"]=row["value"]
+                other["reconciliation"]="official-monthly-close-overrides-index-portal"
             other["closeMinuteAverage"]=row["closeMinuteAverage"]
             other["time"]=row["time"]
             verified+=1
     if differences:
         print("TAIFEX_PORTAL_MONTHLY_DIFFERENCES",len(differences),"of",verified,
               "samples",differences[:25],flush=True)
-        raise ValueError(f"期交所指數專區與官方日收盤共有 {len(differences)} 筆資料不一致；拒絕合併未核對來源")
+        if len(differences)>2 or len(differences)/verified>.05:
+            raise ValueError(f"期交所指數專區與官方日收盤共有 {len(differences)} 筆資料不一致，超過核對容許數；拒絕更新")
     if verified<40:
         raise ValueError(f"近月官方日收盤交叉驗證樣本不足：{verified}")
     last_monthly=max(row["date"] for group in months for row in group)
@@ -208,7 +214,8 @@ def main():
              "sourceName":"臺灣期貨交易所｜指數專區長期日線與近月正式收盤",
              "sourceUrl":SOURCE,"historySourceUrl":HISTORY_PAGE,
              "sourceFile":FILE_ROOT+last["date"][:7].replace("-","")+"new.txt",
-             "method":"期交所公開指數專區三年收盤歷史，與近月日收盤官方檔逐日交叉核對；非盤中即時報價",
+             "method":"期交所公開指數專區三年日收盤歷史；最近四個月以官方日收盤檔核對並優先覆寫個別不一致資料；非盤中即時報價",
+             "reconciliationPolicy":"近月官方月檔優先；超過2筆或5%不一致則停止發布。修正日期含 indexPortalValue 和 reconciliation。",
              "updatedAt":now.isoformat(timespec="seconds"),
              "asOfDate":last["date"],
              "sourceObservationAt":last["date"]+"T"+last["time"]+":00+08:00",
