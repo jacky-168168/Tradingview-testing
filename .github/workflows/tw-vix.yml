@@ -74,6 +74,21 @@ jobs:
               except Exception as exc:
                   print('TAIFEX_UNAVAILABLE',url,type(exc).__name__,str(exc)[:160])
           PY
+      - name: Inspect TAIFEX official latest monthly VIX closing TXT file (PR only)
+        run: |
+          python - <<'PY'
+          import urllib.request
+          url='https://www.taifex.com.tw/file/taifex/Dailydownload/vix/log2data/202611new.txt'
+          try:
+              with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'}),timeout=25) as r:
+                  data=r.read(100000)
+              text=data.decode('utf-8-sig',errors='replace')
+              lines=[x.strip() for x in text.splitlines() if x.strip()]
+              print('TAIFEX_TEXT_OK','bytes',len(data),'lines',len(lines),'first',lines[:4],'last',lines[-4:])
+          except Exception as exc:
+              print('TAIFEX_TEXT_ERROR',type(exc).__name__,str(exc)[:200])
+              raise
+          PY
       - name: Independently probe real public Taiwan VIXTWN source (PR only; never publish)
         run: python tw-stock-dashboard/src/tw_vix.py
       - name: Verify observed quote date on PR runner
