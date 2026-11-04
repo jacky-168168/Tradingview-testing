@@ -115,7 +115,7 @@ def reconcile_portal_to_months(portal: list[dict],months: list[list[dict]]) -> l
     last_monthly=max(row["date"] for group in months for row in group)
     # If the chart includes a newer session not yet in the published official
     # monthly file, do not publish that unverified same-day point.
-    verified_rows=[row for row in portal if row["date"]<=last_monthly]
+    verified_rows=[dict(row) for row in portal if row["date"]<=last_monthly]
     for row in verified_rows:
         if row["date"] in by_date:row.update(by_date[row["date"]])
     if len(verified_rows)<360:
