@@ -89,16 +89,21 @@ def reconcile_portal_to_months(portal: list[dict],months: list[list[dict]]) -> l
     """Verify every recent official monthly close matches the longer public chart."""
     by_date={r["date"]:dict(r) for r in portal}
     verified=0
+    differences=[]
     for group in months:
         for row in group:
             other=by_date.get(row["date"])
             if not other:
                 raise ValueError(f"期交所指數專區缺少已公布之月檔交易日：{row['date']}")
             if not math.isclose(other["value"],row["value"],abs_tol=.011):
-                raise ValueError(f"期交所指數專區／官方日收盤數值不符：{row['date']} "+str(other["value"])+" vs "+str(row["value"]))
+                differences.append((row["date"],other["value"],row["value"]))
             other["closeMinuteAverage"]=row["closeMinuteAverage"]
             other["time"]=row["time"]
             verified+=1
+    if differences:
+        print("TAIFEX_PORTAL_MONTHLY_DIFFERENCES",len(differences),"of",verified,
+              "samples",differences[:25],flush=True)
+        raise ValueError(f"期交所指數專區與官方日收盤共有 {len(differences)} 筆資料不一致；拒絕合併未核對來源")
     if verified<40:
         raise ValueError(f"近月官方日收盤交叉驗證樣本不足：{verified}")
     last_monthly=max(row["date"] for group in months for row in group)
