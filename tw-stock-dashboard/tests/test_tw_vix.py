@@ -76,7 +76,7 @@ class TaifexDailyVixTest(unittest.TestCase):
         self.assertEqual(d["asOfDate"],"2026-11-03")
         self.assertEqual(d["rows"][-1]["value"],36.83)
         self.assertEqual(d["rows"][-1]["changePct"],17.67)
-        self.assertEqual(len(validate(d)),2)
+        self.assertEqual(len(validate(d)),62)
 
     def test_cannot_forge_daily_pct(self):
         d=json.loads((ROOT/"docs/data/research/tw_vix/latest.json").read_text("utf-8"))
