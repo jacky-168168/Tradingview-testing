@@ -27,7 +27,7 @@ test("verified VIXTWN source record is valid and separate from Cboe VIX",()=>{
 test("market VIX high cannot become arbitrary same-day Risk Score",()=>{
  const src=fs.readFileSync(path.join(root,"tw-vix-home.js"),"utf8");
  assert.ok(!src.includes("risk.score="));
- assert.ok(src.includes("非底部"));
+ assert.ok(src.includes("高 VIX 不代表底部已確認"));
 });
 test("20d and 60d percentiles require complete unique market sessions",()=>{
  assert.equal(home.percentile(sample.rows,20),null);
