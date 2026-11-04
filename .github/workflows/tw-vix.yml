@@ -53,26 +53,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Probe official TAIFEX public 3-year VIX series
-        run: |
-          python - <<'PY'
-          import json,urllib.request
-          url='https://www.taifex.com.tw/indes/index.aspx/GetStockDayPrices'
-          payload=json.dumps({'syid':'TAIWANVIX','flag':'MS','startDate':'2025/03/01','endDate':'2026/11/03'}).encode()
-          request=urllib.request.Request(url,data=payload,method='POST',headers={
-              'User-Agent':'Mozilla/5.0','Content-Type':'application/json; charset=utf-8',
-              'Accept':'application/json','Referer':'https://www.taifex.com.tw/indes/index.aspx'})
-          try:
-              with urllib.request.urlopen(request,timeout=30) as response:
-                  obj=json.load(response)
-              data=json.loads(obj['d'])
-              trend=data.get('TrendData') or []
-              print('TAIFEX_3Y_API_OK',len(trend),'keys',list(data),'first',trend[:2],'last',trend[-2:])
-          except Exception as exc:
-              print('TAIFEX_3Y_API_FAILED',type(exc).__name__,str(exc)[:300])
-              raise
-          PY
-      - name: Fetch real TAIFEX official VIX closes in isolated PR runner (never publish)
+      - name: Fetch real TAIFEX 3-year VIX with monthly-close reconciliation (never publish)
         run: python tw-stock-dashboard/src/tw_vix.py
       - name: Reconcile official dated history
         run: |
@@ -82,7 +63,7 @@ jobs:
           j=json.loads(Path('tw-stock-dashboard/docs/data/research/tw_vix/latest.json').read_text('utf-8'))
           assert j['quality']=='official-taifex-daily-close'
           assert j['sourceUrl']=='https://www.taifex.com.tw/cht/7/vixDaily3MNew'
-          assert len(j['rows'])>=20
+          assert len(j['rows'])>=360
           assert j['asOfDate']==j['rows'][-1]['date']
           print('TAIFEX_VIX_SOURCE_PROBE_OK',j['asOfDate'],j['rows'][-1]['value'],len(j['rows']))
           PY
@@ -100,7 +81,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Fetch TAIFEX official daily VIX closes with strict date validation
+      - name: Fetch TAIFEX 3-year VIX and cross-check recent official monthly files
         run: python tw-stock-dashboard/src/tw_vix.py
       - name: Verify generated official close observation
         run: |
@@ -111,7 +92,7 @@ jobs:
           assert j['version']=='TW_VIX_TAIFEX_DAILY_V1'
           assert j['quality']=='official-taifex-daily-close'
           assert j['asOfDate']==j['rows'][-1]['date']
-          assert len(j['rows'])>=20
+          assert len(j['rows'])>=360
           print('TW_VIX_VALIDATED',j['sourceObservationAt'],j['rows'][-1]['value'])
           PY
       - name: Save independently verified observations to main only after human approval
