@@ -103,7 +103,7 @@ async function main(){
         (!long.line&&long.caption.includes('尚不足 360 日'));
       return long.pressed==='true'&&short.pressed==='true'&&longExpected&&
         short.line&&short.caption.includes('共 30 筆');
-    }));
+    });
     await test(variant+' validated same-day quote breadth displays numeric homepage score',async()=>{
       const live=JSON.parse(fs.readFileSync(path.join(ROOT,'data/g_intraday/latest.json'),'utf8'));
       if(!live.indicativeQuoteBreadth)return true; // Older archived JSON predates separate breadth estimate.
