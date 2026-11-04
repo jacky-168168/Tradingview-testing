@@ -34,3 +34,17 @@
  .tw-vix-stat--main strong{font-size:29px}
  .tw-vix-chart{height:105px}
 }
+
+.tw-vix-range-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px}
+.tw-vix-range-name{font-size:13px;font-weight:850;color:#e7ecff;line-height:1.5}
+.tw-vix-range-name small{display:block;color:#b9cde6;font-size:11px;font-weight:500}
+.tw-vix-range-buttons{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tw-vix-range-buttons button{padding:7px 12px;border:1px solid #607494;border-radius:8px;background:#273a55;color:#e8eef9;font-size:12px;font-weight:800;cursor:pointer;min-width:51px}
+.tw-vix-range-buttons button.is-active{background:#ecedff;border-color:#ecedff;color:#1b2540}
+.tw-vix-range-buttons button:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.tw-vix-range-status{margin:7px 0 5px;font-size:11px;color:#b9cde6}
+@media(max-width:760px){
+ .tw-vix-range-head{align-items:flex-start}
+ .tw-vix-range-buttons{width:100%;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+ .tw-vix-range-buttons button{padding:9px 2px;min-width:0;font-size:12px}
+}
