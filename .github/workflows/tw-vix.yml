@@ -67,14 +67,6 @@ jobs:
           assert j['asOfDate']==j['rows'][-1]['date']
           print('TAIFEX_VIX_SOURCE_PROBE_OK',j['asOfDate'],j['rows'][-1]['value'],len(j['rows']))
           PY
-      - name: Temporary verified public observations export for PR staging
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          data=json.loads(Path('tw-stock-dashboard/docs/data/research/tw_vix/latest.json').read_text('utf-8'))
-          print('TAIFEX_VERIFIED_JSON_DATA',json.dumps(data,ensure_ascii=False,separators=(',',':')))
-          PY
   refresh:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: verify
