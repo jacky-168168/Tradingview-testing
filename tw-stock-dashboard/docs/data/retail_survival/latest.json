@@ -1,17 +1,17 @@
 {
   "schema": "retail-survival-v1",
   "source": {
-    "name": "TWSE 上市與 TPEx 上櫃原始資料；上市櫃整體以融資金額加權計算",
+    "name": "愛玩股市場融資維持率（核對 TWSE 官方日期、融資金額與加權指數）",
     "url": "https://www.istock.tw/post/twmarginrequirement_more",
-    "method": "各市場融資股票市值／融資金額餘額；非券商個別整戶維持率",
-    "classification": "盤後公開資料自行計算；每筆 provenanceByScope 標示來源",
+    "method": "來源公布之上市／上櫃與整體市場維持率；以官方同日融資金額與指數核對；非券商個別整戶維持率",
+    "classification": "第三方市場維持率系列，官方融資金額與指數逐日核對；每筆 provenanceByScope 標示來源",
     "listedSource": "https://www.twse.com.tw/exchangeReport/MI_MARGN?selectType=MS",
     "otcSource": "https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal_result.php?l=zh-tw&o=htm",
     "tpexOpenApi": "https://www.tpex.org.tw/openapi/",
     "indexOhlcSource": "Yahoo Finance ^TWII，與資料源指數收盤核對後採用"
   },
   "asOf": "2026-11-03",
-  "updatedAt": "2026-11-03T20:32:49.344634+00:00",
+  "updatedAt": "2026-11-03T23:49:49.978Z",
   "rows": [
     {
       "date": "2026-08-03",
@@ -294,9 +294,9 @@
       "otc": 191.28,
       "overall": 191.41,
       "indexClose": 47326.3,
-      "indexOpen": 46724.0,
+      "indexOpen": 46724,
       "indexHigh": 47429.58,
-      "indexLow": 46724.0,
+      "indexLow": 46724,
       "indexOhlcClose": 47326.27
     },
     {
@@ -385,7 +385,7 @@
       "indexOpen": 45936.11,
       "indexHigh": 46874.84,
       "indexLow": 45936.11,
-      "indexOhlcClose": 46288.0
+      "indexOhlcClose": 46288
     },
     {
       "date": "2026-09-18",
@@ -593,7 +593,7 @@
       "indexClose": 46822.1,
       "indexOpen": 46844.64,
       "indexHigh": 46844.64,
-      "indexLow": 46170.0,
+      "indexLow": 46170,
       "indexOhlcClose": 46822.08
     },
     {
@@ -665,7 +665,7 @@
     {
       "date": "2026-10-30",
       "listed": 171.75,
-      "otc": 167.0,
+      "otc": 167,
       "overall": 170.57,
       "indexClose": 45211.83,
       "provenance": "TWSE 上市公開日資料自行計算",
@@ -712,35 +712,25 @@
       "otcCoverage": 0.984069,
       "otcMatched": 803,
       "otcPositive": 816,
-      "otcSource": "TPEx OpenAPI 上櫃融資＋收盤行情；TPEx 融資金額報表",
-      "indexOpen": 45034.53,
-      "indexHigh": 45156.17,
-      "indexLow": 44399.1,
-      "indexOhlcClose": 44920.14
+      "otcSource": "TPEx OpenAPI 上櫃融資＋收盤行情；TPEx 融資金額報表"
     },
     {
       "date": "2026-11-03",
-      "listed": 178.27,
-      "otc": 156.76,
-      "overall": 172.96,
+      "listed": 162.67,
+      "otc": 156.8,
+      "overall": 161.22,
       "indexClose": 43307.54,
       "listedLoanTwd": 599774466000,
-      "listedCollateralTwd": 1069196079360,
-      "listedCoverage": 0.995157,
-      "listedMatched": 1233,
-      "listedPositive": 1239,
-      "provenance": "TWSE 上市公開日資料自行計算",
-      "provenanceByScope": {
-        "listed": "TWSE 原始資料自行計算",
-        "otc": "TPEx 原始資料自行計算",
-        "overall": "TWSE + TPEx 融資金額加權計算"
-      },
       "otcLoanTwd": 196562898000,
-      "otcCollateralTwd": 308131456420,
-      "otcCoverage": 0.988916,
-      "otcMatched": 803,
-      "otcPositive": 812,
-      "otcSource": "TPEx OpenAPI 上櫃融資＋收盤行情；TPEx 融資金額報表"
+      "ratioSource": "https://www.istock.tw/post/twmarginrequirement_more",
+      "ratioSourceDate": "2026-11-03",
+      "ratioVerification": "third-party date and TWSE official loan/index matched",
+      "provenanceByScope": {
+        "listed": "愛玩股 2026-11-03 上市維持率，與玩股網核對",
+        "otc": "愛玩股 2026-11-03 上櫃維持率",
+        "overall": "愛玩股 2026-11-03 整體維持率（依上市櫃官方融資金額核對加權值）"
+      },
+      "sourceNote": "維持率為市場來源公布值，並非由本 JSON 的未驗證擔保市值倒推"
     }
   ]
 }

@@ -182,7 +182,7 @@
  </div>
  <section class="cmd-trade-guide" id="commandTradeGuide" data-tone="wait" aria-label="依當前分數解讀與操作建議">
     <div class="cmd-trade-guide-label">🧭 分數解讀與操作方向 <span id="commandGuideSource">等待有效資料</span></div>
-    <div class="cmd-trade-guide-title" id="commandGuideTitle" role="status" aria-live="polite">核對今日操作風險中…</div>
+    <div class="cmd-trade-guide-title" id="commandGuideTitle" role="status" aria-live="polite">今日操作：核對風險資料中…</div>
     <div class="cmd-trade-guide-text" id="commandGuideText">分數只能評估市場環境，不能取代個股買點、停損或正式風控。</div>
     <div id="commandReboundWarning" class="sentiment-rebound-warning" role="status" hidden>風險校正確認中…</div>
     <div class="cmd-trade-guide-compare" id="commandGuideCompare" hidden></div>
@@ -251,7 +251,7 @@
   <div class="retail-head">
     <div>
       <h2>📉 散戶存活率｜大盤融資維持率</h2>
-      <p class="retail-muted">加權指數日 K 與融資維持率雙軸對照；維持率為盤後統計推估，並不是實際散戶存活人數比例。</p>
+      <p class="retail-muted">融資金額增減與融資維持率分開呈現；維持率屬盤後統計推估，並非實際散戶存活人數比例。</p>
     </div>
     <div class="retail-controls">
       <label for="retailScope" class="retail-muted">市場別</label>
@@ -270,8 +270,10 @@
     </div>
   </div>
   <div class="retail-stats" aria-label="融資風險數據摘要">
+    <div class="retail-stat"><span>融資金額較前交易日</span><strong id="retailLoanChange">—</strong><small>借款金額增減，單位：億元</small></div>
+    <div class="retail-stat"><span>融資金額餘額</span><strong id="retailLoan">—</strong><small id="retailLoanDate">尚無可核對融資金額</small></div>
     <div class="retail-stat"><span>融資維持率</span><strong id="retailCurrent">—</strong><small>上市櫃整體（預設，可切換市場別）</small></div>
-    <div class="retail-stat"><span>較前交易日</span><strong id="retailChange">—</strong><small>單位：百分點</small></div>
+    <div class="retail-stat"><span>維持率較前交易日</span><strong id="retailChange">—</strong><small>單位：百分點，非融資金額</small></div>
     <div class="retail-stat"><span>加權指數收盤</span><strong id="retailIndex">—</strong><small>日 K 僅於 OHLC 驗證後顯示</small></div>
     <div class="retail-stat"><span>維持率資料日</span><strong id="retailDate">—</strong><small>非盤中即時更新</small></div>
   </div>

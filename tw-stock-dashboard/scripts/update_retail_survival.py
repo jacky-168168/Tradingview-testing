@@ -100,34 +100,58 @@ def main():
         except (OSError, ValueError):
             pass
     old = {r["date"]:r for r in existing.get("rows", []) if isinstance(r, dict) and valid(r)}
-    from retail_twse_fallback import main as compute_twse
-    from retail_tpex import main as compute_tpex
-    # TWSE 為錨點，且與加權指數收盤必須為相同交易日。
-    listed = compute_twse()
-    day = listed["date"]
-    row = {**listed, "otc":None, "overall":None,
-           "provenanceByScope":{"listed":"TWSE 原始資料自行計算"}}
+    from retail_twse_fallback import official_summary
+    from retail_tpex import main as compute_tpex, TOTAL_URL, HEADERS as OTC_HEADERS, iso_to_roc, parse_loan_html
+    # Market-wide ratio uses the published observed series, not a potentially
+    # mixed-date self-computed collateral / same-day loan denominator.
+    # Independently tie it to TWSE's date-stamped official loan and index.
+    official = official_summary()
+    day = official["date"]
+    response = requests.get(SOURCE, headers=HEADERS, timeout=30)
+    response.raise_for_status()
+    published = parse_source(response.text)
+    ratio_row = next((x for x in published if x["date"] == day), None)
+    if ratio_row is None or published[-1]["date"] != day:
+        raise RuntimeError(f"愛玩股維持率尚未更新至 TWSE 同日：官方 {day}／來源最新 {published[-1]['date']}")
+    if abs(ratio_row["indexClose"] / official["indexClose"] - 1) > 0.001:
+        raise RuntimeError(f"上市維持率來源之加權指數不符：{ratio_row['indexClose']} != {official['indexClose']}")
+    row = {**ratio_row, **official,
+           "ratioSource": SOURCE, "ratioSourceDate": day,
+           "ratioVerification": "third-party date and TWSE official loan/index matched",
+           "provenanceByScope": {
+               "listed": "愛玩股上市維持率；核對證交所同日融資金額與指數",
+               "otc": "愛玩股上櫃維持率；核對資料日期",
+               "overall": "愛玩股上市櫃加權維持率；核對交易日期與官方融資金額"
+           }}
     try:
         otc = compute_tpex(expected_day=day)
-        row.update(otc)
-        loan_total = listed["listedLoanTwd"] + otc["otcLoanTwd"]
-        collateral_total = listed["listedCollateralTwd"] + otc["otcCollateralTwd"]
-        if loan_total <= 0:
-            raise RuntimeError("上市櫃合併融資金額無效")
-        total_ratio = round(collateral_total / loan_total * 100, 2)
-        if not 95 < total_ratio < 350:
-            raise RuntimeError("上市櫃整體維持率異常")
-        row["overall"] = total_ratio
-        row["provenanceByScope"] = {
-            "listed":"TWSE 原始資料自行計算",
-            "otc":"TPEx 原始資料自行計算",
-            "overall":"TWSE + TPEx 融資金額加權計算"}
-        print("ALL_MARKET_DERIVED",day,"listed",row["listed"],"otc",row["otc"],
-              "overall",total_ratio,"loanTwd",loan_total,flush=True)
+        row["otcLoanTwd"] = otc["otcLoanTwd"]
+        # An independently calculated OTC rate is a cross-check, not the
+        # displayed series. Large disagreements fail closed.
     except Exception as exc:
-        # OTC 源不可用時可保留已公開的上市數據，但不可用上市值代替整體值。
+        # Even when individual OTC quotes lag, the official OTC loan may
+        # already be available for a dated amount-change comparison.
         row["otcError"] = str(exc)[:260]
-        print("TPEx_UPDATE_FAILED",repr(exc),"; 不捏造上櫃／整體維持率",flush=True)
+        print("TPEX_RATIO_CHECK_UNAVAILABLE", repr(exc), flush=True)
+        try:
+            otc_response = requests.get(TOTAL_URL, params={"l":"zh-tw","o":"htm","d":iso_to_roc(day)},
+                                        headers=OTC_HEADERS, timeout=30)
+            otc_response.raise_for_status()
+            row["otcLoanTwd"] = round(parse_loan_html(otc_response.text, day))
+        except Exception as loan_exc:
+            print("TPEX_OFFICIAL_LOAN_UNAVAILABLE", repr(loan_exc), flush=True)
+    else:
+        if abs(row["otc"] - otc["otc"]) > 2:
+            raise RuntimeError(f"愛玩股／TPEx 上櫃維持率差距過大：{row['otc']} vs {otc['otc']}")
+    if row.get("otcLoanTwd"):
+        # Check that the independently sourced overall value agrees with the
+        # money-weighted published component ratios.
+        la, lb = row["listedLoanTwd"], row["otcLoanTwd"]
+        weighted = (la * row["listed"] + lb * row["otc"]) / (la + lb)
+        if abs(weighted - row["overall"]) > 0.25:
+            raise RuntimeError(f"上市櫃維持率加權對帳失敗：{weighted:.2f} vs {row['overall']}")
+    print("RET_SURVIVAL_SOURCED", day, "listed", row["listed"], "otc", row["otc"],
+          "overall", row["overall"], "loanTwd", row["listedLoanTwd"], row.get("otcLoanTwd"), flush=True)
     incoming = [row]
     if old and day < max(old):
         raise RuntimeError(f"官方來源資料日期倒退：{day}，現有 {max(old)}；拒絕覆寫")
@@ -136,13 +160,16 @@ def main():
         day = row["date"]
         old_record = old.get(day, {})
         if old_record:
-            # 同日期仍保留來源相符的歷史 OHLC；缺失的 OTC 不能冒稱為新一日官方計算。
-            row = {**old_record, **{k:v for k,v in row.items() if v is not None}}
-            if row.get("otcError"):
-                row["provenanceByScope"] = {
-                    "listed":"TWSE 原始資料自行計算",
-                    "otc":"既有歷史資料（本輪 TPEx 無法驗證）" if old_record.get("otc") is not None else "未確認",
-                    "overall":"既有歷史資料（本輪 TPEx 無法驗證）" if old_record.get("overall") is not None else "未確認"}
+            # Do not carry prior-day collateral, matched sample sizes or
+            # calculated coverage into a freshly source-verified ratio.
+            unverified = {"listedCollateralTwd", "otcCollateralTwd", "otcLoanTwd", "listedCoverage", "otcCoverage",
+                          "listedMatched", "otcMatched", "listedPositive", "otcPositive",
+                          "otcSource", "provenance", "otcError", "ratioSource", "ratioSourceDate",
+                          "ratioVerification", "provenanceByScope"}
+            clean_old = {k:v for k,v in old_record.items() if k not in unverified}
+            row = {**clean_old, **{k:v for k,v in row.items() if v is not None}}
+            if "otcLoanTwd" not in row:
+                row.pop("otcLoanTwd", None)
         # 同一天比對公開來源與 Yahoo 收盤，不吻合時不接入 K 棒。
         candle = candles.get(day)
         if candle and abs(candle["indexOhlcClose"] / row["indexClose"] - 1) <= 0.015:
@@ -159,10 +186,10 @@ def main():
     payload = {
         "schema":"retail-survival-v1",
         "source":{
-            "name":"TWSE 上市與 TPEx 上櫃原始資料；上市櫃整體以融資金額加權計算",
+            "name":"愛玩股市場融資維持率（核對 TWSE 官方日期、融資金額與加權指數）",
             "url":SOURCE,
-            "method":"各市場融資股票市值／融資金額餘額；非券商個別整戶維持率",
-            "classification":"盤後公開資料自行計算；每筆 provenanceByScope 標示來源",
+            "method":"來源公布之上市／上櫃與整體市場維持率；以官方同日融資金額及指數核對；非券商個別整戶維持率",
+            "classification":"第三方市場維持率系列，官方融資金額與指數逐日核對；每筆 provenanceByScope 標示來源",
             "listedSource":"https://www.twse.com.tw/exchangeReport/MI_MARGN?selectType=MS",
             "otcSource":"https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal_result.php?l=zh-tw&o=htm",
             "tpexOpenApi":"https://www.tpex.org.tw/openapi/",

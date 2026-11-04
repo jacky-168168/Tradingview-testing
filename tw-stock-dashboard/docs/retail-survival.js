@@ -11,20 +11,71 @@ const nowDay=()=>{const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Ta
 function valid(r){return r&&/^20\d{2}-\d{2}-\d{2}$/.test(r.date)&&ok(r.indexClose)&&n(r.indexClose)>3000&&n(r.indexClose)<100000&&['listed','otc','overall'].some(k=>r[k]!==null&&r[k]!==undefined&&ok(r[k])&&n(r[k])>75&&n(r[k])<400)}
 function delta(i){return i>0?state.view[i][state.type]-state.view[i-1][state.type]:null}
 function metric(row){return row?n(row[state.type]):null}
-function updateStats(){const rows=state.rows.filter(r=>r[state.type]!==null&&r[state.type]!==undefined&&ok(r[state.type])&&n(r[state.type])>75);if(!rows.length)return;const i=rows.length-1,r=rows[i],before=rows[i-1],d=before?n(r[state.type])-n(before[state.type]):null;
+function financingAmount(r,type){
+ if(!r)return null;
+ const v=k=>typeof r[k]==='number'&&Number.isFinite(r[k])&&r[k]>0?r[k]:null;
+ if(type==='listed')return v('listedLoanTwd');
+ if(type==='otc')return v('otcLoanTwd');
+ const a=v('listedLoanTwd'),b=v('otcLoanTwd');
+ return a!==null&&b!==null?a+b:null;
+}
+function suspiciousMargin(r,prev,type){
+ if(!r||!prev)return false;
+ const suspect=k=>{
+  const collateral=k+'CollateralTwd',loan=k+'LoanTwd';
+  return typeof r[collateral]==='number'&&r[collateral]>0&&r[collateral]===prev[collateral]&&
+   typeof r[loan]==='number'&&typeof prev[loan]==='number'&&Math.abs(r[loan]-prev[loan])>1e9&&
+   typeof r.indexClose==='number'&&typeof prev.indexClose==='number'&&prev.indexClose>0&&
+   Math.abs(r.indexClose/prev.indexClose-1)>=0.01;
+ };
+ return (type!=='otc'&&suspect('listed'))||(type!=='listed'&&suspect('otc'));
+}
+function validRatios(rows,type){return rows.filter((r,i)=>r[type]!==null&&r[type]!==undefined&&ok(r[type])&&n(r[type])>75&&!suspiciousMargin(r,rows[i-1],type));}
+function updateFinancing(){
+ const rows=state.rows.filter(r=>financingAmount(r,state.type)!==null);
+ const curr=rows.at(-1),prev=rows.at(-2);
+ const total=curr?financingAmount(curr,state.type):null;
+ const change=curr&&prev?(total-financingAmount(prev,state.type))/1e8:null;
+ $('retailLoan').textContent=total===null?'—':num(total/1e8)+' 億元';
+ $('retailLoanChange').textContent=change===null?'—':signed(change)+' 億元';
+ $('retailLoanChange').className=change===null?'':change>=0?'retail-positive':'retail-negative';
+ $('retailLoanDate').textContent=curr?'資料日 '+curr.date:'尚無可核對融資金額';
+}
+function updateStats(){
+ const rows=validRatios(state.rows,state.type);
+ const latest=state.rows.at(-1);
+ const suspicious=suspiciousMargin(latest,state.rows.at(-2),state.type);
+ if(suspicious){
+  $('retailCurrent').textContent='待確認';
+  $('retailChange').textContent='—';
+  $('retailChange').className='';
+  $('retailIndex').textContent=num(latest.indexClose);
+  $('retailDate').textContent=latest.date+'（待確認）';
+  $('retailAsOf').textContent='維持率資料日 '+latest.date+'（尚未通過同日驗證）';
+  $('retailStatus').className='retail-status';
+  $('retailStatus').textContent='⚠ '+latest.date+' 維持率疑似混用前一交易日擔保市值，暫停顯示當日維持率及日變化；融資借款金額增減使用已取得的官方金額資料，兩者不是同一指標。';
+  return;
+ }
+ if(!rows.length){
+  $('retailCurrent').textContent='待確認';$('retailChange').textContent='—';
+  $('retailDate').textContent='—';$('retailStatus').className='retail-status';
+  $('retailStatus').textContent='融資維持率沒有通過同日資料檢查，暫停顯示推估數字。';
+  return;
+ }
+ const i=rows.length-1,r=rows[i],before=rows[i-1],d=before?n(r[state.type])-n(before[state.type]):null;
  $('retailCurrent').textContent=num(r[state.type])+'%';
  $('retailChange').textContent=d===null?'—':signed(d)+' 個百分點';
  $('retailChange').className=d!==null?(d>=0?'retail-positive':'retail-negative'):'';
  $('retailIndex').textContent=num(r.indexClose);
  $('retailDate').textContent=r.date;
- $('retailAsOf').textContent='資料日 '+r.date+'（盤後）';
+ $('retailAsOf').textContent='維持率資料日 '+r.date+'（盤後）';
  const oldDays=(Date.parse(nowDay()+'T00:00:00Z')-Date.parse(r.date+'T00:00:00Z'))/86400000;
  const stale=oldDays>5;
  const source=r.provenanceByScope&&r.provenanceByScope[state.type]||r.provenance||'歷史資料，計算口徑未逐日重驗';
- $('retailStatus').className='retail-status'+(stale?'':' ok');
- $('retailStatus').textContent=(stale?'資料已超過 5 個日曆日。':'最新已收錄交易日 '+r.date+'。')+' 來源：'+source+'；不代表帕仙豆原圖的專有指標。';
+ $('retailStatus').className='retail-status'+(stale||suspicious?'':' ok');
+ $('retailStatus').textContent=suspicious?'⚠ '+latest.date+' 維持率疑似混用前一交易日的融資擔保市值，已隱藏該筆，維持率只顯示到 '+r.date+'；融資金額增減仍以最新官方借款金額計算。':(stale?'維持率資料超過 5 個日曆日。':'維持率最新已收錄交易日 '+r.date+'。')+' 來源：'+source+'；融資金額增減與維持率變化是兩個不同指標。';
 }
-function table(){const all=state.rows.filter(r=>r[state.type]!==null&&r[state.type]!==undefined&&ok(r[state.type])&&n(r[state.type])>75),a=all.slice(-7).reverse();let html='';
+function table(){const all=validRatios(state.rows,state.type),a=all.slice(-7).reverse();let html='';
  for(const r of a){const i=all.indexOf(r),prior=all[i-1],d=prior?n(r[state.type])-n(prior[state.type]):null;const cls=d===null?'':d>=0?'retail-positive':'retail-negative';
  html+='<tr><td>'+r.date.slice(5)+'</td><td>'+num(r.indexClose)+'</td><td>'+num(r[state.type])+'%</td><td class="'+cls+'">'+(d===null?'—':signed(d))+'</td></tr>';}
  $('retailTbody').innerHTML=html;
@@ -76,7 +127,7 @@ async function load(){try{
  $('retailSourceLink').href=data.source&&/^https:\/\//.test(data.source.url)?data.source.url:'https://www.istock.tw/post/twmarginrequirement_more';
  render();
  }catch(e){$('retailStatus').textContent='融資維持率無法載入：'+e.message+'。不顯示推測數字。';$('retailStatus').className='retail-status';}}
-function render(){const link=$('retailSourceLink');link.href=state.type==='listed'?'https://www.twse.com.tw/exchangeReport/MI_MARGN?selectType=MS':'https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal_result.php?l=zh-tw&o=htm';link.textContent=state.type==='listed'?'證交所融資原始資料（上市）':'櫃買中心融資原始資料（上櫃／整體計算來源）';state.view=state.rows.filter(r=>r[state.type]!==null&&r[state.type]!==undefined&&ok(r[state.type])&&n(r[state.type])>75).slice(-state.count);state.selected=-1;tip.hidden=true;if(!state.view.length){$('retailStatus').textContent='所選市場別目前沒有可核對資料。';return;}updateStats();table();draw();}
+function render(){const link=$('retailSourceLink');link.href=state.type==='listed'?'https://www.twse.com.tw/exchangeReport/MI_MARGN?selectType=MS':'https://www.tpex.org.tw/web/stock/margin_trading/margin_balance/margin_bal_result.php?l=zh-tw&o=htm';link.textContent=state.type==='listed'?'證交所融資原始資料（上市）':'櫃買中心融資原始資料（上櫃／整體計算來源）';state.view=validRatios(state.rows,state.type).slice(-state.count);state.selected=-1;tip.hidden=true;if(!state.view.length){$('retailStatus').textContent='所選市場別目前沒有可核對資料。';return;}updateFinancing();updateStats();table();draw();}
 scope.addEventListener('change',()=>{state.type=scope.value;render();});
 days.addEventListener('change',()=>{state.count=Number(days.value);render();});
 canvas.addEventListener('pointermove',ev=>{if(!state.plot||!state.view.length)return;const rect=canvas.getBoundingClientRect(),p=(ev.clientX-rect.left-state.plot.left)/state.plot.plotW;showTip(Math.min(state.view.length-1,Math.max(0,Math.floor(p*state.view.length))));});
