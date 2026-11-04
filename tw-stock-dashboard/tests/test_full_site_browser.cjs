@@ -80,7 +80,7 @@ async function main(){
         hasHeading:guide?.textContent.includes('分數解讀與操作方向')??false
       };
       const ok=checks.guide&&checks.title&&checks.detail&&checks.scale&&checks.height>50&&
-        (checks.titleText.startsWith('今日操作')||checks.titleText.startsWith('歷史'))&&
+        (checks.titleText.startsWith('今日操作')||checks.titleText.startsWith('歷史')||checks.titleText.startsWith('盤前'))&&
         checks.detailLength>20&&checks.scaleBands===5&&checks.hasHeading;
       return ok?true:{ok:false,...checks};
     }));
