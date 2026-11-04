@@ -44,6 +44,29 @@ jobs:
         run: |
           node --check tw-stock-dashboard/docs/tw-vix-home.js
           node --test tw-stock-dashboard/tests/tw-vix-home.test.cjs
+  probe-source:
+    if: github.event_name == 'pull_request'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Independently probe real public Taiwan VIXTWN source (PR only; never publish)
+        run: python tw-stock-dashboard/src/tw_vix.py
+      - name: Verify observed quote date on PR runner
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('tw-stock-dashboard/docs/data/research/tw_vix/latest.json')
+          d=json.loads(p.read_text('utf-8'))
+          assert d['sourceUrl']=='https://www.wantgoo.com/index/vixtwn'
+          assert d['sourceObservationAt'].startswith(d['asOfDate'])
+          print('SOURCE_PROBE_OK',d['sourceObservationAt'],d['rows'][-1]['value'])
+          PY
   refresh:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: verify
