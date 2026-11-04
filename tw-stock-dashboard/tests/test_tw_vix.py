@@ -102,7 +102,7 @@ class TaifexDailyVixTest(unittest.TestCase):
         self.assertEqual(verified[-1]["closeMinuteAverage"],verified[-1]["value"])
         self.assertEqual(len(daily_rows([verified])),400)
 
-    def test_portal_does_not_accept_conflicting_official_monthly_close(self):
+    def test_one_portal_disagreement_is_corrected_to_monthly_close_with_provenance(self):
         days=[]
         current=date(2025,3,3)
         while len(days)<400:
@@ -113,7 +113,15 @@ class TaifexDailyVixTest(unittest.TestCase):
         portal=parse_portal(json.dumps(payload).encode("utf-8"),NOW)
         monthly=[{**r,"closeMinuteAverage":25.01} for r in portal[-45:]]
         monthly[0]["value"]=29.0
-        with self.assertRaisesRegex(ValueError,"資料不一致"):
+        corrected=reconcile_portal_to_months(portal,[monthly])
+        row=next(r for r in corrected if r["date"]==monthly[0]["date"])
+        self.assertEqual(row["value"],29.0)
+        self.assertEqual(row["indexPortalValue"],25.01)
+        self.assertEqual(row["reconciliation"],"official-monthly-close-overrides-index-portal")
+
+        for index in (1,2):
+            monthly[index]["value"]=29.0
+        with self.assertRaisesRegex(ValueError,"超過核對容許數"):
             reconcile_portal_to_months(portal,[monthly])
 
     def test_committed_daily_official_seed(self):
