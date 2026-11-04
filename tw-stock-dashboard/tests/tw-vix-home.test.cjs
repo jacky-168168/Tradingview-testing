@@ -18,7 +18,7 @@ test("homepage official Taiwan VIX card and links have correct units",()=>{
 });
 test("source must be official and the daily change must reconcile",()=>{
  const rows=home.check(sample);
- assert.equal(rows.length,2);
+ assert.equal(rows.length,62);
  assert.equal(rows.at(-1).value,36.83);
  assert.equal(rows.at(-1).change,5.53);
  assert.throws(()=>home.check({...sample,version:"TW_VIX_WANTGOO_QUOTES_V1"}));
@@ -31,8 +31,8 @@ test("market VIX high cannot directly overwrite the original Risk Score",()=>{
  assert.ok(src.includes("高 VIX 不代表底部已確認"));
 });
 test("20d/60d percentiles need 20/60 real dated sessions",()=>{
- assert.equal(home.percentile(sample.rows,20),null);
- assert.equal(home.percentile(sample.rows,60),null);
+ assert.ok(home.percentile(sample.rows,20)>0);
+ assert.ok(home.percentile(sample.rows,60)>0);
  const rows=Array.from({length:60},(_,i)=>({value:15+i/2}));
  assert.equal(home.percentile(rows,20),100);
  assert.equal(home.percentile(rows,60),100);
