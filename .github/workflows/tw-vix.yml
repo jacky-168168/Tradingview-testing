@@ -19,10 +19,9 @@ on:
       - 'tw-stock-dashboard/docs/tw-vix-home.css'
   workflow_dispatch:
   schedule:
-    # Taipei weekdays: 09:10/09:40 through 13:40; then 14:10 and 16:10.
-    # Scheduled event can be delayed; source timestamp is always displayed.
-    - cron: '10,40 1-5 * * 1-5'
-    - cron: '10 6,8 * * 1-5'
+    # TAIFEX official 13:45 close archive may be published with a delay.
+    # Retry at Taipei 14:20, 16:20, 18:20, 20:20 on weekdays.
+    - cron: '20 6,8,10,12 * * 1-5'
 
 permissions:
   contents: read
@@ -38,7 +37,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Verify Taiwan VIX parser with fixed-time offline fixtures
+      - name: Verify official TAIFEX monthly VIX parser with dated fixtures
         run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_tw_vix.py' -v
       - name: Verify homepage JavaScript and visual safeguards
         run: |
@@ -48,59 +47,25 @@ jobs:
     if: github.event_name == 'pull_request'
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 7
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Diagnose official TAIFEX public download page availability (PR only)
-        run: |
-          python - <<'PY'
-          import re,urllib.request,urllib.error
-          urls=['https://www.taifex.com.tw/cht/7/vixDaily3MNew',
-                'https://www.bq888.taifex.com.tw/cht/7/vixDaily3MNew']
-          for url in urls:
-              try:
-                  req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0','Accept':'text/html'})
-                  with urllib.request.urlopen(req,timeout=18) as response:
-                      page=response.read(900000).decode('utf-8',errors='replace')
-                  print('TAIFEX_DIAGNOSTIC',url,'chars',len(page))
-                  for pattern in [r'2026/11',r'vixDaily3MNew',r'(?:href|action|onclick)="[^"]{1,130}(?:vix|Vix|CSV|csv)[^"]{0,130}"']:
-                      match=re.search(pattern,page)
-                      if match:
-                          lo=max(0,match.start()-230);hi=min(len(page),match.end()+400)
-                          print('PUBLIC_PAGE_FRAGMENT',re.sub(r'\\s+',' ',page[lo:hi])[:720])
-              except Exception as exc:
-                  print('TAIFEX_UNAVAILABLE',url,type(exc).__name__,str(exc)[:160])
-          PY
-      - name: Inspect TAIFEX official latest monthly VIX closing TXT file (PR only)
-        run: |
-          python - <<'PY'
-          import urllib.request
-          url='https://www.taifex.com.tw/file/taifex/Dailydownload/vix/log2data/202611new.txt'
-          try:
-              with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'}),timeout=25) as r:
-                  data=r.read(100000)
-              text=data.decode('utf-8-sig',errors='replace')
-              lines=[x.strip() for x in text.splitlines() if x.strip()]
-              print('TAIFEX_TEXT_OK','bytes',len(data),'lines',len(lines),'first',lines[:4],'last',lines[-4:])
-          except Exception as exc:
-              print('TAIFEX_TEXT_ERROR',type(exc).__name__,str(exc)[:200])
-              raise
-          PY
-      - name: Independently probe real public Taiwan VIXTWN source (PR only; never publish)
+      - name: Fetch real TAIFEX official VIX closes in isolated PR runner (never publish)
         run: python tw-stock-dashboard/src/tw_vix.py
-      - name: Verify observed quote date on PR runner
+      - name: Reconcile official dated history
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          p=Path('tw-stock-dashboard/docs/data/research/tw_vix/latest.json')
-          d=json.loads(p.read_text('utf-8'))
-          assert d['sourceUrl']=='https://www.wantgoo.com/index/vixtwn'
-          assert d['sourceObservationAt'].startswith(d['asOfDate'])
-          print('SOURCE_PROBE_OK',d['sourceObservationAt'],d['rows'][-1]['value'])
+          j=json.loads(Path('tw-stock-dashboard/docs/data/research/tw_vix/latest.json').read_text('utf-8'))
+          assert j['quality']=='official-taifex-daily-close'
+          assert j['sourceUrl']=='https://www.taifex.com.tw/cht/7/vixDaily3MNew'
+          assert len(j['rows'])>=20
+          assert j['asOfDate']==j['rows'][-1]['date']
+          print('TAIFEX_VIX_SOURCE_PROBE_OK',j['asOfDate'],j['rows'][-1]['value'],len(j['rows']))
           PY
   refresh:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
@@ -116,21 +81,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Fetch public VIXTWN quote with timestamp and source validation
+      - name: Fetch TAIFEX official daily VIX closes with strict date validation
         run: python tw-stock-dashboard/src/tw_vix.py
-      - name: Verify generated observation and provenance
+      - name: Verify generated official close observation
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
           j=json.loads(Path('tw-stock-dashboard/docs/data/research/tw_vix/latest.json').read_text('utf-8'))
-          assert j['version']=='TW_VIX_WANTGOO_QUOTES_V1'
-          assert j['sourceUrl']=='https://www.wantgoo.com/index/vixtwn'
+          assert j['version']=='TW_VIX_TAIFEX_DAILY_V1'
+          assert j['quality']=='official-taifex-daily-close'
           assert j['asOfDate']==j['rows'][-1]['date']
-          assert j['sourceObservationAt'].startswith(j['asOfDate']+'T')
+          assert len(j['rows'])>=20
           print('TW_VIX_VALIDATED',j['sourceObservationAt'],j['rows'][-1]['value'])
           PY
-      - name: Save dated public observation to main after review-approved workflow exists
+      - name: Save independently verified observations to main only after human approval
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -139,7 +104,7 @@ jobs:
             echo 'No new VIX observation; no commit required'
             exit 0
           fi
-          git commit -m 'Refresh date-checked Taiwan VIXTWN public observation'
+          git commit -m 'Refresh official TAIFEX VIX daily closing history'
           for i in 1 2 3; do
             if git pull --rebase origin main && git push origin HEAD:main; then
               echo 'TW_VIX_PUBLISHED_TO_MAIN'
