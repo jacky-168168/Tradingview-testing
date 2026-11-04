@@ -22,8 +22,12 @@ OCT = ("""交易日期\t時間\t臺指選擇權波動率指數\t最後一分鐘�
 
 
 class TaifexDailyVixTest(unittest.TestCase):
-    def test_official_last_months(self):
-        self.assertEqual(month_keys(date(2026,11,4)),["202611","202610","202609","202608"])
+    def test_official_months_cover_360_sessions(self):
+        keys=month_keys(date(2026,11,4))
+        self.assertEqual(len(keys),21)
+        self.assertEqual(keys[:4],["202611","202610","202609","202608"])
+        self.assertEqual(keys[-1],"202503")
+        self.assertEqual(len(set(keys)),len(keys))
 
     def test_real_2026_11_file_values(self):
         rows=parse_month(NOV,"202611",NOW)
@@ -67,6 +71,20 @@ class TaifexDailyVixTest(unittest.TestCase):
     def test_not_duplicate_daily_records(self):
         rows=daily_rows([parse_month(NOV,"202611",NOW),parse_month(NOV,"202611",NOW)])
         self.assertEqual(len(rows),2)
+
+    def test_360_session_history_is_kept_without_260_truncation(self):
+        from datetime import timedelta
+        records=[]
+        start=date(2025,2,1)
+        for i in range(420):
+            day=(start+timedelta(days=i)).isoformat()
+            records.append({"date":day,"time":"13:45","value":20+i*.01,
+                            "closeMinuteAverage":20+i*.01})
+        rows=daily_rows([records])
+        self.assertEqual(len(rows),400)
+        self.assertIsNone(rows[0]["change"])
+        self.assertEqual(rows[-1]["date"],records[-1]["date"])
+        self.assertEqual(rows[-1]["change"],.01)
 
     def test_committed_daily_official_seed(self):
         d=json.loads((ROOT/"docs/data/research/tw_vix/latest.json").read_text("utf-8"))
