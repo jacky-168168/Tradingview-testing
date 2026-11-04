@@ -36,6 +36,10 @@ on:
       - 'tw-stock-dashboard/tests/test_tdcc_whale_ui.cjs'
       - 'tw-stock-dashboard/docs/fear-greed-home.css'
       - 'tw-stock-dashboard/docs/data/research/us_fear_greed/**'
+      - 'tw-stock-dashboard/docs/tw-vix-home.js'
+      - 'tw-stock-dashboard/docs/tw-vix-home.css'
+      - 'tw-stock-dashboard/docs/data/research/tw_vix/**'
+      - 'tw-stock-dashboard/tests/tw-vix-home.test.cjs'
       - 'tw-stock-dashboard/tests/fear-greed-home.test.cjs'
       - 'tw-stock-dashboard/tests/test_us_options_chart.cjs'
       - 'tw-stock-dashboard/docs/data/research/us_options/**'
@@ -104,6 +108,7 @@ jobs:
           node tw-stock-dashboard/tests/test_us_options_chart.cjs
           node tw-stock-dashboard/tests/test_tdcc_whale_ui.cjs
           node tw-stock-dashboard/tests/test_market_compact.cjs
+          node --test tw-stock-dashboard/tests/tw-vix-home.test.cjs
           node tw-stock-dashboard/tests/test_market_close_score.cjs
           node tw-stock-dashboard/tests/test_market_close_live_render.cjs
           node tw-stock-dashboard/tests/test_premarket_frozen_render.cjs

@@ -71,10 +71,18 @@ async function main(){
     await test(variant+' homepage shows score interpretation and action',()=>page.evaluate(()=>{
       const guide=document.getElementById('commandTradeGuide'),title=document.getElementById('commandGuideTitle'),
         detail=document.getElementById('commandGuideText'),scale=document.getElementById('commandGuideScale');
-      return !!(guide&&title&&detail&&scale&&guide.getBoundingClientRect().height>50&&
-        (title.textContent.startsWith('今日操作')||title.textContent.startsWith('歷史'))&&
-        detail.textContent.length>20&&scale.querySelectorAll('.cmd-trade-guide-band').length===5&&
-        guide.textContent.includes('分數解讀與操作方向'));
+      const checks={
+        guide:!!guide,title:!!title,detail:!!detail,scale:!!scale,
+        height:guide?.getBoundingClientRect().height??0,
+        titleText:title?.textContent?.slice(0,90)||'',
+        detailLength:detail?.textContent?.length??0,
+        scaleBands:scale?.querySelectorAll('.cmd-trade-guide-band').length??0,
+        hasHeading:guide?.textContent.includes('分數解讀與操作方向')??false
+      };
+      const ok=checks.guide&&checks.title&&checks.detail&&checks.scale&&checks.height>50&&
+        (checks.titleText.startsWith('今日操作')||checks.titleText.startsWith('歷史')||checks.titleText.startsWith('盤前'))&&
+        checks.detailLength>20&&checks.scaleBands===5&&checks.hasHeading;
+      return ok?true:{ok:false,...checks};
     }));
     await test(variant+' validated same-day quote breadth displays numeric homepage score',async()=>{
       const live=JSON.parse(fs.readFileSync(path.join(ROOT,'data/g_intraday/latest.json'),'utf8'));

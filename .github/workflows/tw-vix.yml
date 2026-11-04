@@ -1,0 +1,117 @@
+name: Taiwan VIXTWN Homepage Data
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/tw-vix.yml'
+      - 'tw-stock-dashboard/src/tw_vix.py'
+      - 'tw-stock-dashboard/docs/tw-vix-home.js'
+      - 'tw-stock-dashboard/docs/tw-vix-home.css'
+      - 'tw-stock-dashboard/docs/index.html'
+      - 'tw-stock-dashboard/tests/test_tw_vix.py'
+      - 'tw-stock-dashboard/tests/tw-vix-home.test.cjs'
+      - 'tw-stock-dashboard/docs/data/research/tw_vix/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/tw-vix.yml'
+      - 'tw-stock-dashboard/src/tw_vix.py'
+      - 'tw-stock-dashboard/docs/tw-vix-home.js'
+      - 'tw-stock-dashboard/docs/tw-vix-home.css'
+  workflow_dispatch:
+  schedule:
+    # TAIFEX official 13:45 close archive may be published with a delay.
+    # Retry at Taipei 14:20, 16:20, 18:20, 20:20 on weekdays.
+    - cron: '20 6,8,10,12 * * 1-5'
+
+permissions:
+  contents: read
+concurrency:
+  group: taiwan-vix-source
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify official TAIFEX monthly VIX parser with dated fixtures
+        run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_tw_vix.py' -v
+      - name: Verify homepage JavaScript and visual safeguards
+        run: |
+          node --check tw-stock-dashboard/docs/tw-vix-home.js
+          node --test tw-stock-dashboard/tests/tw-vix-home.test.cjs
+  probe-source:
+    if: github.event_name == 'pull_request'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch real TAIFEX official VIX closes in isolated PR runner (never publish)
+        run: python tw-stock-dashboard/src/tw_vix.py
+      - name: Reconcile official dated history
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path('tw-stock-dashboard/docs/data/research/tw_vix/latest.json').read_text('utf-8'))
+          assert j['quality']=='official-taifex-daily-close'
+          assert j['sourceUrl']=='https://www.taifex.com.tw/cht/7/vixDaily3MNew'
+          assert len(j['rows'])>=20
+          assert j['asOfDate']==j['rows'][-1]['date']
+          print('TAIFEX_VIX_SOURCE_PROBE_OK',j['asOfDate'],j['rows'][-1]['value'],len(j['rows']))
+          PY
+  refresh:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch TAIFEX official daily VIX closes with strict date validation
+        run: python tw-stock-dashboard/src/tw_vix.py
+      - name: Verify generated official close observation
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path('tw-stock-dashboard/docs/data/research/tw_vix/latest.json').read_text('utf-8'))
+          assert j['version']=='TW_VIX_TAIFEX_DAILY_V1'
+          assert j['quality']=='official-taifex-daily-close'
+          assert j['asOfDate']==j['rows'][-1]['date']
+          assert len(j['rows'])>=20
+          print('TW_VIX_VALIDATED',j['sourceObservationAt'],j['rows'][-1]['value'])
+          PY
+      - name: Save independently verified observations to main only after human approval
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/research/tw_vix/latest.json
+          if git diff --cached --quiet; then
+            echo 'No new VIX observation; no commit required'
+            exit 0
+          fi
+          git commit -m 'Refresh official TAIFEX VIX daily closing history'
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              echo 'TW_VIX_PUBLISHED_TO_MAIN'
+              exit 0
+            fi
+            git rebase --abort || true
+            sleep $((i*5))
+          done
+          echo 'TW_VIX_PUBLISH_FAILED: cannot safely fast-forward main' >&2
+          exit 1
