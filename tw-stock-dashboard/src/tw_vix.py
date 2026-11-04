@@ -6,7 +6,8 @@ import json
 import math
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
@@ -20,9 +21,13 @@ VERSION = "TW_VIX_TAIFEX_DAILY_V1"
 MAX_BYTES = 100_000
 
 
-def month_keys(today):
+def month_keys(today, count=21):
+    """21 calendar months contain enough official sessions for 360 trading days.
+
+    Include a buffer for holidays and incomplete current month.
+    """
     first = today.year*12+today.month-1
-    return [f"{(first-i)//12:04d}{(first-i)%12+1:02d}" for i in range(4)]
+    return [f"{(first-i)//12:04d}{(first-i)%12+1:02d}" for i in range(count)]
 
 
 def parse_month(raw: bytes, expected_month: str, now: datetime) -> list[dict]:
@@ -66,7 +71,7 @@ def daily_rows(months: list[list[dict]]) -> list[dict]:
             if row["date"] in by_date and by_date[row["date"]] != row:
                 raise ValueError("期交所 VIX 跨檔同一日期數值不符")
             by_date[row["date"]]=dict(row)
-    ordered=[by_date[d] for d in sorted(by_date)][-260:]
+    ordered=[by_date[d] for d in sorted(by_date)][-400:]
     for i,r in enumerate(ordered):
         if i==0:
             r["change"]=None
@@ -105,20 +110,24 @@ def validate(payload):
 
 def main():
     now=datetime.now(TZ)
-    monthly=[]
-    for key in month_keys(now.date()):
+    def fetch_month(key):
         url=FILE_ROOT+key+"new.txt"
         request=Request(url,headers={"User-Agent":"Mozilla/5.0 (compatible; Tradingview-testing-TaiwanVIX/1.0)"})
         with urlopen(request,timeout=24) as response:
             raw=response.read(MAX_BYTES+1)
         if len(raw)>MAX_BYTES:
-            raise ValueError("期交所 VIX 月資料檔過大")
+            raise ValueError("期交所 VIX 月資料檔過大："+key)
         month=parse_month(raw,key,now)
-        monthly.append(month)
+        return key,month
+    # Download independent official monthly TXT files concurrently. No fabricated
+    # fill-forward, synthetic holidays or reuse of older sessions.
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        batches=list(executor.map(fetch_month,month_keys(now.date())))
+    for key,month in batches:
         print("TAIFEX_VIX_MONTH",key,"days",len(month),"latest",month[-1]["date"],flush=True)
-    rows=daily_rows(monthly)
-    if len(rows)<20:
-        raise RuntimeError("期交所 VIX 有效收盤樣本未達 20 筆，不能生成歷史統計")
+    rows=daily_rows([month for _,month in batches])
+    if len(rows)<360:
+        raise RuntimeError(f"期交所 VIX 有效交易日不足 360 筆：{len(rows)}；拒絕以不完整年度曲線覆寫正式資料")
     last=rows[-1]
     old={}
     if DEST.exists():
