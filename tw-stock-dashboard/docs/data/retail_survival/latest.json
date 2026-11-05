@@ -10,8 +10,8 @@
     "tpexOpenApi": "https://www.tpex.org.tw/openapi/",
     "indexOhlcSource": "Yahoo Finance ^TWII，與資料源指數收盤核對後採用"
   },
-  "asOf": "2026-11-04",
-  "updatedAt": "2026-11-04T20:51:41.060118+00:00",
+  "asOf": "2026-11-05",
+  "updatedAt": "2026-11-05T21:08:29.091592+00:00",
   "rows": [
     {
       "date": "2026-08-03",
@@ -761,7 +761,35 @@
       "provenanceByScope": {
         "listed": "TWSE 原始資料自行計算"
       },
-      "otcError": "Response ended prematurely"
+      "otcError": "Response ended prematurely",
+      "indexOpen": 43449.45,
+      "indexHigh": 43741.54,
+      "indexLow": 41855.82,
+      "indexOhlcClose": 42948.91
+    },
+    {
+      "date": "2026-11-05",
+      "listed": 170.53,
+      "otc": 149.01,
+      "overall": 165.32,
+      "indexClose": 41574.72,
+      "listedLoanTwd": 576409039000,
+      "listedCollateralTwd": 982955782860,
+      "listedCoverage": 0.999192,
+      "listedMatched": 1237,
+      "listedPositive": 1238,
+      "provenance": "TWSE 上市公開日資料自行計算",
+      "provenanceByScope": {
+        "listed": "TWSE 原始資料自行計算",
+        "otc": "TPEx 原始資料自行計算",
+        "overall": "TWSE + TPEx 融資金額加權計算"
+      },
+      "otcLoanTwd": 184037303000,
+      "otcCollateralTwd": 274239624030,
+      "otcCoverage": 0.995086,
+      "otcMatched": 810,
+      "otcPositive": 814,
+      "otcSource": "TPEx OpenAPI 上櫃融資＋收盤行情；TPEx 融資金額報表"
     }
   ]
 }
