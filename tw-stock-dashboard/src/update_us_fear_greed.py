@@ -68,10 +68,13 @@ def to_archive(cnn,spx):
     if abs((datetime.fromisoformat(spx_latest)-datetime.fromisoformat(cnn_latest)).days)>10:
         raise ValueError("CNN and SPX latest dates materially inconsistent")
     last=common[-1]
-    # Never silently turn an already-available US session into an older chart:
-    # the two independent providers must both contain the newest dated close.
-    # A missing side fails this attempt; the workflow retries after US SPX finishes.
-    if last!=spx_latest or last!=cnn_latest:
+    # Publish only confirmed dates shared by both providers. CNN may create a
+    # next-calendar-day sentiment observation before the US cash session closes;
+    # that is not an SPX session and must never be forward-filled with yesterday's
+    # settlement. Still fail closed when the SPX close lacks a matching CNN score,
+    # or when either provider is more than one calendar day ahead.
+    cnn_ahead=(datetime.fromisoformat(cnn_latest)-datetime.fromisoformat(spx_latest)).days
+    if last!=spx_latest or cnn_ahead not in (0,1):
         raise ValueError("US_MARKET_DATE_NOT_ALIGNED: joined="+last+" CNN="+cnn_latest+" SPX="+spx_latest)
     components={}
     for key,title in COMPONENTS.items():
