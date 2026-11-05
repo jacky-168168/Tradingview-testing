@@ -27,7 +27,7 @@ const q={status:'ok',quality:'dated-third-party-snapshot',asOfDate:'2026-10-27',
  app.applyTXLive(q);
  assert.equal(element('commandScore').textContent,'18','Live TX +1.24% produces 11+7=18 display-only provisional score');
  assert.match(element('commandStatus').textContent,/今日 TX \+1\.24%/);
- assert.match(element('commandCashReference').textContent,/46,809/);
+ assert.match(element('commandCashReference').textContent,/盤中參考試算 18\/100/);
  assert.match(element('commandCashReference').textContent,/10\/22|2026-10-22/);
  assert.match(element('commandScoreDescription').textContent,/當日台指報價已驗證/);
  assert.equal(element('marketCommand').dataset.level,'WAIT','Positive TX must not grant unconditional stock buying');
@@ -39,6 +39,6 @@ const q={status:'ok',quality:'dated-third-party-snapshot',asOfDate:'2026-10-27',
  app.applyTXLive({...q,quoteTime:'2026-10-22T09:04:55+08:00'});
  assert.equal(element('commandScore').textContent,'—','Stale TX quote must clear provisional score');
  assert.equal(element('commandScoreFill').style.width,'0%','Expired provisional score must clear gauge');
- assert.doesNotMatch(element('commandCashReference').textContent,/46,809/,'Old TX is refused');
+ assert.doesNotMatch(element('commandCashReference').textContent,/盤中參考試算 18\/100/,'Old TX is refused');
  console.log('PASS 10/27 TX +1.24% shows provisional 18, rejects stale TX and never old overnight zero');
 })().catch(e=>{console.error(e);process.exitCode=1});
