@@ -6,6 +6,9 @@ on:
     paths:
       - 'tw-stock-dashboard/src/futures_night.py'
       - 'tw-stock-dashboard/src/futures_preopen.py'
+      - 'tw-stock-dashboard/tests/test_market_holiday_hero.cjs'
+      - 'tw-stock-dashboard/tests/test_tx_holiday_open.cjs'
+      - 'tw-stock-dashboard/tests/test_market_open_breadth.cjs'
       - '.github/workflows/txf-night-dashboard.yml'
   schedule:
     # TX starts real trading at 08:45 Taipei; quote checks at 08:50/08:58,
