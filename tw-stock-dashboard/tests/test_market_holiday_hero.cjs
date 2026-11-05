@@ -29,7 +29,7 @@ const q={status:'ok',quality:'dated-third-party-snapshot',asOfDate:'2026-10-27',
  assert.match(element('commandStatus').textContent,/今日 TX \+1\.24%/);
  assert.match(element('commandCashReference').textContent,/盤中參考試算 18\/100/);
  assert.match(element('commandCashReference').textContent,/10\/22|2026-10-22/);
- assert.match(element('commandScoreDescription').textContent,/當日台指報價已驗證/);
+ assert.match(element('commandScoreDescription').textContent,/今日 TX 盤中參考試算/);
  assert.equal(element('marketCommand').dataset.level,'WAIT','Positive TX must not grant unconditional stock buying');
  assert.equal(element('commandScoreFill').style.width,'18%','Provisional score draws its own gauge, never official score');
  assert.match(element('commandScoreDescription').textContent,/非正式、未回測/);
