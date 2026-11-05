@@ -18,6 +18,22 @@ class TestUSFearGreed(unittest.TestCase):
         self.assertEqual(o["columns"],["date","fearGreed","spx"])
         self.assertEqual(len(o["rows"]),255)
         self.assertEqual(o["rows"][-1][0],o["asOf"])
+    def test_cnn_next_calendar_day_does_not_fake_spx_close(self):
+        c,s=self.fixtures()
+        last=datetime(2025,1,1,tzinfo=timezone.utc)+timedelta(days=255)
+        c["fear_and_greed_historical"]["data"].append({"x":int(last.timestamp()*1000),"y":42})
+        o=to_archive(c,s)
+        self.assertEqual(o["spxLast"],"2025-09-12")
+        self.assertEqual(o["cnnHistoricalLast"],"2025-09-13")
+        self.assertEqual(o["asOf"],"2025-09-12")
+        self.assertEqual(o["rows"][-1][0],"2025-09-12")
+        self.assertEqual(len(o["rows"]),255)
+    def test_cnn_two_calendar_days_ahead_is_rejected(self):
+        c,s=self.fixtures()
+        day=datetime(2025,1,1,tzinfo=timezone.utc)+timedelta(days=256)
+        c["fear_and_greed_historical"]["data"].append({"x":int(day.timestamp()*1000),"y":42})
+        with self.assertRaisesRegex(ValueError,"US_MARKET_DATE_NOT_ALIGNED"):
+            to_archive(c,s)
     def test_missing_score_not_fake_zero(self):
         c,s=self.fixtures();c["fear_and_greed_historical"]["data"][12]["y"]=None
         o=to_archive(c,s)
