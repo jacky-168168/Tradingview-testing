@@ -39,17 +39,20 @@ test("20d/60d percentiles need 20/60 real dated sessions",()=>{
  assert.equal(home.percentile(rows,60),100);
 });
 test("risk guidance reports volatility, never promises long entry",()=>{
- assert.equal(home.mood(sample.rows.at(-1)).label,"波動升溫");
+ const current=sample.rows.at(-1);
+ assert.equal(home.mood(current).label,current.change>=.25?"波動升溫":current.change<=-.25?"波動降溫觀察":"波動變化有限");
+ assert.equal(home.mood({...current,change:.8}).label,"波動升溫");
+ assert.equal(home.mood({...current,change:-.8}).label,"波動降溫觀察");
  assert.match(home.mood({...sample.rows.at(-1),change:-.8}).text,/不能單獨當作進場信號/);
  assert.equal(home.mood(sample.rows[0]).label,"前日無資料");
 });
 test("previous official close is labelled, not simulated as intraday quote",()=>{
- const now=new Date("2026-11-04T02:00:00Z");
+ const now=new Date(Date.parse(sample.sourceObservationAt)+20*60*60*1000);
  const info=home.timeStatus(sample,now);
  assert.equal(info.stale,false);
  assert.match(info.text,/非盤中即時 VIX/);
  assert.match(info.text,/收盤尚未取得/);
- const future={...sample,sourceObservationAt:"2026-11-05T13:45:00+08:00"};
+ const future={...sample,sourceObservationAt:new Date(Date.parse(sample.sourceObservationAt)+24*60*60*1000).toISOString()};
  assert.equal(home.timeStatus(future,now).stale,true);
 });
 
