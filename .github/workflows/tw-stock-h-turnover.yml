@@ -1,0 +1,47 @@
+name: H High Turnover TP7 2026 Research
+on:
+  push:
+    branches: [research/h-turnover-tp7-2026]
+    paths:
+      - '.github/workflows/tw-stock-h-turnover.yml'
+      - 'tw-stock-dashboard/src/h_turnover.py'
+      - 'tw-stock-dashboard/src/backtest_h.py'
+      - 'tw-stock-dashboard/tests/test_h_turnover.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  h-research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 210
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Restore market OHLCV cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache
+          key: tw-stock-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            tw-stock-cache-${{ runner.os }}-
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Test H model and exit execution
+        working-directory: tw-stock-dashboard
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -p 'test_h_turnover.py' -v
+      - name: Backtest H against D and G in 2026
+        working-directory: tw-stock-dashboard
+        run: python src/backtest_h.py
+      - name: Keep research data as downloadable artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: h-turnover-2026-seven-percent-target
+          path: tw-stock-dashboard/docs/data/backtest_h/*.json
+          retention-days: 30
