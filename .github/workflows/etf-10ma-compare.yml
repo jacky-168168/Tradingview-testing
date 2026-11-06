@@ -7,6 +7,8 @@ on:
       - tw-stock-dashboard/src/etf_10ma_compare.py
 permissions:
   contents: write
+  pages: write
+  id-token: write
 concurrency:
   group: etf-10ma-compare
   cancel-in-progress: false
@@ -45,3 +47,12 @@ jobs:
             done
             if [ "$ok" -ne 1 ]; then exit 1; fi
           fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - uses: actions/deploy-pages@v4
+        id: deployment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
