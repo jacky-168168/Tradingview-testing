@@ -1,0 +1,47 @@
+name: ETF 00631L 00685L 10MA Comparison
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/etf-10ma-compare.yml
+      - tw-stock-dashboard/src/etf_10ma_compare.py
+permissions:
+  contents: write
+concurrency:
+  group: etf-10ma-compare
+  cancel-in-progress: false
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install
+        run: pip install requests==2.32.5
+      - name: Restore TWSE monthly historical cache
+        uses: actions/cache@v4
+        with:
+          path: tw-stock-dashboard/cache/etf_10ma_twse
+          key: etf-10ma-twse-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            etf-10ma-twse-${{ runner.os }}-
+      - name: Run split-aware 2014 common and 2017 real backtests
+        run: python tw-stock-dashboard/src/etf_10ma_compare.py --end "$(TZ=Asia/Taipei date -d 'yesterday' +%F)"
+      - name: Save historical backtest result to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/research/etf_10ma_comparison/latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update split-adjusted 00631L vs 00685L SMA10 comparison"
+            ok=0
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || { git rebase --abort || true; sleep $((i*8)); continue; }
+              if git push origin HEAD:main; then ok=1; break; fi
+              sleep $((i*8))
+            done
+            if [ "$ok" -ne 1 ]; then exit 1; fi
+          fi
