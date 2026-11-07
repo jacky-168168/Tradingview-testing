@@ -12,6 +12,8 @@ on:
       - 'tw-stock-dashboard/scripts/gemini_transport.cjs'
       - 'tw-stock-dashboard/docs/agent-research*'
       - 'tw-stock-dashboard/docs/agent-llm-ui.js'
+      - 'tw-stock-dashboard/docs/agent-freshness.js'
+      - 'tw-stock-dashboard/tests/test_six_agent_freshness.cjs'
       - 'tw-stock-dashboard/tests/test_six_agent_research.cjs'
       - 'tw-stock-dashboard/tests/test_six_agent_gemini.cjs'
 permissions:
@@ -32,7 +34,7 @@ jobs:
           node-version: '22'
       - name: Verify role prompts, conservative source guards, independent challenge and Gemini transport
         run: |
-          node --test tw-stock-dashboard/tests/test_six_agent_research.cjs tw-stock-dashboard/tests/test_six_agent_gemini.cjs
+          node --test tw-stock-dashboard/tests/test_six_agent_research.cjs tw-stock-dashboard/tests/test_six_agent_gemini.cjs tw-stock-dashboard/tests/test_six_agent_freshness.cjs
           node --check tw-stock-dashboard/scripts/run_six_agent_llm.cjs
           node --check tw-stock-dashboard/scripts/gemini_transport.cjs
           node --check tw-stock-dashboard/docs/agent-research-core.js

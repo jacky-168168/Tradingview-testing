@@ -59,9 +59,21 @@ async function geminiModel(options,dependencies={}){
  const req=makeRequest(options);
  const retries=2;
  for(let attempt=0;attempt<retries;attempt++){
-  const response=await fetchFn(req.url,{method:"POST",
-   headers:{"Content-Type":"application/json","Accept":"application/json","x-goog-api-key":apiKey},
-   body:JSON.stringify(req.body),signal:AbortSignal.timeout(50000)});
+  let response;
+  try{
+   response=await fetchFn(req.url,{method:"POST",
+    headers:{"Content-Type":"application/json","Accept":"application/json","x-goog-api-key":apiKey},
+    body:JSON.stringify(req.body),signal:AbortSignal.timeout(50000)});
+  }catch(error){
+   // Google API/network timeouts are transient. Retry once, but never fabricate a model result.
+   const timedOut=error?.name==="TimeoutError"||error?.name==="AbortError";
+   if(timedOut&&attempt+1<retries){
+    if(!dependencies.noSleep)await new Promise(resolve=>setTimeout(resolve,2000));
+    continue;
+   }
+   if(timedOut)throw Error("Gemini request timed out after "+retries+" attempts; no new research published");
+   throw error;
+  }
   if((response.status===429||response.status>=500)&&attempt+1<retries){
    if(!dependencies.noSleep)await new Promise(resolve=>setTimeout(resolve,4000));
    continue;
