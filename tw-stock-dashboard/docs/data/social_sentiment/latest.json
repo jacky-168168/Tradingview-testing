@@ -1,19 +1,19 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-07T05:53:33.859192Z",
+  "generatedAt": "2026-11-07T07:02:11.471857Z",
   "sources": {
     "PTT": {
       "status": "ok",
       "method": "官方 Atom",
       "url": "https://www.ptt.cc/atom/stock.xml",
-      "freshCount": 15,
+      "freshCount": 11,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 6,
-      "pushLabelsFound": 9
+      "boardFreshCount": 7,
+      "pushLabelsFound": 13
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 47,
+      "freshCount": 45,
       "queryHealth": {
         "queriesAttempted": 12,
         "queriesSucceeded": 12,
@@ -82,6 +82,40 @@
   },
   "items": [
     {
+      "platform": "PTT",
+      "title": "[新聞] 全球股市慘跌原因曝！謝金河示警AI燒錢",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794034728.A.8D9.html",
+      "publishedAt": "2026-11-07T06:58:48Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 8,
+      "pushLabel": "8",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "本土女星蔡家蓁因台股重挫，3天虧損逾200萬元，她表示不敢計算損失。 來源：自由時報",
+      "url": "https://bsky.app/profile/skyedit.taiwansky.social/post/3mzp7sacq22p7",
+      "publishedAt": "2026-11-07T06:00:57.937000Z",
+      "stance": "偏空",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "本土女星蔡家蓁因台股重挫，3天虧損逾200萬元",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
       "platform": "Bluesky",
       "title": "📢 外資大舉賣股匯出，新台幣貶勢洶洶，今年截至10月底累計重貶3.2%，本週更一度摜破33元大關，淪最弱亞幣。專家直言，隨著台股市值飆漲、外資持股比重攀升，資金進出規模今非昔比，央行穩匯挑戰也日益艱鉅。",
       "url": "https://bsky.app/profile/cnataiwan.nzcow.com/post/3mzp75uzqyx23",
@@ -110,7 +144,10 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
+      "method": "標題規則（非留言全文）",
+      "pushScore": 10,
+      "pushLabel": "10",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
       "platform": "PTT",
@@ -122,8 +159,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 8,
-      "pushLabel": "8",
+      "pushScore": 10,
+      "pushLabel": "10",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -147,8 +184,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 78,
-      "pushLabel": "78",
+      "pushScore": 100,
+      "pushLabel": "爆",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -161,8 +198,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 25,
-      "pushLabel": "25",
+      "pushScore": 28,
+      "pushLabel": "28",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -195,8 +232,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 49,
-      "pushLabel": "49",
+      "pushScore": 57,
+      "pushLabel": "57",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -988,7 +1025,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -1139,46 +1176,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "📢 台股重挫失守4萬點 經部拿出經濟數據信心喊話 Rti 中央廣播電臺",
-      "url": "https://bsky.app/profile/radiotaiwan.nzcow.com/post/3mzn5qsxsrl2e",
-      "publishedAt": "2026-11-06T10:18:05.460799Z",
-      "stance": "偏空",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "新聞轉載",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "台股重挫失守4萬點 經部拿出經濟數據信心喊話",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] SK海力士槓桿ETF從高點蒸發逾90%",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793960281.A.FF7.html",
-      "publishedAt": "2026-11-06T10:18:01Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "美股費半上漲4.21% 台指期夜盤收紅646點",
-      "url": "https://www.youtube.com/watch?v=5rdfLLqIxJQ",
-      "publishedAt": "2026-11-07T05:51:49Z",
-      "sourceName": "台視新聞 TTV NEWS",
+      "title": "台股殺到全面跌停！哪一類股票最有機會扛住崩盤、甚至逆勢上漲？關鍵就在「極強漲勢」！#台股崩盤 #逆勢上漲 #極強漲勢 #強勢股 #無相流",
+      "url": "https://www.youtube.com/watch?v=OBP7Q5icW4Q",
+      "publishedAt": "2026-11-07T06:30:14Z",
+      "sourceName": " 巔峰交易局•無相流操盤",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1526,8 +1532,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 78,
-      "pushLabel": "78",
+      "pushScore": 100,
+      "pushLabel": "爆",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1540,8 +1546,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 49,
-      "pushLabel": "49",
+      "pushScore": 57,
+      "pushLabel": "57",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1554,8 +1560,22 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 25,
-      "pushLabel": "25",
+      "pushScore": 28,
+      "pushLabel": "28",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[情報] 台股短線急跌行情相關數據",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794030307.A.FAF.html",
+      "publishedAt": "2026-11-07T05:45:07Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 10,
+      "pushLabel": "10",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1568,20 +1588,23 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 8,
-      "pushLabel": "8",
+      "pushScore": 10,
+      "pushLabel": "10",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
       "platform": "PTT",
-      "title": "[情報] 台股短線急跌行情相關數據",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794030307.A.FAF.html",
-      "publishedAt": "2026-11-07T05:45:07Z",
+      "title": "[新聞] 全球股市慘跌原因曝！謝金河示警AI燒錢",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794034728.A.8D9.html",
+      "publishedAt": "2026-11-07T06:58:48Z",
       "stance": "中立／難判",
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
+      "method": "標題規則（非留言全文）",
+      "pushScore": 8,
+      "pushLabel": "8",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
       "platform": "PTT",
@@ -1956,17 +1979,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 3037 欣興 10月",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793960546.A.E2A.html",
-      "publishedAt": "2026-11-06T10:22:26Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1982,10 +1994,10 @@
     "status": "verified",
     "model": "gemini-3.5-flash-lite",
     "inferenceCalls": 1,
-    "cachedClassifications": 18,
-    "newlyClassified": 4,
+    "cachedClassifications": 21,
+    "newlyClassified": 1,
     "unclassified": 0,
-    "updatedAt": "2026-11-07T05:53:38.918Z",
+    "updatedAt": "2026-11-07T07:02:15.546Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
     "candidateCount": 22,
