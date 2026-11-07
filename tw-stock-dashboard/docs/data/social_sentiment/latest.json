@@ -1,15 +1,15 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-07T11:10:09.470901Z",
+  "generatedAt": "2026-11-07T15:37:18.462100Z",
   "sources": {
     "PTT": {
       "status": "ok",
       "method": "官方 Atom",
       "url": "https://www.ptt.cc/atom/stock.xml",
-      "freshCount": 12,
+      "freshCount": 14,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 6,
-      "pushLabelsFound": 9
+      "boardFreshCount": 11,
+      "pushLabelsFound": 17
     },
     "Bluesky": {
       "status": "ok",
@@ -43,34 +43,34 @@
     },
     "新聞": {
       "status": "ok",
-      "freshCount": 71
+      "freshCount": 70
     }
   },
   "social": {
-    "sample": 27,
+    "sample": 25,
     "bull": 2,
-    "bear": 5,
-    "neutral": 20,
-    "directional": 7,
+    "bear": 4,
+    "neutral": 19,
+    "directional": 6,
     "status": "已有樣本｜偏空討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
     "rawSample": 80,
-    "investmentDiscussion": 27,
-    "originalDiscussion": 27,
-    "repostedNews": 45,
-    "unrelated": 8,
+    "investmentDiscussion": 25,
+    "originalDiscussion": 25,
+    "repostedNews": 44,
+    "unrelated": 11,
     "platformCounts": {
-      "PTT": 10,
-      "Bluesky": 17,
+      "PTT": 9,
+      "Bluesky": 16,
       "Threads": 0,
       "Instagram": 0
     }
   },
   "news": {
-    "sample": 71,
+    "sample": 70,
     "bull": 1,
     "bear": 2,
-    "neutral": 68,
+    "neutral": 67,
     "directional": 3,
     "status": "已有樣本｜偏空討論較多",
     "method": "只要有一篇有效公開貼文就視為已有樣本；關鍵詞僅供觀察，篇數少不代表市場共識，也不是留言全文分析"
@@ -83,6 +83,146 @@
   "items": [
     {
       "platform": "PTT",
+      "title": "[新聞] 日本又爆大規模系統故障！128家信用金庫A",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794065292.A.597.html",
+      "publishedAt": "2026-11-07T15:28:12Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 3,
+      "pushLabel": "3",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "記憶體股巨震背後：NVIDIA強拉台積電打破30年鐵律，黃仁勳真能「瓦解」80%暴利神話？ [李東昇的說明]輝達一定會跟台積電/工研院/美光等 進入3dDRAM 以及 SOT-MRAM磁性記憶體 這條路，我早就預告了，而且這是進入【存訊算一體】的全新時代，很可能在2028年實現！  youtu.be/tZHkGp90D",
+      "url": "https://bsky.app/profile/alexandroslee.bsky.social/post/3mzq7bvhvws2d",
+      "publishedAt": "2026-11-07T15:23:31.504000Z",
+      "stance": "中立／難判",
+      "contentType": "非投資話題",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "假日還是一樣中午12:00準時上班 沒有躺贏的命 只能繼續努力工作 就跟台股一樣不適合我😭 默默問還有人知道我卻沒找過我嗎？ 通常找我只有0和無數次！ 像我那麼香還漂漂🇹🇼 真的找不到了啦",
+      "url": "https://bsky.app/profile/yao16.bsky.social/post/3mzq3c2sj7k2g",
+      "publishedAt": "2026-11-07T14:12:02.124000Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "非投資內容",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "假日還是一樣中午12:00準時上班 沒有躺贏的命 只能繼續努力工作 就跟台股一樣不適合我😭",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "PTT",
+      "title": "[情報] 3060銘異第三季合併報表",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794060260.A.C65.html",
+      "publishedAt": "2026-11-07T14:04:20Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 2,
+      "pushLabel": "2",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[心得] 2026年AI產業各國賺到的錢統計",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794057761.A.4E7.html",
+      "publishedAt": "2026-11-07T13:22:41Z",
+      "stance": "中立／難判",
+      "contentType": "非投資話題",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 44,
+      "pushLabel": "44",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 荷蘭示威者「爬吊車噴漆」抗議微軟 怒轟",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794057543.A.4E2.html",
+      "publishedAt": "2026-11-07T13:19:03Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 53,
+      "pushLabel": "53",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 郭哲榮直播鞠躬認錯！坦言沒在高點出場",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794057095.A.23F.html",
+      "publishedAt": "2026-11-07T13:11:35Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 45,
+      "pushLabel": "45",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "台積電與中芯國際的發展差異大解析！",
+      "url": "https://bsky.app/profile/xintianusa.bsky.social/post/3mzpvngaw5e2h",
+      "publishedAt": "2026-11-07T12:31:00.366570Z",
+      "stance": "中立／難判",
+      "contentType": "非投資話題",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 美國在AI賽道沒有回頭路 謝金河：殺過頭",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794050284.A.2EB.html",
+      "publishedAt": "2026-11-07T11:18:04Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 99,
+      "pushLabel": "99",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 華邦電董座焦佑鈞：記憶體漲價應見頂",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794050025.A.82C.html",
+      "publishedAt": "2026-11-07T11:13:45Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 94,
+      "pushLabel": "94",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
       "title": "[心得] 主動ETF經理人，今年真的有贏0050嗎？",
       "url": "https://www.ptt.cc/bbs/Stock/M.1794049232.A.6EA.html",
       "publishedAt": "2026-11-07T11:00:32Z",
@@ -91,8 +231,8 @@
       "investmentEligible": true,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 9,
-      "pushLabel": "9",
+      "pushScore": 100,
+      "pushLabel": "爆",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
@@ -134,8 +274,8 @@
       "investmentEligible": true,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 5,
-      "pushLabel": "5",
+      "pushScore": 29,
+      "pushLabel": "29",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
@@ -157,9 +297,6 @@
       "investmentEligible": true,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 38,
-      "pushLabel": "38",
-      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "投資意見",
@@ -200,8 +337,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 26,
-      "pushLabel": "26",
+      "pushScore": 44,
+      "pushLabel": "44",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1078,152 +1215,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2395 研華 十月營收",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793968602.A.188.html",
-      "publishedAt": "2026-11-06T12:36:42Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "台股6日重挫1873點，收在39701點。金管會宣布自9日起實施5大措施，包括調降借券賣出數量、提高融券保證金成數、放寬擔保品範圍，並鼓勵公司實施庫藏股。 來源：台灣英文新聞",
-      "url": "https://bsky.app/profile/taiwannews-zh.taiwansky.social/post/3mznefh55yua4",
-      "publishedAt": "2026-11-06T12:30:49.706000Z",
-      "stance": "偏空",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "新聞轉載",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "台股6日重挫1873點，收在39701點。金管會宣布自9日起實施5大措施",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "PTT",
-      "title": "[標的] 大盤 多",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793968096.A.A3B.html",
-      "publishedAt": "2026-11-06T12:28:16Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "投資意見",
-        "stance": "偏多",
-        "emotion": "理性分析",
-        "confidence": "高",
-        "evidence": "[標的] 大盤 多",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#公視新聞網 19:05 台股跌落4萬國安基金進場護盤 金管會宣布限空令9日上路 台股今（6）日上演史詩級崩跌，盤中創史上最大跌點，一度狂瀉超過3700點，跌幅逼近9%，在權值股台積電縮小跌幅下，加權指數略為回升，終場收3萬9701點、大跌1873點，寫下收盤第4大跌點紀錄。針對台股急殺，總統賴清德向國人喊話不要恐",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mzndqh7g2q42",
-      "publishedAt": "2026-11-06T12:05:08Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "新聞轉載",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "台股跌落4萬國安基金進場護盤 金管會宣布限空令9日上路",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 群聯拿45.8億元買庫存股贈予員工",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793966585.A.D9E.html",
-      "publishedAt": "2026-11-06T12:03:05Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 19:15 金管會：台股跌幅介於亞洲股市之間 已採穩定措施 （中央社記者高華謙台北6日電）台股今天大跌，國安基金宣布第10次進場護盤。金管會指出，台股跌幅4.51%、介於同時段亞洲股市間，包括日本跌幅6.12%、南韓跌4.85%、新加坡跌2.73%；已綜合考量目前整體市場環境及國際情勢，",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mznddyklmoz2",
-      "publishedAt": "2026-11-06T11:57:59Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 18:48 台股重挫金管會祭限空令等5大救市措施 11/9實施 （中央社記者蘇思云台北6日電）台股今天重挫1873.08點，收在39701.64點。繼國安基金宣布啟動史上第10次護盤後，金管會晚間也宣布9日起祭5大措施，包含調降每日盤中借券賣出委託數量、調升融券保證金成數、放寬信用交易應",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mzndcnqbzom2",
-      "publishedAt": "2026-11-06T11:57:25Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 18:25 台股上市總市值險守130兆元 落居全球第7大股市 （中央社記者曾仁凱台北6日電）AI熱潮降溫，台股本週重跌5510.19點或12.19%，今天集中市場指數收在39701.64點，失守4萬點大關。根據台灣證券交易所統計，上市公司最新總市值為新台幣130兆838億元，較上週大減約",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mzndb6jypj42",
-      "publishedAt": "2026-11-06T11:56:28Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 18:22 央行加強防守、出口商助攻 新台幣貶翻升收32.768元 （中央社記者趙敏雅台北6日電）台股今天早盤崩跌3737.67點，創下盤中最大跌點，新台幣兌美元一早摜破33元整數大關，最低觸及33.04元。在央行加強防守、出口商進場拋匯下，新台幣午後豬羊變色，由貶轉升，最高升抵32.7",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mzndbckfuum2",
-      "publishedAt": "2026-11-06T11:56:17Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 18:08 台股崩跌信心不足 國安基金宣布第10次進場護盤 （中央社記者蘇思云台北6日電）國安基金今天表示，11月6日台股開盤跌近3800點，盤中最低37837點為近期最低點，收盤39701點，距離今年高點49968點，下跌10267點，跌幅20.55%，且外資持續賣超，顯示市場投資信心",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mznd7eyshlz2",
-      "publishedAt": "2026-11-06T11:55:31Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "台積電一張，兩百多萬？這個雙11用抽的 #小E的生活觀察",
-      "url": "https://www.youtube.com/watch?v=mUIcqFFivqk",
-      "publishedAt": "2026-11-07T11:00:20Z",
-      "sourceName": "Eason有意思",
+      "title": "限空令救得了台股嗎？上次答案很意外",
+      "url": "https://www.youtube.com/watch?v=wn9QvayxHtM",
+      "publishedAt": "2026-11-07T15:22:35Z",
+      "sourceName": "新知複利",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1561,6 +1561,90 @@
     }
   ],
   "pttNewsItems": [
+    {
+      "platform": "PTT",
+      "title": "[新聞] 美國在AI賽道沒有回頭路 謝金河：殺過頭",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794050284.A.2EB.html",
+      "publishedAt": "2026-11-07T11:18:04Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 99,
+      "pushLabel": "99",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 華邦電董座焦佑鈞：記憶體漲價應見頂",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794050025.A.82C.html",
+      "publishedAt": "2026-11-07T11:13:45Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 94,
+      "pushLabel": "94",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 荷蘭示威者「爬吊車噴漆」抗議微軟 怒轟",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794057543.A.4E2.html",
+      "publishedAt": "2026-11-07T13:19:03Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 53,
+      "pushLabel": "53",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 郭哲榮直播鞠躬認錯！坦言沒在高點出場",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794057095.A.23F.html",
+      "publishedAt": "2026-11-07T13:11:35Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 45,
+      "pushLabel": "45",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 日本又爆大規模系統故障！128家信用金庫A",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794065292.A.597.html",
+      "publishedAt": "2026-11-07T15:28:12Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 3,
+      "pushLabel": "3",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[情報] 3060銘異第三季合併報表",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794060260.A.C65.html",
+      "publishedAt": "2026-11-07T14:04:20Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 2,
+      "pushLabel": "2",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
     {
       "platform": "PTT",
       "title": "[新聞] 砸2千萬退休金遇股災！65歲翁「急求助AI",
@@ -1912,28 +1996,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2395 研華 十月營收",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793968602.A.188.html",
-      "publishedAt": "2026-11-06T12:36:42Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 群聯拿45.8億元買庫存股贈予員工",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1793966585.A.D9E.html",
-      "publishedAt": "2026-11-06T12:03:05Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1949,19 +2011,19 @@
     "status": "verified",
     "model": "gemini-3.5-flash-lite",
     "inferenceCalls": 1,
-    "cachedClassifications": 20,
-    "newlyClassified": 7,
+    "cachedClassifications": 24,
+    "newlyClassified": 1,
     "unclassified": 0,
-    "updatedAt": "2026-11-07T11:10:13.380Z",
+    "updatedAt": "2026-11-07T15:37:24.451Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 27,
-    "classifiedCount": 27,
-    "investmentCount": 9,
-    "bullish": 1,
+    "candidateCount": 25,
+    "classifiedCount": 25,
+    "investmentCount": 8,
+    "bullish": 0,
     "bearish": 4,
     "neutral": 4,
-    "originalRuleCount": 27,
+    "originalRuleCount": 25,
     "noTrade": true
   }
 }
