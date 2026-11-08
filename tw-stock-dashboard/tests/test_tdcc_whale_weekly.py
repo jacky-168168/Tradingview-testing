@@ -1,4 +1,5 @@
-import io,csv,unittest
+import io,csv,unittest,requests
+from unittest.mock import Mock,patch
 from update_tdcc_whale_weekly import parse_snapshot,quadrant_of,select_owners,render,parse_listing_day
 from datetime import date
 class TestTDCCWhales(unittest.TestCase):
@@ -12,6 +13,36 @@ class TestTDCCWhales(unittest.TestCase):
                 d="20261008" if invalid and i==0 else date.replace("-","")
                 w.writerow([d,code,j,1,1000 if j==17 else 0,0])
         return o.getvalue().encode("utf-8")
+    def test_archive_api_429_retries_with_scoped_github_token(self):
+        limited=Mock(status_code=429,headers={"Retry-After":"0"},content=b"rate limited")
+        limited.raise_for_status.side_effect=requests.HTTPError("429 Too Many Requests",response=limited)
+        good=Mock(status_code=200,headers={},content=b"[]")
+        with patch.dict("update_tdcc_whale_weekly.os.environ",{"GITHUB_TOKEN":"fixture-token"}), \
+             patch("update_tdcc_whale_weekly.requests.get",side_effect=[limited,good]) as get, \
+             patch("update_tdcc_whale_weekly.time.sleep") as sleep:
+            from update_tdcc_whale_weekly import request,ARCHIVE
+            self.assertIs(request(f"{ARCHIVE}/2026",retries=3),good)
+        self.assertEqual(get.call_count,2)
+        self.assertEqual(get.call_args_list[0].kwargs["headers"]["Authorization"],"Bearer fixture-token")
+        self.assertEqual(get.call_args_list[1].kwargs["headers"]["Authorization"],"Bearer fixture-token")
+        sleep.assert_called_once()
+    def test_archive_api_429_exhaustion_stops_without_publish(self):
+        limited=Mock(status_code=429,headers={"Retry-After":"0"},content=b"rate limited")
+        limited.raise_for_status.side_effect=requests.HTTPError("429 Too Many Requests",response=limited)
+        with patch("update_tdcc_whale_weekly.requests.get",return_value=limited) as get, \
+             patch("update_tdcc_whale_weekly.time.sleep"):
+            from update_tdcc_whale_weekly import request,ARCHIVE
+            with self.assertRaisesRegex(RuntimeError,"429"):
+                request(f"{ARCHIVE}/2026",retries=3)
+        self.assertEqual(get.call_count,3)
+    def test_token_not_forwarded_to_tddc_or_raw_csv(self):
+        good=Mock(status_code=200,headers={},content=b"ok")
+        with patch.dict("update_tdcc_whale_weekly.os.environ",{"GITHUB_TOKEN":"fixture-token"}), \
+             patch("update_tdcc_whale_weekly.requests.get",return_value=good) as get:
+            from update_tdcc_whale_weekly import request,SOURCE,ARCHIVE_RAW
+            request(SOURCE,retries=1)
+            request(f"{ARCHIVE_RAW}/2026/2026-10-30.csv",retries=1)
+        self.assertTrue(all("Authorization" not in call.kwargs["headers"] for call in get.call_args_list))
     def test_official_levels_and_date(self):
         x=parse_snapshot(self.fixture(),"2026-10-16")
         self.assertEqual(len(x),3600)
