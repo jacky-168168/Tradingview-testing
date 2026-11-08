@@ -45,6 +45,10 @@ jobs:
           node --check tw-stock-dashboard/docs/tdcc-whale-weekly.js
           node tw-stock-dashboard/tests/test_tdcc_whale_ui.cjs
       - name: Fetch 3 actual TDCC snapshots and verified weekly stock closes
+        env:
+          # GitHub-issued ephemeral token, used ONLY for fixed GitHub archive
+          # listing API. No new secret, credential or third-party propagation.
+          GITHUB_TOKEN: ${{ github.token }}
         run: python -u tw-stock-dashboard/src/update_tdcc_whale_weekly.py
       - name: Verify 400-lot weekly report
         run: |
