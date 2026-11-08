@@ -6,7 +6,7 @@ Snapshot history source: a public raw-CSV archival copy of official TDCC 1-5.
 This panel is descriptive, NOT a recommendation or a live G/Risk Score input.
 """
 from __future__ import annotations
-import argparse,csv,io,json,math,re,sys,time
+import argparse,csv,io,json,math,os,re,sys,time
 from collections import Counter,defaultdict
 from datetime import date,datetime,timedelta,timezone
 from pathlib import Path
@@ -25,22 +25,36 @@ LEVELS={12,13,14,15}
 THRESHOLD_PP=1.0
 QUADRANTS={"續買":("positive","positive"),"回頭車":("negative","positive"),"下車":("positive","negative"),"續賣":("negative","negative")}
 def request(url,params=None,retries=3):
+    # Only the fixed GitHub archive-index endpoint receives the workflow token.
+    # Never forward repository credentials to TDCC, Yahoo, or raw CSV hosts.
+    headers=dict(HEAD)
+    if url.startswith(ARCHIVE+"/") and (token:=os.environ.get("GITHUB_TOKEN")):
+        headers["Authorization"]=f"Bearer {token}"
     err=None
     for i in range(retries):
         try:
-            r=requests.get(url,params=params,headers=HEAD,timeout=35)
+            r=requests.get(url,params=params,headers=headers,timeout=35)
             r.raise_for_status()
             if len(r.content)>8_000_000:raise ValueError("TDCC response above expected size")
             return r
         except (requests.RequestException,ValueError) as e:
             err=e
-            if i+1<retries:time.sleep(1.5*(i+1))
+            if i+1<retries:
+                delay=1.5*(i+1)
+                # GitHub can transiently return 429 when weekly schedules
+                # compete. Respect a bounded Retry-After, then fail closed.
+                if isinstance(e,requests.HTTPError) and e.response is not None and e.response.status_code==429:
+                    retry_after=e.response.headers.get("Retry-After","")
+                    if str(retry_after).isdigit():
+                        delay=max(delay,min(30,int(retry_after)))
+                    else:delay=max(delay,3*(2**i))
+                time.sleep(delay)
     raise RuntimeError(f"{url}: {err}")
 def dates_from_archive(year=None):
     now=date.today(); years=[year] if year else sorted({now.year,now.year-1},reverse=True)
     result=[]
     for y in years:
-        try:rows=request(f"{ARCHIVE}/{y}",retries=1).json()
+        try:rows=request(f"{ARCHIVE}/{y}",retries=3).json()
         except RuntimeError as e:
             if y!=now.year and ("404" in str(e)):continue  # archive started in 2026; older years not mandatory
             raise
