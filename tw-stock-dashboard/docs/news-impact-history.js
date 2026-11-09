@@ -117,6 +117,7 @@ async function boot(){
   if(d.groups.some(g=>g.key===old))select.value=old;
   const sourceErrors=Object.keys(d.catalogSourceErrors||{}).length;
   $("meta").textContent=(HORIZONS.some(h=>!available.includes(h))?"⚠ 目前讀到舊版摘要，180／360 日報酬請重新讀取，不會顯示假 0｜":"")+"研究快照："+(d.generatedAt||"未知")+"｜行情狀態："+(d.status||"未知")+"｜官方事件日期 "+(d.catalogCount||0)+" 筆｜有行情可驗證 "+(d.eventsWithPriceData??"待確認")+" 筆｜涵蓋："+(d.catalogEarliest||"—")+" ～ "+(d.catalogLatest||"—")+"｜行情資產 "+(d.priceSymbolsOk||[]).length+"/9"+(sourceErrors?"｜⚠ "+sourceErrors+" 個官方資料來源擷取異常":"")+(Object.keys(d.priceErrors||{}).length?"｜⚠ 部分行情缺失":"");
+  if(d.longHorizonCoverage&&typeof d.longHorizonCoverage.total==="number")$("meta").textContent+="｜180／360 日歷史組合 "+d.longHorizonCoverage.withHistory+"/"+d.longHorizonCoverage.total+(d.longHorizonCoverage.withoutHistory?"（其餘尚無成熟行情）":"（全數有歷史行情）");
   if(d.generatedAt&&Date.now()-Date.parse(d.generatedAt)>48*3600000)$("meta").textContent+="｜⚠ 研究快照超過 48 小時";
   render();
  }catch(e){
