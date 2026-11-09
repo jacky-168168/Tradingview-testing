@@ -43,6 +43,24 @@ class TestTDCCWhales(unittest.TestCase):
             request(SOURCE,retries=1)
             request(f"{ARCHIVE_RAW}/2026/2026-10-30.csv",retries=1)
         self.assertTrue(all("Authorization" not in call.kwargs["headers"] for call in get.call_args_list))
+    def test_current_year_archive_avoids_unneeded_prior_year_lookup(self):
+        from update_tdcc_whale_weekly import dates_from_archive,ARCHIVE
+        snap=Mock()
+        snap.json.return_value=[{"name":d+".csv"} for d in ("2026-10-16","2026-10-22","2026-10-30")]
+        with patch("update_tdcc_whale_weekly.request",return_value=snap) as get:
+            selected=dates_from_archive(today=date(2026,11,8))
+        self.assertEqual([x[0] for x in selected],["2026-10-16","2026-10-22","2026-10-30"])
+        get.assert_called_once_with(f"{ARCHIVE}/2026",retries=3)
+    def test_new_year_archive_retrieves_previous_year_only_when_required(self):
+        from update_tdcc_whale_weekly import dates_from_archive,ARCHIVE
+        a=Mock();a.json.return_value=[{"name":"2027-01-07.csv"}]
+        b=Mock();b.json.return_value=[{"name":"2026-12-24.csv"},{"name":"2026-12-31.csv"}]
+        with patch("update_tdcc_whale_weekly.request",side_effect=[a,b]) as get:
+            selected=dates_from_archive(today=date(2027,1,8))
+        self.assertEqual([x[0] for x in selected],["2026-12-24","2026-12-31","2027-01-07"])
+        self.assertEqual(get.call_count,2)
+        self.assertEqual(get.call_args_list[0].args[0],f"{ARCHIVE}/2027")
+        self.assertEqual(get.call_args_list[1].args[0],f"{ARCHIVE}/2026")
     def test_official_levels_and_date(self):
         x=parse_snapshot(self.fixture(),"2026-10-16")
         self.assertEqual(len(x),3600)
