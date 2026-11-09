@@ -3,7 +3,8 @@
 const $=id=>document.getElementById(id);
 const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const NEWS="./data/market_events/latest.json", HISTORY_URL="./data/news_impact/history.json";
-const assets=["美股S&P500","NASDAQ","台股","台股記憶體供應端","黃金","白銀","WTI原油","美元","美債殖利率","銅","紐元NZD"];
+const VERSION="2026-11-09-v1.2";
+const assets=["美股S&P500","NASDAQ","台股","台股記憶體供應端","AI／半導體設備","雲端算力租賃","天然氣供應","黃金","白銀","WTI原油","美元","美債殖利率","銅","紐元NZD","農產品期貨","加密資產"];
 const rules=[
 {id:"war-up",name:"地緣衝突升溫",re:/\b(escalat(?:e|es|ion)|airstrikes?|missile (?:attack|strike)|invad(?:e|es|ed)|military strikes?|attacks? on oil|strait of hormuz (?:clos|block))\b|戰爭升級|軍事攻擊|空襲|飛彈襲擊|荷姆茲海峽封鎖|衝突升溫/i,impact:{"美股S&P500":-50,"NASDAQ":-55,"台股":-55,"黃金":65,"白銀":30,"WTI原油":40,"美元":25,"美債殖利率":-10},why:"避險需求可能增加；若實際波及產油、航運，油價上行風險提高。",caveat:"政治聲明不等於實際供應中斷"},
 {id:"war-down",name:"停火與緊張緩和",re:/\b(ceasefire (?:deal|agreed|agreement|takes effect)|peace deal|de[- ]escalat(?:ion|es|ed))\b|停火協議|達成停火|和平協議|緊張緩和/i,impact:{"美股S&P500":45,"NASDAQ":45,"台股":40,"黃金":-40,"白銀":-20,"WTI原油":-35,"美元":-15},why:"風險溢價可能下降，避險資產與地緣油價溢價可能回落。",caveat:"若停火未落實，方向可能立即反轉"},
@@ -32,11 +33,20 @@ function classify(n){
  // Headlines such as "Fed will not hike" or "attack unlikely" must not
  // produce the opposite of their literal meaning via simple keyword hits.
  const negated=/\b(?:not|no|unlikely|denies|deny|rules out|won't|without)\b|不會|未將|否認|沒有|並未|排除|不再/i.test(title);
- const extra=window.NewsImpactSector?window.NewsImpactSector.examine(n):{rules:[],observations:[]};
- const hits=negated?[]:[...rules.filter(r=>r.re.test(title)),...extra.rules];
- const observations=negated?[]:extra.observations;
+ const root=typeof window==="object"?window:globalThis;
+ const extra=root.NewsImpactSector?root.NewsImpactSector.examine(n):{rules:[],observations:[]};
+ const taxonomy=root.NewsImpactTaxonomy?root.NewsImpactTaxonomy.examine(n):{topics:[],rules:[],observations:[],flags:[]};
+ // "升息預期降溫" does not mean an actual Fed rate hike.
+ // Similarly forecasts/concerns/press speculation must not be upgraded to actual policy actions.
+ const hikeNotConfirmed=/(?:升息|加息).{0,16}(?:預期|疑慮|押注|機率|料將|可能|恐|炸彈|降溫)|(?:預期|押注|疑慮).{0,14}(?:升息|加息)|hike bets|hike expectations/i.test(title);
+ const oldHits=negated?[]:rules.filter(r=>r.re.test(title)&&!(r.id==="rate-hawk"&&hikeNotConfirmed)&&!(r.id==="rate-dove"&&/降息.{0,12}(?:押注|預期|疑慮|傳出|可能|恐)/.test(title)));
+ const hits=[...oldHits,...extra.rules,...taxonomy.rules];
+ const observations=[...(extra.observations||[])];
+ for(const o of taxonomy.observations||[])if(!observations.some(x=>x.asset===o.asset))observations.push(o);
+ const topics=taxonomy.topics||[];
+ const flags=taxonomy.flags||[];
  const scores={};for(const a of assets)scores[a]=[];
- for(const r of hits)for(const [a,v] of Object.entries(r.impact))if(v)scores[a].push(v);
+ for(const r of hits)for(const [a,v] of Object.entries(r.impact||{}))if(v&&scores[a])scores[a].push(v);
  const impacts=Object.entries(scores).filter(([a,values])=>values.length).map(([asset,values])=>{
  const pos=values.some(v=>v>0),neg=values.some(v=>v<0),mixed=pos&&neg;
  const score=mixed?0:Math.max(-100,Math.min(100,Math.round(values.reduce((a,b)=>a+b,0)/values.length)));
@@ -44,7 +54,7 @@ function classify(n){
  }).sort((a,b)=>Math.abs(b.score)-Math.abs(a.score));
  const speculative=/\b(could|may|might|if|plan|proposal|consider|warn|rumor|rumour|opinion|predict|expects?|likely|unlikely)\b|可能|傳聞|疑慮|恐|擬|計畫|研議|或將|傳出|預測|？|\?/i.test(title);
  const opinion=/\bopinion\b|評論|社論/i.test(title);
- return {...n,hits,impacts,observations,speculative,opinion,negated,sourceType:sourceTypeOf(n)};
+ return {...n,hits,impacts,observations,topics,flags,speculative,opinion,negated,sourceType:sourceTypeOf(n),classifierVersion:VERSION};
 }
 function elapsed(n){const t=Date.parse(n.publishedAt||"");return Number.isFinite(t)?(Date.now()-t)/3600000:Infinity}
 function visible(n){
@@ -63,24 +73,26 @@ function historyOf(n){
  return verified.length?'<div class="reality">已實現價格後續報酬（非因果證明）｜'+esc(verified.slice(0,6).join("　"))+'</div>':"";
 }
 function eventCard(n){
- const type=n.hits.length?n.hits.map(r=>r.name).join("／"):"尚無足夠事件規則";
- const certainty=n.hits.length?(n.speculative||n.opinion?"低｜推測、評論或條件式標題":"有限｜僅標題判讀（非模型訓練）"):"無法判讀";
- const explain=n.hits.length?[...new Set(n.hits.map(r=>r.why))].join(" "):n.negated?"標題具有否定語境；為避免反向誤判，暫不自動判多空。":"目前標題無明確的市場傳導關鍵事件，不能可靠判斷方向。";
- const caveats=n.hits.length?[...new Set(n.hits.map(r=>r.caveat))].join("；"):"需等待更多資訊及價格反應";
+ const type=n.hits.length?n.hits.map(r=>r.name).join("／"):n.topics.length?"事件主題可識別／方向待確認":"尚無足夠事件規則";
+ const certainty=n.impacts.length?(n.speculative||n.opinion||n.flags.length?"低｜含傳聞／評論／預期":"有限｜條件式標題規則，非歷史勝率"):n.hits.length||n.topics.length?"僅辨識事件類別，不能推估市場方向":"目前不足以判讀";
+ const explain=n.hits.length?[...new Set(n.hits.map(r=>r.why))].join(" "):n.topics.length?"目前只能辨識主題，尚缺乏可驗證的政策變化、供需衝擊或市場預期差，不能直接判利多空。":n.negated?"標題具有否定語境，暫不自動判多空。":"目前標題無明確市場傳導依據，不能可靠判斷方向。";
+ const caveats=n.hits.length?[...new Set(n.hits.map(r=>r.caveat))].join("；"):"需核對原文、預期差與實際行情";
  const time=String(n.publishedAt||n.date||"").replace("T"," ").slice(0,16);
  const url=/^https:\/\//.test(n.url||"")?n.url:"#";
+ const topicLine=n.topics.length?'<div class="topicline">主題：'+esc(n.topics.join("／"))+'</div>':"";
  return '<article class="article"><div class="item-top"><span>'+esc(n.originType==="foreign_original"?"🌍 國際":"🇹🇼 國內／其他")+'</span><span>'+esc(time)+'（台灣）</span></div>'+
  '<h3><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(n.title)+'</a></h3>'+
- '<div class="source">'+esc(n.source||"來源不明")+' · '+esc(n.sourceType)+' · '+esc(n.category||"")+" · "+esc(type)+'</div>'+
+ '<div class="source">'+esc(n.source||"來源不明")+' · '+esc(n.sourceType)+' · '+esc(n.category||"")+" · "+esc(type)+'</div>'+topicLine+
  '<div class="signals">'+(n.impacts.length?n.impacts.slice(0,9).map(badge).join(""):n.hits.length?'<span class="signal mixed">事件已辨識｜尚無可驗證資產預測</span>':'<span class="signal mixed">未判定利多利空</span>')+(n.observations||[]).map(observedBadge).join("")+'</div>'+
  '<div class="reason"><b>推估傳導：</b>'+esc(explain)+'</div><div class="caveat">可信程度：'+esc(certainty)+'｜反向條件：'+esc(caveats)+'</div>'+
  historyOf(n)+'</article>'
 }
 function render(){
  const filtered=DATA.filter(visible).sort((a,b)=>String(b.publishedAt||"").localeCompare(String(a.publishedAt||"")));
- const matched=filtered.filter(n=>n.hits.length);
+ const matched=filtered.filter(n=>n.hits.length||n.topics.length||n.observations.length);
  const directional=filtered.filter(n=>n.impacts.length);
- $("count").textContent="近 "+HOURS+" 小時 "+filtered.length+" 則新聞｜"+matched.length+" 則事件可辨識，其中 "+directional.length+" 則有條件式產業／資產方向";
+ const observedCount=filtered.filter(n=>n.observations.length).length;
+ $("count").textContent="近 "+HOURS+" 小時 "+filtered.length+" 則｜"+matched.length+" 則主題／事件可辨識｜"+directional.length+" 則有條件式方向｜"+observedCount+" 則有新聞已報導行情（非預測）";
  $("articles").innerHTML=filtered.length?filtered.slice(0,100).map(eventCard).join(""):'<div class="empty">所選期間或條件沒有符合的新聞。可放寬篩選條件。</div>';
  const rows=assets.map(asset=>{
  const events=matched.flatMap(n=>n.impacts.filter(x=>x.asset===asset).map(x=>({n,...x})));
@@ -114,6 +126,7 @@ async function boot(){
  render();
  }catch(e){$("meta").textContent="新聞資料載入失敗："+e.message;$("articles").innerHTML='<div class="empty">資料暫時無法取得，請確認原新聞工作流程。</div>';}
 }
+if(typeof module==="object"&&module.exports){module.exports={classify,VERSION,assets};return;}
 $("asset").addEventListener("change",e=>{ASSET=e.target.value;render()});
 $("region").addEventListener("change",e=>{REGION=e.target.value;render()});
 $("hours").addEventListener("change",e=>{HOURS=Number(e.target.value);render()});
