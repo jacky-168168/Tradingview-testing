@@ -19,7 +19,7 @@ const rules=[
 {id:"demand-fall",name:"景氣／需求下滑",re:/\b(recession fears?|economy contracts?|manufacturing slump|demand collapses?|weak demand|unemployment (?:surges?|jumps?))\b|經濟衰退|需求萎縮|製造業萎縮|失業率飆升|需求疲弱/i,impact:{"美股S&P500":-55,"NASDAQ":-50,"台股":-55,"黃金":25,"WTI原油":-55,"銅":-60,"美債殖利率":-40},why:"總需求下降常壓抑股市、油價與工業金屬。",caveat:"黃金反應取決於美元與實質利率"},
 {id:"demand-rise",name:"景氣／需求轉強",re:/\b(industrial production (?:surges?|rebounds?)|manufacturing rebounds?|demand recovery|economic growth accelerates?)\b|景氣回升|需求復甦|製造業回升|經濟成長加速/i,impact:{"美股S&P500":35,"NASDAQ":30,"台股":40,"WTI原油":35,"銅":55,"美債殖利率":20},why:"需求改善有利風險資產、能源與工業金屬。",caveat:"若引發利率上升，成長股可能反而受壓"}
 ];
-let DATA=[],HISTORY=null,PROVENANCE={},ASSET="全部",REGION="全部",HOURS=48,SEARCH="";
+let DATA=[],HISTORY=null,PROVENANCE={},ASSET="全部",REGION="全部",STATUS="全部",HOURS=48,SEARCH="";
 function sourceTypeOf(n){
  const source=String(n.source||"");
  if(n.originType==="forum_repost"||/PTT|論壇|reddit/i.test(source))return "論壇／轉載（不代表原始消息）";
@@ -62,7 +62,11 @@ function visible(n){
  if(REGION==="國際"&&n.originType!=="foreign_original")return false;
  if(REGION==="國內"&&n.originType==="foreign_original")return false;
  if(ASSET!=="全部"&&!n.impacts.some(x=>x.asset===ASSET)&&!n.observations.some(x=>x.asset===ASSET))return false;
- const q=SEARCH.trim().toLowerCase();return !q||[n.title,n.source,n.category,...n.hits.map(h=>h.name)].join(" ").toLowerCase().includes(q)
+ if(STATUS==="可推估方向"&&!n.impacts.length)return false;
+ if(STATUS==="已報導行情"&&!n.observations.length)return false;
+ if(STATUS==="事件有分類、方向未知"&&(n.impacts.length||!(n.topics.length||n.hits.length)))return false;
+ if(STATUS==="未識別"&&(n.topics.length||n.hits.length||n.observations.length))return false;
+ const q=SEARCH.trim().toLowerCase();return !q||[n.title,n.source,n.category,...n.topics,...n.hits.map(h=>h.name)].join(" ").toLowerCase().includes(q)
 }
 function badge(a){const cls=a.mixed?"mixed":a.score>0?"bull":"bear";return '<span class="signal '+cls+'">'+esc(a.asset)+' '+(a.mixed?"多空衝突":a.score>0?"+":"")+a.score+'</span>'}
 function observedBadge(o){return '<span class="signal mixed">'+esc(o.asset)+"｜"+esc(o.label)+"（非預測）"+'</span>'}
@@ -75,7 +79,7 @@ function historyOf(n){
 function eventCard(n){
  const type=n.hits.length?n.hits.map(r=>r.name).join("／"):n.topics.length?"事件主題可識別／方向待確認":"尚無足夠事件規則";
  const certainty=n.impacts.length?(n.speculative||n.opinion||n.flags.length?"低｜含傳聞／評論／預期":"有限｜條件式標題規則，非歷史勝率"):n.hits.length||n.topics.length?"僅辨識事件類別，不能推估市場方向":"目前不足以判讀";
- const explain=n.hits.length?[...new Set(n.hits.map(r=>r.why))].join(" "):n.topics.length?"目前只能辨識主題，尚缺乏可驗證的政策變化、供需衝擊或市場預期差，不能直接判利多空。":n.negated?"標題具有否定語境，暫不自動判多空。":"目前標題無明確市場傳導依據，不能可靠判斷方向。";
+ const explain=n.hits.length?[...new Set(n.hits.map(r=>r.why))].join(" "):n.observations.length?"標題描述已發生的商品／匯率變動，只能作行情觀察，尚不能推論之後會延續或反轉。":n.topics.length?"目前能辨識主題，但尚缺政策實施、供需衝擊、財報預期差或可比價格資訊，不能直接判利多空。":n.negated?"標題具有否定語境，暫不自動判多空。":"目前標題無明確市場傳導依據，不能可靠判斷方向。";
  const caveats=n.hits.length?[...new Set(n.hits.map(r=>r.caveat))].join("；"):"需核對原文、預期差與實際行情";
  const time=String(n.publishedAt||n.date||"").replace("T"," ").slice(0,16);
  const url=/^https:\/\//.test(n.url||"")?n.url:"#";
@@ -83,7 +87,7 @@ function eventCard(n){
  return '<article class="article"><div class="item-top"><span>'+esc(n.originType==="foreign_original"?"🌍 國際":"🇹🇼 國內／其他")+'</span><span>'+esc(time)+'（台灣）</span></div>'+
  '<h3><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(n.title)+'</a></h3>'+
  '<div class="source">'+esc(n.source||"來源不明")+' · '+esc(n.sourceType)+' · '+esc(n.category||"")+" · "+esc(type)+'</div>'+topicLine+
- '<div class="signals">'+(n.impacts.length?n.impacts.slice(0,9).map(badge).join(""):n.hits.length?'<span class="signal mixed">事件已辨識｜尚無可驗證資產預測</span>':'<span class="signal mixed">未判定利多利空</span>')+(n.observations||[]).map(observedBadge).join("")+'</div>'+
+ '<div class="signals">'+(n.impacts.length?n.impacts.slice(0,9).map(badge).join(""):n.hits.length?'<span class="signal mixed">事件已辨識｜方向尚未確定</span>':n.observations.length?'<span class="signal mixed">已報導行情（非預測）</span>':n.topics.length?'<span class="signal mixed">主題已分類｜方向待確認</span>':'<span class="signal mixed">未判定利多利空</span>')+(n.observations||[]).map(observedBadge).join("")+'</div>'+
  '<div class="reason"><b>推估傳導：</b>'+esc(explain)+'</div><div class="caveat">可信程度：'+esc(certainty)+'｜反向條件：'+esc(caveats)+'</div>'+
  historyOf(n)+'</article>'
 }
@@ -137,6 +141,7 @@ $("asset").addEventListener("change",e=>{ASSET=e.target.value;render()});
 $("region").addEventListener("change",e=>{REGION=e.target.value;render()});
 $("hours").addEventListener("change",e=>{HOURS=Number(e.target.value);render()});
 $("query").addEventListener("input",e=>{SEARCH=e.target.value;render()});
+$("recognition").addEventListener("change",e=>{STATUS=e.target.value;render()});
 $("refresh").addEventListener("click",boot);
 boot();
 })();
