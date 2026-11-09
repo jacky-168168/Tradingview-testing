@@ -19,7 +19,8 @@ function examine(item){
  const falling=/(?:報價|均價|現貨價|合約價|價格).{0,45}(?:下跌|跌幅|走低|下降|回落|下滑|重挫)|(?:下跌|走低|下降|回落|下滑).{0,20}(?:報價|均價|現貨價|合約價|價格)|\b(?:prices?|quotes?).{0,22}\b(?:fall|falls|fell|drop|decline|slide|lower)\b/i.test(title);
  const rising=/(?:報價|均價|現貨價|合約價|價格).{0,45}(?:上漲|漲幅|走高|上升|回升|攀升)|(?:上漲|走高|上升|回升).{0,20}(?:報價|均價|現貨價|合約價|價格)|\b(?:prices?|quotes?).{0,22}\b(?:rise|rises|rose|jump|increase|higher)\b/i.test(title);
  const uncertain=/傳聞|據傳|可能|恐|預計|或將|\b(?:rumor|may|might|could|expected|forecast)\b/i.test(title);
- if(memory&&priced&&!uncertain&&falling!==rising){
+ const stockOnly=/\b(?:stock|shares?|equity)\b|股票|股價/i.test(title)&&!/均價|現貨價|合約價|\bDDR[345]\b/i.test(title);
+ if(memory&&priced&&!uncertain&&!stockOnly&&falling!==rising){
   const down=falling;
   rules.push({
    id:down?"memory-price-down":"memory-price-up",
@@ -31,7 +32,7 @@ function examine(item){
    caveat:"單次報價不代表季度合約價或股價；須查核現貨／合約、庫存、公司產品組合與價格趨勢。此訊號不外推至台股大盤。",
    scope:"產業"
   });
- }else if(memory&&priced&&falling&&rising){
+ }else if(memory&&priced&&!stockOnly&&falling&&rising){
   rules.push({id:"memory-price-mixed",name:"記憶體報價方向衝突",impact:{},why:"標題同時包含上漲及下跌資訊，無法直接判定供應端方向。",caveat:"須拆分品項、日期與價格資料。",scope:"產業"});
  }
  const isNZD=/\b(?:new zealand dollar|NZD(?:\/USD)?|kiwi dollar)\b|紐元|紐幣/i.test(title);
