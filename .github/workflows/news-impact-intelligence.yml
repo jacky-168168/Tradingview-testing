@@ -32,6 +32,7 @@ jobs:
       - name: Test news-impact sector classifier and mobile script dependencies
         run: |
           node tw-stock-dashboard/news-impact/test_sector.cjs
+          node tw-stock-dashboard/news-impact/test_taxonomy.cjs
           node tw-stock-dashboard/news-impact/test_freeze.cjs
       - name: Test archive timing and no-look-ahead
         run: python -m unittest discover -s tw-stock-dashboard/news-impact -p 'test_*.py' -v
