@@ -1,6 +1,11 @@
 name: TDCC Whale Shareholder Weekly
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/src/update_tdcc_whale_weekly.py'
+      - 'tw-stock-dashboard/tests/test_tdcc_whale_weekly.py'
+      - '.github/workflows/tdcc-whale-weekly.yml'
   schedule:
     # Sunday 09:35 Asia/Taipei; reference day could be Thursday or Friday.
     - cron: '35 1 * * 0'
@@ -18,7 +23,30 @@ concurrency:
   group: tdcc-whale-weekly
   cancel-in-progress: false
 jobs:
+  verify-pr:
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Independent TDCC regression and repository agent tests
+        env:
+          PYTHONPATH: tw-stock-dashboard/src
+        run: |
+          python -m py_compile tw-stock-dashboard/src/update_tdcc_whale_weekly.py
+          python -m unittest discover -s tw-stock-dashboard/tests -p test_tdcc_whale_weekly.py -v
+          python -m unittest discover -s .github/agent -p 'test_*.py' -v
+          node --check tw-stock-dashboard/docs/tdcc-whale-weekly.js
+          node tw-stock-dashboard/tests/test_tdcc_whale_ui.cjs
   publish:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 24
     steps:
