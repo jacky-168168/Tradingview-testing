@@ -1,7 +1,7 @@
 /* Deterministic V1.2 topic recognition. Observed moves != forecasts. */
 (function(root,factory){const api=factory();if(typeof module==="object"&&module.exports)module.exports=api;if(root)root.NewsImpactTaxonomy=api})(typeof window!=="undefined"?window:(typeof globalThis!=="undefined"?globalThis:null),function(){
 "use strict";
-const VERSION="2026-11-09-v1.2";
+const VERSION="2026-11-09-v1.3";
 const TOPICS=[
 ["AI算力／資料中心",/\b(?:AI|GPU|CoreWeave|Nvidia|Oracle|Microsoft)\b|算力|資料中心|雲端|輝達|甲骨文|微軟/i],
 ["半導體／封裝",/封裝|台積電|半導體|晶圓|光通訊|散熱|伺服器|semiconductor|packaging|chipmaker/i],
@@ -25,16 +25,18 @@ const ASSET_TERMS=[
 ["白銀",/(?:白銀|銀價|\bsilver\b)/i],
 ["美元",/(?:美元指數|美元|US dollar|U\.S\. dollar|dollar index|\bDXY\b)/i],
 ["紐元NZD",/(?:紐元|紐幣|New Zealand Dollar|NZ dollar|kiwi dollar|\bNZD\b)/i],
+["港幣HKD",/(?:港幣|港元|港紙|\bHKD\b|Hong Kong dollar)/i],
 ["銅",/(?:銅價|\bcopper\b)/i],
 ["農產品期貨",/(?:大豆|豆油|小麥|玉米|CBOT|soybean|wheat|corn)/i],
 ["加密資產",/(?:加密貨幣|比特幣|\bbitcoin\b|cryptocurrenc)/i]
 ];
-const UP=/(?:上漲|大漲|走高|走強|升值|漲幅|創高|飆升|反彈|\b(?:rises?|rose|gains?|higher|advances?|advanced|surges?|climbs?|rebounds?)\b)/i;
-const DOWN=/(?:下跌|大跌|暴跌|走低|走弱|重挫|腰斬|跌幅|貶值|\b(?:falls?|fell|drops?|declines?|slides?|weakens?|plunges?)\b)/i;
-const FUTURE=/(?:將|可能|預計|預估|預測|恐|或將|看漲|看跌|預期|下週|明年|\b(?:could|may|might|expect|forecast|likely|predict)\b)/i;
+const UP=/(?:上漲|大漲|走高|走強|走揚|升值|漲幅|創高|飆升|反彈|攀升|回升|\b(?:rises?|rose|gains?|higher|advances?|advanced|surges?|climbs?|rebounds?)\b)/i;
+const DOWN=/(?:下跌|大跌|暴跌|走低|走弱|轉弱|回落|收跌|重挫|腰斬|跌幅|貶值|\b(?:falls?|fell|drops?|declines?|slides?|weakens?|plunges?)\b)/i;
+const FUTURE=/(?:將|料將|可能|預計|預估|預測|恐|或將|看漲|看跌|預期|下週|明年|\b(?:could|may|might|expect|forecast|likely|predict)\b)/i;
 function examine(item){
  const title=String(item?.title||"").trim(),category=String(item?.category||""),source=String(item?.source||"");
  const topics=TOPICS.filter(t=>t[1].test(title)).map(t=>t[0]),rules=[],observations=[],flags=[];
+ let topicEvidence=topics.length?"headline_terms":"none";
  // "60.167美元" and "砸280億美元" are monetary units, NOT USD FX news.
  const fxReal=/匯率|美元指數|美元走|美元升|美元跌|美金匯價|港幣|港元|紐元|紐幣|\b(?:USD|US dollar|U\.S\. dollar|NZD|New Zealand Dollar|NZ dollar|currency|forex|yen|yuan|euro)\b/i.test(title);
  if(!fxReal&&topics.includes("匯率"))topics.splice(topics.indexOf("匯率"),1);
@@ -74,18 +76,26 @@ function examine(item){
   add("cloud-contract-risk","雲端算力合約不確定",{"雲端算力租賃":-20},"取消租約可能降低出租方收入能見度。","須確認是否只是傳聞、僅涉及舊 GPU，不能代表整體 AI 需求轉弱。","產業");
  }
  if(/天然氣|gas field|gas production/i.test(title)&&/停產|中斷|暫停|遭攻擊|suspend|shutdown|attack/i.test(title)){
-  add("gas-field-outage","天然氣供給中斷",{"天然氣供應":35},"設施停產可能使地區天然氣供給吃緊。","天然氣與 WTI 不同，無原油供應證據不應推算 WTI 利多。","天然氣");
+  add("gas-field-outage","天然氣供給中斷／價格壓力",{"天然氣價格":35},"設施停產可能使區域天然氣價格面臨上行壓力；供應量本身下降，不能把漲價看成供應利多。","影響限於供應區域，須核對管線與市場報價；天然氣與 WTI 原油不同。","天然氣");
  }
  if(/原油|石油|crude oil|oil output|oil production/i.test(title)&&/產量創新高|產量增加|原油增產|record production|record output/i.test(title)){
   add("crude-supply-growth","原油供給增加",{"WTI原油":-25},"新增產量可能降低油價支撐。","觀察 OPEC、EIA、庫存及需求；一口鑽井變動影響有限。","原油");
  }
  if(/美伊|伊朗|Iran/i.test(title)&&/和談|談判|peace talks?|negotiations?/i.test(title)&&/希望|進展|恢復|再起|progress|hope|resume/i.test(title)&&!/破局|失敗|collapse|fail/i.test(title)){
-  add("iran-talks","伊朗和談／油價風險溢價",{"WTI原油":-20},"和談進展可能降低地緣油價風險溢價。","和談不等於達成停火，且原油可能已提前反應。","地緣情境");
+  add("iran-talks-watch","伊朗和談傳聞／談判進程",{},"和談進展若獲確認可能降低地緣風險溢價，但標題中的希望、傳聞或談判本身不足以證明能源供應變動。","需核對正式協議、制裁變化與市場是否已在新聞前反應，不把報導後油價跌幅當成前瞻成功。","地緣觀察");
  }
  // Separate supplier tailwinds from broad tech-index direction. Reported
  // profit growth is an observation; an actual future share move is not known.
- if(/記憶體|DRAM|DDR[345]|NAND/i.test(title)&&/缺貨|供給吃緊|漲價|記憶體成本|供應不足/i.test(title)&&!/暴跌|價格下跌|跌價/i.test(title)){
-  add("memory-tight-supply","記憶體供給偏緊／漲價",{"台股記憶體供應端":20},"供給偏緊及產品漲價通常支撐製造商報價，但會增加下游採購成本。","預期明年漲價、單一公司言論或庫存估計都尚未等於實際合約價格。","產業");
+ const memoryMention=/記憶體|DRAM|DDR[345]|NAND/i.test(title);
+ const memoryPressure=/缺貨|供給吃緊|漲價|記憶體成本|供應不足/i.test(title);
+ const memoryFuture=/(?:明年|後年|2027|2028|未來|預期|預測|看缺貨|示警|傳出|將漲|恐漲|可能漲)/i.test(title);
+ const memoryDownstream=/(?:任天堂|Nintendo|蘋果|Apple|Switch|庫存充足|成本上升|毛利率有壓)/i.test(title);
+ if(memoryMention&&memoryPressure){
+  if(memoryFuture||memoryDownstream){
+   add("memory-outlook","記憶體價格展望／下游客戶成本",{},"標題可能在談未來供需或下游成本，尚非記憶體廠已實現的產品售價或毛利變動。","須確認現貨、合約報價、實際生效日期與企業產品組合；不產生記憶體股方向分數。","產業預期");
+  }else if(!/暴跌|價格下跌|跌價/i.test(title)){
+   add("memory-tight-supply","記憶體供給偏緊／漲價",{"台股記憶體供應端":20},"供給偏緊及產品漲價通常支撐製造商報價，但會增加下游採購成本。","僅為條件式供需假說；須查核實際合約價與股價已反映程度。","產業");
+  }
  }
  if(/AI|伺服器|台積電設備|光通訊|散熱/i.test(title)&&/需求熱|需求強勁|營收創高|獲利狂飆|訂單成長|擴大布局/i.test(title)&&!rules.some(r=>r.id==="advanced-packaging-demand")){
   add("ai-supply-growth","AI硬體供應鏈需求改善",{"AI／半導體設備":15},"需求或營收改善對供應鏈基本面可能有利，不代表股價必漲。","個別公司產品組合與股價已反映程度未知。","產業");
@@ -103,8 +113,10 @@ function examine(item){
  if(/COP3[0-9]|氣候峰會|climate summit|EV, battery subsidies/i.test(title))
   add("climate-context","氣候／補貼政策討論",{},"補貼與能源政策可能改變個別產業需求。","僅開會或討論，不代表政策生效。","政策");
  const aliases={"財報":"企業財報／營收","報價":"市場行情／評論","AI需求":"AI算力／資料中心","國際總經":"經濟指標","總經":"經濟指標","原油／能源":"原油／天然氣","農產品":"農產品","貴金屬":"貴金屬／銅","地緣政治":"地緣政治","國際政策":"選舉／政治","美國選舉":"選舉／政治"};
- if(topics.length===0&&aliases[category])topic(aliases[category]);
- return {topics:[...new Set(topics)],rules,observations,flags,version:VERSION};
+ if(topics.length===0&&aliases[category]){topic(aliases[category]);topicEvidence="source_category_only";}
+ // Industry research with a distant forecast year is not an observed futures shock.
+ if(/203[0-9]年|20[34][0-9] market forecast|市場展望20[34][0-9]|市場預測/i.test(title)&&!topics.includes("長期市場展望（非當日商品行情）"))topic("長期市場展望（非當日商品行情）");
+ return {topics:[...new Set(topics)],rules,observations,flags,topicEvidence,version:VERSION};
 }
 return {VERSION,examine};
 });
