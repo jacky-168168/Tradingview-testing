@@ -15,7 +15,7 @@ const first=freeze({records:[]},records,when);
 assert.equal(first.records.length,1,"only one pre-outcome commodity scenario should freeze");
 assert.equal(first.records[0].id,"o1");
 assert.ok(first.records[0].signals.some(s=>s.asset==="WTI原油"&&s.direction===1));
-assert.equal(first.records[0].classifierVersion,"2026-11-09-v1.2");
+assert.equal(first.records[0].classifierVersion,"2026-11-09-v1.3");
 assert.equal(first.records[0].signals[0].predictionIsProbability,undefined);
 const again=freeze(first,[...records,news("new","OPEC announces oil production cuts")],new Date("2026-11-09T06:00:00Z"));
 assert.equal(again.records.length,1);
