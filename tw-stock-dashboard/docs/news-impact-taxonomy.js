@@ -59,8 +59,13 @@ function examine(item){
  for(let i=0;i<found.length;i++){
   const x=found[i],next=found[i+1];
   const phrase=title.slice(x.end,Math.min(x.end+38,next?next.start:title.length));
-  if(FUTURE.test(phrase.slice(0,25)))continue;
-  const up=UP.test(phrase),down=DOWN.test(phrase);
+  // "美元走揚，升息預期..." reports a move BEFORE a future-looking
+  // explanation. "美元預期走揚" reports no move.
+  const movementUp=UP.exec(phrase),movementDown=DOWN.exec(phrase),forecast=FUTURE.exec(phrase);
+  const firstMove=[movementUp?.index,movementDown?.index].filter(v=>v!=null).sort((a,b)=>a-b)[0];
+  if(firstMove===undefined||(forecast&&forecast.index<=firstMove))continue;
+  const observedClause=forecast?phrase.slice(0,forecast.index):phrase;
+  const up=UP.test(observedClause),down=DOWN.test(observedClause);
   if(up!==down)observations.push({asset:x.asset,label:up?"新聞稱已上漲":"新聞稱已下跌"});
  }
  const goodHike=/(?:升息|加息)(?:押注|預期|機率).{0,10}(?:降溫|減弱|降低|下降|回落)|(?:hike bets?|hike expectations?).{0,15}(?:cool|ease|fall|fade)/i.test(title);
@@ -87,7 +92,7 @@ function examine(item){
  // Separate supplier tailwinds from broad tech-index direction. Reported
  // profit growth is an observation; an actual future share move is not known.
  const memoryMention=/記憶體|DRAM|DDR[345]|NAND/i.test(title);
- const memoryPressure=/缺貨|供給吃緊|漲價|記憶體成本|供應不足/i.test(title);
+ const memoryPressure=/缺貨|供給吃緊|漲價|還會漲|價格上漲|產品調漲|記憶體成本|供應不足/i.test(title);
  const memoryFuture=/(?:明年|後年|2027|2028|未來|預期|預測|看缺貨|示警|傳出|將漲|恐漲|可能漲)/i.test(title);
  const memoryDownstream=/(?:任天堂|Nintendo|蘋果|Apple|Switch|庫存充足|成本上升|毛利率有壓)/i.test(title);
  if(memoryMention&&memoryPressure){
