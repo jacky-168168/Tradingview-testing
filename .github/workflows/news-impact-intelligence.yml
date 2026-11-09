@@ -29,6 +29,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Test news-impact sector classifier and mobile script dependencies
+        run: node tw-stock-dashboard/news-impact/test_sector.cjs
       - name: Test archive timing and no-look-ahead
         run: python -m unittest discover -s tw-stock-dashboard/news-impact -p 'test_*.py' -v
       - name: Install market price provider
