@@ -45,8 +45,8 @@ assert.deepEqual(classify("New Zealand election uncertainty deepens").observatio
 
 // Live UI script must include the module before core classifier.
 const page=fs.readFileSync(path.resolve(__dirname,"../docs/news-impact.html"),"utf8");
-const iModule=page.indexOf('src="./news-impact-sector.js"');
-const iCore=page.indexOf('src="./news-impact.js"');
+const iModule=page.indexOf('src="./news-impact-sector.js');
+const iCore=page.indexOf('src="./news-impact.js');
 assert.ok(iModule>=0&&iCore>iModule,"sector plugin must load before core classifier");
 assert.ok(page.includes("<option>台股記憶體供應端</option>"));
 assert.ok(page.includes("<option>紐元NZD</option>"));
