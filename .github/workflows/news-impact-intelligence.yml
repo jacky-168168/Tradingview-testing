@@ -52,6 +52,8 @@ jobs:
         run: python tw-stock-dashboard/news-impact/collect_official_events.py
       - name: Build official-event historical study
         run: python tw-stock-dashboard/news-impact/official_study.py
+      - name: Verify long-horizon website rendering and study-data compatibility
+        run: node tw-stock-dashboard/news-impact/test_history_ui.cjs
       - name: Commit archive when updated
         shell: bash
         run: |
