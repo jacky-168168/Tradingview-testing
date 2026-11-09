@@ -9,7 +9,7 @@ const c=title=>classify({title,source:"Representative archived news",category:"�
 function has(x,id){return x.hits.some(r=>r.id===id)}
 function obs(x,asset){return x.observations.find(o=>o.asset===asset)}
 function score(x,asset){return x.impacts.find(i=>i.asset===asset)?.score}
-assert.equal(VERSION,"2026-11-09-v1.2");
+assert.equal(VERSION,"2026-11-09-v1.3");
 // Fed references without a confirmed decision must NOT become a hawkish shock.
 let x=c("星展銀行指稱，聯準會升息押注降溫，套利交易平倉料將推高港幣匯率");
 assert.ok(has(x,"hike-bets-cool"));assert.equal(has(x,"rate-hawk"),false);
@@ -30,7 +30,7 @@ x=c("Oil falls on open as Trump says fresh Iran attacks 'unlikely'");
 assert.ok(obs(x,"WTI原油"));
 assert.equal(has(x,"war-up"),false);
 x=c("Production suspended at Iraq's Khor Mor gas field after drone attack, sources say");
-assert.equal(score(x,"天然氣供應"),35);
+assert.equal(score(x,"天然氣價格"),35);
 assert.equal(score(x,"WTI原油"),undefined);
 x=c("New Zealand Dollar Advances as Ruling Party Gets Election Edge");
 assert.ok(obs(x,"紐元NZD"));
