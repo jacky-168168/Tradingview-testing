@@ -191,6 +191,17 @@ def build_study(catalog, prices, errors, now=None):
                                 if asset in e["outcomes"] and key in e["outcomes"][asset]["results"]]
                 stats.append({"group": g["key"], "asset": asset, "horizon": key,
                               **summary_stats(observations, controls.get((asset, horizon), []))})
+    # Record full (category or subtype) × asset × long horizon coverage.
+    # Missing observations are honest zero-sample categories, not failed jobs
+    # or fabricated 0% returns. The page can distinguish them from stale data.
+    long_stats = [s for s in stats if s["horizon"] in ("180D", "360D")]
+    long_coverage = {
+        "total": len(long_stats),
+        "withHistory": sum(x["n"] > 0 for x in long_stats),
+        "withoutHistory": sum(x["n"] == 0 for x in long_stats),
+        "horizons": ["180D", "360D"],
+        "definition": "category/subtype × asset × 180/360 completed trading sessions; no fake prices",
+    }
     return {
         "schema": 1,
         "generatedAt": now.astimezone(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),
@@ -203,6 +214,7 @@ def build_study(catalog, prices, errors, now=None):
         "eventsWithPriceData": sum(bool(e["outcomes"]) for e in rows),
         "groups": groups,
         "horizonsTradingDays": list(STUDY_HORIZONS),
+        "longHorizonCoverage": long_coverage,
         "minSample": MIN_SAMPLE,
         "status": "ok" if len(prices) == len(SYMBOLS) else ("partial" if prices else "unavailable"),
         "priceSymbolsOk": list(prices), "priceErrors": errors,
