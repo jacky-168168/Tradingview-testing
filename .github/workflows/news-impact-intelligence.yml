@@ -30,13 +30,19 @@ jobs:
         with:
           python-version: '3.11'
       - name: Test news-impact sector classifier and mobile script dependencies
-        run: node tw-stock-dashboard/news-impact/test_sector.cjs
+        run: |
+          node tw-stock-dashboard/news-impact/test_sector.cjs
+          node tw-stock-dashboard/news-impact/test_freeze.cjs
       - name: Test archive timing and no-look-ahead
         run: python -m unittest discover -s tw-stock-dashboard/news-impact -p 'test_*.py' -v
       - name: Install market price provider
         run: python -m pip install --disable-pip-version-check 'yfinance>=0.2.60,<2'
       - name: Build event archive and price follow-through
         run: python tw-stock-dashboard/news-impact/history.py
+      - name: Freeze prospective news directional signals
+        run: node tw-stock-dashboard/news-impact/freeze_signals.cjs
+      - name: Verify actual realized rule directions without hindsight
+        run: python tw-stock-dashboard/news-impact/scorecard.py
       - name: Collect historical BLS releases and FOMC policy statements
         run: python tw-stock-dashboard/news-impact/collect_official_events.py
       - name: Build official-event historical study
