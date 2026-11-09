@@ -8,6 +8,7 @@ positive/negative surprises. Never treats headlines as independent observations.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 from bisect import bisect_left
@@ -217,12 +218,49 @@ def generate(catalog_path=CATALOG, output_path=OUTPUT):
         return
     result = build_study(catalog, prices, errors, now)
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    # Mobile page must not download multi-megabyte all-asset/all-event history.
+    # Publish a small summary plus one independently readable JSON shard per
+    # (event category, asset). The UI fetches just its current selection.
+    shards = output_path.parent / "official_details"
+    shards.mkdir(parents=True, exist_ok=True)
+    categories = sorted({e["category"] for e in result["events"]})
+    details = {}
+    for category in categories:
+        slug = hashlib.sha256(category.encode("utf-8")).hexdigest()[:16]
+        details[category] = {}
+        relevant = [e for e in result["events"] if e["category"] == category]
+        for index, asset in enumerate(SYMBOLS):
+            filename = f"{slug}-{index}.json"
+            payload = {
+                "schema": 1, "generatedAt": result["generatedAt"],
+                "category": category, "asset": asset,
+                "eventCount": len(relevant),
+                "events": [{
+                    "id": e["id"], "category": e["category"],
+                    "subtype": e.get("subtype"), "date": e["date"],
+                    "title": e["title"], "source": e["source"],
+                    "sourceUrl": e["sourceUrl"],
+                    "timeAccuracy": e.get("timeAccuracy"),
+                    "primaryReleaseVerified": e.get("primaryReleaseVerified"),
+                    "outcomes": {asset: e["outcomes"][asset]} if asset in e["outcomes"] else {}
+                } for e in relevant],
+            }
+            target = shards / filename
+            temp_shard = target.with_suffix(".tmp")
+            temp_shard.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+            temp_shard.replace(target)
+            details[category][asset] = f"./data/news_impact/official_details/{filename}"
+    summary = {k: v for k, v in result.items() if k != "events"}
+    summary["detailMode"] = "category_asset_shards"
+    summary["detailFiles"] = details
+    summary["detailFileCount"] = sum(map(len, details.values()))
     temp = output_path.with_suffix(".tmp")
-    temp.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temp.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     temp.replace(output_path)
     nonempty = sum(s["n"] > 0 for s in result["stats"])
     print(f"official events {result['eventCount']}; realized event dates {result['eventsWithPriceData']}; "
-          f"price symbols {len(prices)}/{len(SYMBOLS)}; nonempty stats {nonempty}")
+          f"price symbols {len(prices)}/{len(SYMBOLS)}; nonempty stats {nonempty}; "
+          f"detail shards {summary['detailFileCount']}")
 
 
 if __name__ == "__main__":
