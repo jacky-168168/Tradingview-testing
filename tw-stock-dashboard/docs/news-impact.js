@@ -3,8 +3,8 @@
 const $=id=>document.getElementById(id);
 const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const NEWS="./data/market_events/latest.json", HISTORY_URL="./data/news_impact/history.json", SCORECARD_URL="./data/news_impact/scorecard.json";
-const VERSION="2026-11-09-v1.2";
-const assets=["美股S&P500","NASDAQ","台股","台股記憶體供應端","AI／半導體設備","雲端算力租賃","天然氣供應","黃金","白銀","WTI原油","美元","美債殖利率","銅","紐元NZD","農產品期貨","加密資產"];
+const VERSION="2026-11-09-v1.3";
+const assets=["美股S&P500","NASDAQ","台股","台股記憶體供應端","AI／半導體設備","雲端算力租賃","天然氣價格","黃金","白銀","WTI原油","美元","美債殖利率","銅","紐元NZD","港幣HKD","農產品期貨","加密資產"];
 const rules=[
 {id:"war-up",name:"地緣衝突升溫",re:/\b(escalat(?:e|es|ion)|airstrikes?|missile (?:attack|strike)|invad(?:e|es|ed)|military strikes?|attacks? on oil|strait of hormuz (?:clos|block))\b|戰爭升級|軍事攻擊|空襲|飛彈襲擊|荷姆茲海峽封鎖|衝突升溫/i,impact:{"美股S&P500":-50,"NASDAQ":-55,"台股":-55,"黃金":65,"白銀":30,"WTI原油":40,"美元":25,"美債殖利率":-10},why:"避險需求可能增加；若實際波及產油、航運，油價上行風險提高。",caveat:"政治聲明不等於實際供應中斷"},
 {id:"war-down",name:"停火與緊張緩和",re:/\b(ceasefire (?:deal|agreed|agreement|takes effect)|peace deal|de[- ]escalat(?:ion|es|ed))\b|停火協議|達成停火|和平協議|緊張緩和/i,impact:{"美股S&P500":45,"NASDAQ":45,"台股":40,"黃金":-40,"白銀":-20,"WTI原油":-35,"美元":-15},why:"風險溢價可能下降，避險資產與地緣油價溢價可能回落。",caveat:"若停火未落實，方向可能立即反轉"},
@@ -45,6 +45,7 @@ function classify(n){
  for(const o of taxonomy.observations||[])if(!observations.some(x=>x.asset===o.asset))observations.push(o);
  const topics=taxonomy.topics||[];
  const flags=taxonomy.flags||[];
+ const topicEvidence=taxonomy.topicEvidence||"none";
  const scores={};for(const a of assets)scores[a]=[];
  for(const r of hits)for(const [a,v] of Object.entries(r.impact||{}))if(v&&scores[a])scores[a].push(v);
  const impacts=Object.entries(scores).filter(([a,values])=>values.length).map(([asset,values])=>{
@@ -54,7 +55,7 @@ function classify(n){
  }).sort((a,b)=>Math.abs(b.score)-Math.abs(a.score));
  const speculative=/\b(could|may|might|if|plan|proposal|consider|warn|rumor|rumour|opinion|predict|expects?|likely|unlikely)\b|可能|傳聞|疑慮|恐|擬|計畫|研議|或將|傳出|預測|？|\?/i.test(title);
  const opinion=/\bopinion\b|評論|社論/i.test(title);
- return {...n,hits,impacts,observations,topics,flags,speculative,opinion,negated,sourceType:sourceTypeOf(n),classifierVersion:VERSION};
+ return {...n,hits,impacts,observations,topics,flags,topicEvidence,speculative,opinion,negated,sourceType:sourceTypeOf(n),classifierVersion:VERSION};
 }
 function elapsed(n){const t=Date.parse(n.publishedAt||"");return Number.isFinite(t)?(Date.now()-t)/3600000:Infinity}
 function visible(n){
@@ -78,12 +79,12 @@ function historyOf(n){
 }
 function eventCard(n){
  const type=n.hits.length?n.hits.map(r=>r.name).join("／"):n.topics.length?"事件主題可識別／方向待確認":"尚無足夠事件規則";
- const certainty=n.impacts.length?(n.speculative||n.opinion||n.flags.length?"低｜含傳聞／評論／預期":"有限｜條件式標題規則，非歷史勝率"):n.hits.length||n.topics.length?"僅辨識事件類別，不能推估市場方向":"目前不足以判讀";
+ const certainty=n.impacts.length?(n.speculative||n.opinion||n.flags.length?"低｜含傳聞／評論／預期":"有限｜條件式標題規則，非歷史勝率"):n.hits.length?"已辨識事件，但未有足夠證據判方向":n.topicEvidence==="source_category_only"?"僅沿用來源分類，標題證據不足":n.topics.length?"可辨識主題，但不足以推估市場方向":"目前不足以判讀";
  const explain=n.hits.length?[...new Set(n.hits.map(r=>r.why))].join(" "):n.observations.length?"標題描述已發生的商品／匯率變動，只能作行情觀察，尚不能推論之後會延續或反轉。":n.topics.length?"目前能辨識主題，但尚缺政策實施、供需衝擊、財報預期差或可比價格資訊，不能直接判利多空。":n.negated?"標題具有否定語境，暫不自動判多空。":"目前標題無明確市場傳導依據，不能可靠判斷方向。";
  const caveats=n.hits.length?[...new Set(n.hits.map(r=>r.caveat))].join("；"):"需核對原文、預期差與實際行情";
  const time=String(n.publishedAt||n.date||"").replace("T"," ").slice(0,16);
  const url=/^https:\/\//.test(n.url||"")?n.url:"#";
- const topicLine=n.topics.length?'<div class="topicline">主題：'+esc(n.topics.join("／"))+'</div>':"";
+ const topicLine=n.topics.length?'<div class="topicline">主題：'+esc(n.topics.join("／"))+(n.topicEvidence==="source_category_only"?"（僅來源分類）":"")+'</div>':"";
  return '<article class="article"><div class="item-top"><span>'+esc(n.originType==="foreign_original"?"🌍 國際":"🇹🇼 國內／其他")+'</span><span>'+esc(time)+'（台灣）</span></div>'+
  '<h3><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(n.title)+'</a></h3>'+
  '<div class="source">'+esc(n.source||"來源不明")+' · '+esc(n.sourceType)+' · '+esc(n.category||"")+" · "+esc(type)+'</div>'+topicLine+
