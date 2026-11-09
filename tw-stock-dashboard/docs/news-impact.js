@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const NEWS="./data/market_events/latest.json", HISTORY_URL="./data/news_impact/history.json";
-const assets=["美股S&P500","NASDAQ","台股","黃金","白銀","WTI原油","美元","美債殖利率","銅"];
+const assets=["美股S&P500","NASDAQ","台股","台股記憶體供應端","黃金","白銀","WTI原油","美元","美債殖利率","銅","紐元NZD"];
 const rules=[
 {id:"war-up",name:"地緣衝突升溫",re:/\b(escalat(?:e|es|ion)|airstrikes?|missile (?:attack|strike)|invad(?:e|es|ed)|military strikes?|attacks? on oil|strait of hormuz (?:clos|block))\b|戰爭升級|軍事攻擊|空襲|飛彈襲擊|荷姆茲海峽封鎖|衝突升溫/i,impact:{"美股S&P500":-50,"NASDAQ":-55,"台股":-55,"黃金":65,"白銀":30,"WTI原油":40,"美元":25,"美債殖利率":-10},why:"避險需求可能增加；若實際波及產油、航運，油價上行風險提高。",caveat:"政治聲明不等於實際供應中斷"},
 {id:"war-down",name:"停火與緊張緩和",re:/\b(ceasefire (?:deal|agreed|agreement|takes effect)|peace deal|de[- ]escalat(?:ion|es|ed))\b|停火協議|達成停火|和平協議|緊張緩和/i,impact:{"美股S&P500":45,"NASDAQ":45,"台股":40,"黃金":-40,"白銀":-20,"WTI原油":-35,"美元":-15},why:"風險溢價可能下降，避險資產與地緣油價溢價可能回落。",caveat:"若停火未落實，方向可能立即反轉"},
@@ -32,7 +32,9 @@ function classify(n){
  // Headlines such as "Fed will not hike" or "attack unlikely" must not
  // produce the opposite of their literal meaning via simple keyword hits.
  const negated=/\b(?:not|no|unlikely|denies|deny|rules out|won't|without)\b|不會|未將|否認|沒有|並未|排除|不再/i.test(title);
- const hits=negated?[]:rules.filter(r=>r.re.test(title));
+ const extra=window.NewsImpactSector?window.NewsImpactSector.examine(n):{rules:[],observations:[]};
+ const hits=negated?[]:[...rules.filter(r=>r.re.test(title)),...extra.rules];
+ const observations=negated?[]:extra.observations;
  const scores={};for(const a of assets)scores[a]=[];
  for(const r of hits)for(const [a,v] of Object.entries(r.impact))if(v)scores[a].push(v);
  const impacts=Object.entries(scores).filter(([a,values])=>values.length).map(([asset,values])=>{
@@ -42,17 +44,18 @@ function classify(n){
  }).sort((a,b)=>Math.abs(b.score)-Math.abs(a.score));
  const speculative=/\b(could|may|might|if|plan|proposal|consider|warn|rumor|rumour|opinion|predict|expects?|likely|unlikely)\b|可能|傳聞|疑慮|恐|擬|計畫|研議|或將|傳出|預測|？|\?/i.test(title);
  const opinion=/\bopinion\b|評論|社論/i.test(title);
- return {...n,hits,impacts,speculative,opinion,negated,sourceType:sourceTypeOf(n)};
+ return {...n,hits,impacts,observations,speculative,opinion,negated,sourceType:sourceTypeOf(n)};
 }
 function elapsed(n){const t=Date.parse(n.publishedAt||"");return Number.isFinite(t)?(Date.now()-t)/3600000:Infinity}
 function visible(n){
  if(elapsed(n)<-1||elapsed(n)>HOURS)return false;
  if(REGION==="國際"&&n.originType!=="foreign_original")return false;
  if(REGION==="國內"&&n.originType==="foreign_original")return false;
- if(ASSET!=="全部"&&!n.impacts.some(x=>x.asset===ASSET))return false;
+ if(ASSET!=="全部"&&!n.impacts.some(x=>x.asset===ASSET)&&!n.observations.some(x=>x.asset===ASSET))return false;
  const q=SEARCH.trim().toLowerCase();return !q||[n.title,n.source,n.category,...n.hits.map(h=>h.name)].join(" ").toLowerCase().includes(q)
 }
 function badge(a){const cls=a.mixed?"mixed":a.score>0?"bull":"bear";return '<span class="signal '+cls+'">'+esc(a.asset)+' '+(a.mixed?"多空衝突":a.score>0?"+":"")+a.score+'</span>'}
+function observedBadge(o){return '<span class="signal mixed">'+esc(o.asset)+"｜"+esc(o.label)+"（非預測）"+'</span>'}
 function historyOf(n){
  if(!HISTORY||!Array.isArray(HISTORY.events))return "";
  const x=HISTORY.events.find(e=>e.id===n.id);if(!x)return "";
@@ -61,7 +64,7 @@ function historyOf(n){
 }
 function eventCard(n){
  const type=n.hits.length?n.hits.map(r=>r.name).join("／"):"尚無足夠事件規則";
- const certainty=n.hits.length?(n.speculative||n.opinion?"低｜推測、評論或條件式標題":"有限｜僅標題判讀"):"無法判讀";
+ const certainty=n.hits.length?(n.speculative||n.opinion?"低｜推測、評論或條件式標題":"有限｜僅標題判讀（非模型訓練）"):"無法判讀";
  const explain=n.hits.length?[...new Set(n.hits.map(r=>r.why))].join(" "):n.negated?"標題具有否定語境；為避免反向誤判，暫不自動判多空。":"目前標題無明確的市場傳導關鍵事件，不能可靠判斷方向。";
  const caveats=n.hits.length?[...new Set(n.hits.map(r=>r.caveat))].join("；"):"需等待更多資訊及價格反應";
  const time=String(n.publishedAt||n.date||"").replace("T"," ").slice(0,16);
@@ -69,25 +72,27 @@ function eventCard(n){
  return '<article class="article"><div class="item-top"><span>'+esc(n.originType==="foreign_original"?"🌍 國際":"🇹🇼 國內／其他")+'</span><span>'+esc(time)+'（台灣）</span></div>'+
  '<h3><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(n.title)+'</a></h3>'+
  '<div class="source">'+esc(n.source||"來源不明")+' · '+esc(n.sourceType)+' · '+esc(n.category||"")+" · "+esc(type)+'</div>'+
- '<div class="signals">'+(n.impacts.length?n.impacts.slice(0,9).map(badge).join(""):'<span class="signal mixed">未判定利多利空</span>')+'</div>'+
+ '<div class="signals">'+(n.impacts.length?n.impacts.slice(0,9).map(badge).join(""):n.hits.length?'<span class="signal mixed">事件已辨識｜尚無可驗證資產預測</span>':'<span class="signal mixed">未判定利多利空</span>')+(n.observations||[]).map(observedBadge).join("")+'</div>'+
  '<div class="reason"><b>推估傳導：</b>'+esc(explain)+'</div><div class="caveat">可信程度：'+esc(certainty)+'｜反向條件：'+esc(caveats)+'</div>'+
  historyOf(n)+'</article>'
 }
 function render(){
  const filtered=DATA.filter(visible).sort((a,b)=>String(b.publishedAt||"").localeCompare(String(a.publishedAt||"")));
  const matched=filtered.filter(n=>n.hits.length);
- $("count").textContent="近 "+HOURS+" 小時 "+filtered.length+" 則新聞，其中 "+matched.length+" 則符合明確事件規則";
+ const directional=filtered.filter(n=>n.impacts.length);
+ $("count").textContent="近 "+HOURS+" 小時 "+filtered.length+" 則新聞｜"+matched.length+" 則事件可辨識，其中 "+directional.length+" 則有條件式產業／資產方向";
  $("articles").innerHTML=filtered.length?filtered.slice(0,100).map(eventCard).join(""):'<div class="empty">所選期間或條件沒有符合的新聞。可放寬篩選條件。</div>';
  const rows=assets.map(asset=>{
  const events=matched.flatMap(n=>n.impacts.filter(x=>x.asset===asset).map(x=>({n,...x})));
- if(!events.length)return {asset,score:null,count:0,conflicts:0};
+ const observed=filtered.reduce((k,n)=>k+n.observations.filter(o=>o.asset===asset).length,0);
+ if(!events.length)return {asset,score:null,count:0,observed,conflicts:0};
  const net=events.reduce((s,e)=>s+e.score,0)/events.length;
- return {asset,score:Math.round(net),count:events.length,conflicts:events.filter(e=>e.mixed).length};
+ return {asset,score:Math.round(net),count:events.length,observed,conflicts:events.filter(e=>e.mixed).length};
  });
  $("assetSummary").innerHTML=rows.map(r=>{
- const label=r.score==null?"無判斷依據":r.score>0?"偏多":r.score<0?"偏空":"方向相抵";
+ const label=r.score==null?(r.observed?"僅有已報導行情，無未來預測":"無判斷依據"):r.score>0?"偏多":r.score<0?"偏空":"方向相抵";
  const klass=r.score==null?"":r.score>0?"up":r.score<0?"down":"";
- return '<button class="asset '+klass+(ASSET===r.asset?" selected":"")+'" data-asset="'+esc(r.asset)+'"><span>'+esc(r.asset)+'</span><strong>'+(r.score==null?"—":(r.score>0?"+":"")+r.score)+'</strong><small>'+esc(label)+' · '+r.count+' 則規則命中</small></button>';
+ return '<button class="asset '+klass+(ASSET===r.asset?" selected":"")+'" data-asset="'+esc(r.asset)+'"><span>'+esc(r.asset)+'</span><strong>'+(r.score==null?"—":(r.score>0?"+":"")+r.score)+'</strong><small>'+esc(label)+' · '+r.count+' 則有方向'+(r.observed?' · '+r.observed+' 則已報導行情':'')+'</small></button>';
  }).join("");
  $("assetSummary").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{ASSET=ASSET===b.dataset.asset?"全部":b.dataset.asset;$("asset").value=ASSET;render()}));
  let text="新聞來源更新："+(PROVENANCE.generatedAt||"未知")+" ｜新聞資料狀態："+(PROVENANCE.status||"未知");
