@@ -23,7 +23,7 @@ assert.equal(memory.impact["NASDAQ"],undefined);
 assert.equal(rule("記憶體DRAM報價上漲2%","memory-price-up").impact["台股記憶體供應端"],35);
 assert.equal(rule("記憶體DRAM報價下跌2%但其他報價上漲1%","memory-price-down"),undefined);
 assert.ok(rule("記憶體DRAM報價下跌2%但其他報價上漲1%","memory-price-mixed"));
-assert.equal(classify("DRAM股票報價下跌2%").rules.some(x=>x.id==="memory-price-down"),true);
+assert.equal(classify("DRAM股票報價下跌2%").rules.length,0);
 // Don't treat historical/intraday stock-price movement as an industry product quotation.
 assert.equal(classify("DRAM相關股票下跌5%").rules.length,0);
 assert.equal(classify("記憶體設計廠前三季EPS創高、毛利率77%").rules.length,0);
