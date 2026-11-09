@@ -80,7 +80,7 @@ def archive_events(existing: list, incoming: list, now: datetime):
     return result[:MAX_EVENTS]
 
 
-def fetch_prices(now: datetime):
+def fetch_prices(now: datetime, period: str = "9mo"):
     """Returns completed daily closes and explicit fetch errors, never made-up prices."""
     try:
         import yfinance as yf
@@ -89,7 +89,7 @@ def fetch_prices(now: datetime):
     data, errors = {}, {}
     for asset, (ticker, tz) in SYMBOLS.items():
         try:
-            frame = yf.Ticker(ticker).history(period="9mo", interval="1d", auto_adjust=True)
+            frame = yf.Ticker(ticker).history(period=period, interval="1d", auto_adjust=True)
             if frame is None or frame.empty or "Close" not in frame:
                 raise ValueError("No daily Close")
             current_local_date = now.astimezone(ZoneInfo(tz)).date()
