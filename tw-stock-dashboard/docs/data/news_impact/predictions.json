@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "generatedAt": "2026-11-09T05:17:13.259Z",
+  "classifierVersionCurrent": "2026-11-09-v1.2",
+  "definition": "Immutable observed-at-time conditional news directional hypotheses. Does not backfill older/matured items or predictions from after benchmark start.",
+  "minNForWinrate": 30,
+  "records": [
+    {
+      "id": "news-bbbdfd6468d16d6a",
+      "group": "edf7e033e1486254c7148d41",
+      "title": "星展銀行指稱，聯準會升息押注降溫，套利交易平倉料將推高港幣匯率",
+      "source": "Yahoo股市",
+      "publishedAt": "2026-11-09T09:34:42+08:00",
+      "frozenAt": "2026-11-09T05:17:13.259Z",
+      "classifierVersion": "2026-11-09-v1.2",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "美元",
+          "direction": -1,
+          "ruleScore": -15,
+          "ruleIds": [
+            "hike-bets-cool"
+          ]
+        },
+        {
+          "asset": "美債殖利率",
+          "direction": -1,
+          "ruleScore": -15,
+          "ruleIds": [
+            "hike-bets-cool"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "news-20c3e551f8d56867",
+      "group": "b3541f0797a180cca529ce5f",
+      "title": "美國石油探勘井數量增加1座原油產量創新高- 新聞",
+      "source": "MoneyDJ",
+      "publishedAt": "2026-11-09T07:23:00+08:00",
+      "frozenAt": "2026-11-09T05:17:13.259Z",
+      "classifierVersion": "2026-11-09-v1.2",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "WTI原油",
+          "direction": -1,
+          "ruleScore": -25,
+          "ruleIds": [
+            "crude-supply-growth"
+          ]
+        }
+      ]
+    }
+  ],
+  "refresh": {
+    "newRecords": 2,
+    "skippedExpired": 38,
+    "excludedNoSignal": 72
+  }
+}
