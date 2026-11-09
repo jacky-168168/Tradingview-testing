@@ -38,7 +38,7 @@ function classify(n){
  const taxonomy=root.NewsImpactTaxonomy?root.NewsImpactTaxonomy.examine(n):{topics:[],rules:[],observations:[],flags:[]};
  // "升息預期降溫" does not mean an actual Fed rate hike.
  // Similarly forecasts/concerns/press speculation must not be upgraded to actual policy actions.
- const hikeNotConfirmed=/(?:升息|加息).{0,16}(?:預期|疑慮|押注|機率|料將|可能|恐|炸彈|降溫)|(?:預期|押注|疑慮).{0,14}(?:升息|加息)|hike bets|hike expectations/i.test(title);
+ const hikeNotConfirmed=/(?:升息|加息).{0,16}(?:預期|疑慮|押注|機率|料將|可能|恐|炸彈|降溫|兩難|討論|猜測)|(?:預期|押注|疑慮|恐|兩難).{0,14}(?:升息|加息)|hike bets|hike expectations|not confirmed/i.test(title);
  const oldHits=negated?[]:rules.filter(r=>r.re.test(title)&&!(r.id==="rate-hawk"&&hikeNotConfirmed)&&!(r.id==="rate-dove"&&/降息.{0,12}(?:押注|預期|疑慮|傳出|可能|恐)/.test(title)));
  const hits=[...oldHits,...extra.rules,...taxonomy.rules];
  const observations=[...(extra.observations||[])];
