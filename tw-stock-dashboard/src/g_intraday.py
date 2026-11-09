@@ -158,6 +158,32 @@ def provisional_breadth(quotes):
     return {"quality":"verified-trade-only","source":"TWSE MIS today trade prices vs prior official reference; proxy and untraded excluded",
             "total":total,"exchange":markets}
 
+def indicative_quote_breadth(quotes):
+    """Same-day MIS price/bid-ask breadth proxy, NOT executed-trade breadth or official Risk Score.
+
+    Quotes lacking trades/book prices never enter the numerator or denominator.
+    The proxy carries its source classification and sample counts to the frontend.
+    """
+    markets={"上市":{"up":0,"down":0,"flat":0,"executed":0,"orderBookProxy":0},
+             "上櫃":{"up":0,"down":0,"flat":0,"executed":0,"orderBookProxy":0}}
+    for (market,code),q in quotes.items():
+        if market not in markets:continue
+        source=q.get("priceSource")
+        if source not in ("last-trade","previous-trade","bid-ask-midpoint","one-sided-high-bid","one-sided-low-ask"):continue
+        price=number(q.get("price"));prev=number(q.get("previousClose"))
+        if price is None or prev is None or prev<=0 or number(q.get("volume")) is None or number(q["volume"])<=0:continue
+        if abs(price/prev-1)>.12:continue
+        m=markets[market];direction="up" if price>prev*1.000001 else "down" if price<prev*.999999 else "flat"
+        m[direction]+=1
+        m["executed" if source in ("last-trade","previous-trade") else "orderBookProxy"]+=1
+    total={field:sum(markets[m][field] for m in markets) for field in ("up","down","flat","executed","orderBookProxy")}
+    for m in [total,*markets.values()]:
+        n=m["up"]+m["down"]+m["flat"]
+        m["sample"]=n;m["upPct"]=round(m["up"]*100/n,2) if n else None
+    return {"quality":"indicative-price-with-orderbook-proxy",
+            "source":"TWSE MIS 盤中當日成交價（可取得者）及已驗證合理價差之委託中間價／最佳買賣價；非全數成交價",
+            "total":total,"exchange":markets}
+
 def fetch_quotes_with_retries(universe,today,now,attempts=3,pause=50):
     """Retry failed whole-market coverage during the opening auction.
     Keep both-market safeguards; never use old-day quotes as replacements.
@@ -276,7 +302,7 @@ def main():
         payload={"asOfDate":today,"publishedAt":published_at,"scanStartedAt":now.isoformat(timespec="seconds"),"quoteCapturedAt":quote_captured_at,"sessionSlot":session_slot,
                  "sourceCloseDate":source,"quality":"intraday-provisional-allmarket",
                  "quoteSource":"TWSE MIS same-day listed+OTC; trade price if available, otherwise validated order-book midpoint proxy; cumulative lots × 1000 shares",
-                 "coverage":coverage,"marketBreadth":breadth,"quotePriceSources":{kind:sum(q.get("priceSource")==kind for q in quotes.values()) for kind in ("last-trade","previous-trade","bid-ask-midpoint","one-sided-high-bid","one-sided-low-ask","no-trade-prevclose")},"historicalBarCoverage":len(history),"historyRejected":rejected,
+                 "coverage":coverage,"marketBreadth":breadth,"indicativeQuoteBreadth":indicative_quote_breadth(quotes),"quotePriceSources":{kind:sum(q.get("priceSource")==kind for q in quotes.values()) for kind in ("last-trade","previous-trade","bid-ask-midpoint","one-sided-high-bid","one-sided-low-ask","no-trade-prevclose")},"historicalBarCoverage":len(history),"historyRejected":rejected,
                  "market20Reference":"previous completed cash-market return (not live index)",
                  "rows":rows,"selection":meta,"freeMarketOverlay":overlay,"gSignalContext":context}
         OUTPUT.parent.mkdir(parents=True,exist_ok=True)

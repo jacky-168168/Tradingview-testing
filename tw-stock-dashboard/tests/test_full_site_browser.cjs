@@ -71,11 +71,56 @@ async function main(){
     await test(variant+' homepage shows score interpretation and action',()=>page.evaluate(()=>{
       const guide=document.getElementById('commandTradeGuide'),title=document.getElementById('commandGuideTitle'),
         detail=document.getElementById('commandGuideText'),scale=document.getElementById('commandGuideScale');
-      return !!(guide&&title&&detail&&scale&&guide.getBoundingClientRect().height>50&&
-        (title.textContent.startsWith('今日操作')||title.textContent.startsWith('歷史'))&&
-        detail.textContent.length>20&&scale.querySelectorAll('.cmd-trade-guide-band').length===5&&
-        guide.textContent.includes('分數解讀與操作方向'));
+      const checks={
+        guide:!!guide,title:!!title,detail:!!detail,scale:!!scale,
+        height:guide?.getBoundingClientRect().height??0,
+        titleText:title?.textContent?.slice(0,90)||'',
+        detailLength:detail?.textContent?.length??0,
+        scaleBands:scale?.querySelectorAll('.cmd-trade-guide-band').length??0,
+        hasHeading:guide?.textContent.includes('分數解讀與操作方向')??false
+      };
+      const ok=checks.guide&&checks.title&&checks.detail&&checks.scale&&checks.height>50&&
+        (checks.titleText.startsWith('今日操作')||checks.titleText.startsWith('歷史')||checks.titleText.startsWith('盤前'))&&
+        checks.detailLength>20&&checks.scaleBands===5&&checks.hasHeading;
+      return ok?true:{ok:false,...checks};
     }));
+    await test(variant+' Taiwan VIX ranges switch 30 and 360 sessions without inventing data',async()=>{
+      await page.waitForFunction(()=>document.getElementById('twVixChartCaption')?.textContent.includes('60'),null,{timeout:10000});
+      const observed=JSON.parse(fs.readFileSync(path.join(ROOT,'data/research/tw_vix/latest.json'),'utf8')).rows.length;
+      await page.locator('button[data-tw-vix-range="360"]').click();
+      const long=await page.evaluate(()=>({
+        pressed:document.querySelector('button[data-tw-vix-range="360"]')?.getAttribute('aria-pressed'),
+        caption:document.getElementById('twVixChartCaption')?.textContent||'',
+        line:!!document.querySelector('#twVixChart polyline')
+      }));
+      await page.locator('button[data-tw-vix-range="30"]').click();
+      const short=await page.evaluate(()=>({
+        pressed:document.querySelector('button[data-tw-vix-range="30"]')?.getAttribute('aria-pressed'),
+        caption:document.getElementById('twVixChartCaption')?.textContent||'',
+        line:!!document.querySelector('#twVixChart polyline')
+      }));
+      const longExpected=observed>=360 ? (long.line&&long.caption.includes('共 360 筆')) :
+        (!long.line&&long.caption.includes('尚不足 360 日'));
+      return long.pressed==='true'&&short.pressed==='true'&&longExpected&&
+        short.line&&short.caption.includes('共 30 筆');
+    });
+    await test(variant+' validated same-day quote breadth displays numeric homepage score',async()=>{
+      const live=JSON.parse(fs.readFileSync(path.join(ROOT,'data/g_intraday/latest.json'),'utf8'));
+      if(!live.indicativeQuoteBreadth)return true; // Older archived JSON predates separate breadth estimate.
+      const {indicativeMarketBreadthScore}=require('../docs/market-command.js');
+      const score=indicativeMarketBreadthScore(live,new Date());
+      if(!score)return true; // Outside trading hours or stale, never demand invented live score.
+      await page.waitForFunction(expected=>
+        document.getElementById('compactScore')?.textContent.trim()===String(expected),score.score,{timeout:12500});
+      const got=await page.evaluate(()=>{
+        return {number:document.getElementById('compactScore')?.textContent.trim(),
+          type:document.getElementById('compactScoreType')?.textContent.trim(),
+          detail:document.getElementById('compactEquation')?.textContent.trim(),
+          official:document.getElementById('compactOfficial')?.textContent.trim()};
+      });
+      return Number(got.number)===score.score&&got.type.includes('非正式 Risk Score')&&
+        got.detail.includes('委託價估計')&&got.official!=='—';
+    });
     await test(variant+' institution/source render',()=>page.evaluate(()=>document.getElementById('instSource').textContent.length>0&&document.getElementById('buyRows').textContent.length>0&&document.getElementById('sellRows').textContent.length>0));
     await test(variant+' CNN Fear Greed still renders when retired DIX latest.json is unavailable',async()=>{
       const x=await ctx.newPage();

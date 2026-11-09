@@ -12,6 +12,7 @@ WORKFLOWS={
  "TW Stock Pages":"tw-stock-pages.yml",
  "TW Stock Dashboard":"tw-stock-dashboard.yml",
  "G Intraday Health Monitor":"g-intraday-health.yml",
+ "LUNA Public Social Sentiment":"luna-social-sentiment.yml",
 }
 SCHEDULES={"TW Stock Python CI":25,"Full Website Browser Audit":192}
 PREFIX="[AUTOMATED QUALITY] "
@@ -123,6 +124,43 @@ def eod_watch(now):
     req("/actions/workflows/tw-stock-dashboard.yml/dispatches","POST",{"ref":"main","inputs":{"mode":"full"}})
     if issue:
         req(f"/issues/{issue['number']}/comments","POST",{"body":"🔄 AUTO_EOD_RETRY：正式盤後 JSON 過期，已請求 full 更新（尚待資料日期驗證）。"})
+LUNA_SLOTS=(time(9,10),time(11,10),time(13,10),time(17,10),time(21,10))
+LUNA_TITLE="LUNA Public Social Sentiment"
+def luna_expected_slot(now,grace_minutes=40):
+    """Most recent Taipei schedule slot that should have started already."""
+    local=(now-timedelta(minutes=grace_minutes)).astimezone(ZoneInfo("Asia/Taipei"))
+    for day in (local.date(),local.date()-timedelta(days=1)):
+        for hour in reversed(LUNA_SLOTS):
+            point=datetime.combine(day,hour,ZoneInfo("Asia/Taipei"))
+            if point<=local:return point.astimezone(timezone.utc)
+    return None
+def luna_watch(now):
+    """Detect a skipped Actions cron and trigger one deduplicated on-demand recovery."""
+    expected=luna_expected_slot(now)
+    if expected is None:return
+    runs=req("/actions/workflows/luna-social-sentiment.yml/runs?per_page=45").get("workflow_runs",[])
+    def when(r):
+        try:return datetime.fromisoformat(str(r.get("created_at","")).replace("Z","+00:00")).astimezone(timezone.utc)
+        except (ValueError,TypeError):return None
+    matches=[r for r in runs if (t:=when(r)) and expected-timedelta(minutes=5)<=t<=now]
+    good=next((r for r in matches if r.get("conclusion")=="success"),None)
+    if good:
+        publish(LUNA_TITLE,None);print("LUNA_SCHEDULE_OK",expected.isoformat());return
+    active=next((r for r in matches if r.get("status") in ("queued","pending","in_progress","waiting","requested")
+                 and (now-when(r)).total_seconds()<75*60),None)
+    if active:
+        print("LUNA_SCHEDULE_IN_PROGRESS",active.get("id"));return
+    newest=matches[0] if matches else None
+    label=expected.astimezone(ZoneInfo("Asia/Taipei")).strftime("%Y-%m-%d %H:%M")
+    reason=(f"LUNA 台灣時間 {label} 排程未正常完成；"
+            +"該時間後找不到成功執行，已保留前次資料的真實時間戳記。")
+    publish(LUNA_TITLE,reason,newest.get("id") if newest else None,newest.get("html_url") if newest else None)
+    if any(r.get("event")=="workflow_dispatch" and
+           (t:=when(r)) and 0<=(now-t).total_seconds()<100*60 for r in runs):
+        print("LUNA_RECOVERY_COOLDOWN");return
+    req("/actions/workflows/luna-social-sentiment.yml/dispatches","POST",{"ref":"main"})
+    print("LUNA_RECOVERY_DISPATCH",label)
+
 def daily(now):
     for name,wid in SCHEDULES.items():
         latest=req("/actions/workflows/"+WORKFLOWS[name]+"/runs?per_page=5").get("workflow_runs",[])
@@ -132,13 +170,16 @@ def daily(now):
         elif newest and newest.get("conclusion")=="failure":publish(name,"最近一次測試失敗且尚未有新的成功紀錄。",newest.get("id"),newest.get("html_url"))
         elif newest and newest.get("conclusion")=="success":publish(name,None)
     eod_watch(now)
+    luna_watch(now)
 def main():
     event_name=os.getenv("GITHUB_EVENT_NAME","")
     event_path=os.getenv("GITHUB_EVENT_PATH")
     event=json.loads(open(event_path,encoding="utf-8").read()) if event_path and os.path.isfile(event_path) else {}
     if event_name=="workflow_run":
         run_event(event)
-        if (event.get("workflow_run") or {}).get("name") in WORKFLOWS:eod_watch(datetime.now(timezone.utc))
+        if (event.get("workflow_run") or {}).get("name") in WORKFLOWS:
+            eod_watch(datetime.now(timezone.utc))
+            luna_watch(datetime.now(timezone.utc))
     elif event_name in ("schedule","workflow_dispatch"):daily(datetime.now(timezone.utc))
     elif event_name=="push":eod_watch(datetime.now(timezone.utc))
     else:print("QA_BOOTSTRAP_RUN",event_name,"no incident raised")

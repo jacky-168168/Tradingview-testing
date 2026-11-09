@@ -1,0 +1,29 @@
+/* 散戶存活率：以融資維持率為市場槓桿風險觀察，非真正存活機率。 */
+.retail-survival{margin-top:16px;padding:19px 20px}
+.retail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.retail-head h2{font-size:19px;margin:0 0 5px;font-weight:900;color:#172033}
+.retail-muted{color:#64748b;font-size:11px;line-height:1.65}
+.retail-controls{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.retail-controls select,.retail-controls button{border:1px solid #dce3ee;border-radius:9px;background:#fff;color:#334155;font-weight:800;font-size:11px;padding:8px 10px;cursor:pointer}
+.retail-controls button.active{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+.retail-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0}
+.retail-stat{padding:11px;background:#f8fafc;border:1px solid #e8edf4;border-radius:11px;min-width:0}
+.retail-stat span{font-size:10px;color:#64748b;display:block}
+.retail-stat strong{display:block;font-size:20px;margin-top:5px;font-weight:900;font-variant-numeric:tabular-nums}
+.retail-stat small{font-size:10px;color:#64748b}
+.retail-plot{position:relative;min-height:340px;border:1px solid #e6ebf2;border-radius:12px;background:#fff;overflow:hidden}
+.retail-plot canvas{display:block;width:100%;height:350px;touch-action:pan-y}
+.retail-tip{position:absolute;top:9px;left:10px;pointer-events:none;background:rgba(15,23,42,.93);border-radius:8px;padding:9px 11px;color:#fff;line-height:1.6;font-size:11px;box-shadow:0 4px 20px #0002;max-width:230px;z-index:1}
+.retail-legend{display:flex;gap:15px;flex-wrap:wrap;align-items:center;padding:9px 0;font-size:11px;color:#475569}
+.retail-legend b{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:4px}
+.retail-table-wrap{overflow-x:auto}
+.retail-table{width:100%;border-collapse:collapse;white-space:nowrap}
+.retail-table th,.retail-table td{font-size:11px;text-align:right;padding:8px 9px;border-bottom:1px solid #eef1f5;font-variant-numeric:tabular-nums}
+.retail-table th:first-child,.retail-table td:first-child{text-align:left}
+.retail-table th{background:#f8fafc;color:#64748b}
+.retail-positive{color:#dc2626}.retail-negative{color:#15803d}
+.retail-source{margin-top:10px;border-top:1px solid #e9edf4;padding-top:10px;font-size:10px;color:#64748b;line-height:1.75}
+.retail-source a{color:#2563eb}
+.retail-status{font-size:11px;margin-top:9px;font-weight:800;color:#92400e}
+.retail-status.ok{color:#166534}
+@media(max-width:700px){.retail-survival{padding:13px}.retail-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.retail-stat strong{font-size:18px}.retail-plot{min-height:295px}.retail-plot canvas{height:295px}.retail-head h2{font-size:17px}}

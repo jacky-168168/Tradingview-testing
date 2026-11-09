@@ -1,0 +1,144 @@
+name: TW Official Close Risk Score Recovery
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/src/close_risk_fast.py'
+      - 'tw-stock-dashboard/tests/test_close_risk_fast.py'
+      - '.github/workflows/tw-market-close-risk.yml'
+  workflow_run:
+    workflows: ['TW Stock Dashboard']
+    types: [completed]
+    branches: [main]
+  schedule:
+    # Independent post-close retry windows. GitHub cron is best effort.
+    # 17:45, 18:15, 18:45, 19:15, 20:15, 21:15, 22:15 Taipei.
+    - cron: '45 9,10 * * 1-5'
+    - cron: '15 10-14 * * 1-5'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: official-close-risk-recovery
+  cancel-in-progress: false
+jobs:
+  close_risk:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.head_branch == 'main' &&
+       (github.event.workflow_run.conclusion == 'success' ||
+        github.event.workflow_run.conclusion == 'failure'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tw-stock-dashboard/requirements.txt
+      - name: Install same Risk Score dependencies
+        run: pip install -r tw-stock-dashboard/requirements.txt
+      - name: Obtain independently verified TWSE close Risk Score
+        id: collect
+        working-directory: tw-stock-dashboard
+        run: |
+          python src/close_risk_fast.py
+          python - <<'PY'
+          import json,os
+          from datetime import datetime
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+          today=datetime.now(ZoneInfo('Asia/Taipei')).date().isoformat()
+          path=Path('docs/data/market_risk_close/latest.json')
+          ok=False
+          if path.exists():
+              z=json.loads(path.read_text('utf-8'))
+              risk=z.get('risk') or {}
+              ok=(z.get('quality')=='official-twse-close-risk-v1'
+                  and z.get('asOfDate')==today==risk.get('date')
+                  and type(risk.get('score')) is int
+                  and 0<=risk['score']<=100)
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:
+              f.write('ready='+str(ok).lower()+'\n')
+          print('TWSE_CLOSE_SNAPSHOT',today,'valid',ok)
+          PY
+      - name: Verify published score and official date (no historical substitution)
+        if: steps.collect.outputs.ready == 'true'
+        working-directory: tw-stock-dashboard
+        run: |
+          PYTHONPATH=src python -m unittest discover -s tests -p 'test_close_risk_fast.py' -v
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('docs/data/market_risk_close/latest.json').read_text('utf-8'))
+          assert p['risk']['date']==p['asOfDate']
+          assert 0<=p['risk']['score']<=100
+          assert abs(p['risk']['index']/p['source']['officialIndexClose']-1)<.002
+          print('OFFICIAL_RISK_SNAPSHOT_VALID',p['asOfDate'],p['risk']['score'])
+          PY
+      - name: Prebuild the NEXT trading day's immutable main homepage reference
+        if: steps.collect.outputs.ready == 'true'
+        working-directory: tw-stock-dashboard
+        run: |
+          python src/freeze_premarket_score.py
+          python -m unittest discover -s tests -p 'test_freeze_premarket_score.py' -v
+      - name: Commit verified standalone Risk Score
+        if: steps.collect.outputs.ready == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tw-stock-dashboard/docs/data/market_risk_close/ tw-stock-dashboard/docs/data/market_premarket/
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish independent TWSE official close Risk Score"
+            success=0
+            for attempt in 1 2 3 4 5; do
+              git pull --rebase -X theirs origin main || { git rebase --abort || true; sleep 8; continue; }
+              if git push origin HEAD:main; then success=1; break; fi
+              sleep 8
+            done
+            [ "$success" -eq 1 ] || exit 1
+          else
+            git pull --ff-only origin main
+          fi
+      - uses: actions/configure-pages@v5
+        if: steps.collect.outputs.ready == 'true'
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.collect.outputs.ready == 'true'
+        with:
+          path: tw-stock-dashboard/docs
+      - uses: actions/deploy-pages@v4
+        if: steps.collect.outputs.ready == 'true'
+        id: deploy
+      - name: Verify public Risk Score matches same-day snapshot
+        if: steps.collect.outputs.ready == 'true'
+        env:
+          SITE: ${{ steps.deploy.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request
+          from pathlib import Path
+          expected=json.loads(Path('tw-stock-dashboard/docs/data/market_risk_close/latest.json').read_text('utf-8'))
+          url=os.environ['SITE'].rstrip('/')+'/data/market_risk_close/latest.json'
+          for attempt in range(12):
+              try:
+                  req=urllib.request.Request(url+'?v='+str(time.time()),headers={'Cache-Control':'no-cache','User-Agent':'TWSE-Risk-Pages-Verification'})
+                  with urllib.request.urlopen(req,timeout=20) as r:
+                      got=json.loads(r.read())
+                  assert got['asOfDate']>=expected['asOfDate']
+                  if got['asOfDate']==expected['asOfDate']:
+                      assert got['risk']['score']==expected['risk']['score']
+                  print('PASS_PUBLIC_OFFICIAL_CLOSE_RISK',got['asOfDate'],got['risk']['score'])
+                  break
+              except Exception as ex:
+                  if attempt==11:raise
+                  print('Retry published risk score',repr(ex))
+                  time.sleep(5)
+          PY

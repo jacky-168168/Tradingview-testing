@@ -38,15 +38,19 @@
 <link rel="stylesheet" href="./market-compact.css?v=65481d6d48f4">
 <link rel="stylesheet" href="./dynamic-exposure.css">
 <link rel="stylesheet" href="./fear-greed-home.css?v=842f00c777d9">
-<script src="./market-compact.js?v=75be6984f70e"></script>
-<script src="./market-command.js?v=c27a62c1e751"></script>
+<script src="./market-compact.js?v=0e2e4857251f"></script>
+<script src="./market-command.js?v=80f3abe33544"></script>
 <script src="./market-sentiment.js?v=cb851e2bbc3b"></script>
 <script src="./dynamic-exposure.js"></script>
 <script defer src="./us-market-freshness.js?v=de836e1500a9"></script>
 <script defer src="./fear-greed-home.js?v=c8cea7d26984"></script>
 <script defer src="./vix-home.js?v=cc61084cae03"></script>
+<link rel="stylesheet" href="./tw-vix-home.css?v=20261104-range2">
+<script defer src="./tw-vix-home.js?v=20261104-range2"></script>
 
 
+<link rel="stylesheet" href="./retail-survival.css?v=1">
+<script defer src="./retail-survival.js?v=3"></script>
 </head>
 <body>
 <div id="loading" class="loading">更新資料中...</div>
@@ -69,6 +73,7 @@
       <div class="site-nav-links">
         <a class="btn main" href="./selections.html">📋 選股排行</a>
         <a class="btn" href="./market-events.html" title="重大展覽、科技財報、漲價與總經新聞">🗞 市場大事</a>
+        <a class="btn" href="./news-impact.html" title="國內外新聞事件對台股、美股、黃金、原油等資產的條件式影響分析">🌐 媒體識別器</a>
         <a class="btn" href="./stocks.html">🔬 個股量化體檢</a>
         <a class="btn" href="./tdcc-whale-weekly.html" title="集保400張以上持股變動；續買／回頭車／下車／續賣；每週更新">🐋 大戶換手週報</a>
         <a class="btn" href="./agent-research.html" title="六角色 AI 研究架構；目前為規則式實驗版，不提供下單">🧠 六代理研究</a>
@@ -92,15 +97,15 @@
   </nav>
 </header>
 <section id="marketCommand" class="market-command market-compact cmd-unknown" aria-label="大盤風險情緒與操作方向">
-<div id="compactMarketSummary" class="compact-summary" data-tone="wait" data-reference="false" aria-label="大盤操作總覽">
- <div id="compactScoreType" class="compact-eyebrow">正在核對市場分數…</div>
+<div id="compactMarketSummary" class="compact-summary" data-tone="wait" data-reference="true" data-fixed-premarket="true" aria-label="大盤操作總覽">
+ <div id="compactScoreType" class="compact-eyebrow">盤前固定基準｜當天不改變主分數</div>
  <div class="compact-hero-line"><h2 id="compactAction" class="compact-action">等待有效資料</h2><div class="compact-major-score"><span id="compactScore">—</span><small>/100</small></div></div>
  <div class="compact-meaning"><strong id="compactBand">資料待確認</strong><span id="compactSession">正式資料日核對中</span></div>
  <details class="compact-source-disclosure" id="compactSourceDisclosure"><summary>分數來源、TX 夜盤與校正研究</summary>
  <div class="compact-score-sources" aria-label="分數來源，校正為獨立研究">
   <div class="compact-source"><span class="compact-source-label">正式收盤</span><strong id="compactOfficial">—</strong><small>原始 Risk Score</small></div>
   <div class="compact-source" id="compactResearch" data-verified="false"><span class="compact-source-label">校正參考</span><strong id="compactAdjusted">—</strong><small>獨立研究，不參與運算</small></div>
-  <div class="compact-source" id="compactNightCell" hidden><span class="compact-source-label">TX 夜盤調整</span><strong id="compactNight">—</strong><small>未經獨立回測</small></div>
+  <div class="compact-source" id="compactNightCell" hidden><span class="compact-source-label">TX 情境調整</span><strong id="compactNight">—</strong><small>未經獨立回測</small></div>
  </div>
  <div class="compact-explain" id="compactEquation">校正研究不參與正式分數或夜盤參考計算。</div>
  </details>
@@ -205,6 +210,92 @@
  </details>
 </details>
 </section>
+<section class="card tw-vix" id="twVixPanel" aria-label="台股 VIXTWN 選擇權波動率與恐慌觀察">
+ <div class="tw-vix-top">
+  <div>
+   <div class="tw-vix-tag">TAIWAN VIX · 臺指選擇權預期波動</div>
+   <h2>🇹🇼 台股 VIX｜期交所官方收盤與恐慌觀察</h2>
+   <p class="tw-vix-sub">衡量臺股未來 30 天預期波動，獨立於大盤 Risk Score；高 VIX 不等於底部，仍須觀察反轉確認。</p>
+  </div>
+  <div class="tw-vix-links">
+   <a href="https://www.wantgoo.com/index/vixtwn" target="_blank" rel="noopener noreferrer">玩股網盤中報價（另開核對）</a>
+   <a href="https://www.taifex.com.tw/cht/7/vixDaily3MNew" target="_blank" rel="noopener noreferrer">期交所官方收盤資料</a>
+   <a href="https://www.taifex.com.tw/indes/index.aspx" target="_blank" rel="noopener noreferrer">期交所近三年歷史</a>
+   <button type="button" id="twVixRetry" aria-label="重新載入台股 VIX 數據">重新讀取</button>
+  </div>
+ </div>
+ <div class="tw-vix-grid" aria-label="臺指選擇權波動率摘要">
+  <div class="tw-vix-stat tw-vix-stat--main"><span>台股 VIXTWN</span><strong id="twVixValue">—</strong><small>期交所官方 13:45 日收盤</small></div>
+  <div class="tw-vix-stat"><span>較前交易日變化</span><strong id="twVixChange">—</strong><small id="twVixMood">核對中…</small></div>
+  <div class="tw-vix-stat"><span>近 20 個官方交易日百分位</span><strong id="twVixP20">—</strong><small>至少 20 個官方日收盤樣本</small></div>
+  <div class="tw-vix-stat"><span>近 60 個官方交易日百分位</span><strong id="twVixP60">—</strong><small>至少 60 個官方日收盤樣本</small></div>
+ </div>
+ <div class="tw-vix-at">資料觀測時間：<strong id="twVixAt">讀取中…</strong></div>
+ <div class="tw-vix-status" id="twVixStatus" role="status" aria-live="polite">正在核對台股 VIX 資料日期…</div>
+ <div class="tw-vix-range-head">
+  <div class="tw-vix-range-name">VIX 歷史走勢區間 <small>以期交所實際交易日計算</small></div>
+  <div class="tw-vix-range-buttons" role="group" aria-label="選擇台股 VIX 歷史走勢交易日數">
+   <button type="button" data-tw-vix-range="30" aria-pressed="false">30 日</button>
+   <button type="button" data-tw-vix-range="60" class="is-active" aria-pressed="true">60 日</button>
+   <button type="button" data-tw-vix-range="90" aria-pressed="false">90 日</button>
+   <button type="button" data-tw-vix-range="120" aria-pressed="false">120 日</button>
+   <button type="button" data-tw-vix-range="360" aria-pressed="false">360 日</button>
+  </div>
+ </div>
+ <p class="tw-vix-range-status" id="twVixRangeStatus" aria-live="polite">圖表區間讀取中…</p>
+ <svg class="tw-vix-chart" id="twVixChart" role="img" aria-label="台股 VIX 歷史觀測值走勢；樣本不足時不繪製假線" preserveAspectRatio="xMidYMid meet"></svg>
+ <p class="tw-vix-chart-caption" id="twVixChartCaption">近 60 個期交所官方交易日；可切換 30／60／90／120／360 日。不以不足的歷史資料冒充指定區間。</p>
+ <p class="tw-vix-guide" id="twVixGuide">同時觀察 Nasdaq、VXN／美股 VIX、台股上漲家數與底部反轉確認；不因單一高 VIX 就進場。</p>
+ <p class="tw-vix-foot">來源：臺灣期貨交易所 VIX 官方歷史收盤檔；非即時行情。盤中資訊請另開玩股網確認。本卡不修改 Risk Score、G／G Pro／F 或回測結果。</p>
+</section>
+<section id="retailSurvival" class="card retail-survival" aria-label="散戶存活率與大盤融資維持率">
+  <div class="retail-head">
+    <div>
+      <h2>📉 散戶存活率｜大盤融資維持率</h2>
+      <p class="retail-muted">加權指數日 K 與融資維持率雙軸對照；維持率為盤後統計推估，並不是實際散戶存活人數比例。</p>
+    </div>
+    <div class="retail-controls">
+      <label for="retailScope" class="retail-muted">市場別</label>
+      <select id="retailScope" aria-label="融資維持率市場範圍">
+        <option value="overall" selected>上市櫃整體</option>
+        <option value="listed">上市</option>
+        <option value="otc">上櫃</option>
+      </select>
+      <label for="retailDays" class="retail-muted">區間</label>
+      <select id="retailDays" aria-label="圖表顯示交易日數">
+        <option value="20">近 20 日</option>
+        <option value="60" selected>近 60 日</option>
+        <option value="120">近 120 日</option>
+        <option value="260">近 1 年</option>
+      </select>
+    </div>
+  </div>
+  <div class="retail-stats" aria-label="融資風險數據摘要">
+    <div class="retail-stat"><span>融資維持率</span><strong id="retailCurrent">—</strong><small>上市櫃整體（預設，可切換市場別）</small></div>
+    <div class="retail-stat"><span>較前交易日</span><strong id="retailChange">—</strong><small>單位：百分點</small></div>
+    <div class="retail-stat"><span>加權指數收盤</span><strong id="retailIndex">—</strong><small>日 K 僅於 OHLC 驗證後顯示</small></div>
+    <div class="retail-stat"><span>維持率資料日</span><strong id="retailDate">—</strong><small>非盤中即時更新</small></div>
+  </div>
+  <div class="retail-plot" aria-label="上方加權指數走勢、下方融資維持率">
+    <canvas id="retailChart" role="img" aria-label="上方加權指數真實日 K 或收盤走勢，下方融資維持率折線及 160% 參考線；滑鼠移入或觸控可查明細"></canvas>
+    <div id="retailTooltip" class="retail-tip" hidden></div>
+  </div>
+  <div class="retail-legend">
+    <span><b style="background:#d93641"></b>大盤上漲 K</span>
+    <span><b style="background:#15803d"></b>大盤下跌 K</span>
+    <span><b style="background:#132a60"></b>維持率</span>
+    <span><b style="background:#1780c1"></b>160% 觀察線</span>
+  </div>
+  <div class="retail-table-wrap">
+    <table class="retail-table" aria-label="最近七筆融資維持率每日明細">
+      <thead><tr><th>日期</th><th>加權指數</th><th>融資維持率</th><th>日變化（百分點）</th></tr></thead>
+      <tbody id="retailTbody"><tr><td colspan="4">正在讀取盤後資料…</td></tr></tbody>
+    </table>
+  </div>
+  <p id="retailStatus" class="retail-status" role="status">正在核對資料日期與來源…</p>
+  <div class="retail-source"><span id="retailAsOf">資料日確認中</span> · 資料來源：<a id="retailSourceLink" href="https://www.istock.tw/post/twmarginrequirement_more" rel="noopener noreferrer" target="_blank">愛玩股融資維持率歷史資料</a>（歷史資料）；上市、上櫃分別以 TWSE、TPEx 公開融資餘額及收盤價格計算，上市櫃整體按融資金額加權。非券商整戶維持率；加權指數 OHLC 另以 Yahoo Finance 核對。顯示的 160% 是可視化觀察線，並非個人整戶追繳門檻；個人維持率以券商實際計算為準。資料不足時不虛構 K 線或最新數值。</div>
+</section>
+
 <section class="card fg-panel" id="fearGreedPanel" aria-label="美股 CNN 恐懼與貪婪指數及標普500走勢">
  <div class="fg-top">
   <div>
@@ -354,6 +445,7 @@
 <section class="card brief-card brief-futures" aria-label="隔日盤前期貨風險">
  <div class="brief-head"><div><div class="small-title">02 · 隔日盤前參考</div><div class="brief-title">台指期夜盤是否增添風險？</div></div><span class="brief-mode">TX</span></div>
  <div id="futuresSub" class="sub brief-data-status" role="status">正在核對期交所資料…</div>
+ <div id="txfLiveQuote" class="sub brief-data-status" role="status">今日 08:45 後台指期報價：尚未驗證</div>
  <div id="nextEntry" class="txf-entry brief-txf-entry">正在讀取夜盤風險觀察…</div>
  <div class="brief-explain">夜盤有助於掌握隔夜波動，<strong>但不能取代已回測的現貨分數</strong>，也不能保證隔日漲跌。</div>
  <details class="detail-stack" id="txfDetails"><summary>查看期貨數字、盤前試算與走勢 <span class="disclosure-hint">進階</span></summary>
@@ -395,7 +487,7 @@ function taipeiDate(){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tai
 function dayInfo(){var d=String(DATA&&DATA.dataDate||DATA&&DATA.risk&&DATA.risk.date||'');var today=taipeiDate();var weekend=["Sat","Sun"].includes(new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Taipei",weekday:"short"}).format(new Date()));var label=d===today?'📅 '+d+'｜當日交易日資料':(weekend?'⏸ 週末休市｜':'⏸ 尚無今日交易日資料｜')+'最近交易日 '+(d||'未知')+'（非即時訊號）';return {d:d,today:today,weekend:weekend,isCurrent:d===today,label:label}}
 function renderRisk(){var state=dayInfo();riskDataStatus.textContent=state.label;revDataStatus.textContent=state.label;var r=DATA&&DATA.risk||{};riskScore.textContent=Number.isFinite(Number(r.score))?r.score:"--";riskState.textContent=r.state||"尚未分析";var s=Number(r.score||0);riskLight.style.background=s>=60?"#dcfce7":s>=45?"#fef3c7":"#fee2e2";riskLight.style.color=s>=60?"#16a34a":s>=45?"#d97706":"#dc2626";var g2=r.f2Gate||{};riskAdvice.textContent=(state.isCurrent?"現貨風控：":"前次收盤 "+state.d+" 歷史風控：")+(s>=75?"強勢多頭。":s>=60?"Risk ON。":s>=45?"Neutral。":"Risk OFF。")+" F2："+(g2.reason||"尚未分析")+(state.isCurrent?"":"｜並非今日盤中進場許可");riskWarning.style.display=s<60?"block":"none";const mode=r.mode||"NORMAL";revMode.textContent=mode==="TOP"?"頂部觀察":mode==="BOTTOM"?"底部觀察":"一般狀態";const names={"⚪ Normal":"⚪ 未見明確反轉","⚪ Top Watch":"⚪ 頂部觀察中，尚未確認轉弱","⚪ Bottom Watch":"⚪ 底部觀察中，尚未確認反轉","🟡 Overbought Watch":"🟡 短線過熱，留意追價","🟣 Oversold Watch":"🟣 超跌觀察，尚未確認反彈","🟣 Extreme Oversold":"🟣 極端超跌，等待反轉確認","🟠 Bottom Reversal Attempt":"🟠 底部反轉嘗試中","🟢 Strong Bottom Reversal":"🟢 強底部反轉已確認","🟠 Top Reversal Attempt":"🟠 頂部轉弱嘗試中","🔴 Strong Top Reversal":"🔴 頂部反轉警戒","🔴 Extreme Overbought":"🔴 極端過熱"};revState.textContent=names[r.activeState]||r.activeState||"⚪ 未見明確反轉";var top=r.mode==="TOP";extremeLabel.textContent=top?"過熱程度（非反轉分數）":"超跌程度（非反轉分數）";confirmLabel.textContent=top?"頂部確認（6/9 為強訊號）":"底部反轉確認（6/9 為強訊號）";extreme.textContent=(top?(r.overboughtScore||0):(r.oversoldScore||0))+"/9";document.getElementById("confirm").textContent=(top?(r.topConfirmScore||0):(r.bottomConfirmScore||0))+"/9";dist.textContent="距MA20 "+P(r.distMA20);dayret.textContent=(state.isCurrent?"當日 ":"資料日 ")+P(r.dayRet);closepos.textContent="收盤位置 "+P(r.closePosition,1);idx.textContent=N(r.index);ma5.textContent=N(r.ma5);ma20.textContent=N(r.ma20);r5.textContent=P(r.ret5);r5.className="metric-value "+C(r.ret5);r20.textContent=P(r.ret20);r20.className="metric-value "+C(r.ret20);breadth.textContent=P(r.breadth,1);foreign.textContent=N(r.foreign,1)+" 億";foreign.className="metric-value "+C(r.foreign);trend.textContent=r.trend||"--"}
 function panelRow(x){return '<div class="row"><span><b>'+esc(x.code)+" "+esc(x.name)+'</b></span><span>'+N(x.lots,0)+' 張</span></div>'}
-let FUTURES=null;
+let FUTURES=null,TX_LIVE=null;
 function futDisplay(v,digits){const x=Number(v);return v!=null&&Number.isFinite(x)?x.toLocaleString("zh-TW",{minimumFractionDigits:digits||0,maximumFractionDigits:digits||0}):"--"}
 // 台指期日夜盤比較完全使用 TX 同日期、同到期月份的兩個交易時段，不混合加權現貨 Risk Score。
 function sameContractTX(f){
@@ -420,7 +512,7 @@ function overnightPreviewModel(r,f,today,minutes){
  if(!/^20\d{2}-\d{2}-\d{2}$/.test(nextDate)||nextDate<=cashDate)return fail("夜盤對應的下一個交易日尚未確認。");
  if(nextDate<today||(nextDate===today&&minutes>=9*60))return fail("夜盤盤前推估已過期；現貨開盤後應以當日行情重新判斷。");
  const lag=(Date.parse(nextDate+"T00:00:00+08:00")-Date.parse(cashDate+"T00:00:00+08:00"))/86400000;
- if(!Number.isFinite(lag)||lag>12)return fail("下一交易日距離太長，暫停盤前推估。");
+ if(!Number.isFinite(lag)||lag>4)return fail("跨越多日休市，舊 TX 夜盤不能作今日盤前分數；須等待當日成交價。");
  const pct=cmp.pct;
  const adjustment=MarketCommand.txScoreDelta(pct);
  const score=Math.max(0,Math.min(100,base+adjustment));
@@ -442,13 +534,40 @@ function renderOpeningPreview(){
 function nextEntryPreview(){
  const f=FUTURES||{},cmp=sameContractTX(f),el=document.getElementById("nextEntry");
  el.className="txf-entry";
- if(!cmp||f.asOfDate!==DATA?.risk?.date||String(f.night?.reportQueryDate||"")<taipeiDate()){
+ const live=verifiedTXNow(TX_LIVE);
+ if(live){const tone=live.pct<=-0.5?"stop":live.pct<0.5?"warn":null;if(tone)el.classList.add(tone);el.textContent="📊 今日台指期 08:45 開盤後已取得同日報價："+futDisplay(live.last)+" 點｜相對參考價 "+(live.pct>=0?"+":"")+live.pct.toFixed(2)+"%；僅行情觀察，非正式 Risk Score。";return;}
+ const lag=(Date.parse(taipeiDate()+"T12:00:00+08:00")-Date.parse(String(f.asOfDate||"")+"T12:00:00+08:00"))/86400000;
+ if(!cmp||!Number.isFinite(lag)||lag>4||f.asOfDate!==DATA?.risk?.date||String(f.night?.reportQueryDate||"")<taipeiDate()){
    el.classList.add("warn");el.textContent="⏳ 等待最近交易日的官方完整夜盤；舊期貨資料不得代表下個交易日。";return}
  const value=futDisplay(Math.abs(cmp.pct),2);
  if(cmp.pct<=-1){el.classList.add("stop");el.textContent="🔴 台指期夜盤較日盤跌 "+value+"%｜期貨偏弱，下一交易日先觀察開盤（未回測）";return}
  if(cmp.pct<=-0.5){el.classList.add("warn");el.textContent="🟠 台指期夜盤較日盤跌 "+value+"%｜期貨短線偏弱，留意開盤波動（未回測）";return}
  if(cmp.pct>=0.5){el.textContent="🟢 台指期夜盤較日盤漲 "+value+"%｜期貨偏強，仍需等下一交易日開盤確認（未回測）";return}
  el.textContent="🟡 台指期夜盤較日盤"+(cmp.pct>=0?"漲 ":"跌 ")+value+"%｜期貨偏中性；僅供參考（未回測）";
+}
+function verifiedTXNow(q){
+ if(!q||q.status!=="ok"||q.quality!=="dated-third-party-snapshot"||q.asOfDate!==taipeiDate()||q.symbol!=="WTX&")return null;
+ const d=new Date(q.quoteTime),age=Date.now()-d.getTime();
+ if(!Number.isFinite(d.getTime())||age<0||age>25*60000)return null;
+ const a=Number(q.last),b=Number(q.reference);
+ if(!Number.isFinite(a)||!Number.isFinite(b)||a<=0||b<=0)return null;
+ return {last:a,reference:b,points:a-b,pct:(a-b)/b*100,date:q.asOfDate,time:q.quoteTime};
+}
+async function loadTXIntraday(){
+ const target=document.getElementById("txfLiveQuote");
+ try{
+  const res=await fetch("./data/futures/intraday.json?v="+Date.now(),{cache:"no-store"});
+  if(!res.ok)throw Error("尚未發布當日盤前報價");
+  TX_LIVE=await res.json();
+  const q=verifiedTXNow(TX_LIVE);
+  if(window.MarketCommand)MarketCommand.applyTXLive(q?TX_LIVE:null);
+  if(!q)throw Error(TX_LIVE?.reason||"當日報價未通過日期或時效驗證");
+  target.textContent="📈 今日 TX 近月成交 "+futDisplay(q.last)+"｜相對參考價 "+(q.points>=0?"+":"")+futDisplay(q.points,0)+" 點（"+(q.pct>=0?"+":"")+futDisplay(q.pct,2)+"%）｜成交 "+new Date(q.time).toLocaleTimeString("zh-TW",{timeZone:"Asia/Taipei",hour12:false})+"｜第三方 TX 報價（可能延遲），非正式現貨風控。";
+ }catch(e){
+  TX_LIVE=null;if(window.MarketCommand)MarketCommand.applyTXLive(null);
+  target.textContent="⚠ 今日 TX 08:45 後報價尚未驗證："+e.message+"；不沿用舊日盤前價。";
+ }
+ nextEntryPreview();
 }
 async function loadFutures(){
  try{
@@ -471,6 +590,7 @@ async function loadFutures(){
   FUTURES=null;if(window.MarketCommand)MarketCommand.applyFutures(null);futuresSub.textContent="⏳ 官方台指期盤後資料暫不可用："+err.message+"；可點下方連結查看即時行情";
   txfDay.textContent=txfNight.textContent=txfChange.textContent=txfOfficial.textContent=txfContract.textContent="--";
  }
+ await loadTXIntraday();
  nextEntryPreview();
  renderOpeningPreview();
 }
@@ -486,13 +606,100 @@ function renderHomeG(){
  left.append(a,theme);score.appendChild(suffix);row.append(left,score);box.appendChild(row);}
 }
 function renderPanels(){var p=DATA&&DATA.panels||{},f=p.institutionFlow||{buy:[],sell:[]};buyRows.innerHTML=(f.buy||[]).map(panelRow).join("")||'<div class="sub">--</div>';sellRows.innerHTML=(f.sell||[]).map(panelRow).join("")||'<div class="sub">--</div>';instSource.textContent=p.institutionSource||"";var quality=DATA&&DATA.institutionQuality||{},valid=quality.status==="complete"&&quality.date===DATA.dataDate&&quality.missingRanked===0;document.getElementById("instCoverage").textContent=valid?"✅ 官方上市 "+quality.listedRows+" 筆／上櫃 "+quality.otcRows+" 筆；榜單法人缺漏 0 檔。":"⚠ 法人完整性未經當日驗證，請勿將缺值視為零。";var hs=p.topicHeat||[];themeRows.innerHTML=hs.length?hs.map(function(x){return '<div class="row"><span><b>'+esc(x.theme)+'</b></span><span class="'+C(x.avgRet)+'">'+(Number(x.avgRet)>=0?"+":"")+N(x.avgRet)+'%</span></div>'}).join(""):'<div class="sub">--</div>';themeSource.textContent=p.topicSource||""}
-function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);var freshness=MarketCommand.evaluate(DATA.risk||{},DATA.marketIntelligence||null);marketMeta.textContent="最新資料日 "+(DATA.dataDate||"--")+(freshness.stale?" ｜ ⚠ 今日正式資料待同步":" ｜ 官方現貨盤後資料，非即時交易建議");var more=document.getElementById("marketMetaDetails");if(more)more.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),ageWarning=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5),isStale=freshness.stale||ageWarning;staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent=freshness.stale?"⚠ 今日大盤正式分數尚未同步，最新完整資料日為 "+(last.d||"未知")+"；目前分數只能看歷史，不能當作今日新倉許可。若遇交易所休市，請等下個交易日更新。":"⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
-async function loadIntradayMarketBreadth(){
- try{const res=await fetch("./data/g_intraday/latest.json?v="+Date.now(),{cache:"no-store"});if(!res.ok)throw new Error("No published live G quotes");
-   const snap=await res.json();if(window.MarketCommand)MarketCommand.applyIntraday(snap);
- }catch(_){if(window.MarketCommand)MarketCommand.applyIntraday(null)}
+function renderMeta(){if(!DATA)return;var s="資料日 "+(DATA.dataDate||"--")+" ｜ 完整更新 "+(DATA.generatedAt||"--");if(DATA.intradayUpdatedAt)s+=" ｜ 盤中快刷 "+DATA.intradayUpdatedAt+" ("+(DATA.intradayQuoteOk||0)+"/"+(DATA.intradayUniverse||0)+")";s+=" ｜ 股票池 "+(DATA.universeCount||0)+" ｜ K成功 "+(DATA.historyOk||0)+" ｜ 錯誤 "+(DATA.historyErrors||0);var freshness=MarketCommand.evaluate(DATA.risk||{},DATA.marketIntelligence||null);marketMeta.textContent="最新資料日 "+(DATA.dataDate||"--")+(freshness.stale?" ｜ ⚠ 今日正式資料待同步":" ｜ 官方現貨盤後資料，非即時交易建議");var more=document.getElementById("marketMetaDetails");if(more)more.textContent=s;var d=new Date(DATA.generatedAt),last=dayInfo(),days=Math.round((new Date(last.today+"T12:00:00+08:00")-new Date(last.d+"T12:00:00+08:00"))/86400000),ageWarning=Number.isFinite(d.getTime())&&(Date.now()-d.getTime()>20*3600*1000)&&(last.isCurrent||days>=5),isStale=freshness.stale||ageWarning;staleWarning.style.display=isStale?"block":"none";if(isStale)staleWarning.textContent=freshness.stale?"⚠ 今日正式現貨 Risk Score 尚未同步，最新完整資料日為 "+(last.d||"未知")+"；前次正式分數只能看歷史，盤中 TX 參考試算不作新倉許可。若遇交易所休市，請等下個交易日更新。":"⚠ 最近交易日資料為 "+(last.d||"未知")+"，已超過合理更新期間，請檢查 GitHub Actions。";}
+let liveBreadthRefreshBusy=false;
+async function loadFrozenPremarket(){
+ const today=taipeiDate();
+ let confirmed=false;
+ const sources=["./data/market_premarket/"+today+".json","./data/market_premarket/latest.json"];
+ // A date-keyed archive is authoritative. latest.json may already point to tomorrow
+ // after today's close, but must never erase the fixed score of today's session.
+ for(const url of sources){
+   try{
+     const res=await fetch(url+"?v="+Date.now(),{cache:"no-store"});
+     if(!res.ok)continue;
+     const record=await res.json();
+     if(window.MarketCommand&&MarketCommand.applyFrozenPremarket(record)){
+       confirmed=true;
+       console.info("今日固定盤前基準",today,record.score,"來源",record.baseDate,record.calculationMode);
+       break;
+     }
+   }catch(error){console.warn("盤前快照讀取失敗",url,error)}
+ }
+ if(confirmed)return;
+ // If cron NEVER fired, recover a plainly labelled previous CLOSE reference.
+ // It does not pretend to be an 08:45 quote or overwrite any A/D/F/F2/G gate.
+ const history=["./data/market_risk_close/latest.json"];
+ const prior=new Date(today+"T12:00:00+08:00");
+ for(let i=1;i<=5;i++){
+   const d=new Date(prior.getTime()-i*86400000);
+   const key=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(d);
+   history.push("./data/market_risk_close/"+key+".json");
+ }
+ for(const source of history){
+   try{
+     const res=await fetch(source+"?v="+Date.now(),{cache:"no-store"});
+     if(!res.ok)continue;
+     const proof=await res.json();
+     const recovered=window.MarketCommand?.recoverFrozenFromOfficial(proof);
+     if(recovered&&MarketCommand.applyFrozenPremarket(recovered)){
+       confirmed=true;
+       console.warn("盤前 GitHub 排程未產生 JSON；使用前次核對收盤分數恢復當日固定參考",recovered.targetDate,recovered.score,recovered.baseDate);
+       break;
+     }
+   }catch(error){console.warn("盤前備援官方資料讀取失敗",source,error)}
+ }
+ if(!confirmed)console.error("當日盤前基準缺失且沒有合格的前收盤來源；不捏造分數");
 }
-async function load(){loading.classList.add("show");try{var r=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);DATA=await r.json();renderRisk();MarketCommand.refresh(DATA);DynamicExposure.refresh(DATA);MarketCommand.checkMl();renderPanels();renderHomeG();renderMeta();await loadFutures();await loadIntradayMarketBreadth()}catch(e){marketMeta.textContent="市場資料載入失敗："+e.message;futuresSub.textContent="市場資料暫時不可用，請稍後重新載入。"}finally{loading.classList.remove("show")}}
+async function loadOfficialCloseRisk(){
+ try{
+   const response=await fetch("./data/market_risk_close/latest.json?v="+Date.now(),{cache:"no-store"});
+   if(!response.ok){if(response.status!==404)console.warn("獨立盤後大盤分數回應",response.status);return}
+   const snap=await response.json();
+   if(window.MarketCommand&&MarketCommand.applyOfficialClose(snap)){
+     console.info("獨立大盤正式 Risk Score 已核對",snap.asOfDate,snap.risk.score);
+   }
+ }catch(e){console.warn("獨立盤後大盤分數暫時不可用；未沿用舊資料",e)}
+}
+async function loadIntradayMarketBreadth(){
+ if(liveBreadthRefreshBusy)return;
+ liveBreadthRefreshBusy=true;
+ try{
+   const res=await fetch("./data/g_intraday/latest.json?v="+Date.now(),{cache:"no-store"});
+   if(!res.ok)throw new Error("盤中市場資料 HTTP "+res.status);
+   const snap=await res.json();
+   if(window.MarketCommand)MarketCommand.applyIntraday(snap);
+   const b=snap?.indicativeQuoteBreadth?.total||{},c=snap?.coverage||{};
+   console.info("盤中市場廣度",snap?.asOfDate,snap?.publishedAt,"樣本",b.sample,"上漲",b.up,"有效報價",c.valid+"/"+c.total);
+ }catch(e){
+   console.warn("盤中市場廣度載入失敗（保留原狀，稍後重試）",e);
+ }finally{liveBreadthRefreshBusy=false}
+}
+async function load(){
+ loading.classList.add("show");
+ try{
+   const response=await fetch("./data/latest.json?"+Date.now(),{cache:"no-store"});
+   if(!response.ok)throw new Error("HTTP "+response.status);
+   DATA=await response.json();
+   renderRisk();MarketCommand.refresh(DATA);DynamicExposure.refresh(DATA);
+   MarketCommand.checkMl();renderPanels();renderHomeG();renderMeta();
+ }catch(e){
+   marketMeta.textContent="完整市場資料載入失敗："+e.message+"；盤前固定基準仍獨立載入。";
+   futuresSub.textContent="完整選股資料暫時不可用，盤前參考分數不受影響。";
+   if(!DATA){
+     DATA={dataDate:"",risk:{date:"",score:null}};
+     try{MarketCommand.refresh(DATA)}catch(error){console.warn("盤前獨立顯示容器初始化失敗",error)}
+   }
+ }finally{
+   // Each data source is independent: a broken full-stock JSON must not block
+   // the date-keyed premarket score, and a failed TX API must not block it either.
+   await loadFrozenPremarket();
+   await loadOfficialCloseRisk();
+   await loadFutures();
+   await loadIntradayMarketBreadth();
+   loading.classList.remove("show");
+ }
+}
 // At 08:30–08:59 revisit the latest COMPLETED exchange session; this
 // is not a live 08:58 quote stream. At 09:00 retire the provisional view.
 setInterval(function(){
@@ -515,5 +722,7 @@ document.getElementById("txfLiveChart").addEventListener("toggle",function(){
 MarketSentiment.mount();DynamicExposure.init();// Refresh both the live data and dashboard JavaScript. Merely calling load()
 // kept stale scripts active in open mobile tabs after Pages deployments.
 reload.onclick=()=>{const url=new URL(location.href);url.searchParams.set("appRefresh",String(Date.now()));location.replace(url.toString())};load();setInterval(load,90000);
+// 獨立巡檢：盤中數據不受夜盤或正式盤後整包更新是否成功影響。
+setInterval(()=>{const m=localClock();if(m>=540&&m<=840)void loadIntradayMarketBreadth()},30000);
 </script>
 </body></html>

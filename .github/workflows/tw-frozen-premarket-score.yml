@@ -1,0 +1,133 @@
+name: TW Frozen Premarket Score
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/tw-frozen-premarket-score.yml'
+      - 'tw-stock-dashboard/src/freeze_premarket_score.py'
+      - 'tw-stock-dashboard/tests/test_freeze_premarket_score.py'
+  workflow_run:
+    workflows: ['TW Stock Dashboard']
+    types: [completed]
+    branches: [main]
+  schedule:
+    # Morning freeze plus timed late-recovery slots if upstream cron failed.
+    - cron: '27,42,57 0 * * 1-5'
+    - cron: '27,57 1-3 * * 1-5'
+    - cron: '27 4 * * 1-5'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: tw-frozen-premarket-score
+  cancel-in-progress: false
+jobs:
+  freeze:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.head_branch == 'main' &&
+       (github.event.workflow_run.conclusion == 'success' ||
+        github.event.workflow_run.conclusion == 'failure'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test date, previous-close and TX pairing safeguards
+        run: python -m unittest discover -s tw-stock-dashboard/tests -p 'test_freeze_premarket_score.py' -v
+      - name: Freeze or recover immutable date-keyed premarket score
+        id: freeze
+        run: |
+          python tw-stock-dashboard/src/freeze_premarket_score.py
+          python - <<'PY'
+          import json,os
+          from datetime import datetime
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+          import sys
+          sys.path.insert(0,'tw-stock-dashboard/src')
+          from freeze_premarket_score import target_day
+          now=datetime.now(ZoneInfo('Asia/Taipei'))
+          target=target_day(now)
+          path=Path('tw-stock-dashboard/docs/data/market_premarket')/(target+'.json')
+          ok=False
+          if path.exists():
+              j=json.loads(path.read_text(encoding='utf-8'))
+              ok=(j.get('quality')=='fixed-premarket-reference-v1' and
+                  j.get('targetDate')==target and
+                  j.get('lockedForTradingDate')==target and
+                  type(j.get('score')) is int and 0<=j['score']<=100 and
+                  j.get('baseDate','')<target)
+          print('PREMARKET_TARGET',target,'archive',path,'ready',ok)
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:f.write('ready='+str(ok).lower()+'\n')
+          print('PREMARKET_READY',now.isoformat(),'publish',ok)
+          PY
+      - name: Commit once-per-date snapshot
+        if: steps.freeze.outputs.ready == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tw-stock-dashboard/docs/data/market_premarket/
+          if ! git diff --cached --quiet; then
+            git commit -m "Freeze today premarket risk reference"
+            ok=0
+            for i in 1 2 3 4 5; do
+              git pull --rebase -X theirs origin main || { git rebase --abort || true; sleep $((5*i)); continue; }
+              if git push origin HEAD:main; then ok=1; break; fi
+              sleep $((5*i))
+            done
+            [ "$ok" -eq 1 ] || exit 1
+          else
+            git pull --ff-only origin main
+          fi
+      - uses: actions/configure-pages@v5
+        if: steps.freeze.outputs.ready == 'true'
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.freeze.outputs.ready == 'true'
+        with:
+          path: tw-stock-dashboard/docs
+      - uses: actions/deploy-pages@v4
+        if: steps.freeze.outputs.ready == 'true'
+        id: deploy
+      - name: Verify public locked score is never older than repository snapshot
+        if: steps.freeze.outputs.ready == 'true'
+        env:
+          SITE: ${{ steps.deploy.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request
+          from pathlib import Path
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          import sys
+          sys.path.insert(0,'tw-stock-dashboard/src')
+          from freeze_premarket_score import target_day
+          target=target_day(datetime.now(ZoneInfo('Asia/Taipei')))
+          snap=json.loads((Path('tw-stock-dashboard/docs/data/market_premarket')/(target+'.json')).read_text('utf-8'))
+          base=os.environ['SITE'].rstrip('/')
+          url=base+'/data/market_premarket/'+target+'.json'
+          for attempt in range(12):
+              try:
+                  req=urllib.request.Request(url+'?v='+str(time.time()),
+                      headers={'Cache-Control':'no-cache','User-Agent':'TW-Premarket-Verification'})
+                  with urllib.request.urlopen(req,timeout=20) as response:
+                      remote=json.loads(response.read())
+                  assert remote['targetDate']==snap['targetDate']
+                  assert remote['score']==snap['score']
+                  assert remote['baseDate']==snap['baseDate']
+                  print('PASS FROZEN PREMARKET',remote['targetDate'],remote['score'])
+                  break
+              except Exception as e:
+                  print('Retry premarket verification',attempt+1,repr(e))
+                  if attempt==11:raise
+                  time.sleep(5)
+          PY

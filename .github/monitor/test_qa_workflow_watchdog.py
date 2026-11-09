@@ -2,7 +2,7 @@ import unittest,sys
 from datetime import datetime,timedelta,timezone
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).parent))
-from qa_workflow_watchdog import due,hours_since,WORKFLOWS,eod_health,eod_watch
+from qa_workflow_watchdog import due,hours_since,WORKFLOWS,eod_health,eod_watch,luna_expected_slot,luna_watch
 class WorkflowHealthTests(unittest.TestCase):
     def test_tracks_critical_flows(self):
         self.assertTrue({"TW Stock Python CI","Full Website Browser Audit","TW Stock Dashboard"}.issubset(WORKFLOWS))
@@ -23,6 +23,42 @@ class WorkflowHealthTests(unittest.TestCase):
         self.assertIn("找不到",due("TW Stock Python CI",None,now))
     def test_untracked_flow_cannot_trigger_daily_alert(self):
         self.assertIsNone(due("TW Stock Pages",None,datetime.now(timezone.utc)))
+class LunaScheduleWatchTests(unittest.TestCase):
+    def test_expected_slots_follow_taipei_and_allow_cron_delay(self):
+        tz=timezone(timedelta(hours=8))
+        before=datetime(2026,10,26,21,32,tzinfo=tz)
+        self.assertEqual(luna_expected_slot(before).astimezone(tz).hour,17)
+        after=datetime(2026,10,26,22,0,tzinfo=tz)
+        self.assertEqual(luna_expected_slot(after).astimezone(tz).strftime("%Y-%m-%d %H:%M"),"2026-10-26 21:10")
+        overnight=datetime(2026,10,27,1,30,tzinfo=tz)
+        self.assertEqual(luna_expected_slot(overnight).astimezone(tz).strftime("%Y-%m-%d %H:%M"),"2026-10-26 21:10")
+    def test_missed_luna_schedule_dispatches_once_with_alert(self):
+        from unittest.mock import patch
+        now=datetime(2026,10,26,14,0,tzinfo=timezone.utc)
+        calls=[];alerts=[]
+        def fake_req(path,method="GET",body=None):
+            if path.endswith("/runs?per_page=45"):return {"workflow_runs":[]}
+            if path.endswith("/dispatches") and method=="POST":calls.append(body);return None
+            raise AssertionError(path)
+        with patch("qa_workflow_watchdog.req",side_effect=fake_req),patch("qa_workflow_watchdog.publish",side_effect=lambda *args:alerts.append(args)):
+            luna_watch(now)
+        self.assertEqual(calls,[{"ref":"main"}])
+        self.assertEqual(alerts[0][0],"LUNA Public Social Sentiment")
+        self.assertIn("21:10",alerts[0][1])
+    def test_luna_recovery_respects_dispatch_cooldown(self):
+        from unittest.mock import patch
+        now=datetime(2026,10,26,14,0,tzinfo=timezone.utc)
+        recent={"created_at":(now-timedelta(minutes=25)).isoformat(),"event":"workflow_dispatch","status":"completed","conclusion":"failure"}
+        with patch("qa_workflow_watchdog.req",return_value={"workflow_runs":[recent]}) as req,patch("qa_workflow_watchdog.publish"):
+            luna_watch(now)
+        self.assertEqual(req.call_count,1)
+    def test_luna_success_closes_stale_alert(self):
+        from unittest.mock import patch
+        now=datetime(2026,10,26,14,0,tzinfo=timezone.utc)
+        success={"created_at":(now-timedelta(minutes=20)).isoformat(),"event":"schedule","status":"completed","conclusion":"success"}
+        with patch("qa_workflow_watchdog.req",return_value={"workflow_runs":[success]}),patch("qa_workflow_watchdog.publish") as alert:
+            luna_watch(now)
+        alert.assert_called_once_with("LUNA Public Social Sentiment",None)
 class EODHealthTests(unittest.TestCase):
     def snapshot(self):
         return {"dataDate":"2026-10-15","risk":{"date":"2026-10-15"},"gSelection":{"dataDate":"2026-10-15"},

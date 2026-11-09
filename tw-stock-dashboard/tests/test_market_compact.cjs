@@ -34,6 +34,37 @@ assert.equal(elements.compactOfficial.textContent,"52");
 assert.equal(elements.compactAction.textContent,"今日盤中待確認");
 assert.match(elements.compactSession.textContent,/前次正式資料日 2026-10-21/);
 assert.match(elements.compactEquation.textContent,/前次收盤 52 分/);
+global.MarketCompact.render({score:15,officialScore:11,officialDate:"2026-10-22",date:"2026-10-27",level:"WAIT",reference:true,provisional:true,delta:4,post:true});
+assert.equal(elements.compactScore.textContent,"15");
+assert.equal(elements.compactOfficial.textContent,"11");
+assert.equal(elements.compactNight.textContent,"+4");
+assert.match(elements.compactScoreType.textContent,/今日 TX 盤中參考試算/);
+assert.match(elements.compactEquation.textContent,/未經樣本外回測/);
+assert.match(elements.compactScoreFootnote.textContent,/不授權交易/);
+assert.match(elements.compactSession.textContent,/前次正式 2026-10-22/);
+// Today's quote-breadth score is not the previous-session official Risk Score.
+global.MarketCompact.render({score:48,officialScore:0,officialDate:"2026-10-30",
+ date:"2026-11-02",level:"WAIT",reference:false,post:true,
+ breadthProvisional:true,breadthSample:1518,breadthProxy:1403});
+assert.equal(elements.compactScore.textContent,"48");
+assert.equal(elements.compactOfficial.textContent,"0");
+assert.match(elements.compactScoreType.textContent,/非正式 Risk Score/);
+assert.match(elements.compactBand.textContent,/市場報價偏弱/);
+assert.match(elements.compactEquation.textContent,/委託價估計/);
+assert.match(elements.compactScoreFootnote.textContent,/不授權交易/);
+// Provisional grade must use same-day validated sample and reject stale or old quotes.
+const {indicativeMarketBreadthScore}=require("../docs/market-command.js");
+const live=JSON.parse(fs.readFileSync(path.join(__dirname,"../docs/data/g_intraday/latest.json"),"utf8"));
+if(live.indicativeQuoteBreadth?.quality==="indicative-price-with-orderbook-proxy"){
+ const published=new Date(live.publishedAt),now=new Date(published.getTime()+2*60000);
+ const grade=indicativeMarketBreadthScore(live,now);
+ const summary=live.indicativeQuoteBreadth.total;
+ assert.ok(grade,"today's validated breadth should yield a provisional numeric score");
+ assert.equal(grade.score,Math.round(summary.up*100/summary.sample));
+ assert.equal(grade.sample,summary.sample);
+ assert.equal(indicativeMarketBreadthScore(live,new Date(published.getTime()+70*60000)),null);
+ assert.equal(indicativeMarketBreadthScore({...live,asOfDate:"1999-01-01"},now),null);
+}
 const html=fs.readFileSync(path.join(__dirname,"../docs/index.html"),"utf8");
 for(const id of ids)assert.ok(html.includes('id="'+id+'"'),"missing compact node "+id);
 assert.ok(html.indexOf('id="compactMarketSummary"')<html.indexOf('id="marketRiskDetails"'));

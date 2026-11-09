@@ -5,8 +5,17 @@ on:
     branches: [main]
     paths:
       - 'tw-stock-dashboard/src/futures_night.py'
+      - 'tw-stock-dashboard/src/futures_preopen.py'
+      - 'tw-stock-dashboard/tests/test_market_holiday_hero.cjs'
+      - 'tw-stock-dashboard/tests/test_tx_holiday_open.cjs'
+      - 'tw-stock-dashboard/tests/test_market_open_breadth.cjs'
       - '.github/workflows/txf-night-dashboard.yml'
   schedule:
+    # TX starts real trading at 08:45 Taipei; quote checks at 08:50/08:58,
+    # with recovery after the 09:00 cash-market opening. GitHub cron best-effort.
+    - cron: '50,58 0 * * 1-5'
+    - cron: '8,25,45 1 * * 1-5'
+    - cron: '5,35 2-5 * * 1-5'
     # Completed after-hours report: 05:15, 05:40, 05:45,
     # 06:15, 07:15, 08:15, 09:15 Asia/Taipei.
     # UTC Friday night = Taipei Saturday morning; keep Fri nights.
@@ -79,7 +88,23 @@ jobs:
           print("PASS TX expiry rollover 20261021 -> 202611, matched both OpenAPI and HTML")
           print("PASS holiday crossover TX day=49349, night=48705, day delta=-644, official settlement delta=-652")
           PY
-      - name: Fetch official TAIFEX completed sessions
+      - name: Verify same-day quote parser rejects stale/auction quotes
+        working-directory: tw-stock-dashboard
+        run: PYTHONPATH=src python -m unittest discover -s tests -p 'test_futures_preopen.py' -v
+      - name: Verify same-day TX quote appears on homepage without rendering failure
+        run: node tw-stock-dashboard/tests/test_txf_live_ui.cjs
+      - name: Verify reopen after market holidays never inherits old TX risk baseline
+        run: |
+          node tw-stock-dashboard/tests/test_tx_holiday_open.cjs
+          node --check tw-stock-dashboard/tests/test_market_holiday_hero.cjs
+          node tw-stock-dashboard/tests/test_market_holiday_hero.cjs
+          node tw-stock-dashboard/tests/test_market_open_breadth.cjs
+      - name: Fetch verified TX same-day quote (08:45+ only)
+        working-directory: tw-stock-dashboard
+        env:
+          FUGLE_API_KEY: ${{ secrets.FUGLE_API_KEY }}
+        run: PYTHONPATH=src python -u src/futures_preopen.py
+      - name: Fetch official TAIFEX completed sessions (independent of live quote)
         working-directory: tw-stock-dashboard
         run: PYTHONPATH=src python src/futures_night.py
       - name: Archive dated TX futures snapshot
@@ -88,7 +113,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tw-stock-dashboard/docs/data/futures/latest.json
+          git add tw-stock-dashboard/docs/data/futures/latest.json tw-stock-dashboard/docs/data/futures/intraday.json
           if ! git diff --cached --quiet; then
             git commit -m "data: official TX futures day and afterhours market preview"
             for n in 1 2 3 4; do

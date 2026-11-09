@@ -1,0 +1,50 @@
+/* Taiwan option volatility indicator — intentionally independent of Risk Score. */
+.tw-vix.card{margin:14px 0 18px;padding:20px 23px;border-radius:17px;border:1px solid #435776;background:linear-gradient(135deg,#15253c,#1e3048 70%,#202b40);color:#eaf2ff;box-shadow:0 7px 25px #0f172a24}
+.tw-vix *{box-sizing:border-box}
+.tw-vix-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:start}
+.tw-vix-tag{font-size:11px;letter-spacing:.10em;font-weight:850;color:#b7c3e9}
+.tw-vix-top h2{margin:4px 0 5px;font-size:21px;line-height:1.3;color:#fff}
+.tw-vix-sub{color:#c3d0e2;font-size:12px;line-height:1.7;margin:0;max-width:740px}
+.tw-vix-links{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px}
+.tw-vix-links a{color:#c9e1ff;text-decoration:underline;text-underline-offset:3px}
+.tw-vix-links button{border:1px solid #617893;background:#2b4161;border-radius:8px;color:#e7f2ff;font-weight:700;cursor:pointer;padding:7px 10px}
+.tw-vix-links button:focus-visible,.tw-vix-links a:focus-visible{outline:3px solid #94bfff;outline-offset:2px}
+.tw-vix-grid{display:grid;grid-template-columns:1.45fr 1.25fr 1fr 1fr;gap:10px;margin-top:15px}
+.tw-vix-stat{background:#2a3d57;border:1px solid #405776;border-radius:11px;padding:13px 15px;min-width:0}
+.tw-vix-stat span{display:block;font-size:11px;color:#b6c9df;font-weight:750;margin-bottom:8px}
+.tw-vix-stat strong{display:block;font-size:25px;line-height:1.1;color:#fff;font-weight:900;font-variant-numeric:tabular-nums}
+.tw-vix-stat--main strong{font-size:34px}
+.tw-vix-stat small{display:block;margin-top:7px;color:#bdcbdc;font-size:11px;line-height:1.45}
+#twVixChange[data-tone="up"],#twVixMood[data-tone="up"]{color:#fca5a5}
+#twVixChange[data-tone="down"],#twVixMood[data-tone="down"]{color:#86efac}
+#twVixChange[data-tone="flat"],#twVixMood[data-tone="flat"]{color:#e0e7ff}
+.tw-vix-at{margin-top:13px;font-size:12px;color:#c7d8ea;line-height:1.6}
+.tw-vix-status{font-size:12px;color:#b5e0c5;margin:5px 0 9px;line-height:1.6}
+.tw-vix-status[data-stale="true"]{color:#ffd89b}
+.tw-vix-chart{display:block;width:100%;height:125px;border:1px solid #425875;border-radius:11px;background:#1b2c43;margin-top:7px;overflow:visible}
+.tw-vix-chart-caption{font-size:11px;color:#a9bfd7;margin:5px 0 0}
+.tw-vix-guide{margin:13px 0 0;color:#dae5f5;line-height:1.7;font-size:13px;padding:11px 13px;background:#293a55;border-left:3px solid #9588dc;border-radius:7px}
+.tw-vix-foot{margin:9px 0 0;color:#abc2db;font-size:11px;line-height:1.7}
+@media(max-width:760px){
+ .tw-vix.card{padding:16px 14px}
+ .tw-vix-top h2{font-size:18px}
+ .tw-vix-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .tw-vix-stat{padding:11px 12px}
+ .tw-vix-stat strong{font-size:20px}
+ .tw-vix-stat--main strong{font-size:29px}
+ .tw-vix-chart{height:105px}
+}
+
+.tw-vix-range-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px}
+.tw-vix-range-name{font-size:13px;font-weight:850;color:#e7ecff;line-height:1.5}
+.tw-vix-range-name small{display:block;color:#b9cde6;font-size:11px;font-weight:500}
+.tw-vix-range-buttons{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tw-vix-range-buttons button{padding:7px 12px;border:1px solid #607494;border-radius:8px;background:#273a55;color:#e8eef9;font-size:12px;font-weight:800;cursor:pointer;min-width:51px}
+.tw-vix-range-buttons button.is-active{background:#ecedff;border-color:#ecedff;color:#1b2540}
+.tw-vix-range-buttons button:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.tw-vix-range-status{margin:7px 0 5px;font-size:11px;color:#b9cde6}
+@media(max-width:760px){
+ .tw-vix-range-head{align-items:flex-start}
+ .tw-vix-range-buttons{width:100%;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+ .tw-vix-range-buttons button{padding:9px 2px;min-width:0;font-size:12px}
+}

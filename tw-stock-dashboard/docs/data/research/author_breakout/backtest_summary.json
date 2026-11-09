@@ -1,0 +1,246 @@
+{
+  "generatedAt": "2026-10-27T22:53:14+08:00",
+  "status": "historical_backtest_completed",
+  "scope": "FULL_CURRENT_UNIVERSE",
+  "testedUniverse": 1986,
+  "usablePriceSeries": 1981,
+  "historyFetchErrors": {},
+  "benchmark": "^TWII",
+  "dateRange": {
+    "start": "2023-10-09",
+    "end": "2026-10-27"
+  },
+  "sampleN": 19,
+  "costs": {
+    "buyBrokerFee": 0.001425,
+    "sellBrokerFeePlusTax": 0.004425,
+    "slippageEachSide": 0.001
+  },
+  "executionAssumptions": [
+    "D 收盤以完成資料選股，D+1 至 D+3 才允許突破買進",
+    "每天按 D 收盤資料排序，最多三檔候選",
+    "突破時若開盤高於觸發價則以開盤成交，開盤溢價超過 3% 則放棄當日",
+    "同日停損與目標同觸及，保守判定停損優先",
+    "停利後下一交易日才開始保本；嚴格不假設分鐘 K 先後",
+    "剩餘持倉到期以收盤出場；尚未結束者剔除統計"
+  ],
+  "limitations": [
+    "2026 樣本啟發了規則，2026 不能被稱為真正的樣本外回測",
+    "當前上市上櫃母體回推至歷史，存在存活者偏差",
+    "未處理停牌、漲跌停無法成交與買賣價差的全部影響",
+    "獨立交易統計不等於具有資金佔用與部位上限的投組年化報酬",
+    "歷史日 K 僅能採保守同日停損優先，無法還原真實分鐘成交順序"
+  ],
+  "models": {
+    "CORE_1ATR_2R5R": {
+      "candidateSignalDays": 737,
+      "eligibleCandidatePairs": 54511,
+      "executed": 606,
+      "authorExampleExecutions": 13,
+      "folds": {
+        "historical_train": {
+          "trades": 237,
+          "winPct": 35.02,
+          "meanNetR": -0.04,
+          "medianNetR": -1.0874,
+          "meanNetPct": -0.187,
+          "profitFactor": 0.944,
+          "avgHoldBars": 4.99
+        },
+        "robustness_2025": {
+          "trades": 192,
+          "winPct": 27.6,
+          "meanNetR": -0.3124,
+          "medianNetR": -1.097,
+          "meanNetPct": -1.875,
+          "profitFactor": 0.625,
+          "avgHoldBars": 4.53
+        },
+        "author_inspired_2026": {
+          "trades": 177,
+          "winPct": 37.85,
+          "meanNetR": -0.0506,
+          "medianNetR": -1.0825,
+          "meanNetPct": -0.082,
+          "profitFactor": 0.928,
+          "avgHoldBars": 4.91
+        }
+      }
+    },
+    "CORE_1ATR_5R10R": {
+      "candidateSignalDays": 737,
+      "eligibleCandidatePairs": 54511,
+      "executed": 567,
+      "authorExampleExecutions": 13,
+      "folds": {
+        "historical_train": {
+          "trades": 219,
+          "winPct": 23.74,
+          "meanNetR": 0.1341,
+          "medianNetR": -1.0957,
+          "meanNetPct": 0.728,
+          "profitFactor": 1.161,
+          "avgHoldBars": 7.74
+        },
+        "robustness_2025": {
+          "trades": 180,
+          "winPct": 17.78,
+          "meanNetR": -0.2511,
+          "medianNetR": -1.102,
+          "meanNetPct": -1.535,
+          "profitFactor": 0.729,
+          "avgHoldBars": 6.41
+        },
+        "author_inspired_2026": {
+          "trades": 168,
+          "winPct": 17.86,
+          "meanNetR": -0.0514,
+          "medianNetR": -1.096,
+          "meanNetPct": -0.402,
+          "profitFactor": 0.945,
+          "avgHoldBars": 6.71
+        }
+      }
+    },
+    "STRONG_1ATR_2R5R": {
+      "candidateSignalDays": 734,
+      "eligibleCandidatePairs": 25491,
+      "executed": 682,
+      "authorExampleExecutions": 18,
+      "folds": {
+        "historical_train": {
+          "trades": 269,
+          "winPct": 31.97,
+          "meanNetR": -0.1126,
+          "medianNetR": -1.0926,
+          "meanNetPct": -0.614,
+          "profitFactor": 0.852,
+          "avgHoldBars": 4.72
+        },
+        "robustness_2025": {
+          "trades": 208,
+          "winPct": 30.77,
+          "meanNetR": -0.2078,
+          "medianNetR": -1.0964,
+          "meanNetPct": -1.105,
+          "profitFactor": 0.739,
+          "avgHoldBars": 4.59
+        },
+        "author_inspired_2026": {
+          "trades": 205,
+          "winPct": 35.12,
+          "meanNetR": -0.1376,
+          "medianNetR": -1.0854,
+          "meanNetPct": -0.735,
+          "profitFactor": 0.815,
+          "avgHoldBars": 4.45
+        }
+      }
+    },
+    "STRONG_1ATR_5R10R": {
+      "candidateSignalDays": 734,
+      "eligibleCandidatePairs": 25491,
+      "executed": 643,
+      "authorExampleExecutions": 18,
+      "folds": {
+        "historical_train": {
+          "trades": 249,
+          "winPct": 21.29,
+          "meanNetR": 0.0079,
+          "medianNetR": -1.1005,
+          "meanNetPct": -0.046,
+          "profitFactor": 1.009,
+          "avgHoldBars": 7.15
+        },
+        "robustness_2025": {
+          "trades": 197,
+          "winPct": 19.8,
+          "meanNetR": -0.1366,
+          "medianNetR": -1.1027,
+          "meanNetPct": -0.713,
+          "profitFactor": 0.85,
+          "avgHoldBars": 6.84
+        },
+        "author_inspired_2026": {
+          "trades": 197,
+          "winPct": 17.77,
+          "meanNetR": -0.1422,
+          "medianNetR": -1.0953,
+          "meanNetPct": -0.994,
+          "profitFactor": 0.851,
+          "avgHoldBars": 6.3
+        }
+      }
+    },
+    "CORE_0p65ATR_2R5R": {
+      "candidateSignalDays": 737,
+      "eligibleCandidatePairs": 54511,
+      "executed": 690,
+      "authorExampleExecutions": 16,
+      "folds": {
+        "historical_train": {
+          "trades": 283,
+          "winPct": 22.61,
+          "meanNetR": -0.4439,
+          "medianNetR": -1.1441,
+          "meanNetPct": -1.703,
+          "profitFactor": 0.509,
+          "avgHoldBars": 2.58
+        },
+        "robustness_2025": {
+          "trades": 211,
+          "winPct": 22.75,
+          "meanNetR": -0.4984,
+          "medianNetR": -1.1531,
+          "meanNetPct": -1.893,
+          "profitFactor": 0.457,
+          "avgHoldBars": 2.68
+        },
+        "author_inspired_2026": {
+          "trades": 196,
+          "winPct": 23.98,
+          "meanNetR": -0.4579,
+          "medianNetR": -1.1397,
+          "meanNetPct": -1.863,
+          "profitFactor": 0.486,
+          "avgHoldBars": 2.49
+        }
+      }
+    },
+    "CORE_1p35ATR_2R5R": {
+      "candidateSignalDays": 737,
+      "eligibleCandidatePairs": 54511,
+      "executed": 555,
+      "authorExampleExecutions": 13,
+      "folds": {
+        "historical_train": {
+          "trades": 214,
+          "winPct": 39.72,
+          "meanNetR": 0.0926,
+          "medianNetR": -1.0624,
+          "meanNetPct": 0.546,
+          "profitFactor": 1.143,
+          "avgHoldBars": 7.32
+        },
+        "robustness_2025": {
+          "trades": 174,
+          "winPct": 28.74,
+          "meanNetR": -0.2363,
+          "medianNetR": -1.0726,
+          "meanNetPct": -1.753,
+          "profitFactor": 0.694,
+          "avgHoldBars": 6.97
+        },
+        "author_inspired_2026": {
+          "trades": 167,
+          "winPct": 38.32,
+          "meanNetR": -0.013,
+          "medianNetR": -1.0586,
+          "meanNetPct": -0.049,
+          "profitFactor": 0.981,
+          "avgHoldBars": 6.69
+        }
+      }
+    }
+  }
+}

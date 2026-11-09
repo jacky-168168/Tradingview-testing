@@ -7,7 +7,9 @@ const script=fs.readFileSync(path.join(root,'market-events.js'),'utf8');
 new Function(script);
 assert(main.includes('href="./market-events.html"'),'homepage must expose major-events entry');
 assert(rankings.includes('href="./market-events.html"'),'G rankings must expose major-events entry');
-for(const id of ['events','news','eventCount','newsCount','alert','freshness','filters','query','eventSection','newsSection','empty'])
+for(const category of ["energy","metals","agriculture","ptt","global"])
+ assert(html.includes('data-cat="'+category+'"'),'market events missing '+category+' tab');
+for(const id of ['globalSection','globalNews','globalCount','moreGlobal','events','news','eventCount','newsCount','alert','freshness','filters','query','eventSection','newsSection','empty'])
  assert(html.includes('id="'+id+'"'),'missing '+id);
 const archived=JSON.parse(fs.readFileSync(path.join(root,'data/market_events/latest.json'),'utf8'));
 assert.equal(archived.schema,1);
@@ -33,8 +35,28 @@ const fresh=Array.from({length:23},(_,i)=>({
  date:'2026-10-24',publishedAt:new Date(Date.parse(FIXED_NOW)-(i+1)*60000).toISOString(),
  source:'測試媒體',url:'https://example.com/test/'+i,themes:['AI'],confirmed:false
 }));
+const foreign={id:'fixture-global',type:'news',category:'國際政策',
+ title:'Trump tariffs on semiconductor imports',date:'2026-10-24',publishedAt:'2026-10-24T05:00:00Z',
+ source:'Reuters',url:'https://www.reuters.com/test',themes:['國際政策'],
+ impactAssets:'美股、美元、半導體、台灣出口類股',impactNote:'關稅變動可能影響供應鏈成本。',
+ impactStatus:'可能連動・未驗證實際行情',impactLevel:'高關注',
+ originType:'foreign_original',confirmed:false};
+const commodities=[
+ {id:'fixture-oil',type:'news',category:'原油／能源',title:'WTI 原油最新產量上升',
+  date:'2026-10-24',publishedAt:'2026-10-24T05:00:00Z',source:'測試能源新聞',
+  url:'https://example.com/oil',themes:['WTI'],confirmed:false},
+ {id:'fixture-silver',type:'news',category:'貴金屬',title:'白銀報價最新上升',
+  date:'2026-10-24',publishedAt:'2026-10-24T05:00:00Z',source:'測試金屬新聞',
+  url:'https://example.com/silver',themes:['白銀'],confirmed:false},
+ {id:'fixture-ptt',type:'news',category:'PTT轉載',title:'[新聞] 台股明開盤恐補跌千點',
+  date:'2026-10-24',publishedAt:'2026-10-24T05:00:00Z',source:'PTT 股票板（新聞轉載）',
+  url:'https://www.ptt.cc/bbs/Stock/M.1792918324.A.BBD.html',themes:['PTT'],confirmed:false},
+ {id:'fixture-crops',type:'news',category:'農產品',title:'黃豆 USDA 最新收成預估',
+  date:'2026-10-24',publishedAt:'2026-10-24T05:00:00Z',source:'測試農產品新聞',
+  url:'https://example.com/crops',themes:['黃豆'],confirmed:false}
+];
 const sample={...archived,generatedAt:'2026-10-21T00:00:00+08:00',
- items:[endedExhibition,upcomingRateMeeting,...archived.items.filter(x=>x.type!=='event'),...fresh]};
+ items:[endedExhibition,upcomingRateMeeting,...archived.items.filter(x=>x.type!=='event'),...fresh,foreign,...commodities]};
 const nodes=new Map();
 function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',hidden:false,value:'',fn:null,
  addEventListener(type,fn){this.fn=fn},querySelectorAll(){return []}
@@ -43,18 +65,31 @@ const document={getElementById:node};
 const ctx={document,fetch:async()=>({ok:true,json:async()=>sample}),setInterval:()=>{},Date:FixedDate,Intl,console};
 vm.runInNewContext(script,ctx);
 setImmediate(()=>{
+ assert(node('globalNews').innerHTML.includes('Trump tariffs'),'foreign original news must be visible');
+ assert(node('globalNews').innerHTML.includes('可能連動'),'global news must describe uncertainty');
  assert(!node('events').innerHTML.includes('TPCA Show 2026'),'ended exhibit must not appear');
  assert(node('events').innerHTML.includes('FOMC'),'future official event must appear');
  assert(!node('news').innerHTML.includes('台股反彈全看這波'),'stale 10/21 headline cannot be latest on 10/24');
  assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,20,'first page must show 20 genuinely fresh articles');
  assert.equal(node('moreNews').hidden,false,'load more must appear for 23 fresh articles');
  node('moreNews').fn();
- const freshTotal=sample.items.filter(x=>x.type==='news'&&Number.isFinite(Date.parse(x.publishedAt))&&
+ const freshTotal=sample.items.filter(x=>x.type==='news'&&x.originType!=='foreign_original'&&Number.isFinite(Date.parse(x.publishedAt))&&
    Date.parse(FIXED_NOW)-Date.parse(x.publishedAt)>=-5*60000&&
    Date.parse(FIXED_NOW)-Date.parse(x.publishedAt)<=48*3600000).length;
  assert.equal((node('news').innerHTML.match(/<article /g)||[]).length,Math.min(40,freshTotal),
     'load more adds only fresh items, regardless of live fixture size');
  assert(node('alert').textContent.includes('新聞超過 36 小時未更新'),'stale dataset must show warning');
  assert(!node('events').innerHTML.includes('<script>'),'event output must be escaped');
+ for(const [filter,expected,excluded] of [
+  ['energy','WTI 原油','白銀報價'],['metals','白銀報價','黃豆 USDA'],
+  ['agriculture','黃豆 USDA','WTI 原油'],['ptt','台股明開盤恐補跌','黃豆 USDA']]){
+  node('filters').fn({target:{closest:()=>({dataset:{cat:filter}})}});
+  assert(node('news').innerHTML.includes(expected),filter+' news filter should show own items');
+  assert(!node('news').innerHTML.includes(excluded),filter+' filter should hide unrelated items');
+  assert.equal(node('eventSection').hidden,true,'topic filters should not contain unrelated events');
+ }
+ node('filters').fn({target:{closest:()=>({dataset:{cat:'global'}})}});
+ assert(node('globalNews').innerHTML.includes('Trump tariffs'),'international tab must show foreign articles');
+ assert(!node('news').innerHTML.includes('黃豆 USDA'),'international tab cannot mix domestic articles');
  console.log('PASS ended events filtered, only fresh news rendered, pagination and stale dataset warning');
 });

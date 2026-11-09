@@ -177,6 +177,24 @@ def collect_ptt(now,fetch):
     return [],{"status":"error" if any(x not in {"Atom 無48小時有效貼文","HTML 無48小時有效貼文","第三方訂閱無有效貼文"} for x in failures) else "empty",
                "reason":"；".join(failures)[:160],"url":PTT_URL,"freshCount":0}
 
+def ptt_board_reactions(page):
+    """Read visible PTT Stock board push labels; don't invent unavailable scores."""
+    body=page.decode("utf-8","replace") if isinstance(page,bytes) else str(page)
+    counts={}
+    for block in re.split(r'<div\s+class=["\']r-ent["\']',body,flags=re.I)[1:]:
+        m=re.search(r'href=["\'](/bbs/Stock/M\.[^"\']+\.html)["\']',block,re.I)
+        if not m:continue
+        v=re.search(r'class=["\'][^"\']*\bnrec\b[^"\']*["\'][^>]*>(.*?)</div>',block,re.I|re.S)
+        if not v:continue
+        raw=re.sub(r'<[^>]+>','',v.group(1)).strip()
+        if raw=="爆":score=100
+        elif re.fullmatch(r"\d{1,2}",raw):score=int(raw)
+        elif re.fullmatch(r"X\d",raw):score=-10*int(raw[1:])
+        else:continue
+        counts["https://www.ptt.cc"+html.unescape(m.group(1))]={
+            "pushScore":score,"pushLabel":raw,"pushBasis":"PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"}
+    return counts
+
 def stock_catalog():
     try:
         data=json.loads(STOCK_PATH.read_text("utf-8"))
@@ -428,6 +446,22 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     inputs=[]
     state={}
     new,state["PTT"]=collect_ptt(now,fetch)
+    # Supplement the Atom set with recent public board articles when Atom lags.
+    # URL-derived timestamps are explicitly estimates and never claimed official.
+    try:
+        board_html=fetch(PTT_BOARD)
+        extra=ptt_board(board_html,now)
+        new=unique(new+extra,110)
+        reactions=ptt_board_reactions(board_html)
+        for x in new:
+            if x["url"] in reactions:x.update(reactions[x["url"]])
+        state["PTT"]["boardFreshCount"]=len(extra)
+        state["PTT"]["pushLabelsFound"]=len(reactions)
+        state["PTT"]["freshCount"]=len(new)
+        if new and state["PTT"]["status"]!="ok":state["PTT"]["status"]="partial"
+    except Exception:
+        state["PTT"]["pushLabelsFound"]=0
+        state["PTT"]["pushLabelsStatus"]="unavailable"
     inputs+=new
     try:
         diagnostic={}
@@ -487,6 +521,9 @@ def collect(now=None, fetch=request, old=None, environmental=None):
         state["新聞"]["reason"]=reason
     social=unique(inputs+prior,80)
     news=unique(news,80)
+    ptt_news=[x for x in social if x.get("platform")=="PTT" and x.get("contentType")=="新聞轉載"]
+    # Only rank by visible board push score when actually supplied; otherwise newest first.
+    ptt_news.sort(key=lambda x:(x.get("pushScore",-999),x["publishedAt"]),reverse=True)
     # Classify every kept entry consistently, including cached records from older snapshots.
     eligible=[x for x in social if x.get("investmentEligible") is True]
     social_stats=statistics(eligible)
@@ -502,8 +539,10 @@ def collect(now=None, fetch=request, old=None, environmental=None):
     return {"schema":1,"generatedAt":now.isoformat().replace("+00:00","Z"),
         "sources":state,"social":social_stats,"news":news_stats,"stockHeat":heat,
         "items":social[:80],"creatorMedia":creator,"newsItems":news[:30],
+        "pttNewsItems":ptt_news[:40],
         "notes":["僅使用公開、實際取得且不超過48小時的資料；缺乏授權的平台顯示未授權。",
                  "標題關鍵詞易受反諷、轉載、選擇偏差與機器人影響；不能視為代表性民調。",
+                 "PTT 新聞轉載另存 pttNewsItems，不計入鄉民多空投票；公開看板推文標籤若無法取得不得推測人氣。",
                  "新聞、散戶社群、YouTube 創作者標題及 Facebook 粉專發文彼此獨立，不可合併為散戶情緒投票。",
                  "YouTube／Facebook 只使用有權使用的官方 API；缺少授權或金鑰就顯示未設定。",
                  "標題反諷／轉載不直接判定多空，無取得平台授權不蒐集受限制來源。",

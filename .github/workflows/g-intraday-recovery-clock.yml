@@ -7,6 +7,16 @@ on:
       - '.github/workflows/g-intraday-recovery-clock.yml'
       - '.github/monitor/g_intraday_recovery.py'
       - '.github/monitor/test_g_intraday_recovery.py'
+  workflow_run:
+    # Independent non-dashboard scheduled services can revive missing G cron.
+    # No loop: a recovered dashboard is NOT an input to this backup clock.
+    workflows:
+      - 'Collect Three-Year Official Market Risk History'
+      - 'Market Major Events Radar'
+      - 'ORION Taiwanese Financial News'
+      - 'LUNA Public Social Sentiment'
+    types: [completed]
+    branches: [main]
   schedule:
     # Independent clock, offset from primary :03/:33 and secondary :09/:39.
     # Taiwan 09:12, 09:42, 10:12 ... 12:42, 13:12 and 13:39.
