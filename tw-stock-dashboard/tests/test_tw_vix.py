@@ -146,6 +146,35 @@ class TaifexDailyVixTest(unittest.TestCase):
         self.assertEqual(latest["change"],4.5)
         self.assertEqual(latest["changePct"],22.5)
 
+    def test_two_newer_official_closes_accepted_without_filling_missing_price(self):
+        days=[]
+        d=date(2026,11,4)
+        while len(days)<420:
+            if d.weekday()<5:days.append(d)
+            d-=timedelta(days=1)
+        portal=[{"date":d.isoformat(),"time":"13:45","value":20.0,
+                 "closeMinuteAverage":None} for d in reversed(days)]
+        monthly=[{**r,"closeMinuteAverage":20.0} for r in portal[-45:]]
+        for day,value in (("2026-11-05",21.5),("2026-11-06",22.4)):
+            monthly.append({"date":day,"time":"13:45","value":value,
+                            "closeMinuteAverage":value-.01})
+        checked=reconcile_portal_to_months(portal,[monthly])
+        self.assertEqual([r["date"] for r in checked[-2:]],["2026-11-05","2026-11-06"])
+        self.assertEqual([r["value"] for r in checked[-2:]],[21.5,22.4])
+        self.assertTrue(all(r["reconciliation"]=="official-monthly-close-newer-than-index-portal" for r in checked[-2:]))
+    def test_duplicate_newer_close_is_rejected(self):
+        days=[]
+        d=date(2026,11,4)
+        while len(days)<420:
+            if d.weekday()<5:days.append(d)
+            d-=timedelta(days=1)
+        portal=[{"date":d.isoformat(),"time":"13:45","value":20.0,
+                 "closeMinuteAverage":None} for d in reversed(days)]
+        monthly=[{**r,"closeMinuteAverage":20.0} for r in portal[-45:]]
+        official={"date":"2026-11-05","time":"13:45","value":21.5,"closeMinuteAverage":21.49}
+        with self.assertRaisesRegex(ValueError,"重複"):
+            reconcile_portal_to_months(portal,[monthly+[official], [official]])
+
     def test_missing_older_monthly_date_is_not_accepted_as_source_lag(self):
         days=[]
         d=date(2026,11,4)

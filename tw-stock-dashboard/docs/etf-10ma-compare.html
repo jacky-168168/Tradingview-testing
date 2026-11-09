@@ -1,0 +1,54 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>00631L vs 00685L｜10MA 公平回測</title><script src="./site-access.js"></script><style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",Arial,sans-serif;color:#172033;background:#f3f6fa}
+*{box-sizing:border-box}body{margin:0}main{max-width:1300px;margin:0 auto;padding:20px}
+a{color:#235ac2}header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+h1{font-size:clamp(21px,4vw,31px);margin:8px 0}h2{font-size:18px;margin:0 0 12px}
+.subtitle,.note,.muted{color:#637083;font-size:12px;line-height:1.85}
+.card{background:#fff;border:1px solid #e0e7ef;border-radius:15px;padding:18px;margin-top:14px}
+.btn{border:1px solid #cbd5e1;background:#fff;border-radius:9px;padding:10px 12px;text-decoration:none;font-size:13px;font-weight:700}
+.controls{display:flex;flex-wrap:wrap;gap:12px}label{font-size:13px;font-weight:700}select{display:block;margin-top:6px;padding:9px;border:1px solid #d0d9e5;border-radius:9px;background:#fff;color:#172033}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}.metric{background:#f6f9fd;border-radius:10px;padding:13px}.metric small{display:block;color:#66758a;font-size:11px}.metric strong{display:block;font-size:19px;margin-top:5px;font-variant-numeric:tabular-nums}
+.scroll{overflow:auto}table{border-collapse:collapse;width:100%;min-width:660px;font-size:13px;white-space:nowrap}td,th{padding:10px 9px;text-align:right;border-bottom:1px solid #ebeff6}td:first-child,th:first-child{text-align:left}th{color:#596a81;background:#f8fafc}th:first-child{position:sticky;left:0}td:first-child{font-weight:750;background:#fff;position:sticky;left:0}.positive{color:#047857}.negative{color:#b91c1c}
+.legend{display:flex;gap:20px;flex-wrap:wrap;font-size:12px;font-weight:700;margin-bottom:10px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+svg{width:100%;height:auto;min-height:230px;background:#f8fafc;border-radius:9px}#status{min-height:25px}
+.warning{border-left:4px solid #b45309;background:#fffbeb;padding:12px 14px;font-size:12px;line-height:1.8;color:#7b5516;border-radius:7px}
+@media(max-width:750px){main{padding:12px}.card{padding:13px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.metric strong{font-size:17px}}
+</style></head><body><main>
+<header><div><div class="muted">台股 ETF 長期歷史研究｜資料來源：臺灣證券交易所</div><h1>📈 00631L vs 00685L｜10MA 策略回測</h1><div class="subtitle">共同起點 2014/10/31｜00685L 於 2017/03/30 才上市，之前僅為假設模擬｜初始本金 100 萬元</div></div><a class="btn" href="./backtest.html">← 回測總覽</a></header>
+<section class="card"><h2>比較條件</h2><div class="controls">
+<label>比較期間<select id="period"><option value="2014_common">2014/10/31 起（00685L 含上市前模擬）</option><option value="2017_real">2017/03/30 起（雙方真實上市）</option></select></label>
+<label>策略<select id="strategy"><option value="MA10">大盤 SMA10：跌2%連3日出、回1%買</option><option value="HOLD">買進並持有（對照組）</option></select></label>
+</div><p id="status" class="muted">正在讀取回測資料…</p><div id="quality" class="muted"></div></section>
+<section class="card"><h2>100 萬元回測結果</h2><div class="grid" id="metrics"></div><div class="scroll"><table><thead><tr><th>ETF</th><th>期末資產</th><th>總報酬</th><th>最大回撤</th><th>買進 / 賣出</th><th>空手日</th><th>上市前模擬日</th></tr></thead><tbody id="comparison"><tr><td colspan="7">資料載入中…</td></tr></tbody></table></div></section>
+<section class="card"><h2>每日資產曲線</h2><div class="legend"><span><i class="dot" style="background:#2563eb"></i>00631L 元大台灣50正2</span><span><i class="dot" style="background:#ea580c"></i>00685L 群益臺灣加權正2</span></div><div id="chart" role="img" aria-label="00631L 與 00685L 回測資產曲線"></div></section>
+<section class="card"><h2>年度報酬率</h2><div class="scroll"><table><thead><tr><th>年度</th><th>00631L</th><th>00685L</th><th>00631L 年末資產</th><th>00685L 年末資產</th></tr></thead><tbody id="annual"></tbody></table></div></section>
+<section class="card"><h2>交易規則與限制</h2><div class="note">
+<p><b>訊號：</b>以台灣加權股價指數（TAIEX）的每日收盤價計算 SMA10，與你既有 00675L 大盤判斷回測一致。連續 3 個交易日收盤低於 SMA10 的 98% → 下一可交易日開盤賣出；單日收盤重新站上 SMA10 的 101% → 下一可交易日開盤買進。首日開盤建立部位。沒有使用後驗訊號回填。</p>
+<p><b>本金與成本：</b>本金 1,000,000 元；每次投入最多 99.7% 可用現金；買賣券商手續費各 0.1425%、模擬買賣滑價各 0.1%，賣出另計證交稅 0.1%。採整股數計算，未計入現金利息，未於期末強制清倉。</p>
+<p><b>還原分割：</b>00631L 2026/03/31 以 22:1 調整；00685L 2026/07/07 以 24:1 調整。使用證交所原始月度日 OHLC，停牌與無成交資料不當成交易。</p>
+<p><b>關鍵限制：</b>00685L 2014/10/31～2017/03/29 的價格，是以加權指數「逐日 2 倍報酬扣除假設費用」反推並對接其上市首日收盤，<b>不代表當時可購買或能實際達到的報酬</b>。該段開盤價以昨收近似，不含真實追蹤誤差、溢折價、期貨轉倉差異與當時市場成交條件。請優先參考 2017 真實共同上市區間驗證。</p>
+</div><p class="muted"><a href="./data/research/etf_10ma_comparison/latest.json" target="_blank" rel="noopener">檢視完整資料、交易明細與年度統計 JSON</a>｜<a href="https://github.com/jacky-168168/Tradingview-testing/blob/main/tw-stock-dashboard/src/etf_10ma_compare.py" target="_blank" rel="noopener">回測演算法原始碼</a>｜<a href="https://www.twse.com.tw/zh/products/securities/etf/products/list.html" target="_blank" rel="noopener">臺灣證交所 ETF 上市資訊</a></p></section>
+</main><script>
+(function(){"use strict";const $=id=>document.getElementById(id),money=x=>Number(x).toLocaleString("zh-TW",{maximumFractionDigits:0})+" 元",pct=x=>(x>=0?"+":"")+Number(x).toFixed(2)+"%",c=x=>x>=0?"positive":"negative";
+let data=null;
+function render(){if(!data)return;const p=data.periods[$("period").value],m=$("strategy").value,a=p.models["00631L"][m],b=p.models["00685L"][m];
+const card=(label,v)=>'<div class="metric"><small>'+label+'</small><strong>'+v+'</strong></div>';
+$("metrics").innerHTML=card("00631L 總報酬",pct(a.returnPct))+card("00685L 總報酬",pct(b.returnPct))+card("00631L 期末資產",money(a.endTWD))+card("00685L 期末資產",money(b.endTWD));
+$("comparison").innerHTML=[["00631L 元大",a],["00685L 群益",b]].map(([name,r])=>'<tr><td>'+name+'</td><td>'+money(r.endTWD)+'</td><td class="'+c(r.returnPct)+'">'+pct(r.returnPct)+'</td><td class="negative">'+pct(r.maxDrawdownPct)+'</td><td>'+r.buys+' / '+r.sells+'</td><td>'+r.cashDays+'</td><td>'+r.syntheticDays+'</td></tr>').join("");
+const A=Object.fromEntries(a.annual.map(v=>[v.year,v])),B=Object.fromEntries(b.annual.map(v=>[v.year,v]));
+$("annual").innerHTML=[...new Set([...Object.keys(A),...Object.keys(B)])].sort((x,y)=>y-x).map(y=>'<tr><td>'+y+'</td><td class="'+c(A[y]?.returnPct||0)+'">'+(A[y]?pct(A[y].returnPct):"—")+'</td><td class="'+c(B[y]?.returnPct||0)+'">'+(B[y]?pct(B[y].returnPct):"—")+'</td><td>'+(A[y]?money(A[y].equityTWD):"—")+'</td><td>'+(B[y]?money(B[y].equityTWD):"—")+'</td></tr>').join("");
+draw(a.curve,b.curve);
+$("status").textContent="資料截止："+data.priceThrough+"｜產生："+data.generatedUTC+"｜共同期間 "+p.start+"～"+p.end+"｜當前："+(p.isCounterfactual?"包含 00685L 上市前模擬":"雙方均為真實 ETF 價格");
+}
+function draw(a,b){let all=a.concat(b),vals=all.map(x=>x[1]);if(!vals.length)return;
+let lo=Math.min(...vals),hi=Math.max(...vals),width=960,height=330,pad={l:72,r:20,t:20,b:43};lo=Math.min(lo,1000000)*.95;hi*=1.05;
+let first=Date.parse(a[0][0]),last=Date.parse(a[a.length-1][0]);const x=d=>pad.l+(Date.parse(d)-first)/Math.max(1,last-first)*(width-pad.l-pad.r),y=v=>pad.t+(hi-v)/(hi-lo)*(height-pad.t-pad.b);
+const path=pts=>pts.map((v,i)=>(i?"L":"M")+x(v[0]).toFixed(1)+","+y(v[1]).toFixed(1)).join(" ");
+let grid="",labels="";for(let i=0;i<=4;i++){let v=lo+(hi-lo)*i/4,Y=y(v);grid+='<line x1="'+pad.l+'" x2="'+(width-pad.r)+'" y1="'+Y+'" y2="'+Y+'" stroke="#e1e8ef"/>';labels+='<text x="'+(pad.l-10)+'" y="'+(Y+4)+'" text-anchor="end" font-size="11" fill="#64748b">'+(v/10000).toFixed(0)+'萬</text>'}
+for(let i=0;i<=5;i++){let t=new Date(first+(last-first)*i/5),X=pad.l+(width-pad.l-pad.r)*i/5;labels+='<text x="'+X+'" y="'+(height-12)+'" text-anchor="middle" font-size="11" fill="#64748b">'+t.getFullYear()+'/'+String(t.getMonth()+1).padStart(2,"0")+'</text>'}
+$("chart").innerHTML='<svg viewBox="0 0 '+width+' '+height+'" xmlns="http://www.w3.org/2000/svg">'+grid+labels+'<path d="'+path(a)+'" fill="none" stroke="#2563eb" stroke-width="2.6" stroke-linejoin="round"/><path d="'+path(b)+'" fill="none" stroke="#ea580c" stroke-width="2.6" stroke-linejoin="round"/></svg>';
+}
+$("period").addEventListener("change",render);$("strategy").addEventListener("change",render);
+fetch("./data/research/etf_10ma_comparison/latest.json?t="+Date.now(),{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("回測資料尚未產生（HTTP "+r.status+"）");return r.json()}).then(d=>{if(!d.periods?.["2014_common"]||!d.periods?.["2017_real"])throw Error("回測期間不完整");data=d;let q=d.dataQuality;$("quality").textContent="來源：TWSE STOCK_DAY / FMTQIK｜00631L "+q["00631L"].count+"個交易日｜00685L "+q["00685L"].count+"個真實交易日｜指數 "+q.twii.count+"日";render()}).catch(e=>{$("status").textContent="尚無可驗證結果："+e.message+"。可於 GitHub Actions 的 ETF 00631L 00685L 10MA Comparison 查看資料產出狀況。";$("comparison").innerHTML="<tr><td colspan='7'>回測尚未完成，不顯示推測報酬。</td></tr>";});
+})();
+</script></body></html>
