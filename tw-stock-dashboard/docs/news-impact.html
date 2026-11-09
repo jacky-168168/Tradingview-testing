@@ -34,7 +34,7 @@ footer{font-size:11px;color:#65778d;line-height:1.8;margin-top:24px;padding-top:
 <div class="container">
 <header><a href="./index.html">← 主頁</a><div><a href="./market-events.html">🗞 新聞原始資料</a> <a href="./news-impact-history.html">📊 歷史事件研究</a> <a href="./news-impact-scorecard.html">🧪 預測驗證</a> <button id="refresh" class="small-button">↻ 重新載入</button></div></header>
 <h1>🌐 Global Market Intelligence</h1>
-<p class="subtitle">國際／國內媒體識別器　<span class="pill">新聞判讀 V1.2 ＋ 歷史研究</span><br>把新聞事件轉成可檢查的跨資產影響假說，不把推論寫成已發生的行情。</p>
+<p class="subtitle">國際／國內媒體識別器　<span class="pill">新聞判讀 V1.3 ＋ 歷史研究</span><br>把新聞事件轉成可檢查的跨資產影響假說，不把推論寫成已發生的行情。</p>
 <div class="notice"><b>判讀方式：</b>目前按新聞<b>標題</b>辨識總經、地緣政治、選舉、產業、企業財報、商品與已報導的行情；<b>識別主題不等於知道未來漲跌。</b> 推估時只對有明確傳導路徑的資產／產業產生條件式方向。記憶體報價只推估供應端，不直接外推到台股大盤；新聞中已發生的匯率變動只標示「已報導」，不是未來預測。每項分數為研究規則產生的<b>條件式方向強度（-100 至 +100）</b>，<b>不是上漲機率、預期漲幅或回測勝率</b>。無有效規則時顯示「未判定」，評論、傳聞也會降低可信程度；所有原始來源均可點回核對。</div>
 <div id="meta" role="status" aria-live="polite">正在讀取新聞資料…</div>
 <h2>主要資產事件方向</h2><div id="assetSummary" class="asset-grid"></div>
@@ -43,11 +43,11 @@ footer{font-size:11px;color:#65778d;line-height:1.8;margin-top:24px;padding-top:
 <label>地區<select id="region"><option>全部</option><option>國際</option><option>國內</option></select></label>
 <label>觀察期間<select id="hours"><option value="24">24 小時</option><option value="48" selected>48 小時</option></select></label>
 <label>判讀狀態<select id="recognition"><option>全部</option><option>可推估方向</option><option>已報導行情</option><option>事件有分類、方向未知</option><option>未識別</option></select></label>
-<label>資產<select id="asset"><option>全部</option><option>美股S&P500</option><option>NASDAQ</option><option>台股</option><option>台股記憶體供應端</option><option>AI／半導體設備</option><option>雲端算力租賃</option><option>天然氣供應</option><option>黃金</option><option>白銀</option><option>WTI原油</option><option>美元</option><option>美債殖利率</option><option>銅</option><option>紐元NZD</option><option>農產品期貨</option><option>加密資產</option></select></label>
+<label>資產<select id="asset"><option>全部</option><option>美股S&P500</option><option>NASDAQ</option><option>台股</option><option>台股記憶體供應端</option><option>AI／半導體設備</option><option>雲端算力租賃</option><option>天然氣價格</option><option>黃金</option><option>白銀</option><option>WTI原油</option><option>美元</option><option>美債殖利率</option><option>銅</option><option>紐元NZD</option><option>港幣HKD</option><option>農產品期貨</option><option>加密資產</option></select></label>
 <input id="query" type="search" placeholder="搜尋新聞、事件、來源…" aria-label="搜尋新聞">
 </div>
 <div id="count" aria-live="polite">正在分析…</div><div id="articles" class="articles"></div>
 <h2>前瞻勝率驗證 <a style="font-size:12px;color:#265f9e;text-decoration:none" href="./news-impact-scorecard.html">查看已凍結預測、勝負與待驗證樣本 →</a></h2><div id="scorecardSummary">正在讀取預測驗證紀錄…</div><h2>官方經濟事件歷史研究 <a style="font-size:12px;color:#265f9e;text-decoration:none" href="./news-impact-history.html">查看 FOMC／CPI／非農等事件歷史走勢 →</a></h2><div id="research">歷史價格資料尚未建立；不顯示推測勝率。</div>
 <footer>資料來源：既有「市場大事」新聞匯流，由原頁維護更新與去重。來源名稱不表示消息已獨立查證。股票、期貨、貴金屬等資產可能受多項互相抵銷的因素影響，新聞規則不是交易訊號。新聞事件分數僅比較事件方向強度，不可直接累加作為買賣建議。歷史價格驗證若提供，只代表某個事件時間點之後的價格變化，不代表新聞造成變化。</footer>
-</div><script src="./news-impact-sector.js?v=20261109f"></script><script src="./news-impact-taxonomy.js?v=20261109f"></script><script src="./news-impact.js?v=20261109f"></script>
+</div><script src="./news-impact-sector.js?v=20261109f"></script><script src="./news-impact-taxonomy.js?v=20261109g"></script><script src="./news-impact.js?v=20261109g"></script>
 </body></html>
