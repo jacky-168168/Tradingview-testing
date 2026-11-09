@@ -14,7 +14,7 @@ select{display:block;width:100%;border:1px solid #d6e0ec;border-radius:9px;paddi
 h2{font-size:17px;margin:25px 0 11px}.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:13px}#caseTable{font-variant-numeric:tabular-nums}
 table{width:100%;border-collapse:collapse;min-width:720px}th{background:#f8fafc;text-align:left;color:#61748b;font-size:11px;padding:12px 13px;white-space:nowrap;border-bottom:1px solid var(--line)}td{border-bottom:1px solid #eef2f7;padding:11px 13px;color:#273a53;font-size:12px;line-height:1.6;vertical-align:top}tbody tr:last-child td{border-bottom:none}td strong{font-size:13px}.tag{display:inline-block;border-radius:5px;background:#edf2f8;color:#506783;padding:2px 6px;font-size:10px;font-weight:850;margin-top:3px}
 .bar{width:150px;max-width:100%;height:7px;background:#edf1f5;border-radius:6px;overflow:hidden;margin-top:8px}.fill{height:100%;background:#bd4561}.fill.down{background:#09967d}
-#meta{font-size:11px;color:var(--muted);line-height:1.8;margin:11px 0}#status{font-size:12px;color:#586b81;margin:12px 0}
+#meta{font-size:11px;color:var(--muted);line-height:1.8;margin:11px 0;flex:1;min-width:240px}.data-refresh{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.data-refresh button{white-space:nowrap}.tag{vertical-align:middle}#status{font-size:12px;color:#586b81;margin:12px 0}
 .case-source{max-width:250px;overflow-wrap:anywhere}.case-source a{color:#26649b;text-decoration:none}.case-source a:hover{text-decoration:underline}
 .pager{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;font-size:12px;color:var(--muted)}
 button{background:#fff;border:1px solid var(--line);padding:9px 13px;border-radius:8px;font-weight:850;color:#285a90;cursor:pointer}
@@ -26,8 +26,8 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-h
 <nav class="nav"><a href="./news-impact.html">← 媒體識別器</a><div><a href="./market-events.html">新聞來源</a> <a href="./index.html">主頁</a></div></nav>
 <h1>📊 歷史事件研究中心</h1>
 <p class="sub">Global Market Intelligence · FOMC／CPI／非農／GDP／PCE／PPI／JOLTS／OPEC 等歷史資料日期 × 資產後續走勢</p>
-<div class="notice">本頁同時呈現<b>官方原始公告日期</b>與<b>ALFRED 歷史資料更新／修訂日期</b>。後者可能包含修訂，並非每筆都是首次公告或市場驚喜；請用事件類別區分。<b>美國選舉已補入歷年依法規計算的投票日，並可切換總統大選／期中選舉。</b> 投票日不是選舉結果正式公布時間，不能推論哪個政黨當選會造成固定漲跌。<b>缺少公布當時的共識預估值，不可把平均漲跌當成 CPI、非農超預期交易結果。</b> 僅有實際可對齊的歷史行情才計入有效觀察。</div>
-<div id="meta" role="status" aria-live="polite">歷史研究資料讀取中…</div>
+<div class="notice">本頁同時呈現<b>官方原始公告日期</b>與<b>ALFRED 歷史資料更新／修訂日期</b>。180／360 日如果已有價格樣本，即使少於 20 筆也顯示實際報酬，並加註小樣本；未成熟或缺行情會明確標示，不填假值。後者可能包含修訂，並非每筆都是首次公告或市場驚喜；請用事件類別區分。<b>美國選舉已補入歷年依法規計算的投票日，並可切換總統大選／期中選舉。</b> 投票日不是選舉結果正式公布時間，不能推論哪個政黨當選會造成固定漲跌。<b>缺少公布當時的共識預估值，不可把平均漲跌當成 CPI、非農超預期交易結果。</b> 僅有實際可對齊的歷史行情才計入有效觀察。</div>
+<div class="data-refresh"><div id="meta" role="status" aria-live="polite">歷史研究資料讀取中…</div><button type="button" id="reloadData" aria-label="重新讀取最新統計資料">重新讀取最新資料</button></div>
 <div class="controls">
 <label>事件類別<select id="group"><option value="FOMC">FOMC</option></select></label>
 <label>觀察資產<select id="asset"><option>美股S&P500</option><option>NASDAQ</option><option>台股</option><option>黃金</option><option>白銀</option><option>WTI原油</option><option>美元</option><option>美債殖利率</option><option>銅</option></select></label>
@@ -38,4 +38,4 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-h
 <h2>逐筆公告／資料修訂日期與後續價格表現</h2><div id="status" aria-live="polite">尚未載入</div><div class="table-wrap"><table><thead><tr><th>事件日期</th><th>事件與原始來源</th><th>標的</th><th>參考基準日</th><th>首個計算日</th><th>1D</th><th>5D</th><th>20D</th><th>180D</th><th>360D</th></tr></thead><tbody id="caseTable"><tr><td colspan="10">載入中…</td></tr></tbody></table></div>
 <div class="pager"><span id="pageLabel"></span><div><button id="previous" type="button">上一頁</button> <button id="next" type="button">下一頁</button></div></div>
 <footer>方法：美股日盤使用公告時間與當地 16:00 收盤比較，台股採當地 13:30 收盤；期貨或沒有可確認發布時間的事件採次一當地日期之後的完整日K，為保守代理。從首個可用交易日前一日收盤到第 1／5／20／180／360 個已完成交易日收盤計算漲跌幅；180／360 指交易日而非日曆日，未成熟期間不填數值。期貨連續合約有換倉影響，台股、美元與殖利率日線可能有資料修訂；^TNX 顯示為殖利率數值的百分比變化，<b>不是殖利率基點變化</b>。ALFRED 更新日可能包含後續修訂；每筆都不等於獨立新聞事件。同一日可以有不同資料源，且多組資料可能高度重疊。早於 Yahoo 可用行情或與最近交易日相隔超過 14 天者不納入驗證。所有統計都是描述性資料、樣本間可能相關，未做政策驚喜因果識別或可交易回測。</footer>
-</main><script src="./news-impact-history.js?v=20261109-long360"></script></body></html>
+</main><script src="./news-impact-history.js?v=20261109-long360-fix2"></script></body></html>
