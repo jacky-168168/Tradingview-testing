@@ -16,7 +16,7 @@ function controls(){
  return {group:$("group").value,asset:$("asset").value,horizon:$("horizon").value};
 }
 function casesFor(group,asset){
- const category=group.startsWith("FOMC:")?"FOMC":group;
+ const category=group.includes(":")?group.split(":",1)[0]:group;
  if(!study.detailFiles)return study.events||[];
  const key=category+"|"+asset;
  if(Object.prototype.hasOwnProperty.call(detailCache,key))return detailCache[key];
@@ -57,7 +57,7 @@ function render(){
    '</td><td class="'+cellClass(x.vsUnconditionalPct)+'">'+(sufficient?fmt(x.vsUnconditionalPct):'—')+'</td></tr>';
  });
  $("summaryTable").innerHTML=other.join("");
- const isSub=group.startsWith("FOMC:"),sublabel=group.split(":")[1];
+ const isSub=group.includes(":"),subCategory=isSub?group.split(":",1)[0]:group,sublabel=isSub?group.slice(group.indexOf(":")+1):"";
  const allCases=casesFor(group,asset);
  if(allCases===null){
   $("status").textContent="正在載入此事件／資產的歷史明細…";
@@ -66,16 +66,16 @@ function render(){
   $("previous").disabled=true;$("next").disabled=true;
   return;
  }
- const cases=allCases.filter(e=>isSub?(e.category==="FOMC"&&e.subtype===sublabel):e.category===group)
+ const cases=allCases.filter(e=>isSub?(e.category===subCategory&&e.subtype===sublabel):e.category===group)
   .sort((a,b)=>String(b.date).localeCompare(String(a.date)));
  const pmax=Math.max(1,Math.ceil(cases.length/PAGE_SIZE));page=Math.min(page,pmax-1);
- const k=(isSub?"FOMC":group)+"|"+asset;
+ const k=subCategory+"|"+asset;
  $("status").textContent=detailErrors[k]?"⚠ 明細讀取失敗："+detailErrors[k]:"此類別歷史日期 "+cases.length+" 筆；此資產／期間已完成 "+count+" 筆價格樣本。未成熟期間保留「—」。";
  const slice=cases.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
  $("caseTable").innerHTML=slice.length?slice.map(e=>{
   const r=e.outcomes&&e.outcomes[asset],a=r?r.results:{};
   const href=/^https:\/\//.test(e.sourceUrl||"")?e.sourceUrl:"#";
-  const small=e.calendarKind==="alfred_historical_vintage"||e.primaryReleaseVerified===false?"ALFRED資料更新／修訂":e.timeAccuracy==="inferred_regular_meeting"?"推導公告日":e.timeAccuracy==="date_only"||e.timeAccuracy==="date_only_release_link"?"日期代理":"公布日期";
+  const small=e.category==="美國選舉"?"投票日（非開票結果）":e.calendarKind==="alfred_historical_vintage"||e.primaryReleaseVerified===false?"ALFRED資料更新／修訂":e.timeAccuracy==="inferred_regular_meeting"?"推導公告日":e.timeAccuracy==="date_only"||e.timeAccuracy==="date_only_release_link"?"日期代理":"公布日期";
   return '<tr><td>'+esc(e.date)+'<div class="tag">'+esc(small)+'</div></td>'+
    '<td class="case-source"><strong>'+esc(e.title)+'</strong><div><a href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+esc(e.source)+'｜資料來源</a></div></td>'+
    '<td>'+esc(asset)+'</td><td>'+esc(r&&r.baselineDate||"—")+'</td><td>'+esc(r&&r.firstEligibleDate||"—")+'</td>'+
