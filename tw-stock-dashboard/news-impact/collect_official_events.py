@@ -24,6 +24,7 @@ from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 from history import read_json
+from collect_alfred import RELEASES as ALFRED_RELEASES, ROOT as ALFRED_ROOT, parse_alfred_dates
 
 CURATED = Path("tw-stock-dashboard/news-impact/official_events.json")
 OUTPUT = Path("tw-stock-dashboard/news-impact/official_events_expanded.json")
@@ -86,7 +87,7 @@ def valid_release_date(value, now):
     except ValueError:
         return False
     # Ignore future hyperlinks, non-events, and obviously corrupt years.
-    return date(1990, 1, 1) <= d <= now.date()
+    return date(1940, 1, 1) <= d <= now.date()
 
 
 def parse_bls_index(html, series, now):
@@ -237,6 +238,11 @@ def collect(curated_path=CURATED, output_path=OUTPUT, fetcher=fetch, now=None):
     statuses, failures = {}, {}
     sources = {f"BLS:{series}": BLS_ROOT + series + ".htm" for series in BLS_SERIES}
     sources["FOMC:recent"] = FED_CALENDAR
+    # St. Louis Fed ALFRED is a second public data source; these vintage
+    # dates are deliberately separate categories, never mislabeled as verified
+    # CPI/NFP/PPI original announcements.
+    for release_id in ALFRED_RELEASES:
+        sources[f"ALFRED:{release_id}"] = ALFRED_ROOT + str(release_id)
     # Historical annual pages have source-linked statements, including the
     # pre-2021 era omitted from the current calendar.
     for year in range(2000, 2021):
@@ -246,6 +252,8 @@ def collect(curated_path=CURATED, output_path=OUTPUT, fetcher=fetch, now=None):
             html = fetcher(url)
             if name.startswith("BLS:"):
                 items = parse_bls_index(html, name.split(":")[1], now)
+            elif name.startswith("ALFRED:"):
+                items = parse_alfred_dates(html, int(name.split(":")[1]), now)
             else:
                 items = parse_fomc_statements(html, now, url)
             # A silently redesigned source index with zero recognizable links
@@ -270,12 +278,13 @@ def collect(curated_path=CURATED, output_path=OUTPUT, fetcher=fetch, now=None):
         "sourceIndexStatus": statuses, "sourceErrors": failures,
         "fetchTotal": len(fetched), "sourceCount": len(sources),
         "count": len(merged), "countsByCategory": counts,
-        "method": "Source-linked BLS archived releases and Fed policy statements, de-duplicated by category and date. Curated exceptions retained. Does not measure consensus surprise.",
+        "method": "Source-linked BLS archived releases and Fed policy statements; ALFRED historical date vintages separately categorized because they include revisions. Deduplicated by category and date; no consensus surprise measured.",
         "limitations": [
             "BLS filenames carry publication dates, not reference-month dates. Typical 08:30/10:00 ET times are not verified individually.",
             "Unscheduled events and unindexed historic releases are not guaranteed to be present.",
             "Historical FOMC source links confirm statement dates but are not independently classified as hikes/cuts.",
             "Archived releases may have revisions. Release calendars are not market predictions or price labels.",
+            "ALFRED historical date vintages may include revised data, which are kept separate from confirmed BLS original release dates.",
             "When government websites fail, previously verified entries are retained and source errors surfaced."
         ],
         "events": merged,
