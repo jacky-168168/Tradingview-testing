@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>新聞預測驗證｜Global Market Intelligence</title>
+<meta name="description" content="追蹤已凍結新聞方向假說在 1、5、20 個交易日後的實際結果，拒絕使用未成熟與事後訊號灌水勝率。">
+<style>
+:root{--bg:#f4f6fa;--ink:#1b2940;--muted:#64748b;--line:#dce5ef;--up:#c63353;--down:#00866e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 -apple-system,BlinkMacSystemFont,"Noto Sans TC",system-ui,sans-serif}
+main{max-width:1130px;margin:auto;padding:22px 18px 60px}
+nav{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}a{color:#235b97;text-decoration:none}nav a{border:1px solid var(--line);background:white;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:800}
+h1{font-size:26px;margin:22px 0 5px}.sub{color:var(--muted);font-size:12px;line-height:1.85}.notice{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;line-height:1.85;font-size:12px;color:#52657c;margin:16px 0}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.metric{background:white;border:1px solid var(--line);border-radius:12px;padding:15px}.metric small{font-size:11px;color:var(--muted);display:block}.metric strong{display:block;font-size:25px;margin-top:7px}.metric span{font-size:10px;color:var(--muted)}
+#meta{font-size:12px;color:#67788a;margin:12px 0}h2{font-size:17px;margin:24px 0 12px}
+.controls{display:flex;align-items:flex-end;gap:12px;margin:14px 0;flex-wrap:wrap}.controls label{font-size:11px;font-weight:850;color:#52657b;min-width:160px}.controls select{display:block;margin-top:5px;border:1px solid var(--line);border-radius:9px;padding:10px;background:white;color:var(--ink);font:inherit}
+.table{overflow:auto;border:1px solid var(--line);border-radius:12px;background:white}table{width:100%;border-collapse:collapse;min-width:690px}th,td{padding:12px 13px;text-align:left;border-bottom:1px solid #eff2f7;font-size:12px}th{background:#fafbfd;color:#62758e;font-size:11px}td{color:#30435c}tr:last-child td{border:0}
+small.warn{color:#a86e28}.empty{color:var(--muted);padding:17px;font-size:12px}
+footer{border-top:1px solid var(--line);font-size:11px;line-height:1.9;color:var(--muted);margin-top:25px;padding-top:16px}
+@media(max-width:700px){main{padding:13px 12px 42px}h1{font-size:21px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric strong{font-size:22px}}
+</style>
+<script src="./site-access.js"></script></head>
+<body><main>
+<nav><a href="./news-impact.html">← 新聞媒體識別器</a><a href="./news-impact-history.html">官方事件歷史研究</a></nav>
+<h1>📈 新聞訊號驗證紀錄</h1>
+<p class="sub">Prospective News Impact Scorecard · V1.2｜記錄當時模型判斷、等未來行情成熟後驗證</p>
+<div class="notice"><b>與 6,246 筆歷史經濟資料日期不同。</b>本頁只計算在價格結果產生之前就已凍結的新聞方向假說，避免事後挑規則或把同日行情誤算成預測。回測採首個後續有效交易日收盤為基準，再看 1／5／20 個完整交易日的收盤價格；不是新聞發布瞬間的行情，也沒有交易成本模擬。少於 <b>30 筆勝負觀測且未跨至少 20 個不同發文日</b>，不顯示正式勝率；樣本足夠也只屬描述性驗證。</div>
+<div id="meta" aria-live="polite">載入驗證資料中…</div>
+<div class="metrics">
+<div class="metric"><small>已凍結新聞紀錄</small><strong id="predictions">—</strong><span>不因後來行情改寫</span></div>
+<div class="metric"><small>已成熟資產／期間觀測</small><strong id="matured">—</strong><span>不代表獨立事件</span></div>
+<div class="metric"><small>未成熟觀測期間</small><strong id="pending">—</strong><span>等待完成日K</span></div>
+<div class="metric"><small>排除過晚凍結的觀測</small><strong id="excluded">—</strong><span>避免使用未來資訊</span></div>
+</div>
+<h2>各資產的前瞻方向驗證</h2>
+<div class="controls"><label>資產<select id="asset"><option>美股S&P500</option><option>NASDAQ</option><option>台股</option><option>黃金</option><option>白銀</option><option>WTI原油</option><option>美元</option><option>美債殖利率</option><option>銅</option></select></label></div>
+<div class="table"><table><thead><tr><th>期間</th><th>成熟勝負 n</th><th>符合方向</th><th>方向相反</th><th>持平</th><th>可公布的描述性命中率</th><th>95% Wilson 區間</th></tr></thead><tbody id="byAsset"><tr><td colspan="7">資料載入中…</td></tr></tbody></table></div>
+<h2>事件規則的驗證</h2>
+<div class="table"><table><thead><tr><th>規則代碼</th><th>資產</th><th>期間</th><th>勝／負</th><th>符合率</th></tr></thead><tbody id="byRule"><tr><td colspan="5">載入中…</td></tr></tbody></table></div>
+<footer>說明：目前是使用公開新聞標題的條件式規則分析，不是完整 AI 訓練模型。正確方向只表示先前假說與後續價格符號一致，不代表新聞造成行情、策略有正期望值或扣除成本後仍獲利。原油、黃金與其他商品價格可能受期貨換倉影響；不同來源報導同一事件、不同資產之間可能相關，不能把它們當成獨立樣本來灌高信心水準。這個計分卡不會使用 ALFRED 歷史修訂日冒充已事先發布的新聞方向。</footer>
+</main><script src="./news-impact-scorecard.js?v=20261109d"></script>
+</body></html>
