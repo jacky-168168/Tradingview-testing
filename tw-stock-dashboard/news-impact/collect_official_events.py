@@ -52,7 +52,7 @@ BLS_DATE_RE = re.compile(
     r"/news\.release/(?:archives|history)/([a-z0-9]+)_(\d{8})\.(htm|html|pdf|txt)$", re.I
 )
 FED_DATE_RE = re.compile(
-    r"(?:monetary|fomcstatement_)(\d{8})a?\.htm$", re.I
+    r"(?:monetary|fomcstatement_|/press/monetary/)(\d{8})a?\.htm$", re.I
 )
 FETCH_TIMEOUT = 18
 USER_AGENT = "MarketEventResearch/1.1 (+https://github.com/jacky-168168/Tradingview-testing; public government archival index)"
