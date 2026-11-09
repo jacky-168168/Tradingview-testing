@@ -196,8 +196,8 @@ def build_study(catalog, prices, errors, now=None):
 def generate(catalog_path=CATALOG, output_path=OUTPUT):
     now = datetime.now(timezone.utc)
     catalog = read_json(catalog_path, {})
-    # Independent multi-year price sample. Previous news archive uses short-term prices.
-    prices, errors = fetch_prices(now, period="6y")
+    # Independent 5-year price sample (supported Yahoo period). Previous news archive uses short-term prices.
+    prices, errors = fetch_prices(now, period="5y")
     # If full provider outage occurs, preserve previous valid results rather
     # than overwrite verified historical stats with empty rows.
     if not prices and output_path.exists():
