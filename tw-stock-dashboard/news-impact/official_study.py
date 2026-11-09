@@ -17,10 +17,10 @@ from zoneinfo import ZoneInfo
 
 from history import HORIZONS, SYMBOLS, fetch_prices, read_json
 
-CATALOG = Path("tw-stock-dashboard/news-impact/official_events.json")
+CATALOG = Path("tw-stock-dashboard/news-impact/official_events_expanded.json")
 OUTPUT = Path("tw-stock-dashboard/docs/data/news_impact/official_study.json")
 EQUITY_CUTOFF = {"美股S&P500": time(16, 0), "NASDAQ": time(16, 0), "台股": time(13, 30)}
-MIN_SAMPLE = 5
+MIN_SAMPLE = 20
 
 
 def event_timestamp(event):
@@ -175,6 +175,12 @@ def build_study(catalog, prices, errors, now=None):
         "schema": 1,
         "generatedAt": now.astimezone(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),
         "catalogCount": len(raw_events), "eventCount": len(rows),
+        "catalogCountsByCategory": catalog.get("countsByCategory", {}),
+        "catalogSourceStatus": catalog.get("status", "curated_only"),
+        "catalogSourceErrors": catalog.get("sourceErrors", {}),
+        "catalogEarliest": min((e["date"] for e in rows), default=None),
+        "catalogLatest": max((e["date"] for e in rows), default=None),
+        "eventsWithPriceData": sum(bool(e["outcomes"]) for e in rows),
         "groups": groups,
         "minSample": MIN_SAMPLE,
         "status": "ok" if len(prices) == len(SYMBOLS) else ("partial" if prices else "unavailable"),
@@ -187,6 +193,8 @@ def build_study(catalog, prices, errors, now=None):
             "OPEC and election date-only events use the following local-date session proxy, not actual first announcement time.",
             "Futures close timestamps and continuous-contract roll behavior are not exchange-verified; apparent daily returns are proxies.",
             "Historical events can overlap; samples are not independent and small-n positive fraction is not a predictive hit rate.",
+            "BLS historical archives provide release date (not contemporaneous forecast); typical release times are assumed and not individually audited.",
+            "FOMC archive dates include hold decisions but do not establish surprise direction; incomplete old ticker history reduces realized counts.",
             "Yahoo Finance daily data may be corrected or incomplete, returns are descriptive rather than evidence of causation."
         ],
         "stats": stats, "events": rows,
@@ -196,8 +204,8 @@ def build_study(catalog, prices, errors, now=None):
 def generate(catalog_path=CATALOG, output_path=OUTPUT):
     now = datetime.now(timezone.utc)
     catalog = read_json(catalog_path, {})
-    # Independent 5-year price sample (supported Yahoo period). Previous news archive uses short-term prices.
-    prices, errors = fetch_prices(now, period="5y")
+    # Request the maximum supported daily-history depth for each Yahoo symbol. Previous news archive uses short-term prices.
+    prices, errors = fetch_prices(now, period="max")
     # If full provider outage occurs, preserve previous valid results rather
     # than overwrite verified historical stats with empty rows.
     if not prices and output_path.exists():
@@ -209,7 +217,8 @@ def generate(catalog_path=CATALOG, output_path=OUTPUT):
     temp.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     temp.replace(output_path)
     nonempty = sum(s["n"] > 0 for s in result["stats"])
-    print(f"official events {result['eventCount']}; price symbols {len(prices)}/{len(SYMBOLS)}; nonempty stats {nonempty}")
+    print(f"official events {result['eventCount']}; realized event dates {result['eventsWithPriceData']}; "
+          f"price symbols {len(prices)}/{len(SYMBOLS)}; nonempty stats {nonempty}")
 
 
 if __name__ == "__main__":
