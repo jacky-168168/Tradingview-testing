@@ -20,6 +20,7 @@ ROOT = Path("tw-stock-dashboard/docs/data/news_impact")
 PREDICTIONS = ROOT / "predictions.json"
 HISTORY = ROOT / "history.json"
 OUT = ROOT / "scorecard.json"
+LEDGER_DIR = ROOT / "outcome_ledger"
 MIN_N = 30
 MIN_DAYS = 20
 
@@ -97,6 +98,65 @@ def get_outcomes(predictions, archived):
                           "excludedLateHorizonCount": excluded}
 
 
+def observation_key(row):
+    """One frozen event/asset/horizon has exactly one immutable outcome."""
+    return (str(row.get("id")), str(row.get("asset")), str(row.get("horizon")))
+
+
+def merge_immutable_observations(previous, current):
+    """Preserve first valid observed result across future headline-archive trims.
+
+    Corrections in price provider data must not silently rewrite previously
+    counted wins/losses. They need a separately versioned research exercise.
+    """
+    by_key = {}
+    for source in (previous, current):
+        for row in source:
+            if not isinstance(row, dict) or row.get("outcome") not in (-1, 0, 1):
+                continue
+            if not isinstance(row.get("realizedPct"), (int, float)) or not math.isfinite(row["realizedPct"]):
+                continue
+            if row.get("asset") not in SYMBOLS or row.get("horizon") not in [f"{n}D" for n in HORIZONS]:
+                continue
+            if not row.get("id") or not row.get("frozenAt"):
+                continue
+            key = observation_key(row)
+            if key not in by_key:
+                by_key[key] = row.copy()
+    return sorted(by_key.values(), key=lambda x: (
+        str(x.get("publishedAt") or ""), str(x.get("id")), x["asset"], x["horizon"]))
+
+
+def read_ledger(folder=LEDGER_DIR):
+    if not folder.exists():
+        return []
+    rows = []
+    for path in sorted(folder.glob("*.json")):
+        block = read_json(path, {})
+        if block.get("schema") == 1 and isinstance(block.get("observations"), list):
+            rows.extend(block["observations"])
+    return merge_immutable_observations([], rows)
+
+
+def write_ledger(rows, folder=LEDGER_DIR):
+    if not rows:
+        return
+    folder.mkdir(parents=True, exist_ok=True)
+    by_year = defaultdict(list)
+    for row in rows:
+        timestamp = str(row.get("frozenAt", ""))
+        year = timestamp[:4] if len(timestamp) >= 4 and timestamp[:4].isdigit() else "unknown"
+        by_year[year].append(row)
+    for year, observations in by_year.items():
+        target = folder / f"{year}.json"
+        payload = {"schema": 1, "year": year, "count": len(observations),
+                   "definition": "First-confirmed forward-locked directional outcomes; immutable after first capture.",
+                   "observations": observations}
+        tmp = target.with_suffix(".tmp")
+        tmp.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+        tmp.replace(target)
+
+
 def stats(rows):
     # Do not treat exact repost duplicates as extra independent results.
     seen = set()
@@ -122,11 +182,17 @@ def stats(rows):
     }
 
 
-def build(predictions, archived, now=None):
+def build(predictions, archived, now=None, ledger=None):
     now = now or datetime.now(timezone.utc)
     if predictions.get("schema") != 1 or archived.get("schema") != 1:
         raise ValueError("Missing valid immutable predictions or historical headline archive")
-    observations, audit = get_outcomes(predictions, archived)
+    fresh, audit = get_outcomes(predictions, archived)
+    observations = merge_immutable_observations(ledger or [], fresh)
+    ledger_count = len(merge_immutable_observations(ledger or [], []))
+    audit["currentArchiveMaturedCount"] = audit["maturedObservationCount"]
+    audit["maturedObservationCount"] = len(observations)
+    audit["retainedOlderObservationCount"] = max(0, len(observations) - len(fresh))
+    audit["newObservationCount"] = len(observations) - ledger_count
     by_rule = defaultdict(list)
     for o in observations:
         for rid in set(o["ruleIds"]):
@@ -154,6 +220,7 @@ def build(predictions, archived, now=None):
         "minN": MIN_N, "minIndependentPublishingDates": MIN_DAYS,
         "method": "Freeze a direction before the first later market baseline; use close-to-close 1D/5D/20D follow-through; direction-sign hit only, ignoring flat returns in win/loss denominator.",
         "notTradingBacktest": True, "notCausal": True,
+        "outcomeLedgerMode": "frozen_first_result_by_year",
         "limitations": [
             "Rule-score magnitude is not an estimated return or probability; outcomes cannot assess calibration.",
             "Outcomes use later completed market daily closes, not immediate news release price moves.",
@@ -161,7 +228,9 @@ def build(predictions, archived, now=None):
             "Asset returns can be correlated; the all-assets row is NOT independent evidence.",
             "No fees, funding, slippage, volatility adjustment, benchmark control or trade execution simulated.",
             "Live news is a short history beginning Nov 2026; historic economic release revision dates carry no frozen forecasts.",
-            "No hindsight relabeling: frozen signals cannot be updated using future prices. Ineligible late snapshots are excluded."
+            "No hindsight relabeling: frozen signals cannot be updated using future prices. Ineligible late snapshots are excluded.",
+            "Only the first matured result for each frozen news-asset-horizon is kept; older verified outcomes survive news archive trimming.",
+            "Confidence bounds assume independent trials but event correlations can make them too narrow; read as descriptive uncertainty only."
         ],
         "audit": audit, "byAsset": per_asset, "byRule": rule_rows, "allAssetCrossCount": all_by_horizon
     }
@@ -170,7 +239,11 @@ def build(predictions, archived, now=None):
 def generate(predictions_path=PREDICTIONS, history_path=HISTORY, output_path=OUT):
     predictions = read_json(predictions_path, {})
     archived = read_json(history_path, {})
-    result = build(predictions, archived)
+    previous = read_ledger(output_path.parent / "outcome_ledger")
+    result = build(predictions, archived, ledger=previous)
+    fresh, _audit = get_outcomes(predictions, archived)
+    merged = merge_immutable_observations(previous, fresh)
+    write_ledger(merged, output_path.parent / "outcome_ledger")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary = output_path.with_suffix(".tmp")
     temporary.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
