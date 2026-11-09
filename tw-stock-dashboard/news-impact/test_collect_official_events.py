@@ -85,8 +85,11 @@ class OfficialCollectorTests(unittest.TestCase):
                 raise OSError("simulated upstream block")
 
             d = collect(original, output, fetcher=unavailable, now=NOW)
-            self.assertEqual(d["status"], "sources_unavailable")
-            self.assertEqual(d["count"], 2)
+            # Local statutory voting days remain available if every network
+            # source fails; 44 elections + 2 unrelated preserved records.
+            self.assertEqual(d["status"], "partial")
+            self.assertEqual(d["count"], 46)
+            self.assertEqual(d["countsByCategory"]["美國選舉"], 44)
             self.assertIn("CPI", d["countsByCategory"])
             self.assertGreater(len(d["sourceErrors"]), 7)
 
