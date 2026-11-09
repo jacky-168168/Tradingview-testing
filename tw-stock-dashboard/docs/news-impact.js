@@ -19,9 +19,20 @@ const rules=[
 {id:"demand-rise",name:"景氣／需求轉強",re:/\b(industrial production (?:surges?|rebounds?)|manufacturing rebounds?|demand recovery|economic growth accelerates?)\b|景氣回升|需求復甦|製造業回升|經濟成長加速/i,impact:{"美股S&P500":35,"NASDAQ":30,"台股":40,"WTI原油":35,"銅":55,"美債殖利率":20},why:"需求改善有利風險資產、能源與工業金屬。",caveat:"若引發利率上升，成長股可能反而受壓"}
 ];
 let DATA=[],HISTORY=null,PROVENANCE={},ASSET="全部",REGION="全部",HOURS=48,SEARCH="";
+function sourceTypeOf(n){
+ const source=String(n.source||"");
+ if(n.originType==="forum_repost"||/PTT|論壇|reddit/i.test(source))return "論壇／轉載（不代表原始消息）";
+ if(/Yahoo新聞|Google News|新聞聚合/i.test(source))return "聚合平台（需核對原始媒體）";
+ if(/Federal Reserve|Federal Reserve Board|U\.S\. Energy Information Administration|\bEIA\b|Bureau of Labor Statistics|\bBLS\b|中央銀行|經濟部|證交所/i.test(source))return "官方發布來源（仍需核對原文）";
+ if(n.originType==="foreign_original")return "國際媒體原始報導（未獨立查核）";
+ return "媒體報導（未獨立查核）";
+}
 function classify(n){
  const title=String(n.title||"");
- const hits=rules.filter(r=>r.re.test(title));
+ // Headlines such as "Fed will not hike" or "attack unlikely" must not
+ // produce the opposite of their literal meaning via simple keyword hits.
+ const negated=/\b(?:not|no|unlikely|denies|deny|rules out|won't|without)\b|不會|未將|否認|沒有|並未|排除|不再/i.test(title);
+ const hits=negated?[]:rules.filter(r=>r.re.test(title));
  const scores={};for(const a of assets)scores[a]=[];
  for(const r of hits)for(const [a,v] of Object.entries(r.impact))if(v)scores[a].push(v);
  const impacts=Object.entries(scores).filter(([a,values])=>values.length).map(([asset,values])=>{
@@ -29,9 +40,9 @@ function classify(n){
  const score=mixed?0:Math.max(-100,Math.min(100,Math.round(values.reduce((a,b)=>a+b,0)/values.length)));
  return {asset,score,mixed,label:mixed?"方向衝突":score>0?"偏多":"偏空"};
  }).sort((a,b)=>Math.abs(b.score)-Math.abs(a.score));
- const speculative=/\b(could|may|might|if|plan|proposal|consider|warn|rumor|rumour|opinion|predict|expects?)\b|可能|傳聞|擬|計畫|研議|或將|傳出|預測/i.test(title);
+ const speculative=/\b(could|may|might|if|plan|proposal|consider|warn|rumor|rumour|opinion|predict|expects?|likely|unlikely)\b|可能|傳聞|疑慮|恐|擬|計畫|研議|或將|傳出|預測|？|\?/i.test(title);
  const opinion=/\bopinion\b|評論|社論/i.test(title);
- return {...n,hits,impacts,speculative,opinion};
+ return {...n,hits,impacts,speculative,opinion,negated,sourceType:sourceTypeOf(n)};
 }
 function elapsed(n){const t=Date.parse(n.publishedAt||"");return Number.isFinite(t)?(Date.now()-t)/3600000:Infinity}
 function visible(n){
@@ -51,13 +62,13 @@ function historyOf(n){
 function eventCard(n){
  const type=n.hits.length?n.hits.map(r=>r.name).join("／"):"尚無足夠事件規則";
  const certainty=n.hits.length?(n.speculative||n.opinion?"低｜推測、評論或條件式標題":"有限｜僅標題判讀"):"無法判讀";
- const explain=n.hits.length?[...new Set(n.hits.map(r=>r.why))].join(" "):"目前標題無明確的市場傳導關鍵事件，不能可靠判斷方向。";
+ const explain=n.hits.length?[...new Set(n.hits.map(r=>r.why))].join(" "):n.negated?"標題具有否定語境；為避免反向誤判，暫不自動判多空。":"目前標題無明確的市場傳導關鍵事件，不能可靠判斷方向。";
  const caveats=n.hits.length?[...new Set(n.hits.map(r=>r.caveat))].join("；"):"需等待更多資訊及價格反應";
  const time=String(n.publishedAt||n.date||"").replace("T"," ").slice(0,16);
  const url=/^https:\/\//.test(n.url||"")?n.url:"#";
  return '<article class="article"><div class="item-top"><span>'+esc(n.originType==="foreign_original"?"🌍 國際":"🇹🇼 國內／其他")+'</span><span>'+esc(time)+'（台灣）</span></div>'+
  '<h3><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(n.title)+'</a></h3>'+
- '<div class="source">'+esc(n.source||"來源不明")+' · '+esc(n.category||"")+" · "+esc(type)+'</div>'+
+ '<div class="source">'+esc(n.source||"來源不明")+' · '+esc(n.sourceType)+' · '+esc(n.category||"")+" · "+esc(type)+'</div>'+
  '<div class="signals">'+(n.impacts.length?n.impacts.slice(0,9).map(badge).join(""):'<span class="signal mixed">未判定利多利空</span>')+'</div>'+
  '<div class="reason"><b>推估傳導：</b>'+esc(explain)+'</div><div class="caveat">可信程度：'+esc(certainty)+'｜反向條件：'+esc(caveats)+'</div>'+
  historyOf(n)+'</article>'
