@@ -2,7 +2,7 @@
 "use strict";
 const $=id=>document.getElementById(id);
 const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const NEWS="./data/market_events/latest.json", HISTORY="./data/news_impact/history.json";
+const NEWS="./data/market_events/latest.json", HISTORY_URL="./data/news_impact/history.json";
 const assets=["美股S&P500","NASDAQ","台股","黃金","白銀","WTI原油","美元","美債殖利率","銅"];
 const rules=[
 {id:"war-up",name:"地緣衝突升溫",re:/\b(escalat(?:e|es|ion)|airstrikes?|missile (?:attack|strike)|invad(?:e|es|ed)|military strikes?|attacks? on oil|strait of hormuz (?:clos|block))\b|戰爭升級|軍事攻擊|空襲|飛彈襲擊|荷姆茲海峽封鎖|衝突升溫/i,impact:{"美股S&P500":-50,"NASDAQ":-55,"台股":-55,"黃金":65,"白銀":30,"WTI原油":40,"美元":25,"美債殖利率":-10},why:"避險需求可能增加；若實際波及產油、航運，油價上行風險提高。",caveat:"政治聲明不等於實際供應中斷"},
@@ -105,7 +105,7 @@ async function boot(){
  PROVENANCE=j;
  const seen=new Set();
  DATA=j.items.filter(n=>n.type==="news"&&n.title&&n.url).filter(n=>{const k=(n.title||"").toLowerCase().replace(/\s+/g," ").trim();if(seen.has(k))return false;seen.add(k);return true}).map(classify);
- try{const h=await fetch(HISTORY+"?t="+Date.now(),{cache:"no-store"});if(h.ok)HISTORY=await h.json()}catch(_){}
+ try{const h=await fetch(HISTORY_URL+"?t="+Date.now(),{cache:"no-store"});if(h.ok)HISTORY=await h.json()}catch(_){}
  render();
  }catch(e){$("meta").textContent="新聞資料載入失敗："+e.message;$("articles").innerHTML='<div class="empty">資料暫時無法取得，請確認原新聞工作流程。</div>';}
 }
