@@ -61,7 +61,14 @@ def eligible_session(event, asset, bars):
     # Date/close tuples are already sorted. Binary search is necessary for
     # decades of prices * thousands of archived releases.
     idx = bisect_left(bars, (earliest, float('-inf')))
-    return idx if 0 < idx < len(bars) else None
+    if not 0 < idx < len(bars):
+        return None
+    # Reject stale proxy matches: a 1940s release must NEVER be assigned the
+    # first available 1990s Yahoo bar. Allow two weeks for Taiwan lunar-new-year
+    # and extraordinary market closures, but not an arbitrary multi-year gap.
+    if (bars[idx][0] - earliest).days > 14:
+        return None
+    return idx
 
 
 def event_returns(event, asset, bars):
