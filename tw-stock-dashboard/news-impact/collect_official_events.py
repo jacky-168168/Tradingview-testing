@@ -25,6 +25,7 @@ from zoneinfo import ZoneInfo
 
 from history import read_json
 from collect_alfred import RELEASES as ALFRED_RELEASES, ROOT as ALFRED_ROOT, parse_alfred_dates
+from us_election_calendar import election_events, CONGRESS_LAW
 
 CURATED = Path("tw-stock-dashboard/news-impact/official_events.json")
 OUTPUT = Path("tw-stock-dashboard/news-impact/official_events_expanded.json")
@@ -234,8 +235,13 @@ def collect(curated_path=CURATED, output_path=OUTPUT, fetcher=fetch, now=None):
         raise ValueError("The existing curated official event catalog is required.")
     old = read_json(output_path, {})
     recovered = old.get("events", []) if isinstance(old.get("events"), list) else []
-    fetched = []
+    # Statutory U.S. federal voting dates are derived locally from the law;
+    # unlike scraped indexes, these do not need network access or imply a
+    # published result, surprise, or market-direction signal.
+    election_rows = election_events(now)
+    fetched = list(election_rows)
     statuses, failures = {}, {}
+    statuses["US_ELECTION_STATUTE"] = {"status": "ok", "parsed": len(election_rows), "url": CONGRESS_LAW}
     sources = {f"BLS:{series}": BLS_ROOT + series + ".htm" for series in BLS_SERIES}
     sources["FOMC:recent"] = FED_CALENDAR
     # St. Louis Fed ALFRED is a second public data source; these vintage
@@ -276,15 +282,16 @@ def collect(curated_path=CURATED, output_path=OUTPUT, fetcher=fetch, now=None):
         "generatedAt": now.astimezone(ZoneInfo("Asia/Taipei")).isoformat(timespec="seconds"),
         "status": "ok" if not failures else ("partial" if fetched else "sources_unavailable"),
         "sourceIndexStatus": statuses, "sourceErrors": failures,
-        "fetchTotal": len(fetched), "sourceCount": len(sources),
+        "fetchTotal": len(fetched), "sourceCount": len(sources) + 1,
         "count": len(merged), "countsByCategory": counts,
-        "method": "Source-linked BLS archived releases and Fed policy statements; ALFRED historical date vintages separately categorized because they include revisions. Deduplicated by category and date; no consensus surprise measured.",
+        "method": "Source-linked BLS archived releases and Fed policy statements; ALFRED historical data vintages separately categorized because they can include revisions. U.S. federal voting dates since 1940 derived from statutes and counted once per even year. Deduplicated by category/date; no election result, timestamp, or consensus surprise inferred.",
         "limitations": [
             "BLS filenames carry publication dates, not reference-month dates. Typical 08:30/10:00 ET times are not verified individually.",
             "Unscheduled events and unindexed historic releases are not guaranteed to be present.",
             "Historical FOMC source links confirm statement dates but are not independently classified as hikes/cuts.",
             "Archived releases may have revisions. Release calendars are not market predictions or price labels.",
             "ALFRED historical date vintages may include revised data, which are kept separate from confirmed BLS original release dates.",
+            "U.S. federal election dates are voting-day proxies, not verified result announcements or winner surprises. All even years are present; presidential and midterm years have separate subtypes.",
             "When government websites fail, previously verified entries are retained and source errors surfaced."
         ],
         "events": merged,
@@ -294,7 +301,8 @@ def collect(curated_path=CURATED, output_path=OUTPUT, fetcher=fetch, now=None):
     tmp.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp.replace(output_path)
     print(f"official_calendar={len(merged)} new_archive_records={len(fetched)} "
-          f"ok_sources={len(sources)-len(failures)}/{len(sources)} "
+          f"election_voting_days={len(election_rows)} "
+          f"ok_sources={len(sources)+1-len(failures)}/{len(sources)+1} "
           f"error_types={dict(Counter(v.split(':')[0] for v in failures.values()))}")
     return result
 
