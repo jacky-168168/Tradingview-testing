@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-09T13:31:47+08:00",
+  "generatedAt": "2026-11-09T13:33:57+08:00",
   "status": "insufficient_matured_signals",
   "predictionRecords": 2,
   "historyEventRecords": 112,
@@ -10,6 +10,7 @@
   "method": "Freeze a direction before the first later market baseline; use close-to-close 1D/5D/20D follow-through; direction-sign hit only, ignoring flat returns in win/loss denominator.",
   "notTradingBacktest": true,
   "notCausal": true,
+  "outcomeLedgerMode": "frozen_first_result_by_year",
   "limitations": [
     "Rule-score magnitude is not an estimated return or probability; outcomes cannot assess calibration.",
     "Outcomes use later completed market daily closes, not immediate news release price moves.",
@@ -17,13 +18,18 @@
     "Asset returns can be correlated; the all-assets row is NOT independent evidence.",
     "No fees, funding, slippage, volatility adjustment, benchmark control or trade execution simulated.",
     "Live news is a short history beginning Nov 2026; historic economic release revision dates carry no frozen forecasts.",
-    "No hindsight relabeling: frozen signals cannot be updated using future prices. Ineligible late snapshots are excluded."
+    "No hindsight relabeling: frozen signals cannot be updated using future prices. Ineligible late snapshots are excluded.",
+    "Only the first matured result for each frozen news-asset-horizon is kept; older verified outcomes survive news archive trimming.",
+    "Confidence bounds assume independent trials but event correlations can make them too narrow; read as descriptive uncertainty only."
   ],
   "audit": {
     "trackedEventAssetSignals": 3,
     "maturedObservationCount": 0,
     "pendingHorizonCount": 9,
-    "excludedLateHorizonCount": 0
+    "excludedLateHorizonCount": 0,
+    "currentArchiveMaturedCount": 0,
+    "retainedOlderObservationCount": 0,
+    "newObservationCount": 0
   },
   "byAsset": [
     {
