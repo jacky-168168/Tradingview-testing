@@ -4,11 +4,13 @@ const $=id=>document.getElementById(id);
 const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ASSETS=["美股S&P500","NASDAQ","台股","黃金","白銀","WTI原油","美元","美債殖利率","銅"];
 const URL="./data/news_impact/official_study.json";
-let study=null,page=0;
+let study=null,page=0,loadGeneration=0;
 const detailCache={},detailPending={},detailErrors={};
 const PAGE_SIZE=12;
 const HORIZONS=["1D","5D","20D","180D","360D"];
-const fmt=(v,digits=2)=>typeof v==="number"&&Number.isFinite(v)?(v>0?"+":"")+v.toFixed(digits)+"%":"—";
+const fmt=(v,digits=2)=>typeof v==="number"&&Number.isFinite(v)?(v>0?"+":"")+v.toFixed(digits)+"%":"價格資料不足";
+const labelFor=(n,v)=>n==null?"統計待更新":n===0?"尚無成熟行情":typeof v==="number"&&Number.isFinite(v)?fmt(v):"行情對照不足";
+const outcomeLabel=(o,h)=>typeof o?.results?.[h]==="number"?fmt(o.results[h]):o?"未滿期間／缺資料":"缺歷史行情";
 function cellClass(v){return typeof v!=="number"?"neutral":v>0?"pos":v<0?"neg":"neutral"}
 function currentStats(group,asset,horizon){
  return study&&Array.isArray(study.stats)?study.stats.find(s=>s.group===group&&s.asset===asset&&s.horizon===horizon):null
@@ -25,37 +27,40 @@ function casesFor(group,asset){
  const path=study.detailFiles?.[category]?.[asset];
  if(!path){detailErrors[key]="此事件／資產的明細資料尚未發布";return []}
  detailPending[key]=true;
- fetch(path+"?v="+encodeURIComponent(study.generatedAt||""),{cache:"no-store"})
+ const wanted=study.generatedAt;
+ const token=loadGeneration;
+ fetch(path+"?v="+encodeURIComponent(wanted||"")+"&r="+Date.now(),{cache:"no-store"})
  .then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()})
  .then(d=>{
   if(d.schema!==1||d.category!==category||d.asset!==asset||!Array.isArray(d.events))throw Error("明細資料格式不符");
-  detailCache[key]=d.events;
+  if(d.generatedAt!==wanted)throw Error("明細與統計版本不一致，請重新讀取");
+  if(token===loadGeneration)detailCache[key]=d.events;
  })
- .catch(e=>{detailErrors[key]=String(e.message||e);detailCache[key]=[]})
- .finally(()=>{delete detailPending[key];render()});
+ .catch(e=>{if(token===loadGeneration){detailErrors[key]=String(e.message||e);detailCache[key]=[]}})
+ .finally(()=>{if(token===loadGeneration){delete detailPending[key];render()}});
  return null;
 }
 function render(){
  if(!study)return;
  const {group,asset,horizon}=controls(),s=currentStats(group,asset,horizon);
- const count=s?s.n:0;
- $("eventN").textContent=count;
- $("sampleNote").textContent=count>=study.minSample?"描述性統計（仍非因果）":"樣本不足（至少 "+study.minSample+" 筆才顯示描述性統計）";
+ const count=s?.n??null;
+ $("eventN").textContent=count===null?"統計待更新":count;
+ $("sampleNote").textContent=count===null?"舊版統計缺少此期間，請按重新讀取最新資料":count===0?"沒有符合本期間的完整價格資料；不以 0% 代替":count<study.minSample?"小樣本 n="+count+"（少於 "+study.minSample+" 筆，數值僅供參考）":"描述性統計（非預測勝率）";
  for(const [id,key] of [["avg","meanPct"],["relative","vsUnconditionalPct"]]){
-  const v=count>=study.minSample&&s?s[key]:null;
-  $(id).textContent=fmt(v);
+  const v=count>0&&s?s[key]:null;
+  $(id).textContent=labelFor(count,v);
   $(id).className=cellClass(v);
  }
- $("positive").textContent=count>=study.minSample&&s&&typeof s.positivePct==="number"?s.positivePct.toFixed(1)+"%":"—";
+ $("positive").textContent=count>0&&typeof s?.positivePct==="number"?s.positivePct.toFixed(1)+"%":count===null?"統計待更新":count===0?"尚無成熟行情":"行情對照不足";
  const other=ASSETS.map(a=>{
-  const x=currentStats(group,a,horizon)||{n:0},sufficient=x.n>=study.minSample;
-  const cls=cellClass(x.meanPct),pct=sufficient?x.positivePct:null;
-  return '<tr><td><strong>'+esc(a)+'</strong></td><td>'+x.n+(sufficient?'':' <span class="tag">小樣本</span>')+'</td>'+
-   '<td class="'+cls+'">'+(sufficient?fmt(x.meanPct):'—')+'</td>'+
-   '<td class="'+cellClass(x.medianPct)+'">'+(sufficient?fmt(x.medianPct):'—')+'</td>'+
-   '<td>'+((sufficient&&typeof pct==="number")?pct.toFixed(1)+"%":"—")+
-   ((sufficient&&typeof pct==="number")?'<div class="bar"><div class="fill '+(pct<50?'down':'')+'" style="width:'+Math.min(100,Math.max(0,pct))+'%"></div></div>':'')+
-   '</td><td class="'+cellClass(x.vsUnconditionalPct)+'">'+(sufficient?fmt(x.vsUnconditionalPct):'—')+'</td></tr>';
+  const x=currentStats(group,a,horizon),n=x?.n??null,small=n!==null&&n>0&&n<study.minSample,hasData=n>0;
+  const pct=hasData?x.positivePct:null,mean=hasData?x.meanPct:null,median=hasData?x.medianPct:null,relative=hasData?x.vsUnconditionalPct:null;
+  return '<tr><td><strong>'+esc(a)+'</strong></td><td>'+(n===null?"統計待更新":n)+(small?' <span class="tag">小樣本／僅供參考</span>':n===0?' <span class="tag">無成熟行情</span>':'')+'</td>'+
+   '<td class="'+cellClass(mean)+'">'+esc(labelFor(n,mean))+'</td>'+
+   '<td class="'+cellClass(median)+'">'+esc(labelFor(n,median))+'</td>'+
+   '<td>'+(typeof pct==="number"?pct.toFixed(1)+"%":esc(labelFor(n,pct)))+
+   ((hasData&&typeof pct==="number")?'<div class="bar"><div class="fill '+(pct<50?'down':'')+'" style="width:'+Math.min(100,Math.max(0,pct))+'%"></div></div>':'')+
+   '</td><td class="'+cellClass(relative)+'">'+esc(labelFor(n,relative))+'</td></tr>';
  });
  $("summaryTable").innerHTML=other.join("");
  const isSub=group.includes(":"),subCategory=isSub?group.split(":",1)[0]:group,sublabel=isSub?group.slice(group.indexOf(":")+1):"";
@@ -71,7 +76,7 @@ function render(){
   .sort((a,b)=>String(b.date).localeCompare(String(a.date)));
  const pmax=Math.max(1,Math.ceil(cases.length/PAGE_SIZE));page=Math.min(page,pmax-1);
  const k=subCategory+"|"+asset;
- $("status").textContent=detailErrors[k]?"⚠ 明細讀取失敗："+detailErrors[k]:"此類別歷史日期 "+cases.length+" 筆；此資產／期間已完成 "+count+" 筆價格樣本。未成熟期間保留「—」。";
+ $("status").textContent=detailErrors[k]?"⚠ 明細讀取失敗："+detailErrors[k]:"此類別歷史日期 "+cases.length+" 筆；此資產／期間已完成 "+(count===null?"待更新":count)+" 筆價格樣本。未成熟期間會標示原因，不視為 0% 報酬。";
  const slice=cases.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
  $("caseTable").innerHTML=slice.length?slice.map(e=>{
   const r=e.outcomes&&e.outcomes[asset],a=r?r.results:{};
@@ -80,32 +85,38 @@ function render(){
   return '<tr><td>'+esc(e.date)+'<div class="tag">'+esc(small)+'</div></td>'+
    '<td class="case-source"><strong>'+esc(e.title)+'</strong><div><a href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+esc(e.source)+'｜資料來源</a></div></td>'+
    '<td>'+esc(asset)+'</td><td>'+esc(r&&r.baselineDate||"—")+'</td><td>'+esc(r&&r.firstEligibleDate||"—")+'</td>'+
-   '<td class="'+cellClass(a["1D"])+'">'+fmt(a["1D"])+'</td>'+
-   '<td class="'+cellClass(a["5D"])+'">'+fmt(a["5D"])+'</td>'+
-   '<td class="'+cellClass(a["20D"])+'">'+fmt(a["20D"])+'</td>'+
-   '<td class="'+cellClass(a["180D"])+'">'+fmt(a["180D"])+'</td>'+
-   '<td class="'+cellClass(a["360D"])+'">'+fmt(a["360D"])+'</td></tr>';
+   '<td class="'+cellClass(a["1D"])+'">'+esc(outcomeLabel(r,"1D"))+'</td>'+
+   '<td class="'+cellClass(a["5D"])+'">'+esc(outcomeLabel(r,"5D"))+'</td>'+
+   '<td class="'+cellClass(a["20D"])+'">'+esc(outcomeLabel(r,"20D"))+'</td>'+
+   '<td class="'+cellClass(a["180D"])+'">'+esc(outcomeLabel(r,"180D"))+'</td>'+
+   '<td class="'+cellClass(a["360D"])+'">'+esc(outcomeLabel(r,"360D"))+'</td></tr>';
  }).join(""):'<tr><td colspan="10">這個組別暫無可驗證事件。</td></tr>';
  $("pageLabel").textContent="第 "+(page+1)+"／"+pmax+" 頁";
  $("previous").disabled=page<=0;$("next").disabled=page>=pmax-1;
 }
 async function boot(){
+ const token=++loadGeneration;
+ $("reloadData").disabled=true;
+ $("meta").textContent="正在讀取最新研究快照與交易日資料…";
  try{
-  const r=await fetch(URL+"?v="+Date.now(),{cache:"no-store"});
+  const r=await fetch(URL+"?v="+Date.now()+"&schema=long360", {cache:"no-store"});
   if(!r.ok)throw Error("HTTP "+r.status);
   const d=await r.json();
+  if(token!==loadGeneration)return;
   if(d.schema!==1||!Array.isArray(d.stats)||!Array.isArray(d.groups)||(!Array.isArray(d.events)&&!d.detailFiles))throw Error("研究資料格式無效");
+  for(const key of Object.keys(detailCache))delete detailCache[key];
+  for(const key of Object.keys(detailPending))delete detailPending[key];
+  for(const key of Object.keys(detailErrors))delete detailErrors[key];
   study=d;
   // The page may deploy before GitHub Actions finishes regenerating the
   // larger data snapshot. Never display missing 180D/360D as 0%.
   const available=Array.isArray(d.horizonsTradingDays)?d.horizonsTradingDays.map(x=>x+"D"):[...new Set(d.stats.map(x=>x.horizon))];
-  $("meta").textContent=HORIZONS.filter(h=>!available.includes(h)).length?"⚠ 新增期間尚未完成資料重建。":"";
   const select=$("group");
   const old=select.value;
   select.innerHTML=d.groups.map(g=>{const n=d.catalogCountsByCategory&&d.catalogCountsByCategory[g.key];return '<option value="'+esc(g.key)+'">'+esc(g.label)+(typeof n==="number"?"（"+n+" 筆日期）":"")+'</option>'}).join("");
   if(d.groups.some(g=>g.key===old))select.value=old;
   const sourceErrors=Object.keys(d.catalogSourceErrors||{}).length;
-  $("meta").textContent=(HORIZONS.some(h=>!available.includes(h))?"⚠ 180／360 日統計尚未重建，請稍後檢查 GitHub Actions｜":"")+"研究快照："+(d.generatedAt||"未知")+"｜行情狀態："+(d.status||"未知")+"｜官方事件日期 "+(d.catalogCount||0)+" 筆｜有行情可驗證 "+(d.eventsWithPriceData??"待確認")+" 筆｜涵蓋："+(d.catalogEarliest||"—")+" ～ "+(d.catalogLatest||"—")+"｜行情資產 "+(d.priceSymbolsOk||[]).length+"/9"+(sourceErrors?"｜⚠ "+sourceErrors+" 個官方資料來源擷取異常":"")+(Object.keys(d.priceErrors||{}).length?"｜⚠ 部分行情缺失":"");
+  $("meta").textContent=(HORIZONS.some(h=>!available.includes(h))?"⚠ 目前讀到舊版摘要，180／360 日報酬請重新讀取，不會顯示假 0｜":"")+"研究快照："+(d.generatedAt||"未知")+"｜行情狀態："+(d.status||"未知")+"｜官方事件日期 "+(d.catalogCount||0)+" 筆｜有行情可驗證 "+(d.eventsWithPriceData??"待確認")+" 筆｜涵蓋："+(d.catalogEarliest||"—")+" ～ "+(d.catalogLatest||"—")+"｜行情資產 "+(d.priceSymbolsOk||[]).length+"/9"+(sourceErrors?"｜⚠ "+sourceErrors+" 個官方資料來源擷取異常":"")+(Object.keys(d.priceErrors||{}).length?"｜⚠ 部分行情缺失":"");
   if(d.generatedAt&&Date.now()-Date.parse(d.generatedAt)>48*3600000)$("meta").textContent+="｜⚠ 研究快照超過 48 小時";
   render();
  }catch(e){
@@ -113,10 +124,11 @@ async function boot(){
   $("summaryTable").innerHTML='<tr><td colspan="6">暫時沒有可信的研究結果，不以估計值代替。</td></tr>';
   $("caseTable").innerHTML='<tr><td colspan="10">待第一次官方事件回測工作流程成功執行。</td></tr>';
   $("status").textContent="歷史研究尚未就緒";
- }
+ }finally{if(token===loadGeneration)$("reloadData").disabled=false}
 }
 for(const name of ["group","asset","horizon"]){$(name).addEventListener("change",()=>{page=0;render()})}
 $("previous").addEventListener("click",()=>{if(page>0){page--;render()}});
 $("next").addEventListener("click",()=>{page++;render()});
+$("reloadData").addEventListener("click",()=>{page=0;boot()});
 boot();
 })();
