@@ -7,6 +7,7 @@ const URL="./data/news_impact/official_study.json";
 let study=null,page=0;
 const detailCache={},detailPending={},detailErrors={};
 const PAGE_SIZE=12;
+const HORIZONS=["1D","5D","20D","180D","360D"];
 const fmt=(v,digits=2)=>typeof v==="number"&&Number.isFinite(v)?(v>0?"+":"")+v.toFixed(digits)+"%":"—";
 function cellClass(v){return typeof v!=="number"?"neutral":v>0?"pos":v<0?"neg":"neutral"}
 function currentStats(group,asset,horizon){
@@ -61,7 +62,7 @@ function render(){
  const allCases=casesFor(group,asset);
  if(allCases===null){
   $("status").textContent="正在載入此事件／資產的歷史明細…";
-  $("caseTable").innerHTML='<tr><td colspan="8">正在取得逐筆價格資料…</td></tr>';
+  $("caseTable").innerHTML='<tr><td colspan="10">正在取得逐筆價格資料…</td></tr>';
   $("pageLabel").textContent="資料載入中";
   $("previous").disabled=true;$("next").disabled=true;
   return;
@@ -81,8 +82,10 @@ function render(){
    '<td>'+esc(asset)+'</td><td>'+esc(r&&r.baselineDate||"—")+'</td><td>'+esc(r&&r.firstEligibleDate||"—")+'</td>'+
    '<td class="'+cellClass(a["1D"])+'">'+fmt(a["1D"])+'</td>'+
    '<td class="'+cellClass(a["5D"])+'">'+fmt(a["5D"])+'</td>'+
-   '<td class="'+cellClass(a["20D"])+'">'+fmt(a["20D"])+'</td></tr>';
- }).join(""):'<tr><td colspan="8">這個組別暫無可驗證事件。</td></tr>';
+   '<td class="'+cellClass(a["20D"])+'">'+fmt(a["20D"])+'</td>'+
+   '<td class="'+cellClass(a["180D"])+'">'+fmt(a["180D"])+'</td>'+
+   '<td class="'+cellClass(a["360D"])+'">'+fmt(a["360D"])+'</td></tr>';
+ }).join(""):'<tr><td colspan="10">這個組別暫無可驗證事件。</td></tr>';
  $("pageLabel").textContent="第 "+(page+1)+"／"+pmax+" 頁";
  $("previous").disabled=page<=0;$("next").disabled=page>=pmax-1;
 }
@@ -93,18 +96,22 @@ async function boot(){
   const d=await r.json();
   if(d.schema!==1||!Array.isArray(d.stats)||!Array.isArray(d.groups)||(!Array.isArray(d.events)&&!d.detailFiles))throw Error("研究資料格式無效");
   study=d;
+  // The page may deploy before GitHub Actions finishes regenerating the
+  // larger data snapshot. Never display missing 180D/360D as 0%.
+  const available=Array.isArray(d.horizonsTradingDays)?d.horizonsTradingDays.map(x=>x+"D"):[...new Set(d.stats.map(x=>x.horizon))];
+  $("meta").textContent=HORIZONS.filter(h=>!available.includes(h)).length?"⚠ 新增期間尚未完成資料重建。":"";
   const select=$("group");
   const old=select.value;
   select.innerHTML=d.groups.map(g=>{const n=d.catalogCountsByCategory&&d.catalogCountsByCategory[g.key];return '<option value="'+esc(g.key)+'">'+esc(g.label)+(typeof n==="number"?"（"+n+" 筆日期）":"")+'</option>'}).join("");
   if(d.groups.some(g=>g.key===old))select.value=old;
   const sourceErrors=Object.keys(d.catalogSourceErrors||{}).length;
-  $("meta").textContent="研究快照："+(d.generatedAt||"未知")+"｜行情狀態："+(d.status||"未知")+"｜官方事件日期 "+(d.catalogCount||0)+" 筆｜有行情可驗證 "+(d.eventsWithPriceData??"待確認")+" 筆｜涵蓋："+(d.catalogEarliest||"—")+" ～ "+(d.catalogLatest||"—")+"｜行情資產 "+(d.priceSymbolsOk||[]).length+"/9"+(sourceErrors?"｜⚠ "+sourceErrors+" 個官方資料來源擷取異常":"")+(Object.keys(d.priceErrors||{}).length?"｜⚠ 部分行情缺失":"");
+  $("meta").textContent=(HORIZONS.some(h=>!available.includes(h))?"⚠ 180／360 日統計尚未重建，請稍後檢查 GitHub Actions｜":"")+"研究快照："+(d.generatedAt||"未知")+"｜行情狀態："+(d.status||"未知")+"｜官方事件日期 "+(d.catalogCount||0)+" 筆｜有行情可驗證 "+(d.eventsWithPriceData??"待確認")+" 筆｜涵蓋："+(d.catalogEarliest||"—")+" ～ "+(d.catalogLatest||"—")+"｜行情資產 "+(d.priceSymbolsOk||[]).length+"/9"+(sourceErrors?"｜⚠ "+sourceErrors+" 個官方資料來源擷取異常":"")+(Object.keys(d.priceErrors||{}).length?"｜⚠ 部分行情缺失":"");
   if(d.generatedAt&&Date.now()-Date.parse(d.generatedAt)>48*3600000)$("meta").textContent+="｜⚠ 研究快照超過 48 小時";
   render();
  }catch(e){
   $("meta").textContent="⚠ 歷史統計尚未發布或讀取失敗："+e.message+"。可到 GitHub Actions 檢查 Global Market News Impact 工作流程。";
   $("summaryTable").innerHTML='<tr><td colspan="6">暫時沒有可信的研究結果，不以估計值代替。</td></tr>';
-  $("caseTable").innerHTML='<tr><td colspan="8">待第一次官方事件回測工作流程成功執行。</td></tr>';
+  $("caseTable").innerHTML='<tr><td colspan="10">待第一次官方事件回測工作流程成功執行。</td></tr>';
   $("status").textContent="歷史研究尚未就緒";
  }
 }
