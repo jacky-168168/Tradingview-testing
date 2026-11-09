@@ -20,11 +20,11 @@ const TOPICS=[
 ["市場行情／評論",/股價|股市|反彈|暴跌|賣壓|期貨|ETF|散戶|\b(?:stocks?|shares?|Wall Street|cryptocurrenc)\b/i]
 ];
 const ASSET_TERMS=[
-["WTI原油",/(?:WTI|NYMEX原油|國際油價|原油|油價|crude oil|oil prices?)/i],
+["WTI原油",/(?:WTI|NYMEX原油|國際油價|原油|油價|crude oil|oil prices?|\boil\b)/i],
 ["黃金",/(?:黃金|金價|COMEX黃金|\bgold\b)/i],
 ["白銀",/(?:白銀|銀價|\bsilver\b)/i],
 ["美元",/(?:美元指數|美元|US dollar|U\.S\. dollar|dollar index|\bDXY\b)/i],
-["紐元NZD",/(?:紐元|紐幣|New Zealand Dollar|\bNZD\b)/i],
+["紐元NZD",/(?:紐元|紐幣|New Zealand Dollar|NZ dollar|kiwi dollar|\bNZD\b)/i],
 ["銅",/(?:銅價|\bcopper\b)/i],
 ["農產品期貨",/(?:大豆|豆油|小麥|玉米|CBOT|soybean|wheat|corn)/i],
 ["加密資產",/(?:加密貨幣|比特幣|\bbitcoin\b|cryptocurrenc)/i]
@@ -46,7 +46,10 @@ function examine(item){
  // Reactions described in a headline are observations, never predictions.
  // Split at the *next* mentioned asset to avoid oil-down/gold-up cross-tagging.
  const found=[];
- for(const [asset,re] of ASSET_TERMS){const m=re.exec(title);if(m)found.push({asset,start:m.index,end:m.index+m[0].length})}
+ for(const [asset,re] of ASSET_TERMS){const m=re.exec(title);if(!m)continue;
+  // Prices quoted in "60.167美元" denote USD units, not a USD-index move.
+  if(asset==="美元"&&/\d(?:\.\d+)?$/.test(title.slice(0,m.index)))continue;
+  found.push({asset,start:m.index,end:m.index+m[0].length});}
  found.sort((a,b)=>a.start-b.start);
  for(let i=0;i<found.length;i++){
   const x=found[i],next=found[i+1];
@@ -75,6 +78,14 @@ function examine(item){
  }
  if(/美伊|伊朗|Iran/i.test(title)&&/和談|談判|peace talks?|negotiations?/i.test(title)&&/希望|進展|恢復|再起|progress|hope|resume/i.test(title)&&!/破局|失敗|collapse|fail/i.test(title)){
   add("iran-talks","伊朗和談／油價風險溢價",{"WTI原油":-20},"和談進展可能降低地緣油價風險溢價。","和談不等於達成停火，且原油可能已提前反應。","地緣情境");
+ }
+ // Separate supplier tailwinds from broad tech-index direction. Reported
+ // profit growth is an observation; an actual future share move is not known.
+ if(/記憶體|DRAM|DDR[345]|NAND/i.test(title)&&/缺貨|供給吃緊|漲價|記憶體成本|供應不足/i.test(title)&&!/暴跌|價格下跌|跌價/i.test(title)){
+  add("memory-tight-supply","記憶體供給偏緊／漲價",{"台股記憶體供應端":20},"供給偏緊及產品漲價通常支撐製造商報價，但會增加下游採購成本。","預期明年漲價、單一公司言論或庫存估計都尚未等於實際合約價格。","產業");
+ }
+ if(/AI|伺服器|台積電設備|光通訊|散熱/i.test(title)&&/需求熱|需求強勁|營收創高|獲利狂飆|訂單成長|擴大布局/i.test(title)&&!rules.some(r=>r.id==="advanced-packaging-demand")){
+  add("ai-supply-growth","AI硬體供應鏈需求改善",{"AI／半導體設備":15},"需求或營收改善對供應鏈基本面可能有利，不代表股價必漲。","個別公司產品組合與股價已反映程度未知。","產業");
  }
  const corp=/財報|財測|營收|獲利|毛利率|\b(?:EPS|guidance|revenue|earnings)\b/i.test(title);
  if(corp){
