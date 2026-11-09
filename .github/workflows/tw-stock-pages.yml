@@ -601,6 +601,8 @@ jobs:
           root=Path("tw-stock-dashboard/docs")
           local_news=json.loads((root/"data/market_events/latest.json").read_text("utf-8"))
           local_history=json.loads((root/"data/news_impact/history.json").read_text("utf-8"))
+          study_path=root/"data/news_impact/official_study.json"
+          local_study=json.loads(study_path.read_text("utf-8")) if study_path.exists() else None
           assert len(local_news.get("items",[]))>0
           assert local_history["schema"]==1 and local_history["generatedAt"]
           def fetch(path):
@@ -619,6 +621,10 @@ jobs:
                   history=json.loads(fetch("data/news_impact/history.json?newsimpact="+str(time.time())))
                   assert news["generatedAt"]>=local_news["generatedAt"],"News Pages JSON behind artifact"
                   assert history["generatedAt"]>=local_history["generatedAt"],"News impact history Pages JSON stale"
+                  if local_study is not None:
+                      study=json.loads(fetch("data/news_impact/official_study.json?newsimpact="+str(time.time())))
+                      assert study["schema"]==local_study["schema"]
+                      assert study["generatedAt"]>=local_study["generatedAt"],"Official event study Pages JSON stale"
                   print("PASS LIVE News Impact",news["generatedAt"],history["generatedAt"])
                   break
               except Exception as exc:
