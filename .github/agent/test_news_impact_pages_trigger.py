@@ -22,6 +22,7 @@ class NewsImpactPagesTests(unittest.TestCase):
         self.assertIn("git add tw-stock-dashboard/docs/data/news_impact/history.json",self.news)
         self.assertIn("News Pages JSON behind artifact",self.pages)
         self.assertIn("News impact history Pages JSON stale",self.pages)
+        self.assertIn("Official event study Pages JSON stale",self.pages)
     def test_pages_scripts_check_and_ci(self):
         self.assertIn('for js in tw-stock-dashboard/docs/*.js; do node --check "$js"; done',self.pages)
         self.assertIn("test_*pages_trigger.py",self.ci)
