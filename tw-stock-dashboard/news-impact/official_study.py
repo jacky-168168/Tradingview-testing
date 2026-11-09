@@ -166,6 +166,9 @@ def build_study(catalog, prices, errors, now=None):
     groups = [{"key": c, "label": c, "kind": "category"} for c in categories]
     groups += [{"key": "FOMC:"+direction, "label": "FOMC "+direction, "kind": "subtype"}
                for direction in ("升息", "降息") if any(e["category"] == "FOMC" and e["subtype"] == direction for e in rows)]
+    groups += [{"key": "美國選舉:"+subtype, "label": "美國選舉｜"+subtype, "kind": "subtype"}
+               for subtype in ("總統選舉", "期中選舉")
+               if any(e["category"] == "美國選舉" and e.get("subtype") == subtype for e in rows)]
     controls = {}
     min_date = min((date.fromisoformat(e["date"]) for e in rows), default=now.date())
     for asset, bars in prices.items():
@@ -175,7 +178,8 @@ def build_study(catalog, prices, errors, now=None):
     for g in groups:
         filtered = [e for e in rows if
                     e["category"] == g["key"] or (g["kind"] == "subtype" and
-                    e["category"] == "FOMC" and e.get("subtype") == g["key"].split(":")[1])]
+                    e["category"] == g["key"].split(":", 1)[0] and
+                    e.get("subtype") == g["key"].split(":", 1)[1])]
         for asset in SYMBOLS:
             for horizon in HORIZONS:
                 key = f"{horizon}D"
@@ -203,6 +207,7 @@ def build_study(catalog, prices, errors, now=None):
             "CPI release dates do not include consensus, actual-value surprise, or direction.",
             "Fed effective dates mapped to prior day 14:00 ET as approximate regular meeting announcements; exceptions are possible.",
             "OPEC and election date-only events use the following local-date session proxy, not actual first announcement time.",
+            "U.S. federal election rows represent voting dates, not the times races were called or winner identities. Category and presidential/midterm subtypes are descriptive only.",
             "Futures close timestamps and continuous-contract roll behavior are not exchange-verified; apparent daily returns are proxies.",
             "Historical events can overlap; samples are not independent and small-n positive fraction is not a predictive hit rate.",
             "BLS historical archives provide release date (not contemporaneous forecast); typical release times are assumed and not individually audited.",
