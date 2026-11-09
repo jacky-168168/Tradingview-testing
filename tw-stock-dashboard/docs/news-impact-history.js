@@ -5,6 +5,7 @@ const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
 const ASSETS=["美股S&P500","NASDAQ","台股","黃金","白銀","WTI原油","美元","美債殖利率","銅"];
 const URL="./data/news_impact/official_study.json";
 let study=null,page=0;
+const detailCache={},detailPending={},detailErrors={};
 const PAGE_SIZE=12;
 const fmt=(v,digits=2)=>typeof v==="number"&&Number.isFinite(v)?(v>0?"+":"")+v.toFixed(digits)+"%":"—";
 function cellClass(v){return typeof v!=="number"?"neutral":v>0?"pos":v<0?"neg":"neutral"}
@@ -13,6 +14,25 @@ function currentStats(group,asset,horizon){
 }
 function controls(){
  return {group:$("group").value,asset:$("asset").value,horizon:$("horizon").value};
+}
+function casesFor(group,asset){
+ const category=group.startsWith("FOMC:")?"FOMC":group;
+ if(!study.detailFiles)return study.events||[];
+ const key=category+"|"+asset;
+ if(Object.prototype.hasOwnProperty.call(detailCache,key))return detailCache[key];
+ if(detailPending[key])return null;
+ const path=study.detailFiles?.[category]?.[asset];
+ if(!path){detailErrors[key]="此事件／資產的明細資料尚未發布";return []}
+ detailPending[key]=true;
+ fetch(path+"?v="+encodeURIComponent(study.generatedAt||""),{cache:"no-store"})
+ .then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()})
+ .then(d=>{
+  if(d.schema!==1||d.category!==category||d.asset!==asset||!Array.isArray(d.events))throw Error("明細資料格式不符");
+  detailCache[key]=d.events;
+ })
+ .catch(e=>{detailErrors[key]=String(e.message||e);detailCache[key]=[]})
+ .finally(()=>{delete detailPending[key];render()});
+ return null;
 }
 function render(){
  if(!study)return;
@@ -38,17 +58,26 @@ function render(){
  });
  $("summaryTable").innerHTML=other.join("");
  const isSub=group.startsWith("FOMC:"),sublabel=group.split(":")[1];
- const cases=(study.events||[]).filter(e=>isSub?(e.category==="FOMC"&&e.subtype===sublabel):e.category===group)
+ const allCases=casesFor(group,asset);
+ if(allCases===null){
+  $("status").textContent="正在載入此事件／資產的歷史明細…";
+  $("caseTable").innerHTML='<tr><td colspan="8">正在取得逐筆價格資料…</td></tr>';
+  $("pageLabel").textContent="資料載入中";
+  $("previous").disabled=true;$("next").disabled=true;
+  return;
+ }
+ const cases=allCases.filter(e=>isSub?(e.category==="FOMC"&&e.subtype===sublabel):e.category===group)
   .sort((a,b)=>String(b.date).localeCompare(String(a.date)));
  const pmax=Math.max(1,Math.ceil(cases.length/PAGE_SIZE));page=Math.min(page,pmax-1);
- $("status").textContent="官方事件 "+cases.length+" 筆；此資產／期間有完整結果的事件 "+count+" 筆。個別不成熟的期間保留「—」。";
+ const k=(isSub?"FOMC":group)+"|"+asset;
+ $("status").textContent=detailErrors[k]?"⚠ 明細讀取失敗："+detailErrors[k]:"此類別歷史日期 "+cases.length+" 筆；此資產／期間已完成 "+count+" 筆價格樣本。未成熟期間保留「—」。";
  const slice=cases.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
  $("caseTable").innerHTML=slice.length?slice.map(e=>{
   const r=e.outcomes&&e.outcomes[asset],a=r?r.results:{};
   const href=/^https:\/\//.test(e.sourceUrl||"")?e.sourceUrl:"#";
-  const small=e.timeAccuracy==="inferred_regular_meeting"?"推導公告日":e.timeAccuracy==="date_only"?"日期代理":"官方公布日";
+  const small=e.calendarKind==="alfred_historical_vintage"||e.primaryReleaseVerified===false?"ALFRED資料更新／修訂":e.timeAccuracy==="inferred_regular_meeting"?"推導公告日":e.timeAccuracy==="date_only"||e.timeAccuracy==="date_only_release_link"?"日期代理":"公布日期";
   return '<tr><td>'+esc(e.date)+'<div class="tag">'+esc(small)+'</div></td>'+
-   '<td class="case-source"><strong>'+esc(e.title)+'</strong><div><a href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+esc(e.source)+'｜官方來源</a></div></td>'+
+   '<td class="case-source"><strong>'+esc(e.title)+'</strong><div><a href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+esc(e.source)+'｜資料來源</a></div></td>'+
    '<td>'+esc(asset)+'</td><td>'+esc(r&&r.baselineDate||"—")+'</td><td>'+esc(r&&r.firstEligibleDate||"—")+'</td>'+
    '<td class="'+cellClass(a["1D"])+'">'+fmt(a["1D"])+'</td>'+
    '<td class="'+cellClass(a["5D"])+'">'+fmt(a["5D"])+'</td>'+
@@ -62,7 +91,7 @@ async function boot(){
   const r=await fetch(URL+"?v="+Date.now(),{cache:"no-store"});
   if(!r.ok)throw Error("HTTP "+r.status);
   const d=await r.json();
-  if(d.schema!==1||!Array.isArray(d.stats)||!Array.isArray(d.events)||!Array.isArray(d.groups))throw Error("研究資料格式無效");
+  if(d.schema!==1||!Array.isArray(d.stats)||!Array.isArray(d.groups)||(!Array.isArray(d.events)&&!d.detailFiles))throw Error("研究資料格式無效");
   study=d;
   const select=$("group");
   const old=select.value;
