@@ -80,5 +80,23 @@ class OfficialStudyTests(unittest.TestCase):
         self.assertTrue(all(s["n"] == 0 for s in result["stats"]))
 
 
+    def test_rejects_release_decades_before_market_history(self):
+        e = event(date="1950-01-10", localTime=None)
+        bars = dates(("1990-01-02", 100), ("1990-01-03", 110),
+                     ("1990-01-04", 120))
+        self.assertIsNone(eligible_session(e, "美股S&P500", bars))
+        self.assertIsNone(event_returns(e, "美股S&P500", bars))
+
+    def test_fails_closed_for_long_gap_but_keeps_lunar_new_year(self):
+        e = event(date="2024-01-20", localTime=None)
+        bars = dates(("2024-01-15", 100), ("2024-02-10", 105),
+                     ("2024-02-11", 106))
+        self.assertIsNone(eligible_session(e, "台股", bars))
+        short_bars = dates(("2024-01-15", 100),
+                           ("2024-01-31", 110), ("2024-02-01", 111))
+        self.assertEqual(eligible_session(e, "台股", short_bars), 1)
+
+
+
 if __name__ == "__main__":
     unittest.main()
