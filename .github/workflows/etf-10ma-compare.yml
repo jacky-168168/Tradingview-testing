@@ -50,12 +50,5 @@ jobs:
             done
             if [ "$ok" -ne 1 ]; then exit 1; fi
           fi
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: tw-stock-dashboard/docs
-      - uses: actions/deploy-pages@v4
-        id: deployment
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      - name: Hand off verified ETF JSON to TW Stock Pages
+        run: echo "ETF_SOURCE_COMMITTED; deploy via trusted workflow_run TW Stock Pages"
