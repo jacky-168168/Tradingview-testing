@@ -1,0 +1,7236 @@
+{
+  "schema": 1,
+  "generatedAt": "2026-11-09T08:36:58+08:00",
+  "catalogCount": 40,
+  "eventCount": 40,
+  "groups": [
+    {
+      "key": "CPI",
+      "label": "CPI",
+      "kind": "category"
+    },
+    {
+      "key": "FOMC",
+      "label": "FOMC",
+      "kind": "category"
+    },
+    {
+      "key": "OPEC",
+      "label": "OPEC",
+      "kind": "category"
+    },
+    {
+      "key": "美國選舉",
+      "label": "美國選舉",
+      "kind": "category"
+    },
+    {
+      "key": "FOMC:升息",
+      "label": "FOMC 升息",
+      "kind": "subtype"
+    },
+    {
+      "key": "FOMC:降息",
+      "label": "FOMC 降息",
+      "kind": "subtype"
+    }
+  ],
+  "minSample": 5,
+  "status": "ok",
+  "priceSymbolsOk": [
+    "美股S&P500",
+    "NASDAQ",
+    "台股",
+    "黃金",
+    "白銀",
+    "WTI原油",
+    "美元",
+    "美債殖利率",
+    "銅"
+  ],
+  "priceErrors": {},
+  "method": "Historical observed return from close before first eligible post-publication equity session (or next-date proxy for futures/unknown time) to close of session 1/5/20; excludes incomplete daily candles.",
+  "comparison": "Unconditional mean of all available same-asset rolling 1/5/20 session returns since oldest catalog event; NOT risk-adjusted, NOT causal or randomized controls.",
+  "limitations": [
+    "CPI release dates do not include consensus, actual-value surprise, or direction.",
+    "Fed effective dates mapped to prior day 14:00 ET as approximate regular meeting announcements; exceptions are possible.",
+    "OPEC and election date-only events use the following local-date session proxy, not actual first announcement time.",
+    "Futures close timestamps and continuous-contract roll behavior are not exchange-verified; apparent daily returns are proxies.",
+    "Historical events can overlap; samples are not independent and small-n positive fraction is not a predictive hit rate.",
+    "Yahoo Finance daily data may be corrected or incomplete, returns are descriptive rather than evidence of causation."
+  ],
+  "stats": [
+    {
+      "group": "CPI",
+      "asset": "美股S&P500",
+      "horizon": "1D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.121,
+      "medianPct": 0.489,
+      "positivePct": 60.0,
+      "minPct": -3.461,
+      "maxPct": 1.831,
+      "p25Pct": -0.274,
+      "p75Pct": 0.817,
+      "allWindowMeanPct": 0.053,
+      "vsUnconditionalPct": 0.068
+    },
+    {
+      "group": "CPI",
+      "asset": "美股S&P500",
+      "horizon": "5D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.286,
+      "medianPct": 0.615,
+      "positivePct": 66.7,
+      "minPct": -3.321,
+      "maxPct": 4.167,
+      "p25Pct": -0.929,
+      "p75Pct": 1.188,
+      "allWindowMeanPct": 0.256,
+      "vsUnconditionalPct": 0.03
+    },
+    {
+      "group": "CPI",
+      "asset": "美股S&P500",
+      "horizon": "20D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.217,
+      "medianPct": 1.797,
+      "positivePct": 66.7,
+      "minPct": -10.576,
+      "maxPct": 4.002,
+      "p25Pct": -2.963,
+      "p75Pct": 3.33,
+      "allWindowMeanPct": 1.023,
+      "vsUnconditionalPct": -0.805
+    },
+    {
+      "group": "CPI",
+      "asset": "NASDAQ",
+      "horizon": "1D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.338,
+      "medianPct": 0.717,
+      "positivePct": 66.7,
+      "minPct": -4.308,
+      "maxPct": 2.451,
+      "p25Pct": -0.263,
+      "p75Pct": 1.387,
+      "allWindowMeanPct": 0.065,
+      "vsUnconditionalPct": 0.273
+    },
+    {
+      "group": "CPI",
+      "asset": "NASDAQ",
+      "horizon": "5D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.512,
+      "medianPct": 1.143,
+      "positivePct": 66.7,
+      "minPct": -4.776,
+      "maxPct": 5.067,
+      "p25Pct": -1.524,
+      "p75Pct": 2.099,
+      "allWindowMeanPct": 0.309,
+      "vsUnconditionalPct": 0.202
+    },
+    {
+      "group": "CPI",
+      "asset": "NASDAQ",
+      "horizon": "20D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.343,
+      "medianPct": 2.31,
+      "positivePct": 66.7,
+      "minPct": -12.435,
+      "maxPct": 5.381,
+      "p25Pct": -2.67,
+      "p75Pct": 3.908,
+      "allWindowMeanPct": 1.256,
+      "vsUnconditionalPct": -0.913
+    },
+    {
+      "group": "CPI",
+      "asset": "台股",
+      "horizon": "1D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.917,
+      "medianPct": 0.876,
+      "positivePct": 80.0,
+      "minPct": -1.421,
+      "maxPct": 3.031,
+      "p25Pct": 0.07,
+      "p75Pct": 1.676,
+      "allWindowMeanPct": 0.085,
+      "vsUnconditionalPct": 0.832
+    },
+    {
+      "group": "CPI",
+      "asset": "台股",
+      "horizon": "5D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 1.305,
+      "medianPct": 1.157,
+      "positivePct": 73.3,
+      "minPct": -1.425,
+      "maxPct": 4.49,
+      "p25Pct": -0.288,
+      "p75Pct": 2.196,
+      "allWindowMeanPct": 0.448,
+      "vsUnconditionalPct": 0.857
+    },
+    {
+      "group": "CPI",
+      "asset": "台股",
+      "horizon": "20D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 2.469,
+      "medianPct": 4.211,
+      "positivePct": 80.0,
+      "minPct": -12.342,
+      "maxPct": 10.178,
+      "p25Pct": 0.19,
+      "p75Pct": 5.791,
+      "allWindowMeanPct": 1.958,
+      "vsUnconditionalPct": 0.511
+    },
+    {
+      "group": "CPI",
+      "asset": "黃金",
+      "horizon": "1D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.191,
+      "medianPct": 0.57,
+      "positivePct": 66.7,
+      "minPct": -2.854,
+      "maxPct": 2.112,
+      "p25Pct": -0.526,
+      "p75Pct": 0.796,
+      "allWindowMeanPct": 0.071,
+      "vsUnconditionalPct": 0.119
+    },
+    {
+      "group": "CPI",
+      "asset": "黃金",
+      "horizon": "5D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 1.162,
+      "medianPct": 1.35,
+      "positivePct": 73.3,
+      "minPct": -3.751,
+      "maxPct": 5.184,
+      "p25Pct": -0.295,
+      "p75Pct": 2.521,
+      "allWindowMeanPct": 0.351,
+      "vsUnconditionalPct": 0.81
+    },
+    {
+      "group": "CPI",
+      "asset": "黃金",
+      "horizon": "20D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 4.717,
+      "medianPct": 4.752,
+      "positivePct": 80.0,
+      "minPct": -1.513,
+      "maxPct": 10.859,
+      "p25Pct": 1.867,
+      "p75Pct": 8.326,
+      "allWindowMeanPct": 1.431,
+      "vsUnconditionalPct": 3.286
+    },
+    {
+      "group": "CPI",
+      "asset": "白銀",
+      "horizon": "1D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.624,
+      "medianPct": 0.651,
+      "positivePct": 66.7,
+      "minPct": -4.097,
+      "maxPct": 5.813,
+      "p25Pct": -0.268,
+      "p75Pct": 1.655,
+      "allWindowMeanPct": 0.095,
+      "vsUnconditionalPct": 0.528
+    },
+    {
+      "group": "CPI",
+      "asset": "白銀",
+      "horizon": "5D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 1.314,
+      "medianPct": 1.466,
+      "positivePct": 73.3,
+      "minPct": -6.609,
+      "maxPct": 7.375,
+      "p25Pct": -0.792,
+      "p75Pct": 3.183,
+      "allWindowMeanPct": 0.461,
+      "vsUnconditionalPct": 0.853
+    },
+    {
+      "group": "CPI",
+      "asset": "白銀",
+      "horizon": "20D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 4.381,
+      "medianPct": 4.147,
+      "positivePct": 80.0,
+      "minPct": -9.44,
+      "maxPct": 15.57,
+      "p25Pct": 0.172,
+      "p75Pct": 8.533,
+      "allWindowMeanPct": 1.892,
+      "vsUnconditionalPct": 2.49
+    },
+    {
+      "group": "CPI",
+      "asset": "WTI原油",
+      "horizon": "1D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": -0.018,
+      "medianPct": -0.21,
+      "positivePct": 33.3,
+      "minPct": -1.699,
+      "maxPct": 2.785,
+      "p25Pct": -0.823,
+      "p75Pct": 0.395,
+      "allWindowMeanPct": 0.029,
+      "vsUnconditionalPct": -0.046
+    },
+    {
+      "group": "CPI",
+      "asset": "WTI原油",
+      "horizon": "5D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 1.167,
+      "medianPct": 0.051,
+      "positivePct": 53.3,
+      "minPct": -6.772,
+      "maxPct": 10.257,
+      "p25Pct": -0.867,
+      "p75Pct": 1.681,
+      "allWindowMeanPct": 0.116,
+      "vsUnconditionalPct": 1.051
+    },
+    {
+      "group": "CPI",
+      "asset": "WTI原油",
+      "horizon": "20D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": -0.0,
+      "medianPct": 0.791,
+      "positivePct": 53.3,
+      "minPct": -10.932,
+      "maxPct": 11.153,
+      "p25Pct": -5.593,
+      "p75Pct": 2.376,
+      "allWindowMeanPct": 0.403,
+      "vsUnconditionalPct": -0.403
+    },
+    {
+      "group": "CPI",
+      "asset": "美元",
+      "horizon": "1D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": -0.193,
+      "medianPct": -0.165,
+      "positivePct": 33.3,
+      "minPct": -1.081,
+      "maxPct": 0.234,
+      "p25Pct": -0.265,
+      "p75Pct": 0.01,
+      "allWindowMeanPct": 0.004,
+      "vsUnconditionalPct": -0.197
+    },
+    {
+      "group": "CPI",
+      "asset": "美元",
+      "horizon": "5D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": -0.274,
+      "medianPct": -0.195,
+      "positivePct": 40.0,
+      "minPct": -1.482,
+      "maxPct": 1.237,
+      "p25Pct": -0.953,
+      "p75Pct": 0.188,
+      "allWindowMeanPct": 0.019,
+      "vsUnconditionalPct": -0.293
+    },
+    {
+      "group": "CPI",
+      "asset": "美元",
+      "horizon": "20D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": -0.393,
+      "medianPct": -0.527,
+      "positivePct": 33.3,
+      "minPct": -3.808,
+      "maxPct": 2.755,
+      "p25Pct": -1.931,
+      "p75Pct": 0.451,
+      "allWindowMeanPct": 0.074,
+      "vsUnconditionalPct": -0.467
+    },
+    {
+      "group": "CPI",
+      "asset": "美債殖利率",
+      "horizon": "1D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": -0.272,
+      "medianPct": -0.743,
+      "positivePct": 33.3,
+      "minPct": -2.415,
+      "maxPct": 2.253,
+      "p25Pct": -1.135,
+      "p75Pct": 0.645,
+      "allWindowMeanPct": 0.083,
+      "vsUnconditionalPct": -0.355
+    },
+    {
+      "group": "CPI",
+      "asset": "美債殖利率",
+      "horizon": "5D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.312,
+      "medianPct": -0.322,
+      "positivePct": 46.7,
+      "minPct": -3.408,
+      "maxPct": 5.221,
+      "p25Pct": -1.388,
+      "p75Pct": 1.966,
+      "allWindowMeanPct": 0.408,
+      "vsUnconditionalPct": -0.096
+    },
+    {
+      "group": "CPI",
+      "asset": "美債殖利率",
+      "horizon": "20D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.022,
+      "medianPct": -0.432,
+      "positivePct": 46.7,
+      "minPct": -7.828,
+      "maxPct": 12.456,
+      "p25Pct": -2.873,
+      "p75Pct": 1.651,
+      "allWindowMeanPct": 1.552,
+      "vsUnconditionalPct": -1.53
+    },
+    {
+      "group": "CPI",
+      "asset": "銅",
+      "horizon": "1D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.679,
+      "medianPct": 0.427,
+      "positivePct": 60.0,
+      "minPct": -1.506,
+      "maxPct": 4.316,
+      "p25Pct": -0.451,
+      "p75Pct": 1.17,
+      "allWindowMeanPct": 0.043,
+      "vsUnconditionalPct": 0.636
+    },
+    {
+      "group": "CPI",
+      "asset": "銅",
+      "horizon": "5D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 0.858,
+      "medianPct": -0.55,
+      "positivePct": 46.7,
+      "minPct": -4.029,
+      "maxPct": 9.5,
+      "p25Pct": -1.916,
+      "p75Pct": 2.723,
+      "allWindowMeanPct": 0.209,
+      "vsUnconditionalPct": 0.649
+    },
+    {
+      "group": "CPI",
+      "asset": "銅",
+      "horizon": "20D",
+      "n": 15,
+      "status": "descriptive",
+      "meanPct": 2.578,
+      "medianPct": 3.173,
+      "positivePct": 73.3,
+      "minPct": -18.707,
+      "maxPct": 15.559,
+      "p25Pct": -0.352,
+      "p75Pct": 9.095,
+      "allWindowMeanPct": 0.812,
+      "vsUnconditionalPct": 1.766
+    },
+    {
+      "group": "FOMC",
+      "asset": "美股S&P500",
+      "horizon": "1D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.044,
+      "medianPct": -0.056,
+      "positivePct": 38.9,
+      "minPct": -2.949,
+      "maxPct": 2.986,
+      "p25Pct": -0.7,
+      "p75Pct": 0.743,
+      "allWindowMeanPct": 0.053,
+      "vsUnconditionalPct": -0.008
+    },
+    {
+      "group": "FOMC",
+      "asset": "美股S&P500",
+      "horizon": "5D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.026,
+      "medianPct": 0.097,
+      "positivePct": 50.0,
+      "minPct": -5.411,
+      "maxPct": 5.846,
+      "p25Pct": -0.789,
+      "p75Pct": 0.95,
+      "allWindowMeanPct": 0.256,
+      "vsUnconditionalPct": -0.23
+    },
+    {
+      "group": "FOMC",
+      "asset": "美股S&P500",
+      "horizon": "20D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.855,
+      "medianPct": 1.323,
+      "positivePct": 61.1,
+      "minPct": -3.939,
+      "maxPct": 5.809,
+      "p25Pct": -1.778,
+      "p75Pct": 2.897,
+      "allWindowMeanPct": 1.023,
+      "vsUnconditionalPct": -0.168
+    },
+    {
+      "group": "FOMC",
+      "asset": "NASDAQ",
+      "horizon": "1D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.311,
+      "medianPct": -0.067,
+      "positivePct": 44.4,
+      "minPct": -3.562,
+      "maxPct": 4.064,
+      "p25Pct": -0.763,
+      "p75Pct": 1.506,
+      "allWindowMeanPct": 0.065,
+      "vsUnconditionalPct": 0.246
+    },
+    {
+      "group": "FOMC",
+      "asset": "NASDAQ",
+      "horizon": "5D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.432,
+      "medianPct": 0.902,
+      "positivePct": 55.6,
+      "minPct": -6.575,
+      "maxPct": 8.96,
+      "p25Pct": -2.01,
+      "p75Pct": 2.075,
+      "allWindowMeanPct": 0.309,
+      "vsUnconditionalPct": 0.123
+    },
+    {
+      "group": "FOMC",
+      "asset": "NASDAQ",
+      "horizon": "20D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.967,
+      "medianPct": 1.673,
+      "positivePct": 55.6,
+      "minPct": -5.712,
+      "maxPct": 7.081,
+      "p25Pct": -2.381,
+      "p75Pct": 3.9,
+      "allWindowMeanPct": 1.256,
+      "vsUnconditionalPct": -0.29
+    },
+    {
+      "group": "FOMC",
+      "asset": "台股",
+      "horizon": "1D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.306,
+      "medianPct": 0.41,
+      "positivePct": 55.6,
+      "minPct": -1.324,
+      "maxPct": 2.995,
+      "p25Pct": -0.867,
+      "p75Pct": 0.786,
+      "allWindowMeanPct": 0.085,
+      "vsUnconditionalPct": 0.221
+    },
+    {
+      "group": "FOMC",
+      "asset": "台股",
+      "horizon": "5D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": -0.234,
+      "medianPct": -0.455,
+      "positivePct": 50.0,
+      "minPct": -6.645,
+      "maxPct": 5.035,
+      "p25Pct": -3.083,
+      "p75Pct": 1.284,
+      "allWindowMeanPct": 0.448,
+      "vsUnconditionalPct": -0.682
+    },
+    {
+      "group": "FOMC",
+      "asset": "台股",
+      "horizon": "20D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 1.188,
+      "medianPct": 0.517,
+      "positivePct": 55.6,
+      "minPct": -10.467,
+      "maxPct": 13.583,
+      "p25Pct": -0.848,
+      "p75Pct": 2.123,
+      "allWindowMeanPct": 1.958,
+      "vsUnconditionalPct": -0.77
+    },
+    {
+      "group": "FOMC",
+      "asset": "黃金",
+      "horizon": "1D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.262,
+      "medianPct": 0.346,
+      "positivePct": 61.1,
+      "minPct": -1.704,
+      "maxPct": 2.375,
+      "p25Pct": -1.062,
+      "p75Pct": 0.918,
+      "allWindowMeanPct": 0.071,
+      "vsUnconditionalPct": 0.191
+    },
+    {
+      "group": "FOMC",
+      "asset": "黃金",
+      "horizon": "5D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.469,
+      "medianPct": 0.309,
+      "positivePct": 66.7,
+      "minPct": -4.912,
+      "maxPct": 3.861,
+      "p25Pct": -0.34,
+      "p75Pct": 1.353,
+      "allWindowMeanPct": 0.351,
+      "vsUnconditionalPct": 0.118
+    },
+    {
+      "group": "FOMC",
+      "asset": "黃金",
+      "horizon": "20D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 1.737,
+      "medianPct": 3.016,
+      "positivePct": 61.1,
+      "minPct": -6.375,
+      "maxPct": 13.013,
+      "p25Pct": -2.037,
+      "p75Pct": 3.954,
+      "allWindowMeanPct": 1.431,
+      "vsUnconditionalPct": 0.306
+    },
+    {
+      "group": "FOMC",
+      "asset": "白銀",
+      "horizon": "1D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.964,
+      "medianPct": 1.094,
+      "positivePct": 66.7,
+      "minPct": -4.327,
+      "maxPct": 6.867,
+      "p25Pct": -0.837,
+      "p75Pct": 2.173,
+      "allWindowMeanPct": 0.095,
+      "vsUnconditionalPct": 0.869
+    },
+    {
+      "group": "FOMC",
+      "asset": "白銀",
+      "horizon": "5D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.989,
+      "medianPct": 0.222,
+      "positivePct": 55.6,
+      "minPct": -4.906,
+      "maxPct": 9.702,
+      "p25Pct": -3.168,
+      "p75Pct": 3.091,
+      "allWindowMeanPct": 0.461,
+      "vsUnconditionalPct": 0.528
+    },
+    {
+      "group": "FOMC",
+      "asset": "白銀",
+      "horizon": "20D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 2.869,
+      "medianPct": 1.485,
+      "positivePct": 55.6,
+      "minPct": -13.592,
+      "maxPct": 30.648,
+      "p25Pct": -5.538,
+      "p75Pct": 5.472,
+      "allWindowMeanPct": 1.892,
+      "vsUnconditionalPct": 0.978
+    },
+    {
+      "group": "FOMC",
+      "asset": "WTI原油",
+      "horizon": "1D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.099,
+      "medianPct": -0.601,
+      "positivePct": 38.9,
+      "minPct": -2.736,
+      "maxPct": 8.354,
+      "p25Pct": -1.326,
+      "p75Pct": 0.417,
+      "allWindowMeanPct": 0.029,
+      "vsUnconditionalPct": 0.071
+    },
+    {
+      "group": "FOMC",
+      "asset": "WTI原油",
+      "horizon": "5D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": -0.657,
+      "medianPct": -1.408,
+      "positivePct": 38.9,
+      "minPct": -10.026,
+      "maxPct": 20.928,
+      "p25Pct": -4.633,
+      "p75Pct": 1.307,
+      "allWindowMeanPct": 0.116,
+      "vsUnconditionalPct": -0.773
+    },
+    {
+      "group": "FOMC",
+      "asset": "WTI原油",
+      "horizon": "20D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": -0.275,
+      "medianPct": 0.634,
+      "positivePct": 55.6,
+      "minPct": -15.367,
+      "maxPct": 10.343,
+      "p25Pct": -7.131,
+      "p75Pct": 3.147,
+      "allWindowMeanPct": 0.403,
+      "vsUnconditionalPct": -0.679
+    },
+    {
+      "group": "FOMC",
+      "asset": "美元",
+      "horizon": "1D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.265,
+      "medianPct": 0.332,
+      "positivePct": 72.2,
+      "minPct": -1.455,
+      "maxPct": 1.419,
+      "p25Pct": -0.09,
+      "p75Pct": 0.524,
+      "allWindowMeanPct": 0.004,
+      "vsUnconditionalPct": 0.261
+    },
+    {
+      "group": "FOMC",
+      "asset": "美元",
+      "horizon": "5D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.633,
+      "medianPct": 0.347,
+      "positivePct": 83.3,
+      "minPct": -0.719,
+      "maxPct": 2.164,
+      "p25Pct": 0.093,
+      "p75Pct": 1.032,
+      "allWindowMeanPct": 0.019,
+      "vsUnconditionalPct": 0.614
+    },
+    {
+      "group": "FOMC",
+      "asset": "美元",
+      "horizon": "20D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 1.037,
+      "medianPct": 1.753,
+      "positivePct": 77.8,
+      "minPct": -5.945,
+      "maxPct": 3.764,
+      "p25Pct": 0.344,
+      "p75Pct": 2.191,
+      "allWindowMeanPct": 0.074,
+      "vsUnconditionalPct": 0.963
+    },
+    {
+      "group": "FOMC",
+      "asset": "美債殖利率",
+      "horizon": "1D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 0.479,
+      "medianPct": 0.077,
+      "positivePct": 50.0,
+      "minPct": -2.686,
+      "maxPct": 5.641,
+      "p25Pct": -1.513,
+      "p75Pct": 1.492,
+      "allWindowMeanPct": 0.083,
+      "vsUnconditionalPct": 0.396
+    },
+    {
+      "group": "FOMC",
+      "asset": "美債殖利率",
+      "horizon": "5D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 2.153,
+      "medianPct": 2.024,
+      "positivePct": 88.9,
+      "minPct": -9.632,
+      "maxPct": 7.536,
+      "p25Pct": 1.058,
+      "p75Pct": 2.605,
+      "allWindowMeanPct": 0.408,
+      "vsUnconditionalPct": 1.745
+    },
+    {
+      "group": "FOMC",
+      "asset": "美債殖利率",
+      "horizon": "20D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 3.976,
+      "medianPct": 1.533,
+      "positivePct": 66.7,
+      "minPct": -13.697,
+      "maxPct": 22.806,
+      "p25Pct": -0.736,
+      "p75Pct": 8.982,
+      "allWindowMeanPct": 1.552,
+      "vsUnconditionalPct": 2.424
+    },
+    {
+      "group": "FOMC",
+      "asset": "銅",
+      "horizon": "1D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": -0.229,
+      "medianPct": -0.535,
+      "positivePct": 38.9,
+      "minPct": -2.971,
+      "maxPct": 2.872,
+      "p25Pct": -1.398,
+      "p75Pct": 1.133,
+      "allWindowMeanPct": 0.043,
+      "vsUnconditionalPct": -0.272
+    },
+    {
+      "group": "FOMC",
+      "asset": "銅",
+      "horizon": "5D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": -0.446,
+      "medianPct": -0.387,
+      "positivePct": 44.4,
+      "minPct": -9.814,
+      "maxPct": 6.732,
+      "p25Pct": -2.68,
+      "p75Pct": 1.668,
+      "allWindowMeanPct": 0.209,
+      "vsUnconditionalPct": -0.655
+    },
+    {
+      "group": "FOMC",
+      "asset": "銅",
+      "horizon": "20D",
+      "n": 18,
+      "status": "descriptive",
+      "meanPct": 1.104,
+      "medianPct": 2.4,
+      "positivePct": 55.6,
+      "minPct": -22.387,
+      "maxPct": 10.994,
+      "p25Pct": -2.465,
+      "p75Pct": 5.793,
+      "allWindowMeanPct": 0.812,
+      "vsUnconditionalPct": 0.292
+    },
+    {
+      "group": "OPEC",
+      "asset": "美股S&P500",
+      "horizon": "1D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 0.028,
+      "medianPct": 0.112,
+      "positivePct": 60.0,
+      "minPct": -0.532,
+      "maxPct": 0.587,
+      "p25Pct": -0.2,
+      "p75Pct": 0.172,
+      "allWindowMeanPct": 0.053,
+      "vsUnconditionalPct": -0.025
+    },
+    {
+      "group": "OPEC",
+      "asset": "美股S&P500",
+      "horizon": "5D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 0.155,
+      "medianPct": 0.385,
+      "positivePct": 80.0,
+      "minPct": -1.629,
+      "maxPct": 1.317,
+      "p25Pct": 0.311,
+      "p75Pct": 0.39,
+      "allWindowMeanPct": 0.256,
+      "vsUnconditionalPct": -0.101
+    },
+    {
+      "group": "OPEC",
+      "asset": "美股S&P500",
+      "horizon": "20D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 2.527,
+      "medianPct": 3.744,
+      "positivePct": 80.0,
+      "minPct": -0.403,
+      "maxPct": 4.423,
+      "p25Pct": 0.827,
+      "p75Pct": 4.045,
+      "allWindowMeanPct": 1.023,
+      "vsUnconditionalPct": 1.505
+    },
+    {
+      "group": "OPEC",
+      "asset": "NASDAQ",
+      "horizon": "1D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 0.221,
+      "medianPct": 0.463,
+      "positivePct": 60.0,
+      "minPct": -0.384,
+      "maxPct": 0.56,
+      "p25Pct": -0.086,
+      "p75Pct": 0.554,
+      "allWindowMeanPct": 0.065,
+      "vsUnconditionalPct": 0.156
+    },
+    {
+      "group": "OPEC",
+      "asset": "NASDAQ",
+      "horizon": "5D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 0.238,
+      "medianPct": 0.8,
+      "positivePct": 80.0,
+      "minPct": -3.037,
+      "maxPct": 2.379,
+      "p25Pct": 0.139,
+      "p75Pct": 0.909,
+      "allWindowMeanPct": 0.309,
+      "vsUnconditionalPct": -0.071
+    },
+    {
+      "group": "OPEC",
+      "asset": "NASDAQ",
+      "horizon": "20D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 3.056,
+      "medianPct": 4.35,
+      "positivePct": 80.0,
+      "minPct": -1.893,
+      "maxPct": 6.838,
+      "p25Pct": 0.465,
+      "p75Pct": 5.519,
+      "allWindowMeanPct": 1.256,
+      "vsUnconditionalPct": 1.8
+    },
+    {
+      "group": "OPEC",
+      "asset": "台股",
+      "horizon": "1D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 0.223,
+      "medianPct": 0.045,
+      "positivePct": 80.0,
+      "minPct": -1.028,
+      "maxPct": 1.712,
+      "p25Pct": 0.026,
+      "p75Pct": 0.359,
+      "allWindowMeanPct": 0.085,
+      "vsUnconditionalPct": 0.137
+    },
+    {
+      "group": "OPEC",
+      "asset": "台股",
+      "horizon": "5D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 0.527,
+      "medianPct": 1.074,
+      "positivePct": 60.0,
+      "minPct": -2.061,
+      "maxPct": 3.231,
+      "p25Pct": -0.89,
+      "p75Pct": 1.283,
+      "allWindowMeanPct": 0.448,
+      "vsUnconditionalPct": 0.08
+    },
+    {
+      "group": "OPEC",
+      "asset": "台股",
+      "horizon": "20D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 3.273,
+      "medianPct": 2.733,
+      "positivePct": 80.0,
+      "minPct": -2.15,
+      "maxPct": 8.899,
+      "p25Pct": 2.597,
+      "p75Pct": 4.287,
+      "allWindowMeanPct": 1.958,
+      "vsUnconditionalPct": 1.315
+    },
+    {
+      "group": "OPEC",
+      "asset": "黃金",
+      "horizon": "1D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 1.135,
+      "medianPct": 0.468,
+      "positivePct": 100.0,
+      "minPct": 0.239,
+      "maxPct": 2.532,
+      "p25Pct": 0.438,
+      "p75Pct": 1.998,
+      "allWindowMeanPct": 0.071,
+      "vsUnconditionalPct": 1.063
+    },
+    {
+      "group": "OPEC",
+      "asset": "黃金",
+      "horizon": "5D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 0.187,
+      "medianPct": 0.333,
+      "positivePct": 80.0,
+      "minPct": -0.28,
+      "maxPct": 0.407,
+      "p25Pct": 0.09,
+      "p75Pct": 0.386,
+      "allWindowMeanPct": 0.351,
+      "vsUnconditionalPct": -0.164
+    },
+    {
+      "group": "OPEC",
+      "asset": "黃金",
+      "horizon": "20D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 1.871,
+      "medianPct": 1.653,
+      "positivePct": 80.0,
+      "minPct": -2.036,
+      "maxPct": 6.964,
+      "p25Pct": 0.689,
+      "p75Pct": 2.085,
+      "allWindowMeanPct": 1.431,
+      "vsUnconditionalPct": 0.44
+    },
+    {
+      "group": "OPEC",
+      "asset": "白銀",
+      "horizon": "1D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 0.952,
+      "medianPct": 0.815,
+      "positivePct": 60.0,
+      "minPct": -0.461,
+      "maxPct": 3.494,
+      "p25Pct": -0.221,
+      "p75Pct": 1.135,
+      "allWindowMeanPct": 0.095,
+      "vsUnconditionalPct": 0.857
+    },
+    {
+      "group": "OPEC",
+      "asset": "白銀",
+      "horizon": "5D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": -0.575,
+      "medianPct": 0.048,
+      "positivePct": 60.0,
+      "minPct": -6.172,
+      "maxPct": 3.501,
+      "p25Pct": -3.175,
+      "p75Pct": 2.923,
+      "allWindowMeanPct": 0.461,
+      "vsUnconditionalPct": -1.036
+    },
+    {
+      "group": "OPEC",
+      "asset": "白銀",
+      "horizon": "20D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 6.667,
+      "medianPct": -3.159,
+      "positivePct": 40.0,
+      "minPct": -5.693,
+      "maxPct": 23.757,
+      "p25Pct": -3.291,
+      "p75Pct": 21.719,
+      "allWindowMeanPct": 1.892,
+      "vsUnconditionalPct": 4.775
+    },
+    {
+      "group": "OPEC",
+      "asset": "WTI原油",
+      "horizon": "1D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": -0.817,
+      "medianPct": 0.115,
+      "positivePct": 60.0,
+      "minPct": -3.598,
+      "maxPct": 1.315,
+      "p25Pct": -2.488,
+      "p75Pct": 0.572,
+      "allWindowMeanPct": 0.029,
+      "vsUnconditionalPct": -0.845
+    },
+    {
+      "group": "OPEC",
+      "asset": "WTI原油",
+      "horizon": "5D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": -2.441,
+      "medianPct": -2.017,
+      "positivePct": 20.0,
+      "minPct": -8.715,
+      "maxPct": 2.613,
+      "p25Pct": -2.188,
+      "p75Pct": -1.896,
+      "allWindowMeanPct": 0.116,
+      "vsUnconditionalPct": -2.557
+    },
+    {
+      "group": "OPEC",
+      "asset": "WTI原油",
+      "horizon": "20D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": -0.723,
+      "medianPct": -2.718,
+      "positivePct": 20.0,
+      "minPct": -5.674,
+      "maxPct": 8.3,
+      "p25Pct": -2.722,
+      "p75Pct": -0.803,
+      "allWindowMeanPct": 0.403,
+      "vsUnconditionalPct": -1.126
+    },
+    {
+      "group": "OPEC",
+      "asset": "美元",
+      "horizon": "1D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": -0.146,
+      "medianPct": -0.05,
+      "positivePct": 20.0,
+      "minPct": -0.506,
+      "maxPct": 0.07,
+      "p25Pct": -0.222,
+      "p75Pct": -0.019,
+      "allWindowMeanPct": 0.004,
+      "vsUnconditionalPct": -0.149
+    },
+    {
+      "group": "OPEC",
+      "asset": "美元",
+      "horizon": "5D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": -0.173,
+      "medianPct": -0.2,
+      "positivePct": 40.0,
+      "minPct": -0.473,
+      "maxPct": 0.21,
+      "p25Pct": -0.442,
+      "p75Pct": 0.039,
+      "allWindowMeanPct": 0.019,
+      "vsUnconditionalPct": -0.192
+    },
+    {
+      "group": "OPEC",
+      "asset": "美元",
+      "horizon": "20D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": -0.746,
+      "medianPct": -0.99,
+      "positivePct": 20.0,
+      "minPct": -2.097,
+      "maxPct": 1.175,
+      "p25Pct": -1.428,
+      "p75Pct": -0.391,
+      "allWindowMeanPct": 0.074,
+      "vsUnconditionalPct": -0.82
+    },
+    {
+      "group": "OPEC",
+      "asset": "美債殖利率",
+      "horizon": "1D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": -0.647,
+      "medianPct": 0.054,
+      "positivePct": 60.0,
+      "minPct": -2.895,
+      "maxPct": 1.967,
+      "p25Pct": -2.481,
+      "p75Pct": 0.122,
+      "allWindowMeanPct": 0.083,
+      "vsUnconditionalPct": -0.73
+    },
+    {
+      "group": "OPEC",
+      "asset": "美債殖利率",
+      "horizon": "5D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": -0.536,
+      "medianPct": -0.195,
+      "positivePct": 40.0,
+      "minPct": -5.124,
+      "maxPct": 3.037,
+      "p25Pct": -1.861,
+      "p75Pct": 1.463,
+      "allWindowMeanPct": 0.408,
+      "vsUnconditionalPct": -0.944
+    },
+    {
+      "group": "OPEC",
+      "asset": "美債殖利率",
+      "horizon": "20D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": -1.015,
+      "medianPct": -0.122,
+      "positivePct": 40.0,
+      "minPct": -11.167,
+      "maxPct": 4.524,
+      "p25Pct": -0.775,
+      "p75Pct": 2.465,
+      "allWindowMeanPct": 1.552,
+      "vsUnconditionalPct": -2.567
+    },
+    {
+      "group": "OPEC",
+      "asset": "銅",
+      "horizon": "1D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 0.98,
+      "medianPct": 1.075,
+      "positivePct": 80.0,
+      "minPct": -0.365,
+      "maxPct": 2.089,
+      "p25Pct": 0.646,
+      "p75Pct": 1.453,
+      "allWindowMeanPct": 0.043,
+      "vsUnconditionalPct": 0.936
+    },
+    {
+      "group": "OPEC",
+      "asset": "銅",
+      "horizon": "5D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": -0.122,
+      "medianPct": -1.162,
+      "positivePct": 40.0,
+      "minPct": -2.517,
+      "maxPct": 3.789,
+      "p25Pct": -2.505,
+      "p75Pct": 1.786,
+      "allWindowMeanPct": 0.209,
+      "vsUnconditionalPct": -0.331
+    },
+    {
+      "group": "OPEC",
+      "asset": "銅",
+      "horizon": "20D",
+      "n": 5,
+      "status": "descriptive",
+      "meanPct": 1.559,
+      "medianPct": 1.518,
+      "positivePct": 80.0,
+      "minPct": -3.981,
+      "maxPct": 5.882,
+      "p25Pct": 1.345,
+      "p75Pct": 3.03,
+      "allWindowMeanPct": 0.812,
+      "vsUnconditionalPct": 0.747
+    },
+    {
+      "group": "美國選舉",
+      "asset": "美股S&P500",
+      "horizon": "1D",
+      "n": 2,
+      "status": "small_sample",
+      "meanPct": 2.056,
+      "medianPct": 2.056,
+      "positivePct": 100.0,
+      "minPct": 1.581,
+      "maxPct": 2.53,
+      "p25Pct": 1.581,
+      "p75Pct": 1.581,
+      "allWindowMeanPct": 0.053,
+      "vsUnconditionalPct": 2.003
+    },
+    {
+      "group": "美國選舉",
+      "asset": "美股S&P500",
+      "horizon": "5D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": 3.48,
+      "medianPct": 3.48,
+      "positivePct": 100.0,
+      "minPct": 3.48,
+      "maxPct": 3.48,
+      "p25Pct": 3.48,
+      "p75Pct": 3.48,
+      "allWindowMeanPct": 0.256,
+      "vsUnconditionalPct": 3.224
+    },
+    {
+      "group": "美國選舉",
+      "asset": "美股S&P500",
+      "horizon": "20D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": 5.252,
+      "medianPct": 5.252,
+      "positivePct": 100.0,
+      "minPct": 5.252,
+      "maxPct": 5.252,
+      "p25Pct": 5.252,
+      "p75Pct": 5.252,
+      "allWindowMeanPct": 1.023,
+      "vsUnconditionalPct": 4.23
+    },
+    {
+      "group": "美國選舉",
+      "asset": "NASDAQ",
+      "horizon": "1D",
+      "n": 2,
+      "status": "small_sample",
+      "meanPct": 2.194,
+      "medianPct": 2.194,
+      "positivePct": 100.0,
+      "minPct": 1.437,
+      "maxPct": 2.952,
+      "p25Pct": 1.437,
+      "p75Pct": 1.437,
+      "allWindowMeanPct": 0.065,
+      "vsUnconditionalPct": 2.129
+    },
+    {
+      "group": "美國選舉",
+      "asset": "NASDAQ",
+      "horizon": "5D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": 4.568,
+      "medianPct": 4.568,
+      "positivePct": 100.0,
+      "minPct": 4.568,
+      "maxPct": 4.568,
+      "p25Pct": 4.568,
+      "p75Pct": 4.568,
+      "allWindowMeanPct": 0.309,
+      "vsUnconditionalPct": 4.258
+    },
+    {
+      "group": "美國選舉",
+      "asset": "NASDAQ",
+      "horizon": "20D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": 7.028,
+      "medianPct": 7.028,
+      "positivePct": 100.0,
+      "minPct": 7.028,
+      "maxPct": 7.028,
+      "p25Pct": 7.028,
+      "p75Pct": 7.028,
+      "allWindowMeanPct": 1.256,
+      "vsUnconditionalPct": 5.772
+    },
+    {
+      "group": "美國選舉",
+      "asset": "台股",
+      "horizon": "1D",
+      "n": 2,
+      "status": "small_sample",
+      "meanPct": -0.175,
+      "medianPct": -0.175,
+      "positivePct": 50.0,
+      "minPct": -0.828,
+      "maxPct": 0.479,
+      "p25Pct": -0.828,
+      "p75Pct": -0.828,
+      "allWindowMeanPct": 0.085,
+      "vsUnconditionalPct": -0.26
+    },
+    {
+      "group": "美國選舉",
+      "asset": "台股",
+      "horizon": "5D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": -0.541,
+      "medianPct": -0.541,
+      "positivePct": 0.0,
+      "minPct": -0.541,
+      "maxPct": -0.541,
+      "p25Pct": -0.541,
+      "p75Pct": -0.541,
+      "allWindowMeanPct": 0.448,
+      "vsUnconditionalPct": -0.989
+    },
+    {
+      "group": "美國選舉",
+      "asset": "台股",
+      "horizon": "20D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": -0.343,
+      "medianPct": -0.343,
+      "positivePct": 0.0,
+      "minPct": -0.343,
+      "maxPct": -0.343,
+      "p25Pct": -0.343,
+      "p75Pct": -0.343,
+      "allWindowMeanPct": 1.958,
+      "vsUnconditionalPct": -2.301
+    },
+    {
+      "group": "美國選舉",
+      "asset": "黃金",
+      "horizon": "1D",
+      "n": 2,
+      "status": "small_sample",
+      "meanPct": 0.348,
+      "medianPct": 0.348,
+      "positivePct": 50.0,
+      "minPct": -2.669,
+      "maxPct": 3.365,
+      "p25Pct": -2.669,
+      "p75Pct": -2.669,
+      "allWindowMeanPct": 0.071,
+      "vsUnconditionalPct": 0.276
+    },
+    {
+      "group": "美國選舉",
+      "asset": "黃金",
+      "horizon": "5D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": -5.215,
+      "medianPct": -5.215,
+      "positivePct": 0.0,
+      "minPct": -5.215,
+      "maxPct": -5.215,
+      "p25Pct": -5.215,
+      "p75Pct": -5.215,
+      "allWindowMeanPct": 0.351,
+      "vsUnconditionalPct": -5.567
+    },
+    {
+      "group": "美國選舉",
+      "asset": "黃金",
+      "horizon": "20D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": -2.673,
+      "medianPct": -2.673,
+      "positivePct": 0.0,
+      "minPct": -2.673,
+      "maxPct": -2.673,
+      "p25Pct": -2.673,
+      "p75Pct": -2.673,
+      "allWindowMeanPct": 1.431,
+      "vsUnconditionalPct": -4.104
+    },
+    {
+      "group": "美國選舉",
+      "asset": "白銀",
+      "horizon": "1D",
+      "n": 2,
+      "status": "small_sample",
+      "meanPct": 0.358,
+      "medianPct": 0.358,
+      "positivePct": 50.0,
+      "minPct": -4.391,
+      "maxPct": 5.108,
+      "p25Pct": -4.391,
+      "p75Pct": -4.391,
+      "allWindowMeanPct": 0.095,
+      "vsUnconditionalPct": 0.263
+    },
+    {
+      "group": "美國選舉",
+      "asset": "白銀",
+      "horizon": "5D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": -6.03,
+      "medianPct": -6.03,
+      "positivePct": 0.0,
+      "minPct": -6.03,
+      "maxPct": -6.03,
+      "p25Pct": -6.03,
+      "p75Pct": -6.03,
+      "allWindowMeanPct": 0.461,
+      "vsUnconditionalPct": -6.491
+    },
+    {
+      "group": "美國選舉",
+      "asset": "白銀",
+      "horizon": "20D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": -3.522,
+      "medianPct": -3.522,
+      "positivePct": 0.0,
+      "minPct": -3.522,
+      "maxPct": -3.522,
+      "p25Pct": -3.522,
+      "p75Pct": -3.522,
+      "allWindowMeanPct": 1.892,
+      "vsUnconditionalPct": -5.413
+    },
+    {
+      "group": "美國選舉",
+      "asset": "WTI原油",
+      "horizon": "1D",
+      "n": 2,
+      "status": "small_sample",
+      "meanPct": -4.356,
+      "medianPct": -4.356,
+      "positivePct": 0.0,
+      "minPct": -8.294,
+      "maxPct": -0.417,
+      "p25Pct": -8.294,
+      "p75Pct": -8.294,
+      "allWindowMeanPct": 0.029,
+      "vsUnconditionalPct": -4.384
+    },
+    {
+      "group": "美國選舉",
+      "asset": "WTI原油",
+      "horizon": "5D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": -5.376,
+      "medianPct": -5.376,
+      "positivePct": 0.0,
+      "minPct": -5.376,
+      "maxPct": -5.376,
+      "p25Pct": -5.376,
+      "p75Pct": -5.376,
+      "allWindowMeanPct": 0.116,
+      "vsUnconditionalPct": -5.492
+    },
+    {
+      "group": "美國選舉",
+      "asset": "WTI原油",
+      "horizon": "20D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": -4.792,
+      "medianPct": -4.792,
+      "positivePct": 0.0,
+      "minPct": -4.792,
+      "maxPct": -4.792,
+      "p25Pct": -4.792,
+      "p75Pct": -4.792,
+      "allWindowMeanPct": 0.403,
+      "vsUnconditionalPct": -5.195
+    },
+    {
+      "group": "美國選舉",
+      "asset": "美元",
+      "horizon": "1D",
+      "n": 2,
+      "status": "small_sample",
+      "meanPct": 0.631,
+      "medianPct": 0.631,
+      "positivePct": 50.0,
+      "minPct": -0.353,
+      "maxPct": 1.615,
+      "p25Pct": -0.353,
+      "p75Pct": -0.353,
+      "allWindowMeanPct": 0.004,
+      "vsUnconditionalPct": 0.627
+    },
+    {
+      "group": "美國選舉",
+      "asset": "美元",
+      "horizon": "5D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": 2.514,
+      "medianPct": 2.514,
+      "positivePct": 100.0,
+      "minPct": 2.514,
+      "maxPct": 2.514,
+      "p25Pct": 2.514,
+      "p75Pct": 2.514,
+      "allWindowMeanPct": 0.019,
+      "vsUnconditionalPct": 2.495
+    },
+    {
+      "group": "美國選舉",
+      "asset": "美元",
+      "horizon": "20D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": 2.823,
+      "medianPct": 2.823,
+      "positivePct": 100.0,
+      "minPct": 2.823,
+      "maxPct": 2.823,
+      "p25Pct": 2.823,
+      "p75Pct": 2.823,
+      "allWindowMeanPct": 0.074,
+      "vsUnconditionalPct": 2.749
+    },
+    {
+      "group": "美國選舉",
+      "asset": "美債殖利率",
+      "horizon": "1D",
+      "n": 2,
+      "status": "small_sample",
+      "meanPct": 1.011,
+      "medianPct": 1.011,
+      "positivePct": 50.0,
+      "minPct": -1.171,
+      "maxPct": 3.194,
+      "p25Pct": -1.171,
+      "p75Pct": -1.171,
+      "allWindowMeanPct": 0.083,
+      "vsUnconditionalPct": 0.928
+    },
+    {
+      "group": "美國選舉",
+      "asset": "美債殖利率",
+      "horizon": "5D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": 3.334,
+      "medianPct": 3.334,
+      "positivePct": 100.0,
+      "minPct": 3.334,
+      "maxPct": 3.334,
+      "p25Pct": 3.334,
+      "p75Pct": 3.334,
+      "allWindowMeanPct": 0.408,
+      "vsUnconditionalPct": 2.926
+    },
+    {
+      "group": "美國選舉",
+      "asset": "美債殖利率",
+      "horizon": "20D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": -2.541,
+      "medianPct": -2.541,
+      "positivePct": 0.0,
+      "minPct": -2.541,
+      "maxPct": -2.541,
+      "p25Pct": -2.541,
+      "p75Pct": -2.541,
+      "allWindowMeanPct": 1.552,
+      "vsUnconditionalPct": -4.093
+    },
+    {
+      "group": "美國選舉",
+      "asset": "銅",
+      "horizon": "1D",
+      "n": 2,
+      "status": "small_sample",
+      "meanPct": -2.369,
+      "medianPct": -2.369,
+      "positivePct": 50.0,
+      "minPct": -5.123,
+      "maxPct": 0.384,
+      "p25Pct": -5.123,
+      "p75Pct": -5.123,
+      "allWindowMeanPct": 0.043,
+      "vsUnconditionalPct": -2.413
+    },
+    {
+      "group": "美國選舉",
+      "asset": "銅",
+      "horizon": "5D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": -7.437,
+      "medianPct": -7.437,
+      "positivePct": 0.0,
+      "minPct": -7.437,
+      "maxPct": -7.437,
+      "p25Pct": -7.437,
+      "p75Pct": -7.437,
+      "allWindowMeanPct": 0.209,
+      "vsUnconditionalPct": -7.647
+    },
+    {
+      "group": "美國選舉",
+      "asset": "銅",
+      "horizon": "20D",
+      "n": 1,
+      "status": "small_sample",
+      "meanPct": -6.932,
+      "medianPct": -6.932,
+      "positivePct": 0.0,
+      "minPct": -6.932,
+      "maxPct": -6.932,
+      "p25Pct": -6.932,
+      "p75Pct": -6.932,
+      "allWindowMeanPct": 0.812,
+      "vsUnconditionalPct": -7.743
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "美股S&P500",
+      "horizon": "1D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.227,
+      "medianPct": -0.231,
+      "positivePct": 41.7,
+      "minPct": -2.5,
+      "maxPct": 2.986,
+      "p25Pct": -1.646,
+      "p75Pct": 1.459,
+      "allWindowMeanPct": 0.053,
+      "vsUnconditionalPct": 0.174
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "美股S&P500",
+      "horizon": "5D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": -0.041,
+      "medianPct": 0.097,
+      "positivePct": 50.0,
+      "minPct": -5.411,
+      "maxPct": 5.846,
+      "p25Pct": -4.178,
+      "p75Pct": 2.144,
+      "allWindowMeanPct": 0.256,
+      "vsUnconditionalPct": -0.297
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "美股S&P500",
+      "horizon": "20D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.889,
+      "medianPct": 1.466,
+      "positivePct": 58.3,
+      "minPct": -3.939,
+      "maxPct": 5.809,
+      "p25Pct": -3.071,
+      "p75Pct": 3.167,
+      "allWindowMeanPct": 1.023,
+      "vsUnconditionalPct": -0.134
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "NASDAQ",
+      "horizon": "1D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.618,
+      "medianPct": -0.067,
+      "positivePct": 41.7,
+      "minPct": -3.361,
+      "maxPct": 4.064,
+      "p25Pct": -1.603,
+      "p75Pct": 2.501,
+      "allWindowMeanPct": 0.065,
+      "vsUnconditionalPct": 0.553
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "NASDAQ",
+      "horizon": "5D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.603,
+      "medianPct": 0.902,
+      "positivePct": 58.3,
+      "minPct": -6.575,
+      "maxPct": 8.96,
+      "p25Pct": -5.213,
+      "p75Pct": 4.569,
+      "allWindowMeanPct": 0.309,
+      "vsUnconditionalPct": 0.294
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "NASDAQ",
+      "horizon": "20D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 1.253,
+      "medianPct": 2.886,
+      "positivePct": 58.3,
+      "minPct": -5.712,
+      "maxPct": 7.081,
+      "p25Pct": -4.515,
+      "p75Pct": 4.707,
+      "allWindowMeanPct": 1.256,
+      "vsUnconditionalPct": -0.003
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "台股",
+      "horizon": "1D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.356,
+      "medianPct": 0.41,
+      "positivePct": 58.3,
+      "minPct": -1.004,
+      "maxPct": 2.995,
+      "p25Pct": -0.867,
+      "p75Pct": 0.786,
+      "allWindowMeanPct": 0.085,
+      "vsUnconditionalPct": 0.271
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "台股",
+      "horizon": "5D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": -0.361,
+      "medianPct": -0.455,
+      "positivePct": 50.0,
+      "minPct": -6.645,
+      "maxPct": 5.035,
+      "p25Pct": -3.426,
+      "p75Pct": 1.284,
+      "allWindowMeanPct": 0.448,
+      "vsUnconditionalPct": -0.809
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "台股",
+      "horizon": "20D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.137,
+      "medianPct": 0.517,
+      "positivePct": 58.3,
+      "minPct": -10.467,
+      "maxPct": 13.583,
+      "p25Pct": -2.282,
+      "p75Pct": 1.221,
+      "allWindowMeanPct": 1.958,
+      "vsUnconditionalPct": -1.821
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "黃金",
+      "horizon": "1D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.401,
+      "medianPct": 0.346,
+      "positivePct": 66.7,
+      "minPct": -1.699,
+      "maxPct": 2.375,
+      "p25Pct": -1.158,
+      "p75Pct": 1.665,
+      "allWindowMeanPct": 0.071,
+      "vsUnconditionalPct": 0.329
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "黃金",
+      "horizon": "5D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.444,
+      "medianPct": 0.309,
+      "positivePct": 66.7,
+      "minPct": -2.682,
+      "maxPct": 3.861,
+      "p25Pct": -0.808,
+      "p75Pct": 0.887,
+      "allWindowMeanPct": 0.351,
+      "vsUnconditionalPct": 0.093
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "黃金",
+      "horizon": "20D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.18,
+      "medianPct": -0.489,
+      "positivePct": 50.0,
+      "minPct": -6.375,
+      "maxPct": 10.012,
+      "p25Pct": -5.266,
+      "p75Pct": 3.565,
+      "allWindowMeanPct": 1.431,
+      "vsUnconditionalPct": -1.251
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "白銀",
+      "horizon": "1D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 1.096,
+      "medianPct": 1.272,
+      "positivePct": 75.0,
+      "minPct": -3.416,
+      "maxPct": 6.867,
+      "p25Pct": -0.837,
+      "p75Pct": 2.173,
+      "allWindowMeanPct": 0.095,
+      "vsUnconditionalPct": 1.001
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "白銀",
+      "horizon": "5D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.297,
+      "medianPct": 0.044,
+      "positivePct": 50.0,
+      "minPct": -4.906,
+      "maxPct": 8.663,
+      "p25Pct": -3.631,
+      "p75Pct": 2.027,
+      "allWindowMeanPct": 0.461,
+      "vsUnconditionalPct": -0.164
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "白銀",
+      "horizon": "20D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": -1.411,
+      "medianPct": -1.172,
+      "positivePct": 41.7,
+      "minPct": -13.592,
+      "maxPct": 15.495,
+      "p25Pct": -11.713,
+      "p75Pct": 1.843,
+      "allWindowMeanPct": 1.892,
+      "vsUnconditionalPct": -3.302
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "WTI原油",
+      "horizon": "1D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.507,
+      "medianPct": -0.283,
+      "positivePct": 41.7,
+      "minPct": -2.033,
+      "maxPct": 8.354,
+      "p25Pct": -1.326,
+      "p75Pct": 0.663,
+      "allWindowMeanPct": 0.029,
+      "vsUnconditionalPct": 0.478
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "WTI原油",
+      "horizon": "5D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.05,
+      "medianPct": -0.026,
+      "positivePct": 50.0,
+      "minPct": -10.026,
+      "maxPct": 20.928,
+      "p25Pct": -6.786,
+      "p75Pct": 2.696,
+      "allWindowMeanPct": 0.116,
+      "vsUnconditionalPct": -0.066
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "WTI原油",
+      "horizon": "20D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.29,
+      "medianPct": 2.238,
+      "positivePct": 66.7,
+      "minPct": -15.367,
+      "maxPct": 9.691,
+      "p25Pct": -7.166,
+      "p75Pct": 3.338,
+      "allWindowMeanPct": 0.403,
+      "vsUnconditionalPct": -0.113
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "美元",
+      "horizon": "1D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.297,
+      "medianPct": 0.35,
+      "positivePct": 66.7,
+      "minPct": -1.455,
+      "maxPct": 1.419,
+      "p25Pct": -0.094,
+      "p75Pct": 0.761,
+      "allWindowMeanPct": 0.004,
+      "vsUnconditionalPct": 0.294
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "美元",
+      "horizon": "5D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.61,
+      "medianPct": 0.33,
+      "positivePct": 83.3,
+      "minPct": -0.719,
+      "maxPct": 2.164,
+      "p25Pct": 0.056,
+      "p75Pct": 1.228,
+      "allWindowMeanPct": 0.019,
+      "vsUnconditionalPct": 0.591
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "美元",
+      "horizon": "20D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.864,
+      "medianPct": 2.105,
+      "positivePct": 66.7,
+      "minPct": -5.945,
+      "maxPct": 3.764,
+      "p25Pct": -0.799,
+      "p75Pct": 2.233,
+      "allWindowMeanPct": 0.074,
+      "vsUnconditionalPct": 0.79
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "美債殖利率",
+      "horizon": "1D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.437,
+      "medianPct": -0.604,
+      "positivePct": 41.7,
+      "minPct": -2.686,
+      "maxPct": 5.641,
+      "p25Pct": -1.939,
+      "p75Pct": 1.601,
+      "allWindowMeanPct": 0.083,
+      "vsUnconditionalPct": 0.354
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "美債殖利率",
+      "horizon": "5D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 2.385,
+      "medianPct": 2.212,
+      "positivePct": 91.7,
+      "minPct": -9.632,
+      "maxPct": 7.536,
+      "p25Pct": 0.512,
+      "p75Pct": 5.556,
+      "allWindowMeanPct": 0.408,
+      "vsUnconditionalPct": 1.976
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "美債殖利率",
+      "horizon": "20D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 5.602,
+      "medianPct": 4.85,
+      "positivePct": 75.0,
+      "minPct": -13.697,
+      "maxPct": 22.806,
+      "p25Pct": -0.137,
+      "p75Pct": 13.606,
+      "allWindowMeanPct": 1.552,
+      "vsUnconditionalPct": 4.05
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "銅",
+      "horizon": "1D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.02,
+      "medianPct": -0.399,
+      "positivePct": 41.7,
+      "minPct": -2.89,
+      "maxPct": 2.41,
+      "p25Pct": -1.332,
+      "p75Pct": 1.327,
+      "allWindowMeanPct": 0.043,
+      "vsUnconditionalPct": -0.023
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "銅",
+      "horizon": "5D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": -0.388,
+      "medianPct": -0.855,
+      "positivePct": 41.7,
+      "minPct": -9.814,
+      "maxPct": 6.732,
+      "p25Pct": -2.68,
+      "p75Pct": 1.166,
+      "allWindowMeanPct": 0.209,
+      "vsUnconditionalPct": -0.597
+    },
+    {
+      "group": "FOMC:升息",
+      "asset": "銅",
+      "horizon": "20D",
+      "n": 12,
+      "status": "descriptive",
+      "meanPct": 0.06,
+      "medianPct": 0.968,
+      "positivePct": 50.0,
+      "minPct": -22.387,
+      "maxPct": 8.8,
+      "p25Pct": -3.262,
+      "p75Pct": 5.21,
+      "allWindowMeanPct": 0.812,
+      "vsUnconditionalPct": -0.752
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "美股S&P500",
+      "horizon": "1D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": -0.32,
+      "medianPct": -0.051,
+      "positivePct": 33.3,
+      "minPct": -2.949,
+      "maxPct": 0.743,
+      "p25Pct": -0.29,
+      "p75Pct": -0.004,
+      "allWindowMeanPct": 0.053,
+      "vsUnconditionalPct": -0.373
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "美股S&P500",
+      "horizon": "5D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.16,
+      "medianPct": 0.292,
+      "positivePct": 50.0,
+      "minPct": -1.732,
+      "maxPct": 1.746,
+      "p25Pct": -0.588,
+      "p75Pct": 0.759,
+      "allWindowMeanPct": 0.256,
+      "vsUnconditionalPct": -0.096
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "美股S&P500",
+      "horizon": "20D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.786,
+      "medianPct": 0.876,
+      "positivePct": 66.7,
+      "minPct": -1.814,
+      "maxPct": 3.207,
+      "p25Pct": -0.892,
+      "p75Pct": 1.183,
+      "allWindowMeanPct": 1.023,
+      "vsUnconditionalPct": -0.237
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "NASDAQ",
+      "horizon": "1D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": -0.302,
+      "medianPct": 0.009,
+      "positivePct": 50.0,
+      "minPct": -3.562,
+      "maxPct": 1.506,
+      "p25Pct": -0.325,
+      "p75Pct": 0.329,
+      "allWindowMeanPct": 0.065,
+      "vsUnconditionalPct": -0.367
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "NASDAQ",
+      "horizon": "5D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.09,
+      "medianPct": 0.342,
+      "positivePct": 50.0,
+      "minPct": -2.01,
+      "maxPct": 2.533,
+      "p25Pct": -1.972,
+      "p75Pct": 1.072,
+      "allWindowMeanPct": 0.309,
+      "vsUnconditionalPct": -0.22
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "NASDAQ",
+      "horizon": "20D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.393,
+      "medianPct": 0.216,
+      "positivePct": 50.0,
+      "minPct": -3.365,
+      "maxPct": 3.9,
+      "p25Pct": -2.381,
+      "p75Pct": 0.841,
+      "allWindowMeanPct": 1.256,
+      "vsUnconditionalPct": -0.863
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "台股",
+      "horizon": "1D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.205,
+      "medianPct": 0.297,
+      "positivePct": 50.0,
+      "minPct": -1.324,
+      "maxPct": 1.678,
+      "p25Pct": -1.02,
+      "p75Pct": 0.62,
+      "allWindowMeanPct": 0.085,
+      "vsUnconditionalPct": 0.12
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "台股",
+      "horizon": "5D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.019,
+      "medianPct": -0.91,
+      "positivePct": 50.0,
+      "minPct": -3.083,
+      "maxPct": 4.995,
+      "p25Pct": -2.962,
+      "p75Pct": 0.222,
+      "allWindowMeanPct": 0.448,
+      "vsUnconditionalPct": -0.429
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "台股",
+      "horizon": "20D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 3.29,
+      "medianPct": 3.023,
+      "positivePct": 50.0,
+      "minPct": -3.128,
+      "maxPct": 8.846,
+      "p25Pct": -0.62,
+      "p75Pct": 6.649,
+      "allWindowMeanPct": 1.958,
+      "vsUnconditionalPct": 1.332
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "黃金",
+      "horizon": "1D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": -0.014,
+      "medianPct": -0.013,
+      "positivePct": 50.0,
+      "minPct": -1.704,
+      "maxPct": 2.09,
+      "p25Pct": -1.062,
+      "p75Pct": 0.38,
+      "allWindowMeanPct": 0.071,
+      "vsUnconditionalPct": -0.086
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "黃金",
+      "horizon": "5D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.519,
+      "medianPct": 0.688,
+      "positivePct": 66.7,
+      "minPct": -4.912,
+      "maxPct": 3.532,
+      "p25Pct": -0.195,
+      "p75Pct": 1.353,
+      "allWindowMeanPct": 0.351,
+      "vsUnconditionalPct": 0.167
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "黃金",
+      "horizon": "20D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 4.853,
+      "medianPct": 3.854,
+      "positivePct": 83.3,
+      "minPct": -1.707,
+      "maxPct": 13.013,
+      "p25Pct": 3.567,
+      "p75Pct": 4.112,
+      "allWindowMeanPct": 1.431,
+      "vsUnconditionalPct": 3.422
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "白銀",
+      "horizon": "1D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.7,
+      "medianPct": 0.723,
+      "positivePct": 50.0,
+      "minPct": -4.327,
+      "maxPct": 5.88,
+      "p25Pct": -1.278,
+      "p75Pct": 1.482,
+      "allWindowMeanPct": 0.095,
+      "vsUnconditionalPct": 0.605
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "白銀",
+      "horizon": "5D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 2.374,
+      "medianPct": 2.385,
+      "positivePct": 66.7,
+      "minPct": -3.957,
+      "maxPct": 9.702,
+      "p25Pct": -1.194,
+      "p75Pct": 4.473,
+      "allWindowMeanPct": 0.461,
+      "vsUnconditionalPct": 1.913
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "白銀",
+      "horizon": "20D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 11.43,
+      "medianPct": 7.782,
+      "positivePct": 83.3,
+      "minPct": -1.823,
+      "maxPct": 30.648,
+      "p25Pct": 1.779,
+      "p75Pct": 10.886,
+      "allWindowMeanPct": 1.892,
+      "vsUnconditionalPct": 9.538
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "WTI原油",
+      "horizon": "1D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": -0.715,
+      "medianPct": -0.849,
+      "positivePct": 33.3,
+      "minPct": -2.736,
+      "maxPct": 1.467,
+      "p25Pct": -1.471,
+      "p75Pct": -0.749,
+      "allWindowMeanPct": 0.029,
+      "vsUnconditionalPct": -0.744
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "WTI原油",
+      "horizon": "5D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": -2.073,
+      "medianPct": -1.588,
+      "positivePct": 16.7,
+      "minPct": -5.058,
+      "maxPct": 1.468,
+      "p25Pct": -4.311,
+      "p75Pct": -1.455,
+      "allWindowMeanPct": 0.116,
+      "vsUnconditionalPct": -2.189
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "WTI原油",
+      "horizon": "20D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": -1.407,
+      "medianPct": -1.88,
+      "positivePct": 33.3,
+      "minPct": -9.024,
+      "maxPct": 10.343,
+      "p25Pct": -7.131,
+      "p75Pct": -0.733,
+      "allWindowMeanPct": 0.403,
+      "vsUnconditionalPct": -1.81
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "美元",
+      "horizon": "1D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.199,
+      "medianPct": 0.332,
+      "positivePct": 83.3,
+      "minPct": -0.445,
+      "maxPct": 0.495,
+      "p25Pct": 0.01,
+      "p75Pct": 0.352,
+      "allWindowMeanPct": 0.004,
+      "vsUnconditionalPct": 0.195
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "美元",
+      "horizon": "5D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.679,
+      "medianPct": 0.653,
+      "positivePct": 83.3,
+      "minPct": -0.425,
+      "maxPct": 2.067,
+      "p25Pct": 0.093,
+      "p75Pct": 0.988,
+      "allWindowMeanPct": 0.019,
+      "vsUnconditionalPct": 0.66
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "美元",
+      "horizon": "20D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 1.383,
+      "medianPct": 1.309,
+      "positivePct": 100.0,
+      "minPct": 0.344,
+      "maxPct": 2.972,
+      "p25Pct": 0.383,
+      "p75Pct": 1.397,
+      "allWindowMeanPct": 0.074,
+      "vsUnconditionalPct": 1.309
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "美債殖利率",
+      "horizon": "1D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.562,
+      "medianPct": 0.775,
+      "positivePct": 66.7,
+      "minPct": -0.806,
+      "maxPct": 1.691,
+      "p25Pct": -0.552,
+      "p75Pct": 0.863,
+      "allWindowMeanPct": 0.083,
+      "vsUnconditionalPct": 0.479
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "美債殖利率",
+      "horizon": "5D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 1.69,
+      "medianPct": 1.833,
+      "positivePct": 83.3,
+      "minPct": -0.312,
+      "maxPct": 2.605,
+      "p25Pct": 1.742,
+      "p75Pct": 1.891,
+      "allWindowMeanPct": 0.408,
+      "vsUnconditionalPct": 1.282
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "美債殖利率",
+      "horizon": "20D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 0.723,
+      "medianPct": -0.284,
+      "positivePct": 50.0,
+      "minPct": -4.377,
+      "maxPct": 8.982,
+      "p25Pct": -1.479,
+      "p75Pct": 0.168,
+      "allWindowMeanPct": 1.552,
+      "vsUnconditionalPct": -0.829
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "銅",
+      "horizon": "1D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": -0.727,
+      "medianPct": -1.298,
+      "positivePct": 33.3,
+      "minPct": -2.971,
+      "maxPct": 2.872,
+      "p25Pct": -2.8,
+      "p75Pct": -0.656,
+      "allWindowMeanPct": 0.043,
+      "vsUnconditionalPct": -0.77
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "銅",
+      "horizon": "5D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": -0.562,
+      "medianPct": 0.493,
+      "positivePct": 50.0,
+      "minPct": -7.642,
+      "maxPct": 4.483,
+      "p25Pct": -5.169,
+      "p75Pct": 1.668,
+      "allWindowMeanPct": 0.209,
+      "vsUnconditionalPct": -0.771
+    },
+    {
+      "group": "FOMC:降息",
+      "asset": "銅",
+      "horizon": "20D",
+      "n": 6,
+      "status": "descriptive",
+      "meanPct": 3.191,
+      "medianPct": 3.999,
+      "positivePct": 66.7,
+      "minPct": -6.157,
+      "maxPct": 10.994,
+      "p25Pct": -2.465,
+      "p75Pct": 5.793,
+      "allWindowMeanPct": 0.812,
+      "vsUnconditionalPct": 2.379
+    }
+  ],
+  "events": [
+    {
+      "id": "fomc-2022-03-16",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2022-03-16",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2022-03-17",
+      "bps": 25,
+      "title": "FOMC 升息 25bps（生效日 2022-03-17）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2022-03-15",
+          "firstEligibleDate": "2022-03-16",
+          "results": {
+            "1D": 2.2384,
+            "5D": 5.8455,
+            "20D": 3.1672
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2022-03-15",
+          "firstEligibleDate": "2022-03-16",
+          "results": {
+            "1D": 3.7682,
+            "5D": 8.96,
+            "20D": 3.2664
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2022-03-16",
+          "firstEligibleDate": "2022-03-17",
+          "results": {
+            "1D": 2.9951,
+            "5D": 4.6665,
+            "20D": 0.3739
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2022-03-16",
+          "firstEligibleDate": "2022-03-17",
+          "results": {
+            "1D": 1.7809,
+            "5D": 1.4718,
+            "20D": 3.9545
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2022-03-16",
+          "firstEligibleDate": "2022-03-17",
+          "results": {
+            "1D": 3.7049,
+            "5D": 2.0268,
+            "20D": 5.4722
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2022-03-16",
+          "firstEligibleDate": "2022-03-17",
+          "results": {
+            "1D": 8.3544,
+            "5D": 20.928,
+            "20D": 9.6907
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2022-03-16",
+          "firstEligibleDate": "2022-03-17",
+          "results": {
+            "1D": -0.3761,
+            "5D": 0.244,
+            "20D": 1.5247
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2022-03-16",
+          "firstEligibleDate": "2022-03-17",
+          "results": {
+            "1D": 0.1828,
+            "5D": 6.0786,
+            "20D": 22.8062
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2022-03-16",
+          "firstEligibleDate": "2022-03-17",
+          "results": {
+            "1D": 2.2341,
+            "5D": 3.8034,
+            "20D": 2.5937
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2022-05-04",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2022-05-04",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2022-05-05",
+      "bps": 50,
+      "title": "FOMC 升息 50bps（生效日 2022-05-05）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2022-05-03",
+          "firstEligibleDate": "2022-05-04",
+          "results": {
+            "1D": 2.9862,
+            "5D": -4.1775,
+            "20D": -1.7782
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2022-05-03",
+          "firstEligibleDate": "2022-05-04",
+          "results": {
+            "1D": 3.1925,
+            "5D": -6.5752,
+            "20D": -4.5313
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2022-05-04",
+          "firstEligibleDate": "2022-05-05",
+          "results": {
+            "1D": 0.7865,
+            "5D": -3.3779,
+            "20D": 0.6595
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2022-05-04",
+          "firstEligibleDate": "2022-05-05",
+          "results": {
+            "1D": 0.3692,
+            "5D": -0.808,
+            "20D": 0.1391
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2022-05-04",
+          "firstEligibleDate": "2022-05-05",
+          "results": {
+            "1D": 0.1699,
+            "5D": -3.6312,
+            "20D": -0.483
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2022-05-04",
+          "firstEligibleDate": "2022-05-05",
+          "results": {
+            "1D": 0.4174,
+            "5D": -1.9479,
+            "20D": 8.4037
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2022-05-04",
+          "firstEligibleDate": "2022-05-05",
+          "results": {
+            "1D": 1.1307,
+            "5D": 1.2282,
+            "20D": -0.7993
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2022-05-04",
+          "firstEligibleDate": "2022-05-05",
+          "results": {
+            "1D": 5.108,
+            "5D": 0.1371,
+            "20D": -0.1371
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2022-05-04",
+          "firstEligibleDate": "2022-05-05",
+          "results": {
+            "1D": -1.005,
+            "5D": -2.6799,
+            "20D": 5.2097
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2022-06-15",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2022-06-15",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2022-06-16",
+      "bps": 75,
+      "title": "FOMC 升息 75bps（生效日 2022-06-16）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2022-06-14",
+          "firstEligibleDate": "2022-06-15",
+          "results": {
+            "1D": 1.4593,
+            "5D": 0.6535,
+            "20D": 1.4697
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2022-06-14",
+          "firstEligibleDate": "2022-06-15",
+          "results": {
+            "1D": 2.5009,
+            "5D": 2.0754,
+            "20D": 3.9049
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2022-06-15",
+          "firstEligibleDate": "2022-06-16",
+          "results": {
+            "1D": -1.004,
+            "5D": -4.0721,
+            "20D": -10.4666
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2022-06-15",
+          "firstEligibleDate": "2022-06-16",
+          "results": {
+            "1D": 1.6652,
+            "5D": 0.5606,
+            "20D": -6.375
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2022-06-15",
+          "firstEligibleDate": "2022-06-16",
+          "results": {
+            "1D": 2.1727,
+            "5D": -1.7288,
+            "20D": -13.3352
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2022-06-15",
+          "firstEligibleDate": "2022-06-16",
+          "results": {
+            "1D": 1.9773,
+            "5D": -9.5742,
+            "20D": -15.3673
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2022-06-15",
+          "firstEligibleDate": "2022-06-16",
+          "results": {
+            "1D": -1.4549,
+            "5D": -0.6942,
+            "20D": 2.7577
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2022-06-15",
+          "firstEligibleDate": "2022-06-16",
+          "results": {
+            "1D": -2.592,
+            "5D": -9.6318,
+            "20D": -13.6966
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2022-06-15",
+          "firstEligibleDate": "2022-06-16",
+          "results": {
+            "1D": -1.3317,
+            "5D": -9.814,
+            "20D": -22.3875
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2022-07-27",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2022-07-27",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2022-07-28",
+      "bps": 75,
+      "title": "FOMC 升息 75bps（生效日 2022-07-28）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2022-07-26",
+          "firstEligibleDate": "2022-07-27",
+          "results": {
+            "1D": 2.6156,
+            "5D": 4.3391,
+            "20D": 5.2965
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2022-07-26",
+          "firstEligibleDate": "2022-07-27",
+          "results": {
+            "1D": 4.0635,
+            "5D": 6.7994,
+            "20D": 7.0809
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2022-07-27",
+          "firstEligibleDate": "2022-07-28",
+          "results": {
+            "1D": -0.199,
+            "5D": -0.9689,
+            "20D": 0.9892
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2022-07-27",
+          "firstEligibleDate": "2022-07-28",
+          "results": {
+            "1D": 1.8149,
+            "5D": 3.3331,
+            "20D": 2.4664
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2022-07-27",
+          "firstEligibleDate": "2022-07-28",
+          "results": {
+            "1D": 6.8668,
+            "5D": 7.0716,
+            "20D": 1.8434
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2022-07-27",
+          "firstEligibleDate": "2022-07-28",
+          "results": {
+            "1D": -0.8637,
+            "5D": -6.7859,
+            "20D": -2.4368
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2022-07-27",
+          "firstEligibleDate": "2022-07-28",
+          "results": {
+            "1D": -0.0939,
+            "5D": 0.0564,
+            "20D": 2.0949
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2022-07-27",
+          "firstEligibleDate": "2022-07-28",
+          "results": {
+            "1D": -1.9386,
+            "5D": 0.5121,
+            "20D": 13.6064
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2022-07-27",
+          "firstEligibleDate": "2022-07-28",
+          "results": {
+            "1D": 1.3267,
+            "5D": 1.1663,
+            "20D": 6.7357
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2022-09-21",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2022-09-21",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2022-09-22",
+      "bps": 75,
+      "title": "FOMC 升息 75bps（生效日 2022-09-22）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2022-09-20",
+          "firstEligibleDate": "2022-09-21",
+          "results": {
+            "1D": -1.7116,
+            "5D": -5.4109,
+            "20D": -3.5257
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2022-09-20",
+          "firstEligibleDate": "2022-09-21",
+          "results": {
+            "1D": -1.7931,
+            "5D": -5.2127,
+            "20D": -5.7124
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2022-09-21",
+          "firstEligibleDate": "2022-09-22",
+          "results": {
+            "1D": -0.9698,
+            "5D": -6.6446,
+            "20D": -10.2494
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2022-09-21",
+          "firstEligibleDate": "2022-09-22",
+          "results": {
+            "1D": 0.3223,
+            "5D": -0.3402,
+            "20D": -2.4766
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2022-09-21",
+          "firstEligibleDate": "2022-09-22",
+          "results": {
+            "1D": 0.7058,
+            "5D": -3.1683,
+            "20D": -5.5381
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2022-09-21",
+          "firstEligibleDate": "2022-09-22",
+          "results": {
+            "1D": 0.6631,
+            "5D": -0.9525,
+            "20D": 3.1469
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2022-09-21",
+          "firstEligibleDate": "2022-09-22",
+          "results": {
+            "1D": 0.6417,
+            "5D": 1.7715,
+            "20D": 2.115
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2022-09-21",
+          "firstEligibleDate": "2022-09-22",
+          "results": {
+            "1D": 5.641,
+            "5D": 5.5556,
+            "20D": 17.5783
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2022-09-21",
+          "firstEligibleDate": "2022-09-22",
+          "results": {
+            "1D": -0.3844,
+            "5D": -3.7016,
+            "20D": -4.3138
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2022-11-02",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2022-11-02",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2022-11-03",
+      "bps": 75,
+      "title": "FOMC 升息 75bps（生效日 2022-11-03）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2022-11-01",
+          "firstEligibleDate": "2022-11-02",
+          "results": {
+            "1D": -2.5002,
+            "5D": -0.7259,
+            "20D": 5.8092
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2022-11-01",
+          "firstEligibleDate": "2022-11-02",
+          "results": {
+            "1D": -3.3611,
+            "5D": -2.5218,
+            "20D": 5.2994
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2022-11-02",
+          "firstEligibleDate": "2022-11-03",
+          "results": {
+            "1D": -0.8669,
+            "5D": 4.1117,
+            "20D": 13.5829
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2022-11-02",
+          "firstEligibleDate": "2022-11-03",
+          "results": {
+            "1D": -1.1576,
+            "5D": 3.8606,
+            "20D": 10.0121
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2022-11-02",
+          "firstEligibleDate": "2022-11-03",
+          "results": {
+            "1D": -0.8367,
+            "5D": 8.6633,
+            "20D": 15.4949
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2022-11-02",
+          "firstEligibleDate": "2022-11-03",
+          "results": {
+            "1D": -2.0333,
+            "5D": -4.6333,
+            "20D": -9.7556
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2022-11-02",
+          "firstEligibleDate": "2022-11-03",
+          "results": {
+            "1D": 1.419,
+            "5D": -0.7185,
+            "20D": -5.9452
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2022-11-02",
+          "firstEligibleDate": "2022-11-03",
+          "results": {
+            "1D": 1.6014,
+            "5D": 2.2666,
+            "20D": -13.0574
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2022-11-02",
+          "firstEligibleDate": "2022-11-03",
+          "results": {
+            "1D": -1.3978,
+            "5D": 6.7323,
+            "20D": 8.8005
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2022-12-14",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2022-12-14",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2022-12-15",
+      "bps": 50,
+      "title": "FOMC 升息 50bps（生效日 2022-12-15）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2022-12-13",
+          "firstEligibleDate": "2022-12-14",
+          "results": {
+            "1D": -0.6053,
+            "5D": -4.9265,
+            "20D": -0.9075
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2022-12-13",
+          "firstEligibleDate": "2022-12-14",
+          "results": {
+            "1D": -0.7633,
+            "5D": -6.3046,
+            "20D": -2.2716
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2022-12-14",
+          "firstEligibleDate": "2022-12-15",
+          "results": {
+            "1D": -0.0355,
+            "5D": -3.4259,
+            "20D": -0.0524
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2022-12-14",
+          "firstEligibleDate": "2022-12-15",
+          "results": {
+            "1D": -1.699,
+            "5D": 0.3684,
+            "20D": 5.6634
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2022-12-14",
+          "firstEligibleDate": "2022-12-15",
+          "results": {
+            "1D": -3.416,
+            "5D": 0.3717,
+            "20D": 1.1902
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2022-12-14",
+          "firstEligibleDate": "2022-12-15",
+          "results": {
+            "1D": -1.514,
+            "5D": 1.3069,
+            "20D": 3.3385
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2022-12-14",
+          "firstEligibleDate": "2022-12-15",
+          "results": {
+            "1D": 0.7613,
+            "5D": 0.3758,
+            "20D": -1.513
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2022-12-14",
+          "firstEligibleDate": "2022-12-15",
+          "results": {
+            "1D": -1.513,
+            "5D": 5.167,
+            "20D": 0.2284
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2022-12-14",
+          "firstEligibleDate": "2022-12-15",
+          "results": {
+            "1D": -2.8903,
+            "5D": -1.7806,
+            "20D": 8.5806
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2023-02-01",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2023-02-01",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2023-02-02",
+      "bps": 25,
+      "title": "FOMC 升息 25bps（生效日 2023-02-02）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2023-01-31",
+          "firstEligibleDate": "2023-02-01",
+          "results": {
+            "1D": 1.0452,
+            "5D": 2.1439,
+            "20D": -3.0714
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2023-01-31",
+          "firstEligibleDate": "2023-02-01",
+          "results": {
+            "1D": 2.0007,
+            "5D": 4.5685,
+            "20D": -1.7702
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2023-02-01",
+          "firstEligibleDate": "2023-02-02",
+          "results": {
+            "1D": 1.1351,
+            "5D": 1.2843,
+            "20D": 1.2211
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2023-02-01",
+          "firstEligibleDate": "2023-02-02",
+          "results": {
+            "1D": -0.6177,
+            "5D": -2.6817,
+            "20D": -5.2656
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2023-02-01",
+          "firstEligibleDate": "2023-02-02",
+          "results": {
+            "1D": 0.0553,
+            "5D": -4.9063,
+            "20D": -11.7129
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2023-02-01",
+          "firstEligibleDate": "2023-02-02",
+          "results": {
+            "1D": -0.6936,
+            "5D": 2.696,
+            "20D": 2.2903
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2023-02-01",
+          "firstEligibleDate": "2023-02-02",
+          "results": {
+            "1D": 0.5236,
+            "5D": 2.1636,
+            "20D": 3.7641
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2023-02-01",
+          "firstEligibleDate": "2023-02-02",
+          "results": {
+            "1D": -0.0294,
+            "5D": 7.5361,
+            "20D": 19.8999
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2023-02-01",
+          "firstEligibleDate": "2023-02-02",
+          "results": {
+            "1D": -0.4135,
+            "5D": -1.6419,
+            "20D": -0.6568
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2023-03-22",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2023-03-22",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2023-03-23",
+      "bps": 25,
+      "title": "FOMC 升息 25bps（生效日 2023-03-23）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2023-03-21",
+          "firstEligibleDate": "2023-03-22",
+          "results": {
+            "1D": -1.6463,
+            "5D": -0.7894,
+            "20D": 3.7885
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2023-03-21",
+          "firstEligibleDate": "2023-03-22",
+          "results": {
+            "1D": -1.6033,
+            "5D": -1.2144,
+            "20D": 2.5052
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2023-03-22",
+          "firstEligibleDate": "2023-03-23",
+          "results": {
+            "1D": 0.6566,
+            "5D": 0.059,
+            "20D": -0.8476
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2023-03-22",
+          "firstEligibleDate": "2023-03-23",
+          "results": {
+            "1D": 2.3748,
+            "5D": 0.8874,
+            "20D": 3.5648
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2023-03-22",
+          "firstEligibleDate": "2023-03-23",
+          "results": {
+            "1D": 2.0684,
+            "5D": 3.0915,
+            "20D": 11.8765
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2023-03-22",
+          "firstEligibleDate": "2023-03-23",
+          "results": {
+            "1D": -1.3258,
+            "5D": 2.9196,
+            "20D": 9.0127
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2023-03-22",
+          "firstEligibleDate": "2023-03-23",
+          "results": {
+            "1D": 0.1759,
+            "5D": 0.2833,
+            "20D": -0.4983
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2023-03-22",
+          "firstEligibleDate": "2023-03-23",
+          "results": {
+            "1D": -2.6857,
+            "5D": 1.8857,
+            "20D": 1.2857
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2023-03-22",
+          "firstEligibleDate": "2023-03-23",
+          "results": {
+            "1D": 1.9049,
+            "5D": 1.1429,
+            "20D": -1.1429
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2023-05-03",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2023-05-03",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2023-05-04",
+      "bps": 25,
+      "title": "FOMC 升息 25bps（生效日 2023-05-04）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2023-05-02",
+          "firstEligibleDate": "2023-05-03",
+          "results": {
+            "1D": -0.6998,
+            "5D": -0.01,
+            "20D": 1.4625
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2023-05-02",
+          "firstEligibleDate": "2023-05-03",
+          "results": {
+            "1D": -0.4568,
+            "5D": 0.8198,
+            "20D": 7.0757
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2023-05-03",
+          "firstEligibleDate": "2023-05-04",
+          "results": {
+            "1D": 0.3576,
+            "5D": 0.568,
+            "20D": 6.5937
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2023-05-03",
+          "firstEligibleDate": "2023-05-04",
+          "results": {
+            "1D": 0.918,
+            "5D": 0.0049,
+            "20D": -2.0373
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2023-05-03",
+          "firstEligibleDate": "2023-05-04",
+          "results": {
+            "1D": 2.1942,
+            "5D": -0.0589,
+            "20D": -6.2843
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2023-05-03",
+          "firstEligibleDate": "2023-05-04",
+          "results": {
+            "1D": -0.0583,
+            "5D": 5.7726,
+            "20D": 2.1866
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2023-05-03",
+          "firstEligibleDate": "2023-05-04",
+          "results": {
+            "1D": 0.0592,
+            "5D": 0.1382,
+            "20D": 2.1906
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2023-05-03",
+          "firstEligibleDate": "2023-05-04",
+          "results": {
+            "1D": -1.5281,
+            "5D": 1.0579,
+            "20D": 6.0241
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2023-05-03",
+          "firstEligibleDate": "2023-05-04",
+          "results": {
+            "1D": 0.4828,
+            "5D": -0.0913,
+            "20D": -3.2624
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "opec-2023-06-04",
+      "category": "OPEC",
+      "subtype": "政策會議",
+      "date": "2023-06-04",
+      "timezone": "Etc/UTC",
+      "localTime": null,
+      "timeAccuracy": "date_only",
+      "title": "OPEC+ 第 35 屆部長級會議及產量政策調整",
+      "source": "OPEC",
+      "sourceUrl": "https://www.opec.org/assets/assetdb/asb-2025.pdf",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2023-06-02",
+          "firstEligibleDate": "2023-06-05",
+          "results": {
+            "1D": -0.2004,
+            "5D": 0.3851,
+            "20D": 4.0449
+          },
+          "method": "next_local_date_proxy"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2023-06-02",
+          "firstEligibleDate": "2023-06-05",
+          "results": {
+            "1D": -0.0856,
+            "5D": 0.1387,
+            "20D": 4.3502
+          },
+          "method": "next_local_date_proxy"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2023-06-02",
+          "firstEligibleDate": "2023-06-05",
+          "results": {
+            "1D": 0.045,
+            "5D": 1.0743,
+            "20D": 2.5969
+          },
+          "method": "next_local_date_proxy"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2023-06-02",
+          "firstEligibleDate": "2023-06-05",
+          "results": {
+            "1D": 0.2386,
+            "5D": 0.3859,
+            "20D": -2.0359
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2023-06-02",
+          "firstEligibleDate": "2023-06-05",
+          "results": {
+            "1D": -0.461,
+            "5D": 2.9226,
+            "20D": -3.1595
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2023-06-02",
+          "firstEligibleDate": "2023-06-05",
+          "results": {
+            "1D": 0.5715,
+            "5D": -2.1885,
+            "20D": -2.7181
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2023-06-02",
+          "firstEligibleDate": "2023-06-05",
+          "results": {
+            "1D": -0.0192,
+            "5D": -0.4422,
+            "20D": -0.9902
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2023-06-02",
+          "firstEligibleDate": "2023-06-05",
+          "results": {
+            "1D": 0.0542,
+            "5D": 1.463,
+            "20D": 4.5245
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2023-06-02",
+          "firstEligibleDate": "2023-06-05",
+          "results": {
+            "1D": 1.0745,
+            "5D": 1.7864,
+            "20D": 1.5178
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2023-07-26",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2023-07-26",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2023-07-27",
+      "bps": 25,
+      "title": "FOMC 升息 25bps（生效日 2023-07-27）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2023-07-25",
+          "firstEligibleDate": "2023-07-26",
+          "results": {
+            "1D": -0.0155,
+            "5D": 0.203,
+            "20D": -3.939
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2023-07-25",
+          "firstEligibleDate": "2023-07-26",
+          "results": {
+            "1D": -0.1222,
+            "5D": 0.9852,
+            "20D": -4.5154
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2023-07-26",
+          "firstEligibleDate": "2023-07-27",
+          "results": {
+            "1D": 0.4619,
+            "5D": -1.5663,
+            "20D": -2.2822
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2023-07-26",
+          "firstEligibleDate": "2023-07-27",
+          "results": {
+            "1D": -1.2385,
+            "5D": 0.2487,
+            "20D": -1.1167
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2023-07-26",
+          "firstEligibleDate": "2023-07-27",
+          "results": {
+            "1D": -2.3726,
+            "5D": -4.3142,
+            "20D": -1.861
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2023-07-26",
+          "firstEligibleDate": "2023-07-27",
+          "results": {
+            "1D": 1.6629,
+            "5D": 0.9012,
+            "20D": 0.1396
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2023-07-26",
+          "firstEligibleDate": "2023-07-27",
+          "results": {
+            "1D": 0.8722,
+            "5D": 1.685,
+            "20D": 2.4482
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2023-07-26",
+          "firstEligibleDate": "2023-07-27",
+          "results": {
+            "1D": 4.1807,
+            "5D": 5.8946,
+            "20D": 9.0106
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2023-07-26",
+          "firstEligibleDate": "2023-07-27",
+          "results": {
+            "1D": -0.694,
+            "5D": -1.6193,
+            "20D": -2.2362
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "opec-2023-11-30",
+      "category": "OPEC",
+      "subtype": "政策會議",
+      "date": "2023-11-30",
+      "timezone": "Etc/UTC",
+      "localTime": null,
+      "timeAccuracy": "date_only",
+      "title": "OPEC+ 第 36 屆部長級會議及產量目標評估",
+      "source": "OPEC",
+      "sourceUrl": "https://www.opec.org/assets/assetdb/asb-2025.pdf",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2023-11-30",
+          "firstEligibleDate": "2023-12-01",
+          "results": {
+            "1D": 0.5874,
+            "5D": 0.3895,
+            "20D": 4.4229
+          },
+          "method": "next_local_date_proxy"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2023-11-30",
+          "firstEligibleDate": "2023-12-01",
+          "results": {
+            "1D": 0.554,
+            "5D": 0.7997,
+            "20D": 5.5189
+          },
+          "method": "next_local_date_proxy"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2023-11-30",
+          "firstEligibleDate": "2023-12-01",
+          "results": {
+            "1D": 0.0258,
+            "5D": -0.8897,
+            "20D": 2.7333
+          },
+          "method": "next_local_date_proxy"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2023-11-30",
+          "firstEligibleDate": "2023-12-01",
+          "results": {
+            "1D": 2.5318,
+            "5D": 0.4072,
+            "20D": 1.6535
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2023-11-30",
+          "firstEligibleDate": "2023-12-01",
+          "results": {
+            "1D": 0.8145,
+            "5D": -6.1717,
+            "20D": -5.6933
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2023-11-30",
+          "firstEligibleDate": "2023-12-01",
+          "results": {
+            "1D": -2.4882,
+            "5D": -8.7151,
+            "20D": -5.674
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2023-11-30",
+          "firstEligibleDate": "2023-12-01",
+          "results": {
+            "1D": -0.2222,
+            "5D": 0.0386,
+            "20D": -2.0966
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2023-11-30",
+          "firstEligibleDate": "2023-12-01",
+          "results": {
+            "1D": -2.8952,
+            "5D": -5.1241,
+            "20D": -11.1673
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2023-11-30",
+          "firstEligibleDate": "2023-12-01",
+          "results": {
+            "1D": 2.0893,
+            "5D": -1.1622,
+            "20D": 1.345
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2024-02-13",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2024-02-13",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://www.bls.gov/news.release/archives/cpi_02132024.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2024-02-12",
+          "firstEligibleDate": "2024-02-13",
+          "results": {
+            "1D": -1.3674,
+            "5D": -0.9226,
+            "20D": 3.0553
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2024-02-12",
+          "firstEligibleDate": "2024-02-13",
+          "results": {
+            "1D": -1.7999,
+            "5D": -1.9556,
+            "20D": 2.0266
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2024-02-05",
+          "firstEligibleDate": "2024-02-15",
+          "results": {
+            "1D": 3.031,
+            "5D": 3.2064,
+            "20D": 10.1782
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2024-02-13",
+          "firstEligibleDate": "2024-02-14",
+          "results": {
+            "1D": -0.1445,
+            "5D": 1.3501,
+            "20D": 8.6489
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2024-02-13",
+          "firstEligibleDate": "2024-02-14",
+          "results": {
+            "1D": 1.0635,
+            "5D": 3.4169,
+            "20D": 12.9571
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2024-02-13",
+          "firstEligibleDate": "2024-02-14",
+          "results": {
+            "1D": -1.5796,
+            "5D": 0.0514,
+            "20D": 2.3758
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2024-02-13",
+          "firstEligibleDate": "2024-02-14",
+          "results": {
+            "1D": -0.2287,
+            "5D": -0.9051,
+            "20D": -2.0675
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2024-02-13",
+          "firstEligibleDate": "2024-02-14",
+          "results": {
+            "1D": -1.1353,
+            "5D": 0.2085,
+            "20D": -2.873
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2024-02-13",
+          "firstEligibleDate": "2024-02-14",
+          "results": {
+            "1D": -0.3635,
+            "5D": 4.3215,
+            "20D": 9.1142
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2024-03-12",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2024-03-12",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://www.bls.gov/news.release/archives/cpi_02132024.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2024-03-11",
+          "firstEligibleDate": "2024-03-12",
+          "results": {
+            "1D": 1.1202,
+            "5D": 0.6151,
+            "20D": 1.797
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2024-03-11",
+          "firstEligibleDate": "2024-03-12",
+          "results": {
+            "1D": 1.538,
+            "5D": 0.5255,
+            "20D": 1.7939
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2024-03-12",
+          "firstEligibleDate": "2024-03-13",
+          "results": {
+            "1D": 0.0701,
+            "5D": -0.288,
+            "20D": 4.2113
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2024-03-12",
+          "firstEligibleDate": "2024-03-13",
+          "results": {
+            "1D": 0.6786,
+            "5D": -0.2955,
+            "20D": 8.416
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2024-03-12",
+          "firstEligibleDate": "2024-03-13",
+          "results": {
+            "1D": 3.1619,
+            "5D": 3.1826,
+            "20D": 15.57
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2024-03-12",
+          "firstEligibleDate": "2024-03-13",
+          "results": {
+            "1D": 2.7849,
+            "5D": 7.6199,
+            "20D": 11.1527
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2024-03-12",
+          "firstEligibleDate": "2024-03-13",
+          "results": {
+            "1D": -0.1651,
+            "5D": 0.8256,
+            "20D": 2.2242
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2024-03-12",
+          "firstEligibleDate": "2024-03-13",
+          "results": {
+            "1D": 0.8905,
+            "5D": 3.4176,
+            "20D": 9.7473
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2024-03-12",
+          "firstEligibleDate": "2024-03-13",
+          "results": {
+            "1D": 3.2484,
+            "5D": 3.4013,
+            "20D": 9.0955
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "opec-2024-06-02",
+      "category": "OPEC",
+      "subtype": "政策會議",
+      "date": "2024-06-02",
+      "timezone": "Etc/UTC",
+      "localTime": null,
+      "timeAccuracy": "date_only",
+      "title": "OPEC+ 第 37 屆部長級會議及自願減產退場規劃",
+      "source": "OPEC",
+      "sourceUrl": "https://www.opec.org/pr-detail/21-02-oct-2024.html",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2024-05-31",
+          "firstEligibleDate": "2024-06-03",
+          "results": {
+            "1D": 0.1116,
+            "5D": 1.3165,
+            "20D": 3.7438
+          },
+          "method": "next_local_date_proxy"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2024-05-31",
+          "firstEligibleDate": "2024-06-03",
+          "results": {
+            "1D": 0.5596,
+            "5D": 2.3789,
+            "20D": 6.8376
+          },
+          "method": "next_local_date_proxy"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2024-05-31",
+          "firstEligibleDate": "2024-06-03",
+          "results": {
+            "1D": 1.7122,
+            "5D": 3.2311,
+            "20D": 8.8993
+          },
+          "method": "next_local_date_proxy"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2024-05-31",
+          "firstEligibleDate": "2024-06-03",
+          "results": {
+            "1D": 1.9975,
+            "5D": 0.0904,
+            "20D": 0.6888
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2024-05-31",
+          "firstEligibleDate": "2024-06-03",
+          "results": {
+            "1D": 1.1354,
+            "5D": -3.1752,
+            "20D": -3.2908
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2024-05-31",
+          "firstEligibleDate": "2024-06-03",
+          "results": {
+            "1D": -3.5979,
+            "5D": -1.8963,
+            "20D": 8.2998
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2024-05-31",
+          "firstEligibleDate": "2024-06-03",
+          "results": {
+            "1D": -0.5064,
+            "5D": 0.2102,
+            "20D": 1.1751
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2024-05-31",
+          "firstEligibleDate": "2024-06-03",
+          "results": {
+            "1D": -2.4812,
+            "5D": -1.8609,
+            "20D": -0.7754
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2024-05-31",
+          "firstEligibleDate": "2024-06-03",
+          "results": {
+            "1D": 1.4534,
+            "5D": -2.5054,
+            "20D": -3.9805
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2024-09-18",
+      "category": "FOMC",
+      "subtype": "降息",
+      "date": "2024-09-18",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2024-09-19",
+      "bps": -50,
+      "title": "FOMC 降息 50bps（生效日 2024-09-19）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2024-09-17",
+          "firstEligibleDate": "2024-09-18",
+          "results": {
+            "1D": -0.2896,
+            "5D": 1.7455,
+            "20D": 3.2066
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2024-09-17",
+          "firstEligibleDate": "2024-09-18",
+          "results": {
+            "1D": -0.3106,
+            "5D": 2.5327,
+            "20D": 3.9002
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2024-09-18",
+          "firstEligibleDate": "2024-09-19",
+          "results": {
+            "1D": 1.6784,
+            "5D": 4.9945,
+            "20D": 8.5968
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2024-09-18",
+          "firstEligibleDate": "2024-09-19",
+          "results": {
+            "1D": 0.6157,
+            "5D": 3.3133,
+            "20D": 3.5673
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2024-09-18",
+          "firstEligibleDate": "2024-09-19",
+          "results": {
+            "1D": 2.4818,
+            "5D": 4.4725,
+            "20D": 4.6768
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2024-09-18",
+          "firstEligibleDate": "2024-09-19",
+          "results": {
+            "1D": 1.4666,
+            "5D": -1.7205,
+            "20D": -0.7333
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2024-09-18",
+          "firstEligibleDate": "2024-09-19",
+          "results": {
+            "1D": 0.0099,
+            "5D": 0.3181,
+            "20D": 2.9722
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2024-09-18",
+          "firstEligibleDate": "2024-09-19",
+          "results": {
+            "1D": 1.4925,
+            "5D": 2.6052,
+            "20D": 8.9824
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2024-09-18",
+          "firstEligibleDate": "2024-09-19",
+          "results": {
+            "1D": 1.1326,
+            "5D": 4.4832,
+            "20D": 2.2062
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "us-election-2024-11-05",
+      "category": "美國選舉",
+      "subtype": "總統選舉",
+      "date": "2024-11-05",
+      "timezone": "America/New_York",
+      "localTime": null,
+      "timeAccuracy": "date_only",
+      "title": "2024 美國總統／國會大選投票日",
+      "source": "U.S. Federal Election Commission",
+      "sourceUrl": "https://www.fec.gov/resources/cms-content/documents/2024presgeresults.pdf",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2024-11-05",
+          "firstEligibleDate": "2024-11-06",
+          "results": {
+            "1D": 2.5296,
+            "5D": 3.4798,
+            "20D": 5.2523
+          },
+          "method": "next_local_date_proxy"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2024-11-05",
+          "firstEligibleDate": "2024-11-06",
+          "results": {
+            "1D": 2.9519,
+            "5D": 4.5676,
+            "20D": 7.0282
+          },
+          "method": "next_local_date_proxy"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2024-11-05",
+          "firstEligibleDate": "2024-11-06",
+          "results": {
+            "1D": 0.4786,
+            "5D": -0.5411,
+            "20D": -0.3433
+          },
+          "method": "next_local_date_proxy"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2024-11-05",
+          "firstEligibleDate": "2024-11-06",
+          "results": {
+            "1D": -2.6694,
+            "5D": -5.2151,
+            "20D": -2.673
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2024-11-05",
+          "firstEligibleDate": "2024-11-06",
+          "results": {
+            "1D": -4.3914,
+            "5D": -6.0297,
+            "20D": -3.5217
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2024-11-05",
+          "firstEligibleDate": "2024-11-06",
+          "results": {
+            "1D": -0.4167,
+            "5D": -5.3757,
+            "20D": -4.7923
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2024-11-05",
+          "firstEligibleDate": "2024-11-06",
+          "results": {
+            "1D": 1.6148,
+            "5D": 2.514,
+            "20D": 2.8234
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2024-11-05",
+          "firstEligibleDate": "2024-11-06",
+          "results": {
+            "1D": 3.1942,
+            "5D": 3.3341,
+            "20D": -2.5414
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2024-11-05",
+          "firstEligibleDate": "2024-11-06",
+          "results": {
+            "1D": -5.123,
+            "5D": -7.4374,
+            "20D": -6.9318
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2024-11-07",
+      "category": "FOMC",
+      "subtype": "降息",
+      "date": "2024-11-07",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2024-11-08",
+      "bps": -25,
+      "title": "FOMC 降息 25bps（生效日 2024-11-08）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2024-11-06",
+          "firstEligibleDate": "2024-11-07",
+          "results": {
+            "1D": 0.7431,
+            "5D": 0.9502,
+            "20D": 2.4636
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2024-11-06",
+          "firstEligibleDate": "2024-11-07",
+          "results": {
+            "1D": 1.5065,
+            "5D": 1.3024,
+            "20D": 3.7759
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2024-11-07",
+          "firstEligibleDate": "2024-11-08",
+          "results": {
+            "1D": 0.6197,
+            "5D": -2.9623,
+            "20D": -0.6018
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2024-11-07",
+          "firstEligibleDate": "2024-11-08",
+          "results": {
+            "1D": -0.4065,
+            "5D": -4.9117,
+            "20D": -1.7074
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2024-11-07",
+          "firstEligibleDate": "2024-11-08",
+          "results": {
+            "1D": -1.2781,
+            "5D": -3.9572,
+            "20D": -1.8228
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2024-11-07",
+          "firstEligibleDate": "2024-11-08",
+          "results": {
+            "1D": -2.7363,
+            "5D": -5.058,
+            "20D": -7.131
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2024-11-07",
+          "firstEligibleDate": "2024-11-08",
+          "results": {
+            "1D": 0.4689,
+            "5D": 2.0668,
+            "20D": 1.397
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2024-11-07",
+          "firstEligibleDate": "2024-11-08",
+          "results": {
+            "1D": -0.8063,
+            "5D": 1.7738,
+            "20D": -4.3769
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2024-11-07",
+          "firstEligibleDate": "2024-11-08",
+          "results": {
+            "1D": -2.8005,
+            "5D": -7.6417,
+            "20D": -6.1565
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2024-11-13",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2024-11-13",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://www.bls.gov/news.release/archives/cpi_02132024.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2024-11-12",
+          "firstEligibleDate": "2024-11-13",
+          "results": {
+            "1D": 0.0232,
+            "5D": -1.1198,
+            "20D": 1.6745
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2024-11-12",
+          "firstEligibleDate": "2024-11-13",
+          "results": {
+            "1D": -0.2628,
+            "5D": -1.5244,
+            "20D": 3.9079
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2024-11-13",
+          "firstEligibleDate": "2024-11-14",
+          "results": {
+            "1D": -0.6336,
+            "5D": -0.7518,
+            "20D": 0.1899
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2024-11-13",
+          "firstEligibleDate": "2024-11-14",
+          "results": {
+            "1D": -0.5258,
+            "5D": 2.5208,
+            "20D": 4.7516
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2024-11-13",
+          "firstEligibleDate": "2024-11-14",
+          "results": {
+            "1D": -0.2681,
+            "5D": 1.1965,
+            "20D": 2.0857
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2024-11-13",
+          "firstEligibleDate": "2024-11-14",
+          "results": {
+            "1D": 0.3946,
+            "5D": 0.643,
+            "20D": 2.3235
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2024-11-13",
+          "firstEligibleDate": "2024-11-14",
+          "results": {
+            "1D": 0.1784,
+            "5D": 0.1878,
+            "20D": 0.4508
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2024-11-13",
+          "firstEligibleDate": "2024-11-14",
+          "results": {
+            "1D": -0.7414,
+            "5D": -1.011,
+            "20D": -2.8533
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2024-11-13",
+          "firstEligibleDate": "2024-11-14",
+          "results": {
+            "1D": 0.1722,
+            "5D": 1.906,
+            "20D": 3.1727
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2024-12-11",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2024-12-11",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://www.bls.gov/news.release/archives/cpi_02132024.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2024-12-10",
+          "firstEligibleDate": "2024-12-11",
+          "results": {
+            "1D": 0.8166,
+            "5D": 0.2601,
+            "20D": -3.4445
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2024-12-10",
+          "firstEligibleDate": "2024-12-11",
+          "results": {
+            "1D": 1.7659,
+            "5D": 2.1426,
+            "20D": -2.6698
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2024-12-11",
+          "firstEligibleDate": "2024-12-12",
+          "results": {
+            "1D": 0.6251,
+            "5D": 1.1572,
+            "20D": 0.775
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2024-12-11",
+          "firstEligibleDate": "2024-12-12",
+          "results": {
+            "1D": -1.7158,
+            "5D": -3.7509,
+            "20D": -1.5127
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2024-12-11",
+          "firstEligibleDate": "2024-12-12",
+          "results": {
+            "1D": -4.0968,
+            "5D": -6.6089,
+            "20D": -4.5175
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2024-12-11",
+          "firstEligibleDate": "2024-12-12",
+          "results": {
+            "1D": -0.3841,
+            "5D": 0.4126,
+            "20D": 8.9344
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2024-12-11",
+          "firstEligibleDate": "2024-12-12",
+          "results": {
+            "1D": 0.2343,
+            "5D": 1.237,
+            "20D": 2.7551
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2024-12-11",
+          "firstEligibleDate": "2024-12-12",
+          "results": {
+            "1D": 1.2409,
+            "5D": 5.2213,
+            "20D": 12.4561
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2024-12-11",
+          "firstEligibleDate": "2024-12-12",
+          "results": {
+            "1D": -0.4509,
+            "5D": -2.7053,
+            "20D": 1.4357
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2024-12-18",
+      "category": "FOMC",
+      "subtype": "降息",
+      "date": "2024-12-18",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2024-12-19",
+      "bps": -25,
+      "title": "FOMC 降息 25bps（生效日 2024-12-19）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2024-12-17",
+          "firstEligibleDate": "2024-12-18",
+          "results": {
+            "1D": -2.9493,
+            "5D": -0.1747,
+            "20D": -0.8916
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2024-12-17",
+          "firstEligibleDate": "2024-12-18",
+          "results": {
+            "1D": -3.5624,
+            "5D": -0.3875,
+            "20D": -2.3813
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2024-12-18",
+          "firstEligibleDate": "2024-12-19",
+          "results": {
+            "1D": -1.0204,
+            "5D": 0.2221,
+            "20D": -0.6197
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2024-12-18",
+          "firstEligibleDate": "2024-12-19",
+          "results": {
+            "1D": -1.7035,
+            "5D": 0.0226,
+            "20D": 3.5955
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2024-12-18",
+          "firstEligibleDate": "2024-12-19",
+          "results": {
+            "1D": -4.3275,
+            "5D": -1.1937,
+            "20D": 1.779
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2024-12-18",
+          "firstEligibleDate": "2024-12-19",
+          "results": {
+            "1D": -0.9493,
+            "5D": -1.3602,
+            "20D": 10.3429
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2024-12-18",
+          "firstEligibleDate": "2024-12-19",
+          "results": {
+            "1D": 0.3518,
+            "5D": 0.0926,
+            "20D": 1.2219
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2024-12-18",
+          "firstEligibleDate": "2024-12-19",
+          "results": {
+            "1D": 1.6911,
+            "5D": 1.8914,
+            "20D": 1.7801
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2024-12-18",
+          "firstEligibleDate": "2024-12-19",
+          "results": {
+            "1D": -1.939,
+            "5D": -0.6829,
+            "20D": 5.7927
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2025-01-15",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2025-01-15",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://blsmon1.bls.gov/schedule/news_release/cpi.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-01-14",
+          "firstEligibleDate": "2025-01-15",
+          "results": {
+            "1D": 1.8313,
+            "5D": 4.1668,
+            "20D": 3.578
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-01-14",
+          "firstEligibleDate": "2025-01-15",
+          "results": {
+            "1D": 2.4513,
+            "5D": 5.0668,
+            "20D": 3.1797
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-01-15",
+          "firstEligibleDate": "2025-01-16",
+          "results": {
+            "1D": 2.2676,
+            "5D": 4.4897,
+            "20D": 5.3995
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-01-15",
+          "firstEligibleDate": "2025-01-16",
+          "results": {
+            "1D": 1.2179,
+            "5D": 1.7367,
+            "20D": 8.3744
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-01-15",
+          "firstEligibleDate": "2025-01-16",
+          "results": {
+            "1D": 0.6514,
+            "5D": -2.0626,
+            "20D": 4.2498
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-01-15",
+          "firstEligibleDate": "2025-01-16",
+          "results": {
+            "1D": -1.6992,
+            "5D": -6.7716,
+            "20D": -10.932
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-01-15",
+          "firstEligibleDate": "2025-01-16",
+          "results": {
+            "1D": -0.1192,
+            "5D": -0.9533,
+            "20D": -1.6317
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-01-15",
+          "firstEligibleDate": "2025-01-16",
+          "results": {
+            "1D": -1.0101,
+            "5D": -0.3224,
+            "20D": -2.7509
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-01-15",
+          "firstEligibleDate": "2025-01-16",
+          "results": {
+            "1D": 1.1699,
+            "5D": -1.3763,
+            "20D": 9.3933
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2025-02-12",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2025-02-12",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://blsmon1.bls.gov/schedule/news_release/cpi.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-02-11",
+          "firstEligibleDate": "2025-02-12",
+          "results": {
+            "1D": -0.2724,
+            "5D": 1.2466,
+            "20D": -7.7317
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-02-11",
+          "firstEligibleDate": "2025-02-12",
+          "results": {
+            "1D": 0.031,
+            "5D": 2.0993,
+            "20D": -10.1579
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-02-12",
+          "firstEligibleDate": "2025-02-13",
+          "results": {
+            "1D": 0.4709,
+            "5D": 1.3496,
+            "20D": -5.7024
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-02-12",
+          "firstEligibleDate": "2025-02-13",
+          "results": {
+            "1D": 0.5702,
+            "5D": 0.9356,
+            "20D": 2.1375
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-02-12",
+          "firstEligibleDate": "2025-02-13",
+          "results": {
+            "1D": -0.1376,
+            "5D": 2.2909,
+            "20D": 4.1474
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-02-12",
+          "firstEligibleDate": "2025-02-13",
+          "results": {
+            "1D": -0.1121,
+            "5D": 1.6814,
+            "20D": -6.7535
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-02-12",
+          "firstEligibleDate": "2025-02-13",
+          "results": {
+            "1D": -0.5837,
+            "5D": -1.4823,
+            "20D": -3.8077
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-02-12",
+          "firstEligibleDate": "2025-02-13",
+          "results": {
+            "1D": -2.4154,
+            "5D": -2.9545,
+            "20D": -7.8283
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-02-12",
+          "firstEligibleDate": "2025-02-13",
+          "results": {
+            "1D": 1.5113,
+            "5D": -1.9157,
+            "20D": 4.2678
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2025-03-12",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2025-03-12",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://blsmon1.bls.gov/schedule/news_release/cpi.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-03-11",
+          "firstEligibleDate": "2025-03-12",
+          "results": {
+            "1D": 0.4887,
+            "5D": 0.7644,
+            "20D": -10.576
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-03-11",
+          "firstEligibleDate": "2025-03-12",
+          "results": {
+            "1D": 1.2179,
+            "5D": 0.3901,
+            "20D": -12.4351
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-03-12",
+          "firstEligibleDate": "2025-03-13",
+          "results": {
+            "1D": -1.4215,
+            "5D": -1.4253,
+            "20D": -12.342
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-03-12",
+          "firstEligibleDate": "2025-03-13",
+          "results": {
+            "1D": 1.5101,
+            "5D": 3.2035,
+            "20D": 4.4998
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-03-12",
+          "firstEligibleDate": "2025-03-13",
+          "results": {
+            "1D": 1.6933,
+            "5D": 1.4664,
+            "20D": -9.4403
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-03-12",
+          "firstEligibleDate": "2025-03-13",
+          "results": {
+            "1D": -1.6696,
+            "5D": -0.7683,
+            "20D": -7.8753
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-03-12",
+          "firstEligibleDate": "2025-03-13",
+          "results": {
+            "1D": 0.2123,
+            "5D": -0.1737,
+            "20D": -0.6853
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-03-12",
+          "firstEligibleDate": "2025-03-13",
+          "results": {
+            "1D": -1.019,
+            "5D": -1.4358,
+            "20D": 1.899
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-03-12",
+          "firstEligibleDate": "2025-03-13",
+          "results": {
+            "1D": 1.6075,
+            "5D": 5.2894,
+            "20D": -13.3893
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2025-04-10",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2025-04-10",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://blsmon1.bls.gov/schedule/news_release/cpi.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-04-09",
+          "firstEligibleDate": "2025-04-10",
+          "results": {
+            "1D": -3.4608,
+            "5D": -3.3206,
+            "20D": 3.7941
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-04-09",
+          "firstEligibleDate": "2025-04-10",
+          "results": {
+            "1D": -4.3075,
+            "5D": -4.7755,
+            "20D": 4.6901
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-04-10",
+          "firstEligibleDate": "2025-04-11",
+          "results": {
+            "1D": 2.7828,
+            "5D": 1.7826,
+            "20D": 10.079
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-04-10",
+          "firstEligibleDate": "2025-04-11",
+          "results": {
+            "1D": 2.1117,
+            "5D": 4.749,
+            "20D": 5.24
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-04-10",
+          "firstEligibleDate": "2025-04-11",
+          "results": {
+            "1D": 3.7593,
+            "5D": 5.7025,
+            "20D": 6.5371
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-04-10",
+          "firstEligibleDate": "2025-04-11",
+          "results": {
+            "1D": 2.3806,
+            "5D": 7.6744,
+            "20D": 1.5815
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-04-10",
+          "firstEligibleDate": "2025-04-11",
+          "results": {
+            "1D": -1.0806,
+            "5D": -1.4772,
+            "20D": -0.5254
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-04-10",
+          "firstEligibleDate": "2025-04-11",
+          "results": {
+            "1D": 2.2531,
+            "5D": -1.3883,
+            "20D": -0.4324
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-04-10",
+          "firstEligibleDate": "2025-04-11",
+          "results": {
+            "1D": 4.3161,
+            "5D": 9.5001,
+            "20D": 6.7114
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2025-05-13",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2025-05-13",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://blsmon1.bls.gov/schedule/news_release/cpi.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-05-12",
+          "firstEligibleDate": "2025-05-13",
+          "results": {
+            "1D": 0.7248,
+            "5D": 2.0432,
+            "20D": 3.3301
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-05-12",
+          "firstEligibleDate": "2025-05-13",
+          "results": {
+            "1D": 1.6129,
+            "5D": 2.7107,
+            "20D": 5.3808
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-05-13",
+          "firstEligibleDate": "2025-05-14",
+          "results": {
+            "1D": 2.1225,
+            "5D": 0.9184,
+            "20D": 5.3444
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-05-13",
+          "firstEligibleDate": "2025-05-14",
+          "results": {
+            "1D": -1.832,
+            "5D": 1.1331,
+            "20D": 2.9528
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-05-13",
+          "firstEligibleDate": "2025-05-14",
+          "results": {
+            "1D": -1.9533,
+            "5D": 0.3408,
+            "20D": 10.0341
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-05-13",
+          "firstEligibleDate": "2025-05-14",
+          "results": {
+            "1D": -0.8167,
+            "5D": -1.7434,
+            "20D": 7.0363
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-05-13",
+          "firstEligibleDate": "2025-05-14",
+          "results": {
+            "1D": 0.0396,
+            "5D": -0.8713,
+            "20D": -1.9307
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-05-13",
+          "firstEligibleDate": "2025-05-14",
+          "results": {
+            "1D": 0.6446,
+            "5D": -0.4001,
+            "20D": -1.9338
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-05-13",
+          "firstEligibleDate": "2025-05-14",
+          "results": {
+            "1D": -1.5059,
+            "5D": -1.3244,
+            "20D": 2.5526
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2025-06-11",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2025-06-11",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://blsmon1.bls.gov/schedule/news_release/cpi.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-06-10",
+          "firstEligibleDate": "2025-06-11",
+          "results": {
+            "1D": -0.2744,
+            "5D": -0.9288,
+            "20D": 4.0016
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-06-10",
+          "firstEligibleDate": "2025-06-11",
+          "results": {
+            "1D": -0.5027,
+            "5D": -0.9835,
+            "20D": 4.6445
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-06-11",
+          "firstEligibleDate": "2025-06-12",
+          "results": {
+            "1D": -0.8112,
+            "5D": -0.5045,
+            "20D": 0.2533
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-06-11",
+          "firstEligibleDate": "2025-06-12",
+          "results": {
+            "1D": 1.7555,
+            "5D": 1.926,
+            "20D": -0.5383
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-06-11",
+          "firstEligibleDate": "2025-06-12",
+          "results": {
+            "1D": 0.13,
+            "5D": 1.9355,
+            "20D": 2.4111
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-06-11",
+          "firstEligibleDate": "2025-06-12",
+          "results": {
+            "1D": -0.1614,
+            "5D": 10.2568,
+            "20D": -2.3184
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-06-11",
+          "firstEligibleDate": "2025-06-12",
+          "results": {
+            "1D": -0.7199,
+            "5D": 0.2839,
+            "20D": -0.7908
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-06-11",
+          "firstEligibleDate": "2025-06-12",
+          "results": {
+            "1D": -1.2466,
+            "5D": -0.34,
+            "20D": 0.2493
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-06-11",
+          "firstEligibleDate": "2025-06-12",
+          "results": {
+            "1D": 0.427,
+            "5D": 0.9165,
+            "20D": 15.5593
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2025-07-15",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2025-07-15",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://blsmon1.bls.gov/schedule/news_release/cpi.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-07-14",
+          "firstEligibleDate": "2025-07-15",
+          "results": {
+            "1D": -0.3956,
+            "5D": 0.5909,
+            "20D": 1.6733
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-07-14",
+          "firstEligibleDate": "2025-07-15",
+          "results": {
+            "1D": 0.1815,
+            "5D": 1.6175,
+            "20D": 3.6098
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-07-15",
+          "firstEligibleDate": "2025-07-16",
+          "results": {
+            "1D": 0.9063,
+            "5D": 0.6655,
+            "20D": 5.791
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-07-15",
+          "firstEligibleDate": "2025-07-16",
+          "results": {
+            "1D": 0.6713,
+            "5D": 3.2068,
+            "20D": 1.8671
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-07-15",
+          "firstEligibleDate": "2025-07-16",
+          "results": {
+            "1D": 0.0502,
+            "5D": 3.9277,
+            "20D": 0.1718
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-07-15",
+          "firstEligibleDate": "2025-07-16",
+          "results": {
+            "1D": -0.2105,
+            "5D": -0.466,
+            "20D": -5.0361
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-07-15",
+          "firstEligibleDate": "2025-07-16",
+          "results": {
+            "1D": -0.2332,
+            "5D": -1.2472,
+            "20D": -0.5273
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-07-15",
+          "firstEligibleDate": "2025-07-16",
+          "results": {
+            "1D": -0.7574,
+            "5D": -3.4083,
+            "20D": -4.3662
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-07-15",
+          "firstEligibleDate": "2025-07-16",
+          "results": {
+            "1D": -0.8925,
+            "5D": 2.7227,
+            "20D": -18.7072
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2025-08-12",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2025-08-12",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://blsmon1.bls.gov/schedule/news_release/cpi.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-08-11",
+          "firstEligibleDate": "2025-08-12",
+          "results": {
+            "1D": 1.1345,
+            "5D": 1.1877,
+            "20D": 2.1834
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-08-11",
+          "firstEligibleDate": "2025-08-12",
+          "results": {
+            "1D": 1.3865,
+            "5D": 1.1427,
+            "20D": 2.3104
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-08-12",
+          "firstEligibleDate": "2025-08-13",
+          "results": {
+            "1D": 0.8761,
+            "5D": 0.8078,
+            "20D": 2.8844
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-08-12",
+          "firstEligibleDate": "2025-08-13",
+          "results": {
+            "1D": 0.2736,
+            "5D": -1.1856,
+            "20D": 8.326
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-08-12",
+          "firstEligibleDate": "2025-08-13",
+          "results": {
+            "1D": 1.5832,
+            "5D": -1.6834,
+            "20D": 8.5332
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-08-12",
+          "firstEligibleDate": "2025-08-13",
+          "results": {
+            "1D": -0.8232,
+            "5D": -1.2981,
+            "20D": 0.7915
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-08-12",
+          "firstEligibleDate": "2025-08-13",
+          "results": {
+            "1D": -0.265,
+            "5D": 0.1733,
+            "20D": -0.3262
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-08-12",
+          "firstEligibleDate": "2025-08-13",
+          "results": {
+            "1D": -1.2812,
+            "5D": 0.2096,
+            "20D": -6.0797
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-08-12",
+          "firstEligibleDate": "2025-08-13",
+          "results": {
+            "1D": -0.5878,
+            "5D": -2.2069,
+            "20D": 0.9205
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2025-09-11",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2025-09-11",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://blsmon1.bls.gov/schedule/news_release/cpi.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-09-10",
+          "firstEligibleDate": "2025-09-11",
+          "results": {
+            "1D": 0.8486,
+            "5D": 1.0458,
+            "20D": 3.3937
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-09-10",
+          "firstEligibleDate": "2025-09-11",
+          "results": {
+            "1D": 0.7174,
+            "5D": 1.7147,
+            "20D": 5.2879
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-09-11",
+          "firstEligibleDate": "2025-09-12",
+          "results": {
+            "1D": 1.0269,
+            "5D": 2.1956,
+            "20D": 6.2558
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-09-11",
+          "firstEligibleDate": "2025-09-12",
+          "results": {
+            "1D": 0.3484,
+            "5D": 0.1279,
+            "20D": 8.1392
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-09-11",
+          "firstEligibleDate": "2025-09-12",
+          "results": {
+            "1D": 1.6548,
+            "5D": 0.024,
+            "20D": 12.3582
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-09-11",
+          "firstEligibleDate": "2025-09-12",
+          "results": {
+            "1D": 0.5131,
+            "5D": 1.924,
+            "20D": -1.3789
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-09-11",
+          "firstEligibleDate": "2025-09-12",
+          "results": {
+            "1D": 0.0103,
+            "5D": -0.1948,
+            "20D": 2.0504
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-09-11",
+          "firstEligibleDate": "2025-09-12",
+          "results": {
+            "1D": 1.2466,
+            "5D": 2.3186,
+            "20D": 3.4156
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-09-11",
+          "firstEligibleDate": "2025-09-12",
+          "results": {
+            "1D": -0.0436,
+            "5D": -1.0783,
+            "20D": 10.5653
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2025-09-17",
+      "category": "FOMC",
+      "subtype": "降息",
+      "date": "2025-09-17",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2025-09-18",
+      "bps": -25,
+      "title": "FOMC 降息 25bps（生效日 2025-09-18）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-09-16",
+          "firstEligibleDate": "2025-09-17",
+          "results": {
+            "1D": -0.097,
+            "5D": 0.7592,
+            "20D": 0.5684
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-09-16",
+          "firstEligibleDate": "2025-09-17",
+          "results": {
+            "1D": -0.3252,
+            "5D": 1.0724,
+            "20D": 0.8406
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-09-17",
+          "firstEligibleDate": "2025-09-18",
+          "results": {
+            "1D": 1.3016,
+            "5D": 2.9817,
+            "20D": 8.8464
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-09-17",
+          "firstEligibleDate": "2025-09-18",
+          "results": {
+            "1D": -1.0625,
+            "5D": 1.353,
+            "20D": 13.0131
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-09-17",
+          "firstEligibleDate": "2025-09-18",
+          "results": {
+            "1D": -0.036,
+            "5D": 4.9255,
+            "20D": 22.4126
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-09-17",
+          "firstEligibleDate": "2025-09-18",
+          "results": {
+            "1D": -0.7494,
+            "5D": 1.4676,
+            "20D": -9.0242
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-09-17",
+          "firstEligibleDate": "2025-09-18",
+          "results": {
+            "1D": 0.4955,
+            "5D": 1.0323,
+            "20D": 1.982
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-09-17",
+          "firstEligibleDate": "2025-09-18",
+          "results": {
+            "1D": 0.6869,
+            "5D": 1.7419,
+            "20D": -0.736
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-09-17",
+          "firstEligibleDate": "2025-09-18",
+          "results": {
+            "1D": -0.6563,
+            "5D": 3.9707,
+            "20D": 8.7727
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2025-10-24",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2025-10-24",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://blsmon1.bls.gov/schedule/news_release/cpi.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-10-23",
+          "firstEligibleDate": "2025-10-24",
+          "results": {
+            "1D": 0.7902,
+            "5D": 1.2451,
+            "20D": -2.9633
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-10-23",
+          "firstEligibleDate": "2025-10-24",
+          "results": {
+            "1D": 1.1467,
+            "5D": 2.7868,
+            "20D": -3.765
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-10-23",
+          "firstEligibleDate": "2025-10-27",
+          "results": {
+            "1D": 1.6757,
+            "5D": 2.5464,
+            "20D": -3.9856
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-10-24",
+          "firstEligibleDate": "2025-10-27",
+          "results": {
+            "1D": -2.8542,
+            "5D": -3.4149,
+            "20D": -1.409
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-10-24",
+          "firstEligibleDate": "2025-10-27",
+          "results": {
+            "1D": -3.7518,
+            "5D": -0.7917,
+            "20D": 3.0924
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-10-24",
+          "firstEligibleDate": "2025-10-27",
+          "results": {
+            "1D": -0.3089,
+            "5D": -0.8455,
+            "20D": -5.5935
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-10-24",
+          "firstEligibleDate": "2025-10-27",
+          "results": {
+            "1D": -0.1718,
+            "5D": 0.859,
+            "20D": 1.2431
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-10-24",
+          "firstEligibleDate": "2025-10-27",
+          "results": {
+            "1D": 0.0,
+            "5D": 2.6019,
+            "20D": 1.6512
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-10-24",
+          "firstEligibleDate": "2025-10-27",
+          "results": {
+            "1D": 0.9227,
+            "5D": -0.5497,
+            "20D": -1.6688
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2025-10-29",
+      "category": "FOMC",
+      "subtype": "降息",
+      "date": "2025-10-29",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2025-10-30",
+      "bps": -25,
+      "title": "FOMC 降息 25bps（生效日 2025-10-30）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-10-28",
+          "firstEligibleDate": "2025-10-29",
+          "results": {
+            "1D": -0.0044,
+            "5D": -1.7319,
+            "20D": -1.8141
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-10-28",
+          "firstEligibleDate": "2025-10-29",
+          "results": {
+            "1D": 0.5497,
+            "5D": -2.0097,
+            "20D": -3.3654
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-10-29",
+          "firstEligibleDate": "2025-10-30",
+          "results": {
+            "1D": -0.0255,
+            "5D": -2.0417,
+            "20D": -3.1285
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-10-29",
+          "firstEligibleDate": "2025-10-30",
+          "results": {
+            "1D": 0.3799,
+            "5D": -0.195,
+            "20D": 4.1118
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-10-29",
+          "firstEligibleDate": "2025-10-30",
+          "results": {
+            "1D": 1.4815,
+            "5D": 0.2976,
+            "20D": 10.8862
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-10-29",
+          "firstEligibleDate": "2025-10-30",
+          "results": {
+            "1D": 0.1488,
+            "5D": -1.455,
+            "20D": -3.0258
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-10-29",
+          "firstEligibleDate": "2025-10-30",
+          "results": {
+            "1D": 0.3124,
+            "5D": 0.9877,
+            "20D": 0.383
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-10-29",
+          "firstEligibleDate": "2025-10-30",
+          "results": {
+            "1D": 0.8625,
+            "5D": 2.4396,
+            "20D": -1.4786
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-10-29",
+          "firstEligibleDate": "2025-10-30",
+          "results": {
+            "1D": -2.9712,
+            "5D": -5.1686,
+            "20D": -2.4649
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "opec-2025-11-02",
+      "category": "OPEC",
+      "subtype": "產量調整",
+      "date": "2025-11-02",
+      "timezone": "Etc/UTC",
+      "localTime": null,
+      "timeAccuracy": "date_only",
+      "title": "OPEC+ 八國宣布 12 月生產調整（+13.7 萬桶/日）",
+      "source": "OPEC",
+      "sourceUrl": "https://opec.org/pr-detail/579-02-november-2025.html",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-10-31",
+          "firstEligibleDate": "2025-11-03",
+          "results": {
+            "1D": 0.1721,
+            "5D": -1.6286,
+            "20D": -0.4031
+          },
+          "method": "next_local_date_proxy"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-10-31",
+          "firstEligibleDate": "2025-11-03",
+          "results": {
+            "1D": 0.4626,
+            "5D": -3.0366,
+            "20D": -1.8927
+          },
+          "method": "next_local_date_proxy"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-10-31",
+          "firstEligibleDate": "2025-11-03",
+          "results": {
+            "1D": 0.3586,
+            "5D": -2.0612,
+            "20D": -2.1495
+          },
+          "method": "next_local_date_proxy"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-10-31",
+          "firstEligibleDate": "2025-11-03",
+          "results": {
+            "1D": 0.4379,
+            "5D": 0.3328,
+            "20D": 6.9636
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-10-31",
+          "firstEligibleDate": "2025-11-03",
+          "results": {
+            "1D": -0.2209,
+            "5D": 0.0479,
+            "20D": 21.7194
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-10-31",
+          "firstEligibleDate": "2025-11-03",
+          "results": {
+            "1D": 0.1148,
+            "5D": -2.0171,
+            "20D": -2.7222
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-10-31",
+          "firstEligibleDate": "2025-11-03",
+          "results": {
+            "1D": 0.0701,
+            "5D": -0.2004,
+            "20D": -0.3908
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-10-31",
+          "firstEligibleDate": "2025-11-03",
+          "results": {
+            "1D": 0.1219,
+            "5D": -0.1951,
+            "20D": -0.1219
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-10-31",
+          "firstEligibleDate": "2025-11-03",
+          "results": {
+            "1D": -0.3652,
+            "5D": -2.517,
+            "20D": 3.0303
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "opec-2025-11-30",
+      "category": "OPEC",
+      "subtype": "產量暫停調整",
+      "date": "2025-11-30",
+      "timezone": "Etc/UTC",
+      "localTime": null,
+      "timeAccuracy": "date_only",
+      "title": "OPEC+ 八國確認 2026 Q1 暫停增產",
+      "source": "OPEC",
+      "sourceUrl": "https://opec.org/pr-detail/1574583-30-november-2025.html",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-11-28",
+          "firstEligibleDate": "2025-12-01",
+          "results": {
+            "1D": -0.5323,
+            "5D": 0.3111,
+            "20D": 0.8271
+          },
+          "method": "next_local_date_proxy"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-11-28",
+          "firstEligibleDate": "2025-12-01",
+          "results": {
+            "1D": -0.3842,
+            "5D": 0.9092,
+            "20D": 0.465
+          },
+          "method": "next_local_date_proxy"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-11-28",
+          "firstEligibleDate": "2025-12-01",
+          "results": {
+            "1D": -1.0278,
+            "5D": 1.2829,
+            "20D": 4.2872
+          },
+          "method": "next_local_date_proxy"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-11-28",
+          "firstEligibleDate": "2025-12-01",
+          "results": {
+            "1D": 0.4677,
+            "5D": -0.2797,
+            "20D": 2.0847
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-11-28",
+          "firstEligibleDate": "2025-12-01",
+          "results": {
+            "1D": 3.4936,
+            "5D": 3.5007,
+            "20D": 23.7572
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-11-28",
+          "firstEligibleDate": "2025-12-01",
+          "results": {
+            "1D": 1.3151,
+            "5D": 2.6132,
+            "20D": -0.8027
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-11-28",
+          "firstEligibleDate": "2025-12-01",
+          "results": {
+            "1D": -0.0503,
+            "5D": -0.4726,
+            "20D": -1.4277
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-11-28",
+          "firstEligibleDate": "2025-12-01",
+          "results": {
+            "1D": 1.9666,
+            "5D": 3.0371,
+            "20D": 2.4645
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-11-28",
+          "firstEligibleDate": "2025-12-01",
+          "results": {
+            "1D": 0.646,
+            "5D": 3.7894,
+            "20D": 5.8818
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2025-12-10",
+      "category": "FOMC",
+      "subtype": "降息",
+      "date": "2025-12-10",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2025-12-11",
+      "bps": -25,
+      "title": "FOMC 降息 25bps（生效日 2025-12-11）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2025-12-09",
+          "firstEligibleDate": "2025-12-10",
+          "results": {
+            "1D": 0.675,
+            "5D": -0.5884,
+            "20D": 1.1834
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2025-12-09",
+          "firstEligibleDate": "2025-12-10",
+          "results": {
+            "1D": 0.3294,
+            "5D": -1.9724,
+            "20D": -0.4092
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2025-12-10",
+          "firstEligibleDate": "2025-12-11",
+          "results": {
+            "1D": -1.3238,
+            "5D": -3.0829,
+            "20D": 6.6485
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2025-12-10",
+          "firstEligibleDate": "2025-12-11",
+          "results": {
+            "1D": 2.0901,
+            "5D": 3.5316,
+            "20D": 6.5377
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2025-12-10",
+          "firstEligibleDate": "2025-12-11",
+          "results": {
+            "1D": 5.8795,
+            "5D": 9.702,
+            "20D": 30.6481
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2025-12-10",
+          "firstEligibleDate": "2025-12-11",
+          "results": {
+            "1D": -1.4711,
+            "5D": -4.3106,
+            "20D": 1.129
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2025-12-10",
+          "firstEligibleDate": "2025-12-11",
+          "results": {
+            "1D": -0.4454,
+            "5D": -0.4251,
+            "20D": 0.3442
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2025-12-10",
+          "firstEligibleDate": "2025-12-11",
+          "results": {
+            "1D": -0.5524,
+            "5D": -0.3122,
+            "20D": 0.1681
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2025-12-10",
+          "firstEligibleDate": "2025-12-11",
+          "results": {
+            "1D": 2.8718,
+            "5D": 1.6681,
+            "20D": 10.9942
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "cpi-2026-01-13",
+      "category": "CPI",
+      "subtype": "公布日",
+      "date": "2026-01-13",
+      "timezone": "America/New_York",
+      "localTime": "08:30",
+      "timeAccuracy": "official_calendar",
+      "title": "美國 CPI 官方公布日（未含預期差）",
+      "source": "US Bureau of Labor Statistics",
+      "sourceUrl": "https://blsmon1.bls.gov/schedule/news_release/cpi.htm",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2026-01-12",
+          "firstEligibleDate": "2026-01-13",
+          "results": {
+            "1D": -0.1939,
+            "5D": -2.5857,
+            "20D": -0.5082
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2026-01-12",
+          "firstEligibleDate": "2026-01-13",
+          "results": {
+            "1D": -0.1013,
+            "5D": -3.2847,
+            "20D": -2.6605
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2026-01-13",
+          "firstEligibleDate": "2026-01-14",
+          "results": {
+            "1D": 0.7639,
+            "5D": 3.4284,
+            "20D": 7.7042
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2026-01-13",
+          "firstEligibleDate": "2026-01-14",
+          "results": {
+            "1D": 0.7958,
+            "5D": 5.1836,
+            "20D": 10.8586
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2026-01-13",
+          "firstEligibleDate": "2026-01-14",
+          "results": {
+            "1D": 5.813,
+            "5D": 7.3745,
+            "20D": -2.4721
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2026-01-13",
+          "firstEligibleDate": "2026-01-14",
+          "results": {
+            "1D": 1.4227,
+            "5D": -0.8667,
+            "20D": 5.6909
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2026-01-13",
+          "firstEligibleDate": "2026-01-14",
+          "results": {
+            "1D": 0.0,
+            "5D": -0.3732,
+            "20D": -2.3202
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2026-01-13",
+          "firstEligibleDate": "2026-01-14",
+          "results": {
+            "1D": -0.7432,
+            "5D": 1.966,
+            "20D": 0.024
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2026-01-13",
+          "firstEligibleDate": "2026-01-14",
+          "results": {
+            "1D": 0.6533,
+            "5D": -4.0285,
+            "20D": -0.3518
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "fomc-2026-09-16",
+      "category": "FOMC",
+      "subtype": "升息",
+      "date": "2026-09-16",
+      "timezone": "America/New_York",
+      "localTime": "14:00",
+      "timeAccuracy": "inferred_regular_meeting",
+      "effectiveDate": "2026-09-17",
+      "bps": 25,
+      "title": "FOMC 升息 25bps（生效日 2026-09-17）",
+      "source": "Federal Reserve",
+      "sourceUrl": "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+      "directionKnown": true,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2026-09-15",
+          "firstEligibleDate": "2026-09-16",
+          "results": {
+            "1D": -0.4472,
+            "5D": 2.3585,
+            "20D": 2.8965
+          },
+          "method": "equity_event_session"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2026-09-15",
+          "firstEligibleDate": "2026-09-16",
+          "results": {
+            "1D": -0.0121,
+            "5D": 4.86,
+            "20D": 4.7065
+          },
+          "method": "equity_event_session"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2026-09-16",
+          "firstEligibleDate": "2026-09-17",
+          "results": {
+            "1D": 0.9577,
+            "5D": 5.0348,
+            "20D": 2.1226
+          },
+          "method": "equity_event_session"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2026-09-16",
+          "firstEligibleDate": "2026-09-17",
+          "results": {
+            "1D": 0.2781,
+            "5D": -1.5749,
+            "20D": -6.3727
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2026-09-16",
+          "firstEligibleDate": "2026-09-17",
+          "results": {
+            "1D": 1.8386,
+            "5D": 0.1462,
+            "20D": -13.592
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2026-09-16",
+          "firstEligibleDate": "2026-09-17",
+          "results": {
+            "1D": -0.5077,
+            "5D": -10.0264,
+            "20D": -7.1659
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2026-09-16",
+          "firstEligibleDate": "2026-09-17",
+          "results": {
+            "1D": -0.0897,
+            "5D": 0.7876,
+            "20D": 2.2331
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2026-09-16",
+          "firstEligibleDate": "2026-09-17",
+          "results": {
+            "1D": -1.1786,
+            "5D": 2.1574,
+            "20D": 3.6756
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2026-09-16",
+          "firstEligibleDate": "2026-09-17",
+          "results": {
+            "1D": 2.41,
+            "5D": 3.8327,
+            "20D": 2.7987
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    },
+    {
+      "id": "us-election-2026-11-03",
+      "category": "美國選舉",
+      "subtype": "期中選舉",
+      "date": "2026-11-03",
+      "timezone": "America/New_York",
+      "localTime": null,
+      "timeAccuracy": "date_only",
+      "title": "2026 美國國會期中選舉投票日",
+      "source": "U.S. Federal Election Commission",
+      "sourceUrl": "https://www.fec.gov/resources/cms-content/documents/2024presgeresults.pdf",
+      "directionKnown": false,
+      "outcomes": {
+        "美股S&P500": {
+          "asset": "美股S&P500",
+          "baselineDate": "2026-11-03",
+          "firstEligibleDate": "2026-11-04",
+          "results": {
+            "1D": 1.5815
+          },
+          "method": "next_local_date_proxy"
+        },
+        "NASDAQ": {
+          "asset": "NASDAQ",
+          "baselineDate": "2026-11-03",
+          "firstEligibleDate": "2026-11-04",
+          "results": {
+            "1D": 1.4366
+          },
+          "method": "next_local_date_proxy"
+        },
+        "台股": {
+          "asset": "台股",
+          "baselineDate": "2026-11-03",
+          "firstEligibleDate": "2026-11-04",
+          "results": {
+            "1D": -0.8281
+          },
+          "method": "next_local_date_proxy"
+        },
+        "黃金": {
+          "asset": "黃金",
+          "baselineDate": "2026-11-03",
+          "firstEligibleDate": "2026-11-04",
+          "results": {
+            "1D": 3.3651
+          },
+          "method": "next_local_date_proxy"
+        },
+        "白銀": {
+          "asset": "白銀",
+          "baselineDate": "2026-11-03",
+          "firstEligibleDate": "2026-11-04",
+          "results": {
+            "1D": 5.1082
+          },
+          "method": "next_local_date_proxy"
+        },
+        "WTI原油": {
+          "asset": "WTI原油",
+          "baselineDate": "2026-11-03",
+          "firstEligibleDate": "2026-11-04",
+          "results": {
+            "1D": -8.2943
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美元": {
+          "asset": "美元",
+          "baselineDate": "2026-11-03",
+          "firstEligibleDate": "2026-11-04",
+          "results": {
+            "1D": -0.3534
+          },
+          "method": "next_local_date_proxy"
+        },
+        "美債殖利率": {
+          "asset": "美債殖利率",
+          "baselineDate": "2026-11-03",
+          "firstEligibleDate": "2026-11-04",
+          "results": {
+            "1D": -1.1712
+          },
+          "method": "next_local_date_proxy"
+        },
+        "銅": {
+          "asset": "銅",
+          "baselineDate": "2026-11-03",
+          "firstEligibleDate": "2026-11-04",
+          "results": {
+            "1D": 0.3841
+          },
+          "method": "next_local_date_proxy"
+        }
+      }
+    }
+  ]
+}
