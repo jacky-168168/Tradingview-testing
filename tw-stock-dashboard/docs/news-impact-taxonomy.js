@@ -35,6 +35,9 @@ const FUTURE=/(?:將|可能|預計|預估|預測|恐|或將|看漲|看跌|預期
 function examine(item){
  const title=String(item?.title||"").trim(),category=String(item?.category||""),source=String(item?.source||"");
  const topics=TOPICS.filter(t=>t[1].test(title)).map(t=>t[0]),rules=[],observations=[],flags=[];
+ // "60.167美元" and "砸280億美元" are monetary units, NOT USD FX news.
+ const fxReal=/匯率|美元指數|美元走|美元升|美元跌|美金匯價|港幣|港元|紐元|紐幣|\b(?:USD|US dollar|U\.S\. dollar|NZD|New Zealand Dollar|NZ dollar|currency|forex|yen|yuan|euro)\b/i.test(title);
+ if(!fxReal&&topics.includes("匯率"))topics.splice(topics.indexOf("匯率"),1);
  function add(id,name,impact,why,caveat,scope){
   if(!rules.some(x=>x.id===id))rules.push({id,name,impact,why,caveat,scope:scope||"研究情境",model:VERSION})
  }
