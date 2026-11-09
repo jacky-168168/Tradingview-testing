@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+from bisect import bisect_left
 import statistics
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
@@ -56,7 +57,10 @@ def eligible_session(event, asset, bars):
             earliest = timestamp.astimezone(tz).date() + timedelta(days=1)
         else:
             earliest = date.fromisoformat(event["date"]) + timedelta(days=1)
-    return next((i for i, (d, _) in enumerate(bars) if d >= earliest and i > 0), None)
+    # Date/close tuples are already sorted. Binary search is necessary for
+    # decades of prices * thousands of archived releases.
+    idx = bisect_left(bars, (earliest, float('-inf')))
+    return idx if 0 < idx < len(bars) else None
 
 
 def event_returns(event, asset, bars):
