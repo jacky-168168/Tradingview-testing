@@ -2,7 +2,7 @@
 "use strict";
 const $=id=>document.getElementById(id);
 const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const NEWS="./data/market_events/latest.json", HISTORY_URL="./data/news_impact/history.json";
+const NEWS="./data/market_events/latest.json", HISTORY_URL="./data/news_impact/history.json", SCORECARD_URL="./data/news_impact/scorecard.json";
 const VERSION="2026-11-09-v1.2";
 const assets=["美股S&P500","NASDAQ","台股","台股記憶體供應端","AI／半導體設備","雲端算力租賃","天然氣供應","黃金","白銀","WTI原油","美元","美債殖利率","銅","紐元NZD","農產品期貨","加密資產"];
 const rules=[
@@ -124,6 +124,12 @@ async function boot(){
  DATA=j.items.filter(n=>n.type==="news"&&n.title&&n.url).filter(n=>{const k=(n.title||"").toLowerCase().replace(/\s+/g," ").trim();if(seen.has(k))return false;seen.add(k);return true}).map(classify);
  try{const h=await fetch(HISTORY_URL+"?t="+Date.now(),{cache:"no-store"});if(h.ok)HISTORY=await h.json()}catch(_){}
  render();
+ try{
+  const response=await fetch(SCORECARD_URL+"?t="+Date.now(),{cache:"no-store"});
+  if(!response.ok)throw Error("HTTP "+response.status);
+  const sc=await response.json();if(!sc.audit||!Array.isArray(sc.byAsset))throw Error("無有效驗證資料");
+  $("scorecardSummary").textContent="已凍結方向紀錄 "+(sc.predictionRecords||0)+" 則｜已成熟資產／期間觀測 "+sc.audit.maturedObservationCount+" 筆｜待成熟 "+sc.audit.pendingHorizonCount+" 筆。"+(sc.status==="insufficient_matured_signals"?"目前尚無足量可公布的預測勝率；不使用歷史日期冒充訓練結果。":"查看逐資產信賴區間與已成熟結果。");
+ }catch(e){$("scorecardSummary").textContent="前瞻預測驗證紀錄尚不可用；可至獨立驗證頁查看。"}
  }catch(e){$("meta").textContent="新聞資料載入失敗："+e.message;$("articles").innerHTML='<div class="empty">資料暫時無法取得，請確認原新聞工作流程。</div>';}
 }
 if(typeof module==="object"&&module.exports){module.exports={classify,VERSION,assets};return;}
