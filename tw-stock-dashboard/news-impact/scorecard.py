@@ -54,7 +54,8 @@ def before_baseline(record, asset, baseline):
         return False
 
 
-def get_outcomes(predictions, archived):
+def get_outcomes(predictions, archived, known_keys=None):
+    known_keys = known_keys or set()
     archived_by_id = {e.get("id"): e for e in archived.get("events", []) if isinstance(e, dict)}
     observations, pending, excluded = [], 0, 0
     tracked = 0
@@ -67,7 +68,8 @@ def get_outcomes(predictions, archived):
                 continue
             tracked += 1
             if not historic or asset not in historic.get("baseline", {}):
-                pending += len(HORIZONS)
+                pending += sum(1 for horizon in HORIZONS if
+                               (record["id"], asset, f"{horizon}D") not in known_keys)
                 continue
             baseline = historic["baseline"][asset]
             if not before_baseline(record, asset, baseline):
@@ -78,7 +80,8 @@ def get_outcomes(predictions, archived):
                 key = f"{horizon}D"
                 value = result.get(key)
                 if not isinstance(value, (int, float)) or not math.isfinite(value):
-                    pending += 1
+                    if (record["id"], asset, key) not in known_keys:
+                        pending += 1
                     continue
                 outcome = 0 if value == 0 else (1 if value * direction > 0 else -1)
                 observations.append({
@@ -186,12 +189,15 @@ def build(predictions, archived, now=None, ledger=None):
     now = now or datetime.now(timezone.utc)
     if predictions.get("schema") != 1 or archived.get("schema") != 1:
         raise ValueError("Missing valid immutable predictions or historical headline archive")
-    fresh, audit = get_outcomes(predictions, archived)
-    observations = merge_immutable_observations(ledger or [], fresh)
-    ledger_count = len(merge_immutable_observations(ledger or [], []))
+    prior = merge_immutable_observations(ledger or [], [])
+    known_keys = {observation_key(row) for row in prior}
+    fresh, audit = get_outcomes(predictions, archived, known_keys)
+    observations = merge_immutable_observations(prior, fresh)
+    ledger_count = len(prior)
     audit["currentArchiveMaturedCount"] = audit["maturedObservationCount"]
     audit["maturedObservationCount"] = len(observations)
-    audit["retainedOlderObservationCount"] = max(0, len(observations) - len(fresh))
+    fresh_keys = {observation_key(row) for row in fresh}
+    audit["retainedOlderObservationCount"] = sum(observation_key(row) not in fresh_keys for row in observations)
     audit["newObservationCount"] = len(observations) - ledger_count
     by_rule = defaultdict(list)
     for o in observations:
@@ -241,7 +247,7 @@ def generate(predictions_path=PREDICTIONS, history_path=HISTORY, output_path=OUT
     archived = read_json(history_path, {})
     previous = read_ledger(output_path.parent / "outcome_ledger")
     result = build(predictions, archived, ledger=previous)
-    fresh, _audit = get_outcomes(predictions, archived)
+    fresh, _audit = get_outcomes(predictions, archived, {observation_key(row) for row in previous})
     merged = merge_immutable_observations(previous, fresh)
     write_ledger(merged, output_path.parent / "outcome_ledger")
     output_path.parent.mkdir(parents=True, exist_ok=True)
