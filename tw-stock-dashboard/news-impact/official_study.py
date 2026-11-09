@@ -17,7 +17,11 @@ from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from history import HORIZONS, SYMBOLS, fetch_prices, read_json
+from history import SYMBOLS, fetch_prices, read_json
+
+# Keep long-term event-calendar horizons separate from prospective headline
+# scorecards, which intentionally remain 1/5/20 trading days only.
+STUDY_HORIZONS = (1, 5, 20, 180, 360)
 
 CATALOG = Path("tw-stock-dashboard/news-impact/official_events_expanded.json")
 OUTPUT = Path("tw-stock-dashboard/docs/data/news_impact/official_study.json")
@@ -79,7 +83,7 @@ def event_returns(event, asset, bars):
     if baseline <= 0:
         return None
     returns = {}
-    for horizon in HORIZONS:
+    for horizon in STUDY_HORIZONS:
         future = idx + horizon - 1
         if future >= len(bars):
             continue
@@ -172,7 +176,7 @@ def build_study(catalog, prices, errors, now=None):
     controls = {}
     min_date = min((date.fromisoformat(e["date"]) for e in rows), default=now.date())
     for asset, bars in prices.items():
-        for horizon in HORIZONS:
+        for horizon in STUDY_HORIZONS:
             controls[(asset, horizon)] = rolling_controls(bars, horizon, min_date)
     stats = []
     for g in groups:
@@ -181,7 +185,7 @@ def build_study(catalog, prices, errors, now=None):
                     e["category"] == g["key"].split(":", 1)[0] and
                     e.get("subtype") == g["key"].split(":", 1)[1])]
         for asset in SYMBOLS:
-            for horizon in HORIZONS:
+            for horizon in STUDY_HORIZONS:
                 key = f"{horizon}D"
                 observations = [e["outcomes"][asset]["results"][key] for e in filtered
                                 if asset in e["outcomes"] and key in e["outcomes"][asset]["results"]]
@@ -198,11 +202,12 @@ def build_study(catalog, prices, errors, now=None):
         "catalogLatest": max((e["date"] for e in rows), default=None),
         "eventsWithPriceData": sum(bool(e["outcomes"]) for e in rows),
         "groups": groups,
+        "horizonsTradingDays": list(STUDY_HORIZONS),
         "minSample": MIN_SAMPLE,
         "status": "ok" if len(prices) == len(SYMBOLS) else ("partial" if prices else "unavailable"),
         "priceSymbolsOk": list(prices), "priceErrors": errors,
-        "method": "Historical observed return from close before first eligible post-publication equity session (or next-date proxy for futures/unknown time) to close of session 1/5/20; excludes incomplete daily candles.",
-        "comparison": "Unconditional mean of all available same-asset rolling 1/5/20 session returns since oldest catalog event; NOT risk-adjusted, NOT causal or randomized controls.",
+        "method": "Historical observed return from close before first eligible post-publication equity session (or next-date proxy for futures/unknown time) to close of session 1/5/20/180/360 trading days; excludes incomplete daily candles and horizons not yet matured.",
+        "comparison": "Unconditional mean of all available same-asset rolling 1/5/20/180/360 trading-session returns since oldest catalog event; NOT risk-adjusted, NOT causal or randomized controls.",
         "limitations": [
             "CPI release dates do not include consensus, actual-value surprise, or direction.",
             "Fed effective dates mapped to prior day 14:00 ET as approximate regular meeting announcements; exceptions are possible.",
@@ -210,6 +215,7 @@ def build_study(catalog, prices, errors, now=None):
             "U.S. federal election rows represent voting dates, not the times races were called or winner identities. Category and presidential/midterm subtypes are descriptive only.",
             "Futures close timestamps and continuous-contract roll behavior are not exchange-verified; apparent daily returns are proxies.",
             "Historical events can overlap; samples are not independent and small-n positive fraction is not a predictive hit rate.",
+            "180D and 360D mean 180 and 360 completed trading sessions, not calendar days. Recent events have no long-horizon result until enough sessions pass.",
             "BLS historical archives provide release date (not contemporaneous forecast); typical release times are assumed and not individually audited.",
             "FOMC archive dates include hold decisions but do not establish surprise direction; incomplete old ticker history reduces realized counts.",
             "Yahoo Finance daily data may be corrected or incomplete, returns are descriptive rather than evidence of causation."
