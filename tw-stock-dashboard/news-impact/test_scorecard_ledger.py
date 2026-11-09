@@ -44,6 +44,18 @@ class ImmutableScorecardLedgerTests(unittest.TestCase):
             write_ledger(rows,folder)
             self.assertEqual(read_ledger(folder),rows)
 
+    def test_already_recorded_horizon_not_counted_as_pending_after_trim(self):
+        p={"schema":1,"records":[{
+            "id":"old-record","group":"old-news-story",
+            "publishedAt":"2026-11-09T08:00:00+08:00",
+            "frozenAt":"2026-11-09T00:15:00Z",
+            "signals":[{"asset":"美股S&P500","direction":1,"ruleIds":["rate-dove"]}]
+        }]}
+        result=build(p,{"schema":1,"events":[]},ledger=[observation()])
+        self.assertEqual(result["audit"]["maturedObservationCount"],1)
+        self.assertEqual(result["audit"]["pendingHorizonCount"],2)
+        self.assertEqual(result["audit"]["retainedOlderObservationCount"],1)
+
     def test_reject_invalid_or_incomplete_records(self):
         row=observation()
         invalid=[{**row,"outcome":6},{**row,"realizedPct":float("nan")},
