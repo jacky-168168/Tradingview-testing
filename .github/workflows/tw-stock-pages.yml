@@ -8,7 +8,7 @@ on:
     # Daily 23:50 Taipei backstop for bot-authored snapshots, best effort.
     - cron: '50 15 * * *'
   workflow_run:
-    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'Taiwan VIXTWN Homepage Data', 'TDCC Whale Shareholder Weekly', 'Retry Date-Locked TWSE History with Throttling', 'Global Market News Impact']
+    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'Taiwan VIXTWN Homepage Data', 'TDCC Whale Shareholder Weekly', 'Retry Date-Locked TWSE History with Throttling', 'Global Market News Impact', 'ETF 00631L 00685L 10MA Comparison', 'TPEx Upstream Industry Chain Stock Map']
     types: [completed]
     branches: [main]
   push:
@@ -629,6 +629,38 @@ jobs:
                   break
               except Exception as exc:
                   print("Pages News Impact attempt",attempt,"/12",repr(exc),flush=True)
+                  if attempt==12:raise
+                  time.sleep(5)
+          PY
+
+      - name: Verify live ETF comparison and upstream JSON are not older than deployed source
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request
+          from pathlib import Path
+          base=os.environ["PAGES_URL"].rstrip("/")
+          root=Path("tw-stock-dashboard/docs/data")
+          upstream=json.loads((root/"industry_upstream/latest.json").read_text("utf-8"))
+          etf=json.loads((root/"research/etf_10ma_comparison/latest.json").read_text("utf-8"))
+          assert upstream["dataDate"] and etf["priceThrough"]
+          def read(path):
+              request=urllib.request.Request(base+"/"+path,headers={
+                  "User-Agent":"ETF-Upstream-Pages-Smoke/1.0","Cache-Control":"no-cache"})
+              with urllib.request.urlopen(request,timeout=25) as response:
+                  if response.status!=200:raise RuntimeError("HTTP "+str(response.status))
+                  return json.loads(response.read())
+          for attempt in range(1,13):
+              try:
+                  live_upstream=read("data/industry_upstream/latest.json?pages="+str(time.time()))
+                  live_etf=read("data/research/etf_10ma_comparison/latest.json?pages="+str(time.time()))
+                  assert live_upstream["dataDate"]>=upstream["dataDate"],"Upstream Pages data stale"
+                  assert live_etf["priceThrough"]>=etf["priceThrough"],"ETF Pages data stale"
+                  print("PASS LIVE ETF and upstream",live_etf["priceThrough"],live_upstream["dataDate"])
+                  break
+              except Exception as exc:
+                  print("ETF upstream Pages verification",attempt,"/12",repr(exc),flush=True)
                   if attempt==12:raise
                   time.sleep(5)
           PY
