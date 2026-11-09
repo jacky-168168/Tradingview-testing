@@ -74,3 +74,5 @@ jobs:
         run: python -m unittest discover -s .github/agent -p 'test_*pages_trigger.py' -v
       - name: Verify LUNA Pages fallback regression
         run: python -m unittest discover -s .github/agent -p 'test_luna_pages_fallback.py' -v
+      - name: Prevent ETF research deployment from non-main branches
+        run: python -m unittest discover -s .github/agent -p 'test_etf_publish_branch_gate.py' -v
