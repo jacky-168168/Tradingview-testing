@@ -25,17 +25,17 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-h
 <script src="./site-access.js"></script></head><body><main>
 <nav class="nav"><a href="./news-impact.html">← 媒體識別器</a><div><a href="./market-events.html">新聞來源</a> <a href="./index.html">主頁</a></div></nav>
 <h1>📊 歷史事件研究中心</h1>
-<p class="sub">Global Market Intelligence · FOMC / CPI / OPEC / 美國選舉 · 過去官方事件日期 × 後續資產走勢</p>
-<div class="notice">本頁計算的是 <b>已發生事件的歷史價格表現</b>，不是利多利空的確定預測。美國 CPI 只有公布日，<b>沒有市場預期與實際值差異，因此不會標示「超預期」</b>。FOMC 常規公告日由利率生效日往前推一天；OPEC 與選舉的日期可能晚於市場得知資訊的時間。沒有完成的交易日不會被填入。</div>
+<p class="sub">Global Market Intelligence · FOMC／CPI／非農／GDP／PCE／PPI／JOLTS／OPEC 等歷史資料日期 × 資產後續走勢</p>
+<div class="notice">本頁同時呈現<b>官方原始公告日期</b>與<b>ALFRED 歷史資料更新／修訂日期</b>。後者可能包含修訂，並非每筆都是首次公告或市場驚喜；請用事件類別區分。<b>缺少公布當時的共識預估值，不可把平均漲跌當成 CPI、非農超預期交易結果。</b> 僅有實際可對齊的歷史行情才計入有效觀察。</div>
 <div id="meta" role="status" aria-live="polite">歷史研究資料讀取中…</div>
 <div class="controls">
 <label>事件類別<select id="group"><option value="FOMC">FOMC</option></select></label>
 <label>觀察資產<select id="asset"><option>美股S&P500</option><option>NASDAQ</option><option>台股</option><option>黃金</option><option>白銀</option><option>WTI原油</option><option>美元</option><option>美債殖利率</option><option>銅</option></select></label>
 <label>事件後期間<select id="horizon"><option value="1D">1 個交易日</option><option value="5D" selected>5 個交易日</option><option value="20D">20 個交易日</option></select></label>
 </div>
-<div class="metrics"><div class="metric"><small>有效獨立事件數</small><strong id="eventN">—</strong><span id="sampleNote">樣本待確認</span></div><div class="metric"><small>歷史平均變動</small><strong id="avg">—</strong><span>非預測報酬</span></div><div class="metric"><small>歷史正報酬占比</small><strong id="positive">—</strong><span>不是預測勝率</span></div><div class="metric"><small>相較一般滾動期間平均</small><strong id="relative">—</strong><span>未排除其他市場因素</span></div></div>
-<h2>事件組別 × 資產比較</h2><div class="table-wrap"><table><thead><tr><th>資產</th><th>有效樣本 n</th><th>平均變動</th><th>中位數</th><th>正報酬占比</th><th>相對同資產一般期間</th></tr></thead><tbody id="summaryTable"><tr><td colspan="6">載入中…</td></tr></tbody></table></div>
-<h2>逐筆官方事件與後續價格表現</h2><div id="status" aria-live="polite">尚未載入</div><div class="table-wrap"><table><thead><tr><th>事件日期</th><th>事件與原始來源</th><th>標的</th><th>參考基準日</th><th>首個計算日</th><th>1D</th><th>5D</th><th>20D</th></tr></thead><tbody id="caseTable"><tr><td colspan="8">載入中…</td></tr></tbody></table></div>
+<div class="metrics"><div class="metric"><small>具行情觀察數 n（非獨立）</small><strong id="eventN">—</strong><span id="sampleNote">樣本待確認</span></div><div class="metric"><small>歷史平均變動</small><strong id="avg">—</strong><span>非預測報酬</span></div><div class="metric"><small>歷史正報酬占比</small><strong id="positive">—</strong><span>不是預測勝率</span></div><div class="metric"><small>相較一般滾動期間平均</small><strong id="relative">—</strong><span>未排除其他市場因素</span></div></div>
+<h2>歷史類別 × 資產統計</h2><div class="table-wrap"><table><thead><tr><th>資產</th><th>有效樣本 n</th><th>平均變動</th><th>中位數</th><th>正報酬占比</th><th>相對同資產一般期間</th></tr></thead><tbody id="summaryTable"><tr><td colspan="6">載入中…</td></tr></tbody></table></div>
+<h2>逐筆公告／資料修訂日期與後續價格表現</h2><div id="status" aria-live="polite">尚未載入</div><div class="table-wrap"><table><thead><tr><th>事件日期</th><th>事件與原始來源</th><th>標的</th><th>參考基準日</th><th>首個計算日</th><th>1D</th><th>5D</th><th>20D</th></tr></thead><tbody id="caseTable"><tr><td colspan="8">載入中…</td></tr></tbody></table></div>
 <div class="pager"><span id="pageLabel"></span><div><button id="previous" type="button">上一頁</button> <button id="next" type="button">下一頁</button></div></div>
-<footer>方法：美股日盤使用公告時間與當地 16:00 收盤比較，台股採當地 13:30 收盤；期貨或沒有可確認發布時間的事件採次一當地日期之後的完整日K，為保守代理。從首個可用交易日前一日收盤到第 1／5／20 個可用收盤計算漲跌幅。期貨連續合約有換倉影響，台股、美元與殖利率日線可能有資料修訂；^TNX 顯示為殖利率數值的百分比變化，<b>不是殖利率基點變化</b>。所有統計都是描述性資料、樣本間可能相關，未做政策驚喜因果識別或可交易回測。</footer>
-</main><script src="./news-impact-history.js"></script></body></html>
+<footer>方法：美股日盤使用公告時間與當地 16:00 收盤比較，台股採當地 13:30 收盤；期貨或沒有可確認發布時間的事件採次一當地日期之後的完整日K，為保守代理。從首個可用交易日前一日收盤到第 1／5／20 個可用收盤計算漲跌幅。期貨連續合約有換倉影響，台股、美元與殖利率日線可能有資料修訂；^TNX 顯示為殖利率數值的百分比變化，<b>不是殖利率基點變化</b>。ALFRED 更新日可能包含後續修訂；每筆都不等於獨立新聞事件。同一日可以有不同資料源，且多組資料可能高度重疊。早於 Yahoo 可用行情或與最近交易日相隔超過 14 天者不納入驗證。所有統計都是描述性資料、樣本間可能相關，未做政策驚喜因果識別或可交易回測。</footer>
+</main><script src="./news-impact-history.js?v=20261109c"></script></body></html>
