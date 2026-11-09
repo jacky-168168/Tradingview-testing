@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>歷史事件研究｜Global Market Intelligence</title>
+<meta name="description" content="美國 FOMC、CPI、OPEC 與美國選舉官方日期歷史價格研究；1/5/20 交易日實際後續報酬，標示樣本數與限制。">
+<style>
+:root{--bg:#f3f6fa;--ink:#15253e;--muted:#6b7d94;--line:#e0e7ef;--blue:#265f9e;--green:#00866e;--red:#bb3653}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--ink);margin:0;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}main{max-width:1350px;margin:auto;padding:20px 18px 50px}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.nav a{display:inline-block;padding:8px 12px;background:#fff;border:1px solid var(--line);border-radius:9px;text-decoration:none;color:#1d497a;font-size:12px;font-weight:800}
+h1{font-size:26px;margin:18px 0 7px}.sub{font-size:12px;color:var(--muted);line-height:1.85}.notice{background:#fff;border:1px solid var(--line);border-radius:12px;font-size:12px;line-height:1.8;padding:12px 15px;color:#516177;margin:15px 0}
+.controls{display:flex;flex-wrap:wrap;gap:9px;align-items:flex-end;margin:16px 0}.controls label{font-weight:850;color:#475569;font-size:11px;flex:1;min-width:150px}
+select{display:block;width:100%;border:1px solid #d6e0ec;border-radius:9px;padding:11px;background:#fff;color:var(--ink);font:inherit;font-size:13px;margin-top:5px}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.metric{border:1px solid var(--line);border-radius:12px;padding:15px;background:white}.metric small{display:block;font-size:10px;color:var(--muted);line-height:1.6}.metric strong{font-size:26px;display:block;margin-top:6px}.metric span{font-size:10px;color:var(--muted)}
+.pos{color:var(--red)}.neg{color:var(--green)}.neutral{color:#475569}
+h2{font-size:17px;margin:25px 0 11px}.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:13px}
+table{width:100%;border-collapse:collapse;min-width:650px}th{background:#f8fafc;text-align:left;color:#61748b;font-size:11px;padding:12px 13px;white-space:nowrap;border-bottom:1px solid var(--line)}td{border-bottom:1px solid #eef2f7;padding:11px 13px;color:#273a53;font-size:12px;line-height:1.6;vertical-align:top}tbody tr:last-child td{border-bottom:none}td strong{font-size:13px}.tag{display:inline-block;border-radius:5px;background:#edf2f8;color:#506783;padding:2px 6px;font-size:10px;font-weight:850;margin-top:3px}
+.bar{width:150px;max-width:100%;height:7px;background:#edf1f5;border-radius:6px;overflow:hidden;margin-top:8px}.fill{height:100%;background:#bd4561}.fill.down{background:#09967d}
+#meta{font-size:11px;color:var(--muted);line-height:1.8;margin:11px 0}#status{font-size:12px;color:#586b81;margin:12px 0}
+.case-source{max-width:250px;overflow-wrap:anywhere}.case-source a{color:#26649b;text-decoration:none}.case-source a:hover{text-decoration:underline}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;font-size:12px;color:var(--muted)}
+button{background:#fff;border:1px solid var(--line);padding:9px 13px;border-radius:8px;font-weight:850;color:#285a90;cursor:pointer}
+.empty{padding:24px;color:var(--muted);font-size:12px;line-height:1.8}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-height:1.8;margin-top:28px;padding-top:16px}
+@media(max-width:700px){main{padding:13px 11px 35px}h1{font-size:21px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric{padding:12px}.metric strong{font-size:21px}.controls label{flex:1 1 43%}h2{margin-top:20px}table{min-width:570px}}
+</style>
+<script src="./site-access.js"></script></head><body><main>
+<nav class="nav"><a href="./news-impact.html">← 媒體識別器</a><div><a href="./market-events.html">新聞來源</a> <a href="./index.html">主頁</a></div></nav>
+<h1>📊 歷史事件研究中心</h1>
+<p class="sub">Global Market Intelligence · FOMC / CPI / OPEC / 美國選舉 · 過去官方事件日期 × 後續資產走勢</p>
+<div class="notice">本頁計算的是 <b>已發生事件的歷史價格表現</b>，不是利多利空的確定預測。美國 CPI 只有公布日，<b>沒有市場預期與實際值差異，因此不會標示「超預期」</b>。FOMC 常規公告日由利率生效日往前推一天；OPEC 與選舉的日期可能晚於市場得知資訊的時間。沒有完成的交易日不會被填入。</div>
+<div id="meta" role="status" aria-live="polite">歷史研究資料讀取中…</div>
+<div class="controls">
+<label>事件類別<select id="group"><option value="FOMC">FOMC</option></select></label>
+<label>觀察資產<select id="asset"><option>美股S&P500</option><option>NASDAQ</option><option>台股</option><option>黃金</option><option>白銀</option><option>WTI原油</option><option>美元</option><option>美債殖利率</option><option>銅</option></select></label>
+<label>事件後期間<select id="horizon"><option value="1D">1 個交易日</option><option value="5D" selected>5 個交易日</option><option value="20D">20 個交易日</option></select></label>
+</div>
+<div class="metrics"><div class="metric"><small>有效獨立事件數</small><strong id="eventN">—</strong><span id="sampleNote">樣本待確認</span></div><div class="metric"><small>歷史平均變動</small><strong id="avg">—</strong><span>非預測報酬</span></div><div class="metric"><small>歷史正報酬占比</small><strong id="positive">—</strong><span>不是預測勝率</span></div><div class="metric"><small>相較一般滾動期間平均</small><strong id="relative">—</strong><span>未排除其他市場因素</span></div></div>
+<h2>事件組別 × 資產比較</h2><div class="table-wrap"><table><thead><tr><th>資產</th><th>有效樣本 n</th><th>平均變動</th><th>中位數</th><th>正報酬占比</th><th>相對同資產一般期間</th></tr></thead><tbody id="summaryTable"><tr><td colspan="6">載入中…</td></tr></tbody></table></div>
+<h2>逐筆官方事件與後續價格表現</h2><div id="status" aria-live="polite">尚未載入</div><div class="table-wrap"><table><thead><tr><th>事件日期</th><th>事件與原始來源</th><th>標的</th><th>參考基準日</th><th>首個計算日</th><th>1D</th><th>5D</th><th>20D</th></tr></thead><tbody id="caseTable"><tr><td colspan="8">載入中…</td></tr></tbody></table></div>
+<div class="pager"><span id="pageLabel"></span><div><button id="previous" type="button">上一頁</button> <button id="next" type="button">下一頁</button></div></div>
+<footer>方法：美股日盤使用公告時間與當地 16:00 收盤比較，台股採當地 13:30 收盤；期貨或沒有可確認發布時間的事件採次一當地日期之後的完整日K，為保守代理。從首個可用交易日前一日收盤到第 1／5／20 個可用收盤計算漲跌幅。期貨連續合約有換倉影響，台股、美元與殖利率日線可能有資料修訂；^TNX 顯示為殖利率數值的百分比變化，<b>不是殖利率基點變化</b>。所有統計都是描述性資料、樣本間可能相關，未做政策驚喜因果識別或可交易回測。</footer>
+</main><script src="./news-impact-history.js"></script></body></html>
