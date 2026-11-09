@@ -77,10 +77,21 @@ function historyOf(n){
  let verified=Object.entries(x.realized||{}).flatMap(([asset,frames])=>Object.entries(frames||{}).filter(([k,v])=>v!=null&&Number.isFinite(v)).map(([k,v])=>asset+" "+k+": "+(v>0?"+":"")+v.toFixed(2)+"%"));
  return verified.length?'<div class="reality">已實現價格後續報酬（非因果證明）｜'+esc(verified.slice(0,6).join("　"))+'</div>':"";
 }
+function missingEvidence(n){
+ if(n.hits.length)return "";
+ if(n.topicEvidence==="source_category_only")return "目前只由來源提供主題類別，標題本身缺少可檢查的事件內容。";
+ if(n.topics.includes("長期市場展望（非當日商品行情）"))return "這是中長期市場預測，不是當日商品供需數據，也不是期貨行情訊號。";
+ if(n.flags.includes("評論／預測"))return "評論／問題式標題沒有可確認的政策或供需結果，不自動給方向。";
+ if(n.topics.includes("企業財報／營收"))return "可辨識企業財報或營收主題，但仍需公司公告、實際值與事前市場共識。";
+ if(n.topics.includes("選舉／政治"))return "已辨識政治／選舉主題，但未連接到可核對且已生效的關稅、利率、能源等政策衝擊。";
+ if(n.topics.includes("經濟指標"))return "已辨識總體數據主題，但缺少當時預估值、實際公布值或首次發布證據。";
+ if(n.topics.includes("市場行情／評論"))return "市場評論或非指定資產行情不等於可驗證的未來價格假說。";
+ return "已辨識新聞主題，但尚無足夠資產傳導、時間或預期差證據判斷方向。";
+}
 function eventCard(n){
  const type=n.hits.length?n.hits.map(r=>r.name).join("／"):n.topics.length?"事件主題可識別／方向待確認":"尚無足夠事件規則";
  const certainty=n.impacts.length?(n.speculative||n.opinion||n.flags.length?"低｜含傳聞／評論／預期":"有限｜條件式標題規則，非歷史勝率"):n.hits.length?"已辨識事件，但未有足夠證據判方向":n.topicEvidence==="source_category_only"?"僅沿用來源分類，標題證據不足":n.topics.length?"可辨識主題，但不足以推估市場方向":"目前不足以判讀";
- const explain=n.hits.length?[...new Set(n.hits.map(r=>r.why))].join(" "):n.observations.length?"標題描述已發生的商品／匯率變動，只能作行情觀察，尚不能推論之後會延續或反轉。":n.topics.length?"目前能辨識主題，但尚缺政策實施、供需衝擊、財報預期差或可比價格資訊，不能直接判利多空。":n.negated?"標題具有否定語境，暫不自動判多空。":"目前標題無明確市場傳導依據，不能可靠判斷方向。";
+ const explain=n.hits.length?[...new Set(n.hits.map(r=>r.why))].join(" "):n.observations.length?"標題描述已發生的商品／匯率變動，只能作行情觀察，尚不能推論之後會延續或反轉。":n.topics.length?missingEvidence(n):n.negated?"標題具有否定語境，暫不自動判多空。":"目前標題無明確市場傳導依據，不能可靠判斷方向。";
  const caveats=n.hits.length?[...new Set(n.hits.map(r=>r.caveat))].join("；"):"需核對原文、預期差與實際行情";
  const time=String(n.publishedAt||n.date||"").replace("T"," ").slice(0,16);
  const url=/^https:\/\//.test(n.url||"")?n.url:"#";
@@ -129,6 +140,20 @@ async function boot(){
  DATA=j.items.filter(n=>n.type==="news"&&n.title&&n.url).filter(n=>{const k=(n.title||"").toLowerCase().replace(/\s+/g," ").trim();if(seen.has(k))return false;seen.add(k);return true}).map(classify);
  try{const h=await fetch(HISTORY_URL+"?t="+Date.now(),{cache:"no-store"});if(h.ok)HISTORY=await h.json()}catch(_){}
  render();
+ try{
+  const auditResponse=await fetch("./data/news_impact/recognition_audit.json?t="+Date.now(),{cache:"no-store"});
+  if(!auditResponse.ok)throw Error("HTTP "+auditResponse.status);
+  const a=await auditResponse.json();
+  if(a.schema!==1||!a.notAccuracy)throw Error("unexpected audit format");
+  const aligned=a.sourceNewsGeneratedAt===j.generatedAt;
+  $("recognitionAudit").textContent=
+   "新聞分類稽核："+a.newsCount+" 則｜標題有主題線索 "+a.recognizedHeadlineTopicCount+
+   " 則｜僅靠來源分類 "+a.sourceCategoryFallbackCount+
+   " 則｜有條件式方向 "+a.directionalHeadlineCount+
+   " 則｜已報導行情 "+a.reportedMarketMoveCount+
+   " 則｜尚未識別 "+a.unrecognizedCount+
+   " 則。這是涵蓋程度，不是辨識準確率或交易勝率。"+(aligned?"":"⚠ 分類稽核與當前新聞批次不同步。");
+ }catch(e){$("recognitionAudit").textContent="新聞分類稽核尚未完成；列表仍顯示各則事件的判讀及不確定性。";}
  try{
   const response=await fetch(SCORECARD_URL+"?t="+Date.now(),{cache:"no-store"});
   if(!response.ok)throw Error("HTTP "+response.status);
