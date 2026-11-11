@@ -1,19 +1,19 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-10T16:59:26.404756Z",
+  "generatedAt": "2026-11-11T01:53:43.475126Z",
   "sources": {
     "PTT": {
       "status": "ok",
       "method": "官方 Atom",
       "url": "https://www.ptt.cc/atom/stock.xml",
-      "freshCount": 18,
+      "freshCount": 13,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 4,
-      "pushLabelsFound": 6
+      "boardFreshCount": 10,
+      "pushLabelsFound": 16
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 45,
+      "freshCount": 48,
       "queryHealth": {
         "queriesAttempted": 12,
         "queriesSucceeded": 12,
@@ -43,34 +43,34 @@
     },
     "新聞": {
       "status": "ok",
-      "freshCount": 67
+      "freshCount": 66
     }
   },
   "social": {
-    "sample": 10,
-    "bull": 2,
+    "sample": 17,
+    "bull": 1,
     "bear": 0,
-    "neutral": 8,
-    "directional": 2,
+    "neutral": 16,
+    "directional": 1,
     "status": "已有樣本｜偏多討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
     "rawSample": 80,
-    "investmentDiscussion": 10,
-    "originalDiscussion": 10,
-    "repostedNews": 66,
+    "investmentDiscussion": 17,
+    "originalDiscussion": 17,
+    "repostedNews": 59,
     "unrelated": 4,
     "platformCounts": {
-      "PTT": 1,
-      "Bluesky": 9,
+      "PTT": 2,
+      "Bluesky": 15,
       "Threads": 0,
       "Instagram": 0
     }
   },
   "news": {
-    "sample": 67,
+    "sample": 66,
     "bull": 3,
     "bear": 5,
-    "neutral": 59,
+    "neutral": 58,
     "directional": 8,
     "status": "已有樣本｜偏空討論較多",
     "method": "只要有一篇有效公開貼文就視為已有樣本；關鍵詞僅供觀察，篇數少不代表市場共識，也不是留言全文分析"
@@ -83,6 +83,275 @@
   "items": [
     {
       "platform": "PTT",
+      "title": "[請益] 可口可樂本益比 為啥能比台積電高？",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794361613.A.FD9.html",
+      "publishedAt": "2026-11-11T01:46:53Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 14,
+      "pushLabel": "14",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "投資意見",
+        "stance": "中立／難判",
+        "emotion": "理性分析",
+        "confidence": "中",
+        "evidence": "[請益] 可口可樂本益比 為啥能比台積電高？",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "Bluesky",
+      "title": "📢 台股上週重跌5510.19點，失守4萬點，本週反彈，連2個交易日上漲3010.28點。美股10日收黑，法人認為，AI發展正從算力建設競賽，逐步進入商業化獲利驗證階段，台股將由基本面主導，資金聚焦具競爭優勢與獲利成長能見度的企業。",
+      "url": "https://bsky.app/profile/cnataiwan.nzcow.com/post/3mzysgfocil2t",
+      "publishedAt": "2026-11-11T01:27:21.657051Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "台股上週重跌5510.19點，失守4萬點，本週反彈，連2個交易日上漲3010.28點。",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "Bluesky",
+      "title": "📢 台積電擬投資Anthropic、OpenAI 董事會核准各5億美元額度 Rti 中央廣播電臺",
+      "url": "https://bsky.app/profile/radiotaiwan.nzcow.com/post/3mzysdqbp532x",
+      "publishedAt": "2026-11-11T01:25:52.128681Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "台積電擬投資Anthropic、OpenAI 董事會核准各5億美元額度",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 黃仁勳婚外情掀國安危機？美國會要求嚴",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794360306.A.520.html",
+      "publishedAt": "2026-11-11T01:25:06Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 1,
+      "pushLabel": "1",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 黃仁勳外遇風波重創輝達！市值蒸發12.8兆",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794359739.A.D5F.html",
+      "publishedAt": "2026-11-11T01:15:39Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 10,
+      "pushLabel": "10",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "#中央社即時新聞 財經新聞 08:26 美股收黑 法人：台股聚焦基本面AI進入獲利驗證階段 （中央社記者曾仁凱台北11日電）台股上週重跌5510.19點，失守4萬點，本週反彈，連2個交易日上漲3010.28點。美股10日收黑，法人認為，AI發展正從算力建設競賽，逐步進入商業化獲利驗證階段，台股將由基本面主導，資金聚",
+      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mzyqy6zgw7v2",
+      "publishedAt": "2026-11-11T01:01:06Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 蘇姿丰接輝達執行長？傳獵人頭公司物色候",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794357445.A.F28.html",
+      "publishedAt": "2026-11-11T00:37:25Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 70,
+      "pushLabel": "70",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "三個月前 我才出了期末考題 要學生分析，Altman, Amodei, Hassabis, 誰比較像Oppenheimer? 結果 現實給我們的答案是黃仁勳。 -- 我原本是賭Altman會中招 台積電會被扣帽子違反禁運被美國剉掉 沒想到是Nvidia",
+      "url": "https://bsky.app/profile/joi2049.bsky.social/post/3mzypkquvt22t",
+      "publishedAt": "2026-11-11T00:36:06.447000Z",
+      "stance": "中立／難判",
+      "contentType": "非投資話題",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+    },
+    {
+      "platform": "PTT",
+      "title": "[閒聊] 2026/11/11 盤中閒聊",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794357007.A.B42.html",
+      "publishedAt": "2026-11-11T00:30:07Z",
+      "stance": "中立／難判",
+      "contentType": "非投資話題",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 100,
+      "pushLabel": "爆",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "\"台積電投資Anthropic和OpenAI　各5億美元\" ( www.cna.com.tw/news/afe/202... ) 晶圓代工廠台積電董事會今天核准在5億美元額度內認購Anthropic普通股，以及於5億美元額度內認購OpenAI Group特別股股份。",
+      "url": "https://bsky.app/profile/calvinlee.bsky.social/post/3mzyoyf5qps2i",
+      "publishedAt": "2026-11-11T00:25:50.177000Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "台積電投資Anthropic和OpenAI　各5億美元",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "PTT",
+      "title": "[情報]OpenAI第三季度營收約100億美元，增長約5",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794347116.A.192.html",
+      "publishedAt": "2026-11-10T21:45:16Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 26,
+      "pushLabel": "26",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "台灣焦點：台積電核准最高10億美元　認購Anthropic與OpenAI股份 看點： 1. 中央社報導兩項股份認購案：中央社報導台積電董事會核准，分別在5億美元額度內認購Anthropic普通股及OpenAI Group特別股；時間為報導首次發布時間，非董事會決議的精確時刻。 2. 為何重要：台積電對兩家主要AI模型",
+      "url": "https://bsky.app/profile/surltw.bsky.social/post/3mzyfdo3cvf2g",
+      "publishedAt": "2026-11-10T21:33:11.080000Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "台積電核准最高10億美元　認購Anthropic與OpenAI股份",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "Bluesky",
+      "title": "📢 台積電10月營收逾5,800億創新高 年增近6成 Rti 中央廣播電臺",
+      "url": "https://bsky.app/profile/radiotaiwan.nzcow.com/post/3mzyf3uyx532n",
+      "publishedAt": "2026-11-10T21:28:50.005019Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "台積電10月營收逾5,800億創新高 年增近6成",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "Bluesky",
+      "title": "今天是雙11購物節 你買了什麼呢？ 我現在最想買的是股票 上午就一起來進貨吧 www.youtube.com/live/iI1dsFT... 讓購物的充實感盈滿你我的內心 #蛸音Live #投機實作 #台灣Vtuber",
+      "url": "https://bsky.app/profile/aoiheart.bsky.social/post/3mzy6c534zk26",
+      "publishedAt": "2026-11-10T19:27:03.636000Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "投資意見",
+        "stance": "偏多",
+        "emotion": "追高",
+        "confidence": "中",
+        "evidence": "我現在最想買的是股票 上午就一起來進貨吧",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "Bluesky",
+      "title": "📢 台股連續2個交易日反彈，今天漲1050.22點，收在42711.92點，但外資持續站在賣方，今天賣超新台幣341.16億元，連續9個交易日賣超，累計賣超逾8298億元；今天外資賣超族群涵蓋面板、金融及半導體族群，並調節台積電8181張，連續23個交易日賣超。",
+      "url": "https://bsky.app/profile/cnataiwan.nzcow.com/post/3mzxxohbnza22",
+      "publishedAt": "2026-11-10T17:28:40.751315Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "台股連續2個交易日反彈，今天漲1050.22點，收在42711.92點",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 黃仁勳外遇扯上「中國間諜」 陸官方出面",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794330018.A.3DA.html",
+      "publishedAt": "2026-11-10T17:00:18Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 66,
+      "pushLabel": "66",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
       "title": "[新聞] 不只黃仁勳陷共諜風暴！CNN點名4人　「AI",
       "url": "https://www.ptt.cc/bbs/Stock/M.1794329734.A.49A.html",
       "publishedAt": "2026-11-10T16:55:34Z",
@@ -90,7 +359,10 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
+      "method": "標題規則（非留言全文）",
+      "pushScore": 25,
+      "pushLabel": "25",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
       "platform": "PTT",
@@ -102,9 +374,15 @@
       "investmentEligible": true,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 11,
-      "pushLabel": "11",
-      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "投資意見",
+        "stance": "中立／難判",
+        "emotion": "猶豫",
+        "confidence": "中",
+        "evidence": "[請益] 若有違反美國國家安全公司股票的處置",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
     },
     {
       "platform": "Bluesky",
@@ -115,7 +393,16 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "台灣焦點：台股反彈1050點後法人動向出爐　三大法人賣超148.23億元",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
     },
     {
       "platform": "PTT",
@@ -127,8 +414,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 3,
-      "pushLabel": "3",
+      "pushScore": 7,
+      "pushLabel": "7",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -853,204 +1140,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 115年11月10日 三大法人買賣金額統計表",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794294842.A.057.html",
-      "publishedAt": "2026-11-10T07:14:02Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 黃仁勳認婚外情 輝達遭錯殺？00662今分割",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794294404.A.4CE.html",
-      "publishedAt": "2026-11-10T07:06:44Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 5871 中租-KY 10月自結 0.99 累計:9.73",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794293607.A.B15.html",
-      "publishedAt": "2026-11-10T06:53:27Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 1110 上市投信買賣超排行",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794293540.A.E5B.html",
-      "publishedAt": "2026-11-10T06:52:20Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 3481群創10月營收 M-7.65% Y+1.41%",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794291809.A.0A5.html",
-      "publishedAt": "2026-11-10T06:23:29Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 外資11月匯出百億美元 楊金龍：算正常 非",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794291608.A.FB8.html",
-      "publishedAt": "2026-11-10T06:20:08Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[請益] 威剛3260 十銓4967",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794290940.A.EC9.html",
-      "publishedAt": "2026-11-10T06:09:00Z",
-      "stance": "中立／難判",
-      "contentType": "非投資話題",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#公視新聞網 13:59 國安基金護盤助攻 台股早盤強勢反彈站回4萬3 台股歷經上週五雪崩後，本週受到國安基金視情況進場護盤，加上昨（9）日美股費半指數收漲6.85%激勵下，週二亞洲主要股市再度全面反攻，台股加權指數，早盤最高一度4萬3135點，大漲1473點。相較台股指數急拉，新台幣兌美元表現疲弱，以32.84元",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mzwriftwg2s2",
-      "publishedAt": "2026-11-10T06:05:07Z",
-      "stance": "偏多",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "新聞轉載",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "國安基金護盤助攻 台股早盤強勢反彈站回4萬3 台股歷經上週五雪崩後",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 13:47 台股漲1050.22點 （中央社台北10日電）台北股市今天收盤漲1050.22點，為42711.92點，漲幅2.52%，成交金額新台幣1兆33.39億元。 https://www.cna.com.tw/news/afe/202611100131.aspx #新聞",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mzwrbirnsfx2",
-      "publishedAt": "2026-11-10T06:01:17Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 13:42 台積電10月營收衝5868.9億元 創下歷史新高 （中央社記者張建中新竹10日電）晶圓代工廠台積電自結10月營收新台幣5868.9億元，創下歷史新高，月增14.7%，年增59.7%。 https://www.cna.com.tw/news/afe/202611100129.",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mzwrb6qvzbf2",
-      "publishedAt": "2026-11-10T06:01:06Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 13:11 新思科技攜手台積電 推進A14認證與CPO設計 （中央社記者張建中新竹10日電）電子設計自動化（EDA）廠新思科技（Synopsys）今天宣布，透過AI驅動EDA流程、多晶粒設計流程以及通過矽晶片實際考驗的介面與基礎矽智財（IP），與台積電協助客戶因應與日俱增的設計複雜性，同",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mzwradha2w32",
-      "publishedAt": "2026-11-10T06:00:31Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[閒聊] 2026/11/10 盤後閒聊",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794290412.A.045.html",
-      "publishedAt": "2026-11-10T06:00:12Z",
-      "stance": "中立／難判",
-      "contentType": "非投資話題",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "timestampBasis": "文章網址 ID 推算，非官方發文時間",
-      "pushScore": 100,
-      "pushLabel": "爆",
-      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2330台積電10月營收 mom +14.7% yoy +59.",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794288885.A.825.html",
-      "publishedAt": "2026-11-10T05:34:45Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 10月營收年、月雙減！光學元件「這檔」漲",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794287873.A.B97.html",
-      "publishedAt": "2026-11-10T05:17:53Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 好友下台就討債? 納坦雅胡將交出政權 川",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794286004.A.A7C.html",
-      "publishedAt": "2026-11-10T04:46:44Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 10:33 台股盤中重登43000點 台積電聯發科領軍 （中央社記者吳家豪台北10日電）在美國科技股回穩、國安基金進場護盤下，台股今天延續反彈走勢，盤中一舉站回43000點整數大關，最高觸及43135.92點、強彈1474點，台積電、聯發科等權值股領軍，資金大舉搶進人工智慧（AI）伺服器",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3mzwlmzlbdet2",
-      "publishedAt": "2026-11-10T04:20:19Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "台股低點強彈5200點 下一步V轉秀？  @57money57   #財富達給厚 #shorts",
-      "url": "https://www.youtube.com/watch?v=MkzixwdZt9g",
-      "publishedAt": "2026-11-10T16:31:24Z",
-      "sourceName": "57東森財經新聞",
+      "title": "台指期近月當沖 現場直播 2026.11.11",
+      "url": "https://www.youtube.com/watch?v=hikTi4SQ4aY",
+      "publishedAt": "2026-11-11T01:23:22Z",
+      "sourceName": "狗骨董",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1390,16 +1488,44 @@
   "pttNewsItems": [
     {
       "platform": "PTT",
-      "title": "[新聞] 今年刷卡簽帳可望破5.5兆元大關 史上最高",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794325901.A.B06.html",
-      "publishedAt": "2026-11-10T15:51:41Z",
+      "title": "[新聞] 蘇姿丰接輝達執行長？傳獵人頭公司物色候",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794357445.A.F28.html",
+      "publishedAt": "2026-11-11T00:37:25Z",
       "stance": "中立／難判",
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 3,
-      "pushLabel": "3",
+      "pushScore": 70,
+      "pushLabel": "70",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 黃仁勳外遇扯上「中國間諜」 陸官方出面",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794330018.A.3DA.html",
+      "publishedAt": "2026-11-10T17:00:18Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 66,
+      "pushLabel": "66",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[情報]OpenAI第三季度營收約100億美元，增長約5",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794347116.A.192.html",
+      "publishedAt": "2026-11-10T21:45:16Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 26,
+      "pushLabel": "26",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1411,7 +1537,52 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
+      "method": "標題規則（非留言全文）",
+      "pushScore": 25,
+      "pushLabel": "25",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 黃仁勳外遇風波重創輝達！市值蒸發12.8兆",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794359739.A.D5F.html",
+      "publishedAt": "2026-11-11T01:15:39Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 10,
+      "pushLabel": "10",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 今年刷卡簽帳可望破5.5兆元大關 史上最高",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794325901.A.B06.html",
+      "publishedAt": "2026-11-10T15:51:41Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 7,
+      "pushLabel": "7",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 黃仁勳婚外情掀國安危機？美國會要求嚴",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794360306.A.520.html",
+      "publishedAt": "2026-11-11T01:25:06Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 1,
+      "pushLabel": "1",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
       "platform": "PTT",
@@ -1775,61 +1946,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2467 志聖 10月自結:1.05 年增:100%",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794297259.A.5E3.html",
-      "publishedAt": "2026-11-10T07:54:19Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 3702 大聯大 決議買回並註銷可轉債(部分)",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794296926.A.6BD.html",
-      "publishedAt": "2026-11-10T07:48:46Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 黃仁勳外遇風波擴大！股東提告隱瞞出軌女",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794296228.A.64A.html",
-      "publishedAt": "2026-11-10T07:37:08Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 3147大綜 115年10月營收",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794296130.A.02F.html",
-      "publishedAt": "2026-11-10T07:35:30Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 1802 台玻 10月營收",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794295413.A.B8A.html",
-      "publishedAt": "2026-11-10T07:23:33Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1842,22 +1958,22 @@
     "個股熱度只統計有投資語境且非新聞轉貼的 G Top20 標題，不更改 G 排名或 TITAN 風控。"
   ],
   "semantic": {
-    "status": "partial",
+    "status": "verified",
     "model": "gemini-3.5-flash-lite",
-    "inferenceCalls": 0,
-    "cachedClassifications": 8,
-    "newlyClassified": 0,
-    "unclassified": 2,
-    "updatedAt": "2026-11-10T16:59:29.923Z",
-    "error": "Gemini HTTP 503",
+    "inferenceCalls": 2,
+    "cachedClassifications": 7,
+    "newlyClassified": 10,
+    "unclassified": 0,
+    "updatedAt": "2026-11-11T01:53:48.810Z",
+    "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 10,
-    "classifiedCount": 8,
-    "investmentCount": 1,
-    "bullish": 0,
+    "candidateCount": 17,
+    "classifiedCount": 17,
+    "investmentCount": 4,
+    "bullish": 1,
     "bearish": 0,
-    "neutral": 1,
-    "originalRuleCount": 10,
+    "neutral": 3,
+    "originalRuleCount": 17,
     "noTrade": true
   }
 }
