@@ -1,40 +1,41 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-10T19:53:48.693Z",
-  "sourceNewsGeneratedAt": "2026-11-10T20:44:36+08:00",
+  "generatedAt": "2026-11-11T06:49:01.373Z",
+  "sourceNewsGeneratedAt": "2026-11-11T09:58:37+08:00",
   "sourceNewsStatus": "ok",
   "classifierVersion": "2026-11-09-v1.3",
-  "newsCount": 67,
-  "recognizedHeadlineTopicCount": 62,
-  "sourceCategoryFallbackCount": 5,
-  "contextOrEventOnlyCount": 44,
-  "directionalHeadlineCount": 8,
-  "reportedMarketMoveCount": 13,
+  "newsCount": 69,
+  "recognizedHeadlineTopicCount": 65,
+  "sourceCategoryFallbackCount": 4,
+  "contextOrEventOnlyCount": 50,
+  "directionalHeadlineCount": 10,
+  "reportedMarketMoveCount": 5,
   "unrecognizedCount": 0,
   "countsByRecognition": {
-    "reported_market_move_not_prediction": 11,
-    "headline_topic_only": 38,
-    "conditional_direction": 8,
+    "conditional_direction": 10,
+    "headline_topic_only": 48,
+    "reported_market_move_not_prediction": 5,
     "source_category_only": 4,
-    "mechanism_or_event_known_direction_unverified": 6
+    "mechanism_or_event_known_direction_unverified": 2
   },
   "countsByTopic": {
-    "原油／天然氣": 11,
-    "央行／利率": 10,
-    "經濟指標": 12,
-    "地緣政治": 7,
+    "央行／利率": 13,
+    "經濟指標": 10,
+    "企業財報／營收": 9,
+    "AI算力／資料中心": 13,
+    "地緣政治": 8,
+    "貴金屬／銅": 6,
     "半導體／封裝": 7,
-    "企業財報／營收": 12,
-    "AI算力／資料中心": 9,
-    "貴金屬／銅": 11,
-    "市場行情／評論": 8,
+    "原油／天然氣": 6,
+    "市場行情／評論": 4,
     "選舉／政治": 13,
-    "記憶體產業": 6,
-    "關稅／貿易": 2,
     "農產品": 6,
-    "匯率": 1
+    "長期市場展望（非當日商品行情）": 1,
+    "記憶體產業": 6
   },
-  "sourceReviewCounts": {},
+  "sourceReviewCounts": {
+    "forum_or_commentary": 2
+  },
   "notAccuracy": true,
   "notHitRate": true,
   "caveats": [
@@ -45,18 +46,36 @@
   ],
   "unresolved": [
     {
-      "id": "news-48d3212649258e03",
-      "title": "美10月CPI今夜揭曉：年增率罕見缺席 月增放緩能否撼動聯準會12月升息預期？",
+      "id": "news-135755b08d351fdc",
+      "title": "亞股早盤多空拉鋸！台股震盪、台幣近逼33元 Fed升息疑慮、Anthropic IPO成焦點",
+      "source": "Yahoo新聞",
+      "topics": [
+        "央行／利率"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-7b28fcc4703f95fd",
+      "title": "Fed升息預期再升溫！費城聯準銀行總裁：逐步緊縮貨幣政策似乎是合適的選擇",
       "source": "鉅亨網",
       "topics": [
-        "央行／利率",
+        "央行／利率"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-f87176c45ca545d9",
+      "title": "TradingKey 每日市場簡報：CPI超預期！美股回落，輝達跌超5%，AMD、博通逆勢上漲",
+      "source": "TradingKey",
+      "topics": [
+        "AI算力／資料中心",
         "經濟指標"
       ],
       "reason": "headline_topic_only"
     },
     {
-      "id": "global-db76a7140f47b36f",
-      "title": "Israel's new parliament to be sworn in as leaders compete to form government",
+      "id": "global-7483f0ff8a22301a",
+      "title": "Three Iran-backed suspects plotted attacks including RAF Fairford incident, US says",
       "source": "BBC News",
       "topics": [
         "地緣政治"
@@ -64,8 +83,138 @@
       "reason": "headline_topic_only"
     },
     {
-      "id": "global-bcec18a1d87ddc8f",
-      "title": "Russia pounds Ukraine's power grid as talks open in Abu Dhabi",
+      "id": "global-0dc67a1f653e8b0d",
+      "title": "Dollar gains traction as Fed speakers warn of risks from inflation",
+      "source": "Reuters",
+      "topics": [
+        "央行／利率",
+        "經濟指標"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-816593f8ab911e60",
+      "title": "台積電Q3賺近3股本！ 擬砸409億美元擴產 配息9元、參股2巨頭",
+      "source": "東森新聞",
+      "topics": [
+        "半導體／封裝"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-924e2431bcb156ad",
+      "title": "金價：美通膨超預期+升息預測強化，紐約期、現貨金價週二齊挫逾2%",
+      "source": "富聯網",
+      "topics": [
+        "央行／利率",
+        "經濟指標",
+        "貴金屬／銅"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-b5f799e6c47f1b5c",
+      "title": "美國原油庫存大幅增加戰略石油儲備持續釋出- 新聞與統計",
+      "source": "IndexBox",
+      "topics": [
+        "原油／天然氣"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "global-f94f1560912d3528",
+      "title": "Real Madrid's Vinícius Jr sends surprise message to boy who lost his legs in Sudan's war",
+      "source": "BBC News",
+      "topics": [
+        "地緣政治"
+      ],
+      "reason": "source_category_only"
+    },
+    {
+      "id": "news-1177a3920dfac30a",
+      "title": "國際產經：供應與航運受阻，EIA上調今、明年油價預測，年底布油料守100美元",
+      "source": "富聯網",
+      "topics": [
+        "原油／天然氣"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-0bbbfcc2b6c30a47",
+      "title": "黃金飆漲7%後 力守關鍵突破支撐 多頭動能受考驗",
+      "source": "商傳媒",
+      "topics": [
+        "貴金屬／銅"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "global-dee2ab37c633b859",
+      "title": "US charges 3 men with plotting terror attacks, including planned assault on UK airbase - AP News",
+      "source": "Associated Press",
+      "topics": [
+        "地緣政治"
+      ],
+      "reason": "source_category_only"
+    },
+    {
+      "id": "global-a0ea1daef34dcdb6",
+      "title": "Dreams, desks and selfies: Newly elected members of Congress learn their way around - AP News",
+      "source": "Associated Press",
+      "topics": [
+        "選舉／政治"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "global-aa8b7102d536030b",
+      "title": "Hot Inflation, AI Selloff & Anthropic IPO",
+      "source": "Bloomberg",
+      "topics": [
+        "AI算力／資料中心",
+        "經濟指標"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "global-c3da3b1c1008869c",
+      "title": "Trump nominates Justice Department official to an EEOC seat that was left open by Democrat's firing - AP News",
+      "source": "Associated Press",
+      "topics": [
+        "選舉／政治"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-e1678ba6f448f2d3",
+      "title": "AI訂單旺、存貨翻倍千億 英業達揭缺料困局",
+      "source": "民報",
+      "topics": [
+        "AI算力／資料中心"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-970f96c6cc1f3ba8",
+      "title": "路透調查：上周美國原油和成品油庫存料均呈下降",
+      "source": "TradingView",
+      "topics": [
+        "原油／天然氣"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "global-4de7ed4ee265ca3a",
+      "title": "Opinion | Iran Doesn’t Think the War Is Over",
+      "source": "The Wall Street Journal",
+      "topics": [
+        "地緣政治"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "global-cd2aec3899487368",
+      "title": "Ukraine's Zelenskiy says he is pleased with messages from US envoys on diplomatic efforts to end war",
       "source": "Reuters",
       "topics": [
         "地緣政治"
@@ -73,12 +222,198 @@
       "reason": "headline_topic_only"
     },
     {
-      "id": "global-8e9c5228b46367fe",
-      "title": "EXCLUSIVE: Recent Ukrainian attacks have reduced Russia's oil processing capacity by 30%, sources say",
-      "source": "Reuters",
+      "id": "global-e67f76072a584db8",
+      "title": "U.K. Police Arrested a U.S. Army Soldier on Allegations of Spying for Russia",
+      "source": "The Wall Street Journal",
+      "topics": [
+        "地緣政治"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "global-1836f597be7e7968",
+      "title": "USPS sounds alarm over finances, presses Congress for help - Politico",
+      "source": "POLITICO",
+      "topics": [
+        "選舉／政治"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-ac3effbdbee1ccfe",
+      "title": "〈能源盤後〉美淡化對伊朗再開戰可能 俄烏和談再添供應壓力 原油連2跌至2個月低點",
+      "source": "鉅亨網",
       "topics": [
         "原油／天然氣",
         "地緣政治"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "global-6c77c762467645f8",
+      "title": "Bernie Sanders won't support Schumer for Senate Democratic leader, saying it's time for change - AP News",
+      "source": "Associated Press",
+      "topics": [
+        "選舉／政治"
+      ],
+      "reason": "source_category_only"
+    },
+    {
+      "id": "global-1b4e73fea95d20e2",
+      "title": "Congress Taking Closer Look at Nvidia's Huang",
+      "source": "Bloomberg",
+      "topics": [
+        "AI算力／資料中心",
+        "選舉／政治"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-f02aa5aa02eb97a1",
+      "title": "USDA 2026年11月10日穀物收購價：堪薩斯、伊利諾、墨西哥灣、波特蘭、印第安納與俄亥俄現貨價格- 新聞與統計",
+      "source": "IndexBox",
+      "topics": [
+        "農產品"
+      ],
+      "reason": "source_category_only"
+    },
+    {
+      "id": "global-bf611314bd860392",
+      "title": "A note to ‘46’: Donald Trump’s private message to Joe Biden emerges in new White House memoir - AP News",
+      "source": "Associated Press",
+      "topics": [
+        "選舉／政治"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-ff50ad142abed37a",
+      "title": "EIA上調油價預測：布倫特原油今年餘下時間料守穩100美元，明年均價看86美元",
+      "source": "BigGo 財經",
+      "topics": [
+        "原油／天然氣"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-d434b4323a692f8d",
+      "title": "巴西全國穀物出口商協會（ANEC）：巴西11月大豆出口量預計達4.37億噸，前一週爲3.3",
+      "source": "富途牛牛",
+      "topics": [
+        "農產品"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-8726cf82730d63dd",
+      "title": "全球單一產區咖啡豆市場2035年預測：高值化與可追溯需求推動成長 - 新聞與統計",
+      "source": "IndexBox",
+      "topics": [
+        "農產品",
+        "長期市場展望（非當日商品行情）"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "global-01f1ace51b976a42",
+      "title": "Rate Trading Rose in October and a Fed Governor Leans Toward Backing a December Hike",
+      "source": "Financial Times",
+      "topics": [
+        "央行／利率"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "global-a5372663a25e47b3",
+      "title": "Troubled US debt levels ticked up in third quarter, New York Fed report says",
+      "source": "Reuters",
+      "topics": [
+        "央行／利率"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-4440f0ed575ea156",
+      "title": "「2026海外技術研討會：工業實體AI」聚焦美臺合作與供應鏈變局|僑社現場",
+      "source": "僑新聞",
+      "topics": [
+        "AI算力／資料中心"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-ptt-866b121c8eb7b3af",
+      "title": "[新聞] 不只黃仁勳陷共諜風暴！CNN點名4人 「AI",
+      "source": "PTT 股票板（新聞轉載）",
+      "topics": [
+        "AI算力／資料中心"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-d36ca4aab3736ec1",
+      "title": "路易斯安那墨西哥灣出口報價：玉米、黃豆、小麥基差持穩 - 新聞與統計",
+      "source": "IndexBox",
+      "topics": [
+        "農產品"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-f79fa88111efba1d",
+      "title": "代理式 AI 推升推論與 CPU 需求 英特爾以 GPU D 系列與 Diamond Rapids 布局資料中心",
+      "source": "網路資訊雜誌",
+      "topics": [
+        "AI算力／資料中心"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-ptt-604207525a176383",
+      "title": "[新聞] 美國10月CPI月增0.4%超預期！美股期貨走",
+      "source": "PTT 股票板（新聞轉載）",
+      "topics": [
+        "經濟指標",
+        "市場行情／評論"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-1b45756334593c74",
+      "title": "台積電砸1.34兆元擴產！建廠、升級先進製程 | NOWNEWS今日新聞",
+      "source": "LINE TODAY",
+      "topics": [
+        "半導體／封裝"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-0f903aed91bbba1d",
+      "title": "輝達多事之秋 財報發布前調研機構降評 率先投下震撼彈",
+      "source": "中時新聞網",
+      "topics": [
+        "AI算力／資料中心",
+        "企業財報／營收"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-80814c038f1682ef",
+      "title": "英業達法說會｜AI伺服器訂單強難出貨 GPU、ASIC明年拚高雙位數成長",
+      "source": "壹蘋新聞網",
+      "topics": [
+        "AI算力／資料中心",
+        "半導體／封裝",
+        "企業財報／營收"
+      ],
+      "reason": "headline_topic_only"
+    },
+    {
+      "id": "news-fb4b69ff098f1cd2",
+      "title": "台積電砸1.34兆元擴產！建廠、升級先進製程",
+      "source": "Yahoo新聞",
+      "topics": [
+        "半導體／封裝"
       ],
       "reason": "headline_topic_only"
     },
@@ -93,15 +428,6 @@
       "reason": "headline_topic_only"
     },
     {
-      "id": "news-2c79029d3e5cc1c8",
-      "title": "聯準會理事華勒支持12月升息 不排除擴大升息幅度",
-      "source": "鉅亨網",
-      "topics": [
-        "央行／利率"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
       "id": "news-5479fb8c64b1d758",
       "title": "〈禾伸堂法說〉AI營收比重續攀高明年MLCC擴產4成 未來兩年展望樂觀",
       "source": "鉅亨網",
@@ -112,136 +438,12 @@
       "reason": "headline_topic_only"
     },
     {
-      "id": "global-075935e6d5430ccb",
-      "title": "US-mediated talks on ending Russia-Ukraine war begin in Abu Dhabi - AP News",
-      "source": "Associated Press",
-      "topics": [
-        "地緣政治"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "global-d42dfdd01fe86a17",
-      "title": "COMMENTARY: Morning Bid: War is over?",
-      "source": "Reuters",
-      "topics": [
-        "地緣政治"
-      ],
-      "reason": "source_category_only"
-    },
-    {
-      "id": "news-ed56fef6bdd85fb0",
-      "title": "聯準會鷹派聲浪升高，美股期貨、黃金下挫！沃勒支持12月升息，不排除一次升2碼 | 林彥呈 | 財經",
-      "source": "風傳媒",
-      "topics": [
-        "央行／利率",
-        "貴金屬／銅",
-        "市場行情／評論"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-0fd6b6fad413f96a",
-      "title": "輝達多事之秋...財報前驚見外資降評- 國際",
-      "source": "工商時報",
-      "topics": [
-        "AI算力／資料中心",
-        "企業財報／營收"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "global-4a2805806e59020e",
-      "title": "Vanishing vessels and missing sailors: The Iran war's human cost at sea",
-      "source": "Reuters",
-      "topics": [
-        "地緣政治"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-1748e0c16e440176",
-      "title": "對輝達GPU需求強勁！陸企豪擲百億搶輝達顯卡",
-      "source": "UDN",
-      "topics": [
-        "AI算力／資料中心"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-b2d076de75db0171",
-      "title": "奇鋐看明年ASIC營收超越GPU 水冷產能擴逾5成",
-      "source": "自由財經",
-      "topics": [
-        "AI算力／資料中心",
-        "企業財報／營收"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-d7d45f9d48cf18c4",
-      "title": "記憶體教父高啟全：台積電不會跨足記憶體 2年後中國DRAM產能開出將供過於求",
-      "source": "鏡報",
-      "topics": [
-        "半導體／封裝",
-        "記憶體產業"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-7296a5031d7f09ac",
-      "title": "奇鋐看明年ASIC營收超越GPU，水冷擴產逾五成",
-      "source": "台視全球資訊網",
-      "topics": [
-        "AI算力／資料中心",
-        "企業財報／營收"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-2ef1ceedf9b80adf",
-      "title": "〈英業達法說〉AI需求沒有改變 明年GPU及ASIC營收及出貨量皆高雙位數年增",
-      "source": "鉅亨網",
-      "topics": [
-        "AI算力／資料中心",
-        "企業財報／營收"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "global-7cd25761c95e06d9",
-      "title": "ECB may need to hike in Dec, chief economist says",
-      "source": "Reuters",
-      "topics": [
-        "經濟指標"
-      ],
-      "reason": "source_category_only"
-    },
-    {
-      "id": "global-008212b6aa7679e9",
-      "title": "Top Federal Reserve official considers largest rate rise since 2022",
-      "source": "Financial Times",
-      "topics": [
-        "經濟指標"
-      ],
-      "reason": "source_category_only"
-    },
-    {
       "id": "news-c67106d10b9391d8",
       "title": "法人降評後反而大漲？記憶體利空出盡大V轉「南亞科、華邦電、力積電、群聯全收紅」法說會透露這兩件事才是大魔王",
       "source": "旺得富理財網",
       "topics": [
         "記憶體產業",
         "企業財報／營收"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "global-6c8d10663c00352b",
-      "title": "Singapore Central Bank Rolls Out Gold-Vaulting Services",
-      "source": "The Wall Street Journal",
-      "topics": [
-        "貴金屬／銅"
       ],
       "reason": "headline_topic_only"
     },
@@ -256,41 +458,11 @@
       "reason": "headline_topic_only"
     },
     {
-      "id": "news-746e1ada24fb7699",
-      "title": "【台灣】台積電 10 月營收再創歷史新高，Q4 營收有望超越財測| 財經Ｍ平方短評",
-      "source": "LINE TODAY",
-      "topics": [
-        "半導體／封裝",
-        "企業財報／營收"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
       "id": "news-f5a34a73ee563d55",
       "title": "美國上週黃豆出口減少 小麥與玉米出口增長",
       "source": "Yahoo股市",
       "topics": [
         "農產品"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-a227c918972b2f00",
-      "title": "「記憶體大廠」6千張庫藏股急喊卡 股價大漲近6％後翻黑",
-      "source": "東森電視",
-      "topics": [
-        "記憶體產業",
-        "市場行情／評論"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-0c3a618f6cf61f21",
-      "title": "台積電 10 月營收衝上 5,868.9 億元！年增近 6 成創新高、前 10 月突破 4.48 兆",
-      "source": "果仁家",
-      "topics": [
-        "半導體／封裝",
-        "企業財報／營收"
       ],
       "reason": "headline_topic_only"
     },
@@ -311,63 +483,6 @@
       "topics": [
         "農產品",
         "市場行情／評論"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-6ce34b18d1a80c0b",
-      "title": "美國上週黃豆出口減少小麥與玉米出口增長- 新聞",
-      "source": "MoneyDJ",
-      "topics": [
-        "農產品"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "global-191d5dc3081a3917",
-      "title": "Democrats have gained control in more states. That could change the way the US elects its president - AP News",
-      "source": "Associated Press",
-      "topics": [
-        "選舉／政治"
-      ],
-      "reason": "source_category_only"
-    },
-    {
-      "id": "news-95834f05b1b990cc",
-      "title": "黃金價格預測：美國通膨預計放緩，10月CPI或將支撐金價突破4200美元",
-      "source": "TradingKey",
-      "topics": [
-        "經濟指標",
-        "貴金屬／銅"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-120af85049d079b7",
-      "title": "聯準會升息預期升溫，蓋過美伊達成協議的樂觀情緒，金價跌破4,150美元",
-      "source": "www.tmgm.com",
-      "topics": [
-        "央行／利率",
-        "貴金屬／銅"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-ed2afbd344cc04d3",
-      "title": "布蘭特原油價格預測：油價暴跌近6%逼近90美元，恐將跌向80美元",
-      "source": "TradingKey",
-      "topics": [
-        "原油／天然氣",
-        "市場行情／評論"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-9f8ba20569e90ebb",
-      "title": "《商情》調升產量預期 11/9紐約阿拉比卡咖啡豆回跌",
-      "source": "富聯網",
-      "topics": [
-        "農產品"
       ],
       "reason": "headline_topic_only"
     },
@@ -408,38 +523,11 @@
       "reason": "headline_topic_only"
     },
     {
-      "id": "global-53a5439bbbb4281b",
-      "title": "Dana White declines Trump’s offer to be White House press secretary",
-      "source": "BBC News",
-      "topics": [
-        "選舉／政治"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "global-57960d13bf45413f",
-      "title": "Canada says it is extending tariff relief on some US imports",
+      "id": "global-fbda466c7e2dedd6",
+      "title": "Two arrested near White House in separate incidents, Secret Service says",
       "source": "Reuters",
       "topics": [
-        "關稅／貿易"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-8b3dc6bfa2753a74",
-      "title": "美國農業部預測2027/28年度玉米大豆小麥種植面積及產量",
-      "source": "觀點網",
-      "topics": [
-        "農產品"
-      ],
-      "reason": "headline_topic_only"
-    },
-    {
-      "id": "news-a7991ac21dbbac85",
-      "title": "AI內容節2026年11月12日開幕，COEX免費展覽與體驗活動同步登場",
-      "source": "www.diarypoint.com",
-      "topics": [
-        "AI算力／資料中心"
+        "選舉／政治"
       ],
       "reason": "headline_topic_only"
     }
