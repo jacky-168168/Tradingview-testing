@@ -1,0 +1,564 @@
+{
+  "asOfDate": "2026-11-11",
+  "publishedAt": "2026-11-11T09:54:17+08:00",
+  "scanStartedAt": "2026-11-11T09:53:39+08:00",
+  "quoteCapturedAt": "2026-11-11T09:54:01+08:00",
+  "sessionSlot": "09:30",
+  "sourceCloseDate": "2026-11-10",
+  "quality": "intraday-provisional-allmarket",
+  "quoteSource": "TWSE MIS same-day listed+OTC; trade price if available, otherwise validated order-book midpoint proxy; cumulative lots × 1000 shares",
+  "coverage": {
+    "total": 1990,
+    "valid": 1604,
+    "traded": 1438,
+    "noTrade": 166,
+    "exchange": {
+      "上市": {
+        "valid": 947,
+        "total": 1093,
+        "coverage": 0.8664,
+        "traded": 903,
+        "noTrade": 44
+      },
+      "上櫃": {
+        "valid": 657,
+        "total": 897,
+        "coverage": 0.7324,
+        "traded": 535,
+        "noTrade": 122
+      }
+    }
+  },
+  "marketBreadth": {
+    "quality": "verified-trade-only",
+    "source": "TWSE MIS today trade prices vs prior official reference; proxy and untraded excluded",
+    "total": {
+      "up": 50,
+      "down": 52,
+      "flat": 14,
+      "sample": 116,
+      "upPct": 43.1
+    },
+    "exchange": {
+      "上市": {
+        "up": 29,
+        "down": 27,
+        "flat": 7,
+        "sample": 63,
+        "upPct": 46.0
+      },
+      "上櫃": {
+        "up": 21,
+        "down": 25,
+        "flat": 7,
+        "sample": 53,
+        "upPct": 39.6
+      }
+    }
+  },
+  "indicativeQuoteBreadth": {
+    "quality": "indicative-price-with-orderbook-proxy",
+    "source": "TWSE MIS 盤中當日成交價（可取得者）及已驗證合理價差之委託中間價／最佳買賣價；非全數成交價",
+    "total": {
+      "up": 659,
+      "down": 729,
+      "flat": 50,
+      "executed": 116,
+      "orderBookProxy": 1322,
+      "sample": 1438,
+      "upPct": 45.83
+    },
+    "exchange": {
+      "上市": {
+        "up": 408,
+        "down": 461,
+        "flat": 34,
+        "executed": 63,
+        "orderBookProxy": 840,
+        "sample": 903,
+        "upPct": 45.18
+      },
+      "上櫃": {
+        "up": 251,
+        "down": 268,
+        "flat": 16,
+        "executed": 53,
+        "orderBookProxy": 482,
+        "sample": 535,
+        "upPct": 46.92
+      }
+    }
+  },
+  "quotePriceSources": {
+    "last-trade": 110,
+    "previous-trade": 6,
+    "bid-ask-midpoint": 1279,
+    "one-sided-high-bid": 25,
+    "one-sided-low-ask": 18,
+    "no-trade-prevclose": 166
+  },
+  "historicalBarCoverage": 1410,
+  "historyRejected": 194,
+  "market20Reference": "previous completed cash-market return (not live index)",
+  "rows": [
+    {
+      "code": "2466",
+      "name": "冠西電",
+      "market": "上市",
+      "industry": "光電業",
+      "capitalB": 17.3458697,
+      "close": 382.75,
+      "currentPrice": 382.75,
+      "currentPct": 6.02,
+      "ret20": 61.49789029535866,
+      "ret5": 15.809379727685325,
+      "ma20Slope": 12.834508743116624,
+      "atrPct": 8.929737799757396,
+      "range20Pct": 108.83116883116881,
+      "turnoverB": 7.5363475,
+      "breakoutPct": -4.7885572139303445,
+      "volume": 1969000.0,
+      "rvol": 1.0754255939439283,
+      "rvol10": 1.0221468437231955,
+      "mom10Pct": 21.315372424722657,
+      "dayRet": 6.02493074792243,
+      "volD": 9.56175298804781,
+      "foreignToday": null,
+      "trustToday": null,
+      "ret20P": 99.71631205673759,
+      "slopeP": 99.7872340425532,
+      "atrP": 97.65957446808511,
+      "range20P": 99.9290780141844,
+      "turnoverP": 94.7517730496454,
+      "baselineScore": 97.4996,
+      "gFlags": {
+        "bull3": true,
+        "eng3": false,
+        "break3": true,
+        "prior3High": 328.5,
+        "bull18": true,
+        "eng18": false,
+        "break18": true,
+        "prior18High": 354.0
+      },
+      "model": "G",
+      "gVariant": "G_DOUBLE_PERSIST",
+      "total": 100.0541,
+      "persistence": {
+        "past10Top20": 4,
+        "past5Top3": 1,
+        "priorStreak": 1,
+        "scoreChange": 4.75,
+        "strength": 36.49,
+        "bonus": 2.5545
+      },
+      "gScore": 97.4996,
+      "gExtra": 2.5545,
+      "gPast10": 4,
+      "gPast5Top3": 1,
+      "gStreak": 1,
+      "gBreak3": true,
+      "gBreak18": true,
+      "sarBonus": 0,
+      "sarText": "未確認（正式日K）",
+      "strictPass": true,
+      "candidateTier": "G雙突破",
+      "signal": "🟠 盤中暫估｜🔥 G雙突破持續強勢",
+      "rs20": 74.88789029535866,
+      "theme": "主/被動元件、環保潔能服務產業、其他",
+      "subIndustry": "通信網路、其他",
+      "intradayPriceSource": "bid-ask-midpoint"
+    },
+    {
+      "code": "2465",
+      "name": "麗臺",
+      "market": "上市",
+      "industry": "電腦及週邊設備業",
+      "capitalB": 9.3946031,
+      "close": 149.5,
+      "currentPrice": 149.5,
+      "currentPct": 9.93,
+      "ret20": 67.22594792878583,
+      "ret5": 19.599999999999994,
+      "ma20Slope": 10.687625075876328,
+      "atrPct": 6.803630859841585,
+      "range20Pct": 80.99273942098067,
+      "turnoverB": 4.462575,
+      "breakoutPct": 9.926470588235304,
+      "volume": 2985000.0,
+      "rvol": 0.3415188479275263,
+      "rvol10": 0.21176435784515826,
+      "mom10Pct": 45.14563106796117,
+      "dayRet": 9.926470588235304,
+      "volD": 9.03010033444816,
+      "foreignToday": null,
+      "trustToday": null,
+      "ret20P": 99.8581560283688,
+      "slopeP": 99.64539007092199,
+      "atrP": 85.81560283687944,
+      "range20P": 98.65248226950355,
+      "turnoverP": 93.04964539007092,
+      "baselineScore": 97.2057,
+      "gFlags": {
+        "bull3": false,
+        "eng3": false,
+        "break3": true,
+        "prior3High": 130.0,
+        "bull18": true,
+        "eng18": true,
+        "break18": true,
+        "prior18High": 113.0
+      },
+      "model": "G",
+      "gVariant": "G_DOUBLE_PERSIST",
+      "total": 99.3378,
+      "persistence": {
+        "past10Top20": 4,
+        "past5Top3": 1,
+        "priorStreak": 1,
+        "scoreChange": 1.73,
+        "strength": 30.46,
+        "bonus": 2.1321
+      },
+      "gScore": 97.2057,
+      "gExtra": 2.1321,
+      "gPast10": 4,
+      "gPast5Top3": 1,
+      "gStreak": 1,
+      "gBreak3": true,
+      "gBreak18": true,
+      "sarBonus": 0,
+      "sarText": "未確認（正式日K）",
+      "strictPass": true,
+      "candidateTier": "G雙突破",
+      "signal": "🟠 盤中暫估｜🔥 G雙突破持續強勢",
+      "rs20": 80.61594792878583,
+      "theme": "顯示卡、精簡型電腦、營運發行、生物檢測",
+      "subIndustry": "電腦及週邊設備、休閒娛樂、醫療器材",
+      "intradayPriceSource": "last-trade"
+    },
+    {
+      "code": "1416",
+      "name": "廣豐",
+      "market": "上市",
+      "industry": "其他",
+      "capitalB": 18.5342168,
+      "close": 19.7,
+      "currentPrice": 19.7,
+      "currentPct": 7.36,
+      "ret20": 52.123554364113154,
+      "ret5": 39.22261859429075,
+      "ma20Slope": 9.988497473677228,
+      "atrPct": 4.949238924464944,
+      "range20Pct": 58.0392156862745,
+      "turnoverB": 3.553486,
+      "breakoutPct": -3.872788956194029e-06,
+      "volume": 18038000.0,
+      "rvol": 3.401737750894071,
+      "rvol10": 1.881435733433621,
+      "mom10Pct": 46.46840356406177,
+      "dayRet": 7.35694599708856,
+      "volD": 9.523807505451174,
+      "foreignToday": null,
+      "trustToday": null,
+      "ret20P": 99.57446808510639,
+      "slopeP": 99.57446808510639,
+      "atrP": 67.4468085106383,
+      "range20P": 91.84397163120568,
+      "turnoverP": 92.05673758865248,
+      "baselineScore": 94.0957,
+      "gFlags": {
+        "bull3": true,
+        "eng3": false,
+        "break3": true,
+        "prior3High": 17.95,
+        "bull18": true,
+        "eng18": false,
+        "break18": true,
+        "prior18High": 13.5
+      },
+      "model": "G",
+      "gVariant": "G_DOUBLE_PERSIST",
+      "total": 96.11,
+      "persistence": {
+        "past10Top20": 3,
+        "past5Top3": 0,
+        "priorStreak": 3,
+        "scoreChange": 1.64,
+        "strength": 28.78,
+        "bonus": 2.0143
+      },
+      "gScore": 94.0957,
+      "gExtra": 2.0143,
+      "gPast10": 3,
+      "gPast5Top3": 0,
+      "gStreak": 3,
+      "gBreak3": true,
+      "gBreak18": true,
+      "sarBonus": 0,
+      "sarText": "未確認（正式日K）",
+      "strictPass": true,
+      "candidateTier": "G雙突破",
+      "signal": "🟠 盤中暫估｜🚀 G雙突破開始轉強",
+      "rs20": 65.51355436411316,
+      "theme": "應用/系統軟體設計開發、建設業、其他",
+      "subIndustry": "軟體服務、建材營造、其他",
+      "intradayPriceSource": "last-trade"
+    },
+    {
+      "code": "1802",
+      "name": "台玻",
+      "market": "上市",
+      "industry": "玻璃陶瓷",
+      "capitalB": 290.80608,
+      "close": 76.7,
+      "currentPrice": 76.7,
+      "currentPct": 9.89,
+      "ret20": 24.110033894634974,
+      "ret5": 14.992509009434606,
+      "ma20Slope": 1.0159319616306561,
+      "atrPct": 6.891413244772143,
+      "range20Pct": 41.7744956807895,
+      "turnoverB": 186.117919,
+      "breakoutPct": 4.211958682266714,
+      "volume": 242657000.0,
+      "rvol": 1.7428333683428159,
+      "rvol10": 1.7641061099927113,
+      "mom10Pct": 16.92073442693418,
+      "dayRet": 9.885382015135068,
+      "volD": 9.829055481826481,
+      "foreignToday": null,
+      "trustToday": null,
+      "ret20P": 98.86524822695036,
+      "slopeP": 95.2482269503546,
+      "atrP": 86.31205673758865,
+      "range20P": 77.5177304964539,
+      "turnoverP": 99.8581560283688,
+      "baselineScore": 93.7092,
+      "gFlags": {
+        "bull3": false,
+        "eng3": false,
+        "break3": true,
+        "prior3High": 65.0,
+        "bull18": true,
+        "eng18": true,
+        "break18": true,
+        "prior18High": 73.6
+      },
+      "model": "G",
+      "gVariant": "G_DOUBLE_PERSIST",
+      "total": 93.7092,
+      "persistence": {
+        "past10Top20": 0,
+        "past5Top3": 0,
+        "priorStreak": 0,
+        "scoreChange": null,
+        "strength": 0.0,
+        "bonus": 0.0
+      },
+      "gScore": 93.7092,
+      "gExtra": 0.0,
+      "gPast10": 0,
+      "gPast5Top3": 0,
+      "gStreak": 0,
+      "gBreak3": true,
+      "gBreak18": true,
+      "sarBonus": 0,
+      "sarText": "未確認（正式日K）",
+      "strictPass": true,
+      "candidateTier": "G雙突破",
+      "signal": "🟠 盤中暫估｜🆕 G雙突破新入選",
+      "rs20": 37.500033894634974,
+      "theme": "玻璃纖維/玻纖布、建材原料",
+      "subIndustry": "印刷電路板、建材營造",
+      "intradayPriceSource": "last-trade"
+    }
+  ],
+  "selection": {
+    "variant": "G_DOUBLE_PERSIST",
+    "source": "live-year-anchored-market-OHLC",
+    "dataDate": "2026-11-11",
+    "percentileUniverse": 1410,
+    "strongCandidates": 25,
+    "doubleBreakCandidates": 4,
+    "pocketPreviousDays": 10,
+    "note": "盤中依未完成日K、當日累積成交量與當日MIS報價重選。當日未成交股票以核對過的昨收價及0成交量納入排名母體，不得入選G；無成交價但有買賣揭示者以經價差篩選的中間價估算。非正式G日K訊號，法人及SAR均未確認。",
+    "pocketSnapshotsFound": 9,
+    "pocketWarmup": true,
+    "isProvisional": true
+  },
+  "freeMarketOverlay": {
+    "version": "free-market-overlay-v1",
+    "asOfDate": "2026-11-11",
+    "industryMomentum": {
+      "asOfDate": "2026-11-11",
+      "method": "平方根估計成交額加權漲跌幅；排除低量與非實際成交價",
+      "priceQuality": "verified-same-day-trades-only",
+      "estimatedTurnover": true,
+      "notNetFlow": true,
+      "minGroupCoverage": 0.6,
+      "ranking": [],
+      "eligibleGroupCount": 0,
+      "sampleGroups": 36
+    },
+    "tradeRestrictions": {
+      "checkedAt": "2026-11-11T09:54:13+08:00",
+      "asOfDate": "2026-11-11",
+      "source": "TWSE／TPEx 免費官方處置公告",
+      "markets": {
+        "上市": {
+          "status": "verified",
+          "count": 5,
+          "codes": [
+            "2360",
+            "2455",
+            "3189",
+            "3532",
+            "6213"
+          ]
+        },
+        "上櫃": {
+          "status": "verified",
+          "count": 3,
+          "codes": [
+            "4542",
+            "8099",
+            "8272"
+          ]
+        }
+      },
+      "codes": [
+        [
+          "上市",
+          "2360"
+        ],
+        [
+          "上市",
+          "2455"
+        ],
+        [
+          "上市",
+          "3189"
+        ],
+        [
+          "上市",
+          "3532"
+        ],
+        [
+          "上市",
+          "6213"
+        ],
+        [
+          "上櫃",
+          "4542"
+        ],
+        [
+          "上櫃",
+          "8099"
+        ],
+        [
+          "上櫃",
+          "8272"
+        ]
+      ]
+    },
+    "topGRestrictions": [
+      {
+        "market": "上市",
+        "code": "2466",
+        "status": "未列入本次查得處置公告"
+      },
+      {
+        "market": "上市",
+        "code": "2465",
+        "status": "未列入本次查得處置公告"
+      },
+      {
+        "market": "上市",
+        "code": "1416",
+        "status": "未列入本次查得處置公告"
+      },
+      {
+        "market": "上市",
+        "code": "1802",
+        "status": "未列入本次查得處置公告"
+      }
+    ],
+    "note": "純研究附加資訊，不修改 G 盤中／盤後選股、分數或風險分數；處置標記非當沖資格保證"
+  },
+  "gSignalContext": {
+    "version": "g-intraday-market-context-v1",
+    "asOfDate": "2026-11-11",
+    "publishedAt": "2026-11-11T09:54:17+08:00",
+    "sourceCloseDate": "2026-11-10",
+    "previousCloseRisk": {
+      "date": "2026-11-10",
+      "score": 26.0,
+      "state": "🔴 Risk OFF",
+      "available": true,
+      "note": "這是上一個完整交易日的正式風險分數，不是訊號當下的即時大盤分數"
+    },
+    "market": {
+      "source": "TWSE MIS 當日已驗證實際成交價",
+      "breadth": {
+        "上市": {
+          "tradedSample": 63,
+          "upPct": 46.0,
+          "peerMeanPct": 1.103,
+          "peerSample": 63
+        },
+        "上櫃": {
+          "tradedSample": 53,
+          "upPct": 39.6,
+          "peerMeanPct": 0.519,
+          "peerSample": 53
+        }
+      },
+      "allMarketTradedSample": 116,
+      "allMarketUpPct": null,
+      "breadthBand": "資料不足",
+      "coverageValid": 1604,
+      "note": "上漲家數占比使用實際成交價樣本；上一日正式風險分數與本輪盤中廣度不同時點，不合成新的 Risk Score"
+    },
+    "top20": [
+      {
+        "rank": 1,
+        "code": "2466",
+        "name": "冠西電",
+        "market": "上市",
+        "intradayPct": null,
+        "relativeToEqualWeightPeersPct": null,
+        "priceQuality": "price-proxy-not-comparable"
+      },
+      {
+        "rank": 2,
+        "code": "2465",
+        "name": "麗臺",
+        "market": "上市",
+        "intradayPct": 9.93,
+        "relativeToEqualWeightPeersPct": 8.827,
+        "priceQuality": "verified-trade"
+      },
+      {
+        "rank": 3,
+        "code": "1416",
+        "name": "廣豐",
+        "market": "上市",
+        "intradayPct": 7.36,
+        "relativeToEqualWeightPeersPct": 6.257,
+        "priceQuality": "verified-trade"
+      },
+      {
+        "rank": 4,
+        "code": "1802",
+        "name": "台玻",
+        "market": "上市",
+        "intradayPct": 9.89,
+        "relativeToEqualWeightPeersPct": 8.787,
+        "priceQuality": "verified-trade"
+      }
+    ],
+    "researchOnly": true,
+    "note": "每輪只是時間快照，同日股票重複入榜不代表多個獨立買進訊號；未計算未來報酬、勝率或即時指數相對強弱"
+  }
+}
