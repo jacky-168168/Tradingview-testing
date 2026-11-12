@@ -1,9 +1,9 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-12T03:44:38+08:00",
+  "generatedAt": "2026-11-12T15:27:05+08:00",
   "status": "insufficient_matured_signals",
-  "predictionRecords": 22,
-  "historyEventRecords": 395,
+  "predictionRecords": 25,
+  "historyEventRecords": 440,
   "predictionVersionCurrent": "2026-11-09-v1.3",
   "minN": 30,
   "minIndependentPublishingDates": 20,
@@ -23,23 +23,23 @@
     "Confidence bounds assume independent trials but event correlations can make them too narrow; read as descriptive uncertainty only."
   ],
   "audit": {
-    "trackedEventAssetSignals": 158,
-    "maturedObservationCount": 0,
-    "pendingHorizonCount": 465,
-    "excludedLateHorizonCount": 9,
-    "currentArchiveMaturedCount": 0,
+    "trackedEventAssetSignals": 180,
+    "maturedObservationCount": 8,
+    "pendingHorizonCount": 445,
+    "excludedLateHorizonCount": 87,
+    "currentArchiveMaturedCount": 8,
     "retainedOlderObservationCount": 0,
-    "newObservationCount": 0
+    "newObservationCount": 8
   },
   "byAsset": [
     {
       "asset": "美股S&P500",
       "horizon": "1D",
-      "n": 0,
+      "n": 1,
       "wins": 0,
-      "losses": 0,
+      "losses": 1,
       "flat": 0,
-      "uniquePublishingDates": 0,
+      "uniquePublishingDates": 1,
       "status": "insufficient_independent_dates_or_n",
       "winRatePct": null,
       "wilson95Pct": null
@@ -71,11 +71,11 @@
     {
       "asset": "NASDAQ",
       "horizon": "1D",
-      "n": 0,
+      "n": 1,
       "wins": 0,
-      "losses": 0,
+      "losses": 1,
       "flat": 0,
-      "uniquePublishingDates": 0,
+      "uniquePublishingDates": 1,
       "status": "insufficient_independent_dates_or_n",
       "winRatePct": null,
       "wilson95Pct": null
@@ -107,11 +107,11 @@
     {
       "asset": "台股",
       "horizon": "1D",
-      "n": 0,
+      "n": 1,
       "wins": 0,
-      "losses": 0,
+      "losses": 1,
       "flat": 0,
-      "uniquePublishingDates": 0,
+      "uniquePublishingDates": 1,
       "status": "insufficient_independent_dates_or_n",
       "winRatePct": null,
       "wilson95Pct": null
@@ -143,11 +143,11 @@
     {
       "asset": "黃金",
       "horizon": "1D",
-      "n": 0,
-      "wins": 0,
+      "n": 1,
+      "wins": 1,
       "losses": 0,
       "flat": 0,
-      "uniquePublishingDates": 0,
+      "uniquePublishingDates": 1,
       "status": "insufficient_independent_dates_or_n",
       "winRatePct": null,
       "wilson95Pct": null
@@ -179,11 +179,11 @@
     {
       "asset": "白銀",
       "horizon": "1D",
-      "n": 0,
+      "n": 1,
       "wins": 0,
-      "losses": 0,
+      "losses": 1,
       "flat": 0,
-      "uniquePublishingDates": 0,
+      "uniquePublishingDates": 1,
       "status": "insufficient_independent_dates_or_n",
       "winRatePct": null,
       "wilson95Pct": null
@@ -215,11 +215,11 @@
     {
       "asset": "WTI原油",
       "horizon": "1D",
-      "n": 0,
+      "n": 1,
       "wins": 0,
-      "losses": 0,
+      "losses": 1,
       "flat": 0,
-      "uniquePublishingDates": 0,
+      "uniquePublishingDates": 1,
       "status": "insufficient_independent_dates_or_n",
       "winRatePct": null,
       "wilson95Pct": null
@@ -251,11 +251,11 @@
     {
       "asset": "美元",
       "horizon": "1D",
-      "n": 0,
-      "wins": 0,
+      "n": 1,
+      "wins": 1,
       "losses": 0,
       "flat": 0,
-      "uniquePublishingDates": 0,
+      "uniquePublishingDates": 1,
       "status": "insufficient_independent_dates_or_n",
       "winRatePct": null,
       "wilson95Pct": null
@@ -287,11 +287,11 @@
     {
       "asset": "美債殖利率",
       "horizon": "1D",
-      "n": 0,
-      "wins": 0,
+      "n": 1,
+      "wins": 1,
       "losses": 0,
       "flat": 0,
-      "uniquePublishingDates": 0,
+      "uniquePublishingDates": 1,
       "status": "insufficient_independent_dates_or_n",
       "winRatePct": null,
       "wilson95Pct": null
@@ -357,15 +357,120 @@
       "wilson95Pct": null
     }
   ],
-  "byRule": [],
+  "byRule": [
+    {
+      "ruleId": "rate-hawk",
+      "asset": "NASDAQ",
+      "horizon": "1D",
+      "n": 1,
+      "wins": 0,
+      "losses": 1,
+      "flat": 0,
+      "uniquePublishingDates": 1,
+      "status": "insufficient_independent_dates_or_n",
+      "winRatePct": null,
+      "wilson95Pct": null
+    },
+    {
+      "ruleId": "rate-hawk",
+      "asset": "WTI原油",
+      "horizon": "1D",
+      "n": 1,
+      "wins": 0,
+      "losses": 1,
+      "flat": 0,
+      "uniquePublishingDates": 1,
+      "status": "insufficient_independent_dates_or_n",
+      "winRatePct": null,
+      "wilson95Pct": null
+    },
+    {
+      "ruleId": "rate-hawk",
+      "asset": "台股",
+      "horizon": "1D",
+      "n": 1,
+      "wins": 0,
+      "losses": 1,
+      "flat": 0,
+      "uniquePublishingDates": 1,
+      "status": "insufficient_independent_dates_or_n",
+      "winRatePct": null,
+      "wilson95Pct": null
+    },
+    {
+      "ruleId": "rate-hawk",
+      "asset": "白銀",
+      "horizon": "1D",
+      "n": 1,
+      "wins": 0,
+      "losses": 1,
+      "flat": 0,
+      "uniquePublishingDates": 1,
+      "status": "insufficient_independent_dates_or_n",
+      "winRatePct": null,
+      "wilson95Pct": null
+    },
+    {
+      "ruleId": "rate-hawk",
+      "asset": "美債殖利率",
+      "horizon": "1D",
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "flat": 0,
+      "uniquePublishingDates": 1,
+      "status": "insufficient_independent_dates_or_n",
+      "winRatePct": null,
+      "wilson95Pct": null
+    },
+    {
+      "ruleId": "rate-hawk",
+      "asset": "美元",
+      "horizon": "1D",
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "flat": 0,
+      "uniquePublishingDates": 1,
+      "status": "insufficient_independent_dates_or_n",
+      "winRatePct": null,
+      "wilson95Pct": null
+    },
+    {
+      "ruleId": "rate-hawk",
+      "asset": "美股S&P500",
+      "horizon": "1D",
+      "n": 1,
+      "wins": 0,
+      "losses": 1,
+      "flat": 0,
+      "uniquePublishingDates": 1,
+      "status": "insufficient_independent_dates_or_n",
+      "winRatePct": null,
+      "wilson95Pct": null
+    },
+    {
+      "ruleId": "rate-hawk",
+      "asset": "黃金",
+      "horizon": "1D",
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "flat": 0,
+      "uniquePublishingDates": 1,
+      "status": "insufficient_independent_dates_or_n",
+      "winRatePct": null,
+      "wilson95Pct": null
+    }
+  ],
   "allAssetCrossCount": [
     {
       "horizon": "1D",
-      "n": 0,
-      "wins": 0,
-      "losses": 0,
+      "n": 8,
+      "wins": 3,
+      "losses": 5,
       "flat": 0,
-      "uniquePublishingDates": 0,
+      "uniquePublishingDates": 1,
       "status": "insufficient_independent_dates_or_n",
       "winRatePct": null,
       "wilson95Pct": null
