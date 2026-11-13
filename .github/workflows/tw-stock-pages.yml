@@ -5,8 +5,10 @@ on:
   schedule:
     # Sunday 11:30 Asia/Taipei: fallback redeploy after TDCC 09:35 weekly collector.
     - cron: '30 3 * * 0'
+    # Daily 23:50 Taipei backstop for bot-authored snapshots, best effort.
+    - cron: '50 15 * * *'
   workflow_run:
-    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'Taiwan VIXTWN Homepage Data']
+    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'Taiwan VIXTWN Homepage Data', 'TDCC Whale Shareholder Weekly', 'Retry Date-Locked TWSE History with Throttling', 'Global Market News Impact', 'ETF 00631L 00685L 10MA Comparison', 'TPEx Upstream Industry Chain Stock Map']
     types: [completed]
     branches: [main]
   push:
@@ -33,6 +35,10 @@ on:
       - 'tw-stock-dashboard/docs/tdcc-whale-weekly.js'
       - 'tw-stock-dashboard/docs/tdcc-whale-weekly.css'
       - 'tw-stock-dashboard/docs/data/research/tdcc_whales/**'
+      - 'tw-stock-dashboard/docs/data/research/g_regime_3y/**'
+      - 'tw-stock-dashboard/docs/data/research/market_history_extended/**'
+      - 'tw-stock-dashboard/docs/data/news_impact/**'
+      - 'tw-stock-dashboard/docs/news-impact.js'
       - 'tw-stock-dashboard/tests/test_tdcc_whale_ui.cjs'
       - 'tw-stock-dashboard/docs/fear-greed-home.css'
       - 'tw-stock-dashboard/docs/data/research/us_fear_greed/**'
@@ -98,6 +104,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Prevent broken site scripts from reaching Pages
+        run: |
+          for js in tw-stock-dashboard/docs/*.js; do node --check "$js"; done
       - name: Verify single market decision card, historical research and no VWAP placeholder
         run: |
           node tw-stock-dashboard/tests/test_entry_playbook.js
@@ -545,6 +554,8 @@ jobs:
         run: |
           python - <<'PY'
           import json,os,time,urllib.request,urllib.error
+          from pathlib import Path
+          local=json.loads(Path('tw-stock-dashboard/docs/data/research/tdcc_whales/latest.json').read_text('utf-8'))
           base=os.environ["PAGES_URL"].rstrip("/")
           def read(p):
               req=urllib.request.Request(base+"/"+p,headers={"User-Agent":"TDCC-Whale-Pages-Check","Cache-Control":"no-cache"})
@@ -563,14 +574,11 @@ jobs:
                   assert "返回大盤首頁" in detail
                   assert b"TDCCWhaleWeekly" in read("tdcc-whale-weekly.js")
                   assert b".whale-stock" in read("tdcc-whale-weekly.css")
-                  try:
-                      p=json.loads(read("data/research/tdcc_whales/latest.json?whale="+str(time.time())))
-                  except urllib.error.HTTPError as err:
-                      if err.code==404:
-                          print("TDCC page online, first historical report awaiting official runner",flush=True)
-                          break
-                      raise
+                  p=json.loads(read("data/research/tdcc_whales/latest.json?whale="+str(time.time())))
                   assert p["version"]=="TDCC_WHALE_400_QUADRANTS_V1"
+                  assert p["date"]>=local["date"],"TDCC Pages data date stale vs artifact"
+                  if p["date"]==local["date"]:
+                      assert p["priorDate"]==local["priorDate"] and p["twoWeeksBefore"]==local["twoWeeksBefore"],"TDCC baseline dates mismatched"
                   assert p["twoWeeksBefore"]<p["priorDate"]<p["date"]
                   assert p["coverage"]["sharedThreeWeeks"]>=3500
                   print("PASS live navbar-linked TDCC weekly report",p["date"],{k:v["count"] for k,v in p["quadrants"].items()})
@@ -581,3 +589,78 @@ jobs:
                   time.sleep(5)
           PY
 
+
+      - name: Verify live news-impact JS, market news and history are not stale
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request
+          from pathlib import Path
+          base=os.environ["PAGES_URL"].rstrip("/")
+          root=Path("tw-stock-dashboard/docs")
+          local_news=json.loads((root/"data/market_events/latest.json").read_text("utf-8"))
+          local_history=json.loads((root/"data/news_impact/history.json").read_text("utf-8"))
+          study_path=root/"data/news_impact/official_study.json"
+          local_study=json.loads(study_path.read_text("utf-8")) if study_path.exists() else None
+          assert len(local_news.get("items",[]))>0
+          assert local_history["schema"]==1 and local_history["generatedAt"]
+          def fetch(path):
+              req=urllib.request.Request(base+"/"+path,headers={
+                  "User-Agent":"News-Impact-Pages-Smoke/1.0","Cache-Control":"no-cache"})
+              with urllib.request.urlopen(req,timeout=25) as response:
+                  if response.status!=200:raise RuntimeError("HTTP "+str(response.status))
+                  return response.read()
+          for attempt in range(1,13):
+              try:
+                  page=fetch("news-impact.html?newsimpact="+str(time.time())).decode("utf-8")
+                  assert "news-impact.js" in page and "國際國內媒體識別器" in page
+                  script=fetch("news-impact.js?newsimpact="+str(time.time())).decode("utf-8")
+                  assert "HISTORY_URL" in script and "let DATA=[],HISTORY=null" in script
+                  news=json.loads(fetch("data/market_events/latest.json?newsimpact="+str(time.time())))
+                  history=json.loads(fetch("data/news_impact/history.json?newsimpact="+str(time.time())))
+                  assert news["generatedAt"]>=local_news["generatedAt"],"News Pages JSON behind artifact"
+                  assert history["generatedAt"]>=local_history["generatedAt"],"News impact history Pages JSON stale"
+                  if local_study is not None:
+                      study=json.loads(fetch("data/news_impact/official_study.json?newsimpact="+str(time.time())))
+                      assert study["schema"]==local_study["schema"]
+                      assert study["generatedAt"]>=local_study["generatedAt"],"Official event study Pages JSON stale"
+                  print("PASS LIVE News Impact",news["generatedAt"],history["generatedAt"])
+                  break
+              except Exception as exc:
+                  print("Pages News Impact attempt",attempt,"/12",repr(exc),flush=True)
+                  if attempt==12:raise
+                  time.sleep(5)
+          PY
+
+      - name: Verify live ETF comparison and upstream JSON are not older than deployed source
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request
+          from pathlib import Path
+          base=os.environ["PAGES_URL"].rstrip("/")
+          root=Path("tw-stock-dashboard/docs/data")
+          upstream=json.loads((root/"industry_upstream/latest.json").read_text("utf-8"))
+          etf=json.loads((root/"research/etf_10ma_comparison/latest.json").read_text("utf-8"))
+          assert upstream["dataDate"] and etf["priceThrough"]
+          def read(path):
+              request=urllib.request.Request(base+"/"+path,headers={
+                  "User-Agent":"ETF-Upstream-Pages-Smoke/1.0","Cache-Control":"no-cache"})
+              with urllib.request.urlopen(request,timeout=25) as response:
+                  if response.status!=200:raise RuntimeError("HTTP "+str(response.status))
+                  return json.loads(response.read())
+          for attempt in range(1,13):
+              try:
+                  live_upstream=read("data/industry_upstream/latest.json?pages="+str(time.time()))
+                  live_etf=read("data/research/etf_10ma_comparison/latest.json?pages="+str(time.time()))
+                  assert live_upstream["dataDate"]>=upstream["dataDate"],"Upstream Pages data stale"
+                  assert live_etf["priceThrough"]>=etf["priceThrough"],"ETF Pages data stale"
+                  print("PASS LIVE ETF and upstream",live_etf["priceThrough"],live_upstream["dataDate"])
+                  break
+              except Exception as exc:
+                  print("ETF upstream Pages verification",attempt,"/12",repr(exc),flush=True)
+                  if attempt==12:raise
+                  time.sleep(5)
+          PY
