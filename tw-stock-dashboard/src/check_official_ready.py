@@ -6,6 +6,12 @@ from datetime import datetime,time
 from zoneinfo import ZoneInfo
 from risk import _report
 TZ=ZoneInfo("Asia/Taipei")
+# Confirmed TWSE/TPEx closures for 2026, matching g_intraday.py and
+# .github/agent/health.py. Do not infer holidays for unverified future years.
+CLOSED_2026=set("01-01 02-12 02-13 02-16 02-17 02-18 02-19 02-20 02-27 04-03 04-06 05-01 06-19 09-25 09-28 10-09 10-26 12-25".split())
+def exchange_closed(now):
+    local=now.astimezone(TZ)
+    return local.year==2026 and local.strftime("%m-%d") in CLOSED_2026
 def ready_for_close(day,check=_report):
     try:
         r=check(day,"fund/BFI82U",{"dayDate":day.replace("-",""),"type":"day"})
@@ -24,10 +30,14 @@ def after_official_cutoff(now):
     """Enforce 17:30 Taipei earliest publication even on push/manual full."""
     local=now.astimezone(TZ)
     return local.weekday()<5 and local.time()>=time(17,30)
-def main():
-    now=datetime.now(TZ);today=now.date().isoformat();event=os.getenv("GITHUB_EVENT_NAME","")
-    # Strict earliest-publication time applies to schedule, manual and push.
-    if now.weekday()>=5:
+def main(now=None):
+    now=now or datetime.now(TZ);now=now.astimezone(TZ)
+    today=now.date().isoformat();event=os.getenv("GITHUB_EVENT_NAME","")
+    # A weekday exchange holiday has no same-day BFI82U. Mark the build as
+    # intentionally deferred without publishing an old G/risk snapshot.
+    if exchange_closed(now):
+        ok=False;why="official exchange holiday: no same-day BFI82U expected"
+    elif now.weekday()>=5:
         ok=True;why="weekend: pipeline will freeze last completed trading day"
     elif not after_official_cutoff(now):
         ok=False;why="official G daily publication begins at 17:30 Taipei"
@@ -39,6 +49,6 @@ def main():
     if not ok:
         with open(os.environ.get("GITHUB_STEP_SUMMARY","/dev/null"),"a",encoding="utf-8") as file:
             file.write("### Official daily publication pending\nNo daily Risk Score or EOD G signal was published. "+why+". The next scheduled full retry will check again.\n")
-        if after_official_cutoff(now):
+        if after_official_cutoff(now) and not exchange_closed(now):
             raise SystemExit("ERROR: after 17:30 the official full update cannot be silently marked successful: "+why)
 if __name__=="__main__":main()
