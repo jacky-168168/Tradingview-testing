@@ -6,10 +6,11 @@ Snapshot history source: a public raw-CSV archival copy of official TDCC 1-5.
 This panel is descriptive, NOT a recommendation or a live G/Risk Score input.
 """
 from __future__ import annotations
-import argparse,csv,io,json,math,re,sys,time
+import argparse,csv,io,json,math,os,re,sys,time
 from collections import Counter,defaultdict
 from datetime import date,datetime,timedelta,timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 import requests
 from config import DATA_DIR
 from yahoo_cache import update_many,to_symbol
@@ -17,6 +18,7 @@ from pipeline import load_universe
 from config import TWSE_COMPANY_URL,TPEX_COMPANY_URLS
 
 OUT=DATA_DIR/"research"/"tdcc_whales"
+TW_TZ=ZoneInfo("Asia/Taipei")
 ARCHIVE="https://api.github.com/repos/wirelessr/tdcc-opendata-archive/contents/snapshots"
 SOURCE="https://opendata.tdcc.com.tw/getOD.ashx?id=1-5"
 ARCHIVE_RAW="https://raw.githubusercontent.com/wirelessr/tdcc-opendata-archive/main/snapshots"
@@ -25,22 +27,39 @@ LEVELS={12,13,14,15}
 THRESHOLD_PP=1.0
 QUADRANTS={"續買":("positive","positive"),"回頭車":("negative","positive"),"下車":("positive","negative"),"續賣":("negative","negative")}
 def request(url,params=None,retries=3):
+    # Only the fixed GitHub archive-index endpoint receives the workflow token.
+    # Never forward repository credentials to TDCC, Yahoo, or raw CSV hosts.
+    headers=dict(HEAD)
+    if url.startswith(ARCHIVE+"/") and (token:=os.environ.get("GITHUB_TOKEN")):
+        headers["Authorization"]=f"Bearer {token}"
     err=None
     for i in range(retries):
         try:
-            r=requests.get(url,params=params,headers=HEAD,timeout=35)
+            r=requests.get(url,params=params,headers=headers,timeout=35)
             r.raise_for_status()
             if len(r.content)>8_000_000:raise ValueError("TDCC response above expected size")
             return r
         except (requests.RequestException,ValueError) as e:
             err=e
-            if i+1<retries:time.sleep(1.5*(i+1))
+            if i+1<retries:
+                delay=1.5*(i+1)
+                # GitHub can transiently return 429 when weekly schedules
+                # compete. Respect a bounded Retry-After, then fail closed.
+                if isinstance(e,requests.HTTPError) and e.response is not None and e.response.status_code==429:
+                    retry_after=e.response.headers.get("Retry-After","")
+                    if str(retry_after).isdigit():
+                        delay=max(delay,min(30,int(retry_after)))
+                    else:delay=max(delay,3*(2**i))
+                time.sleep(delay)
     raise RuntimeError(f"{url}: {err}")
-def dates_from_archive(year=None):
-    now=date.today(); years=[year] if year else sorted({now.year,now.year-1},reverse=True)
+def dates_from_archive(year=None,today=None):
+    # Use the local Taiwan calendar; only fetch prior year near New Year when
+    # there are fewer than three current-year official weekly snapshots.
+    now=today or datetime.now(TW_TZ).date()
+    years=[year] if year else ([now.year,now.year-1] if now.year>2026 else [now.year])
     result=[]
     for y in years:
-        try:rows=request(f"{ARCHIVE}/{y}",retries=1).json()
+        try:rows=request(f"{ARCHIVE}/{y}",retries=3).json()
         except RuntimeError as e:
             if y!=now.year and ("404" in str(e)):continue  # archive started in 2026; older years not mandatory
             raise
@@ -52,6 +71,7 @@ def dates_from_archive(year=None):
                 try:d=date.fromisoformat(day)
                 except ValueError:continue
                 if d<=now:result.append((day,x.get("download_url") or f"{ARCHIVE_RAW}/{y}/{name}"))
+        if not year and len(set(result))>=3:break
     result=sorted(set(result))
     if len(result)<3:raise ValueError("Fewer than three TDCC historical reference weeks")
     return result[-3:]
@@ -232,7 +252,7 @@ def main():
     parser.add_argument("--skip-price",action="store_true",help="For diagnostics only: dates+TDCC source, not publishable")
     args=parser.parse_args()
     dates=dates_from_archive()
-    if (date.today()-date.fromisoformat(dates[-1][0])).days>16:
+    if (datetime.now(TW_TZ).date()-date.fromisoformat(dates[-1][0])).days>16:
         raise RuntimeError("Official TDCC archive stale: latest week older than 16 days")
     snapshots=[]
     for day,url in dates:
