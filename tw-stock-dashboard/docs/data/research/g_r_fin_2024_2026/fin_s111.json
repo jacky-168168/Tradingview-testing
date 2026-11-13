@@ -1,0 +1,30 @@
+{
+  "strategy": "Fin",
+  "version": "FINPILOT_S111_ORIGINAL_RULES_V1",
+  "period": {
+    "start": "2025-01-01",
+    "end": "2026-10-12"
+  },
+  "generatedAt": "2026-10-13T06:51:32.318788+08:00",
+  "status": "not_run",
+  "reason": "FINLAB_API_TOKEN absent; paid historical BI cannot be reconstructed from price/volume",
+  "source": "hu0937/FinPilot agents/strategies/s111",
+  "conditions": [
+    "20D average shares traded > 100000",
+    "operating profit growth > 0",
+    "close >= highest prior 40 close",
+    "average recent 3m revenue / prior 12m revenue > 1.1",
+    "broker balance_index > 0.52"
+  ],
+  "ranking": "Dividend yield descending, top 5",
+  "execution": {
+    "rebalance": "monthly M",
+    "tradeAt": "next open as FinLab engine implements",
+    "positionLimit": 0.2,
+    "brokerFeeEachSide": 0.001425,
+    "sellTax": 0.003
+  },
+  "statistics": null,
+  "coverage": null,
+  "note": "Exact source strategy formula; 2025-2026 results do not inherit author claimed 2018-2022/OOS metrics"
+}
