@@ -274,3 +274,66 @@ test("research page embeds mobile visual six-agent flow and separately labeled G
  assert.match(html,/展開各代理的完整分析證據/);
  assert.doesNotMatch(html,/PHOENIX|AURORA/);
 });
+
+
+const entry=require("../docs/agent-entry-decision.js");
+test("NOVA entry report is fail-closed for missing sourced breakout levels",()=>{
+ const out=core.analyze(fixtures(),LIVE),c=out.candidates[0],plan=entry.evaluate(c,out);
+ assert.equal(plan.noTrade,true);
+ assert.equal(plan.status,"等待進場條件確認");
+ assert.equal(plan.reference.prior3High,null);
+ assert.ok(plan.checks.some(x=>x.title.includes("前3日")&&x.state==="缺資料"));
+ assert.equal(plan.pricePlan.buyLow,null);
+ assert.equal(plan.pricePlan.stop,null);
+ assert.equal(plan.pricePlan.rr,null);
+});
+test("sourced G prior high is observation only, never automatic entry authorization",()=>{
+ const x=fixtures();x.intraday.rows[0].gFlags={prior3High:1490,prior18High:1420,break3:true,break18:true};
+ const out=core.analyze(x,LIVE),c=out.candidates[0],plan=entry.evaluate(c,out);
+ assert.equal(c.referenceLevels.prior3High,1490);
+ assert.equal(plan.reference.prior18High,1420);
+ assert.equal(plan.status,"研究條件符合，仍需人工確認");
+ assert.equal(plan.passed,plan.total);
+ assert.match(plan.trigger,/收盤確認/);
+ assert.equal(plan.noTrade,true);
+ assert.equal(c.agents.nova.noTrade,true);
+});
+test("TITAN hard veto and historical data always block entry research clearance",()=>{
+ const x=fixtures();x.intraday.rows[0].gFlags={prior3High:1490,break3:true};x.daily.risk.score=20;
+ const out=core.analyze(x,LIVE),p=entry.evaluate(out.candidates[0],out);
+ assert.equal(p.status,"風險否決");assert.equal(p.noTrade,true);
+ const h=core.analyze(fixtures(),when("2026-10-24T13:00:00Z"));
+ const hp=entry.evaluate(h.candidates[0],h);
+ assert.equal(hp.status,"風險否決");
+ assert.equal(hp.reference.live,false);
+ assert.ok(hp.caution.some(x=>x.includes("歷史")||x.includes("即時")));
+});
+test("manual risk reward is local user-supplied scenario using worst-case buy high",()=>{
+ const p=entry.manualPlan({buyLow:"100",buyHigh:"105",stop:"95",target:"125"});
+ assert.equal(p.status,"calculated");assert.equal(p.rr,2);
+ assert.equal(p.risk,10);assert.equal(p.reward,20);assert.equal(p.noTrade,true);
+ assert.match(p.origin,/使用者/);
+});
+test("manual scenario missing, inverted, negative, non-finite and invalid stops cannot produce R ratio",()=>{
+ const variants=[
+  {buyLow:"",buyHigh:"105",stop:"95",target:"125"},
+  {buyLow:"106",buyHigh:"105",stop:"95",target:"125"},
+  {buyLow:"100",buyHigh:"105",stop:"101",target:"125"},
+  {buyLow:"100",buyHigh:"105",stop:"95",target:"104"},
+  {buyLow:"-1",buyHigh:"105",stop:"95",target:"125"},
+  {buyLow:"NaN",buyHigh:"105",stop:"95",target:"125"},
+  {buyLow:"1e309",buyHigh:"105",stop:"95",target:"125"}
+ ];
+ for(const input of variants){const p=entry.manualPlan(input);assert.notEqual(p.status,"calculated");assert.equal(p.rr,null);}
+});
+test("stock entry UI wires safe text output without brokerage calls or implied LLM authority",()=>{
+ const html=fs.readFileSync(path.join(docs,"agent-research.html"),"utf8");
+ const ui=fs.readFileSync(path.join(docs,"agent-entry-ui.js"),"utf8");
+ const decision=fs.readFileSync(path.join(docs,"agent-entry-decision.js"),"utf8");
+ for(const id of ["entryReport","entryManualPlan"])assert.ok(html.includes('id="'+id+'"'));
+ assert.ok(html.includes('src="./agent-entry-decision.js"'));
+ assert.ok(html.includes('src="./agent-entry-ui.js"'));
+ assert.match(ui,/textContent/);new Function(ui);new Function(decision);
+ assert.doesNotMatch(ui+decision,/placeOrder|broker\.buy|order_submit|fetch\s*\(/i);
+ assert.match(ui,/自行輸入/);
+});

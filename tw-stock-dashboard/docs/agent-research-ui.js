@@ -21,6 +21,7 @@ function detail(c){
  $("decision").className="flag"+(a.titan.hardVeto?" no":a.nova.status.includes("等待")?" warn":" ok");
  $("detailIntro").textContent="第 "+c.sourceRank+" 名 · "+(c.market||"市場未標註")+" · 參考價 "+fmt(c.price,2)+
   " · 資料日 "+(c.asOfDate||"未知")+"。這裡只顯示研究證據，無下單功能。";
+ window.SixAgentEntryUI?.render(c,current);
  const host=$("agents");host.replaceChildren();
  explainCard(host,"ATLAS","全市場掃描",a.atlas.status,[
   "原始 G 排名第 "+a.atlas.rank+" 名；RS20 "+fmt(a.atlas.rs20,2)+"、RVOL "+fmt(a.atlas.rvol,2),
