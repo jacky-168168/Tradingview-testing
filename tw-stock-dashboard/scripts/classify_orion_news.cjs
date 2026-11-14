@@ -49,11 +49,15 @@ async function infer(batch,{apiKey=process.env.GEMINI_API_KEY,model=MODEL,fetchF
  if(answer?.finishReason!=="STOP")throw Error("Gemini incomplete response");
  const data=JSON.parse((answer.content?.parts||[]).map(p=>p.text||"").join(""));
  if(!Array.isArray(data.results)||data.results.length!==batch.length)throw Error("incomplete classification");
- const lookup=new Map(batch.map(p=>[key(p),p])),out=new Map();
+ const lookup=new Map(batch.map(p=>[key(p),p])),out=new Map(),seen=new Set();
+ let rejectedCount=0;
  for(const x of data.results){
-  if(!lookup.has(x.id)||out.has(x.id))throw Error("unknown/duplicate ORION ID");
-  out.set(x.id,check(lookup.get(x.id),x,model));
+  if(!lookup.has(x.id)||seen.has(x.id))throw Error("unknown/duplicate ORION ID");
+  seen.add(x.id);
+  try{out.set(x.id,check(lookup.get(x.id),x,model))}
+  catch{rejectedCount++} // Unverifiable model output must never become a source-backed classification.
  }
+ out.rejectedCount=rejectedCount;
  return out;
 }
 /* Run through the whole verified 48h pool, not only the first 24 titles.
@@ -133,6 +137,7 @@ async function classify(data,previous={},options={}){
   const batch=limited.slice(i,i+BATCH_SIZE);attemptedCalls++;
   try{
    const results=await infer(batch,{...options,apiKey,model});calls++;
+   if(results.rejectedCount)error="ORION validation rejected "+results.rejectedCount+" headline(s)";
    for(const p of valid)if(!p.semantic){
     const matching=batch.find(x=>signature(x)===signature(p));
     if(!matching)continue;
