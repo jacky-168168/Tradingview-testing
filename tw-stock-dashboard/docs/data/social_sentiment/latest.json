@@ -1,26 +1,20 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-13T17:08:29.496436Z",
+  "generatedAt": "2026-11-14T02:29:39.019288Z",
   "sources": {
     "PTT": {
       "status": "ok",
       "method": "官方 Atom",
       "url": "https://www.ptt.cc/atom/stock.xml",
-      "freshCount": 15,
+      "freshCount": 10,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 4,
-      "pushLabelsFound": 8
+      "boardFreshCount": 9,
+      "pushLabelsFound": 15
     },
     "Bluesky": {
-      "status": "ok",
-      "freshCount": 56,
-      "queryHealth": {
-        "queriesAttempted": 12,
-        "queriesSucceeded": 12,
-        "queriesFailed": 0,
-        "rateLimited": false
-      },
-      "method": "官方公開 app.bsky.feed.searchPosts",
+      "status": "error",
+      "reason": "ValueError",
+      "freshCount": 0,
       "url": "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts"
     },
     "Threads": {
@@ -47,21 +41,21 @@
     }
   },
   "social": {
-    "sample": 16,
+    "sample": 14,
     "bull": 2,
     "bear": 0,
-    "neutral": 14,
+    "neutral": 12,
     "directional": 2,
     "status": "已有樣本｜偏多討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
     "rawSample": 80,
-    "investmentDiscussion": 16,
-    "originalDiscussion": 16,
-    "repostedNews": 49,
+    "investmentDiscussion": 14,
+    "originalDiscussion": 14,
+    "repostedNews": 51,
     "unrelated": 15,
     "platformCounts": {
       "PTT": 2,
-      "Bluesky": 14,
+      "Bluesky": 12,
       "Threads": 0,
       "Instagram": 0
     }
@@ -82,6 +76,76 @@
   },
   "items": [
     {
+      "platform": "PTT",
+      "title": "[新聞] 台積電Q3拿下各國政府補助款約1670億！前",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794623068.A.698.html",
+      "publishedAt": "2026-11-14T02:24:28Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 2,
+      "pushLabel": "2",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞]輝達風波讓東南亞 AI 熱潮成為關注焦點",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794620836.A.C1F.html",
+      "publishedAt": "2026-11-14T01:47:16Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 9,
+      "pushLabel": "9",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 黃仁勳下台掀反彈！馬斯克挺請願復職 億",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794619599.A.1CD.html",
+      "publishedAt": "2026-11-14T01:26:39Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 60,
+      "pushLabel": "60",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 傳輝達接洽安謀執行長哈斯 董事會：正在",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794617177.A.30E.html",
+      "publishedAt": "2026-11-14T00:46:17Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 24,
+      "pushLabel": "24",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "R: [新聞] 黃仁勳坦承與中國女間諜有婚外情 輝達",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794612258.A.5C9.html",
+      "publishedAt": "2026-11-13T23:24:18Z",
+      "stance": "中立／難判",
+      "contentType": "非投資話題",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 69,
+      "pushLabel": "69",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
       "platform": "Bluesky",
       "title": "📢 半導體晶圓封測廠精材今天公告，董事會決議通過與台積電簽訂產能外包協議，在先進封裝後段製程展開合作，計劃在台積電中部科學園區廠房，建置產線並負責生產相關營運。",
       "url": "https://bsky.app/profile/cnataiwan.nzcow.com/post/3n27hdhojbw2y",
@@ -90,11 +154,11 @@
       "contentType": "非投資話題",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
-      "title": "[創作］改編網路送孟浩然之廣陵",
+      "title": "[創作] 改編網路送孟浩然之廣陵",
       "url": "https://www.ptt.cc/bbs/Stock/M.1794588414.A.8F6.html",
       "publishedAt": "2026-11-13T16:46:54Z",
       "stance": "中立／難判",
@@ -102,8 +166,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 2,
-      "pushLabel": "2",
+      "pushScore": 15,
+      "pushLabel": "15",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -116,8 +180,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 50,
-      "pushLabel": "50",
+      "pushScore": 100,
+      "pushLabel": "爆",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -140,7 +204,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "Bluesky",
@@ -151,7 +215,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "非投資內容",
@@ -314,7 +378,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -345,7 +409,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -365,7 +429,7 @@
       "contentType": "非投資話題",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "Bluesky",
@@ -376,7 +440,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -396,7 +460,7 @@
       "contentType": "非投資話題",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
@@ -471,7 +535,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "Bluesky",
@@ -482,7 +546,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "Bluesky",
@@ -493,7 +557,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
@@ -559,7 +623,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "Bluesky",
@@ -570,7 +634,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
@@ -603,7 +667,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "投資意見",
@@ -623,7 +687,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -643,7 +707,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -682,19 +746,10 @@
       "url": "https://bsky.app/profile/dsads514.bsky.social/post/3n26jm7h34c25",
       "publishedAt": "2026-11-13T08:05:31.258000Z",
       "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
+      "contentType": "非投資話題",
+      "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "非投資內容",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "不過小冷也想順便跟各位哥哥分享一下 其實如果你是約一節以上，或是想好好放鬆一下",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
@@ -716,7 +771,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
@@ -738,7 +793,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "Bluesky",
@@ -749,7 +804,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "Bluesky",
@@ -760,7 +815,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "PTT",
@@ -839,8 +894,8 @@
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
       "timestampBasis": "文章網址 ID 推算，非官方發文時間",
-      "pushScore": 97,
-      "pushLabel": "97",
+      "pushScore": 100,
+      "pushLabel": "爆",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -885,7 +940,7 @@
       "contentType": "新聞轉載",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "Bluesky",
@@ -896,7 +951,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -916,7 +971,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -967,7 +1022,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -987,7 +1042,7 @@
       "contentType": "非投資話題",
       "investmentEligible": false,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+      "method": "標題規則（非留言全文）"
     },
     {
       "platform": "Bluesky",
@@ -998,7 +1053,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -1029,7 +1084,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -1050,79 +1105,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[請益] 2027 大成鋼",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794542994.A.DAB.html",
-      "publishedAt": "2026-11-13T04:09:54Z",
-      "stance": "中立／難判",
-      "contentType": "非投資話題",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[標的] 6152 百一",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794541503.A.228.html",
-      "publishedAt": "2026-11-13T03:45:03Z",
-      "stance": "中立／難判",
-      "contentType": "非投資話題",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 10:59 電金傳齊揚 台股強漲近1400點收復12日跌點 （中央社記者張建中台北13日電）輝達（NVIDIA）執行長黃仁勳辭去總裁、執行長等職務，市場以短期利空出盡反應，台股開高走高，盤中勁揚1397.61點，達到44489.48點，收復11月12日的跌點。聯發科、大立光漲停，電子、金",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3n262s56oa6t2",
-      "publishedAt": "2026-11-13T03:40:07Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "黃仁勳因國安疑慮及婚外情辭去輝達執行長，雖導致美股下跌，但台股將其視為利空出盡而強勢反彈，早盤突破44300點。受此影響，聯發科等ASIC族群股價紛紛漲停，新台幣匯率則在震盪後小幅走升。 來源：台灣英文新聞",
-      "url": "https://bsky.app/profile/taiwannews-zh.taiwansky.social/post/3n25zgj5cegm6",
-      "publishedAt": "2026-11-13T03:20:16.093000Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "新聞轉載",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "黃仁勳因國安疑慮及婚外情辭去輝達執行長，雖導致美股下跌",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 10:06 黃仁勳去職風波未擴大 台股強彈新台幣震盪翻揚 （中央社記者潘姿羽台北13日電）輝達執行長黃仁勳辭去總裁、執行長等職務，美股主要指數全面收跌，不過台灣股匯今天未見頹勢，台股強漲逾千點，新台幣兌美元震盪翻揚，於32.8元價位小幅波動。 https://www.cna.com.t",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3n25xrzbjvo22",
-      "publishedAt": "2026-11-13T02:46:30Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "台指期直播-2026-11-13-(五)-日盤夜盤-2",
-      "url": "https://www.youtube.com/watch?v=OqylN1H_xfg",
-      "publishedAt": "2026-11-13T16:06:54Z",
-      "sourceName": "期樂趣",
+      "title": "如果這筆買進沒設停損 #台股分析",
+      "url": "https://www.youtube.com/watch?v=gnYN8oi_650",
+      "publishedAt": "2026-11-14T02:00:37Z",
+      "sourceName": "Greedy Leek貪婪韭菜",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1470,8 +1461,64 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 50,
-      "pushLabel": "50",
+      "pushScore": 100,
+      "pushLabel": "爆",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 黃仁勳下台掀反彈！馬斯克挺請願復職 億",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794619599.A.1CD.html",
+      "publishedAt": "2026-11-14T01:26:39Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 60,
+      "pushLabel": "60",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 傳輝達接洽安謀執行長哈斯 董事會：正在",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794617177.A.30E.html",
+      "publishedAt": "2026-11-14T00:46:17Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 24,
+      "pushLabel": "24",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞]輝達風波讓東南亞 AI 熱潮成為關注焦點",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794620836.A.C1F.html",
+      "publishedAt": "2026-11-14T01:47:16Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 9,
+      "pushLabel": "9",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 台積電Q3拿下各國政府補助款約1670億！前",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794623068.A.698.html",
+      "publishedAt": "2026-11-14T02:24:28Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 2,
+      "pushLabel": "2",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1870,22 +1917,22 @@
     "個股熱度只統計有投資語境且非新聞轉貼的 G Top20 標題，不更改 G 排名或 TITAN 風控。"
   ],
   "semantic": {
-    "status": "verified",
+    "status": "cached",
     "model": "gemini-3.5-flash-lite",
-    "inferenceCalls": 1,
-    "cachedClassifications": 15,
-    "newlyClassified": 1,
+    "inferenceCalls": 0,
+    "cachedClassifications": 14,
+    "newlyClassified": 0,
     "unclassified": 0,
-    "updatedAt": "2026-11-13T17:08:36.563Z",
+    "updatedAt": "2026-11-14T02:29:42.073Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 16,
-    "classifiedCount": 16,
+    "candidateCount": 14,
+    "classifiedCount": 14,
     "investmentCount": 3,
     "bullish": 1,
     "bearish": 0,
     "neutral": 2,
-    "originalRuleCount": 16,
+    "originalRuleCount": 14,
     "noTrade": true
   }
 }
