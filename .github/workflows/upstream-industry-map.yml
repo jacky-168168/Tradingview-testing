@@ -19,11 +19,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   collect:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 240
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -135,12 +133,5 @@ jobs:
             done
             [ "$ok" -eq 1 ] || exit 1
           fi
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: tw-stock-dashboard/docs
-      - name: Deploy upstream industry page
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Hand off verified upstream JSON to TW Stock Pages
+        run: echo "UPSTREAM_SOURCE_COMMITTED; deploy via trusted workflow_run TW Stock Pages"
