@@ -64,13 +64,13 @@ const conclusion=interpret.plainLanguageConclusion({
   aspects:[{bodyA:'Mars',bodyB:'Jupiter',aspect:'conjunction',actualAngleDeg:1,orbErrorDeg:1,applying:true}]
 });
 assert.match(conclusion.headline,/行動與擴張/);
-assert.match(conclusion.reason,/火星與木星合相/);
-assert.match(conclusion.market,/無法根據星盤判斷偏多或偏空/);
-assert.match(conclusion.watch,/ATR/);
+assert.match(conclusion.reason,/火星代表行動/);
+assert.match(conclusion.market,/單靠星盤無法可靠判斷股票漲跌/);
+assert.match(conclusion.watch,/成交量/);
 const emptyConclusion=interpret.plainLanguageConclusion({positions:[
  {name:'Sun',sign:'牡羊',motion:'direct',signDegree:3}
 ],aspects:[]});
-assert.match(emptyConclusion.headline,/沒有特別接近的五大行星相位/);
+assert.match(emptyConclusion.headline,/沒有特別接近的主要行星角度/);
 assert.equal(interpret.plainLanguageConclusion(null).status,'unavailable');
 assert.equal(interpret.describe(null).status,'unavailable');
 assert.match(page,/沒有經驗證的因果預測力/);
@@ -78,12 +78,12 @@ assert.match(js,/textContent/);
 assert.doesNotMatch(js,/eval\(|localStorage|fetch\(\s*['"]https:\/\/|fetch\(\s*['"]http:\/\//);
 console.log('Financial astrology UI separation and legacy anchors OK');
 
-assert.match(page,/id="astroReadingRecapHeadline"/);
-assert.match(page,/id="astroReadingRecapMarket"/);
+assert.doesNotMatch(page,/id="astroReadingRecapHeadline"/);
+assert.doesNotMatch(page,/id="astroReadingRecapMarket"/);
 assert.match(page,/id="astroConclusionHeadline"/);
-assert(page.includes('financial-astrology-explain.js?v=1.2'));
-assert.match(explain,/astroReadingRecapHeadline/);
-assert.match(explain,/astroReadingRecapMarket/);
+assert(page.includes('financial-astrology-explain.js?v=1.3'));
+assert.match(explain,/astroConclusionHeadline/);
+assert.match(page,/astro-research-body/);
 const reading=interpret.plainLanguageConclusion({
  positions:[
   {name:'Sun',sign:'天蠍',longitudeDeg:228,signDegree:18,motion:'direct'},
@@ -93,4 +93,28 @@ const reading=interpret.plainLanguageConclusion({
  aspects:[{bodyA:'Mars',bodyB:'Jupiter',aspect:'conjunction',actualAngleDeg:.4,orbErrorDeg:.4,applying:true}]
 });
 assert.match(reading.headline,/行動與擴張/);
-assert.match(reading.market,/無法根據星盤判斷偏多或偏空/);
+assert.match(reading.market,/單靠星盤無法可靠判斷股票漲跌/);
+
+const firstScreen=page.slice(0,page.indexOf('id="astroWheel"'));
+assert(firstScreen.includes('id="astroConclusionHeadline"'),'final conclusion appears before wheel');
+assert(firstScreen.includes('台灣時間 UTC+8'),'date field is plain Taiwan time');
+assert(page.indexOf('id="astroQueryTime"')<page.indexOf('id="astroConclusionHeadline"'));
+assert(page.indexOf('id="astroConclusionHeadline"')<page.indexOf('id="astroWheel"'));
+assert.doesNotMatch(page,/id="astroReadingHighlights"/);
+assert.match(page,/<details class="astro-guide astro-advanced"/);
+assert.match(page,/<details class="panel astro-research"/);
+assert.match(page,/<summary>研究方法、資料來源與限制<\/summary>/);
+assert.match(page,/<summary>進階資料：行星角度與移動速度<\/summary>/);
+assert.match(js,/new Date\(input\+':00\+08:00'\)/);
+assert.match(js,/showEvidence\(r.sampleSize<30/);
+const voids=new Set(['meta','link','input','img','br','hr','source','area','base','embed','wbr']);
+const stack=[];const errors=[];
+for(const m of page.matchAll(/<(\/?)(([a-zA-Z][\w-]*))(?:\s[^>]*?)?>/g)){
+  const name=m[2].toLowerCase();
+  if(voids.has(name))continue;
+  if(m[1]){
+    if(stack.pop()!==name)errors.push('unexpected closing '+name);
+  }else stack.push(name);
+}
+assert.deepStrictEqual(errors,[],'HTML tags must be properly nested');
+assert.deepStrictEqual(stack,[],'HTML should have no unclosed tags');

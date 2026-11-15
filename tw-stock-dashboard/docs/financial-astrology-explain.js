@@ -130,36 +130,36 @@ function plainLanguageConclusion(data){
     const saturnUranus=names.includes('Saturn')&&names.includes('Uranus');
     const mercuryNeptune=names.includes('Mercury')&&names.includes('Neptune');
     if(marsJupiter&&key.kind==='合相'){
-      headline='傳統占星象徵：行動與擴張同時突出，容易積極，也要留意過度自信。';
-      reason='核心依據是火星與木星合相：火星代表競爭、行動，木星代表樂觀、成長；兩者主題集中，但不代表股市必漲。';
-      watch='可觀察 Nasdaq、S&P 500 的成交量、ATR、VIX 是否真的擴張，並核對技術趨勢。';
+      headline='這張星盤的主要主題是「積極擴張」，同時提醒不要太衝動。';
+      reason='火星代表行動，木星代表成長；兩顆行星靠近（合相），傳統占星會把它理解成「更想採取行動」。';
+      watch='如果想研究股市，可觀察成交量、價格波動及大盤走勢有沒有明顯變化。';
     }else if(marsSaturn&&['四分相','對分相'].includes(key.kind)){
-      headline='傳統占星象徵：推進與限制相互拉扯，主題偏向壓力下的調整。';
+      headline='這張星盤的主題是「想前進，卻遇到限制」。';
       reason='火星象徵行動、土星象徵規範與限制；'+key.kind+'通常被視為需要克服的張力。';
       watch='可檢查股市實際波動率、信用利差、重大政策事件與支撐壓力位。';
     }else if(saturnUranus&&['四分相','對分相'].includes(key.kind)){
-      headline='傳統占星象徵：舊制度與新變革間出現明顯拉扯。';
+      headline='這張星盤的主題是「維持現狀與尋求改變之間的拉扯」。';
       reason='土星偏向結構與紀律，天王星偏向改革與突破；'+key.kind+'象徵兩者存在張力。';
       watch='可觀察科技股相對強弱、產業輪動與市場對政策的實際反應。';
     }else if(mercuryNeptune&&['四分相','對分相'].includes(key.kind)){
-      headline='傳統占星象徵：資訊判讀與想像之間容易產生落差。';
+      headline='這張星盤的主題是「消息與想像可能混在一起，需要多查證」。';
       reason='水星象徵消息和分析，海王星象徵想像與模糊；'+key.kind+'在傳統解讀中偏向需要仔細查證。';
       watch='可觀察市場傳聞與正式財報之間的落差；所有消息應比對可靠來源。';
     }else{
-      headline='傳統占星象徵：'+key.meaning+'，但沒有預設的吉凶或股票方向。';
+      headline='傳統占星會把這張星盤理解為「'+key.meaning+'」。';
       reason='主要相位為'+key.title+'（'+key.kind+'，與精確角度相差 '+fmt(key.orbErrorDeg)+'°）。'+key.interpretation;
-      watch='可把該相位時間記錄下來，與股票成交量、VIX、ATR 及歷史同類事件的實際價格變化比較。';
+      watch='若想研究股市，可把相位日期與過去的股價變化作比較。';
     }
   }else{
-    headline='傳統占星象徵：目前沒有特別接近的五大行星相位，以行星所在星座的主題為主。';
+    headline='這個時間沒有特別接近的主要行星角度，先看太陽與月亮的主題即可。';
     reason='選定時間內沒有落入 ±2° 容許度的五大相位，不能把這解讀成股市將平靜或必然盤整。';
-    watch='可觀察月相、重大宏觀經濟日程與股市實際價格結構；等待可回測的事件條件。';
+    watch='若想研究股市，先看大盤趨勢、重大消息和實際波動。';
   }
-  const context=(sun?'太陽在'+sun.sign+'座，'+SIGNS[sun.sign].qualities+'；':'')+
-    (moon?'月亮在'+moon.sign+'座，'+SIGNS[moon.sign].qualities+'。':'');
-  return {status:'ok',headline,reason:reason+(context?' 配合星座背景：'+context:''),
-    market:'股市方向：無法根據星盤判斷偏多或偏空；這不是買賣訊號。',
-    watch,limitation:'統計證據：這個日期的星象解讀尚未建立能證明股市預測優勢的樣本外績效；應以下方真實行情回測為準。'};
+  const context=(sun?'太陽在'+sun.sign+'座':'')+(moon?'，月亮在'+moon.sign+'座':'');
+  const explained=reason+(context?' 這時的背景是'+context+'。':'');
+  return {status:'ok',headline,reason:explained,
+    market:'單靠星盤無法可靠判斷股票漲跌，不能當成買賣訊號。',
+    watch,limitation:'目前沒有充分證據證明星盤能預測股市；可在下方查歷史事件資料。'};
 }
 function renderPlainLanguageConclusion(data){
   if(typeof document==='undefined')return plainLanguageConclusion(data);
@@ -201,28 +201,14 @@ function render(data){
   if(typeof document==='undefined')return describe(data);
   const reading=describe(data);
   const overview=document.getElementById('astroReadingOverview');
-  const highlights=document.getElementById('astroReadingHighlights');
   const planetBox=document.getElementById('astroReadingPlanets');
   const aspectBox=document.getElementById('astroReadingAspects');
   const categoryBox=document.getElementById('astroReadingCategories');
   renderPlainLanguageConclusion(data);
-  if(!overview||!highlights||!planetBox||!aspectBox||!categoryBox)return reading;
+  if(!overview||!planetBox||!aspectBox||!categoryBox)return reading;
   overview.textContent=reading.summary;
-  [highlights,planetBox,aspectBox,categoryBox].forEach(node=>node.replaceChildren());
+  [planetBox,aspectBox,categoryBox].forEach(node=>node.replaceChildren());
   if(reading.status!=='ok')return reading;
-  const lead=[
-    ['☀️ 太陽的主題',reading.planets.find(p=>p.name==='Sun')],
-    ['🌙 月亮的反應',reading.planets.find(p=>p.name==='Moon')],
-    ['🔭 最接近的相位',reading.aspects[0]]
-  ];
-  for(const [label,item] of lead){
-    const card=el('div','astro-reading-highlight');
-    card.appendChild(el('small','',label));
-    if(item&&'combined' in item)card.appendChild(el('p','',item.combined));
-    else if(item&&'interpretation' in item)card.appendChild(el('p','',item.title+'：'+item.interpretation));
-    else card.appendChild(el('p','','目前沒有此類可判讀項目。'));
-    highlights.appendChild(card);
-  }
   for(const p of reading.planets){
     const details=el('details','astro-reading-item');
     const summary=el('summary','',p.symbol+' '+p.title+'｜'+p.sign+' '+fmt(p.signDegree)+'°｜'+p.motion);

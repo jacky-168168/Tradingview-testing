@@ -131,14 +131,14 @@
     const input=el('astroQueryTime')?.value;
     if(!input){show('astroSummary','請先選擇 UTC 日期與時間');return;}
     try{
-      const timestamp=new Date(input+':00Z');
+      const timestamp=new Date(input+':00+08:00');
       state.ephemeris=snapshotClient(timestamp);
       renderEphemeris();
-      show('astroWheelCaption','查詢 UTC：'+timestamp.toISOString()+'｜地心、熱帶黃道（ECT）、±2° Orb；此星盤於瀏覽器使用 Astronomy Engine 2.1.19 即時計算。');
+      show('astroWheelCaption','所選時間：'+input.replace('T',' ')+'（台灣時間）；星盤以天文演算法計算。');
     }catch(e){show('astroSummary','無法計算指定星盤：'+e.message);}
   }
   function setTimeInput(date){
-    el('astroQueryTime').value=new Date(date).toISOString().slice(0,16);
+    el('astroQueryTime').value=new Date(new Date(date).getTime()+8*3600000).toISOString().slice(0,16);
   }
 
   function renderEphemeris(){
@@ -194,24 +194,31 @@
   function renderBacktest(){
     const market=el('astroMarket').value;
     const h=Number(el('astroHorizon').value);
+    const showEvidence=text=>show('astroConclusionEvidence',text);
     for(const id of ['metricN','metricWin','metricMean','metricBase','metricExcess','metricDd'])show(id,'—');
     el('astroCohorts').replaceChildren();
     const report=state.report;
     if(!report?.reports){
       show('astroBacktestMeta','歷史研究 JSON 尚未產生。');
-      show('astroEvidence','沒有真實行情與事件配對結果，因此不顯示任何勝率或報酬。');return;
+      show('astroEvidence','沒有真實行情與事件配對結果，因此不顯示任何勝率或報酬。');
+      showEvidence('尚未取得可靠的歷史比較資料，無法判斷星象對股市有沒有幫助。');return;
     }
     const result=report.reports[market];
     show('astroBacktestMeta',(result?.marketName||market)+'｜資料日期：'+(result?.sampleStart||'—')+'～'+
       (result?.sampleEnd||'—')+'｜來源：'+(result?.source||'未取得')+'｜研究生成時間 '+when(report.generatedAt));
     if(!result || result.status!=='ok'){
       show('astroEvidence','資料尚不可用：'+(result?.message||'該指數尚無經確認的歷史行情。')+
-        ' 不以占星解讀代替回測。');return;
+        ' 不以占星解讀代替回測。');
+      showEvidence('目前尚無可確認的真實行情結果，不提供預測勝率。');return;
     }
     const r=result.horizons?.find(x=>x.horizonSessions===h);
     if(!r || r.sampleSize<1){
-      show('astroEvidence','此期間沒有已完成的有效樣本（資料不足或研究期限尚未結束）。');return;
+      show('astroEvidence','此期間沒有已完成的有效樣本（資料不足或研究期限尚未結束）。');
+      showEvidence('這個條件下沒有足夠歷史事件可以比較。');return;
     }
+    showEvidence(r.sampleSize<30
+      ? '目前只有 '+r.sampleSize+' 次可比較事件，樣本太少，不能據此預測股市。'
+      : '已整理 '+r.sampleSize+' 次歷史事件，但統計相關不等於能預測未來，請展開研究資料查看。');
     show('metricN',String(r.sampleSize));
     show('metricWin',percent(r.winRate,1));
     show('metricMean',percent(r.meanReturn));

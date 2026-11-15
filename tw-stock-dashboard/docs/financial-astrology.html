@@ -1,101 +1,64 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>全球金融占星研究中心｜台股量化</title>
-<link rel="stylesheet" href="./financial-astrology.css?v=1.2">
+<link rel="stylesheet" href="./financial-astrology.css?v=1.3">
 <script src="./site-access.js"></script>
 <script defer src="./financial-astrology-vendor.js?v=2.1.19"></script>
-<script defer src="./financial-astrology-explain.js?v=1.2"></script>
-<script defer src="./financial-astrology.js?v=3"></script></head>
+<script defer src="./financial-astrology-explain.js?v=1.3"></script>
+<script defer src="./financial-astrology.js?v=1.3"></script></head>
 <body><div class="astro-app"><header class="astro-head"><div><a href="./index.html" class="back">← 返回台股量化主頁</a>
-<h1>🌌 全球金融占星研究中心</h1><p>天文事件 × 傳統解讀 × 真實市場回測｜研究用途，非交易訊號</p></div>
+<h1>🌌 金融占星研究中心</h1><p>選一個日期，看看當時的星象代表什麼。</p></div>
 <a href="./backtest.html" class="back">歷史回測中心</a></header>
-<div class="warning"><strong>兩條研究軌道、嚴格區分：</strong> 傳統占星對行星的象徵性解讀沒有經驗證的因果預測力。
-量化結果只有取得真實行情並通過資料品質檢查後才會顯示；不足或失敗顯示「無法驗證」。</div>
-<section class="panel"><div class="section-title"><h2>即時地心星盤</h2><span id="astroUpdated">星曆待載入</span></div>
-<div class="controls"><label>顯示時區 <select id="astroTimezone">
-<option value="Asia/Taipei">Asia/Taipei</option><option value="America/New_York">America/New_York</option>
-<option value="Europe/London">Europe/London</option><option value="Europe/Berlin">Europe/Berlin</option>
-<option value="Europe/Paris">Europe/Paris</option></select></label>
-<span class="hint">熱帶黃道、地心真黃道（ECT）、0～360°</span></div>
-<div class="astro-historical-controls">
-  <label>指定歷史或現在時間（UTC）
-    <input id="astroQueryTime" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" step="60">
-  </label>
-  <button id="astroQueryNow" type="button">查詢目前星盤</button>
-  <button id="astroQueryDate" type="button">查詢指定日期星盤</button>
+<div class="warning">占星是傳統象徵解讀，<strong>不能單靠星盤決定股票買賣</strong>；歷史績效只顯示可核對的真實資料。</div>
+<section class="panel astro-main-panel">
+<div class="section-title"><h2>🌙 選日期，看懂星盤</h2><span id="astroUpdated">星盤資料載入中…</span></div>
+<div class="astro-simple-query">
+<label for="astroQueryTime">查詢日期與時間（台灣時間 UTC+8）
+<input id="astroQueryTime" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" step="60"></label>
+<button id="astroQueryNow" type="button">看現在</button>
+<button id="astroQueryDate" type="button">查這一天</button>
 </div>
-<p class="hint">支援 1900～2100 年任意日期與時間；星盤由瀏覽器即時計算，不依賴股市資料。輸入時間使用 UTC，所有事件顯示依上方時區切換。</p>
-<div id="astroSummary" class="callout" role="status">正在計算天文資料…</div>
 <section id="astroConclusion" class="astro-conclusion" aria-labelledby="astroConclusionTitle" aria-live="polite">
-  <div class="astro-conclusion-header">
-    <h2 id="astroConclusionTitle">📌 星盤綜合結論｜先看這裡</h2>
-    <span id="astroConclusionAt">星盤時間載入中…</span>
-  </div>
-  <p class="astro-conclusion-headline" id="astroConclusionHeadline">計算星象重點中…</p>
-  <div class="astro-conclusion-rows">
-    <div><strong>為什麼這樣解讀</strong><p id="astroConclusionWhy">分析主要相位、太陽與月亮位置中…</p></div>
-    <div><strong>對股票偏多還是偏空？</strong><p id="astroConclusionMarket">尚未取得資料，不能判斷。</p></div>
-    <div><strong>你可以觀察什麼</strong><p id="astroConclusionWatch">需要核對成交量、波動與市場趨勢。</p></div>
-    <div><strong>歷史證據是否支持？</strong><p id="astroConclusionEvidence">尚無足夠樣本外驗證。</p></div>
-  </div>
-  <p class="astro-conclusion-footnote">以上是傳統占星的象徵性綜合解釋，不等同實證金融預測。詳細行星及相位的推導可在下方展開閱讀。</p>
+<div class="astro-conclusion-header"><h2 id="astroConclusionTitle">📌 一分鐘看懂這張星盤</h2><span id="astroConclusionAt">正在取得星盤時間…</span></div>
+<p class="astro-conclusion-headline" id="astroConclusionHeadline">正在整理星象重點…</p>
+<div class="astro-conclusion-rows">
+<div><strong>為什麼這樣說？</strong><p id="astroConclusionWhy">正在分析行星位置與角度…</p></div>
+<div><strong>能看出股票漲跌嗎？</strong><p id="astroConclusionMarket">單靠星盤無法可靠判斷股市漲跌。</p></div>
+<div><strong>歷史資料怎麼說？</strong><p id="astroConclusionEvidence">需要歷史股市資料檢驗。</p></div>
+</div>
+<details class="astro-conclusion-extra"><summary>想研究股市，還可以觀察什麼？</summary><p id="astroConclusionWatch">可對照成交量、波動與大盤趨勢。</p></details>
+<p class="astro-conclusion-footnote">這是傳統占星的文化性解讀，不是股市預測或買賣建議。</p>
 </section>
+<details class="astro-advanced astro-time-settings">
+<summary>進階設定：顯示時區與星盤計算資訊</summary>
+<div class="controls"><label>星盤時間顯示時區 <select id="astroTimezone">
+<option value="Asia/Taipei">台灣時間</option><option value="America/New_York">美國紐約</option>
+<option value="Europe/London">英國倫敦</option><option value="Europe/Berlin">德國柏林</option>
+<option value="Europe/Paris">法國巴黎</option></select></label></div>
+<p class="hint">查詢欄位固定使用 UTC+8；歷史年份採固定 +8 小時換算，不含歷史夏令時間。星盤顯示可以切換其他時區。</p>
+<div id="astroSummary" class="callout" role="status">載入星盤原始計算資料中…</div>
+</details>
 <div class="astro-wheel-wrap">
   <svg id="astroWheel" role="img" aria-label="十二星座行星星盤輪，包含十大天體及主要相位" viewBox="0 0 400 400" width="390" height="390"></svg>
   <p class="hint" id="astroWheelCaption">十二星座與行星角度，以熱帶黃道地心黃經繪製。</p>
 </div>
-<section class="astro-guide" id="astroReading" aria-labelledby="astroGuideTitle">
-  <div class="astro-guide-head">
-    <h3 id="astroGuideTitle">📖 星盤詳細依據（有興趣再展開）</h3>
-    <span class="astro-guide-tag">依《占星其實很簡單：入門篇》架構整理</span>
-  </div>
-  <div class="astro-guide-grammar">
-    <div><strong>① 行星＝什麼力量</strong><small>例如火星象徵行動、競爭</small></div>
-    <div><strong>② 星座＝如何表達</strong><small>例如獅子座強調展現、自信</small></div>
-    <div><strong>③ 相位＝力量如何互動</strong><small>例如合相表示集中與結合</small></div>
-    <div><strong>④ 宮位＝發生在哪個領域</strong><small>需出生／事件地點，這裡不虛構宮位</small></div>
-  </div>
-  <p class="astro-guide-note"><strong>快速理解：</strong>「火星在獅子座」不是火星真的位於獅子座恆星旁，而是從地球看，火星位於熱帶黃道的獅子座區間；傳統占星把「行動力」用「自信、展現」的風格解讀。這些象徵不是股票多空證據。</p>
-  <div id="astroReadingOverview" class="callout" role="status">正在解讀所選日期的星盤…</div>
-  <div id="astroReadingHighlights" class="astro-reading-highlights"></div>
-  <aside id="astroReadingRecap" class="astro-reading-recap" aria-label="整張星盤的最終重點" role="status" aria-live="polite">
-    <strong>✅ 最後結論｜看完這張星盤應該知道什麼？</strong>
-    <p id="astroReadingRecapHeadline">正在整理這張星盤的綜合含義…</p>
-    <p id="astroReadingRecapMarket">股市多空需要歷史行情與樣本外回測驗證，不用星象代替買賣決策。</p>
-    <a href="#astroConclusion">回到最上方完整結論</a>
-  </aside>
-  <details class="astro-reading-section">
-    <summary>① 十大行星各代表什麼？（點開看詳細解釋）</summary>
-    <p class="hint">每個行星都會依目前選定日期的星座和順逆行自動組合中文說明。</p>
-    <div id="astroReadingPlanets"></div>
-  </details>
-  <details class="astro-reading-section">
-    <summary>② 目前行星相位怎麼讀？（依角度接近程度排序）</summary>
-    <p class="hint">合相 0°、六分相 60°、四分相 90°、三分相 120°、對分相 180°。Orb 是與目標角度相差的度數，不是股價波動率。</p>
-    <div id="astroReadingAspects"></div>
-  </details>
-  <details class="astro-reading-section">
-    <summary>③ 四元素、開創／固定／變動與月相</summary>
-    <div id="astroReadingCategories"></div>
-  </details>
-  <details class="astro-reading-section">
-    <summary>④ 書籍參考、讀盤順序與金融研究差異</summary>
-    <div class="astro-reading-detail">
-      <p><strong>參考書：</strong>《占星其實很簡單！1：入門篇》。依第 2-3 節「占星學的分類法」、第 2-4 節「十二星座」、第 2-6 節「行星系統」、第 2-7 節「相位分析」、第 2-8 節「解盤法則」的概念整理。</p>
-      <p>導讀順序為：先看重要行星與所在星座，再看行星相位與整體分布；不要只憑單一「吉相／凶相」判斷結論。</p>
-      <p><strong>適用範圍：</strong>書中的主要情境是個人出生圖。本網站顯示的是指定時間的地心天空行運圖，沒有個人出生時間與地點，不能推論個人命運，也沒有計算上升星座及十二宮位。</p>
-      <p><strong>金融延伸：</strong>網站對價值、情緒、競爭等字詞的市場聯想，是研究假說而非書籍所驗證的股市交易方法。買賣方向必須以獨立歷史行情回測檢查。</p>
-      <p class="hint">以上為原創重述與整理，非書籍全文轉載；不收錄或公開上傳的 PDF。</p>
-    </div>
-  </details>
-</section>
+<details class="astro-guide astro-advanced" id="astroReading" aria-labelledby="astroGuideTitle">
+<summary id="astroGuideTitle">📚 想了解每顆行星的詳細意思？</summary>
+<p class="astro-guide-note">簡單來說：行星像是「主題」、星座像是「表現方式」、相位代表「兩個主題如何互動」。例如「火星在獅子座」的傳統解讀是比較積極、想表現。</p>
+<div id="astroReadingOverview" class="callout" role="status">讀取詳細解讀中…</div>
+<details class="astro-reading-section"><summary>十大行星各代表什麼？</summary><div id="astroReadingPlanets"></div></details>
+<details class="astro-reading-section"><summary>合相、四分相等角度代表什麼？</summary><div id="astroReadingAspects"></div></details>
+<details class="astro-reading-section"><summary>四元素、月相與書籍參考</summary><div id="astroReadingCategories"></div>
+<p class="astro-guide-note">參考《占星其實很簡單：入門篇》的十二星座、行星及相位章節，以原創文字解釋。這是所選時間的天空星盤，不是個人出生圖；未輸入出生地點，不計算宮位。股市含義須另外回測。</p></details>
+</details>
+<details class="astro-advanced astro-numeric-details"><summary>進階資料：行星角度與移動速度</summary>
 <div class="tablewrap"><table><thead><tr><th>天體</th><th>星座</th><th>黃經</th><th>黃緯</th><th>視速度（°/日）</th><th>運動</th></tr></thead>
-<tbody id="astroPlanets"></tbody></table></div></section>
-<div class="columns"><section class="panel"><h2>目前主要相位（2° orb）</h2><p class="hint">Applying/Separating 代表接近／遠離精確角度，不等於股價方向。</p>
+<tbody id="astroPlanets"></tbody></table></div></details></section>
+<details class="astro-advanced astro-calendar-details"><summary>查看完整相位與未來 90 天星象日曆</summary><div class="columns"><section class="panel"><h2>目前主要行星相位</h2><p class="hint">顯示行星彼此的角度，以及距離精確相位有多近。</p>
 <div id="astroAspects" class="results">尚無資料</div></section>
 <section class="panel"><h2>未來 90 天事件日曆</h2><p class="hint">事件時間預設轉成台灣時間，可切換上方顯示時區。</p>
-<div id="astroCalendar" class="results">尚無資料</div></section></div>
-<section class="panel"><h2>📈 金融占星量化回測</h2>
+<div id="astroCalendar" class="results">尚無資料</div></section></div></details>
+<details class="panel astro-research"><summary>📈 歷史研究：相同星象之後股市怎麼走？</summary><div class="astro-research-body">
 <div class="controls">
 <label>市場 <select id="astroMarket">
 <option value="NASDAQ">Nasdaq Composite</option><option value="SP500">S&amp;P 500</option>
@@ -105,15 +68,16 @@
 <label>事件後交易日 <select id="astroHorizon"><option>1</option><option>3</option><option>5</option><option>10</option>
 <option selected>20</option><option>60</option><option>90</option><option>180</option><option>360</option></select></label></div>
 <p id="astroBacktestMeta" class="hint">讀取歷史研究狀態中…</p>
-<div class="metrics"><div><small>事件樣本數</small><strong id="metricN">—</strong></div>
+<div class="metrics"><div><small>可比較的事件次數</small><strong id="metricN">—</strong></div>
 <div><small>後續上漲率</small><strong id="metricWin">—</strong></div>
 <div><small>事件平均報酬</small><strong id="metricMean">—</strong></div>
-<div><small>同期年份隨機基準</small><strong id="metricBase">—</strong></div>
-<div><small>平均超額報酬</small><strong id="metricExcess">—</strong></div>
-<div><small>平均期間最大回撤</small><strong id="metricDd">—</strong></div></div>
+<div><small>一般交易日平均</small><strong id="metricBase">—</strong></div>
+<div><small>比一般日多／少</small><strong id="metricExcess">—</strong></div>
+<div><small>期間平均最大跌幅</small><strong id="metricDd">—</strong></div></div>
 <div id="astroEvidence" class="callout" role="status">尚未取得經驗證統計資料。</div>
-<div id="astroCohorts" class="tablewrap"></div></section>
-<section class="panel"><h2>研究定義、稽核與限制</h2>
+<details class="astro-advanced"><summary>查看每次歷史事件的明細</summary><div id="astroCohorts" class="tablewrap"></div></details>
+</div></details>
+<details class="panel astro-advanced astro-methods"><summary>研究方法、資料來源與限制</summary>
 <ul><li>行星位置採 <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer" target="_blank">Astronomy Engine</a> 2.1.19，地心、熱帶黃道、真黃道 of date，天文資料以 UTC 紀錄。</li>
 <li>精確相位以角度跨越求根；2° orb 為預先設定的觀測窗口，不得透過調整 orb 反向挑選最佳績效。</li>
 <li>回測以事件在市場時區的日期為準，之後第一個完整交易日收盤入場，20 個交易日後收盤計算報酬；不使用事件當天未知的收盤價。</li>
@@ -123,5 +87,5 @@
 <div class="source-links"><a href="./data/financial_astrology/latest.json">即時星盤 JSON</a>
 <a href="./data/financial_astrology/mars_jupiter_conjunction.json">天文事件 JSON</a>
 <a href="./data/financial_astrology/report.json">量化研究 JSON</a>
-<a href="https://github.com/jacky-168168/Tradingview-testing/actions/workflows/financial-astrology.yml">研究工作流</a></div></section>
+<a href="https://github.com/jacky-168168/Tradingview-testing/actions/workflows/financial-astrology.yml">研究工作流</a></div></details>
 </div></body></html>
