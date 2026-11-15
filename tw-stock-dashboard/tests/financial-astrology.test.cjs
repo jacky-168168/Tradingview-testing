@@ -60,3 +60,21 @@ test('page uses safe no-data research defaults and does not alter market risk sc
  assert(!ui.includes('market-command.js'));assert(index.includes('financial-astrology.html'));
  assert(index.includes('market-command.js'),'existing market risk module missing');
 });
+test('predefined hypothesis filters, false-discovery correction and missing OHLC are explicit',()=>{
+  assert(research.HYPOTHESES.new_moon({kind:'moon-quarter',name:'新月'}));
+  assert(!research.HYPOTHESES.full_moon({kind:'moon-quarter',name:'新月'}));
+  assert(research.HYPOTHESES.mars_jupiter_conjunction({kind:'aspect',first:'Mars',second:'Jupiter',angle:0}));
+  assert(!research.HYPOTHESES.mars_jupiter_conjunction({kind:'aspect',first:'Mars',second:'Jupiter',angle:90}));
+  const tests=[{pHac:.01},{pHac:.04},{pHac:.05}];
+  research.bhAdjust(tests);
+  assert(tests[0].qFdr<=.031&&tests[0].qFdr>=.029);
+  assert(tests.every(x=>x.qFdr>=x.pHac));
+});
+test('research page exposes event hypotheses and 7/30/90/360 day calendar',()=>{
+  const html=fs.readFileSync(path.join(root,'financial-astrology.html'),'utf8');
+  for(const id of ['eventType','eventWindow','market','horizon','at','timezone','positions','research'])assert(html.includes('id="'+id+'"'));
+  for(const days of ['7','30','90','360'])assert(html.includes('value="'+days+'"'));
+  const index=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  assert(index.includes('financialAstroHomeSummary'));
+  assert(index.includes('financial-astrology-home.js'));
+});
