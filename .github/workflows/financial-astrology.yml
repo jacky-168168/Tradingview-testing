@@ -1,0 +1,111 @@
+name: Financial Astrology Research V1
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/financial-astrology/**'
+      - 'tw-stock-dashboard/docs/financial-astrology*'
+      - 'tw-stock-dashboard/tests/test_financial_astrology_ui.cjs'
+      - '.github/workflows/financial-astrology.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tw-stock-dashboard/financial-astrology/**'
+      - 'tw-stock-dashboard/docs/financial-astrology*'
+      - 'tw-stock-dashboard/tests/test_financial_astrology_ui.cjs'
+      - '.github/workflows/financial-astrology.yml'
+  schedule:
+    # UTC 22:17 = Asia/Taipei 06:17, outside G 09:50-13:45.
+    - cron: '17 22 * * *'
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned MIT astronomy library
+        run: npm ci
+        working-directory: tw-stock-dashboard/financial-astrology
+      - name: Run astronomy and ephemeris regression tests
+        run: npm test
+        working-directory: tw-stock-dashboard/financial-astrology
+      - name: Run market data backtest logic tests (synthetic fixtures only)
+        run: python3 -m unittest discover -s tw-stock-dashboard/financial-astrology/tests -p 'test_*.py' -v
+      - name: Validate read-only UI and existing dashboard integration
+        run: |
+          node --check tw-stock-dashboard/docs/financial-astrology.js
+          node --check tw-stock-dashboard/docs/financial-astrology-home.js
+          node tw-stock-dashboard/tests/test_financial_astrology_ui.cjs
+          python3 tw-stock-dashboard/tests/test_market_homepage_layout.py
+          node tw-stock-dashboard/tests/test_market_compact.cjs
+      - name: Validate astronomical event JSON generated without future prices
+        run: |
+          node tw-stock-dashboard/financial-astrology/build.cjs --output=/tmp/astro-validation
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('/tmp/astro-validation')
+          data=json.loads((root/'latest.json').read_text())
+          events=json.loads((root/'mars_jupiter_conjunction.json').read_text())
+          assert len(data['positions'])==10
+          assert data['ephemeris']['origin']=='geocentric'
+          assert data['verifiedReturnSignal'] is False
+          assert events['events']
+          assert all(x['actualAngleDeg']<0.01 for x in events['events'])
+          PY
+
+  publish-research-data:
+    needs: verify
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    concurrency:
+      group: financial-astrology-publish-only
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+        working-directory: tw-stock-dashboard/financial-astrology
+      - name: Calculate UTC ephemeris and exact historic conjunction roots
+        run: node tw-stock-dashboard/financial-astrology/build.cjs
+      - name: Install historical market data reader
+        run: python3 -m pip install 'yfinance>=0.2.65,<2'
+      - name: Research daily closes; unavailable is explicitly marked, never fabricated
+        run: |
+          python3 tw-stock-dashboard/financial-astrology/backtest.py \
+            --events=tw-stock-dashboard/docs/data/financial_astrology/mars_jupiter_conjunction.json \
+            --output=tw-stock-dashboard/docs/data/financial_astrology/report.json
+      - name: Publish only isolated astrology JSON without affecting G intraday workflows
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tw-stock-dashboard/docs/data/financial_astrology/latest.json \
+            tw-stock-dashboard/docs/data/financial_astrology/calendar.json \
+            tw-stock-dashboard/docs/data/financial_astrology/mars_jupiter_conjunction.json \
+            tw-stock-dashboard/docs/data/financial_astrology/report.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Publish isolated financial astrology research data"
+          ok=0
+          for i in 1 2 3 4; do
+            git pull --rebase origin main || { git rebase --abort || true; sleep $((i * 4)); continue; }
+            if git push origin HEAD:main; then ok=1; break; fi
+            sleep $((i * 4))
+          done
+          test "$ok" = 1
