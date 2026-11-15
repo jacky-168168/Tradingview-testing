@@ -60,24 +60,29 @@ function goldenMin(fn,a,b){
   return (a+b)/2;
 }
 function findAspects(start,days=90){
-  const begin=toDate(start).getTime(),step=12*3600000,N=Math.ceil(days*DAY/step);
-  if(days<1||days>370)throw Error('event horizon must be 1..370 days');
-  const frames=Array.from({length:N+3},(_,k)=>BODIES.map(b=>position(b,begin+k*step-step).longitude));
-  const result=[];
-  for(let i=0;i<BODIES.length;i++)for(let j=i+1;j<BODIES.length;j++)for(const [name,angle] of ASPECTS){
-    const e=frames.map(f=>error(f[i],f[j],angle));
-    for(let k=1;k<=N;k++){
-      if(e[k]>e[k-1]||e[k]>e[k+1]||e[k]>7.5)continue;
-      const f=t=>error(position(BODIES[i],t).longitude,position(BODIES[j],t).longitude,angle);
-      const time=goldenMin(f,begin+(k-1)*step-step,begin+(k+1)*step-step);
-      if(time<begin||time>begin+days*DAY||f(time)>0.06)continue;
-      const iso=new Date(Math.round(time/60000)*60000).toISOString();
-      const event={id:[BODIES[i],BODIES[j],angle,iso].join('-'),kind:'aspect',
-        first:BODIES[i],second:BODIES[j],name,angle,utc:iso,orbAtMinimum:+f(time).toFixed(5)};
-      if(!result.some(p=>p.first===event.first&&p.second===event.second&&p.angle===event.angle&&Math.abs(Date.parse(p.utc)-time)<2*DAY))result.push(event);
-    }
+ const begin=toDate(start).getTime(),step=12*3600000,N=Math.ceil(days*DAY/step);
+ if(days<1||days>370)throw Error('event horizon must be 1..370 days');
+ const frames=Array.from({length:N+1},(_,k)=>BODIES.map(b=>position(b,begin+k*step).longitude));
+ const result=[];
+ // Separate +angle and -angle roots on the circle. A 180deg wrap is not a root.
+ // This detects actual exact crossings (including 0 and 180), not just a close approach.
+ for(let i=0;i<BODIES.length;i++)for(let j=i+1;j<BODIES.length;j++)for(const [name,angle] of ASPECTS){
+  const targets=(angle===0||angle===180)?[angle]:[angle,360-angle];
+  for(const target of targets)for(let k=0;k<N;k++){
+   const value=(t)=>signed(position(BODIES[i],t).longitude-position(BODIES[j],t).longitude-target);
+   let a=signed(frames[k][i]-frames[k][j]-target),b=signed(frames[k+1][i]-frames[k+1][j]-target);
+   if(a*b>0||Math.abs(b-a)>90)continue; // not an actual crossing
+   let lo=begin+k*step,hi=begin+(k+1)*step,vl=a;
+   for(let n=0;n<44;n++){const mid=(lo+hi)/2,vm=value(mid);if(vm*vl<=0)hi=mid;else{lo=mid;vl=vm;}}
+   const timestamp=(lo+hi)/2;
+   if(timestamp<begin||timestamp>begin+days*DAY||Math.abs(value(timestamp))>0.0001)continue;
+   const utc=new Date(Math.round(timestamp/60000)*60000).toISOString();
+   const event={id:[BODIES[i],BODIES[j],angle,utc].join('-'),kind:'aspect',
+    first:BODIES[i],second:BODIES[j],name,angle,utc,orbAtMinimum:+error(position(BODIES[i],timestamp).longitude,position(BODIES[j],timestamp).longitude,angle).toFixed(6)};
+   if(!result.some(p=>p.first===event.first&&p.second===event.second&&p.angle===angle&&Math.abs(Date.parse(p.utc)-timestamp)<3600000))result.push(event);
   }
-  return result.sort((a,b)=>a.utc.localeCompare(b.utc));
+ }
+ return result.sort((a,b)=>a.utc.localeCompare(b.utc));
 }
 function findStations(start,days=90){
   const begin=toDate(start).getTime(),out=[];
