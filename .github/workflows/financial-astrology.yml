@@ -1,0 +1,106 @@
+name: Financial Astrology Research
+on:
+  workflow_dispatch:
+    inputs:
+      regenerate_history:
+        description: "Recompute 2000-present astronomical history (can take time)"
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    # 08:07 and 20:07 Asia/Taipei. GitHub schedule is best-effort.
+    - cron: '7 0,12 * * *'
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/src/financial_astrology/**'
+      - 'tw-stock-dashboard/docs/financial-astrology*'
+      - 'tw-stock-dashboard/tests/financial-astrology.test.cjs'
+      - 'tw-stock-dashboard/package*.json'
+      - '.github/workflows/financial-astrology.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tw-stock-dashboard/package-lock.json
+      - run: npm ci --ignore-scripts --prefix tw-stock-dashboard
+      - name: Validate JavaScript, astronomical output and original index integration
+        run: |
+          node --check tw-stock-dashboard/src/financial_astrology/engine.cjs
+          node --check tw-stock-dashboard/src/financial_astrology/research.cjs
+          node --check tw-stock-dashboard/src/financial_astrology/historical.cjs
+          node --check tw-stock-dashboard/docs/financial-astrology-ui.js
+          node --test tw-stock-dashboard/tests/financial-astrology.test.cjs
+      - name: Generate and validate fixed-time research dataset (not published)
+        env:
+          ASTRO_FIXED_NOW: 2026-11-15T00:00:00Z
+        run: |
+          node tw-stock-dashboard/src/financial_astrology/engine.cjs
+          node - <<'JS'
+          const fs=require('node:fs'),assert=require('node:assert/strict');
+          const p='tw-stock-dashboard/docs/data/financial_astrology/latest.json';
+          const d=JSON.parse(fs.readFileSync(p,'utf8'));
+          assert.equal(d.schema,1);
+          assert.equal(d.snapshot.positions.length,10);
+          assert.equal(d.statisticalStatus,'unavailable-no-approved-price-history');
+          JS
+  publish:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    concurrency:
+      group: financial-astrology-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tw-stock-dashboard/package-lock.json
+      - run: npm ci --ignore-scripts --prefix tw-stock-dashboard
+      - name: Generate geocentric astrology snapshot and 90-day events
+        run: node tw-stock-dashboard/src/financial_astrology/engine.cjs
+      - name: Generate historical event archive when explicitly requested
+        if: github.event_name == 'workflow_dispatch' && inputs.regenerate_history == true
+        run: node tw-stock-dashboard/src/financial_astrology/historical.cjs
+      - name: Study markets only when historical event catalogue exists
+        run: |
+          if [ -s tw-stock-dashboard/research/financial_astrology/historical-events.json ]; then
+            node tw-stock-dashboard/src/financial_astrology/research.cjs
+          else
+            echo 'Historical event catalogue not yet generated; market study remains N/A.'
+          fi
+      - name: Commit ONLY astronomy research datasets (never touch G dashboard)
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tw-stock-dashboard/docs/data/financial_astrology/
+          if [ -f tw-stock-dashboard/research/financial_astrology/historical-events.json ]; then
+            git add tw-stock-dashboard/research/financial_astrology/historical-events.json
+          fi
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'data(astrology): refresh independent sky/event research'
+          for i in 1 2 3 4 5; do
+            if ! git pull --rebase origin main; then
+              git rebase --abort || true
+              exit 1
+            fi
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((i*4))
+          done
+          echo 'Failed to publish after retries' >&2
+          exit 1
