@@ -5,26 +5,26 @@
 <script src="./site-access.js"></script>
 <script defer src="./financial-astrology-vendor.js?v=2.1.19"></script>
 <script defer src="./financial-astrology-explain.js?v=1.2"></script>
-<script defer src="./financial-astrology.js?v=3"></script></head>
+<script defer src="./financial-astrology.js?v=1.4"></script></head>
 <body><div class="astro-app"><header class="astro-head"><div><a href="./index.html" class="back">← 返回台股量化主頁</a>
 <h1>🌌 全球金融占星研究中心</h1><p>天文事件 × 傳統解讀 × 真實市場回測｜研究用途，非交易訊號</p></div>
 <a href="./backtest.html" class="back">歷史回測中心</a></header>
 <div class="warning"><strong>兩條研究軌道、嚴格區分：</strong> 傳統占星對行星的象徵性解讀沒有經驗證的因果預測力。
 量化結果只有取得真實行情並通過資料品質檢查後才會顯示；不足或失敗顯示「無法驗證」。</div>
-<section class="panel"><div class="section-title"><h2>即時地心星盤</h2><span id="astroUpdated">星曆待載入</span></div>
+<section class="panel"><div class="section-title"><h2>即時地心星盤（顯示當前日期）</h2><span id="astroUpdated">星曆待載入</span></div>
 <div class="controls"><label>顯示時區 <select id="astroTimezone">
 <option value="Asia/Taipei">Asia/Taipei</option><option value="America/New_York">America/New_York</option>
 <option value="Europe/London">Europe/London</option><option value="Europe/Berlin">Europe/Berlin</option>
 <option value="Europe/Paris">Europe/Paris</option></select></label>
 <span class="hint">熱帶黃道、地心真黃道（ECT）、0～360°</span></div>
 <div class="astro-historical-controls">
-  <label>指定歷史或現在時間（UTC）
+  <label>指定歷史或現在時間（台灣時間 UTC+8）
     <input id="astroQueryTime" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" step="60">
   </label>
   <button id="astroQueryNow" type="button">查詢目前星盤</button>
   <button id="astroQueryDate" type="button">查詢指定日期星盤</button>
 </div>
-<p class="hint">支援 1900～2100 年任意日期與時間；星盤由瀏覽器即時計算，不依賴股市資料。輸入時間使用 UTC，所有事件顯示依上方時區切換。</p>
+<p class="hint">支援 1900～2100 年任意日期與時間；星盤由瀏覽器即時計算，不依賴股市資料。輸入時間使用台灣時間（UTC+8），星盤每分鐘更新；查詢歷史日期後會暫停自動更新，點「查詢目前星盤」即可回到現在。</p>
 <div id="astroSummary" class="callout" role="status">正在計算天文資料…</div>
 <section id="astroConclusion" class="astro-conclusion" aria-labelledby="astroConclusionTitle" aria-live="polite">
   <div class="astro-conclusion-header">

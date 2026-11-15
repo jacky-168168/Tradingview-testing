@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   const el=id=>document.getElementById(id);
-  const state={ephemeris:null,calendar:null,report:null};
+  const state={ephemeris:null,calendar:null,report:null,liveMode:true};
   const zones=new Set(['Asia/Taipei','America/New_York','Europe/London','Europe/Berlin','Europe/Paris']);
   const bodyNames={Sun:'太陽',Moon:'月亮',Mercury:'水星',Venus:'金星',Mars:'火星',
     Jupiter:'木星',Saturn:'土星',Uranus:'天王星',Neptune:'海王星',Pluto:'冥王星'};
@@ -129,18 +129,37 @@
   }
   function calculateSelected(){
     const input=el('astroQueryTime')?.value;
-    if(!input){show('astroSummary','請先選擇 UTC 日期與時間');return;}
+    if(!input){show('astroSummary','請先選擇台灣日期與時間');return;}
     try{
-      const timestamp=new Date(input+':00Z');
+      const timestamp=new Date(input+':00+08:00');
+      state.liveMode=false;
       state.ephemeris=snapshotClient(timestamp);
       renderEphemeris();
-      show('astroWheelCaption','查詢 UTC：'+timestamp.toISOString()+'｜地心、熱帶黃道（ECT）、±2° Orb；此星盤於瀏覽器使用 Astronomy Engine 2.1.19 即時計算。');
+      show('astroWheelCaption','歷史星盤：'+when(timestamp.toISOString())+'（'+el('astroTimezone').value+'）｜使用所選時間計算。');
     }catch(e){show('astroSummary','無法計算指定星盤：'+e.message);}
   }
   function setTimeInput(date){
-    el('astroQueryTime').value=new Date(date).toISOString().slice(0,16);
+    el('astroQueryTime').value=new Date(new Date(date).getTime()+8*3600000).toISOString().slice(0,16);
   }
 
+  function refreshLiveChart(){
+    if(!state.liveMode)return;
+    if(!window.Astronomy){
+      show('astroUpdated','即時星盤函式庫未載入');
+      show('astroSummary','無法即時計算星盤，請重新整理頁面。');
+      return;
+    }
+    try{
+      const now=new Date();
+      state.ephemeris=snapshotClient(now);
+      setTimeInput(now);
+      renderEphemeris();
+      show('astroWheelCaption','最新地心星盤：'+when(now.toISOString())+'（'+el('astroTimezone').value+'）｜每分鐘自動更新。');
+    }catch(error){
+      show('astroUpdated','即時星盤暫不可用');
+      show('astroSummary','即時星盤計算失敗：'+error.message);
+    }
+  }
   function renderEphemeris(){
     const data=state.ephemeris;
     if(!data?.positions?.length){
@@ -238,21 +257,21 @@
     table.appendChild(tbody);wrap.appendChild(table);
   }
   async function start(){
-    setTimeInput(new Date());
-    if(window.Astronomy)calculateSelected();
-    else show('astroSummary','本機星曆函式庫未能載入；待讀取伺服器快照。');
-    const results=await Promise.allSettled([load('latest.json'),load('calendar.json'),load('report.json')]);
-    const vals=results.map(x=>x.status==='fulfilled'?x.value:null);
-    if(!window.Astronomy)state.ephemeris=vals[0];
-    [state.calendar,state.report]=vals.slice(1);
-    renderEphemeris();renderCalendar();renderBacktest();
-    if(results.every(x=>x.status==='rejected'))show('astroEvidence','所有資料來源暫時不可用，請檢查 GitHub Actions。');
+    // Never replace a live computation with yesterday's cached latest.json.
+    refreshLiveChart();
+    const results=await Promise.allSettled([load('calendar.json'),load('report.json')]);
+    state.calendar=results[0].status==='fulfilled'?results[0].value:null;
+    state.report=results[1].status==='fulfilled'?results[1].value:null;
+    renderCalendar();renderBacktest();
   }
-  el('astroTimezone').addEventListener('change',()=>{renderEphemeris();renderCalendar();renderBacktest();});
+  el('astroTimezone').addEventListener('change',()=>{if(state.liveMode)refreshLiveChart();else renderEphemeris();renderCalendar();renderBacktest();});
   el('astroMarket').addEventListener('change',renderBacktest);
   el('astroHorizon').addEventListener('change',renderBacktest);
   el('astroQueryDate').addEventListener('click',calculateSelected);
   el('astroQueryTime').addEventListener('change',calculateSelected);
-  el('astroQueryNow').addEventListener('click',()=>{setTimeInput(new Date());calculateSelected();});
+  el('astroQueryNow').addEventListener('click',()=>{state.liveMode=true;refreshLiveChart();});
+  setInterval(()=>{if(state.liveMode)refreshLiveChart();},60000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.liveMode)refreshLiveChart();});
+  window.addEventListener('focus',()=>{if(state.liveMode)refreshLiveChart();});
   start().catch(e=>show('astroEvidence','研究頁初始化失敗：'+e.message));
 })();

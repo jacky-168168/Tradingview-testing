@@ -94,3 +94,53 @@ const reading=interpret.plainLanguageConclusion({
 });
 assert.match(reading.headline,/行動與擴張/);
 assert.match(reading.market,/無法根據星盤判斷偏多或偏空/);
+
+const vm=require('node:vm');
+const homepageScript=fs.readFileSync(root+'financial-astrology-home.js','utf8');
+assert(html.includes('financial-astrology-vendor.js?v=2.1.19'),'homepage must load astronomy engine before live summary');
+assert(html.includes('financial-astrology-home.js?v=2'),'homepage live script must bust stale cache');
+assert.doesNotMatch(homepageScript,/latest\\.json/,'homepage must not rely on a possibly stale JSON snapshot');
+assert.match(homepageScript,/setInterval\\(refresh,60000\\)/,'homepage must refresh each minute');
+assert.match(js,/liveMode:true/,'detailed page defaults to current sky');
+assert.match(js,/setInterval\\(\\(\\)=>\\{if\\(state\\.liveMode\\)refreshLiveChart\\(\\);\\},60000\\)/);
+assert.match(js,/visibilitychange/,'returning to page must refresh live chart');
+assert.match(js,/state\\.liveMode=false/,'historical date selection must pause automatic refresh');
+assert.match(js,/new Date\\(input\\+':00\\+08:00'\\)/,'input is Taiwan UTC+8');
+assert.doesNotMatch(js,/load\\('latest\\.json'\\)/,'do not overwrite live charts using old snapshots');
+assert.match(page,/即時地心星盤（顯示當前日期）/);
+assert.match(page,/financial-astrology\\.js\\?v=1\\.4/);
+
+// Fixed clock regression: the home preview crosses Taiwan midnight while user is on the page.
+let clock=Date.parse('2026-11-15T15:59:00.000Z');
+class FixedDate extends Date{
+  constructor(...args){super(...(args.length?args:[clock]));}
+  static now(){return clock;}
+}
+const ui={state:{textContent:''},event:{textContent:''},evidence:{textContent:''}};
+let tick=null;
+const rootElement={querySelector(key){
+  if(key==='[data-astro-state]')return ui.state;
+  if(key==='[data-astro-event]')return ui.event;
+  if(key==='[data-astro-evidence]')return ui.evidence;
+  throw new Error('Unknown selector '+key);
+}};
+const sandbox={
+  document:{getElementById(id){return id==='financialAstrologyHome'?rootElement:null;},addEventListener(){}},
+  window:{Astronomy:{
+    Body:{Mars:'Mars',Jupiter:'Jupiter'},
+    GeoVector(body){return {body};},
+    Ecliptic(vector){return {elon:vector.body==='Mars'?120:121};}
+  },addEventListener(){}},
+  Date:FixedDate,Intl,Math,Number,Error,
+  fetch:async()=>({ok:false}),
+  setInterval(fn,ms){assert.equal(ms,60000);tick=fn;return 1;}
+};
+vm.runInNewContext(homepageScript,sandbox);
+assert.match(ui.state.textContent,/2026\\/11\\/15|2026\\/11\\/16/);
+assert.match(ui.state.textContent,/23:59/,'UTC 15:59 must be Taiwan 23:59');
+clock=Date.parse('2026-11-15T16:01:00.000Z');
+assert.equal(typeof tick,'function');
+tick();
+assert.match(ui.state.textContent,/2026\\/11\\/16/,'live chart must advance to new Taiwan date');
+assert.match(ui.state.textContent,/00:01/,'live chart must advance with time, not stale data');
+assert.match(ui.event.textContent,/接近合相/);
