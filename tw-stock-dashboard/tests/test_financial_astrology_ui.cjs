@@ -22,7 +22,7 @@ assert.match(page,/id="astroWheel"/);
 assert.match(page,/financial-astrology-vendor\.js/);
 assert.match(js,/snapshotClient/);
 assert.match(js,/drawWheel/);
-assert.match(page,/financial-astrology-explain\\.js/);
+assert.match(page,/financial-astrology-explain\.js/);
 assert.match(page,/id="astroReadingOverview"/);
 assert.match(page,/id="astroReadingPlanets"/);
 assert.match(page,/id="astroReadingAspects"/);
