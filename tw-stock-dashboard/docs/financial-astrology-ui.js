@@ -64,12 +64,25 @@ function showEvents(){
   $('eventCount').textContent='已列出 '+events.length+'／'+dataset.events.length+' 件';
 }
 function showStats(){
-  const market=$('market').value,horizon=$('horizon').value, r=stats?.results?.[market]?.[horizon];
-  if(!r||r.status!=='verified'||r.oosVerified!==true||!Number.isFinite(r.sampleCount)){
-    $('research').textContent='目前 '+market+'、事件後 '+horizon+' 交易日尚無合格且通過樣本外驗證的研究結果。顯示 N/A，絕不以傳統解讀推估勝率。';
+  const market=$('market').value,horizon=$('horizon').value,hypothesis=$('eventType').value;
+  const r=stats?.results?.[market]?.[hypothesis]?.[horizon];
+  if(!r||r.status==='unavailable'||r.status==='insufficient'||!Number.isFinite(r.sampleCount)){
+    $('research').textContent='目前 '+market+'、'+$('eventType').selectedOptions[0].textContent+
+      '、事件後 '+horizon+' 個交易日尚無足夠且具來源的歷史研究資料。結果 N/A，絕不推算勝率。';
     return;
   }
-  $('research').textContent='樣本 '+r.sampleCount+' 筆｜平均報酬 '+r.meanReturnPct.toFixed(2)+'%｜上漲率 '+r.winRatePct.toFixed(1)+'%｜超額報酬 '+r.excessReturnPct.toFixed(2)+'%；請查核信賴區間、FDR 與樣本外研究報告。';
+  const verified=r.status==='verified'&&r.oosVerified===true;
+  $('research').textContent=(verified?'樣本外審核通過':'探索性統計（非驗證交易訊號）')+
+    '｜'+$('eventType').selectedOptions[0].textContent+
+    '｜樣本 '+r.sampleCount+' 筆｜平均報酬 '+Number(r.meanReturnPct).toFixed(2)+'%'+
+    '｜上漲率 '+Number(r.winRatePct).toFixed(1)+'%'+
+    '｜同期全日均值 '+Number(r.baselineMeanPct).toFixed(2)+'%'+
+    '｜超額 '+Number(r.excessReturnPct).toFixed(2)+'%'+
+    '｜95% Bootstrap CI '+(Array.isArray(r.ci95MeanPct)?r.ci95MeanPct.map(v=>Number(v).toFixed(2)+'%').join('～'):'N/A')+
+    '｜HAC p '+(r.pHac==null?'N/A':r.pHac)+
+    '｜FDR q '+(r.qFdr==null?'N/A':r.qFdr)+
+    '｜樣本外描述性均值 '+(r.oosMeanReturnPct==null?'N/A':Number(r.oosMeanReturnPct).toFixed(2)+'%')+
+    '。僅供研究，非因果或可交易績效。';
 }
 function taipeiInput(){const parts=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date());return parts.replace(' ','T');}
 function loadBrowserEngine(){
@@ -105,6 +118,7 @@ $('calculate').addEventListener('click',()=>{
 $('timezone').addEventListener('change',()=>{if(window.__astroDisplayed?.at)showSnapshot(window.__astroDisplayed);showEvents();});
 const oldShow=showSnapshot;showSnapshot=function(s){window.__astroDisplayed=s;oldShow(s);};
 $('eventWindow').addEventListener('change',showEvents);
+$('eventType').addEventListener('change',showStats);
 $('market').addEventListener('change',showStats);$('horizon').addEventListener('change',showStats);
 load().catch(()=>{$('alert').textContent='資料初始化失敗，請檢查星曆檔案與發布狀態。';});
 })();
