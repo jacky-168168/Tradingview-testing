@@ -97,20 +97,19 @@ assert.match(reading.market,/無法根據星盤判斷偏多或偏空/);
 
 const vm=require('node:vm');
 const homepageScript=fs.readFileSync(root+'financial-astrology-home.js','utf8');
-assert(html.includes('financial-astrology-vendor.js?v=2.1.19'),'homepage must load astronomy engine before live summary');
-assert(html.includes('financial-astrology-home.js?v=2'),'homepage live script must bust stale cache');
-assert.doesNotMatch(homepageScript,/latest\\.json/,'homepage must not rely on a possibly stale JSON snapshot');
-assert.match(homepageScript,/setInterval\\(refresh,60000\\)/,'homepage must refresh each minute');
-assert.match(js,/liveMode:true/,'detailed page defaults to current sky');
-assert.match(js,/setInterval\\(\\(\\)=>\\{if\\(state\\.liveMode\\)refreshLiveChart\\(\\);\\},60000\\)/);
-assert.match(js,/visibilitychange/,'returning to page must refresh live chart');
-assert.match(js,/state\\.liveMode=false/,'historical date selection must pause automatic refresh');
-assert.match(js,/new Date\\(input\\+':00\\+08:00'\\)/,'input is Taiwan UTC+8');
-assert.doesNotMatch(js,/load\\('latest\\.json'\\)/,'do not overwrite live charts using old snapshots');
-assert.match(page,/即時地心星盤（顯示當前日期）/);
-assert.match(page,/financial-astrology\\.js\\?v=1\\.4/);
-
-// Fixed clock regression: the home preview crosses Taiwan midnight while user is on the page.
+assert(html.includes('financial-astrology-vendor.js?v=2.1.19'),'homepage must load the astronomy engine');
+assert(html.includes('financial-astrology-home.js?v=2'),'homepage must bust previous cache');
+assert(!homepageScript.includes('latest.json'),'homepage may not depend on old sky snapshot JSON');
+assert(homepageScript.includes('setInterval(refresh,60000)'),'homepage must recalculate each minute');
+assert(js.includes('liveMode:true'),'detail page defaults to current sky');
+assert(js.includes('setInterval(()=>{if(state.liveMode)refreshLiveChart();},60000)'),'detail page refreshes each minute');
+assert(js.includes('visibilitychange'),'resuming hidden page must refresh');
+assert(js.includes('state.liveMode=false'),'historical query suspends live mode');
+assert(js.includes("new Date(input+':00+08:00')"),'history time input is Taiwan UTC+8');
+assert(!js.includes("load('latest.json')"),'old JSON must not overwrite live computation');
+assert(page.includes('即時地心星盤（顯示當前日期）'));
+assert(page.includes('financial-astrology.js?v=1.4'));
+// Fixed clock regression for crossing midnight in Asia/Taipei.
 let clock=Date.parse('2026-11-15T15:59:00.000Z');
 class FixedDate extends Date{
   constructor(...args){super(...(args.length?args:[clock]));}
@@ -136,11 +135,11 @@ const sandbox={
   setInterval(fn,ms){assert.equal(ms,60000);tick=fn;return 1;}
 };
 vm.runInNewContext(homepageScript,sandbox);
-assert.match(ui.state.textContent,/2026\\/11\\/15|2026\\/11\\/16/);
-assert.match(ui.state.textContent,/23:59/,'UTC 15:59 must be Taiwan 23:59');
+assert(ui.state.textContent.includes('2026/11/15'),'before Taiwan midnight');
+assert(ui.state.textContent.includes('23:59'),'UTC 15:59 should display 23:59 in Taiwan');
 clock=Date.parse('2026-11-15T16:01:00.000Z');
 assert.equal(typeof tick,'function');
 tick();
-assert.match(ui.state.textContent,/2026\\/11\\/16/,'live chart must advance to new Taiwan date');
-assert.match(ui.state.textContent,/00:01/,'live chart must advance with time, not stale data');
-assert.match(ui.event.textContent,/接近合相/);
+assert(ui.state.textContent.includes('2026/11/16'),'live chart must advance to new Taiwan date');
+assert(ui.state.textContent.includes('00:01'),'live chart must advance when minute changes');
+assert(ui.event.textContent.includes('接近合相'));
