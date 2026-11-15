@@ -89,7 +89,7 @@ async function load(){
     fetch('./data/financial_astrology/stats.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null),
     loadBrowserEngine()]);
   dataset=data;stats=backtest;localAstro=A;
-  $('freshness').textContent=data?'星曆產生 '+fmt(data.generatedAt,'Asia/Taipei')+(Date.now()>Date.parse(data.validUntil)?'｜資料已逾時':''):'星曆資料尚未發布';
+  $('freshness').textContent=data?.snapshot?.at&&data.generatedAt?'星曆產生 '+fmt(data.generatedAt,'Asia/Taipei')+(Date.now()>Date.parse(data.validUntil)?'｜資料已逾時':''):'星曆資料尚未發布；本機可計算指定時間';
   if(A){showSnapshot(localSnapshot(new Date()));$('alert').textContent='';}
   else if(data?.snapshot){showSnapshot(data.snapshot);$('alert').textContent='本機星曆程式無法載入，目前僅顯示上次發布的固定時間星盤，無法計算任意時間。';}
   else{$('alert').textContent='星曆來源無法取得；不展示推算星盤。';empty($('positions'),'星曆暫不可用',5);}
