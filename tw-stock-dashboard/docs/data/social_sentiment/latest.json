@@ -1,19 +1,19 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-15T07:47:45.046979Z",
+  "generatedAt": "2026-11-15T09:50:27.669784Z",
   "sources": {
     "PTT": {
       "status": "ok",
       "method": "官方 Atom",
       "url": "https://www.ptt.cc/atom/stock.xml",
-      "freshCount": 8,
+      "freshCount": 10,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 4,
-      "pushLabelsFound": 7
+      "boardFreshCount": 6,
+      "pushLabelsFound": 11
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 20,
+      "freshCount": 14,
       "queryHealth": {
         "queriesAttempted": 12,
         "queriesSucceeded": 12,
@@ -43,34 +43,34 @@
     },
     "新聞": {
       "status": "ok",
-      "freshCount": 69
+      "freshCount": 66
     }
   },
   "social": {
-    "sample": 9,
+    "sample": 8,
     "bull": 1,
     "bear": 0,
-    "neutral": 8,
+    "neutral": 7,
     "directional": 1,
     "status": "已有樣本｜偏多討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
-    "rawSample": 80,
-    "investmentDiscussion": 9,
-    "originalDiscussion": 9,
-    "repostedNews": 59,
-    "unrelated": 12,
+    "rawSample": 71,
+    "investmentDiscussion": 8,
+    "originalDiscussion": 8,
+    "repostedNews": 54,
+    "unrelated": 9,
     "platformCounts": {
-      "PTT": 2,
-      "Bluesky": 7,
+      "PTT": 3,
+      "Bluesky": 5,
       "Threads": 0,
       "Instagram": 0
     }
   },
   "news": {
-    "sample": 69,
+    "sample": 66,
     "bull": 0,
     "bear": 1,
-    "neutral": 68,
+    "neutral": 65,
     "directional": 1,
     "status": "已有樣本｜偏空討論較多",
     "method": "只要有一篇有效公開貼文就視為已有樣本；關鍵詞僅供觀察，篇數少不代表市場共識，也不是留言全文分析"
@@ -83,6 +83,43 @@
   "items": [
     {
       "platform": "PTT",
+      "title": "[新聞] 黃仁勳離開輝達台廠也變天！分析師點名鴻",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794735102.A.B5B.html",
+      "publishedAt": "2026-11-15T09:31:42Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 8,
+      "pushLabel": "8",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[請益] 持股健檢",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794735036.A.158.html",
+      "publishedAt": "2026-11-15T09:30:36Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 1,
+      "pushLabel": "1",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "投資意見",
+        "stance": "中立／難判",
+        "emotion": "猶豫",
+        "confidence": "中",
+        "evidence": "[請益] 持股健檢",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "PTT",
       "title": "[新聞] 誰對黃仁勳「下黑手」？魯比歐遭控改寫CI",
       "url": "https://www.ptt.cc/bbs/Stock/M.1794724605.A.8C9.html",
       "publishedAt": "2026-11-15T06:36:45Z",
@@ -91,8 +128,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 68,
-      "pushLabel": "68",
+      "pushScore": 100,
+      "pushLabel": "爆",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -105,8 +142,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 7,
-      "pushLabel": "7",
+      "pushScore": 8,
+      "pushLabel": "8",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -119,8 +156,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 79,
-      "pushLabel": "79",
+      "pushScore": 98,
+      "pushLabel": "98",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -133,8 +170,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 25,
-      "pushLabel": "25",
+      "pushScore": 30,
+      "pushLabel": "30",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -914,154 +951,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2887 台新新光金10月自結:0.20累計:2.67",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794563281.A.DF4.html",
-      "publishedAt": "2026-11-13T09:48:01Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[請益] 民主黨/共和黨搞黃爸，多少人看在眼裡？",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794562024.A.A6C.html",
-      "publishedAt": "2026-11-13T09:27:04Z",
-      "stance": "中立／難判",
-      "contentType": "非投資話題",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[請益] 老黃下台是利空出盡了嗎?",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794561755.A.E8E.html",
-      "publishedAt": "2026-11-13T09:22:35Z",
-      "stance": "中立／難判",
-      "contentType": "非投資話題",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] Google推出全新Gemini 4 Hydrogen 反應快",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794560418.A.25B.html",
-      "publishedAt": "2026-11-13T09:00:18Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 浩鼎ADC新藥授權國際大廠諾華簽約金3000",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794560362.A.176.html",
-      "publishedAt": "2026-11-13T08:59:22Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 16:01 央行明年繳庫逾2200億 外資持有台股占比大增恐影響上繳數 （中央社記者潘姿羽台北13日電）立院財政委員會16日審查中央銀行116年度預算，書面報告今天出爐，116年度央行繳庫數為新台幣2200億4828萬元，連4年突破2000億元大關，並續寫99年以來最高紀錄。不過央行指出",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3n26mammr7q22",
-      "publishedAt": "2026-11-13T08:52:37Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "#中央社即時新聞 財經新聞 15:12 三大法人買超台股439.65億元 （中央社台北13日電）台股今天漲583.25點，收在43675.12點，成交值新台幣9162.55億元。三大法人同步買超，合計買超439.65億元。 https://www.cna.com.tw/news/afe/202611130165.",
-      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3n26m4u4c47i2",
-      "publishedAt": "2026-11-13T08:50:31Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[創作] 鞏金融（清朝國歌）",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794558848.A.811.html",
-      "publishedAt": "2026-11-13T08:34:08Z",
-      "stance": "中立／難判",
-      "contentType": "非投資話題",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 「白宮股神」川普先賣了！8月套現最多百",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794558221.A.85A.html",
-      "publishedAt": "2026-11-13T08:23:41Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "結果台股什麼都沒有發生，頂多技嘉出事而已。",
-      "url": "https://bsky.app/profile/bicolorcat2077.bsky.social/post/3n26kghyb322d",
-      "publishedAt": "2026-11-13T08:20:12.627000Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "投資意見",
-        "stance": "中立／難判",
-        "emotion": "理性分析",
-        "confidence": "中",
-        "evidence": "結果台股什麼都沒有發生，頂多技嘉出事而已。",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "Bluesky",
-      "title": "📢 台股今天震盪上漲583.25點，收在43675.12點，留下逾769點長上影線，成交值新台幣9162.55億元。台股週線終止連4黑，單週大漲3973.48點。",
-      "url": "https://bsky.app/profile/cnataiwan.nzcow.com/post/3n26kd7h2gb2s",
-      "publishedAt": "2026-11-13T08:18:22.964170Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "新聞轉載",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "📢 台股今天震盪上漲583.25點，收在43675.12點，留下逾769點長上影線",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "AMD.輝達挫...週一台股恐不妙? 專家曝恐有補跌效應 國安基金護盤後恐有第二隻腳? 台股恐被美股拖累?｜【話題懶人包】｜TVBS新聞 @TVBSNEWS01",
-      "url": "https://www.youtube.com/watch?v=NuLEd-HdiZM",
-      "publishedAt": "2026-11-15T07:30:33Z",
-      "sourceName": "TVBS NEWS",
+      "title": "11/16 台指期盤前｜多空分界 43,670～43,692",
+      "url": "https://www.youtube.com/watch?v=2AKy381vBEs",
+      "publishedAt": "2026-11-15T09:49:33Z",
+      "sourceName": "Alisa的投資隨筆",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1401,20 +1299,6 @@
   "pttNewsItems": [
     {
       "platform": "PTT",
-      "title": "[新聞] 輝達恐爆離職潮！傳OpenAI、競爭對手瘋",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794722045.A.317.html",
-      "publishedAt": "2026-11-15T05:54:05Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "pushScore": 79,
-      "pushLabel": "79",
-      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
-    },
-    {
-      "platform": "PTT",
       "title": "[新聞] 誰對黃仁勳「下黑手」？魯比歐遭控改寫CI",
       "url": "https://www.ptt.cc/bbs/Stock/M.1794724605.A.8C9.html",
       "publishedAt": "2026-11-15T06:36:45Z",
@@ -1423,8 +1307,22 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 68,
-      "pushLabel": "68",
+      "pushScore": 100,
+      "pushLabel": "爆",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 輝達恐爆離職潮！傳OpenAI、競爭對手瘋",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794722045.A.317.html",
+      "publishedAt": "2026-11-15T05:54:05Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 98,
+      "pushLabel": "98",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1437,8 +1335,22 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 25,
-      "pushLabel": "25",
+      "pushScore": 30,
+      "pushLabel": "30",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 黃仁勳離開輝達台廠也變天！分析師點名鴻",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794735102.A.B5B.html",
+      "publishedAt": "2026-11-15T09:31:42Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 8,
+      "pushLabel": "8",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1451,8 +1363,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 7,
-      "pushLabel": "7",
+      "pushScore": 8,
+      "pushLabel": "8",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1839,17 +1751,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 主動ETF/外資共同買賣超排行 (11/13)",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794574409.A.645.html",
-      "publishedAt": "2026-11-13T12:53:29Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1862,22 +1763,22 @@
     "個股熱度只統計有投資語境且非新聞轉貼的 G Top20 標題，不更改 G 排名或 TITAN 風控。"
   ],
   "semantic": {
-    "status": "cached",
+    "status": "verified",
     "model": "gemini-3.5-flash-lite",
-    "inferenceCalls": 0,
-    "cachedClassifications": 9,
-    "newlyClassified": 0,
+    "inferenceCalls": 1,
+    "cachedClassifications": 7,
+    "newlyClassified": 1,
     "unclassified": 0,
-    "updatedAt": "2026-11-15T07:47:47.480Z",
+    "updatedAt": "2026-11-15T09:50:32.939Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 9,
-    "classifiedCount": 9,
+    "candidateCount": 8,
+    "classifiedCount": 8,
     "investmentCount": 3,
     "bullish": 0,
     "bearish": 0,
     "neutral": 3,
-    "originalRuleCount": 9,
+    "originalRuleCount": 8,
     "noTrade": true
   }
 }
