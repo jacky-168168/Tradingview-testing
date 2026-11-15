@@ -120,4 +120,4 @@ function build(now=new Date(),days=90){
     disclaimer:'天文運算不代表市場預測。歷史統計與交易訊號必須獨立驗證。'};
 }
 module.exports={BODIES,SIGNS,ASPECTS,DAY,mod,signed,separation,error,position,velocity,phase,ephemeris,snapshot,goldenMin,findAspects,findStations,futureEvents,build};
-if(require.main===module){const fs=require('node:fs'),path=require('node:path');const d=process.env.ASTRO_FIXED_NOW?new Date(process.env.ASTRO_FIXED_NOW):new Date();const out=path.resolve(__dirname,'../../docs/data/financial_astrology/latest.json');fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,JSON.stringify(build(d,90),null,2)+'\n');process.stdout.write('Generated '+out+'\n');}
+if(require.main===module){const fs=require('node:fs'),path=require('node:path');const d=process.env.ASTRO_FIXED_NOW?new Date(process.env.ASTRO_FIXED_NOW):new Date();const out=path.resolve(__dirname,'../../docs/data/financial_astrology/latest.json');fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,JSON.stringify(build(d,Number(process.env.ASTRO_EVENT_DAYS||90)),null,2)+'\n');process.stdout.write('Generated '+out+'\n');}
