@@ -49,10 +49,10 @@ function showSnapshot(s){
   $('atLabel').textContent=fmt(s.at,$('timezone').value);
   $('moonPhase').textContent='月相：'+s.moonPhase.name+'（角度 '+Number(s.moonPhase.angle).toFixed(1)+'°）';
   const body=$('positions');body.replaceChildren();
-  for(const p of s.positions)row(body,[names[p.body]||p.body,(p.sign||signs[Math.floor(p.longitude/30)])+'座',Number(p.longitude).toFixed(2)+'°',Number(p.signDegree).toFixed(2)+'°',p.motion==='retrograde'?'逆行':p.motion==='stationary'?'駐留':'順行']);
+  for(const p of s.positions)row(body,[names[p.body]||p.body,(p.sign||signs[Math.floor(p.longitude/30)])+'座',Number(p.longitude).toFixed(2)+'°',Number(p.latitude).toFixed(2)+'°',Number(p.signDegree).toFixed(2)+'°',Number(p.velocityDegPerDay).toFixed(4),p.motion==='retrograde'?'逆行':p.motion==='stationary'?'駐留':'順行']);
   $('aspects').replaceChildren();
   if(!s.aspects.length)$('aspects').textContent='Orb ≤2° 的主要相位：無';
-  for(const a of s.aspects){const el=document.createElement('span');el.className='pill';el.textContent=(names[a.first]||a.first)+' '+a.type+' '+(names[a.second]||a.second)+'｜'+Number(a.orb).toFixed(2)+'°';$('aspects').append(el);}
+  for(const a of s.aspects){const el=document.createElement('span');el.className='pill';el.textContent=(names[a.first]||a.first)+' '+a.type+' '+(names[a.second]||a.second)+'｜'+Number(a.orb).toFixed(2)+'°'+(a.applying?(a.applying==='applying'?'・接近':'・分離'):'');$('aspects').append(el);}
   $('interpretations').textContent=interpret(s.aspects);
 }
 function showEvents(){
@@ -106,7 +106,7 @@ async function load(){
   $('freshness').textContent=data?.snapshot?.at&&data.generatedAt?'星曆產生 '+fmt(data.generatedAt,'Asia/Taipei')+(Date.now()>Date.parse(data.validUntil)?'｜資料已逾時':''):'星曆資料尚未發布；本機可計算指定時間';
   if(A){showSnapshot(localSnapshot(new Date()));$('alert').textContent='';}
   else if(data?.snapshot){showSnapshot(data.snapshot);$('alert').textContent='本機星曆程式無法載入，目前僅顯示上次發布的固定時間星盤，無法計算任意時間。';}
-  else{$('alert').textContent='星曆來源無法取得；不展示推算星盤。';empty($('positions'),'星曆暫不可用',5);}
+  else{$('alert').textContent='星曆來源無法取得；不展示推算星盤。';empty($('positions'),'星曆暫不可用',7);}
   showEvents();showStats();
 }
 $('calculate').addEventListener('click',()=>{
