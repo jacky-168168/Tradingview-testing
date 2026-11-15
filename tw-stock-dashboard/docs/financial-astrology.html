@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>全球金融占星研究中心｜台股量化</title>
+<link rel="stylesheet" href="./financial-astrology.css?v=1">
+<script src="./site-access.js"></script><script defer src="./financial-astrology.js?v=1"></script></head>
+<body><div class="astro-app"><header class="astro-head"><div><a href="./index.html" class="back">← 返回台股量化主頁</a>
+<h1>🌌 全球金融占星研究中心</h1><p>天文事件 × 傳統解讀 × 真實市場回測｜研究用途，非交易訊號</p></div>
+<a href="./backtest.html" class="back">歷史回測中心</a></header>
+<div class="warning"><strong>兩條研究軌道、嚴格區分：</strong> 傳統占星對行星的象徵性解讀沒有經驗證的因果預測力。
+量化結果只有取得真實行情並通過資料品質檢查後才會顯示；不足或失敗顯示「無法驗證」。</div>
+<section class="panel"><div class="section-title"><h2>即時地心星盤</h2><span id="astroUpdated">星曆待載入</span></div>
+<div class="controls"><label>顯示時區 <select id="astroTimezone">
+<option value="Asia/Taipei">Asia/Taipei</option><option value="America/New_York">America/New_York</option>
+<option value="Europe/London">Europe/London</option><option value="Europe/Berlin">Europe/Berlin</option>
+<option value="Europe/Paris">Europe/Paris</option></select></label>
+<span class="hint">熱帶黃道、地心真黃道（ECT）、0～360°</span></div>
+<div id="astroSummary" class="callout" role="status">正在讀取天文資料…</div>
+<div class="tablewrap"><table><thead><tr><th>天體</th><th>星座</th><th>黃經</th><th>黃緯</th><th>視速度（°/日）</th><th>運動</th></tr></thead>
+<tbody id="astroPlanets"></tbody></table></div></section>
+<div class="columns"><section class="panel"><h2>目前主要相位（2° orb）</h2><p class="hint">Applying/Separating 代表接近／遠離精確角度，不等於股價方向。</p>
+<div id="astroAspects" class="results">尚無資料</div></section>
+<section class="panel"><h2>未來 90 天事件日曆</h2><p class="hint">事件時間預設轉成台灣時間，可切換上方顯示時區。</p>
+<div id="astroCalendar" class="results">尚無資料</div></section></div>
+<section class="panel"><h2>📈 金融占星量化回測</h2>
+<div class="controls">
+<label>市場 <select id="astroMarket">
+<option value="NASDAQ">Nasdaq Composite</option><option value="SP500">S&amp;P 500</option>
+<option value="DAX">德國 DAX</option><option value="FTSE100">英國 FTSE 100</option>
+<option value="CAC40">法國 CAC 40</option><option value="TAIEX">台股加權</option></select></label>
+<label>研究事件 <select id="astroEvent"><option value="mars_jupiter_conjunction">火星 × 木星｜精確合相（0°）</option></select></label>
+<label>事件後交易日 <select id="astroHorizon"><option>1</option><option>3</option><option>5</option><option>10</option>
+<option selected>20</option><option>60</option><option>90</option><option>180</option><option>360</option></select></label></div>
+<p id="astroBacktestMeta" class="hint">讀取歷史研究狀態中…</p>
+<div class="metrics"><div><small>事件樣本數</small><strong id="metricN">—</strong></div>
+<div><small>後續上漲率</small><strong id="metricWin">—</strong></div>
+<div><small>事件平均報酬</small><strong id="metricMean">—</strong></div>
+<div><small>同期年份隨機基準</small><strong id="metricBase">—</strong></div>
+<div><small>平均超額報酬</small><strong id="metricExcess">—</strong></div>
+<div><small>平均期間最大回撤</small><strong id="metricDd">—</strong></div></div>
+<div id="astroEvidence" class="callout" role="status">尚未取得經驗證統計資料。</div>
+<div id="astroCohorts" class="tablewrap"></div></section>
+<section class="panel"><h2>研究定義、稽核與限制</h2>
+<ul><li>行星位置採 <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer" target="_blank">Astronomy Engine</a> 2.1.19，地心、熱帶黃道、真黃道 of date，天文資料以 UTC 紀錄。</li>
+<li>精確相位以角度跨越求根；2° orb 為預先設定的觀測窗口，不得透過調整 orb 反向挑選最佳績效。</li>
+<li>回測以事件在市場時區的日期為準，之後第一個完整交易日收盤入場，20 個交易日後收盤計算報酬；不使用事件當天未知的收盤價。</li>
+<li>資料來源為 Yahoo Finance 日線價格（研究用，可能有缺漏或修訂），所用為價格指數，不含股息再投資。</li>
+<li>同年份交易日對照、隨機化檢驗、bootstrap 與 FDR 多重測試修正；低樣本數與缺乏獨立樣本外驗證時不可宣稱發現預測優勢。</li>
+<li>星象不納入既有台股 Risk Score、A/D/F/G/G Pro 選股或自動交易；本頁沒有下單權限。</li></ul>
+<div class="source-links"><a href="./data/financial_astrology/latest.json">即時星盤 JSON</a>
+<a href="./data/financial_astrology/mars_jupiter_conjunction.json">天文事件 JSON</a>
+<a href="./data/financial_astrology/report.json">量化研究 JSON</a>
+<a href="https://github.com/jacky-168168/Tradingview-testing/actions/workflows/financial-astrology.yml">研究工作流</a></div></section>
+</div></body></html>

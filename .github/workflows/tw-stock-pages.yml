@@ -19,6 +19,11 @@ on:
       - 'tw-stock-dashboard/docs/orion-news*'
       - 'tw-stock-dashboard/docs/data/agent_llm/**'
       - 'tw-stock-dashboard/docs/*.html'
+      - 'tw-stock-dashboard/docs/financial-astrology*.js'
+      - 'tw-stock-dashboard/docs/financial-astrology*.css'
+      - 'tw-stock-dashboard/docs/data/financial_astrology/**'
+      - 'tw-stock-dashboard/financial-astrology/**'
+      - 'tw-stock-dashboard/tests/test_financial_astrology_ui.cjs'
       - 'tw-stock-dashboard/docs/market-command.js'
       - 'tw-stock-dashboard/docs/data/market_premarket/**'
       - 'tw-stock-dashboard/docs/market-compact.js'
@@ -108,6 +113,7 @@ jobs:
           node tw-stock-dashboard/tests/test_us_options_chart.cjs
           node tw-stock-dashboard/tests/test_tdcc_whale_ui.cjs
           node tw-stock-dashboard/tests/test_market_compact.cjs
+          node tw-stock-dashboard/tests/test_financial_astrology_ui.cjs
           node --test tw-stock-dashboard/tests/tw-vix-home.test.cjs
           node tw-stock-dashboard/tests/test_market_close_score.cjs
           node tw-stock-dashboard/tests/test_market_close_live_render.cjs
