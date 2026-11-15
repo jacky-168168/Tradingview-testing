@@ -72,8 +72,8 @@ jobs:
           cache: npm
           cache-dependency-path: tw-stock-dashboard/package-lock.json
       - run: npm ci --ignore-scripts --prefix tw-stock-dashboard
-      - name: Generate geocentric astrology snapshot and 90-day events
-        run: node tw-stock-dashboard/src/financial_astrology/engine.cjs
+      - name: Generate geocentric astrology snapshot and 360-day events
+        run: ASTRO_EVENT_DAYS=360 node tw-stock-dashboard/src/financial_astrology/engine.cjs
       - name: Generate historical event archive when explicitly requested
         if: github.event_name == 'workflow_dispatch' && inputs.regenerate_history == true
         run: node tw-stock-dashboard/src/financial_astrology/historical.cjs
