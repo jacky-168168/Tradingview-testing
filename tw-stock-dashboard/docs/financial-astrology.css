@@ -19,3 +19,13 @@ th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}th{ba
 li{line-height:1.75;margin:5px 0}.source-links{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px;font-size:13px}
 @media(max-width:760px){.columns{grid-template-columns:1fr;gap:0}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.astro-head{display:block}.panel{padding:15px}}
 @media(max-width:420px){.metrics{grid-template-columns:1fr 1fr}.metrics strong{font-size:18px}}
+
+.astro-historical-controls{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:15px 0}
+.astro-historical-controls label{flex:1 1 230px}
+.astro-historical-controls input{width:100%;min-height:38px;border:1px solid #bfcddc;border-radius:8px;padding:9px 11px;background:#fff;color:#18263b;font:inherit}
+.astro-historical-controls button{padding:10px 13px;border:1px solid #6551ad;background:#6551ad;border-radius:9px;color:#fff;cursor:pointer;font:inherit}
+.astro-historical-controls button:first-of-type{background:#fff;color:#6551ad}
+.astro-historical-controls button:hover{filter:brightness(.95)}
+.astro-wheel-wrap{display:flex;flex-direction:column;align-items:center;margin:15px 0}
+#astroWheel{max-width:min(390px,100%);height:auto;overflow:visible}
+#astroWheel text{font-family:Arial,system-ui,sans-serif}

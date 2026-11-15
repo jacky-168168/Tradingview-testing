@@ -2,7 +2,9 @@
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>全球金融占星研究中心｜台股量化</title>
 <link rel="stylesheet" href="./financial-astrology.css?v=1">
-<script src="./site-access.js"></script><script defer src="./financial-astrology.js?v=1"></script></head>
+<script src="./site-access.js"></script>
+<script defer src="./financial-astrology-vendor.js?v=2.1.19"></script>
+<script defer src="./financial-astrology.js?v=2"></script></head>
 <body><div class="astro-app"><header class="astro-head"><div><a href="./index.html" class="back">← 返回台股量化主頁</a>
 <h1>🌌 全球金融占星研究中心</h1><p>天文事件 × 傳統解讀 × 真實市場回測｜研究用途，非交易訊號</p></div>
 <a href="./backtest.html" class="back">歷史回測中心</a></header>
@@ -14,7 +16,19 @@
 <option value="Europe/London">Europe/London</option><option value="Europe/Berlin">Europe/Berlin</option>
 <option value="Europe/Paris">Europe/Paris</option></select></label>
 <span class="hint">熱帶黃道、地心真黃道（ECT）、0～360°</span></div>
-<div id="astroSummary" class="callout" role="status">正在讀取天文資料…</div>
+<div class="astro-historical-controls">
+  <label>指定歷史或現在時間（UTC）
+    <input id="astroQueryTime" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" step="60">
+  </label>
+  <button id="astroQueryNow" type="button">查詢目前星盤</button>
+  <button id="astroQueryDate" type="button">查詢指定日期星盤</button>
+</div>
+<p class="hint">支援 1900～2100 年任意日期與時間；星盤由瀏覽器即時計算，不依賴股市資料。輸入時間使用 UTC，所有事件顯示依上方時區切換。</p>
+<div id="astroSummary" class="callout" role="status">正在計算天文資料…</div>
+<div class="astro-wheel-wrap">
+  <svg id="astroWheel" role="img" aria-label="十二星座行星星盤輪，包含十大天體及主要相位" viewBox="0 0 400 400" width="390" height="390"></svg>
+  <p class="hint" id="astroWheelCaption">十二星座與行星角度，以熱帶黃道地心黃經繪製。</p>
+</div>
 <div class="tablewrap"><table><thead><tr><th>天體</th><th>星座</th><th>黃經</th><th>黃緯</th><th>視速度（°/日）</th><th>運動</th></tr></thead>
 <tbody id="astroPlanets"></tbody></table></div></section>
 <div class="columns"><section class="panel"><h2>目前主要相位（2° orb）</h2><p class="hint">Applying/Separating 代表接近／遠離精確角度，不等於股價方向。</p>
