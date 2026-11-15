@@ -4,7 +4,8 @@
 <link rel="stylesheet" href="./financial-astrology.css?v=1">
 <script src="./site-access.js"></script>
 <script defer src="./financial-astrology-vendor.js?v=2.1.19"></script>
-<script defer src="./financial-astrology.js?v=2"></script></head>
+<script defer src="./financial-astrology-explain.js?v=1.1"></script>
+<script defer src="./financial-astrology.js?v=3"></script></head>
 <body><div class="astro-app"><header class="astro-head"><div><a href="./index.html" class="back">← 返回台股量化主頁</a>
 <h1>🌌 全球金融占星研究中心</h1><p>天文事件 × 傳統解讀 × 真實市場回測｜研究用途，非交易訊號</p></div>
 <a href="./backtest.html" class="back">歷史回測中心</a></header>
@@ -29,6 +30,45 @@
   <svg id="astroWheel" role="img" aria-label="十二星座行星星盤輪，包含十大天體及主要相位" viewBox="0 0 400 400" width="390" height="390"></svg>
   <p class="hint" id="astroWheelCaption">十二星座與行星角度，以熱帶黃道地心黃經繪製。</p>
 </div>
+<section class="astro-guide" id="astroReading" aria-labelledby="astroGuideTitle">
+  <div class="astro-guide-head">
+    <h3 id="astroGuideTitle">📖 這張星盤代表什麼？完整中文解讀</h3>
+    <span class="astro-guide-tag">依《占星其實很簡單：入門篇》架構整理</span>
+  </div>
+  <div class="astro-guide-grammar">
+    <div><strong>① 行星＝什麼力量</strong><small>例如火星象徵行動、競爭</small></div>
+    <div><strong>② 星座＝如何表達</strong><small>例如獅子座強調展現、自信</small></div>
+    <div><strong>③ 相位＝力量如何互動</strong><small>例如合相表示集中與結合</small></div>
+    <div><strong>④ 宮位＝發生在哪個領域</strong><small>需出生／事件地點，這裡不虛構宮位</small></div>
+  </div>
+  <p class="astro-guide-note"><strong>快速理解：</strong>「火星在獅子座」不是火星真的位於獅子座恆星旁，而是從地球看，火星位於熱帶黃道的獅子座區間；傳統占星把「行動力」用「自信、展現」的風格解讀。這些象徵不是股票多空證據。</p>
+  <div id="astroReadingOverview" class="callout" role="status">正在解讀所選日期的星盤…</div>
+  <div id="astroReadingHighlights" class="astro-reading-highlights"></div>
+  <details class="astro-reading-section" open>
+    <summary>① 十大行星各代表什麼？（點開看詳細解釋）</summary>
+    <p class="hint">每個行星都會依目前選定日期的星座和順逆行自動組合中文說明。</p>
+    <div id="astroReadingPlanets"></div>
+  </details>
+  <details class="astro-reading-section" open>
+    <summary>② 目前行星相位怎麼讀？（依角度接近程度排序）</summary>
+    <p class="hint">合相 0°、六分相 60°、四分相 90°、三分相 120°、對分相 180°。Orb 是與目標角度相差的度數，不是股價波動率。</p>
+    <div id="astroReadingAspects"></div>
+  </details>
+  <details class="astro-reading-section">
+    <summary>③ 四元素、開創／固定／變動與月相</summary>
+    <div id="astroReadingCategories"></div>
+  </details>
+  <details class="astro-reading-section">
+    <summary>④ 書籍參考、讀盤順序與金融研究差異</summary>
+    <div class="astro-reading-detail">
+      <p><strong>參考書：</strong>《占星其實很簡單！1：入門篇》。依第 2-3 節「占星學的分類法」、第 2-4 節「十二星座」、第 2-6 節「行星系統」、第 2-7 節「相位分析」、第 2-8 節「解盤法則」的概念整理。</p>
+      <p>導讀順序為：先看重要行星與所在星座，再看行星相位與整體分布；不要只憑單一「吉相／凶相」判斷結論。</p>
+      <p><strong>適用範圍：</strong>書中的主要情境是個人出生圖。本網站顯示的是指定時間的地心天空行運圖，沒有個人出生時間與地點，不能推論個人命運，也沒有計算上升星座及十二宮位。</p>
+      <p><strong>金融延伸：</strong>網站對價值、情緒、競爭等字詞的市場聯想，是研究假說而非書籍所驗證的股市交易方法。買賣方向必須以獨立歷史行情回測檢查。</p>
+      <p class="hint">以上為原創重述與整理，非書籍全文轉載；不收錄或公開上傳的 PDF。</p>
+    </div>
+  </details>
+</section>
 <div class="tablewrap"><table><thead><tr><th>天體</th><th>星座</th><th>黃經</th><th>黃緯</th><th>視速度（°/日）</th><th>運動</th></tr></thead>
 <tbody id="astroPlanets"></tbody></table></div></section>
 <div class="columns"><section class="panel"><h2>目前主要相位（2° orb）</h2><p class="hint">Applying/Separating 代表接近／遠離精確角度，不等於股價方向。</p>

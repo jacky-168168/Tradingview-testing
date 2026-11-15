@@ -29,3 +29,31 @@ li{line-height:1.75;margin:5px 0}.source-links{display:flex;flex-wrap:wrap;gap:1
 .astro-wheel-wrap{display:flex;flex-direction:column;align-items:center;margin:15px 0}
 #astroWheel{max-width:min(390px,100%);height:auto;overflow:visible}
 #astroWheel text{font-family:Arial,system-ui,sans-serif}
+
+/* Book-inspired plain-language interpreter, independently scoped from trading UI. */
+.astro-guide{margin:18px 0 22px;padding:17px;border-radius:13px;border:1px solid #d5dfef;background:#fbfcff}
+.astro-guide-head{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:10px}
+.astro-guide h3{font-size:19px;margin:0}
+.astro-guide-tag{color:#5d6387;font-size:12px;border:1px solid #d8dff0;border-radius:20px;padding:4px 9px}
+.astro-guide-grammar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
+.astro-guide-grammar>div{display:grid;gap:5px;padding:11px;border:1px solid #e3e8f1;border-radius:9px;background:#f3f6fc}
+.astro-guide-grammar strong{font-size:14px}.astro-guide-grammar small{font-size:12px;color:#656d83;line-height:1.45}
+.astro-guide-note{font-size:13px;line-height:1.75;color:#45536c;margin:12px 0}
+.astro-reading-highlights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0}
+.astro-reading-highlight{min-width:0;padding:11px;background:#f0f3fa;border-radius:9px;border:1px solid #e4e8f2}
+.astro-reading-highlight small{display:block;font-weight:700;color:#62699a;font-size:12px}
+.astro-reading-highlight p{margin:7px 0 0;font-size:13px;line-height:1.65}
+.astro-reading-section{border:1px solid #e0e6f0;border-radius:9px;margin-top:10px;overflow:hidden;background:white}
+.astro-reading-section>summary{cursor:pointer;padding:12px 13px;font-weight:700;font-size:14px;color:#28354f;background:#f5f7fc}
+.astro-reading-section>.hint{margin:11px 13px}
+.astro-reading-section>div:not(.astro-reading-detail){padding:8px 12px}
+.astro-reading-item{border-bottom:1px solid #e9edf4;padding:9px 3px}
+.astro-reading-item:last-child{border-bottom:0}
+.astro-reading-item>summary{cursor:pointer;font-size:14px;font-weight:600;color:#35436b;line-height:1.5;padding:3px 0}
+.astro-reading-detail{padding:6px 13px 12px;font-size:13px;color:#48536a;line-height:1.75}
+.astro-reading-detail p{margin:7px 0}
+.astro-reading-market{color:#5d6482;background:#f7f8fc;border-left:3px solid #9299c8;padding:7px 9px}
+.astro-reading-empty{color:#647089;padding:8px}
+.astro-element-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}
+.astro-element-tile{padding:9px;background:#f4f7fa;border-radius:8px;font-size:12px;line-height:1.5}
+@media(max-width:760px){.astro-reading-highlights{grid-template-columns:1fr}.astro-guide-grammar{grid-template-columns:1fr}.astro-element-grid{grid-template-columns:1fr}.astro-guide{padding:12px}}
