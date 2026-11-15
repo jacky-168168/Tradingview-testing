@@ -97,6 +97,98 @@ function describe(data){
   return {status:'ok',summary,planets,aspects,elements,modalities,retrogradeNames:retro.map(p=>p.title),
     categories,moonText,bookScope:'本書主要教授個人出生圖判讀；目前顯示的行運天象沒有出生時間、地點，因此不計上升、天頂及十二宮。'};
 }
+
+/** Primary human-readable synthesis for the selected historical/current sky.
+ * This is a traditional symbolic reading, NOT a prediction of equity returns.
+ */
+function plainLanguageConclusion(data){
+  const r=describe(data);
+  if(r.status!=='ok')return {
+    status:'unavailable',headline:'目前沒有可解讀的星盤。',
+    reason:'尚未取得有效的行星位置資料。',
+    market:'無法判定股市多空方向。',watch:'請先查詢有效日期。',
+    limitation:'未提供已驗證的金融統計證據。'
+  };
+  const sun=r.planets.find(p=>p.name==='Sun');
+  const moon=r.planets.find(p=>p.name==='Moon');
+  const key=(r.aspects||[]).slice().sort((a,b)=>{
+    function weight(x){
+      const names=[x.bodyA,x.bodyB];
+      const inner=names.filter(n=>['Sun','Moon','Mercury','Venus','Mars','Jupiter'].includes(n)).length;
+      const sunMoon=names.some(n=>['Sun','Moon'].includes(n))?8:0;
+      const marsJupiter=names.includes('Mars')&&names.includes('Jupiter')?12:0;
+      const tension=['square','opposition'].includes(x.kind)||x.kind==='四分相'||x.kind==='對分相'?2:0;
+      return inner*5+sunMoon+marsJupiter+tension-(x.orbErrorDeg||0)*2;
+    }
+    return weight(b)-weight(a);
+  })[0];
+  let headline='',reason='',watch='';
+  if(key){
+    const names=[key.bodyA,key.bodyB];
+    const marsJupiter=names.includes('Mars')&&names.includes('Jupiter');
+    const marsSaturn=names.includes('Mars')&&names.includes('Saturn');
+    const saturnUranus=names.includes('Saturn')&&names.includes('Uranus');
+    const mercuryNeptune=names.includes('Mercury')&&names.includes('Neptune');
+    if(marsJupiter&&key.kind==='合相'){
+      headline='傳統占星象徵：行動與擴張同時突出，容易積極，也要留意過度自信。';
+      reason='核心依據是火星與木星合相：火星代表競爭、行動，木星代表樂觀、成長；兩者主題集中，但不代表股市必漲。';
+      watch='可觀察 Nasdaq、S&P 500 的成交量、ATR、VIX 是否真的擴張，並核對技術趨勢。';
+    }else if(marsSaturn&&['四分相','對分相'].includes(key.kind)){
+      headline='傳統占星象徵：推進與限制相互拉扯，主題偏向壓力下的調整。';
+      reason='火星象徵行動、土星象徵規範與限制；'+key.kind+'通常被視為需要克服的張力。';
+      watch='可檢查股市實際波動率、信用利差、重大政策事件與支撐壓力位。';
+    }else if(saturnUranus&&['四分相','對分相'].includes(key.kind)){
+      headline='傳統占星象徵：舊制度與新變革間出現明顯拉扯。';
+      reason='土星偏向結構與紀律，天王星偏向改革與突破；'+key.kind+'象徵兩者存在張力。';
+      watch='可觀察科技股相對強弱、產業輪動與市場對政策的實際反應。';
+    }else if(mercuryNeptune&&['四分相','對分相'].includes(key.kind)){
+      headline='傳統占星象徵：資訊判讀與想像之間容易產生落差。';
+      reason='水星象徵消息和分析，海王星象徵想像與模糊；'+key.kind+'在傳統解讀中偏向需要仔細查證。';
+      watch='可觀察市場傳聞與正式財報之間的落差；所有消息應比對可靠來源。';
+    }else{
+      headline='傳統占星象徵：'+key.meaning+'，但沒有預設的吉凶或股票方向。';
+      reason='主要相位為'+key.title+'（'+key.kind+'，與精確角度相差 '+fmt(key.orbErrorDeg)+'°）。'+key.interpretation;
+      watch='可把該相位時間記錄下來，與股票成交量、VIX、ATR 及歷史同類事件的實際價格變化比較。';
+    }
+  }else{
+    headline='傳統占星象徵：目前沒有特別接近的五大行星相位，以行星所在星座的主題為主。';
+    reason='選定時間內沒有落入 ±2° 容許度的五大相位，不能把這解讀成股市將平靜或必然盤整。';
+    watch='可觀察月相、重大宏觀經濟日程與股市實際價格結構；等待可回測的事件條件。';
+  }
+  const context=(sun?'太陽在'+sun.sign+'座，'+SIGNS[sun.sign].qualities+'；':'')+
+    (moon?'月亮在'+moon.sign+'座，'+SIGNS[moon.sign].qualities+'。':'');
+  return {status:'ok',headline,reason:reason+(context?' 配合星座背景：'+context:''),
+    market:'股市方向：無法根據星盤判斷偏多或偏空；這不是買賣訊號。',
+    watch,limitation:'統計證據：這個日期的星象解讀尚未建立能證明股市預測優勢的樣本外績效；應以下方真實行情回測為準。'};
+}
+function renderPlainLanguageConclusion(data){
+  if(typeof document==='undefined')return plainLanguageConclusion(data);
+  const x=plainLanguageConclusion(data);
+  const targets={
+    astroConclusionHeadline:x.headline,
+    astroConclusionWhy:x.reason,
+    astroConclusionMarket:x.market,
+    astroConclusionWatch:x.watch,
+    astroConclusionEvidence:x.limitation
+  };
+  for(const [id,value] of Object.entries(targets)){
+    const node=document.getElementById(id);
+    if(node)node.textContent=value;
+  }
+  const time=document.getElementById('astroConclusionAt');
+  if(time){
+    const instant=new Date(data?.generatedAt||'');
+    if(Number.isFinite(instant.getTime())){
+      const zone=document.getElementById('astroTimezone')?.value||'Asia/Taipei';
+      try{
+        time.textContent='星盤時間：'+new Intl.DateTimeFormat('zh-TW',
+          {timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(instant)+'（'+zone+'）';
+      }catch(_){time.textContent='星盤時間：'+instant.toISOString();}
+    }else time.textContent='星盤時間尚不可用';
+  }
+  return x;
+}
+
 function el(tag,cls,textValue){
   const e=document.createElement(tag);
   if(cls)e.className=cls;
@@ -112,6 +204,7 @@ function render(data){
   const aspectBox=document.getElementById('astroReadingAspects');
   const categoryBox=document.getElementById('astroReadingCategories');
   if(!overview||!highlights||!planetBox||!aspectBox||!categoryBox)return reading;
+  renderPlainLanguageConclusion(data);
   overview.textContent=reading.summary;
   [highlights,planetBox,aspectBox,categoryBox].forEach(node=>node.replaceChildren());
   if(reading.status!=='ok')return reading;
@@ -165,5 +258,5 @@ function render(data){
   categoryBox.appendChild(list);
   return reading;
 }
-return {PLANETS,SIGNS,ASPECTS,ELEMENTS,MODALITIES,describe,render};
+return {PLANETS,SIGNS,ASPECTS,ELEMENTS,MODALITIES,describe,plainLanguageConclusion,renderPlainLanguageConclusion,render};
 });
