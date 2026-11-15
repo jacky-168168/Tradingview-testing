@@ -58,7 +58,8 @@ function showSnapshot(s){
 function showEvents(){
   const list=$('events');list.replaceChildren();
   if(!dataset?.events?.length){empty(list,'尚無可用的天象事件',3);return;}
-  const events=dataset.events.slice(0,100);
+  const days=Number($('eventWindow').value)||90,now=Date.now();
+  const events=dataset.events.filter(e=>Date.parse(e.utc)>=now&&Date.parse(e.utc)<=now+days*86400000).slice(0,150);
   for(const e of events)row(list,[fmt(e.utc,$('timezone').value),e.kind==='aspect'?(names[e.first]||e.first)+' '+e.name+' '+(names[e.second]||e.second):e.kind==='station'?(names[e.body]||e.body)+(e.motionAfter==='retrograde'?'開始逆行':'恢復順行'):e.name,e.kind==='aspect'?'行星相位':e.kind==='station'?'逆行轉折':'月相']);
   $('eventCount').textContent='已列出 '+events.length+'／'+dataset.events.length+' 件';
 }
@@ -103,6 +104,7 @@ $('calculate').addEventListener('click',()=>{
 });
 $('timezone').addEventListener('change',()=>{if(window.__astroDisplayed?.at)showSnapshot(window.__astroDisplayed);showEvents();});
 const oldShow=showSnapshot;showSnapshot=function(s){window.__astroDisplayed=s;oldShow(s);};
+$('eventWindow').addEventListener('change',showEvents);
 $('market').addEventListener('change',showStats);$('horizon').addEventListener('change',showStats);
 load().catch(()=>{$('alert').textContent='資料初始化失敗，請檢查星曆檔案與發布狀態。';});
 })();
