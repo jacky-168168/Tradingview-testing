@@ -5,7 +5,7 @@
 - **Presentation**: main-page research card and independent researcher page. Traditional cultural interpretations are clearly isolated from statistical evidence.
 - **Market predictive claims**: **NONE**. No source-audited historical US/EU/TW market series has been committed. Do **not** publish a win rate or market directional forecast until a separate audited study is completed.
 - **No integrations** with G selectors, risk score, trading orders or news classifiers.
-- **Not yet implemented**: official exchange calendars, price bars with opening fills, confidence intervals, HAC/FDR, walk-forward cross-validation, event-clustered bootstrap, MFE/MAE (need intraday/high-low price data), house cusps, eclipses and Bradley replica. Do not describe V1 as completing those.
+- **Implemented exploratory statistics**: fixed hypothesis groups, event non-overlap, 500-draw bootstrap mean CI, approximate HAC p-values, global Benjamini-Hochberg FDR, and optional OHLC-derived MFE/MAE. **Not yet independently validated**: matched-regime controls, exchange calendar audits, opening-fill trading simulations, true walk-forward OOS, clustered bootstrap, house cusps, eclipses and Bradley replica. Do not describe V1 as completing those.
 
 ## Reproducibility
 Node.js 22+:
@@ -54,7 +54,7 @@ Run the **Financial Astrology Research** workflow manually with \`regenerate_his
 - Currently uses a conservative next-exchange-session **closing price** after the event and a closing exit after h further sessions. This is *not* a realistic next-open fill; trading simulations require verified open/transaction costs.
 - Deduplicates exact same entry session, but does not remove overlapping forward holding windows or control for seasonal/day-of-week/year/market regime confounders.
 - Uses chronological 70/30 descriptive holdout statistics; does **not** optimize on the train set or certify OOS significance.
-- No HAC standard errors, block bootstrap confidence interval, false-discovery-rate correction, event-by-event causality analysis, or proper rolling walk-forward yet.
+- Exploratory HAC and FDR are available, but proper block bootstrap, event-by-event causality analysis, audited matched baselines and rolling walk-forward are not yet implemented.
 - A rolling-index benchmark is calculated for orientation only. \`status: exploratory\` must **not** become \`verified\` until these controls pass independent review.
 - If data is absent, output \`unavailable\` and UI shows N/A, never numbers.
 - Source metadata alone cannot prove data provenance: data lineage, checksums and calendar reconciliation still require independent audit.
