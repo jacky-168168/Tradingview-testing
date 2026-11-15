@@ -73,7 +73,7 @@ const emptyConclusion=interpret.plainLanguageConclusion({positions:[
 assert.match(emptyConclusion.headline,/沒有特別接近的主要行星角度/);
 assert.equal(interpret.plainLanguageConclusion(null).status,'unavailable');
 assert.equal(interpret.describe(null).status,'unavailable');
-assert.match(page,/沒有經驗證的因果預測力/);
+assert.match(page,/不能單靠星盤決定股票買賣/);
 assert.match(js,/textContent/);
 assert.doesNotMatch(js,/eval\(|localStorage|fetch\(\s*['"]https:\/\/|fetch\(\s*['"]http:\/\//);
 console.log('Financial astrology UI separation and legacy anchors OK');
