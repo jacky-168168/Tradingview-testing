@@ -4,6 +4,7 @@
  * No market data is generated in this file.
  */
 const fs=require('node:fs'),path=require('node:path');
+const Astronomy=require('astronomy-engine');
 const {findAspects,findStations,DAY}=require('./engine.cjs');
 function history(startYear=2000,endYear=new Date().getUTCFullYear()){
  if(!Number.isInteger(startYear)||!Number.isInteger(endYear)||startYear<1900||endYear>2100||endYear<startYear||endYear-startYear>40)
@@ -12,6 +13,12 @@ function history(startYear=2000,endYear=new Date().getUTCFullYear()){
  for(let year=startYear;year<=endYear;year++){
    const start=Date.UTC(year,0,1),end=Date.UTC(year+1,0,1),days=(end-start)/DAY;
    const e=[...findAspects(new Date(start),days),...findStations(new Date(start),days)];
+   let q=Astronomy.SearchMoonQuarter(new Date(start));
+   while(q.time.date.getTime()<end){
+     const utc=q.time.date.toISOString();
+     e.push({id:'moon-quarter-'+utc,kind:'moon-quarter',utc,name:['新月','上弦月','滿月','下弦月'][q.quarter]});
+     q=Astronomy.NextMoonQuarter(q);
+   }
    for(const item of e)if(Date.parse(item.utc)<end)events.push(item);
  }
  const unique=new Map(events.map(e=>[e.id,e]));
