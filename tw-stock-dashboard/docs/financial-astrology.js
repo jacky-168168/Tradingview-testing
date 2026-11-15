@@ -148,6 +148,7 @@
       show('astroUpdated','星曆待更新');
       el('astroPlanets').replaceChildren();
       show('astroAspects','無法讀取星象相位');
+      if(window.FinancialAstrologyInterpret)window.FinancialAstrologyInterpret.render(null);
       return;
     }
     const stale=!data.liveComputed && (Date.now()-Date.parse(data.generatedAt))>48*3600000;
@@ -156,6 +157,8 @@
       '）；當前符合 2° Orb 的主要相位 '+(data.aspects?.length||0)+' 組。'+
       '此處僅為可重現天文資料，不提供已驗證買賣建議。');
     drawWheel(data);
+    if(window.FinancialAstrologyInterpret)window.FinancialAstrologyInterpret.render(data);
+    else show('astroReadingOverview','星盤可用，但詳細解讀模組尚未載入，請重新整理頁面。');
     const tbody=el('astroPlanets');tbody.replaceChildren();
     for(const p of data.positions){
       row(tbody,[bodyNames[p.name]||p.name,p.sign+' '+number(p.signDegree,2)+'°',
