@@ -1,19 +1,19 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-15T06:23:21.296387Z",
+  "generatedAt": "2026-11-15T07:47:45.046979Z",
   "sources": {
     "PTT": {
       "status": "ok",
       "method": "官方 Atom",
       "url": "https://www.ptt.cc/atom/stock.xml",
-      "freshCount": 9,
+      "freshCount": 8,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 3,
-      "pushLabelsFound": 5
+      "boardFreshCount": 4,
+      "pushLabelsFound": 7
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 24,
+      "freshCount": 20,
       "queryHealth": {
         "queriesAttempted": 12,
         "queriesSucceeded": 12,
@@ -47,21 +47,21 @@
     }
   },
   "social": {
-    "sample": 10,
+    "sample": 9,
     "bull": 1,
     "bear": 0,
-    "neutral": 9,
+    "neutral": 8,
     "directional": 1,
     "status": "已有樣本｜偏多討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
     "rawSample": 80,
-    "investmentDiscussion": 10,
-    "originalDiscussion": 10,
-    "repostedNews": 58,
+    "investmentDiscussion": 9,
+    "originalDiscussion": 9,
+    "repostedNews": 59,
     "unrelated": 12,
     "platformCounts": {
       "PTT": 2,
-      "Bluesky": 8,
+      "Bluesky": 7,
       "Threads": 0,
       "Instagram": 0
     }
@@ -83,6 +83,20 @@
   "items": [
     {
       "platform": "PTT",
+      "title": "[新聞] 誰對黃仁勳「下黑手」？魯比歐遭控改寫CI",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794724605.A.8C9.html",
+      "publishedAt": "2026-11-15T06:36:45Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 68,
+      "pushLabel": "68",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
       "title": "[新聞] 伊朗稱無人機襲美軍基地　巴林急發2次警",
       "url": "https://www.ptt.cc/bbs/Stock/M.1794723053.A.42E.html",
       "publishedAt": "2026-11-15T06:10:53Z",
@@ -91,8 +105,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 1,
-      "pushLabel": "1",
+      "pushScore": 7,
+      "pushLabel": "7",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -105,8 +119,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 37,
-      "pushLabel": "37",
+      "pushScore": 79,
+      "pushLabel": "79",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -119,8 +133,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 14,
-      "pushLabel": "14",
+      "pushScore": 25,
+      "pushLabel": "25",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1039,35 +1053,15 @@
         "evidence": "📢 台股今天震盪上漲583.25點，收在43675.12點，留下逾769點長上影線",
         "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
       }
-    },
-    {
-      "platform": "Bluesky",
-      "title": "📢 台股盤中震盪955點 收盤漲583點 Rti 中央廣播電臺",
-      "url": "https://bsky.app/profile/radiotaiwan.nzcow.com/post/3n26kar7l3j2j",
-      "publishedAt": "2026-11-13T08:17:00.939097Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "新聞轉載",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "📢 台股盤中震盪955點 收盤漲583點 Rti 中央廣播電臺",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "台指期大台、小台、微台差在哪？一點多少錢？新手怎麼選？",
-      "url": "https://www.youtube.com/watch?v=JLWbxEfEsk8",
-      "publishedAt": "2026-11-15T05:47:36Z",
-      "sourceName": "華南期貨珊珊",
+      "title": "AMD.輝達挫...週一台股恐不妙? 專家曝恐有補跌效應 國安基金護盤後恐有第二隻腳? 台股恐被美股拖累?｜【話題懶人包】｜TVBS新聞 @TVBSNEWS01",
+      "url": "https://www.youtube.com/watch?v=NuLEd-HdiZM",
+      "publishedAt": "2026-11-15T07:30:33Z",
+      "sourceName": "TVBS NEWS",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1415,8 +1409,22 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 37,
-      "pushLabel": "37",
+      "pushScore": 79,
+      "pushLabel": "79",
+      "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] 誰對黃仁勳「下黑手」？魯比歐遭控改寫CI",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1794724605.A.8C9.html",
+      "publishedAt": "2026-11-15T06:36:45Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）",
+      "pushScore": 68,
+      "pushLabel": "68",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1429,8 +1437,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 14,
-      "pushLabel": "14",
+      "pushScore": 25,
+      "pushLabel": "25",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1443,8 +1451,8 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）",
-      "pushScore": 1,
-      "pushLabel": "1",
+      "pushScore": 7,
+      "pushLabel": "7",
       "pushBasis": "PTT 公開看板顯示；僅為頁面快照，不是留言全文或實際觀看數"
     },
     {
@@ -1842,17 +1850,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[情報] 2376 技嘉 115年Q3:12.79 累計:30.52",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794574344.A.FEF.html",
-      "publishedAt": "2026-11-13T12:52:24Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1865,22 +1862,22 @@
     "個股熱度只統計有投資語境且非新聞轉貼的 G Top20 標題，不更改 G 排名或 TITAN 風控。"
   ],
   "semantic": {
-    "status": "verified",
+    "status": "cached",
     "model": "gemini-3.5-flash-lite",
-    "inferenceCalls": 1,
-    "cachedClassifications": 8,
-    "newlyClassified": 2,
+    "inferenceCalls": 0,
+    "cachedClassifications": 9,
+    "newlyClassified": 0,
     "unclassified": 0,
-    "updatedAt": "2026-11-15T06:23:24.403Z",
+    "updatedAt": "2026-11-15T07:47:47.480Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 10,
-    "classifiedCount": 10,
+    "candidateCount": 9,
+    "classifiedCount": 9,
     "investmentCount": 3,
     "bullish": 0,
     "bearish": 0,
     "neutral": 3,
-    "originalRuleCount": 10,
+    "originalRuleCount": 9,
     "noTrade": true
   }
 }
