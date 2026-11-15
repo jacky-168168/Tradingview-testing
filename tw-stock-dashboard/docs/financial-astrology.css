@@ -70,3 +70,14 @@ li{line-height:1.75;margin:5px 0}.source-links{display:flex;flex-wrap:wrap;gap:1
 .astro-conclusion-rows p{margin:6px 0 0;font-size:14px;line-height:1.75;color:#38445a}
 .astro-conclusion-footnote{font-size:12px;color:#747e91;line-height:1.6;margin:13px 0 0}
 @media(max-width:600px){.astro-conclusion{padding:14px}.astro-conclusion-headline{font-size:17px}.astro-conclusion-header h2{font-size:17px}}
+
+/* Mobile quick interpretation: the conclusion is legible even after scrolling below the wheel. */
+.astro-reading-recap{margin:13px 0;padding:14px;border-radius:12px;border:1px solid #d3dae7;background:#f5f7fc;line-height:1.65;color:#263247}
+.astro-reading-recap strong{display:block;font-size:15px;letter-spacing:.01em}
+.astro-reading-recap p{font-size:14px;margin:8px 0 0}
+.astro-reading-recap #astroReadingRecapHeadline{font-size:16px;font-weight:700;color:#232d48}
+.astro-reading-recap #astroReadingRecapMarket{color:#576378}
+.astro-reading-recap a{font-size:13px;display:inline-block;margin-top:9px}
+.astro-conclusion{scroll-margin-top:16px}
+.astro-reading-section:not([open])>summary{background:#f5f7fc}
+@media(max-width:600px){.astro-reading-recap{padding:12px}.astro-reading-recap #astroReadingRecapHeadline{font-size:15px}}

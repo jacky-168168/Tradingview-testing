@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>全球金融占星研究中心｜台股量化</title>
-<link rel="stylesheet" href="./financial-astrology.css?v=1">
+<link rel="stylesheet" href="./financial-astrology.css?v=1.2">
 <script src="./site-access.js"></script>
 <script defer src="./financial-astrology-vendor.js?v=2.1.19"></script>
-<script defer src="./financial-astrology-explain.js?v=1.1"></script>
+<script defer src="./financial-astrology-explain.js?v=1.2"></script>
 <script defer src="./financial-astrology.js?v=3"></script></head>
 <body><div class="astro-app"><header class="astro-head"><div><a href="./index.html" class="back">← 返回台股量化主頁</a>
 <h1>🌌 全球金融占星研究中心</h1><p>天文事件 × 傳統解讀 × 真實市場回測｜研究用途，非交易訊號</p></div>
@@ -28,7 +28,7 @@
 <div id="astroSummary" class="callout" role="status">正在計算天文資料…</div>
 <section id="astroConclusion" class="astro-conclusion" aria-labelledby="astroConclusionTitle" aria-live="polite">
   <div class="astro-conclusion-header">
-    <h2 id="astroConclusionTitle">📌 先看結論｜這張星盤在說什麼？</h2>
+    <h2 id="astroConclusionTitle">📌 星盤綜合結論｜先看這裡</h2>
     <span id="astroConclusionAt">星盤時間載入中…</span>
   </div>
   <p class="astro-conclusion-headline" id="astroConclusionHeadline">計算星象重點中…</p>
@@ -46,7 +46,7 @@
 </div>
 <section class="astro-guide" id="astroReading" aria-labelledby="astroGuideTitle">
   <div class="astro-guide-head">
-    <h3 id="astroGuideTitle">📖 這張星盤代表什麼？完整中文解讀</h3>
+    <h3 id="astroGuideTitle">📖 星盤詳細依據（有興趣再展開）</h3>
     <span class="astro-guide-tag">依《占星其實很簡單：入門篇》架構整理</span>
   </div>
   <div class="astro-guide-grammar">
@@ -58,12 +58,18 @@
   <p class="astro-guide-note"><strong>快速理解：</strong>「火星在獅子座」不是火星真的位於獅子座恆星旁，而是從地球看，火星位於熱帶黃道的獅子座區間；傳統占星把「行動力」用「自信、展現」的風格解讀。這些象徵不是股票多空證據。</p>
   <div id="astroReadingOverview" class="callout" role="status">正在解讀所選日期的星盤…</div>
   <div id="astroReadingHighlights" class="astro-reading-highlights"></div>
-  <details class="astro-reading-section" open>
+  <aside id="astroReadingRecap" class="astro-reading-recap" aria-label="整張星盤的最終重點" role="status" aria-live="polite">
+    <strong>✅ 最後結論｜看完這張星盤應該知道什麼？</strong>
+    <p id="astroReadingRecapHeadline">正在整理這張星盤的綜合含義…</p>
+    <p id="astroReadingRecapMarket">股市多空需要歷史行情與樣本外回測驗證，不用星象代替買賣決策。</p>
+    <a href="#astroConclusion">回到最上方完整結論</a>
+  </aside>
+  <details class="astro-reading-section">
     <summary>① 十大行星各代表什麼？（點開看詳細解釋）</summary>
     <p class="hint">每個行星都會依目前選定日期的星座和順逆行自動組合中文說明。</p>
     <div id="astroReadingPlanets"></div>
   </details>
-  <details class="astro-reading-section" open>
+  <details class="astro-reading-section">
     <summary>② 目前行星相位怎麼讀？（依角度接近程度排序）</summary>
     <p class="hint">合相 0°、六分相 60°、四分相 90°、三分相 120°、對分相 180°。Orb 是與目標角度相差的度數，不是股價波動率。</p>
     <div id="astroReadingAspects"></div>

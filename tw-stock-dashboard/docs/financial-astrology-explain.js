@@ -169,7 +169,9 @@ function renderPlainLanguageConclusion(data){
     astroConclusionWhy:x.reason,
     astroConclusionMarket:x.market,
     astroConclusionWatch:x.watch,
-    astroConclusionEvidence:x.limitation
+    astroConclusionEvidence:x.limitation,
+    astroReadingRecapHeadline:x.headline,
+    astroReadingRecapMarket:x.market+'｜'+x.limitation
   };
   for(const [id,value] of Object.entries(targets)){
     const node=document.getElementById(id);
@@ -203,8 +205,8 @@ function render(data){
   const planetBox=document.getElementById('astroReadingPlanets');
   const aspectBox=document.getElementById('astroReadingAspects');
   const categoryBox=document.getElementById('astroReadingCategories');
-  if(!overview||!highlights||!planetBox||!aspectBox||!categoryBox)return reading;
   renderPlainLanguageConclusion(data);
+  if(!overview||!highlights||!planetBox||!aspectBox||!categoryBox)return reading;
   overview.textContent=reading.summary;
   [highlights,planetBox,aspectBox,categoryBox].forEach(node=>node.replaceChildren());
   if(reading.status!=='ok')return reading;

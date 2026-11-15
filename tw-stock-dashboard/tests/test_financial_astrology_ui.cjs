@@ -77,3 +77,20 @@ assert.match(page,/沒有經驗證的因果預測力/);
 assert.match(js,/textContent/);
 assert.doesNotMatch(js,/eval\(|localStorage|fetch\(\s*['"]https:\/\/|fetch\(\s*['"]http:\/\//);
 console.log('Financial astrology UI separation and legacy anchors OK');
+
+assert.match(page,/id="astroReadingRecapHeadline"/);
+assert.match(page,/id="astroReadingRecapMarket"/);
+assert.match(page,/id="astroConclusionHeadline"/);
+assert(page.includes('financial-astrology-explain.js?v=1.2'));
+assert.match(explain,/astroReadingRecapHeadline/);
+assert.match(explain,/astroReadingRecapMarket/);
+const reading=interpret.plainLanguageConclusion({
+ positions:[
+  {name:'Sun',sign:'天蠍',longitudeDeg:228,signDegree:18,motion:'direct'},
+  {name:'Moon',sign:'摩羯',longitudeDeg:278,signDegree:8,motion:'direct'},
+  {name:'Mars',sign:'獅子',longitudeDeg:130,signDegree:10,motion:'direct'},
+  {name:'Jupiter',sign:'獅子',longitudeDeg:130.4,signDegree:10.4,motion:'direct'}],
+ aspects:[{bodyA:'Mars',bodyB:'Jupiter',aspect:'conjunction',actualAngleDeg:.4,orbErrorDeg:.4,applying:true}]
+});
+assert.match(reading.headline,/行動與擴張/);
+assert.match(reading.market,/無法根據星盤判斷偏多或偏空/);
