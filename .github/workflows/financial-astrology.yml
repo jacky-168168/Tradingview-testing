@@ -41,6 +41,7 @@ jobs:
       - name: Generate and validate fixed-time research dataset (not published)
         env:
           ASTRO_FIXED_NOW: 2026-11-15T00:00:00Z
+          ASTRO_EVENT_DAYS: "360"
         run: |
           node tw-stock-dashboard/src/financial_astrology/engine.cjs
           node - <<'JS'
