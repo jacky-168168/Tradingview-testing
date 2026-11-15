@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>全球金融占星研究中心｜Financial Astrology Lab</title>
+<meta name="description" content="地心黃道星盤、行星相位與全球股市實證事件研究。傳統金融占星不等於交易訊號。">
+<script src="./site-access.js"></script>
+<style>
+:root{color-scheme:light;--bg:#f5f7fb;--fg:#16263e;--muted:#66758e;--line:#dbe3ef;--blue:#28558b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
+main{max-width:1190px;margin:auto;padding:24px 18px 60px}a{color:#23558c}h1{font-size:27px;margin:0}h2{font-size:19px;margin:0 0 12px}h3{font-size:15px;margin:0 0 5px}
+.sub{color:var(--muted);font-size:13px;margin:4px 0 20px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}nav a{background:#fff;padding:8px 13px;border:1px solid var(--line);border-radius:8px;text-decoration:none;font-size:12px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:0 0 14px;box-shadow:0 3px 13px #172b4408;min-width:0}
+.banner{background:#edf3fb;border-left:4px solid var(--blue);padding:12px 14px;border-radius:9px;margin-bottom:20px;font-size:13px}
+.muted,.meta{color:var(--muted);font-size:12px}.controls{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:8px 0 14px}
+label{font-size:12px;font-weight:700;display:block}input,select,button{font:inherit;padding:8px;border:1px solid #b9c9dc;border-radius:8px;background:white}
+button{background:var(--blue);color:#fff;font-weight:700;cursor:pointer}
+.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:#52647c;background:#f7f9fc}
+.pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;background:#eff3fa;margin:2px;color:#315275}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+#alert{color:#9e2b22;font-weight:700}strong.note{color:#9f4b08}
+@media(max-width:500px){h1{font-size:22px}.card{padding:12px}th,td{padding:6px}}
+</style>
+<script defer src="./financial-astrology-ui.js?v=1"></script>
+</head>
+<body>
+<main>
+<nav aria-label="研究功能"><a href="./index.html">← 市場主頁</a><a href="./market-events.html">市場大事</a><a href="./backtest.html">回測中心</a><a href="./market-methodology.html">方法學</a></nav>
+<h1>🪐 全球金融占星研究中心</h1>
+<p class="sub">雙軌模式：傳統金融占星解讀 × 獨立統計檢驗｜美國、歐洲與台灣市場</p>
+<div class="banner"><b>研究性質與限制：</b>行星位置是可計算的天文現象，但其對股市的預測效果未獲證實。星象解讀不是交易建議，且不納入原有大盤風控或 G 選股分數。</div>
+<div class="card">
+  <div class="row"><h2>現在的星盤與指定時間</h2><span id="freshness" class="meta" role="status">載入星曆中…</span></div>
+  <div class="controls"><div><label for="at">星盤時間（台灣時間）</label><input id="at" type="datetime-local" step="60"></div><button id="calculate" type="button">計算指定時間</button></div>
+  <p class="muted">預設採地心座標、熱帶黃道、真黃道 ECT；所有事件時間以 UTC 儲存，畫面時區可切換。指定時間由本機星曆程式計算；不可用時不以近似值冒充。</p>
+  <div class="controls"><div><label for="timezone">顯示時區</label><select id="timezone"><option value="Asia/Taipei">台灣</option><option value="America/New_York">紐約</option><option value="Europe/London">倫敦</option><option value="Europe/Berlin">柏林</option><option value="Europe/Paris">巴黎</option></select></div></div>
+  <div id="alert" role="alert"></div>
+  <div class="row"><h3 id="moonPhase">月相：—</h3><span id="atLabel" class="meta"></span></div>
+  <div class="table-wrap"><table><thead><tr><th>天體</th><th>星座</th><th>黃經</th><th>星座內度數</th><th>視運動</th></tr></thead><tbody id="positions"><tr><td colspan="5">讀取中</td></tr></tbody></table></div>
+</div>
+<div class="grid">
+  <section class="card"><h2>目前主要相位（Orb ≤2°）</h2><div id="aspects" class="muted">載入中…</div></section>
+  <section class="card"><h2>傳統金融占星解讀</h2><p id="interpretations" class="muted">載入中…</p><p class="meta">本區只描述傳統文化解讀，不代表行情方向。統計結論需看右下研究結果。</p></section>
+</div>
+<section class="card">
+  <div class="row"><h2>未來天象事件行事曆（90 天）</h2><span id="eventCount" class="meta"></span></div>
+  <p class="muted">精確相位時間採數值搜尋，不將每日取樣視為事件精確時間。站點與相位事件可能重疊。</p>
+  <div class="table-wrap"><table><thead><tr><th>當地時間</th><th>天象事件</th><th>分類</th></tr></thead><tbody id="events"><tr><td colspan="3">讀取中</td></tr></tbody></table></div>
+</section>
+<section class="card">
+  <h2>股市歷史實證研究</h2>
+  <p class="muted">以下數值只能來自具來源、日期及交易日對齊的真實歷史市場行情。必須與基準組比較，控制事件重疊、樣本選擇與多重檢定。</p>
+  <div class="controls"><div><label for="market">市場</label><select id="market"><option value="SPX">S&P 500</option><option value="IXIC">Nasdaq</option><option value="NDX">Nasdaq 100</option><option value="SOX">費半</option><option value="DAX">DAX</option><option value="FTSE">FTSE 100</option><option value="CAC">CAC 40</option><option value="STOXX50">EURO STOXX 50</option><option value="TAIEX">台灣加權</option></select></div>
+  <div><label for="horizon">事件後交易日</label><select id="horizon"><option>1</option><option>3</option><option selected>5</option><option>10</option><option>20</option><option>60</option><option>90</option><option>180</option><option>360</option></select></div></div>
+  <div id="research" role="status" class="banner">歷史行情未驗證；目前不提供勝率、超額報酬或多空結論。</div>
+  <p class="muted">標準輸出：樣本數、平均／中位報酬、上漲率、95% CI、超額報酬、樣本外、FDR 及資料限制。未通過驗證時一律顯示 N/A。</p>
+</section>
+<p class="meta" id="source">星曆引擎：Astronomy Engine 2.1.19（MIT）｜UTC 保存｜不做任何實際交易。</p>
+</main>
+</body></html>
