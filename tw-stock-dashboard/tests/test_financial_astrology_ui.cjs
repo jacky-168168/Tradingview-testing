@@ -63,7 +63,7 @@ const conclusion=interpret.plainLanguageConclusion({
   ],
   aspects:[{bodyA:'Mars',bodyB:'Jupiter',aspect:'conjunction',actualAngleDeg:1,orbErrorDeg:1,applying:true}]
 });
-assert.match(conclusion.headline,/行動與擴張/);
+assert.match(conclusion.headline,/積極擴張/);
 assert.match(conclusion.reason,/火星代表行動/);
 assert.match(conclusion.market,/單靠星盤無法可靠判斷股票漲跌/);
 assert.match(conclusion.watch,/成交量/);
@@ -92,7 +92,7 @@ const reading=interpret.plainLanguageConclusion({
   {name:'Jupiter',sign:'獅子',longitudeDeg:130.4,signDegree:10.4,motion:'direct'}],
  aspects:[{bodyA:'Mars',bodyB:'Jupiter',aspect:'conjunction',actualAngleDeg:.4,orbErrorDeg:.4,applying:true}]
 });
-assert.match(reading.headline,/行動與擴張/);
+assert.match(reading.headline,/積極擴張/);
 assert.match(reading.market,/單靠星盤無法可靠判斷股票漲跌/);
 
 const firstScreen=page.slice(0,page.indexOf('id="astroWheel"'));
