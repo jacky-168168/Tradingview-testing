@@ -77,7 +77,7 @@ function describe(data){
         orbErrorDeg:safeNumber(a.orbErrorDeg),
         applying:a.applying===true,meaning:definition.meaning,subtlety:definition.subtlety,
         interpretation:'這個相位把「'+left.role+'」與「'+right.role+'」連結在一起。傳統上解讀為'+definition.meaning+'。'+definition.subtlety,
-        status:a.applying===true?'接近精確相位（Applying）':'離開精確相位（Separating）'});
+        status:a.applying===true?'接近精確相位（Applying）':'離開精確相位（Separating）'};
     }).sort((a,b)=>(a.orbErrorDeg??999)-(b.orbErrorDeg??999));
   const sun=planets.find(p=>p.name==='Sun');
   const moon=planets.find(p=>p.name==='Moon');
