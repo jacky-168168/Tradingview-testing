@@ -5,6 +5,9 @@ import argparse
 import bisect
 import csv
 import json
+import io
+from urllib.request import Request, urlopen
+from urllib.parse import urlencode
 import math
 import random
 import statistics
@@ -12,6 +15,9 @@ from collections import defaultdict
 from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
+from evidence import attach_evidence
+from research_methods import global_fdr, regime_control, strategy_comparison
+from g_overlay_research import compute_g_overlay
 
 HORIZONS = (1, 3, 5, 10, 20, 60, 90, 180, 360)
 MARKETS = {
@@ -66,12 +72,40 @@ def download_prices(ticker, earliest, asof):
     if table is None or table.empty:
         raise RuntimeError("No daily prices returned for "+ticker)
     rows=[]
+    # Never mix a still-forming local trading session into daily close history.
+    local_today=datetime.now(timezone.utc).astimezone(ZoneInfo(next((
+        zone for code,(symbol,zone,_) in MARKETS.items() if symbol==ticker
+    ),"America/New_York"))).date()
+    cap=min(asof,local_today-timedelta(days=1))
     for stamp, entry in table.iterrows():
-        close = entry.get("Close")
-        if close is None or not math.isfinite(float(close)):
+        close=entry.get("Close")
+        if close is None or not math.isfinite(float(close)) or stamp.date()>cap:
             continue
         rows.append((stamp.date(), float(close)))
     return clean_prices(rows)
+
+def download_fred(series_id, asof):
+    """FRED published daily index closes; only derived statistics leave CI."""
+    if series_id not in {"NASDAQCOM","SP500"}:
+        raise ValueError("Unapproved FRED series")
+    url="https://fred.stlouisfed.org/graph/fredgraph.csv?"+urlencode({
+        "id":series_id,"cosd":"1990-01-01","coed":asof.isoformat()})
+    request=Request(url,headers={"User-Agent":"FinancialAstrologyResearch/1.0 (historical-statistics)"})
+    with urlopen(request,timeout=35) as response:
+        payload=response.read(5000000).decode("utf-8-sig")
+    rows=list(csv.DictReader(io.StringIO(payload)))
+    if not rows or series_id not in rows[0]:
+        raise RuntimeError("FRED returned no valid daily CSV series "+series_id)
+    out=[]
+    for row in rows:
+        text=row.get(series_id,"")
+        if text in ("",".","NaN",None):
+            continue
+        day=date.fromisoformat(row.get("DATE") or row.get("observation_date") or row.get("date"))
+        if day>asof:continue
+        out.append((day,float(text)))
+    return clean_prices(out)
+
 
 def event_to_session_index(event, days, market_tz):
     event_utc = iso_datetime(event["exactUtc"])
@@ -131,11 +165,16 @@ def stats(events, prices, tz, horizon, seed=SEED):
     baseline=sum(statistics.mean(group) for group in matched)/len(matched)
     mean=statistics.mean(xs)
     rng=random.Random(seed+horizon)
-    ci=None;p=None
-    # No statistical significance claim for rare observations.
+    ci=None;p=None;excess_ci=None
+    # Ex-post descriptive bootstrap: not a causal or out-of-sample test.
     if len(xs)>=8:
         boot=[statistics.mean(rng.choices(xs,k=len(xs))) for _ in range(1000)]
         ci=[percentile(boot,0.025),percentile(boot,0.975)]
+        year_baselines=[statistics.mean(group) for group in matched]
+        excess_observations=[x-b for x,b in zip(xs,year_baselines)]
+        excess_boot=[statistics.mean(rng.choices(excess_observations,k=len(xs)))
+                     for _ in range(1000)]
+        excess_ci=[percentile(excess_boot,0.025),percentile(excess_boot,0.975)]
         n=999
         dif=abs(mean-baseline)
         exceed=sum(abs(statistics.mean([rng.choice(g) for g in matched])-baseline)>=dif for _ in range(n))
@@ -155,7 +194,8 @@ def stats(events, prices, tz, horizon, seed=SEED):
         "meanReturn":mean,"medianReturn":statistics.median(xs),
         "winRate":sum(x>0 for x in xs)/count,"meanMaxDrawdown":statistics.mean(x["windowMaxDrawdown"] for x in samples),
         "baselineReturn":baseline,"excessReturn":mean-baseline,
-        "pValue":p,"confidence95":ci,"holdout":oos,
+        "pValue":p,"confidence95":ci,"excessConfidence95":excess_ci,
+        "holdout":oos,
         "events":[{"eventUtc":x["eventUtc"],"entryDate":x["entryDate"],
                    "exitDate":x["exitDate"],"return":x["return"],
                    "windowMaxDrawdown":x["windowMaxDrawdown"]} for x in samples]}
@@ -174,6 +214,42 @@ def bh_fdr(rows):
         row["fdrQValue"]=q
         row["significanceClaim"]=False  # V1 is hypothesis-generating, never causal proof.
 
+def catalog_stats(catalog, prices, market_timezone):
+    """Summary-only exploratory studies; no invented inferential p-values or trading signals."""
+    result={}
+    for family,definition in (catalog.get("studyFamilies") or {}).items():
+        if family==EVENT_ID: continue  # main predeclared event has full statistical methods
+        events=definition.get("events",[])
+        horizons=[]
+        for h in HORIZONS:
+            observed,missing=returns_for_events(events,prices,market_timezone,h)
+            n=len(observed)
+            if n:
+                yearly=defaultdict(list)
+                closes=[p[1] for p in prices]
+                for i in range(len(closes)-h):
+                    yearly[prices[i][0].year].append(closes[i+h]/closes[i]-1)
+                overall=[v for vals in yearly.values() for v in vals]
+                baseline=sum(statistics.mean(yearly.get(date.fromisoformat(x["entryDate"]).year)
+                    or overall) for x in observed)/n
+                mean=statistics.mean(x["return"] for x in observed)
+                win=sum(x["return"]>0 for x in observed)/n
+            else:
+                baseline=mean=win=None
+            horizons.append({"horizonSessions":h,"sampleSize":n,"censoredEvents":missing,
+                "meanReturn":mean,"winRate":win,"baselineReturn":baseline,
+                "excessReturn":mean-baseline if n else None,
+                "pValue":None,"globalFdrQValue":None,
+                "evidence":{"level":"unvalidated","label":"僅探索，未驗證",
+                            "direction":"無法判定",
+                            "reason":"其他星象系列尚未通過跨事件、跨市場多重檢定和真正獨立樣本外驗證。"}})
+        result[family]={"eventLabel":definition.get("label",family),
+             "source":"Astronomy Engine 2.1.19 exact ephemeris + real daily market closes",
+             "eventCount":len(events),"horizons":horizons,
+             "status":"exploratory","noTradingSignal":True}
+    return result
+
+
 def build_report(events, market, prices, asof):
     ticker,tz,label=MARKETS[market]
     clean=clean_prices(prices)
@@ -181,37 +257,99 @@ def build_report(events, market, prices, asof):
         raise ValueError("Historical prices contain future observations")
     if len(clean)<500:
         raise ValueError("Insufficient daily market history (<500 sessions)")
+    # A stale quote feed must never be presented as current verified research.
+    if (asof-clean[-1][0]).days>14:
+        raise ValueError("Market history stale: last valid close "+clean[-1][0].isoformat())
     horizons=[stats(events,clean,tz,h) for h in HORIZONS]
+    for row in horizons:
+        horizon=row["horizonSessions"]
+        samples,_=returns_for_events(events,clean,tz,horizon)
+        regime=regime_control(samples,clean,horizon)
+        row["regimeMatchedControl"]=regime
+        # The original same-year random baseline is descriptive only, not our formal p-value.
+        row["yearMatchedNaivePValue"]=row["pValue"]
+        row["pValue"]=(regime.get("permutationPValue")
+                       if regime.get("status")=="descriptive" else None)
+        row["regimeMatchedExcessReturn"]=regime.get("meanExcessReturn")
+        row["regimeMatchedCI95"]=regime.get("eventClusterBootstrap95")
     bh_fdr(horizons)
+    attach_evidence(horizons)
+    # Offline-only MA20 baseline; never writes into user's G/risk strategy code.
+    strategy=strategy_comparison(clean,events,tz,event_to_session_index)
     return {"status":"ok","market":market,"ticker":ticker,"marketName":label,
         "currency":"index points","event":EVENT_ID,"timeZone":tz,
         "sampleStart":clean[0][0].isoformat(),"sampleEnd":clean[-1][0].isoformat(),
+        "priceSampleCount":len(clean),"historicalEventsFound":len(events),
+        "indexReturnBasis":("gross-dividend-reinvested-performance" if market=="DAX" else "price-only"),
+        "crossMarketComparable":False,"strategyComparison":strategy,
         "source":"Yahoo Finance via yfinance; daily unadjusted index Close; retrieval is best-effort",
         "entryRule":"First trading session strictly after event's exchange-local calendar date, close to close",
         "horizons":horizons,"orbDeg":2,"orbSensitivityStatus":"not-validated",
         "restrictions":["Rare events; significance is unreliable for small N.",
           "Overlapping holding periods and macro regimes are not causal evidence.",
           "Price indices exclude dividends; Yahoo Finance data is not guaranteed."],
-        "sampleOutOfSample":"chronological holdout when N>=20; otherwise unavailable"}
+        "sampleOutOfSample":"chronological holdout when N>=20; otherwise unavailable",
+        "researchLimitations":["DAX reflects gross dividend reinvestment, others are generally price indices.",
+                               "MA20+astrology is close-to-close observational, not a trading recommendation."]}
 
-def build_all(events, asof, csv_paths=None):
+def build_all(events, asof, csv_paths=None, catalog=None, g_trades=None, g_executive=None):
     reports={}
+    catalog_reports={}
+    g_overlay={"status":"unavailable","reason":"Existing G closed-trade file not configured"}
     for market,(ticker,tz,label) in MARKETS.items():
         try:
             path=(csv_paths or {}).get(market)
-            prices=parse_prices_csv(Path(path)) if path else download_prices(ticker,date(1990,1,1),asof)
+            source="User-supplied real daily close CSV; manual provenance required"
+            if path:
+                prices=parse_prices_csv(Path(path))
+            else:
+                source="Yahoo Finance historical index daily Close (via yfinance)"
+                try:
+                    prices=download_prices(ticker,date(1990,1,1),asof)
+                except Exception as first:
+                    fred={"NASDAQ":"NASDAQCOM","SP500":"SP500"}.get(market)
+                    if not fred:
+                        raise
+                    try:
+                        prices=download_fred(fred,asof)
+                        source=("FRED / "+fred+" daily close; original Nasdaq / S&P rights apply; "+
+                            "source https://fred.stlouisfed.org/series/"+fred)
+                    except Exception as second:
+                        raise RuntimeError("Yahoo: "+str(first)[:95]+
+                            "; FRED: "+str(second)[:95]) from second
             reports[market]=build_report(events,market,prices,asof)
+            reports[market]["source"]=source
+            if catalog is not None:
+                catalog_reports[market]=catalog_stats(catalog,prices,MARKETS[market][1])
+                if market=="TAIEX" and g_trades and g_executive:
+                    try:
+                        g_overlay=compute_g_overlay(catalog,prices,g_trades,g_executive)
+                    except Exception as exc:
+                        g_overlay={"status":"unavailable","reason":str(exc)[:280]}
         except Exception as exc:
             reports[market]={"status":"unavailable","ticker":ticker,
                 "errorType":type(exc).__name__,"message":str(exc)[:280],
                 "horizons":[]}
-    return {"schemaVersion":1,"generatedAt":datetime.now(timezone.utc).isoformat(),
-        "asOf":asof.isoformat(),"event":EVENT_ID,"hypothesis":"Mars–Jupiter geocentric exact conjunction",
-        "researchOnly":True,"strategySignal":False,"reports":reports}
+    tested=global_fdr(reports)
+    # Final confidence labels must use global market x horizon multiplicity.
+    for result in reports.values():
+        if result.get("status")=="ok":attach_evidence(result["horizons"])
+    return {"schemaVersion":3,"generatedAt":datetime.now(timezone.utc).isoformat(),
+        "asOf":asof.isoformat(),"event":EVENT_ID,"methodVersion":"quantitative-evidence-v3",
+        "multipleTesting":{"family":"all available markets x nine horizons",
+                           "hypotheses":tested,"method":"Benjamini-Hochberg global FDR"},
+        "hypothesis":"Mars–Jupiter geocentric exact conjunction",
+        "researchOnly":True,"strategySignal":False,"reports":reports,
+        "additionalEventStudies":catalog_reports if catalog is not None else {},
+        "gOverlay":g_overlay,
+        "additionalEvidenceStatus":"descriptive-only; no inferential significance or OOS proof"}
 
 def main():
     cli=argparse.ArgumentParser()
     cli.add_argument("--events",required=True)
+    cli.add_argument("--catalog",help="Optional predeclared event_catalog.json for descriptive event families")
+    cli.add_argument("--g-trades",help="Existing readonly G selected cash-ledger archive")
+    cli.add_argument("--g-executive",help="Existing G model selection metadata")
     cli.add_argument("--output",required=True)
     cli.add_argument("--as-of",default=datetime.now(timezone.utc).date().isoformat())
     cli.add_argument("--prices",help="Optional CSV with date,close (offline single market)")
@@ -223,10 +361,20 @@ def main():
         try: report=build_report(events,args.market,parse_prices_csv(Path(args.prices)),asof)
         except Exception as exc:
             report={"status":"unavailable","message":str(exc)}
-        payload={"schemaVersion":1,"generatedAt":datetime.now(timezone.utc).isoformat(),
-            "asOf":asof.isoformat(),"event":EVENT_ID,"researchOnly":True,
+        if report.get("status")=="ok":
+            tested=global_fdr({args.market:report})
+            attach_evidence(report["horizons"])
+        else:tested=0
+        payload={"schemaVersion":3,"generatedAt":datetime.now(timezone.utc).isoformat(),
+            "asOf":asof.isoformat(),"event":EVENT_ID,"methodVersion":"quantitative-evidence-v3",
+            "multipleTesting":{"family":"single market offline CLI only",
+                               "hypotheses":tested,"method":"Benjamini-Hochberg"},
+            "researchOnly":True,
             "strategySignal":False,"reports":{args.market:report}}
-    else: payload=build_all(events,asof)
+    else:
+        catalog=(json.loads(Path(args.catalog).read_text(encoding="utf-8")) if args.catalog else None)
+        payload=build_all(events,asof,catalog=catalog,
+                          g_trades=args.g_trades,g_executive=args.g_executive)
     output=Path(args.output);output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(json.dumps(payload,ensure_ascii=False,allow_nan=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({key:r["status"] for key,r in payload["reports"].items()}))

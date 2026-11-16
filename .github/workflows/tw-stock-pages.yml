@@ -6,7 +6,7 @@ on:
     # Sunday 11:30 Asia/Taipei: fallback redeploy after TDCC 09:35 weekly collector.
     - cron: '30 3 * * 0'
   workflow_run:
-    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'Taiwan VIXTWN Homepage Data']
+    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'Taiwan VIXTWN Homepage Data', 'Financial Astrology Research V1']
     types: [completed]
     branches: [main]
   push:
@@ -587,3 +587,44 @@ jobs:
                   time.sleep(5)
           PY
 
+      - name: Verify live financial astrology data, schema and homepage
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,os,time,urllib.request
+          base=os.environ['PAGES_URL'].rstrip('/')
+          localpath=Path('tw-stock-dashboard/docs/data/financial_astrology/report.json')
+          def load_remote(path):
+              q='?astrocheck='+str(time.time())
+              request=urllib.request.Request(base+'/'+path+q,headers={
+                'User-Agent':'Financial-Astrology-Pages-Regression/1.0','Cache-Control':'no-cache'})
+              with urllib.request.urlopen(request,timeout=25) as response:
+                  if response.status!=200: raise ValueError('HTTP '+str(response.status)+' '+path)
+                  return response.read()
+          expected=json.loads(localpath.read_text(encoding='utf-8')) if localpath.exists() else None
+          for attempt in range(8):
+              try:
+                  index=load_remote('index.html').decode('utf-8')
+                  detail=load_remote('financial-astrology.html').decode('utf-8')
+                  assert 'financial-astrology.html' in index
+                  assert 'astroConclusionHeadline' in detail
+                  assert 'astroCredibility' in detail, 'Market evidence must be visible'
+                  assert b'renderBacktest' in load_remote('financial-astrology.js')
+                  if expected:
+                      actual=json.loads(load_remote('data/financial_astrology/report.json'))
+                      assert actual.get('researchOnly') is True
+                      assert actual.get('strategySignal') is False
+                      assert actual.get('generatedAt')==expected.get('generatedAt'), 'Pages research data stale'
+                      assert actual.get('methodVersion')==expected.get('methodVersion')
+                      print('PASS financial astrology report freshness',actual.get('generatedAt'),
+                            {k:r.get('status') for k,r in actual.get('reports',{}).items()})
+                  else:
+                      print('Astrology page ready; initial research report not yet generated')
+                  break
+              except Exception as exc:
+                  print('Financial astrology Pages attempt',attempt+1,repr(exc),flush=True)
+                  if attempt==7: raise
+                  time.sleep(6)
+          PY

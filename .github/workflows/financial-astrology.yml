@@ -40,6 +40,8 @@ jobs:
         working-directory: tw-stock-dashboard/financial-astrology
       - name: Run market data backtest logic tests (synthetic fixtures only)
         run: python3 -m unittest discover -s tw-stock-dashboard/financial-astrology/tests -p 'test_*.py' -v
+      - name: Regression suite for repository agent and deployment safety
+        run: python3 -m unittest discover -s .github/agent -p 'test_*.py' -v
       - name: Validate read-only UI and existing dashboard integration
         run: |
           node --check tw-stock-dashboard/docs/financial-astrology.js
@@ -60,12 +62,81 @@ jobs:
           assert data['ephemeris']['origin']=='geocentric'
           assert data['verifiedReturnSignal'] is False
           assert events['events']
+          catalog=json.loads((root/'event_catalog.json').read_text())
+          families=catalog['studyFamilies']
+          assert len(families)>=7 and 'new_moon' in families and 'mercury_retrograde_start' in families
+          assert all('exactUtc' in e for fam in families.values() for e in fam['events'])
           assert all(x['actualAngleDeg']<0.01 for x in events['events'])
           PY
 
+
+  research-preview:
+    needs: verify
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install locked astronomical ephemeris
+        run: npm ci
+        working-directory: tw-stock-dashboard/financial-astrology
+      - name: Calculate precise Mars-Jupiter conjunction UTC events
+        run: node tw-stock-dashboard/financial-astrology/build.cjs --output=/tmp/financial-astrology-preview
+      - name: Install public historical data reader
+        run: python3 -m pip install 'yfinance>=0.2.65,<2'
+      - name: Retrieve REAL public daily index closes and compute event-study metrics
+        run: |
+          python3 tw-stock-dashboard/financial-astrology/backtest.py \
+            --events=/tmp/financial-astrology-preview/mars_jupiter_conjunction.json \
+            --catalog=/tmp/financial-astrology-preview/event_catalog.json \
+            --g-trades=tw-stock-dashboard/docs/data/research/g_compound_3y/trades.json \
+            --g-executive=tw-stock-dashboard/docs/data/research/g_compound_3y/executive.json \
+            --output=/tmp/financial-astrology-preview/report.json
+      - name: Summarize actual research provenance and sample coverage
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('/tmp/financial-astrology-preview/report.json').read_text())
+          print('REAL MARKET PRICE EVIDENCE SUMMARY; research only, no trading recommendation')
+          ok=0
+          for market,result in x['reports'].items():
+              if result.get('status')!='ok':
+                  print(market,'UNAVAILABLE:',result.get('message','not returned')[:160])
+                  continue
+              h=next((a for a in result['horizons'] if a['horizonSessions']==20),{})
+              print(market,'source',result['source'],'through',result['sampleEnd'],
+                    'N20',h.get('sampleSize',0),'winRate',h.get('winRate'),
+                    'meanReturn',h.get('meanReturn'),'excess',h.get('excessReturn'),
+                    'credibility',h.get('evidence',{}).get('label','missing'))
+              ok+=1
+          print('MARKETS_WITH_VERIFIED_DAILY_CLOSES',ok,'OF',len(x['reports']))
+          print('G_OVERLAY',x.get('gOverlay',{}).get('status'),'source:',x.get('gOverlay',{}).get('sourceModel','unavailable'))
+          print('ADDITIONAL_EVENT_FAMILIES',len(x.get('additionalEventStudies',{}).get('NASDAQ',{})))
+          if not ok:
+              print('::warning::All real market price sources unavailable; no performance generated.')
+          PY
+      - name: Archive research-only provenance JSON for PR review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: financial-astrology-real-data-preview
+          path: /tmp/financial-astrology-preview/report.json
+          if-no-files-found: warn
+          retention-days: 7
+
+
   publish-research-data:
     needs: verify
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     concurrency:
@@ -91,6 +162,9 @@ jobs:
         run: |
           python3 tw-stock-dashboard/financial-astrology/backtest.py \
             --events=tw-stock-dashboard/docs/data/financial_astrology/mars_jupiter_conjunction.json \
+            --catalog=tw-stock-dashboard/docs/data/financial_astrology/event_catalog.json \
+            --g-trades=tw-stock-dashboard/docs/data/research/g_compound_3y/trades.json \
+            --g-executive=tw-stock-dashboard/docs/data/research/g_compound_3y/executive.json \
             --output=tw-stock-dashboard/docs/data/financial_astrology/report.json
       - name: Publish only isolated astrology JSON without affecting G intraday workflows
         run: |
@@ -99,6 +173,7 @@ jobs:
           git add tw-stock-dashboard/docs/data/financial_astrology/latest.json \
             tw-stock-dashboard/docs/data/financial_astrology/calendar.json \
             tw-stock-dashboard/docs/data/financial_astrology/mars_jupiter_conjunction.json \
+            tw-stock-dashboard/docs/data/financial_astrology/event_catalog.json \
             tw-stock-dashboard/docs/data/financial_astrology/report.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Publish isolated financial astrology research data"

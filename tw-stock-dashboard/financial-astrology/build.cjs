@@ -2,6 +2,7 @@
 const fs=require('node:fs');
 const path=require('node:path');
 const astro=require('./astro-core.cjs');
+const extra=require('./event-catalog.cjs');
 const argv=process.argv.slice(2);
 const opt=(key,def)=>argv.find(x=>x.startsWith(key+'='))?.slice(key.length+1)??def;
 const now=astro.utc(opt('--now',new Date().toISOString()));
@@ -12,6 +13,9 @@ const write=(name,data)=>{
 };
 const events=astro.findExact('Mars','Jupiter',0,'1990-01-01T00:00:00.000Z',
   new Date(now.getTime()+100*86400000),{orbDeg:2,stepHours:6});
+const allEvents=extra.catalog('1990-01-01T00:00:00.000Z',
+  new Date(now.getTime()+100*86400000));
+write('event_catalog.json',allEvents);
 const futurePairs=[['Sun','Moon'],['Sun','Mercury'],['Sun','Mars'],['Mercury','Venus'],
   ['Venus','Mars'],['Mars','Jupiter'],['Jupiter','Saturn'],['Saturn','Uranus']];
 const forwardStart=new Date(now.getTime()-2*86400000);
@@ -36,4 +40,4 @@ write('mars_jupiter_conjunction.json',{schemaVersion:1,generatedAt:now.toISOStri
   bodyA:'Mars',bodyB:'Jupiter',aspect:'conjunction',angleDeg:0,orbDeg:2,
   source:'Astronomy Engine 2.1.19, geocentric tropical ECT',events});
 process.stdout.write(JSON.stringify({generatedAt:now.toISOString(),events:events.length,
-  calendar:calendar.length,root})+'\n');
+  calendar:calendar.length,studyFamilies:Object.keys(allEvents.studyFamilies).length,root})+'\n');
