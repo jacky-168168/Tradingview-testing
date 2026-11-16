@@ -106,7 +106,8 @@ assert.match(page,/<details class="panel astro-research"/);
 assert.match(page,/<summary>研究方法、資料來源與限制<\/summary>/);
 assert.match(page,/<summary>進階資料：行星角度與移動速度<\/summary>/);
 assert.match(js,/new Date\(input\+':00\+08:00'\)/);
-assert.match(js,/showEvidence\(r.sampleSize<30/);
+assert.match(js,/astroResearchVerdict/);
+assert.match(js,/historicalTendency/);
 const voids=new Set(['meta','link','input','img','br','hr','source','area','base','embed','wbr']);
 const stack=[];const errors=[];
 for(const m of page.matchAll(/<(\/?)(([a-zA-Z][\w-]*))(?:\s[^>]*?)?>/g)){
