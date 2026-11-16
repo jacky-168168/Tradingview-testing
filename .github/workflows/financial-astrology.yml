@@ -84,7 +84,7 @@ jobs:
         working-directory: tw-stock-dashboard/financial-astrology
       - name: Calculate precise Mars-Jupiter conjunction UTC events
         run: node tw-stock-dashboard/financial-astrology/build.cjs --output=/tmp/financial-astrology-preview
-      - name: Install unlicensed-free historical data reader
+      - name: Install public historical data reader
         run: python3 -m pip install 'yfinance>=0.2.65,<2'
       - name: Retrieve REAL public daily index closes and compute event-study metrics
         run: |
@@ -125,7 +125,7 @@ jobs:
 
   publish-research-data:
     needs: verify
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     concurrency:
