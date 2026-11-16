@@ -158,3 +158,39 @@ assert(js.includes('globalFdrQValue'),'Cross-market FDR result must be used');
 assert(js.includes('renderStrategyComparison'),'Close-based MA20 comparison must be displayable');
 assert(js.includes('目前所選星盤並非火星木星合相'),
        'Nonmatching sky cannot be treated as this-day market prediction');
+
+const vm=require('node:vm');
+// Fixed-clock regression: homepage crosses Taiwan midnight without a page refresh.
+let clock=Date.parse('2026-11-15T15:59:00.000Z');
+class FixedDate extends Date{
+  constructor(...args){super(...(args.length?args:[clock]));}
+  static now(){return clock;}
+}
+const ui={state:{textContent:''},event:{textContent:''},evidence:{textContent:''}};
+let minuteTick=null;
+const rootElement={querySelector(key){
+  if(key==='[data-astro-state]')return ui.state;
+  if(key==='[data-astro-event]')return ui.event;
+  if(key==='[data-astro-evidence]')return ui.evidence;
+  throw new Error('Unknown selector '+key);
+}};
+const homepageScript=fs.readFileSync(root+'financial-astrology-home.js','utf8');
+const sandbox={
+  document:{getElementById(id){return id==='financialAstrologyHome'?rootElement:null;},addEventListener(){}},
+  window:{Astronomy:{
+    Body:{Mars:'Mars',Jupiter:'Jupiter'},
+    GeoVector(body){return {body};},
+    Ecliptic(vector){return {elon:vector.body==='Mars'?120:121};}
+  },addEventListener(){}},
+  Date:FixedDate,Intl,Math,Number,Error,
+  fetch:async()=>({ok:false}),
+  setInterval(fn,ms){if(ms===60000)minuteTick=fn;else assert.equal(ms,15*60000);return 1;}
+};
+vm.runInNewContext(homepageScript,sandbox);
+assert(ui.state.textContent.includes('2026/11/15')&&ui.state.textContent.includes('23:59'));
+clock=Date.parse('2026-11-15T16:01:00.000Z');
+assert.equal(typeof minuteTick,'function');
+minuteTick();
+assert(ui.state.textContent.includes('2026/11/16')&&ui.state.textContent.includes('00:01'),
+       'The live homepage sky must advance to current Taipei date across midnight');
+assert(ui.event.textContent.includes('接近合相'));
