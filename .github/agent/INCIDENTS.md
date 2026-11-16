@@ -7,3 +7,4 @@
 | 2026-10-21 | 主排程時間由 :00/:30 調整後 CI 失敗 | 舊測試寫死 cron 值 | 排程測試跟實際規格同步、避免過度指定字面值 | \`test_intraday_schedule.cjs\` |
 
 每次 P1/P2 修復後新增一筆，必須提供 Actions run、原始輸入、可重現步驟與驗收連結；不可自行編造「根本原因」。
+| 2026-11-16 | 金融占星資料更新後 Pages 可能保留舊版（發布路徑風險，非已證實的正式故障） | 原本 TW Stock Pages 的 workflow_run 清單未監聽金融占星工作流；GitHub Bot commit 通常不觸發下一個 push workflow | 加入成功的 Astro workflow_run → Pages，部署後核對正式 JSON 時間與主頁 | .github/agent/test_financial_astrology_publication.py、PR #191 |

@@ -148,3 +148,13 @@ assert(js.includes('state.liveMode=false'),'historical date must pause realtime 
 assert(!js.includes("load('latest.json')"));
 assert(js.includes("new Date(input+':00+08:00')"));
 assert(page.includes('金融占星')&&page.includes('astroObservedWin'));
+
+assert(page.includes('id="astroStrategyCompare"'),'MA20 research comparison must have a UI');
+assert(page.includes('id="astroEvent"'),'Event family must have selectable options');
+assert(page.includes('value="new_moon"'),'new moon study selector');
+assert(page.includes('value="mercury_retrograde_start"'),'retrograde study selector');
+assert(js.includes('additionalEventStudies'),'unvalidated additional events cannot hijack Mars Jupiter stats');
+assert(js.includes('globalFdrQValue'),'Cross-market FDR result must be used');
+assert(js.includes('renderStrategyComparison'),'Close-based MA20 comparison must be displayable');
+assert(js.includes('目前所選星盤並非火星木星合相'),
+       'Nonmatching sky cannot be treated as this-day market prediction');

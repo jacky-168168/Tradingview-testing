@@ -161,3 +161,15 @@ li{line-height:1.75;margin:5px 0}.source-links{display:flex;flex-wrap:wrap;gap:1
  .astro-brief-main strong{font-size:18px}
  .astro-brief-stats strong{font-size:16px}
 }
+
+/* V1.6: historical event family selection and offline strategy comparisons. */
+.astro-brief-controls{grid-template-columns:repeat(3,minmax(0,1fr))}
+.astro-strategy-compare>div{padding:10px 12px}
+#astroStrategyCompare{overflow-x:auto;font-size:13px;line-height:1.6}
+#astroStrategyCompare table{min-width:650px;margin:8px 0}
+#astroStrategyCompare th,#astroStrategyCompare td{padding:8px 10px}
+#astroStrategyCompare>p{color:#536079;line-height:1.65;margin:8px 0 12px}
+@media(max-width:760px){.astro-brief-controls{grid-template-columns:1fr 1fr}
+  .astro-brief-controls label:nth-child(3){grid-column:1/-1}}
+@media(max-width:420px){.astro-brief-controls{grid-template-columns:1fr}
+  .astro-brief-controls label:nth-child(3){grid-column:auto}}

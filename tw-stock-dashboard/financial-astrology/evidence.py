@@ -5,9 +5,10 @@ import math
 def evidence_for_horizon(row):
     """Only actual observed returns are eligible for a market-specific evidence label."""
     n = row.get("sampleSize", 0)
-    q = row.get("fdrQValue")
+    q = row.get("globalFdrQValue", row.get("fdrQValue"))
     ci = row.get("excessConfidence95")
     hold = row.get("holdout") or {}
+    regime = row.get("regimeMatchedControl") or {}
     delta = row.get("excessReturn")
     if not isinstance(n,int) or n<=0:
         return {"level":"unavailable","label":"尚無資料","direction":"無法判定",
@@ -24,6 +25,8 @@ def evidence_for_horizon(row):
         level,label,reason="unconfirmed","尚未驗證","尚無可以檢查的超額報酬信賴區間。"
     elif ci[0]<=0<=ci[1]:
         level,label,reason="unconfirmed","尚未驗證","超額報酬的信賴區間包含零，優勢不穩定。"
+    elif regime.get("status")!="descriptive":
+        level,label,reason="unconfirmed","市場環境對照不足","沒有足夠的同年度、相近趨勢與波動條件下的非事件對照。"
     elif hold.get("holdoutCount",0)<10:
         level,label,reason="preliminary","初步觀察","統計結果仍缺乏足夠的時間留出樣本；尚非獨立樣本外驗證。"
     elif not isinstance(delta,(float,int)) or not isinstance(hold.get("holdoutMean"),(float,int)):

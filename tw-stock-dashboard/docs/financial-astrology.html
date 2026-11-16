@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>全球金融占星研究中心｜台股量化</title>
-<link rel="stylesheet" href="./financial-astrology.css?v=1.4-live-stats">
+<link rel="stylesheet" href="./financial-astrology.css?v=1.6-g-compare">
 <script src="./site-access.js"></script>
 <script defer src="./financial-astrology-vendor.js?v=2.1.19"></script>
 <script defer src="./financial-astrology-explain.js?v=1.3"></script>
-<script defer src="./financial-astrology.js?v=1.4-live-stats"></script></head>
+<script defer src="./financial-astrology.js?v=1.6-g-compare"></script></head>
 <body><div class="astro-app"><header class="astro-head"><div><a href="./index.html" class="back">← 返回台股量化主頁</a>
 <h1>🌌 金融占星研究中心</h1><p>選一個日期，看看當時的星象代表什麼。</p></div>
 <a href="./backtest.html" class="back">歷史回測中心</a></header>
@@ -44,7 +44,16 @@
       <option>10</option><option selected>20</option><option>60</option>
       <option>90</option><option>180</option><option>360</option></select>
     </label>
-    <select id="astroEvent" aria-label="研究星象" hidden><option value="mars_jupiter_conjunction">火星與木星合相</option></select>
+    <label>研究星象
+    <select id="astroEvent" aria-label="研究星象">
+      <option value="mars_jupiter_conjunction">火星 × 木星合相（完整統計）</option>
+      <option value="venus_jupiter_conjunction">金星 × 木星合相</option>
+      <option value="mars_saturn_square">火星 × 土星四分相</option>
+      <option value="jupiter_saturn_conjunction">木星 × 土星合相</option>
+      <option value="saturn_uranus_square">土星 × 天王星四分相</option>
+      <option value="new_moon">新月</option><option value="full_moon">滿月</option>
+      <option value="mercury_retrograde_start">水星開始逆行</option>
+    </select></label>
   </div>
   <p id="astroEventMatch" class="astro-brief-note">檢查所選星盤是否出現火星與木星合相…</p>
   <div class="astro-brief-main"><span class="astro-brief-caption">歷史研究能否支持偏多／偏空？</span>
@@ -57,7 +66,7 @@
     <div><span>相對一般交易日</span><strong id="astroObservedExcess">—</strong></div>
   </div>
   <p id="astroResearchVerdict" class="astro-brief-note" role="status">等待可核實的行情與歷史事件資料。</p>
-  <p class="astro-brief-footnote">僅研究已預先定義的「火星與木星精確合相」。樣本少、資料缺漏或驗證不足時，明確顯示無法判定，不提供交易訊號。</p>
+  <p class="astro-brief-footnote">火星木星合相提供跨市場統計檢定；其他星象先提供探索性事件統計，未經跨事件／市場多重檢定與樣本外確認。所有結果均不構成交易訊號。</p>
   <a href="#astroBacktestMeta">查看完整事件績效與資料來源</a>
 </section>
 <details class="astro-advanced astro-time-settings">
@@ -90,6 +99,7 @@
 <section class="panel"><h2>未來 90 天事件日曆</h2><p class="hint">事件時間預設轉成台灣時間，可切換上方顯示時區。</p>
 <div id="astroCalendar" class="results">尚無資料</div></section></div></details>
 <details class="panel astro-research"><summary>📈 歷史研究：相同星象之後股市怎麼走？</summary><div class="astro-research-body">
+<p id="astroComparability" class="hint">各國股價指數口徑可能不同，跨市場比較時請確認是否包含股息。</p>
 <p id="astroBacktestMeta" class="hint">讀取歷史研究狀態中…</p>
 <div class="metrics"><div><small>可比較的事件次數</small><strong id="metricN">—</strong></div>
 <div><small>後續上漲率</small><strong id="metricWin">—</strong></div>
@@ -98,7 +108,15 @@
 <div><small>比一般日多／少</small><strong id="metricExcess">—</strong></div>
 <div><small>期間平均最大跌幅</small><strong id="metricDd">—</strong></div></div>
 <div id="astroEvidence" class="callout" role="status">尚未取得經驗證統計資料。</div>
-<details class="astro-advanced"><summary>查看每次歷史事件的明細</summary><div id="astroCohorts" class="tablewrap"></div></details>
+<details class="astro-advanced"><summary>查看每次歷史事件的明細</summary><div id="astroCohorts" class="tablewrap"></div>
+    <details class="astro-advanced astro-strategy-compare">
+      <summary>量化研究：MA20 趨勢策略加入占星條件，有沒有更好？</summary>
+      <p class="hint">純離線觀察：指數收盤價、前一收盤可得訊號、每次進出各扣 5bps 成本。只作研究，不修改原有 G 策略，也不自動交易。</p>
+      <div id="astroStrategyCompare" role="status">尚無策略對照資料。</div>
+      <div class="astro-g-overlay"><h4>G 選股與星象研究（原始交易紀錄，僅作描述）</h4>
+      <p class="hint">比較 G 歷史交易落在星象事件後 20 交易日內、外的比例與淨報酬；未重新執行資金帳，不能視為新策略績效。</p>
+      <div id="astroGOverlay" role="status">等待既有 G 交易研究檔。</div></div>
+    </details></details>
 </div></details>
 <details class="panel astro-advanced astro-methods"><summary>研究方法、資料來源與限制</summary>
 <ul><li>行星位置採 <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer" target="_blank">Astronomy Engine</a> 2.1.19，地心、熱帶黃道、真黃道 of date，天文資料以 UTC 紀錄。</li>

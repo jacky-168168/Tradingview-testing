@@ -57,9 +57,10 @@ class FinancialAstrologyBacktestTest(unittest.TestCase):
         base["sampleSize"]=16
         self.assertEqual(evidence_for_horizon(base)["level"],"low")
         base["sampleSize"]=33
+        base["regimeMatchedControl"]={"status":"descriptive","matchedEvents":33}
         self.assertEqual(evidence_for_horizon(base)["level"],"preliminary")
         self.assertEqual(evidence_for_horizon(base)["direction"],"無法判定")
-        base["fdrQValue"]=0.9
+        base["globalFdrQValue"]=0.9
         self.assertEqual(evidence_for_horizon(base)["level"],"unconfirmed")
         self.assertEqual(evidence_for_horizon({"sampleSize":0})["level"],"unavailable")
 

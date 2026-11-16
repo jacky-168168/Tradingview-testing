@@ -62,3 +62,14 @@ CSV 格式：`date,close`，日期 ISO 8601，各資料列為真實交易日收�
 - FRED SP500: https://fred.stlouisfed.org/series/SP500
 - 天文資料：Astronomy Engine 2.1.19 (MIT)。
 - 不修改 G 盤中、A/D/F/G/G Pro 交易邏輯、Risk Score、原始行情或交易資料。
+
+## V1.6: Data publication, expanded research and conservative comparisons
+
+- Release: Financial Astrology Research V1 succeeds on main and triggers TW Stock Pages through workflow_run. Pages smoke validates report.json generatedAt and linked main/detail pages. No direct agent merge to main. All generated astronomy/market JSON stays in the isolated astrology data folder.
+- Event catalog: eight preregistered categories: Mars/Jupiter conjunction, Venus/Jupiter conjunction, Mars/Saturn square, Jupiter/Saturn conjunction, Saturn/Uranus square, new moon, full moon, Mercury retrograde starts. Astronomy Engine generates exact UTC times in event_catalog.json. Additional events have descriptive-only research, no significance or independent OOS claim.
+- Statistical protections: six markets × nine horizons get global BH-FDR; add same-year MA60-trend and realized-volatility matched regimes, event-window purging, independent-event bootstrap and permutation. If regime controls are insufficient, display insufficient rather than claiming success. None of these imply causation.
+- Price basis: the commonly quoted DAX ^GDAXI is a dividend-reinvested performance index; other included indices are typically price-only. Each result carries indexReturnBasis and a warning that cross-market return levels are not directly comparable. FRED SP500 fallback covers about ten years.
+- Offline strategy experiment: compare buy/hold, MA20 long/flat, and MA20+event-window long/flat using only close(t) info for t→t+1, 5 bps per side, fixed 20 trading-session event window. Report CAGR, Sharpe, Sortino, MDD, Calmar, exposure and entry count. Exploratory, not tradeable index replication.
+- Existing G overlay is read-only. It reads the archive selected G model and historical closed tickets, and only reports sample counts and descriptive performance when enough event windows exist. It does not re-run G cash accounting, modify original selection or Risk Score, and is not a comparable portfolio Sharpe/CAGR. Full G+astronomy strategy would require a frozen-parameter cash-ledger run with blind OOS.
+- Failure handling: all failed quote sources remain explicitly unavailable, no invented values. PR preview stores research JSON artifact only, and main daily workflow publishes actual data after review/merge.
+- Tests: npm test, python -m unittest discover -s tw-stock-dashboard/financial-astrology/tests -p test_*.py, python -m unittest discover -s .github/agent -p test_*.py, and Pages live smoke.

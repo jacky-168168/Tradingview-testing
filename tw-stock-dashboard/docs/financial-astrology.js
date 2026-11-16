@@ -211,6 +211,66 @@
       box.appendChild(p);
     }
   }
+  function renderStrategyComparison(result){
+    const box=el('astroStrategyCompare');
+    if(!box)return;
+    box.replaceChildren();
+    const data=result?.strategyComparison;
+    if(!data?.report){
+      box.textContent='本事件或市場的離線策略比較尚未產生，不能推論策略優勢。';return;
+    }
+    const p=document.createElement('p');
+    p.textContent='指數類型：'+(result.indexReturnBasis==='gross-dividend-reinvested-performance'?
+      '含股息再投資的績效指數（DAX）':'價格指數（不計股息）')+
+      '。僅觀察模型，不能直接換算成可交易資產的淨利。';
+    box.appendChild(p);
+    const table=document.createElement('table');
+    const header=document.createElement('tr');
+    ['模型','年化報酬','Sharpe','最大回撤','參與交易日','進場次數'].forEach(x=>cell(header,x,'th'));
+    const thead=document.createElement('thead');thead.appendChild(header);table.appendChild(thead);
+    const fmt=x=>typeof x==='number'&&Number.isFinite(x)?(x*100).toFixed(2)+'%':'—';
+    const names={passive:'持有指數',ma20:'MA20 趨勢',ma20_plus_astrology:'MA20 ＋星象事件'};
+    const body=document.createElement('tbody');
+    for(const [key,name] of Object.entries(names)){
+      const item=data.report[key],metrics=item?.all;
+      if(!metrics)continue;
+      row(body,[name,fmt(metrics.cagr),
+        typeof metrics.sharpe==='number'?metrics.sharpe.toFixed(2):'—',
+        fmt(metrics.maxDrawdown),fmt(item.exposureFraction),item.entryCount]);
+    }
+    table.appendChild(body);box.appendChild(table);
+    const caption=document.createElement('p');
+    caption.textContent='測試方法：'+data.signalTiming+
+      '；成本：每次換倉 '+data.costBpsPerSide+' bps。2020 年後數據僅為時間分段描述，尚未完成獨立樣本外驗證。';
+    box.appendChild(caption);
+  }
+  function renderGOverlay(market,eventId){
+    const panel=el('astroGOverlay');
+    if(!panel)return;
+    const g=state.report?.gOverlay;
+    if(market!=='TAIEX'){
+      panel.textContent='G 研究只適用台股歷史交易；切換市場至「台股加權」可查看。';return;
+    }
+    if(!g || g.status!=='observational_only'){
+      panel.textContent='G 歷史交易事件對照尚不可用：'+(g?.reason||'未取得可用的交易紀錄。');return;
+    }
+    const d=g.families?.[eventId];
+    if(!d){
+      panel.textContent='此星象在既有 G 策略回測期間沒有可對照的事件窗口。';return;
+    }
+    if(d.status==='insufficient'){
+      panel.textContent='既有 G 選股模型 '+g.sourceModel+'：事件窗口 '+
+        d.availableEventWindows+' 個，符合條件的歷史交易 '+d.gTradesInsideEventWindow+
+        ' 筆（其他 '+d.gTradesOutsideWindow+' 筆）；樣本不足，暫不比較報酬。';return;
+    }
+    const value=x=>typeof x==='number'&&Number.isFinite(x)?x.toFixed(2)+'%':'—';
+    panel.textContent='原 G 模型：'+g.sourceModel+'｜事件窗口 '+
+      d.availableEventWindows+' 個｜G 交易（事件內／外）'+
+      d.gTradesInsideEventWindow+'／'+d.gTradesOutsideWindow+
+      ' 筆｜事件內平均單筆淨報酬 '+value(d.meanGTradeNetPctInside)+
+      '，事件外 '+value(d.meanGTradeNetPctOutside)+
+      '。這只是舊交易的分組觀察，未重算資金曲線或樣本外結果。';
+  }
   function renderBacktest(){
     const market=el('astroMarket').value;
     const h=Number(el('astroHorizon').value);
@@ -236,7 +296,49 @@
       show('astroEvidence',message);
     };
     clearNumbers();
+    const eventId=el('astroEvent')?.value||'mars_jupiter_conjunction';
+    renderGOverlay(market,eventId);
+    if(eventId!=='mars_jupiter_conjunction'){
+      renderStrategyComparison(null);
+      show('astroEventMatch','這是另一種星象的獨立歷史事件研究；不能把其平均報酬直接套用到目前星盤。');
+      const study=report?.additionalEventStudies?.[market]?.[eventId];
+      const chosen=study?.horizons?.find(x=>x.horizonSessions===h);
+      const available=report?.reports?.[market]?.status==='ok' &&
+        study?.status==='exploratory' && Number.isInteger(chosen?.sampleSize) &&
+        chosen.sampleSize>0;
+      show('astroMarketDirection','無法判定');
+      show('astroCredibility','探索性，尚未驗證');
+      if(!available){
+        const msg='這個星象與市場尚無完整的真實歷史比較；不能計算可靠勝率。';
+        show('astroResearchVerdict',msg);show('astroConclusionEvidence',msg);
+        show('astroEvidence',msg);
+        show('astroBacktestMeta','附加星象研究：尚無可公開驗證的價格樣本。');
+        return;
+      }
+      const fmt=x=>typeof x==='number'&&Number.isFinite(x)?(x>0?'+':'')+
+        (x*100).toFixed(2)+'%':'—';
+      const up=x=>typeof x==='number'&&Number.isFinite(x)?(x*100).toFixed(1)+'%':'—';
+      show('astroObservedN',chosen.sampleSize+' 次');
+      show('astroObservedWin',up(chosen.winRate));
+      show('astroObservedExcess',fmt(chosen.excessReturn));
+      show('metricN',String(chosen.sampleSize));
+      show('metricWin',up(chosen.winRate));
+      show('metricMean',fmt(chosen.meanReturn));
+      show('metricBase',fmt(chosen.baselineReturn));
+      show('metricExcess',fmt(chosen.excessReturn));
+      const msg=study.eventLabel+'在 '+marketName+' 後 '+h+' 個交易日，有效事件 '+
+        chosen.sampleSize+' 次，歷史上漲比例 '+up(chosen.winRate)+
+        '，平均報酬 '+fmt(chosen.meanReturn)+
+        '，相對同年一般交易日 '+fmt(chosen.excessReturn)+
+        '。此系列尚未完成跨事件檢定及獨立樣本外驗證，不能稱為有效買賣訊號。';
+      show('astroResearchVerdict',msg);show('astroConclusionEvidence',msg);
+      show('astroEvidence','可信度：僅探索（未提供顯著性 p/q 值或真正樣本外報酬），不可判斷多空。');
+      show('astroBacktestMeta','資料：真實歷史指數收盤價｜'+
+        (report.reports[market].source||'來源待核實')+'｜更新：'+(report.generatedAt||'—'));
+      return;
+    }
     if(!report?.reports){
+      renderStrategyComparison(null);
       show('astroBacktestMeta','歷史研究尚未取得真實行情資料，沒有可核實績效。');
       empty('尚未取得真實歷史行情與事件研究結果，不能給出勝率或推論市場方向。');
       return;
@@ -249,12 +351,14 @@
       '｜資料來源：'+(result?.source||'未取得')+
       '｜研究日期：'+asof);
     if(!result||result.status!=='ok'){
+      renderStrategyComparison(null);
       empty(marketName+'：沒有可核實的價格研究結果（'+
         (result?.message||'資料來源目前無法取得')+'）。不能以占星解讀取代真實績效。');
       return;
     }
     const metric=result.horizons?.find(x=>x.horizonSessions===h);
     if(!metric || !Number.isInteger(metric.sampleSize) || metric.sampleSize<=0){
+      renderStrategyComparison(null);
       empty(marketName+'：這個時間範圍沒有已完成、可驗證的事件樣本。');
       return;
     }
@@ -291,7 +395,7 @@
     show('astroConclusionEvidence',hasRelevantChart
       ? '這張星盤包含火星木星合相。'+summaryText
       : '目前所選星盤並非火星木星合相；下方 '+marketName+' 回測只供比較，不可當作本日預測。'+summaryText);
-    const q=num(metric.fdrQValue)?metric.fdrQValue.toFixed(3):'尚無';
+    const q=num(metric.globalFdrQValue)?metric.globalFdrQValue.toFixed(3):'尚無';
     const ci=Array.isArray(metric.excessConfidence95)?
       pfx(metric.excessConfidence95[0])+'～'+pfx(metric.excessConfidence95[1]):'尚無';
     const hold=metric.holdout;
@@ -299,7 +403,7 @@
       '；時間留出觀察：'+hold.holdoutCount+' 次（非預註冊樣本外驗證）':
       '；時間留出觀察：不足';
     show('astroEvidence','可信度：'+label+'；歷史事件 '+n+' 次、未完成／無行情事件 '+
-      (metric.censoredEvents??0)+' 次；多重比較調整後 q='+q+
+      (metric.censoredEvents??0)+' 次；跨市場與觀察期多重比較調整後 q='+q+
       '；超額報酬95%信賴區間 '+ci+holdInfo+
       '。無法直接證明因果與可交易優勢。');
     const wrap=el('astroCohorts'),table=document.createElement('table');
@@ -311,6 +415,10 @@
       row(tbody,[when(e.eventUtc),e.entryDate,e.exitDate,pfx(e.return),pfx(e.windowMaxDrawdown)]);
     }
     table.appendChild(tbody);wrap.appendChild(table);
+    show('astroComparability',result.indexReturnBasis==='gross-dividend-reinvested-performance'
+      ? '注意：DAX 為含股息再投資的績效指數，不可把不同市場平均報酬直接視為同口徑比較。'
+      : '本市場採價格指數、未計股息。與 DAX 等績效指數的報酬不應直接跨市場排名。');
+    renderStrategyComparison(result);
   }
   async function start(){
     // The selected sky is computed live; stale daily JSON must never replace it.
@@ -322,6 +430,7 @@
   }
   el('astroTimezone').addEventListener('change',()=>{if(state.liveMode)refreshLiveChart();else renderEphemeris();renderCalendar();renderBacktest();});
   el('astroMarket').addEventListener('change',renderBacktest);
+  el('astroEvent').addEventListener('change',renderBacktest);
   el('astroHorizon').addEventListener('change',renderBacktest);
   el('astroQueryDate').addEventListener('click',calculateSelected);
   el('astroQueryTime').addEventListener('change',calculateSelected);
