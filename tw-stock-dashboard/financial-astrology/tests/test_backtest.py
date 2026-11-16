@@ -38,6 +38,8 @@ class FinancialAstrologyBacktestTest(unittest.TestCase):
         self.assertIsNone(twenty["pValue"])
         self.assertIsNone(twenty["holdout"])
         self.assertFalse(twenty["significanceClaim"])
+        self.assertIsNone(twenty["pValue"],"missing regime controls must not produce inferential p values")
+        self.assertIsNone(twenty["regimeMatchedCI95"])
         self.assertEqual(twenty["evidence"]["level"],"very_low")
         self.assertEqual(twenty["evidence"]["direction"],"無法判定")
         self.assertEqual(result["priceSampleCount"],len(self.prices))

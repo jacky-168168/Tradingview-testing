@@ -396,15 +396,19 @@
       ? '這張星盤包含火星木星合相。'+summaryText
       : '目前所選星盤並非火星木星合相；下方 '+marketName+' 回測只供比較，不可當作本日預測。'+summaryText);
     const q=num(metric.globalFdrQValue)?metric.globalFdrQValue.toFixed(3):'尚無';
-    const ci=Array.isArray(metric.excessConfidence95)?
-      pfx(metric.excessConfidence95[0])+'～'+pfx(metric.excessConfidence95[1]):'尚無';
+    const matched=metric.regimeMatchedControl;
+    const ci=Array.isArray(metric.regimeMatchedCI95)?
+      pfx(metric.regimeMatchedCI95[0])+'～'+pfx(metric.regimeMatchedCI95[1]):'尚無';
+    const matchedInfo=matched?.status==='descriptive'
+      ? '；相近年度、趨勢與波動的非事件對照樣本：'+matched.matchedEvents+' 次'
+      : '；相近市場環境的非事件對照不足';
     const hold=metric.holdout;
     const holdInfo=hold?.holdoutCount?
       '；時間留出觀察：'+hold.holdoutCount+' 次（非預註冊樣本外驗證）':
       '；時間留出觀察：不足';
     show('astroEvidence','可信度：'+label+'；歷史事件 '+n+' 次、未完成／無行情事件 '+
       (metric.censoredEvents??0)+' 次；跨市場與觀察期多重比較調整後 q='+q+
-      '；超額報酬95%信賴區間 '+ci+holdInfo+
+      '；市場環境配對的超額報酬95%信賴區間 '+ci+matchedInfo+holdInfo+
       '。無法直接證明因果與可交易優勢。');
     const wrap=el('astroCohorts'),table=document.createElement('table');
     const thead=document.createElement('thead'),heading=document.createElement('tr');

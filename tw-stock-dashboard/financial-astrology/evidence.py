@@ -6,10 +6,11 @@ def evidence_for_horizon(row):
     """Only actual observed returns are eligible for a market-specific evidence label."""
     n = row.get("sampleSize", 0)
     q = row.get("globalFdrQValue", row.get("fdrQValue"))
-    ci = row.get("excessConfidence95")
+    ci = row.get("regimeMatchedCI95") or row.get("excessConfidence95")
     hold = row.get("holdout") or {}
     regime = row.get("regimeMatchedControl") or {}
-    delta = row.get("excessReturn")
+    delta = (row.get("regimeMatchedExcessReturn") if row.get("regimeMatchedExcessReturn") is not None
+             else row.get("excessReturn"))
     if not isinstance(n,int) or n<=0:
         return {"level":"unavailable","label":"尚無資料","direction":"無法判定",
             "historicalTendency":"無資料","reason":"未取得有效歷史行情與事件樣本，沒有可核實的勝率。"}

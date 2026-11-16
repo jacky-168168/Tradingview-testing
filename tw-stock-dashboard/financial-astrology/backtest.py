@@ -264,7 +264,14 @@ def build_report(events, market, prices, asof):
     for row in horizons:
         horizon=row["horizonSessions"]
         samples,_=returns_for_events(events,clean,tz,horizon)
-        row["regimeMatchedControl"]=regime_control(samples,clean,horizon)
+        regime=regime_control(samples,clean,horizon)
+        row["regimeMatchedControl"]=regime
+        # The original same-year random baseline is descriptive only, not our formal p-value.
+        row["yearMatchedNaivePValue"]=row["pValue"]
+        row["pValue"]=(regime.get("permutationPValue")
+                       if regime.get("status")=="descriptive" else None)
+        row["regimeMatchedExcessReturn"]=regime.get("meanExcessReturn")
+        row["regimeMatchedCI95"]=regime.get("eventClusterBootstrap95")
     bh_fdr(horizons)
     attach_evidence(horizons)
     # Offline-only MA20 baseline; never writes into user's G/risk strategy code.
