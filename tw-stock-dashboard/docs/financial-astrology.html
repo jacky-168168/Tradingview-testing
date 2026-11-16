@@ -1,21 +1,21 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>全球金融占星研究中心｜台股量化</title>
-<link rel="stylesheet" href="./financial-astrology.css?v=1.3">
+<link rel="stylesheet" href="./financial-astrology.css?v=1.4-live-stats">
 <script src="./site-access.js"></script>
 <script defer src="./financial-astrology-vendor.js?v=2.1.19"></script>
 <script defer src="./financial-astrology-explain.js?v=1.3"></script>
-<script defer src="./financial-astrology.js?v=1.3"></script></head>
+<script defer src="./financial-astrology.js?v=1.4-live-stats"></script></head>
 <body><div class="astro-app"><header class="astro-head"><div><a href="./index.html" class="back">← 返回台股量化主頁</a>
 <h1>🌌 金融占星研究中心</h1><p>選一個日期，看看當時的星象代表什麼。</p></div>
 <a href="./backtest.html" class="back">歷史回測中心</a></header>
 <div class="warning">占星是傳統象徵解讀，<strong>不能單靠星盤決定股票買賣</strong>；歷史績效只顯示可核對的真實資料。</div>
 <section class="panel astro-main-panel">
-<div class="section-title"><h2>🌙 選日期，看懂星盤</h2><span id="astroUpdated">星盤資料載入中…</span></div>
+<div class="section-title"><h2>🌙 即時地心星盤｜現在日期自動更新</h2><span id="astroUpdated">星盤資料載入中…</span></div>
 <div class="astro-simple-query">
 <label for="astroQueryTime">查詢日期與時間（台灣時間 UTC+8）
 <input id="astroQueryTime" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" step="60"></label>
-<button id="astroQueryNow" type="button">看現在</button>
+<button id="astroQueryNow" type="button">回到即時星盤</button>
 <button id="astroQueryDate" type="button">查這一天</button>
 </div>
 <section id="astroConclusion" class="astro-conclusion" aria-labelledby="astroConclusionTitle" aria-live="polite">
@@ -29,13 +29,44 @@
 <details class="astro-conclusion-extra"><summary>想研究股市，還可以觀察什麼？</summary><p id="astroConclusionWatch">可對照成交量、波動與大盤趨勢。</p></details>
 <p class="astro-conclusion-footnote">這是傳統占星的文化性解讀，不是股市預測或買賣建議。</p>
 </section>
+<section class="astro-evidence-brief" aria-labelledby="astroBriefTitle">
+  <h3 id="astroBriefTitle">📊 股市研究結論｜真實歷史數據</h3>
+  <p class="astro-brief-note">星象是傳統說法；以下是歷史股票收盤價的統計研究，兩者不能混為一談。</p>
+  <div class="astro-brief-controls">
+    <label>市場
+      <select id="astroMarket"><option value="NASDAQ">Nasdaq Composite</option>
+      <option value="SP500">S&amp;P 500</option><option value="DAX">德國 DAX</option>
+      <option value="FTSE100">英國 FTSE 100</option><option value="CAC40">法國 CAC 40</option>
+      <option value="TAIEX">台股加權</option></select>
+    </label>
+    <label>觀察期間（交易日）
+      <select id="astroHorizon"><option>1</option><option>3</option><option>5</option>
+      <option>10</option><option selected>20</option><option>60</option>
+      <option>90</option><option>180</option><option>360</option></select>
+    </label>
+    <select id="astroEvent" aria-label="研究星象" hidden><option value="mars_jupiter_conjunction">火星與木星合相</option></select>
+  </div>
+  <p id="astroEventMatch" class="astro-brief-note">檢查所選星盤是否出現火星與木星合相…</p>
+  <div class="astro-brief-main"><span class="astro-brief-caption">歷史研究能否支持偏多／偏空？</span>
+    <strong id="astroMarketDirection">資料檢查中</strong>
+  </div>
+  <div class="astro-brief-stats">
+    <div><span>證據可信程度</span><strong id="astroCredibility">尚未評估</strong></div>
+    <div><span>有效事件樣本</span><strong id="astroObservedN">—</strong></div>
+    <div><span>歷史上漲比例</span><strong id="astroObservedWin">—</strong></div>
+    <div><span>相對一般交易日</span><strong id="astroObservedExcess">—</strong></div>
+  </div>
+  <p id="astroResearchVerdict" class="astro-brief-note" role="status">等待可核實的行情與歷史事件資料。</p>
+  <p class="astro-brief-footnote">僅研究已預先定義的「火星與木星精確合相」。樣本少、資料缺漏或驗證不足時，明確顯示無法判定，不提供交易訊號。</p>
+  <a href="#astroBacktestMeta">查看完整事件績效與資料來源</a>
+</section>
 <details class="astro-advanced astro-time-settings">
 <summary>進階設定：顯示時區與星盤計算資訊</summary>
 <div class="controls"><label>星盤時間顯示時區 <select id="astroTimezone">
 <option value="Asia/Taipei">台灣時間</option><option value="America/New_York">美國紐約</option>
 <option value="Europe/London">英國倫敦</option><option value="Europe/Berlin">德國柏林</option>
 <option value="Europe/Paris">法國巴黎</option></select></label></div>
-<p class="hint">查詢欄位固定使用 UTC+8；歷史年份採固定 +8 小時換算，不含歷史夏令時間。星盤顯示可以切換其他時區。</p>
+<p class="hint">預設以台灣目前日期與時間每分鐘更新；選擇歷史日期時暫停，點「回到即時星盤」恢復。日期欄位採固定 UTC+8，舊年代未考慮台灣歷史夏令時間。</p>
 <div id="astroSummary" class="callout" role="status">載入星盤原始計算資料中…</div>
 </details>
 <div class="astro-wheel-wrap">
@@ -59,14 +90,6 @@
 <section class="panel"><h2>未來 90 天事件日曆</h2><p class="hint">事件時間預設轉成台灣時間，可切換上方顯示時區。</p>
 <div id="astroCalendar" class="results">尚無資料</div></section></div></details>
 <details class="panel astro-research"><summary>📈 歷史研究：相同星象之後股市怎麼走？</summary><div class="astro-research-body">
-<div class="controls">
-<label>市場 <select id="astroMarket">
-<option value="NASDAQ">Nasdaq Composite</option><option value="SP500">S&amp;P 500</option>
-<option value="DAX">德國 DAX</option><option value="FTSE100">英國 FTSE 100</option>
-<option value="CAC40">法國 CAC 40</option><option value="TAIEX">台股加權</option></select></label>
-<label>研究事件 <select id="astroEvent"><option value="mars_jupiter_conjunction">火星 × 木星｜精確合相（0°）</option></select></label>
-<label>事件後交易日 <select id="astroHorizon"><option>1</option><option>3</option><option>5</option><option>10</option>
-<option selected>20</option><option>60</option><option>90</option><option>180</option><option>360</option></select></label></div>
 <p id="astroBacktestMeta" class="hint">讀取歷史研究狀態中…</p>
 <div class="metrics"><div><small>可比較的事件次數</small><strong id="metricN">—</strong></div>
 <div><small>後續上漲率</small><strong id="metricWin">—</strong></div>

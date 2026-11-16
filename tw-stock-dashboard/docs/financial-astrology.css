@@ -133,3 +133,31 @@ li{line-height:1.75;margin:5px 0}.source-links{display:flex;flex-wrap:wrap;gap:1
   .astro-research-body{padding:12px}
   .astro-guide .astro-reading-section{margin:7px}
 }
+
+/* V1.4: one-screen financial evidence summary, separate from symbolic astrology. */
+.astro-evidence-brief{border:1px solid #d7dfe9;border-radius:13px;background:#fff;
+  padding:17px;margin:18px 0 12px;color:#27344b}
+.astro-evidence-brief h3{font-size:19px;margin:0 0 9px;line-height:1.4}
+.astro-brief-note{font-size:13px;color:#606b7e;line-height:1.65;margin:8px 0}
+.astro-brief-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:13px 0}
+.astro-brief-controls label{font-size:13px;min-width:0}
+.astro-brief-controls select{width:100%;min-width:0}
+.astro-brief-main{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;
+  padding:14px 0;border-top:1px solid #e5e9ef;border-bottom:1px solid #e5e9ef}
+.astro-brief-caption{font-size:14px;color:#4d586e}
+.astro-brief-main strong{font-size:21px;font-weight:750}
+.astro-brief-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:13px 0}
+.astro-brief-stats>div{border:1px solid #e6eaf1;background:#f7f9fb;border-radius:10px;
+  padding:11px;display:grid;gap:5px}
+.astro-brief-stats span{color:#69748a;font-size:12px}
+.astro-brief-stats strong{font-size:17px;line-height:1.3;font-variant-numeric:tabular-nums}
+.astro-brief-footnote{font-size:12px;line-height:1.6;color:#6b7487}
+.astro-evidence-brief>a{display:inline-block;font-size:13px;font-weight:600;margin-top:4px}
+#astroResearchVerdict{background:#f8fafc;border-left:3px solid #b4bfd0;padding:11px;margin-top:12px}
+@media(max-width:600px){
+ .astro-evidence-brief{padding:14px}
+ .astro-evidence-brief h3{font-size:17px}
+ .astro-brief-controls{gap:8px}
+ .astro-brief-main strong{font-size:18px}
+ .astro-brief-stats strong{font-size:16px}
+}

@@ -118,3 +118,32 @@ for(const m of page.matchAll(/<(\/?)(([a-zA-Z][\w-]*))(?:\s[^>]*?)?>/g)){
 }
 assert.deepStrictEqual(errors,[],'HTML tags must be properly nested');
 assert.deepStrictEqual(stack,[],'HTML should have no unclosed tags');
+
+assert.match(page,/id="astroMarketDirection"/);
+assert.match(page,/id="astroCredibility"/);
+assert.match(page,/id="astroObservedN"/);
+assert.match(page,/id="astroObservedWin"/);
+assert.match(page,/id="astroObservedExcess"/);
+assert.match(page,/id="astroResearchVerdict"/);
+assert.match(page,/id="astroEventMatch"/);
+assert(page.indexOf('id="astroMarketDirection"')<page.indexOf('id="astroWheel"'),
+       'actual market evidence should be visible before the detailed chart');
+assert.equal((page.match(/id="astroMarket"/g)||[]).length,1);
+assert.equal((page.match(/id="astroHorizon"/g)||[]).length,1);
+assert.match(js,/stale\?'資料過期'/);
+assert.match(js,/marketName/);
+assert.match(js,/歷史事件/);
+assert.match(js,/evidence\.direction|summary\.direction/);
+assert.match(page,/研究方法、資料來源與限制/);
+
+// Active-sky and report freshness regression for the integrated evidence UI.
+const currentHome=fs.readFileSync(root+'financial-astrology-home.js','utf8');
+assert(html.includes('financial-astrology-vendor.js?v=2.1.19'));
+assert(!currentHome.includes('latest.json'),'stale sky snapshots must not appear as live data');
+assert(currentHome.includes('setInterval(refresh,60000)'));
+assert(js.includes('liveMode:true'),'user starts in realtime mode');
+assert(js.includes('setInterval(()=>{if(state.liveMode)refreshLiveChart();},60000)'));
+assert(js.includes('state.liveMode=false'),'historical date must pause realtime refresh');
+assert(!js.includes("load('latest.json')"));
+assert(js.includes("new Date(input+':00+08:00')"));
+assert(page.includes('金融占星')&&page.includes('astroObservedWin'));

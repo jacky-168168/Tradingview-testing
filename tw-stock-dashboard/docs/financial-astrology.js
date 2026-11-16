@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   const el=id=>document.getElementById(id);
-  const state={ephemeris:null,calendar:null,report:null};
+  const state={ephemeris:null,calendar:null,report:null,liveMode:true};
   const zones=new Set(['Asia/Taipei','America/New_York','Europe/London','Europe/Berlin','Europe/Paris']);
   const bodyNames={Sun:'太陽',Moon:'月亮',Mercury:'水星',Venus:'金星',Mars:'火星',
     Jupiter:'木星',Saturn:'土星',Uranus:'天王星',Neptune:'海王星',Pluto:'冥王星'};
@@ -132,8 +132,10 @@
     if(!input){show('astroSummary','請先選擇 UTC 日期與時間');return;}
     try{
       const timestamp=new Date(input+':00+08:00');
+      state.liveMode=false;
       state.ephemeris=snapshotClient(timestamp);
       renderEphemeris();
+      if(state.report)renderBacktest();
       show('astroWheelCaption','所選時間：'+input.replace('T',' ')+'（台灣時間）；星盤以天文演算法計算。');
     }catch(e){show('astroSummary','無法計算指定星盤：'+e.message);}
   }
@@ -141,6 +143,24 @@
     el('astroQueryTime').value=new Date(new Date(date).getTime()+8*3600000).toISOString().slice(0,16);
   }
 
+  function refreshLiveChart(){
+    if(!state.liveMode)return;
+    if(!window.Astronomy){
+      show('astroUpdated','即時星盤暫時無法計算');
+      return;
+    }
+    try{
+      const now=new Date();
+      state.ephemeris=snapshotClient(now);
+      setTimeInput(now);
+      renderEphemeris();
+      if(state.report)renderBacktest();
+      show('astroWheelCaption','目前星盤：'+when(now.toISOString())+'｜每分鐘自動更新');
+    }catch(error){
+      show('astroUpdated','即時星盤暫時無法計算');
+      show('astroSummary','無法計算目前星盤：'+error.message);
+    }
+  }
   function renderEphemeris(){
     const data=state.ephemeris;
     if(!data?.positions?.length){
@@ -194,72 +214,120 @@
   function renderBacktest(){
     const market=el('astroMarket').value;
     const h=Number(el('astroHorizon').value);
-    const showEvidence=text=>show('astroConclusionEvidence',text);
-    for(const id of ['metricN','metricWin','metricMean','metricBase','metricExcess','metricDd'])show(id,'—');
-    el('astroCohorts').replaceChildren();
     const report=state.report;
+    const marketName={NASDAQ:'Nasdaq Composite',SP500:'S&P 500',
+      DAX:'DAX',FTSE100:'FTSE 100',CAC40:'CAC 40',TAIEX:'台灣加權指數'}[market]||market;
+    const hasRelevantChart=state.ephemeris?.aspects?.some(a=>
+      a.aspect==='conjunction' &&
+      ((a.bodyA==='Mars'&&a.bodyB==='Jupiter')||(a.bodyA==='Jupiter'&&a.bodyB==='Mars')));
+    show('astroEventMatch',hasRelevantChart
+      ? '所選時間有火星與木星合相；下方統計仍不能直接預測這一天的股價。'
+      : '所選時間沒有火星與木星合相。下方是獨立的歷史事件研究，不能當成這張星盤的市場判斷。');
+    const clearNumbers=()=>{
+      for(const id of ['metricN','metricWin','metricMean','metricBase','metricExcess','metricDd'])show(id,'—');
+      for(const id of ['astroObservedN','astroObservedWin','astroObservedExcess'])show(id,'—');
+      el('astroCohorts').replaceChildren();
+    };
+    const empty=(message)=>{
+      show('astroMarketDirection','無法判定');
+      show('astroCredibility','尚無證據');
+      show('astroResearchVerdict',message);
+      show('astroConclusionEvidence',message);
+      show('astroEvidence',message);
+    };
+    clearNumbers();
     if(!report?.reports){
-      show('astroBacktestMeta','歷史研究 JSON 尚未產生。');
-      show('astroEvidence','沒有真實行情與事件配對結果，因此不顯示任何勝率或報酬。');
-      showEvidence('尚未取得可靠的歷史比較資料，無法判斷星象對股市有沒有幫助。');return;
+      show('astroBacktestMeta','歷史研究尚未取得真實行情資料，沒有可核實績效。');
+      empty('尚未取得真實歷史行情與事件研究結果，不能給出勝率或推論市場方向。');
+      return;
     }
     const result=report.reports[market];
-    show('astroBacktestMeta',(result?.marketName||market)+'｜資料日期：'+(result?.sampleStart||'—')+'～'+
-      (result?.sampleEnd||'—')+'｜來源：'+(result?.source||'未取得')+'｜研究生成時間 '+when(report.generatedAt));
-    if(!result || result.status!=='ok'){
-      show('astroEvidence','資料尚不可用：'+(result?.message||'該指數尚無經確認的歷史行情。')+
-        ' 不以占星解讀代替回測。');
-      showEvidence('目前尚無可確認的真實行情結果，不提供預測勝率。');return;
+    const asof=report.asOf||'—';
+    const dates=result?.sampleStart&&result?.sampleEnd
+      ? result.sampleStart+'～'+result.sampleEnd:'行情尚未取得';
+    show('astroBacktestMeta',marketName+'｜行情期間：'+dates+
+      '｜資料來源：'+(result?.source||'未取得')+
+      '｜研究日期：'+asof);
+    if(!result||result.status!=='ok'){
+      empty(marketName+'：沒有可核實的價格研究結果（'+
+        (result?.message||'資料來源目前無法取得')+'）。不能以占星解讀取代真實績效。');
+      return;
     }
-    const r=result.horizons?.find(x=>x.horizonSessions===h);
-    if(!r || r.sampleSize<1){
-      show('astroEvidence','此期間沒有已完成的有效樣本（資料不足或研究期限尚未結束）。');
-      showEvidence('這個條件下沒有足夠歷史事件可以比較。');return;
+    const metric=result.horizons?.find(x=>x.horizonSessions===h);
+    if(!metric || !Number.isInteger(metric.sampleSize) || metric.sampleSize<=0){
+      empty(marketName+'：這個時間範圍沒有已完成、可驗證的事件樣本。');
+      return;
     }
-    showEvidence(r.sampleSize<30
-      ? '目前只有 '+r.sampleSize+' 次可比較事件，樣本太少，不能據此預測股市。'
-      : '已整理 '+r.sampleSize+' 次歷史事件，但統計相關不等於能預測未來，請展開研究資料查看。');
-    show('metricN',String(r.sampleSize));
-    show('metricWin',percent(r.winRate,1));
-    show('metricMean',percent(r.meanReturn));
-    show('metricBase',percent(r.baselineReturn));
-    show('metricExcess',percent(r.excessReturn));
-    show('metricDd',percent(r.meanMaxDrawdown));
-    const warn=r.sampleSize<30?'事件數量少於30，統計可能非常不穩定。':'此為探索性統計，不能推定因果。';
-    const ci=Array.isArray(r.confidence95)?'；bootstrap 95% 區間 '+percent(r.confidence95[0])+
-      '～'+percent(r.confidence95[1]):'；信賴區間尚不足以估計';
-    const p=r.pValue===null?'未估計':number(r.pValue,3);
-    const q=r.fdrQValue===null?'未估計':number(r.fdrQValue,3);
-    show('astroEvidence',warn+' '+r.censoredEvents+' 個樣本因未到期或無價格而排除。'+
-      '置換檢驗 p='+p+'，FDR q='+q+ci+'。'+
-      (r.holdout?' 已顯示依時間切割的觀察性留出樣本。':' 尚無充足樣本外驗證。')+
-      ' 不代表行星影響股價，也不建議據此交易。');
+    const n=metric.sampleSize;
+    const summary=metric.evidence||{label:'尚無正式評級',direction:'無法判定',
+      reason:'舊版研究資料未附可信程度評級；需重新執行研究。'};
+    const num=x=>typeof x==='number'&&Number.isFinite(x);
+    const pfx=x=>num(x)?(x>0?'+':'')+(x*100).toFixed(2)+'%':'—';
+    const ratio=x=>num(x)?(x*100).toFixed(1)+'%':'—';
+    const age=Date.now()-Date.parse(report.generatedAt);
+    const stale=!Number.isFinite(age)||age>14*86400000||age< -3600000;
+    const label=stale?'資料過期':summary.label;
+    const conclusion=stale?'無法判定':summary.direction||'無法判定';
+    show('astroCredibility',label);
+    show('astroMarketDirection',conclusion);
+    show('astroObservedN',String(n)+' 次');
+    show('astroObservedWin',ratio(metric.winRate));
+    show('astroObservedExcess',pfx(metric.excessReturn));
+    show('metricN',String(n));
+    show('metricWin',ratio(metric.winRate));
+    show('metricMean',pfx(metric.meanReturn));
+    show('metricBase',pfx(metric.baselineReturn));
+    show('metricExcess',pfx(metric.excessReturn));
+    show('metricDd',pfx(metric.meanMaxDrawdown));
+    const tendency=summary.historicalTendency||'未確認';
+    const summaryText=marketName+'｜火星木星合相後 '+h+' 個交易日：'+n+
+      ' 次有效樣本，上漲比例 '+ratio(metric.winRate)+
+      '，平均報酬 '+pfx(metric.meanReturn)+
+      '，同年份一般交易日平均 '+pfx(metric.baselineReturn)+
+      '，差距 '+pfx(metric.excessReturn)+'。'+
+      ' 這是「'+tendency+'」的歷史描述，不代表下次會重演。'+
+      (stale?' 報告已超過14天未更新，暫不使用其結論。':' '+summary.reason);
+    show('astroResearchVerdict',summaryText);
+    show('astroConclusionEvidence',hasRelevantChart
+      ? '這張星盤包含火星木星合相。'+summaryText
+      : '目前所選星盤並非火星木星合相；下方 '+marketName+' 回測只供比較，不可當作本日預測。'+summaryText);
+    const q=num(metric.fdrQValue)?metric.fdrQValue.toFixed(3):'尚無';
+    const ci=Array.isArray(metric.excessConfidence95)?
+      pfx(metric.excessConfidence95[0])+'～'+pfx(metric.excessConfidence95[1]):'尚無';
+    const hold=metric.holdout;
+    const holdInfo=hold?.holdoutCount?
+      '；時間留出觀察：'+hold.holdoutCount+' 次（非預註冊樣本外驗證）':
+      '；時間留出觀察：不足';
+    show('astroEvidence','可信度：'+label+'；歷史事件 '+n+' 次、未完成／無行情事件 '+
+      (metric.censoredEvents??0)+' 次；多重比較調整後 q='+q+
+      '；超額報酬95%信賴區間 '+ci+holdInfo+
+      '。無法直接證明因果與可交易優勢。');
     const wrap=el('astroCohorts'),table=document.createElement('table');
-    const thead=document.createElement('thead');const heading=document.createElement('tr');
-    ['精確合相 UTC','入場交易日','出場交易日','期間報酬','期間最大回撤'].forEach(x=>cell(heading,x,'th'));
+    const thead=document.createElement('thead'),heading=document.createElement('tr');
+    ['事件時間','進場日期','出場日期','歷史報酬','期間最大跌幅'].forEach(x=>cell(heading,x,'th'));
     thead.appendChild(heading);table.appendChild(thead);
     const tbody=document.createElement('tbody');
-    for(const s of (r.events||[])){
-      row(tbody,[when(s.eventUtc),s.entryDate,s.exitDate,percent(s.return),percent(s.windowMaxDrawdown)]);
+    for(const e of metric.events||[]){
+      row(tbody,[when(e.eventUtc),e.entryDate,e.exitDate,pfx(e.return),pfx(e.windowMaxDrawdown)]);
     }
     table.appendChild(tbody);wrap.appendChild(table);
   }
   async function start(){
-    setTimeInput(new Date());
-    if(window.Astronomy)calculateSelected();
-    else show('astroSummary','本機星曆函式庫未能載入；待讀取伺服器快照。');
-    const results=await Promise.allSettled([load('latest.json'),load('calendar.json'),load('report.json')]);
-    const vals=results.map(x=>x.status==='fulfilled'?x.value:null);
-    if(!window.Astronomy)state.ephemeris=vals[0];
-    [state.calendar,state.report]=vals.slice(1);
-    renderEphemeris();renderCalendar();renderBacktest();
-    if(results.every(x=>x.status==='rejected'))show('astroEvidence','所有資料來源暫時不可用，請檢查 GitHub Actions。');
+    // The selected sky is computed live; stale daily JSON must never replace it.
+    refreshLiveChart();
+    const results=await Promise.allSettled([load('calendar.json'),load('report.json')]);
+    state.calendar=results[0].status==='fulfilled'?results[0].value:null;
+    state.report=results[1].status==='fulfilled'?results[1].value:null;
+    renderCalendar();renderBacktest();
   }
-  el('astroTimezone').addEventListener('change',()=>{renderEphemeris();renderCalendar();renderBacktest();});
+  el('astroTimezone').addEventListener('change',()=>{if(state.liveMode)refreshLiveChart();else renderEphemeris();renderCalendar();renderBacktest();});
   el('astroMarket').addEventListener('change',renderBacktest);
   el('astroHorizon').addEventListener('change',renderBacktest);
   el('astroQueryDate').addEventListener('click',calculateSelected);
   el('astroQueryTime').addEventListener('change',calculateSelected);
-  el('astroQueryNow').addEventListener('click',()=>{setTimeInput(new Date());calculateSelected();});
+  el('astroQueryNow').addEventListener('click',()=>{state.liveMode=true;refreshLiveChart();});
+  setInterval(()=>{if(state.liveMode)refreshLiveChart();},60000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.liveMode)refreshLiveChart();});
+  window.addEventListener('focus',()=>{if(state.liveMode)refreshLiveChart();});
   start().catch(e=>show('astroEvidence','研究頁初始化失敗：'+e.message));
 })();

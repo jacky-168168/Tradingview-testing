@@ -5,6 +5,9 @@ import argparse
 import bisect
 import csv
 import json
+import io
+from urllib.request import Request, urlopen
+from urllib.parse import urlencode
 import math
 import random
 import statistics
@@ -12,6 +15,7 @@ from collections import defaultdict
 from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
+from evidence import attach_evidence
 
 HORIZONS = (1, 3, 5, 10, 20, 60, 90, 180, 360)
 MARKETS = {
@@ -66,12 +70,40 @@ def download_prices(ticker, earliest, asof):
     if table is None or table.empty:
         raise RuntimeError("No daily prices returned for "+ticker)
     rows=[]
+    # Never mix a still-forming local trading session into daily close history.
+    local_today=datetime.now(timezone.utc).astimezone(ZoneInfo(next((
+        zone for code,(symbol,zone,_) in MARKETS.items() if symbol==ticker
+    ),"America/New_York"))).date()
+    cap=min(asof,local_today-timedelta(days=1))
     for stamp, entry in table.iterrows():
-        close = entry.get("Close")
-        if close is None or not math.isfinite(float(close)):
+        close=entry.get("Close")
+        if close is None or not math.isfinite(float(close)) or stamp.date()>cap:
             continue
         rows.append((stamp.date(), float(close)))
     return clean_prices(rows)
+
+def download_fred(series_id, asof):
+    """FRED published daily index closes; only derived statistics leave CI."""
+    if series_id not in {"NASDAQCOM","SP500"}:
+        raise ValueError("Unapproved FRED series")
+    url="https://fred.stlouisfed.org/graph/fredgraph.csv?"+urlencode({
+        "id":series_id,"cosd":"1990-01-01","coed":asof.isoformat()})
+    request=Request(url,headers={"User-Agent":"FinancialAstrologyResearch/1.0 (historical-statistics)"})
+    with urlopen(request,timeout=35) as response:
+        payload=response.read(5000000).decode("utf-8-sig")
+    rows=list(csv.DictReader(io.StringIO(payload)))
+    if not rows or series_id not in rows[0]:
+        raise RuntimeError("FRED returned no valid daily CSV series "+series_id)
+    out=[]
+    for row in rows:
+        text=row.get(series_id,"")
+        if text in ("",".","NaN",None):
+            continue
+        day=date.fromisoformat(row.get("DATE") or row.get("observation_date") or row.get("date"))
+        if day>asof:continue
+        out.append((day,float(text)))
+    return clean_prices(out)
+
 
 def event_to_session_index(event, days, market_tz):
     event_utc = iso_datetime(event["exactUtc"])
@@ -131,11 +163,16 @@ def stats(events, prices, tz, horizon, seed=SEED):
     baseline=sum(statistics.mean(group) for group in matched)/len(matched)
     mean=statistics.mean(xs)
     rng=random.Random(seed+horizon)
-    ci=None;p=None
-    # No statistical significance claim for rare observations.
+    ci=None;p=None;excess_ci=None
+    # Ex-post descriptive bootstrap: not a causal or out-of-sample test.
     if len(xs)>=8:
         boot=[statistics.mean(rng.choices(xs,k=len(xs))) for _ in range(1000)]
         ci=[percentile(boot,0.025),percentile(boot,0.975)]
+        year_baselines=[statistics.mean(group) for group in matched]
+        excess_observations=[x-b for x,b in zip(xs,year_baselines)]
+        excess_boot=[statistics.mean(rng.choices(excess_observations,k=len(xs)))
+                     for _ in range(1000)]
+        excess_ci=[percentile(excess_boot,0.025),percentile(excess_boot,0.975)]
         n=999
         dif=abs(mean-baseline)
         exceed=sum(abs(statistics.mean([rng.choice(g) for g in matched])-baseline)>=dif for _ in range(n))
@@ -155,7 +192,8 @@ def stats(events, prices, tz, horizon, seed=SEED):
         "meanReturn":mean,"medianReturn":statistics.median(xs),
         "winRate":sum(x>0 for x in xs)/count,"meanMaxDrawdown":statistics.mean(x["windowMaxDrawdown"] for x in samples),
         "baselineReturn":baseline,"excessReturn":mean-baseline,
-        "pValue":p,"confidence95":ci,"holdout":oos,
+        "pValue":p,"confidence95":ci,"excessConfidence95":excess_ci,
+        "holdout":oos,
         "events":[{"eventUtc":x["eventUtc"],"entryDate":x["entryDate"],
                    "exitDate":x["exitDate"],"return":x["return"],
                    "windowMaxDrawdown":x["windowMaxDrawdown"]} for x in samples]}
@@ -181,11 +219,16 @@ def build_report(events, market, prices, asof):
         raise ValueError("Historical prices contain future observations")
     if len(clean)<500:
         raise ValueError("Insufficient daily market history (<500 sessions)")
+    # A stale quote feed must never be presented as current verified research.
+    if (asof-clean[-1][0]).days>14:
+        raise ValueError("Market history stale: last valid close "+clean[-1][0].isoformat())
     horizons=[stats(events,clean,tz,h) for h in HORIZONS]
     bh_fdr(horizons)
+    attach_evidence(horizons)
     return {"status":"ok","market":market,"ticker":ticker,"marketName":label,
         "currency":"index points","event":EVENT_ID,"timeZone":tz,
         "sampleStart":clean[0][0].isoformat(),"sampleEnd":clean[-1][0].isoformat(),
+        "priceSampleCount":len(clean),"historicalEventsFound":len(events),
         "source":"Yahoo Finance via yfinance; daily unadjusted index Close; retrieval is best-effort",
         "entryRule":"First trading session strictly after event's exchange-local calendar date, close to close",
         "horizons":horizons,"orbDeg":2,"orbSensitivityStatus":"not-validated",
@@ -199,14 +242,33 @@ def build_all(events, asof, csv_paths=None):
     for market,(ticker,tz,label) in MARKETS.items():
         try:
             path=(csv_paths or {}).get(market)
-            prices=parse_prices_csv(Path(path)) if path else download_prices(ticker,date(1990,1,1),asof)
+            source="User-supplied real daily close CSV; manual provenance required"
+            if path:
+                prices=parse_prices_csv(Path(path))
+            else:
+                source="Yahoo Finance historical index daily Close (via yfinance)"
+                try:
+                    prices=download_prices(ticker,date(1990,1,1),asof)
+                except Exception as first:
+                    fred={"NASDAQ":"NASDAQCOM","SP500":"SP500"}.get(market)
+                    if not fred:
+                        raise
+                    try:
+                        prices=download_fred(fred,asof)
+                        source=("FRED / "+fred+" daily close; original Nasdaq / S&P rights apply; "+
+                            "source https://fred.stlouisfed.org/series/"+fred)
+                    except Exception as second:
+                        raise RuntimeError("Yahoo: "+str(first)[:95]+
+                            "; FRED: "+str(second)[:95]) from second
             reports[market]=build_report(events,market,prices,asof)
+            reports[market]["source"]=source
         except Exception as exc:
             reports[market]={"status":"unavailable","ticker":ticker,
                 "errorType":type(exc).__name__,"message":str(exc)[:280],
                 "horizons":[]}
-    return {"schemaVersion":1,"generatedAt":datetime.now(timezone.utc).isoformat(),
-        "asOf":asof.isoformat(),"event":EVENT_ID,"hypothesis":"Mars–Jupiter geocentric exact conjunction",
+    return {"schemaVersion":2,"generatedAt":datetime.now(timezone.utc).isoformat(),
+        "asOf":asof.isoformat(),"event":EVENT_ID,"methodVersion":"quantitative-evidence-v2",
+        "hypothesis":"Mars–Jupiter geocentric exact conjunction",
         "researchOnly":True,"strategySignal":False,"reports":reports}
 
 def main():
@@ -223,8 +285,9 @@ def main():
         try: report=build_report(events,args.market,parse_prices_csv(Path(args.prices)),asof)
         except Exception as exc:
             report={"status":"unavailable","message":str(exc)}
-        payload={"schemaVersion":1,"generatedAt":datetime.now(timezone.utc).isoformat(),
-            "asOf":asof.isoformat(),"event":EVENT_ID,"researchOnly":True,
+        payload={"schemaVersion":2,"generatedAt":datetime.now(timezone.utc).isoformat(),
+            "asOf":asof.isoformat(),"event":EVENT_ID,"methodVersion":"quantitative-evidence-v2",
+            "researchOnly":True,
             "strategySignal":False,"reports":{args.market:report}}
     else: payload=build_all(events,asof)
     output=Path(args.output);output.parent.mkdir(parents=True,exist_ok=True)
