@@ -88,7 +88,8 @@ permissions:
 
 concurrency:
   group: tw-stock-pages
-  cancel-in-progress: true
+  # Queue deployments instead of cancelling a running Pages publication.
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -386,10 +387,18 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
+          # Different run attempts must not produce identically named github-pages artifacts.
+          # Otherwise retrying a failed deploy yields "Multiple artifacts named github-pages".
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
           path: tw-stock-dashboard/docs
+      - name: Wait briefly for preceding Pages deployment to settle
+        if: github.event_name == 'workflow_run'
+        run: sleep 30
       - name: Deploy Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Verify live Pages serves correct Chinese market-risk asset version
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
