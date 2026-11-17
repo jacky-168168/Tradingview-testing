@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-17T16:10:36+08:00",
+  "generatedAt": "2026-11-18T05:06:57+08:00",
   "status": "partial",
   "sourceIndexStatus": {
     "US_ELECTION_STATUTE": {
@@ -80,12 +80,12 @@
     },
     "ALFRED:9": {
       "status": "ok",
-      "parsed": 757,
+      "parsed": 758,
       "url": "https://alfred.stlouisfed.org/release/downloaddates?ff=txt&rid=9"
     },
     "ALFRED:13": {
       "status": "ok",
-      "parsed": 1068,
+      "parsed": 1069,
       "url": "https://alfred.stlouisfed.org/release/downloaddates?ff=txt&rid=13"
     },
     "FOMC:2000": {
@@ -209,9 +209,9 @@
     "FOMC:2004": "ValueError: no matching official release links parsed",
     "FOMC:2005": "ValueError: no matching official release links parsed"
   },
-  "fetchTotal": 6270,
+  "fetchTotal": 6272,
   "sourceCount": 38,
-  "count": 6290,
+  "count": 6292,
   "countsByCategory": {
     "CPI": 15,
     "CPI資料更新": 952,
@@ -221,9 +221,9 @@
     "OPEC": 5,
     "PCE資料更新": 742,
     "PPI資料更新": 605,
-    "工業生產資料更新": 1068,
+    "工業生產資料更新": 1069,
     "美國選舉": 44,
-    "零售銷售資料更新": 757,
+    "零售銷售資料更新": 758,
     "非農就業資料更新": 866
   },
   "method": "Source-linked BLS archived releases and Fed policy statements; ALFRED historical data vintages separately categorized because they can include revisions. U.S. federal voting dates since 1940 derived from statutes and counted once per even year. Deduplicated by category/date; no election result, timestamp, or consensus surprise inferred.",
@@ -112943,6 +112943,42 @@
       "source": "ALFRED / Federal Reserve Bank of St. Louis",
       "sourceUrl": "https://alfred.stlouisfed.org/release/downloaddates?ff=txt&rid=46",
       "publishedBy": "BLS",
+      "evidence": "ALFRED download of release date history; may include later revised data. This date does not establish the main release, consensus surprise or any new information to the market.",
+      "directionKnown": false,
+      "primaryReleaseVerified": false,
+      "calendarKind": "alfred_historical_vintage",
+      "catalogOrigin": "fresh_archive"
+    },
+    {
+      "id": "alfred-release-13-2026-11-17",
+      "category": "工業生產資料更新",
+      "subtype": "歷史資料發布／修訂日期（未辨認首次公告）",
+      "date": "2026-11-17",
+      "timezone": "America/New_York",
+      "localTime": null,
+      "timeAccuracy": "date_only_vintage_or_revision",
+      "title": "美國 工業生產與產能利用率 資料更新或修訂日（ALFRED）",
+      "source": "ALFRED / Federal Reserve Bank of St. Louis",
+      "sourceUrl": "https://alfred.stlouisfed.org/release/downloaddates?ff=txt&rid=13",
+      "publishedBy": "Federal Reserve",
+      "evidence": "ALFRED download of release date history; may include later revised data. This date does not establish the main release, consensus surprise or any new information to the market.",
+      "directionKnown": false,
+      "primaryReleaseVerified": false,
+      "calendarKind": "alfred_historical_vintage",
+      "catalogOrigin": "fresh_archive"
+    },
+    {
+      "id": "alfred-release-9-2026-11-17",
+      "category": "零售銷售資料更新",
+      "subtype": "歷史資料發布／修訂日期（未辨認首次公告）",
+      "date": "2026-11-17",
+      "timezone": "America/New_York",
+      "localTime": null,
+      "timeAccuracy": "date_only_vintage_or_revision",
+      "title": "美國 零售銷售 資料更新或修訂日（ALFRED）",
+      "source": "ALFRED / Federal Reserve Bank of St. Louis",
+      "sourceUrl": "https://alfred.stlouisfed.org/release/downloaddates?ff=txt&rid=9",
+      "publishedBy": "Census",
       "evidence": "ALFRED download of release date history; may include later revised data. This date does not establish the main release, consensus surprise or any new information to the market.",
       "directionKnown": false,
       "primaryReleaseVerified": false,
