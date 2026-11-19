@@ -88,13 +88,23 @@ def parse_portal(raw: bytes, now: datetime) -> list[dict]:
 def reconcile_portal_to_months(portal: list[dict],months: list[list[dict]]) -> list[dict]:
     """Verify every recent official monthly close matches the longer public chart."""
     by_date={r["date"]:dict(r) for r in portal}
+    latest_portal_date=portal[-1]["date"]
     verified=0
     differences=[]
+    newer_monthly=[]
     for group in months:
         for row in group:
             other=by_date.get(row["date"])
             if not other:
-                raise ValueError(f"期交所指數專區缺少已公布之月檔交易日：{row['date']}")
+                # Official daily-close TXT can publish before the long-history
+                # chart catches up. Only trust verified, newer monthly closes;
+                # missing dates *inside* the chart remain a hard error.
+                if row["date"]<=latest_portal_date:
+                    raise ValueError(f"期交所指數專區缺少已公布之月檔交易日：{row['date']}")
+                if any(saved["date"]==row["date"] for saved in newer_monthly):
+                    raise ValueError("期交所官方月檔同一日期重複")
+                newer_monthly.append({**row,"reconciliation":"official-monthly-close-newer-than-index-portal"})
+                continue
             if not math.isclose(other["value"],row["value"],abs_tol=.011):
                 differences.append((row["date"],other["value"],row["value"]))
                 # Official last-3-month daily-close file is authoritative for
@@ -112,12 +122,18 @@ def reconcile_portal_to_months(portal: list[dict],months: list[list[dict]]) -> l
             raise ValueError(f"期交所指數專區與官方日收盤共有 {len(differences)} 筆資料不一致，超過核對容許數；拒絕更新")
     if verified<40:
         raise ValueError(f"近月官方日收盤交叉驗證樣本不足：{verified}")
+    if len(newer_monthly)>2:
+        raise ValueError("期交所歷史圖表落後官方月檔超過兩個交易日；拒絕自動補齊")
     last_monthly=max(row["date"] for group in months for row in group)
-    # If the chart includes a newer session not yet in the published official
-    # monthly file, do not publish that unverified same-day point.
+    # Do not publish unverified *portal-only* latest sessions. A bounded
+    # number of fully parsed official monthly closes may lead the portal.
     verified_rows=[dict(row) for row in portal if row["date"]<=last_monthly]
     for row in verified_rows:
         if row["date"] in by_date:row.update(by_date[row["date"]])
+    if newer_monthly:
+        print("TAIFEX_OFFICIAL_MONTHLY_AHEAD_OF_PORTAL",
+              [r["date"] for r in newer_monthly],flush=True)
+        verified_rows.extend(sorted(newer_monthly,key=lambda r:r["date"]))
     if len(verified_rows)<360:
         raise ValueError(f"核對正式收盤後未達 360 個交易日：{len(verified_rows)}")
     return verified_rows
