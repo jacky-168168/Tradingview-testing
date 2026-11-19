@@ -1,0 +1,1202 @@
+{
+  "version": "G_R1_R4_FIN_RESEARCH_V1",
+  "status": "COMPLETE_G_R1_R4_ONLY",
+  "createdAt": "2026-10-13T06:51:31.388068+08:00",
+  "window": {
+    "start": "2024-01-01",
+    "end": "2026-10-08",
+    "sessions": 670
+  },
+  "scope": "G variants share ORIGINAL reconstructed G top 3 as candidate pool; reject failing ranks; R4 postpones entry up to five sessions.",
+  "execution": {
+    "initialTWD": 500000.0,
+    "marketGate": "SCORE60",
+    "profitTargetPct": 8,
+    "stopPct": 12,
+    "maxHoldSessions": 10,
+    "maxTicketTWD": 200000,
+    "brokerPctEachSide": 0.1425,
+    "sellTaxPct": 0.3,
+    "slippagePctEachSide": 0.1,
+    "fillRule": "Signal close D, next open entry <=D close +3%; daily OHLC stop-first ambiguity"
+  },
+  "rules": {
+    "G": "Unchanged G_DOUBLE_PERSIST top three each close",
+    "G-R1": "G top3, latest point-in-time-safe 3m revenue mean > 12m mean, close > MA20 > MA60 > MA120",
+    "G-R2": "G top3, close > preceding 20-day high, 3m average revenue new high vs preceding 11 complete 3m windows, latest revenue YoY > 10%",
+    "G-R3": "G top3, prior five-day range < 65% of prior 20-day range, prior five-day mean volume < 80% of prior 20, today's volume > 1.2x prior 20, close > preceding 20-day high",
+    "G-R4": "Within next 5 sessions of prior G top3, low <= MA20*1.02, close >= MA20*.995, close>open and >prior close; enter next open, daily MA proxy NOT 2-minute Bottom"
+  },
+  "audit": {
+    "g": {
+      "symbols": 1977,
+      "dailyFeatureRows": 29768,
+      "validGSignalDays": 650,
+      "meanGStocksPerSignal": 40.89
+    },
+    "priceErrors": 0,
+    "marketRiskDays": 728,
+    "mopsRevenueRows": 101066,
+    "revenueFeatureAvailable": {
+      "G-R1": 1817,
+      "G-R2": 1817
+    },
+    "latestSurvivingUniverse": 1982,
+    "stockBarMissing": {},
+    "lastDataLimit": "Risk Score pinned only through 2026-10-08; 2026-10-12 deliberately excluded"
+  },
+  "limitations": [
+    "Current, not historical, listed universe and paid-in capital: survivorship bias",
+    "MOPS latest-vintage revised revenue with conservative 16th-next-month disclosure-date proxy is not a true point-in-time database",
+    "R4 uses DAILY MA pullback proxy not the original Bottom(2m) signal",
+    "Overlapping fixed-horizon forward outcome snapshots are not a cash-reinvested portfolio",
+    "All G-R filters run on original top3 only, no replacement with previously lower-ranked G securities"
+  ],
+  "strategies": {
+    "G": {
+      "signals": 592,
+      "candidateCount": 1756,
+      "horizons": {
+        "1": {
+          "full": {
+            "signals": 316,
+            "winPct": 40.19,
+            "avgNetPct": -0.651,
+            "avgWinPct": 2.918,
+            "avgLossPct": -3.049
+          },
+          "byYear": {
+            "2024": {
+              "signals": 120,
+              "winPct": 39.17,
+              "avgNetPct": -0.97,
+              "avgWinPct": 2.451,
+              "avgLossPct": -3.172
+            },
+            "2025": {
+              "signals": 107,
+              "winPct": 39.25,
+              "avgNetPct": -0.417,
+              "avgWinPct": 3.283,
+              "avgLossPct": -2.808
+            },
+            "2026": {
+              "signals": 89,
+              "winPct": 42.7,
+              "avgNetPct": -0.501,
+              "avgWinPct": 3.093,
+              "avgLossPct": -3.179
+            }
+          },
+          "missingPriceSignals": 4
+        },
+        "3": {
+          "full": {
+            "signals": 314,
+            "winPct": 44.9,
+            "avgNetPct": -0.402,
+            "avgWinPct": 4.916,
+            "avgLossPct": -4.736
+          },
+          "byYear": {
+            "2024": {
+              "signals": 120,
+              "winPct": 44.17,
+              "avgNetPct": -0.923,
+              "avgWinPct": 4.446,
+              "avgLossPct": -5.17
+            },
+            "2025": {
+              "signals": 107,
+              "winPct": 44.86,
+              "avgNetPct": -0.489,
+              "avgWinPct": 3.849,
+              "avgLossPct": -4.018
+            },
+            "2026": {
+              "signals": 87,
+              "winPct": 45.98,
+              "avgNetPct": 0.425,
+              "avgWinPct": 6.821,
+              "avgLossPct": -5.018
+            }
+          },
+          "missingPriceSignals": 4
+        },
+        "5": {
+          "full": {
+            "signals": 312,
+            "winPct": 47.44,
+            "avgNetPct": -0.169,
+            "avgWinPct": 6.388,
+            "avgLossPct": -6.086
+          },
+          "byYear": {
+            "2024": {
+              "signals": 120,
+              "winPct": 41.67,
+              "avgNetPct": -1.27,
+              "avgWinPct": 5.538,
+              "avgLossPct": -6.133
+            },
+            "2025": {
+              "signals": 107,
+              "winPct": 46.73,
+              "avgNetPct": -0.25,
+              "avgWinPct": 5.51,
+              "avgLossPct": -5.304
+            },
+            "2026": {
+              "signals": 85,
+              "winPct": 56.47,
+              "avgNetPct": 1.488,
+              "avgWinPct": 8.187,
+              "avgLossPct": -7.201
+            }
+          },
+          "missingPriceSignals": 4
+        },
+        "10": {
+          "full": {
+            "signals": 308,
+            "winPct": 54.55,
+            "avgNetPct": 1.17,
+            "avgWinPct": 8.729,
+            "avgLossPct": -7.901
+          },
+          "byYear": {
+            "2024": {
+              "signals": 120,
+              "winPct": 50.0,
+              "avgNetPct": -0.217,
+              "avgWinPct": 7.862,
+              "avgLossPct": -8.297
+            },
+            "2025": {
+              "signals": 106,
+              "winPct": 53.77,
+              "avgNetPct": 1.242,
+              "avgWinPct": 8.655,
+              "avgLossPct": -7.381
+            },
+            "2026": {
+              "signals": 82,
+              "winPct": 62.2,
+              "avgNetPct": 3.106,
+              "avgWinPct": 9.83,
+              "avgLossPct": -7.955
+            }
+          },
+          "missingPriceSignals": 5
+        },
+        "20": {
+          "full": {
+            "signals": 304,
+            "winPct": 53.62,
+            "avgNetPct": 3.126,
+            "avgWinPct": 15.321,
+            "avgLossPct": -10.972
+          },
+          "byYear": {
+            "2024": {
+              "signals": 120,
+              "winPct": 41.67,
+              "avgNetPct": -1.561,
+              "avgWinPct": 9.012,
+              "avgLossPct": -9.112
+            },
+            "2025": {
+              "signals": 107,
+              "winPct": 59.81,
+              "avgNetPct": 5.462,
+              "avgWinPct": 15.79,
+              "avgLossPct": -9.91
+            },
+            "2026": {
+              "signals": 77,
+              "winPct": 63.64,
+              "avgNetPct": 7.184,
+              "avgWinPct": 21.148,
+              "avgLossPct": -17.253
+            }
+          },
+          "missingPriceSignals": 4
+        }
+      },
+      "performance": {
+        "all": {
+          "capitalEnd": 573542.9,
+          "netReturnPct": 14.709,
+          "maxDDPct": -45.376,
+          "filledBuys": 189,
+          "closedTrades": 186,
+          "wins": 113,
+          "losses": 73,
+          "winPct": 60.75,
+          "avgNetPct": 0.007,
+          "avgWinPct": 7.389,
+          "avgLossPct": -11.419,
+          "openAtEnd": 3
+        },
+        "2024": {
+          "capitalEnd": 446344.85,
+          "netReturnPct": -10.731,
+          "maxDDPct": -31.245,
+          "filledBuys": 74,
+          "closedTrades": 72,
+          "wins": 41,
+          "losses": 31,
+          "winPct": 56.94,
+          "avgNetPct": -0.254,
+          "avgWinPct": 7.855,
+          "avgLossPct": -10.979,
+          "openAtEnd": 2
+        },
+        "2025": {
+          "capitalEnd": 501209.73,
+          "netReturnPct": 0.242,
+          "maxDDPct": -35.126,
+          "filledBuys": 67,
+          "closedTrades": 64,
+          "wins": 38,
+          "losses": 26,
+          "winPct": 59.38,
+          "avgNetPct": -0.55,
+          "avgWinPct": 6.951,
+          "avgLossPct": -11.512,
+          "openAtEnd": 3
+        },
+        "2026": {
+          "capitalEnd": 538987.81,
+          "netReturnPct": 7.798,
+          "maxDDPct": -22.31,
+          "filledBuys": 54,
+          "closedTrades": 51,
+          "wins": 34,
+          "losses": 17,
+          "winPct": 66.67,
+          "avgNetPct": 0.663,
+          "avgWinPct": 7.337,
+          "avgLossPct": -12.684,
+          "openAtEnd": 3
+        }
+      }
+    },
+    "G-R1": {
+      "signals": 547,
+      "candidateCount": 1100,
+      "horizons": {
+        "1": {
+          "full": {
+            "signals": 292,
+            "winPct": 39.04,
+            "avgNetPct": -0.766,
+            "avgWinPct": 3.172,
+            "avgLossPct": -3.288
+          },
+          "byYear": {
+            "2024": {
+              "signals": 113,
+              "winPct": 39.82,
+              "avgNetPct": -0.997,
+              "avgWinPct": 2.971,
+              "avgLossPct": -3.623
+            },
+            "2025": {
+              "signals": 91,
+              "winPct": 32.97,
+              "avgNetPct": -0.863,
+              "avgWinPct": 3.566,
+              "avgLossPct": -3.04
+            },
+            "2026": {
+              "signals": 88,
+              "winPct": 44.32,
+              "avgNetPct": -0.369,
+              "avgWinPct": 3.103,
+              "avgLossPct": -3.133
+            }
+          },
+          "missingPriceSignals": 4
+        },
+        "3": {
+          "full": {
+            "signals": 290,
+            "winPct": 44.14,
+            "avgNetPct": -0.569,
+            "avgWinPct": 5.998,
+            "avgLossPct": -5.757
+          },
+          "byYear": {
+            "2024": {
+              "signals": 113,
+              "winPct": 40.71,
+              "avgNetPct": -1.297,
+              "avgWinPct": 6.234,
+              "avgLossPct": -6.468
+            },
+            "2025": {
+              "signals": 91,
+              "winPct": 40.66,
+              "avgNetPct": -1.073,
+              "avgWinPct": 4.492,
+              "avgLossPct": -4.886
+            },
+            "2026": {
+              "signals": 86,
+              "winPct": 52.33,
+              "avgNetPct": 0.922,
+              "avgWinPct": 6.995,
+              "avgLossPct": -5.742
+            }
+          },
+          "missingPriceSignals": 4
+        },
+        "5": {
+          "full": {
+            "signals": 288,
+            "winPct": 44.44,
+            "avgNetPct": -0.492,
+            "avgWinPct": 7.89,
+            "avgLossPct": -7.198
+          },
+          "byYear": {
+            "2024": {
+              "signals": 113,
+              "winPct": 36.28,
+              "avgNetPct": -1.814,
+              "avgWinPct": 8.164,
+              "avgLossPct": -7.496
+            },
+            "2025": {
+              "signals": 91,
+              "winPct": 43.96,
+              "avgNetPct": -0.936,
+              "avgWinPct": 5.965,
+              "avgLossPct": -6.348
+            },
+            "2026": {
+              "signals": 84,
+              "winPct": 55.95,
+              "avgNetPct": 1.766,
+              "avgWinPct": 9.288,
+              "avgLossPct": -7.789
+            }
+          },
+          "missingPriceSignals": 4
+        },
+        "10": {
+          "full": {
+            "signals": 284,
+            "winPct": 49.65,
+            "avgNetPct": 1.127,
+            "avgWinPct": 11.647,
+            "avgLossPct": -9.246
+          },
+          "byYear": {
+            "2024": {
+              "signals": 113,
+              "winPct": 43.36,
+              "avgNetPct": -0.063,
+              "avgWinPct": 12.742,
+              "avgLossPct": -9.866
+            },
+            "2025": {
+              "signals": 90,
+              "winPct": 46.67,
+              "avgNetPct": 0.379,
+              "avgWinPct": 10.378,
+              "avgLossPct": -8.369
+            },
+            "2026": {
+              "signals": 81,
+              "winPct": 61.73,
+              "avgNetPct": 3.617,
+              "avgWinPct": 11.64,
+              "avgLossPct": -9.324
+            }
+          },
+          "missingPriceSignals": 5
+        },
+        "20": {
+          "full": {
+            "signals": 280,
+            "winPct": 47.86,
+            "avgNetPct": 2.989,
+            "avgWinPct": 20.549,
+            "avgLossPct": -13.127
+          },
+          "byYear": {
+            "2024": {
+              "signals": 113,
+              "winPct": 34.51,
+              "avgNetPct": -2.031,
+              "avgWinPct": 15.942,
+              "avgLossPct": -11.504
+            },
+            "2025": {
+              "signals": 91,
+              "winPct": 54.95,
+              "avgNetPct": 5.169,
+              "avgWinPct": 20.499,
+              "avgLossPct": -13.526
+            },
+            "2026": {
+              "signals": 76,
+              "winPct": 59.21,
+              "avgNetPct": 7.843,
+              "avgWinPct": 24.595,
+              "avgLossPct": -16.474
+            }
+          },
+          "missingPriceSignals": 4
+        }
+      },
+      "performance": {
+        "all": {
+          "capitalEnd": 298842.81,
+          "netReturnPct": -40.231,
+          "maxDDPct": -70.63,
+          "filledBuys": 149,
+          "closedTrades": 148,
+          "wins": 86,
+          "losses": 62,
+          "winPct": 58.11,
+          "avgNetPct": -0.654,
+          "avgWinPct": 7.237,
+          "avgLossPct": -11.6,
+          "openAtEnd": 1
+        },
+        "2024": {
+          "capitalEnd": 307760.33,
+          "netReturnPct": -38.448,
+          "maxDDPct": -48.493,
+          "filledBuys": 65,
+          "closedTrades": 64,
+          "wins": 34,
+          "losses": 30,
+          "winPct": 53.12,
+          "avgNetPct": -1.651,
+          "avgWinPct": 7.269,
+          "avgLossPct": -11.76,
+          "openAtEnd": 1
+        },
+        "2025": {
+          "capitalEnd": 375741.44,
+          "netReturnPct": -24.852,
+          "maxDDPct": -43.798,
+          "filledBuys": 51,
+          "closedTrades": 49,
+          "wins": 26,
+          "losses": 23,
+          "winPct": 53.06,
+          "avgNetPct": -1.344,
+          "avgWinPct": 7.251,
+          "avgLossPct": -11.061,
+          "openAtEnd": 2
+        },
+        "2026": {
+          "capitalEnd": 577589.3,
+          "netReturnPct": 15.518,
+          "maxDDPct": -21.752,
+          "filledBuys": 50,
+          "closedTrades": 48,
+          "wins": 33,
+          "losses": 15,
+          "winPct": 68.75,
+          "avgNetPct": 0.92,
+          "avgWinPct": 7.242,
+          "avgLossPct": -12.987,
+          "openAtEnd": 2
+        }
+      }
+    },
+    "G-R2": {
+      "signals": 346,
+      "candidateCount": 501,
+      "horizons": {
+        "1": {
+          "full": {
+            "signals": 196,
+            "winPct": 39.8,
+            "avgNetPct": -0.601,
+            "avgWinPct": 3.448,
+            "avgLossPct": -3.278
+          },
+          "byYear": {
+            "2024": {
+              "signals": 63,
+              "winPct": 39.68,
+              "avgNetPct": -1.203,
+              "avgWinPct": 2.904,
+              "avgLossPct": -3.905
+            },
+            "2025": {
+              "signals": 66,
+              "winPct": 37.88,
+              "avgNetPct": -0.49,
+              "avgWinPct": 3.331,
+              "avgLossPct": -2.82
+            },
+            "2026": {
+              "signals": 67,
+              "winPct": 41.79,
+              "avgNetPct": -0.144,
+              "avgWinPct": 4.039,
+              "avgLossPct": -3.148
+            }
+          },
+          "missingPriceSignals": 3
+        },
+        "3": {
+          "full": {
+            "signals": 195,
+            "winPct": 42.56,
+            "avgNetPct": -0.223,
+            "avgWinPct": 6.903,
+            "avgLossPct": -5.503
+          },
+          "byYear": {
+            "2024": {
+              "signals": 63,
+              "winPct": 36.51,
+              "avgNetPct": -1.307,
+              "avgWinPct": 7.478,
+              "avgLossPct": -6.358
+            },
+            "2025": {
+              "signals": 66,
+              "winPct": 42.42,
+              "avgNetPct": -0.201,
+              "avgWinPct": 5.228,
+              "avgLossPct": -4.202
+            },
+            "2026": {
+              "signals": 66,
+              "winPct": 48.48,
+              "avgNetPct": 0.791,
+              "avgWinPct": 7.954,
+              "avgLossPct": -5.951
+            }
+          },
+          "missingPriceSignals": 3
+        },
+        "5": {
+          "full": {
+            "signals": 193,
+            "winPct": 49.22,
+            "avgNetPct": 0.844,
+            "avgWinPct": 8.803,
+            "avgLossPct": -6.87
+          },
+          "byYear": {
+            "2024": {
+              "signals": 63,
+              "winPct": 44.44,
+              "avgNetPct": -0.949,
+              "avgWinPct": 8.524,
+              "avgLossPct": -8.527
+            },
+            "2025": {
+              "signals": 66,
+              "winPct": 45.45,
+              "avgNetPct": 0.49,
+              "avgWinPct": 7.213,
+              "avgLossPct": -5.112
+            },
+            "2026": {
+              "signals": 64,
+              "winPct": 57.81,
+              "avgNetPct": 2.975,
+              "avgWinPct": 10.302,
+              "avgLossPct": -7.067
+            }
+          },
+          "missingPriceSignals": 3
+        },
+        "10": {
+          "full": {
+            "signals": 189,
+            "winPct": 56.61,
+            "avgNetPct": 2.524,
+            "avgWinPct": 11.26,
+            "avgLossPct": -8.876
+          },
+          "byYear": {
+            "2024": {
+              "signals": 63,
+              "winPct": 52.38,
+              "avgNetPct": 0.772,
+              "avgWinPct": 11.734,
+              "avgLossPct": -11.287
+            },
+            "2025": {
+              "signals": 65,
+              "winPct": 55.38,
+              "avgNetPct": 2.356,
+              "avgWinPct": 10.0,
+              "avgLossPct": -7.133
+            },
+            "2026": {
+              "signals": 61,
+              "winPct": 62.3,
+              "avgNetPct": 4.513,
+              "avgWinPct": 12.043,
+              "avgLossPct": -7.927
+            }
+          },
+          "missingPriceSignals": 4
+        },
+        "20": {
+          "full": {
+            "signals": 185,
+            "winPct": 53.51,
+            "avgNetPct": 3.672,
+            "avgWinPct": 18.769,
+            "avgLossPct": -13.706
+          },
+          "byYear": {
+            "2024": {
+              "signals": 63,
+              "winPct": 44.44,
+              "avgNetPct": -0.783,
+              "avgWinPct": 15.968,
+              "avgLossPct": -14.184
+            },
+            "2025": {
+              "signals": 66,
+              "winPct": 57.58,
+              "avgNetPct": 5.843,
+              "avgWinPct": 18.277,
+              "avgLossPct": -11.032
+            },
+            "2026": {
+              "signals": 56,
+              "winPct": 58.93,
+              "avgNetPct": 6.127,
+              "avgWinPct": 21.712,
+              "avgLossPct": -16.234
+            }
+          },
+          "missingPriceSignals": 3
+        }
+      },
+      "performance": {
+        "all": {
+          "capitalEnd": 520666.1,
+          "netReturnPct": 4.133,
+          "maxDDPct": -58.842,
+          "filledBuys": 132,
+          "closedTrades": 130,
+          "wins": 83,
+          "losses": 47,
+          "winPct": 63.85,
+          "avgNetPct": 0.274,
+          "avgWinPct": 7.277,
+          "avgLossPct": -12.093,
+          "openAtEnd": 2
+        },
+        "2024": {
+          "capitalEnd": 370857.09,
+          "netReturnPct": -25.829,
+          "maxDDPct": -40.222,
+          "filledBuys": 46,
+          "closedTrades": 45,
+          "wins": 25,
+          "losses": 20,
+          "winPct": 55.56,
+          "avgNetPct": -1.271,
+          "avgWinPct": 7.442,
+          "avgLossPct": -12.161,
+          "openAtEnd": 1
+        },
+        "2025": {
+          "capitalEnd": 428854.11,
+          "netReturnPct": -14.229,
+          "maxDDPct": -36.748,
+          "filledBuys": 45,
+          "closedTrades": 42,
+          "wins": 25,
+          "losses": 17,
+          "winPct": 59.52,
+          "avgNetPct": -0.79,
+          "avgWinPct": 6.674,
+          "avgLossPct": -11.766,
+          "openAtEnd": 3
+        },
+        "2026": {
+          "capitalEnd": 634340.79,
+          "netReturnPct": 26.868,
+          "maxDDPct": -16.905,
+          "filledBuys": 48,
+          "closedTrades": 46,
+          "wins": 32,
+          "losses": 14,
+          "winPct": 69.57,
+          "avgNetPct": 1.448,
+          "avgWinPct": 7.623,
+          "avgLossPct": -12.665,
+          "openAtEnd": 2
+        }
+      }
+    },
+    "G-R3": {
+      "signals": 63,
+      "candidateCount": 70,
+      "horizons": {
+        "1": {
+          "full": {
+            "signals": 32,
+            "winPct": 46.88,
+            "avgNetPct": -0.331,
+            "avgWinPct": 4.234,
+            "avgLossPct": -4.359
+          },
+          "byYear": {
+            "2024": {
+              "signals": 12,
+              "winPct": 50.0,
+              "avgNetPct": 0.09,
+              "avgWinPct": 4.406,
+              "avgLossPct": -4.226
+            },
+            "2025": {
+              "signals": 9,
+              "winPct": 44.44,
+              "avgNetPct": -0.93,
+              "avgWinPct": 3.335,
+              "avgLossPct": -4.342
+            },
+            "2026": {
+              "signals": 11,
+              "winPct": 45.45,
+              "avgNetPct": -0.3,
+              "avgWinPct": 4.749,
+              "avgLossPct": -4.507
+            }
+          },
+          "missingPriceSignals": 0
+        },
+        "3": {
+          "full": {
+            "signals": 31,
+            "winPct": 58.06,
+            "avgNetPct": 1.162,
+            "avgWinPct": 7.453,
+            "avgLossPct": -7.548
+          },
+          "byYear": {
+            "2024": {
+              "signals": 12,
+              "winPct": 50.0,
+              "avgNetPct": 1.102,
+              "avgWinPct": 8.534,
+              "avgLossPct": -6.331
+            },
+            "2025": {
+              "signals": 9,
+              "winPct": 44.44,
+              "avgNetPct": -3.106,
+              "avgWinPct": 1.745,
+              "avgLossPct": -6.987
+            },
+            "2026": {
+              "signals": 10,
+              "winPct": 80.0,
+              "avgNetPct": 5.076,
+              "avgWinPct": 9.495,
+              "avgLossPct": -12.604
+            }
+          },
+          "missingPriceSignals": 0
+        },
+        "5": {
+          "full": {
+            "signals": 31,
+            "winPct": 41.94,
+            "avgNetPct": 1.937,
+            "avgWinPct": 15.319,
+            "avgLossPct": -7.727
+          },
+          "byYear": {
+            "2024": {
+              "signals": 12,
+              "winPct": 50.0,
+              "avgNetPct": 2.236,
+              "avgWinPct": 14.792,
+              "avgLossPct": -10.32
+            },
+            "2025": {
+              "signals": 9,
+              "winPct": 11.11,
+              "avgNetPct": -3.985,
+              "avgWinPct": 10.579,
+              "avgLossPct": -5.805
+            },
+            "2026": {
+              "signals": 10,
+              "winPct": 60.0,
+              "avgNetPct": 6.909,
+              "avgWinPct": 16.637,
+              "avgLossPct": -7.684
+            }
+          },
+          "missingPriceSignals": 0
+        },
+        "10": {
+          "full": {
+            "signals": 31,
+            "winPct": 45.16,
+            "avgNetPct": 2.675,
+            "avgWinPct": 18.973,
+            "avgLossPct": -10.748
+          },
+          "byYear": {
+            "2024": {
+              "signals": 12,
+              "winPct": 50.0,
+              "avgNetPct": 6.449,
+              "avgWinPct": 23.355,
+              "avgLossPct": -10.458
+            },
+            "2025": {
+              "signals": 9,
+              "winPct": 33.33,
+              "avgNetPct": -4.959,
+              "avgWinPct": 11.332,
+              "avgLossPct": -13.105
+            },
+            "2026": {
+              "signals": 10,
+              "winPct": 50.0,
+              "avgNetPct": 5.016,
+              "avgWinPct": 18.3,
+              "avgLossPct": -8.268
+            }
+          },
+          "missingPriceSignals": 0
+        },
+        "20": {
+          "full": {
+            "signals": 29,
+            "winPct": 44.83,
+            "avgNetPct": 8.441,
+            "avgWinPct": 32.134,
+            "avgLossPct": -10.809
+          },
+          "byYear": {
+            "2024": {
+              "signals": 12,
+              "winPct": 33.33,
+              "avgNetPct": 5.634,
+              "avgWinPct": 32.513,
+              "avgLossPct": -7.806
+            },
+            "2025": {
+              "signals": 9,
+              "winPct": 44.44,
+              "avgNetPct": 8.987,
+              "avgWinPct": 42.767,
+              "avgLossPct": -18.037
+            },
+            "2026": {
+              "signals": 8,
+              "winPct": 62.5,
+              "avgNetPct": 12.038,
+              "avgWinPct": 23.323,
+              "avgLossPct": -6.771
+            }
+          },
+          "missingPriceSignals": 0
+        }
+      },
+      "performance": {
+        "all": {
+          "capitalEnd": 559835.02,
+          "netReturnPct": 11.967,
+          "maxDDPct": -12.412,
+          "filledBuys": 26,
+          "closedTrades": 25,
+          "wins": 17,
+          "losses": 8,
+          "winPct": 68.0,
+          "avgNetPct": 1.388,
+          "avgWinPct": 7.88,
+          "avgLossPct": -12.407,
+          "openAtEnd": 1
+        },
+        "2024": {
+          "capitalEnd": 532270.36,
+          "netReturnPct": 6.454,
+          "maxDDPct": -12.412,
+          "filledBuys": 9,
+          "closedTrades": 9,
+          "wins": 6,
+          "losses": 3,
+          "winPct": 66.67,
+          "avgNetPct": 1.792,
+          "avgWinPct": 8.789,
+          "avgLossPct": -12.202,
+          "openAtEnd": 0
+        },
+        "2025": {
+          "capitalEnd": 491051.26,
+          "netReturnPct": -1.79,
+          "maxDDPct": -11.092,
+          "filledBuys": 8,
+          "closedTrades": 8,
+          "wins": 5,
+          "losses": 3,
+          "winPct": 62.5,
+          "avgNetPct": -0.575,
+          "avgWinPct": 6.535,
+          "avgLossPct": -12.424,
+          "openAtEnd": 0
+        },
+        "2026": {
+          "capitalEnd": 536513.39,
+          "netReturnPct": 7.303,
+          "maxDDPct": -10.166,
+          "filledBuys": 9,
+          "closedTrades": 8,
+          "wins": 6,
+          "losses": 2,
+          "winPct": 75.0,
+          "avgNetPct": 2.897,
+          "avgWinPct": 8.093,
+          "avgLossPct": -12.689,
+          "openAtEnd": 1
+        }
+      }
+    },
+    "G-R4": {
+      "signals": 56,
+      "candidateCount": 64,
+      "horizons": {
+        "1": {
+          "full": {
+            "signals": 25,
+            "winPct": 40.0,
+            "avgNetPct": -0.666,
+            "avgWinPct": 2.059,
+            "avgLossPct": -2.483
+          },
+          "byYear": {
+            "2024": {
+              "signals": 13,
+              "winPct": 38.46,
+              "avgNetPct": -0.896,
+              "avgWinPct": 1.741,
+              "avgLossPct": -2.544
+            },
+            "2025": {
+              "signals": 5,
+              "winPct": 20.0,
+              "avgNetPct": -2.375,
+              "avgWinPct": 1.303,
+              "avgLossPct": -3.295
+            },
+            "2026": {
+              "signals": 7,
+              "winPct": 57.14,
+              "avgNetPct": 0.981,
+              "avgWinPct": 2.646,
+              "avgLossPct": -1.238
+            }
+          },
+          "missingPriceSignals": 0
+        },
+        "3": {
+          "full": {
+            "signals": 25,
+            "winPct": 48.0,
+            "avgNetPct": 0.17,
+            "avgWinPct": 4.907,
+            "avgLossPct": -4.203
+          },
+          "byYear": {
+            "2024": {
+              "signals": 13,
+              "winPct": 46.15,
+              "avgNetPct": 0.639,
+              "avgWinPct": 4.151,
+              "avgLossPct": -2.371
+            },
+            "2025": {
+              "signals": 5,
+              "winPct": 40.0,
+              "avgNetPct": -1.529,
+              "avgWinPct": 4.705,
+              "avgLossPct": -5.685
+            },
+            "2026": {
+              "signals": 7,
+              "winPct": 57.14,
+              "avgNetPct": 0.512,
+              "avgWinPct": 6.141,
+              "avgLossPct": -6.994
+            }
+          },
+          "missingPriceSignals": 0
+        },
+        "5": {
+          "full": {
+            "signals": 24,
+            "winPct": 37.5,
+            "avgNetPct": 0.576,
+            "avgWinPct": 10.457,
+            "avgLossPct": -5.353
+          },
+          "byYear": {
+            "2024": {
+              "signals": 13,
+              "winPct": 23.08,
+              "avgNetPct": -0.527,
+              "avgWinPct": 9.531,
+              "avgLossPct": -3.544
+            },
+            "2025": {
+              "signals": 5,
+              "winPct": 40.0,
+              "avgNetPct": -3.799,
+              "avgWinPct": 7.42,
+              "avgLossPct": -11.279
+            },
+            "2026": {
+              "signals": 6,
+              "winPct": 66.67,
+              "avgNetPct": 6.609,
+              "avgWinPct": 12.67,
+              "avgLossPct": -5.513
+            }
+          },
+          "missingPriceSignals": 0
+        },
+        "10": {
+          "full": {
+            "signals": 23,
+            "winPct": 43.48,
+            "avgNetPct": 0.938,
+            "avgWinPct": 10.866,
+            "avgLossPct": -6.698
+          },
+          "byYear": {
+            "2024": {
+              "signals": 13,
+              "winPct": 38.46,
+              "avgNetPct": -1.213,
+              "avgWinPct": 7.439,
+              "avgLossPct": -6.62
+            },
+            "2025": {
+              "signals": 5,
+              "winPct": 40.0,
+              "avgNetPct": -3.542,
+              "avgWinPct": 4.502,
+              "avgLossPct": -8.906
+            },
+            "2026": {
+              "signals": 5,
+              "winPct": 60.0,
+              "avgNetPct": 11.012,
+              "avgWinPct": 20.82,
+              "avgLossPct": -3.701
+            }
+          },
+          "missingPriceSignals": 0
+        },
+        "20": {
+          "full": {
+            "signals": 23,
+            "winPct": 34.78,
+            "avgNetPct": 3.874,
+            "avgWinPct": 28.014,
+            "avgLossPct": -9.001
+          },
+          "byYear": {
+            "2024": {
+              "signals": 13,
+              "winPct": 23.08,
+              "avgNetPct": -2.257,
+              "avgWinPct": 16.477,
+              "avgLossPct": -7.877
+            },
+            "2025": {
+              "signals": 5,
+              "winPct": 20.0,
+              "avgNetPct": -6.727,
+              "avgWinPct": 10.239,
+              "avgLossPct": -10.969
+            },
+            "2026": {
+              "signals": 5,
+              "winPct": 80.0,
+              "avgNetPct": 30.417,
+              "avgWinPct": 41.111,
+              "avgLossPct": -12.361
+            }
+          },
+          "missingPriceSignals": 0
+        }
+      },
+      "performance": {
+        "all": {
+          "capitalEnd": 541670.32,
+          "netReturnPct": 8.334,
+          "maxDDPct": -8.857,
+          "filledBuys": 24,
+          "closedTrades": 23,
+          "wins": 13,
+          "losses": 10,
+          "winPct": 56.52,
+          "avgNetPct": 0.995,
+          "avgWinPct": 7.246,
+          "avgLossPct": -7.131,
+          "openAtEnd": 1
+        },
+        "2024": {
+          "capitalEnd": 536105.65,
+          "netReturnPct": 7.221,
+          "maxDDPct": -6.534,
+          "filledBuys": 12,
+          "closedTrades": 11,
+          "wins": 6,
+          "losses": 5,
+          "winPct": 54.55,
+          "avgNetPct": 2.19,
+          "avgWinPct": 7.154,
+          "avgLossPct": -3.767,
+          "openAtEnd": 1
+        },
+        "2025": {
+          "capitalEnd": 497542.97,
+          "netReturnPct": -0.491,
+          "maxDDPct": -6.311,
+          "filledBuys": 5,
+          "closedTrades": 4,
+          "wins": 3,
+          "losses": 1,
+          "winPct": 75.0,
+          "avgNetPct": 1.471,
+          "avgWinPct": 6.19,
+          "avgLossPct": -12.689,
+          "openAtEnd": 1
+        },
+        "2026": {
+          "capitalEnd": 518273.78,
+          "netReturnPct": 3.655,
+          "maxDDPct": -9.22,
+          "filledBuys": 7,
+          "closedTrades": 6,
+          "wins": 4,
+          "losses": 2,
+          "winPct": 66.67,
+          "avgNetPct": 1.858,
+          "avgWinPct": 8.175,
+          "avgLossPct": -10.776,
+          "openAtEnd": 1
+        }
+      }
+    }
+  }
+}
