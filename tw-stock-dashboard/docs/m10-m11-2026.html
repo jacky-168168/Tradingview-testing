@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>M10／M11｜2026 台股新模型回測</title>
+<script src="./site-access.js"></script>
+<style>
+:root{font-family:system-ui,"Noto Sans TC",sans-serif;color:#1e293b;background:#f4f6fa}
+*{box-sizing:border-box}body{margin:0}main{max-width:1050px;margin:auto;padding:18px}
+a{color:#2563eb}.menu{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.menu a{background:white;border-radius:10px;padding:9px 12px;border:1px solid #e2e8f0;text-decoration:none;font-size:13px;font-weight:700}
+h1{font-size:24px;margin:20px 0 8px}p{line-height:1.8;color:#475569;font-size:14px}
+.card{background:white;border-radius:14px;border:1px solid #e2e8f0;padding:18px;margin:15px 0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.tabs button{padding:12px 17px;border:1px solid #cbd5e1;border-radius:10px;background:white;cursor:pointer;font-weight:bold}
+.tabs button.active{background:#1d4ed8;color:white;border-color:#1d4ed8}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:15px}
+.metric{background:#f8fafc;padding:14px;border-radius:12px}.metric small{color:#64748b}.metric strong{display:block;font-size:23px;margin-top:5px}
+table{border-collapse:collapse;width:100%;min-width:550px}th,td{font-size:12px;text-align:left;padding:11px 9px;border-bottom:1px solid #e2e8f0}th{background:#f8fafc}.scroll{overflow-x:auto}
+.note{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px;font-size:12px;line-height:1.8;color:#92400e}
+.sub{font-size:12px;color:#64748b}.muted{color:#64748b;font-size:12px}
+</style>
+</head>
+<body><main>
+<nav class="menu"><a href="./selections.html">← 返回選股排行</a><a href="./backtest.html">回測中心</a><a href="https://github.com/jacky-168168/Tradingview-testing/actions/workflows/m10-m11-2026.yml" target="_blank" rel="noopener noreferrer">查看回測執行狀況</a></nav>
+<h1>🧪 M10／M11｜2026 新選股模型</h1>
+<p>兩組新策略採用上市＋上櫃股票、官方投信與融資融券盤後報表；此頁是研究回測，不是當日可交易訊號。只在有效的歷史資料通過日期與涵蓋率檢查後顯示結果。</p>
+<section class="card">
+<div class="tabs"><button id="tabM10" class="active" type="button">M10｜產業投信擴散＋5日強漲</button><button id="tabM11" type="button">M11｜融資融券連增5日</button></div>
+<h2 id="title" style="font-size:18px">M10｜產業投信擴散＋5日強漲</h2>
+<p id="condition">同一產業至少30%有投信淨買超，個股近5交易日漲幅超過10%。</p>
+<div id="status" class="note" role="status">正在讀取2026年官方資料回測結果…</div>
+<div class="metrics" id="metrics"></div>
+<h3>進場後持有5／10／20交易日（前3檔等權訊號，單筆績效）</h3>
+<div class="scroll"><table><thead><tr><th>持有天數</th><th>樣本數</th><th>勝率</th><th>平均淨報酬</th><th>平均獲利</th><th>平均虧損</th></tr></thead><tbody id="horizons"></tbody></table></div>
+<h3>近期研究選股訊號（非即時榜單）</h3>
+<p class="sub" id="latestDate"></p>
+<div class="scroll"><table><thead><tr><th>股票</th><th>市場</th><th>產業</th><th>5日漲幅</th><th>因子</th></tr></thead><tbody id="picks"></tbody></table></div>
+</section>
+<section class="card"><h3>與0050同期比較</h3><div id="benchmark" class="sub">等候資料。</div></section>
+<div class="note">回測限制：訊號為D日收盤後才可得知，隔一交易日開盤才能買進；普通股券商手續費每邊0.1425%、賣出證交稅0.3%、雙邊各假設0.1%滑價。10日資金模擬為100萬元本金、最多3檔同時持有、整張交易。當前公司的產業與股本分類可能與2026年歷史時點不同，且已下市公司可能未納入，研究結果不等於通過無前視偏誤的正式績效。</div>
+</main>
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const models={M10:{name:"產業投信擴散＋5日強漲",desc:"同一產業（上市＋上櫃）至少30%股票獲投信淨買超；個股近5個交易日漲幅超過10%。"},M11:{name:"融資融券連增5日",desc:"個股融資餘額及融券餘額，在最近5個連續交易日，每一天都高於前一日。"}};
+let data=null;let selected=location.hash==="#M11"?"M11":"M10";
+function num(v,suffix="%"){return v==null?"—":Number(v).toLocaleString("zh-TW",{maximumFractionDigits:2})+suffix}
+function show(){
+const id=selected,def=models[id];$("tabM10").classList.toggle("active",id==="M10");$("tabM11").classList.toggle("active",id==="M11");
+$("title").textContent=id+"｜"+def.name;$("condition").textContent=def.desc;
+if(!data){$("status").textContent="尚無回測輸出，或目前無法取得結果。請檢查GitHub回測工作流程。";return}
+const coverage=data.coverage||{},m=data.models?.[id],p=m?.portfolio10D;
+$("status").textContent="資料期間："+data.period.start+" 至 "+data.period.end+"｜官方融資融券 "+coverage.creditSessions+"/"+coverage.marketSessions+" 日｜法人 "+coverage.institutionSessions+"/"+coverage.marketSessions+" 日｜資料狀態："+data.status;
+if(!m)return;
+const metric=[["10日資金回測報酬",num(p?.netReturnPct)],["年化報酬",num(p?.annualizedCAGRpct)],["最大回撤",num(p?.maxDrawdownPct)],["10日已平倉交易",num(p?.closedTrades,"筆")],["訊號交易日",num(m.signalDays,"日")],["期末資產",num(p?.capitalEnd,"元")]];
+$("metrics").innerHTML=metric.map(([k,v])=>'<div class="metric"><small>'+esc(k)+'</small><strong>'+esc(v)+'</strong></div>').join("");
+$("horizons").innerHTML=["5","10","20"].map(h=>{let v=m.top3TradeSample?.[h]||{};return "<tr><td>"+h+"日</td><td>"+esc(v.trades??"—")+"</td><td>"+num(v.winPct)+"</td><td>"+num(v.avgNetPct)+"</td><td>"+num(v.avgWinPct)+"</td><td>"+num(v.avgLossPct)+"</td></tr>"}).join("");
+const snapshots=data.picks?.[id]||{};const dates=Object.keys(snapshots).filter(d=>(snapshots[d]||[]).length).sort();
+const day=dates.at(-1);$("latestDate").textContent=day?"最近有入選股票的日期："+day+"（研究紀錄，非今天正式榜單）":"此期間沒有足夠資料產生有效訊號。";
+$("picks").innerHTML=day?snapshots[day].map(x=>"<tr><td>"+esc(x.code+" "+x.name)+"</td><td>"+esc(x.market)+"</td><td>"+esc(x.industry)+"</td><td>"+num(x.ret5)+"</td><td>"+(id==="M10"?"產業投信買超比例 "+num(x.trustIndustryRatio):"融資增 "+num(x.marginRise5,"張")+"／融券增 "+num(x.shortRise5,"張"))+"</td></tr>").join(""):"";
+const b=data.benchmark0050||{};$("benchmark").textContent=b.status==="OK"?"0050同期買進持有：累積 "+num(b.netReturnPct)+"｜年化 "+num(b.annualizedCAGRpct)+"｜最大回撤 "+num(b.maxDrawdownPct)+"（相同起迄日、計入ETF費用）":"0050比較資料狀態："+(b.status||"未取得");
+}
+for(const id of ["M10","M11"])$("tab"+id).addEventListener("click",()=>{selected=id;location.hash=id;show()});
+fetch("./data/research/m10_m11_2026/summary.json?"+Date.now(),{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()}).then(z=>{data=z;show()}).catch(()=>show());
+</script></body></html>
