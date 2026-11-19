@@ -1,0 +1,130 @@
+{
+  "source": "user screenshot transcribed, not yet verified against official revised numbers",
+  "tradingDays": 23,
+  "from": "2026-09-08",
+  "to": "2026-10-13",
+  "method": "Pearson correlation, day+N is future cumulative index close-to-close return; day0 is same-day return (cannot be acted on before close); sample is exploratory only",
+  "results": {
+    "financing_change": {
+      "day0": {
+        "n": 22,
+        "pearson": 0.391
+      },
+      "day1": {
+        "n": 22,
+        "pearson": 0.035
+      },
+      "day3": {
+        "n": 20,
+        "pearson": 0.244
+      },
+      "day5": {
+        "n": 18,
+        "pearson": 0.142
+      },
+      "day10": {
+        "n": 13,
+        "pearson": -0.053
+      }
+    },
+    "financing_balance": {
+      "day0": {
+        "n": 22,
+        "pearson": -0.048
+      },
+      "day1": {
+        "n": 22,
+        "pearson": -0.123
+      },
+      "day3": {
+        "n": 20,
+        "pearson": -0.049
+      },
+      "day5": {
+        "n": 18,
+        "pearson": -0.034
+      },
+      "day10": {
+        "n": 13,
+        "pearson": -0.461
+      }
+    },
+    "maintenance": {
+      "day0": {
+        "n": 22,
+        "pearson": 0.304
+      },
+      "day1": {
+        "n": 22,
+        "pearson": -0.13
+      },
+      "day3": {
+        "n": 20,
+        "pearson": -0.332
+      },
+      "day5": {
+        "n": 18,
+        "pearson": -0.431
+      },
+      "day10": {
+        "n": 13,
+        "pearson": -0.68
+      }
+    },
+    "short_change": {
+      "day0": {
+        "n": 22,
+        "pearson": -0.088
+      },
+      "day1": {
+        "n": 22,
+        "pearson": 0.306
+      },
+      "day3": {
+        "n": 20,
+        "pearson": 0.477
+      },
+      "day5": {
+        "n": 18,
+        "pearson": 0.459
+      },
+      "day10": {
+        "n": 13,
+        "pearson": 0.721
+      }
+    },
+    "short_to_financing": {
+      "day0": {
+        "n": 22,
+        "pearson": 0.389
+      },
+      "day1": {
+        "n": 22,
+        "pearson": 0.469
+      },
+      "day3": {
+        "n": 20,
+        "pearson": 0.276
+      },
+      "day5": {
+        "n": 18,
+        "pearson": -0.1
+      },
+      "day10": {
+        "n": 13,
+        "pearson": 0.126
+      }
+    }
+  },
+  "decision": {
+    "integrateRiskScore": false,
+    "integrateContrarianAllocation": false,
+    "reasons": [
+      "Only 23 trading sessions; 10-day horizon has just 13 overlapping observations",
+      "No independent multi-year holdout",
+      "No test of incremental predictive power beyond same-day index return or market trend",
+      "No trading-cost-adjusted portfolio test",
+      "Screenshot data not reconciled against official final revised balances"
+    ]
+  }
+}
