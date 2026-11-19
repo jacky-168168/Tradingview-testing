@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-19T07:18:20.685780Z",
+  "generatedAt": "2026-11-19T08:40:46.636975Z",
   "sources": {
     "PTT": {
       "status": "error",
@@ -12,7 +12,7 @@
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 36,
+      "freshCount": 39,
       "queryHealth": {
         "queriesAttempted": 9,
         "queriesSucceeded": 9,
@@ -46,21 +46,21 @@
     }
   },
   "social": {
-    "sample": 16,
+    "sample": 17,
     "bull": 0,
-    "bear": 5,
+    "bear": 6,
     "neutral": 11,
-    "directional": 5,
+    "directional": 6,
     "status": "已有樣本｜偏空討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
     "rawSample": 80,
-    "investmentDiscussion": 16,
-    "originalDiscussion": 16,
+    "investmentDiscussion": 17,
+    "originalDiscussion": 17,
     "repostedNews": 45,
-    "unrelated": 19,
+    "unrelated": 18,
     "platformCounts": {
       "PTT": 1,
-      "Bluesky": 15,
+      "Bluesky": 16,
       "Threads": 0,
       "Instagram": 0
     }
@@ -80,6 +80,79 @@
     "method": "僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"
   },
   "items": [
+    {
+      "platform": "Bluesky",
+      "title": "受美股科技股走勢影響，台股近期劇烈波動且失守年線。金管會宣布自11月20日起實施限空令，規定個股收盤跌幅達3.5%以上時，隔日不得低於前一日收盤價放空，並調降盤中借券賣出委託數量上限。 來源：台灣英文新聞",
+      "url": "https://bsky.app/profile/taiwannews-zh.taiwansky.social/post/3n2nmlxsnd7vo",
+      "publishedAt": "2026-11-19T08:35:18.641000Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "受美股科技股走勢影響，台股近期劇烈波動且失守年線",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "Bluesky",
+      "title": "#中央社即時新聞 財經新聞 15:07 三大法人賣超台股461.03億元 （中央社台北19日電）台股今天跌1768.02點，收在38426.89點，成交值新台幣8952.81億元。三大法人外資及陸資賣超、投信買超、自營商賣超，合計賣超461.03億元。 www.cna.com.tw/news/afe/202…",
+      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3n2nmhpknibl2",
+      "publishedAt": "2026-11-19T08:06:29Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "#中央社即時新聞 財經新聞 14:44 金管會加碼限空令11/20實施 跌幅3.5%個股隔日禁平盤下放空 （中央社記者高華謙台北19日電）台股近期波動劇烈，金管會繼9日祭出5項措施穩定市場後，今天再宣布，自明天起實施限空令新措施，包括個股當日收盤價跌幅達3.5%以上，隔天交易日不得低於前一交易日收盤價放空；另也調整",
+      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3n2nmgyqr4o72",
+      "publishedAt": "2026-11-19T08:06:05Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "#中央社即時新聞 財經新聞 14:25 台股收38426點摜破年線 收盤跌1768點寫第7大 （中央社記者吳家豪台北19日電）受美國科技股走勢疲弱影響，台股今天失守4萬點關卡，最低跌至38259.7點、下挫1935.21點，創盤中第9大跌點；終場加權指數收在38426.89點，下跌1768.02點，創收盤第7大跌點",
+      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3n2nmg44lhtx2",
+      "publishedAt": "2026-11-19T08:05:31Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "#公視新聞網 15:01 新一波限空令11/20起上路 個股收跌3.5％以上隔日禁空 在台股今（19）日再度重挫1768點，失守4萬點大關後，金管會宣布，自明（20）日起祭出新一波限空令，個股收盤價跌幅若達3.5%以上，次一交易日不得低於前一日收盤價放空；此外，每日盤中借券賣出委託數量上限也由3%調降至1%，同時鼓",
+      "url": "https://bsky.app/profile/pbs.pbs.idv.tw.ap.brid.gy/post/3n2nlbkvyfhx2",
+      "publishedAt": "2026-11-19T07:45:07Z",
+      "stance": "偏空",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "新聞轉載",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "新一波限空令11/20起上路 個股收跌3.5％以上隔日禁空",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
     {
       "platform": "Bluesky",
       "title": "📢 受美國科技股走勢疲弱影響，台股今天失守4萬點關卡，盤中最低下探38259.7點、下挫1935.21點，創盤中第9大跌點；終場加權指數收在38426.89點，下跌1768.02點，為史上第7大收盤跌點，跌幅4.4%，失守年線39368點，成交值新台幣8952.81億元。",
@@ -741,7 +814,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -761,7 +834,7 @@
       "contentType": "投資討論",
       "investmentEligible": true,
       "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "method": "標題規則（非留言全文）",
       "semantic": {
         "model": "gemini-3.5-flash-lite",
         "intent": "新聞轉載",
@@ -1041,80 +1114,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 輝達退出中國H200晶片市場！代理執行長證",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794964934.A.2F4.html",
-      "publishedAt": "2026-11-18T01:22:14Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "📢 輝達（NVIDIA）今天公布2027財年第三季財報與財測，雙雙優於預期。輝達進一步上調2028財年營收成長預測至75%，高於先前預估的70%。針對交接，代理執行長克瑞斯在談到與客戶和供應商關係維持時表示，台積電領導團隊也來到辦公室，並且全力參與協助相關工作。",
-      "url": "https://bsky.app/profile/cnataiwan.nzcow.com/post/3n2ke3c2pze2c",
-      "publishedAt": "2026-11-18T00:58:31.678166Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "新聞轉載",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "📢 輝達（NVIDIA）今天公布2027財年第三季財報與財測，雙雙優於預期",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "PTT",
-      "title": "[閒聊] 2026/11/18 盤中閒聊",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794961816.A.384.html",
-      "publishedAt": "2026-11-18T00:30:16Z",
-      "stance": "中立／難判",
-      "contentType": "非投資話題",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "timestampBasis": "文章網址 ID 推算，非官方發文時間"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 黃仁勳喊願意回歸！輝達董事會主席放話",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794961713.A.24B.html",
-      "publishedAt": "2026-11-18T00:28:33Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 輝達強調當前業務與供應鏈沒有影響，台積",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794961639.A.99F.html",
-      "publishedAt": "2026-11-18T00:27:19Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "【LIVE】台股恐破前低37837 主動式ETF砍倉PCB怎辦？｜#趙慶翔 #小童 #楊雲翔 #財經鈔能力 20261119",
-      "url": "https://www.youtube.com/watch?v=XmC8FvSHOsE",
-      "publishedAt": "2026-11-19T07:03:54Z",
-      "sourceName": "TVBS財經",
+      "title": "台幣貶破33元、台股殺破3萬9 空頭來了嗎？大盤跌到這邊會止跌反轉！#紀緯明 #小明老師 #投資明明很簡單 #台股 #台幣 #權值股 #崩跌 #台積電",
+      "url": "https://www.youtube.com/watch?v=dL5QxNMdCVs",
+      "publishedAt": "2026-11-19T08:32:53Z",
+      "sourceName": "投資明明很簡單 紀緯明分析師-永誠國際投顧",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1814,39 +1822,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 輝達退出中國H200晶片市場！代理執行長證",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794964934.A.2F4.html",
-      "publishedAt": "2026-11-18T01:22:14Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 黃仁勳喊願意回歸！輝達董事會主席放話",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794961713.A.24B.html",
-      "publishedAt": "2026-11-18T00:28:33Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 輝達強調當前業務與供應鏈沒有影響，台積",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1794961639.A.99F.html",
-      "publishedAt": "2026-11-18T00:27:19Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1862,19 +1837,19 @@
     "status": "verified",
     "model": "gemini-3.5-flash-lite",
     "inferenceCalls": 1,
-    "cachedClassifications": 12,
-    "newlyClassified": 4,
+    "cachedClassifications": 15,
+    "newlyClassified": 2,
     "unclassified": 0,
-    "updatedAt": "2026-11-19T07:18:28.393Z",
+    "updatedAt": "2026-11-19T08:40:53.640Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 16,
-    "classifiedCount": 16,
+    "candidateCount": 17,
+    "classifiedCount": 17,
     "investmentCount": 2,
     "bullish": 0,
     "bearish": 1,
     "neutral": 1,
-    "originalRuleCount": 16,
+    "originalRuleCount": 17,
     "noTrade": true
   }
 }
