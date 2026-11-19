@@ -41,6 +41,32 @@ test("non-JSON API response, blocked or malformed output all fail closed",async(
  ])await assert.rejects(geminiModel({model:DEFAULT_MODEL,messages:[{role:"system",content:"s"},{role:"user",content:"u"}]},
  {apiKey:"x",fetchFn:async()=>({ok:true,status:200,json:async()=>candidate})}),/non-JSON|not complete|missing/);
 });
+
+test("Gemini timeout retries once and only accepts a real verified response",async()=>{
+ let calls=0;
+ const fake=async()=>{
+  calls++;
+  if(calls===1)throw Object.assign(new Error("The operation was aborted due to timeout"),{name:"TimeoutError"});
+  return {ok:true,status:200,json:async()=>({candidates:[{finishReason:"STOP",content:{parts:[{text:JSON.stringify(good)}]}}]})};
+ };
+ const result=await geminiModel({model:DEFAULT_MODEL,messages:[{role:"system",content:"s"},{role:"user",content:"u"}]},
+  {apiKey:"x",fetchFn:fake,noSleep:true});
+ assert.equal(calls,2);assert.deepEqual(JSON.parse(result),good);
+});
+test("two Gemini timeouts fail closed without publishing synthetic inference",async()=>{
+ let calls=0;
+ await assert.rejects(geminiModel({model:DEFAULT_MODEL,messages:[{role:"system",content:"s"},{role:"user",content:"u"}]},
+  {apiKey:"x",noSleep:true,fetchFn:async()=>{calls++;throw Object.assign(new Error("timeout"),{name:"TimeoutError"});}}),
+  /timed out after 2 attempts/);
+ assert.equal(calls,2);
+});
+test("non-timeout transport error is not retried",async()=>{
+ let calls=0;
+ await assert.rejects(geminiModel({model:DEFAULT_MODEL,messages:[{role:"system",content:"s"},{role:"user",content:"u"}]},
+  {apiKey:"x",noSleep:true,fetchFn:async()=>{calls++;throw Error("invalid authentication");}}),/invalid authentication/);
+ assert.equal(calls,1);
+});
+
 test("quota errors fail clearly without reporting inference success",async()=>{
  await assert.rejects(geminiModel({model:DEFAULT_MODEL,messages:[{role:"system",content:"s"},{role:"user",content:"u"}]},
  {apiKey:"x",noSleep:true,fetchFn:async()=>({ok:false,status:429})}),/429/);
