@@ -1,6 +1,6 @@
 <!doctype html><html lang="zh-Hant"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>六代理研究實驗室｜台股量化</title>
+<title>六代理研究與個股進場決策｜台股量化</title>
 <meta name="description" content="ATLAS／VEGA／ORION／LUNA／TITAN／NOVA 六角色規則式研究。透明來源、風險否決、歷史資料明示、非交易訊號。">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#66768c;--line:#e2e8f0;--blue:#2563eb;--red:#b91c1c;--green:#047857;--amber:#9a5b08}
@@ -28,6 +28,8 @@ button,select{font:inherit}a{color:#1d4ed8}main{max-width:1190px;padding:20px;ma
 footer{font-size:11px;color:#64748b;padding:20px 0 3px;line-height:1.8}.empty{padding:18px;font-size:12px;color:var(--muted)}
 @media(max-width:940px){.summary{grid-template-columns:repeat(2,1fr)}.workarea{grid-template-columns:1fr}.candidates{max-height:320px}}
 @media(max-width:620px){main{padding:12px}.top h1{font-size:22px}.summary{gap:8px}.card{padding:12px}.number{font-size:24px}.agents{grid-template-columns:1fr}.agent.final{grid-column:auto}}
+.entry-report{margin:13px 0;padding:13px;border:1px solid #d7e4f4;border-radius:12px;background:#f8fbff}.entry-decision-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.entry-decision-top strong{font-size:14px}.entry-trigger{padding:10px;border-left:3px solid #3b82f6;background:#eff6ff;font-size:12px;border-radius:6px;line-height:1.7}.entry-levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}.entry-level{background:#fff;border:1px solid var(--line);padding:9px;border-radius:9px;display:grid;gap:4px}.entry-level strong{font-size:15px}.entry-checks{display:grid;gap:7px}.entry-check{display:flex;gap:9px;align-items:flex-start;padding:8px;background:#fff;border:1px solid var(--line);border-radius:8px;font-size:12px}.entry-check p{margin:4px 0 0;overflow-wrap:anywhere}.entry-check-tag{font-size:10px;font-weight:800;padding:3px 5px;border-radius:6px;white-space:nowrap;background:#fef3c7;color:#92400e}.entry-check-tag.good{background:#dcfce7;color:#166534}.entry-check-tag.bad{background:#fee2e2;color:#991b1b}.entry-check-tag.missing{background:#e2e8f0;color:#475569}.entry-arguments{display:grid;grid-template-columns:1fr 1fr;gap:9px}.entry-arguments section{background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px}.entry-arguments h4{font-size:12px;margin:0 0 6px}.entry-arguments ul{padding-left:17px;margin:0;font-size:11px;line-height:1.7}.entry-manual{border:1px dashed #94a3b8;border-radius:11px;padding:12px;margin:12px 0}.entry-manual h3{margin:0;font-size:14px}.entry-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}.entry-input{display:grid;gap:4px}.entry-input input{min-width:0;width:100%;border-radius:8px;border:1px solid #cbd5e1;background:#fff;padding:9px;font:inherit;font-size:14px}.entry-result{font-weight:800;font-size:13px;margin:8px 0}.entry-result.invalid{color:var(--red)}
+@media(max-width:620px){.entry-levels{grid-template-columns:1fr}.entry-arguments{grid-template-columns:1fr}}
 </style><link rel="stylesheet" href="./six-agent-visual.css"><link rel="stylesheet" href="./orion-news.css"><script src="./site-access.js"></script></head><body>
 <main>
 <header class="top"><div><div class="eyebrow">RESEARCH LAB / RULE-BASED MVP</div><h1>六代理研究實驗室</h1>
@@ -60,6 +62,7 @@ footer{font-size:11px;color:#64748b;padding:20px 0 3px;line-height:1.8}.empty{pa
 <div id="candidates" class="candidates" aria-label="G 研究候選清單"><div class="empty">準備讀取官方快照…</div></div></div>
 <div class="card"><div class="head"><h2 id="detailTitle" class="group-title">選擇股票查看六代理解釋</h2><span id="decision" class="flag">等待資料</span></div>
 <p id="detailIntro" class="description">系統不會提供買賣指令；每個結論都有資料日期與可核對依據。</p>
+<div id="entryReport" class="entry-report" aria-live="polite">等待六代理研究資料…</div><section id="entryManualPlan" class="entry-manual" aria-label="手動價位風報比試算"></section>
 <details class="v-fold"><summary>展開各代理的完整分析證據（六張卡）</summary><div id="agents" class="agents"></div></details></div>
 </section>
 <section class="card" aria-label="ORION 台灣財經新聞風向資料庫" style="margin-top:15px">
@@ -77,5 +80,5 @@ footer{font-size:11px;color:#64748b;padding:20px 0 3px;line-height:1.8}.empty{pa
 </section>
 <footer>資料來源：既有 G 正式日資料與盤中暫估、重大市場新聞 JSON。新聞主題比對不等於已證實因果；LUNA 分開顯示市場風險及可核實的 PTT／經授權 Meta 社群樣本；社群缺值不代表市場中立。TITAN 否決不可被 NOVA 覆寫。六代理 Gemini 研究使用獨立模型呼叫並顯示實際報告時間；不提供模擬或真實下單，不宣稱回測績效。離開盤中時段只顯示歷史快照；跨年度休市行事曆需要核對更新。</footer>
 </main>
-<script src="./agent-research-core.js"></script><script src="./six-agent-visual.js"></script><script src="./orion-news-ui.js"></script><script src="./agent-research-ui.js"></script><script src="./agent-llm-ui.js"></script>
+<script src="./agent-research-core.js"></script><script src="./agent-entry-decision.js"></script><script src="./agent-entry-ui.js"></script><script src="./six-agent-visual.js"></script><script src="./orion-news-ui.js"></script><script src="./agent-research-ui.js"></script><script src="./agent-llm-ui.js"></script>
 </body></html>

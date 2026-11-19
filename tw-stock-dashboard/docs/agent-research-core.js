@@ -165,7 +165,9 @@ function analyze(input,nowInput){
   parts.titan=titan(row,{risk,marketReady,sameRiskDate});
   parts.nova=nova(parts);
   return {code:String(row.code),name:String(row.name||row.code),market:String(row.market||""),price:numeric(row.close),theme:String(row.theme||""),
-   sourceRank:i+1,asOfDate,agents:parts};
+   sourceRank:i+1,asOfDate,referenceLevels:{prior3High:numeric(row.gFlags?.prior3High),prior18High:numeric(row.gFlags?.prior18High),
+   break3:typeof row.gFlags?.break3==="boolean"?row.gFlags.break3:null,
+   break18:typeof row.gFlags?.break18==="boolean"?row.gFlags.break18:null},agents:parts};
  });
  return {version:"six-agent-rule-v0.1",checkedAt:now.toISOString(),taipeiDate:p.date,asOfDate,mode,marketSession:trading,
    liveVerified:useLive,source:{gPublishedAt:intraday.publishedAt||null,gQuality:q,officialDataDate:dailyDate,riskDate:risk?.date||null,
