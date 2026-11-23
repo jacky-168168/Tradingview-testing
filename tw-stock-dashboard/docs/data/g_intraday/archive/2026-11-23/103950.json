@@ -1,0 +1,268 @@
+{
+  "asOfDate": "2026-11-23",
+  "publishedAt": "2026-11-23T10:39:50+08:00",
+  "scanStartedAt": "2026-11-23T10:38:14+08:00",
+  "quoteCapturedAt": "2026-11-23T10:39:40+08:00",
+  "sessionSlot": "10:30",
+  "sourceCloseDate": "2026-11-20",
+  "quality": "intraday-provisional-allmarket",
+  "quoteSource": "TWSE MIS same-day listed+OTC; trade price if available, otherwise validated order-book midpoint proxy; cumulative lots × 1000 shares",
+  "coverage": {
+    "total": 1990,
+    "valid": 1426,
+    "traded": 1365,
+    "noTrade": 61,
+    "exchange": {
+      "上市": {
+        "valid": 870,
+        "total": 1092,
+        "coverage": 0.7967,
+        "traded": 867,
+        "noTrade": 3
+      },
+      "上櫃": {
+        "valid": 556,
+        "total": 898,
+        "coverage": 0.6192,
+        "traded": 498,
+        "noTrade": 58
+      }
+    }
+  },
+  "marketBreadth": {
+    "quality": "verified-trade-only",
+    "source": "TWSE MIS today trade prices vs prior official reference; proxy and untraded excluded",
+    "total": {
+      "up": 35,
+      "down": 67,
+      "flat": 13,
+      "sample": 115,
+      "upPct": 30.4
+    },
+    "exchange": {
+      "上市": {
+        "up": 23,
+        "down": 34,
+        "flat": 5,
+        "sample": 62,
+        "upPct": 37.1
+      },
+      "上櫃": {
+        "up": 12,
+        "down": 33,
+        "flat": 8,
+        "sample": 53,
+        "upPct": 22.6
+      }
+    }
+  },
+  "indicativeQuoteBreadth": {
+    "quality": "indicative-price-with-orderbook-proxy",
+    "source": "TWSE MIS 盤中當日成交價（可取得者）及已驗證合理價差之委託中間價／最佳買賣價；非全數成交價",
+    "total": {
+      "up": 436,
+      "down": 881,
+      "flat": 48,
+      "executed": 115,
+      "orderBookProxy": 1250,
+      "sample": 1365,
+      "upPct": 31.94
+    },
+    "exchange": {
+      "上市": {
+        "up": 294,
+        "down": 549,
+        "flat": 24,
+        "executed": 62,
+        "orderBookProxy": 805,
+        "sample": 867,
+        "upPct": 33.91
+      },
+      "上櫃": {
+        "up": 142,
+        "down": 332,
+        "flat": 24,
+        "executed": 53,
+        "orderBookProxy": 445,
+        "sample": 498,
+        "upPct": 28.51
+      }
+    }
+  },
+  "quotePriceSources": {
+    "last-trade": 108,
+    "previous-trade": 7,
+    "bid-ask-midpoint": 1224,
+    "one-sided-high-bid": 14,
+    "one-sided-low-ask": 12,
+    "no-trade-prevclose": 61
+  },
+  "historicalBarCoverage": 1424,
+  "historyRejected": 2,
+  "market20Reference": "previous completed cash-market return (not live index)",
+  "rows": [],
+  "selection": {
+    "variant": "G_DOUBLE_PERSIST",
+    "source": "live-year-anchored-market-OHLC",
+    "dataDate": "2026-11-23",
+    "percentileUniverse": 1424,
+    "strongCandidates": 7,
+    "doubleBreakCandidates": 0,
+    "pocketPreviousDays": 10,
+    "note": "盤中依未完成日K、當日累積成交量與當日MIS報價重選。當日未成交股票以核對過的昨收價及0成交量納入排名母體，不得入選G；無成交價但有買賣揭示者以經價差篩選的中間價估算。非正式G日K訊號，法人及SAR均未確認。",
+    "pocketSnapshotsFound": 10,
+    "pocketWarmup": false,
+    "isProvisional": true
+  },
+  "freeMarketOverlay": {
+    "version": "free-market-overlay-v1",
+    "asOfDate": "2026-11-23",
+    "industryMomentum": {
+      "asOfDate": "2026-11-23",
+      "method": "平方根估計成交額加權漲跌幅；排除低量與非實際成交價",
+      "priceQuality": "verified-same-day-trades-only",
+      "estimatedTurnover": true,
+      "notNetFlow": true,
+      "minGroupCoverage": 0.6,
+      "ranking": [],
+      "eligibleGroupCount": 0,
+      "sampleGroups": 36
+    },
+    "tradeRestrictions": {
+      "checkedAt": "2026-11-23T10:39:46+08:00",
+      "asOfDate": "2026-11-23",
+      "source": "TWSE／TPEx 免費官方處置公告",
+      "markets": {
+        "上市": {
+          "status": "verified",
+          "count": 5,
+          "codes": [
+            "2305",
+            "2466",
+            "3532",
+            "6108",
+            "7610"
+          ]
+        },
+        "上櫃": {
+          "status": "verified",
+          "count": 10,
+          "codes": [
+            "3287",
+            "3441",
+            "3491",
+            "4174",
+            "4534",
+            "6140",
+            "6697",
+            "6751",
+            "7717",
+            "8084"
+          ]
+        }
+      },
+      "codes": [
+        [
+          "上市",
+          "2305"
+        ],
+        [
+          "上市",
+          "2466"
+        ],
+        [
+          "上市",
+          "3532"
+        ],
+        [
+          "上市",
+          "6108"
+        ],
+        [
+          "上市",
+          "7610"
+        ],
+        [
+          "上櫃",
+          "3287"
+        ],
+        [
+          "上櫃",
+          "3441"
+        ],
+        [
+          "上櫃",
+          "3491"
+        ],
+        [
+          "上櫃",
+          "4174"
+        ],
+        [
+          "上櫃",
+          "4534"
+        ],
+        [
+          "上櫃",
+          "6140"
+        ],
+        [
+          "上櫃",
+          "6697"
+        ],
+        [
+          "上櫃",
+          "6751"
+        ],
+        [
+          "上櫃",
+          "7717"
+        ],
+        [
+          "上櫃",
+          "8084"
+        ]
+      ]
+    },
+    "topGRestrictions": [],
+    "note": "純研究附加資訊，不修改 G 盤中／盤後選股、分數或風險分數；處置標記非當沖資格保證"
+  },
+  "gSignalContext": {
+    "version": "g-intraday-market-context-v1",
+    "asOfDate": "2026-11-23",
+    "publishedAt": "2026-11-23T10:39:50+08:00",
+    "sourceCloseDate": "2026-11-20",
+    "previousCloseRisk": {
+      "date": "2026-11-20",
+      "score": 0.0,
+      "state": "🔴 Risk OFF",
+      "available": true,
+      "note": "這是上一個完整交易日的正式風險分數，不是訊號當下的即時大盤分數"
+    },
+    "market": {
+      "source": "TWSE MIS 當日已驗證實際成交價",
+      "breadth": {
+        "上市": {
+          "tradedSample": 62,
+          "upPct": 37.1,
+          "peerMeanPct": -0.591,
+          "peerSample": 62
+        },
+        "上櫃": {
+          "tradedSample": 53,
+          "upPct": 22.6,
+          "peerMeanPct": -2.409,
+          "peerSample": 53
+        }
+      },
+      "allMarketTradedSample": 115,
+      "allMarketUpPct": null,
+      "breadthBand": "資料不足",
+      "coverageValid": 1426,
+      "note": "上漲家數占比使用實際成交價樣本；上一日正式風險分數與本輪盤中廣度不同時點，不合成新的 Risk Score"
+    },
+    "top20": [],
+    "researchOnly": true,
+    "note": "每輪只是時間快照，同日股票重複入榜不代表多個獨立買進訊號；未計算未來報酬、勝率或即時指數相對強弱"
+  }
+}
