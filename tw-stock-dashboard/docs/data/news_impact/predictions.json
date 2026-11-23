@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-22T19:52:09.536Z",
+  "generatedAt": "2026-11-23T07:54:50.032Z",
   "classifierVersionCurrent": "2026-11-09-v1.3",
   "definition": "Immutable observed-at-time conditional news directional hypotheses. Does not backfill older/matured items or predictions from after benchmark start.",
   "minNForWinrate": 30,
@@ -8118,11 +8118,117 @@
           ]
         }
       ]
+    },
+    {
+      "id": "news-f097f3e557f77aa4",
+      "group": "9838b3ecdfa29467ce153bd5",
+      "title": "現貨黃金反彈逾2%重返3600美元，聯準會升息預期降溫",
+      "source": "TradingKey",
+      "publishedAt": "2026-11-23T10:24:11+08:00",
+      "frozenAt": "2026-11-23T07:54:50.032Z",
+      "classifierVersion": "2026-11-09-v1.3",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "美元",
+          "direction": -1,
+          "ruleScore": -15,
+          "ruleIds": [
+            "hike-bets-cool"
+          ]
+        },
+        {
+          "asset": "美債殖利率",
+          "direction": -1,
+          "ruleScore": -15,
+          "ruleIds": [
+            "hike-bets-cool"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "news-154bf8fbb97c0ab6",
+      "group": "febdf426f8fb899793ddc78d",
+      "title": "東京匯市日圓兌美元升至159日圓前半，美國聯準會官員暗示升息助長日圓賣壓",
+      "source": "BigGo 財經",
+      "publishedAt": "2026-11-23T09:05:00+08:00",
+      "frozenAt": "2026-11-23T07:54:50.032Z",
+      "classifierVersion": "2026-11-09-v1.3",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "NASDAQ",
+          "direction": -1,
+          "ruleScore": -65,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "美元",
+          "direction": 1,
+          "ruleScore": 55,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "美債殖利率",
+          "direction": 1,
+          "ruleScore": 55,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "台股",
+          "direction": -1,
+          "ruleScore": -50,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "美股S&P500",
+          "direction": -1,
+          "ruleScore": -45,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "黃金",
+          "direction": -1,
+          "ruleScore": -45,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "白銀",
+          "direction": -1,
+          "ruleScore": -40,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "WTI原油",
+          "direction": -1,
+          "ruleScore": -25,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        }
+      ]
     }
   ],
   "refresh": {
     "newRecords": 2,
-    "skippedExpired": 1368,
-    "excludedNoSignal": 37
+    "skippedExpired": 1393,
+    "excludedNoSignal": 63
   }
 }
