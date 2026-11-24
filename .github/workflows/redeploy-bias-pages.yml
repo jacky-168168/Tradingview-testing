@@ -1,0 +1,88 @@
+name: Recover TW Stock Pages (BIAS)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/redeploy-bias-pages.yml'
+      - 'tw-stock-dashboard/docs/bias-turning-points.html'
+      - 'tw-stock-dashboard/docs/bias-study.js'
+      - 'tw-stock-dashboard/docs/bias-study.css'
+      - 'tw-stock-dashboard/docs/data/research/bias_turning_points/**'
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: tw-stock-pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate BIAS study and existing website before upload
+        run: |
+          node --check tw-stock-dashboard/docs/bias-study.js
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("tw-stock-dashboard/docs")
+          site=(root/"backtest.html").read_text(encoding="utf-8")
+          standalone=(root/"bias-turning-points.html").read_text(encoding="utf-8")
+          js=(root/"bias-study.js").read_text(encoding="utf-8")
+          data=json.loads((root/"data/research/bias_turning_points/latest.json").read_text(encoding="utf-8"))
+          assert (root/"index.html").is_file()
+          assert (root/"site-access.js").is_file()
+          assert (root/"bias-study.css").is_file()
+          assert 'id="BIAS_STUDY"' in site and 'id="biasStudyView"' in site
+          assert 'href="./bias-turning-points.html"' in site
+          assert 'id="biasStudyView"' in standalone and 'src="./bias-study.js"' in standalone
+          assert 'if(!el("modelTabs")' in js
+          assert data["coverage"]["distinctDailyBars"]>=7800
+          assert len(data["tests"])>=13
+          print("PASS: BIAS assets, backtest tab, standalone page, data and homepage")
+          PY
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload complete website (preserve all existing modules)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: tw-stock-dashboard/docs
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Verify live BIAS and main backtest page
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python3 - <<'PY'
+          import json,os,time,urllib.request
+          base=os.environ["PAGES_URL"].rstrip("/")+"/"
+          def fetch(path):
+              req=urllib.request.Request(base+path+("?v="+str(time.time()) if "?" not in path else ""),headers={"User-Agent":"BIAS-Pages-Validation","Cache-Control":"no-cache"})
+              with urllib.request.urlopen(req,timeout=20) as r:
+                  assert r.status==200,(path,r.status)
+                  return r.read()
+          for attempt in range(12):
+              try:
+                  main=fetch("backtest.html").decode("utf-8")
+                  page=fetch("bias-turning-points.html").decode("utf-8")
+                  js=fetch("bias-study.js").decode("utf-8")
+                  data=json.loads(fetch("data/research/bias_turning_points/latest.json"))
+                  assert 'id="BIAS_STUDY"' in main
+                  assert 'href="./bias-turning-points.html"' in main
+                  assert 'id="biasStudyView"' in page
+                  assert 'if(!el("modelTabs")' in js
+                  assert len(data["tests"])>=13
+                  print("PASS live Pages",base,"bars=",data["coverage"]["distinctDailyBars"],"tests=",len(data["tests"]))
+                  break
+              except Exception as e:
+                  print("Verify retry",attempt+1,repr(e),flush=True)
+                  if attempt==11:raise
+                  time.sleep(5)
+          PY
