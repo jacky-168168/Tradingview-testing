@@ -62,4 +62,5 @@ el("biasStudyRows").addEventListener("click",e=>{const tr=e.target.closest("tr[d
 el("biasStudyPeriod").addEventListener("change",()=>{selected=null;render();});
 el("biasStudySide").addEventListener("change",()=>{selected=null;render();});
 el("biasStudyRefresh").addEventListener("click",()=>{data=null;load();});
+if(!el("modelTabs")||(typeof location!=="undefined"&&location.hash==="#bias-study"))show();
 })();
