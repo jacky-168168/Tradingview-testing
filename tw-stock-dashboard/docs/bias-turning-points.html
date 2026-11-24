@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIAS 轉折研究｜jacky-168168 台股回測</title>
+<style>
+:root{--bg:#f4f6f9;--text:#172033;--border:#e4e8ef;--green:#047857;--red:#b91c1c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;color:var(--text)}
+.wrap{max-width:1440px;margin:auto;padding:18px}.top{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.card{background:#fff;border:1px solid var(--border);border-radius:13px;padding:16px;margin-top:14px}
+.btn,select{display:inline-block;border:1px solid #d8dce7;background:#fff;border-radius:9px;padding:8px 12px;font-size:13px;font-weight:700;color:var(--text);text-decoration:none;cursor:pointer}
+.btn.main{background:#2563eb;border-color:#2563eb;color:#fff}
+.muted{font-size:12px;color:#64748b}.scroll{overflow:auto;max-height:520px}
+table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}
+th,td{padding:9px;border-bottom:1px solid #edf0f4;text-align:right}
+th:first-child,td:first-child{text-align:left}.good{color:#047857;font-weight:800}.bad{color:#b91c1c;font-weight:800}
+</style>
+<link rel="stylesheet" href="./bias-study.css">
+<script src="./site-access.js"></script>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div><h1 style="font-size:23px;margin:0">📐 BIAS 轉折研究</h1><div class="muted">jacky-168168｜加權指數長期事件研究</div></div><nav class="top"><a href="./backtest.html" class="btn">返回統一回測</a><a href="./index.html" class="btn">返回首頁</a><button id="BIAS_STUDY" class="btn main" type="button">重新顯示 BIAS 研究</button></nav></div>
+<section id="biasStudyView" aria-label="加權指數 BIAS 轉折事件研究" style="display:block">
+<div class="card">
+ <div class="top"><div><h2>📐 加權指數 BIAS10／20 極端乖離與均線確認研究</h2><div id="biasStudyStatus" class="muted" style="margin-top:6px">按「BIAS 轉折研究」讀取歷史資料</div></div><button id="biasStudyRefresh" class="btn" type="button">↻ 重新載入</button></div>
+ <div class="bias-info" style="margin-top:10px">這是歷史事件研究，非交易下單系統。訊號：加權指數日 K 的 BIAS 首次穿越門檻；同一門檻訊號至少間隔 20 根 K。後續報酬由當日收盤計算，未含交易成本，<b>不等同策略獲利或即時勝率</b>。特別注意：<b>尚未涵蓋 2026/10/09～11/23</b>，不應當作昨日市場數值。</div>
+ <div class="bias-controls"><label>均線週期 <select id="biasStudyPeriod"><option value="10">10 日 BIAS</option><option value="20">20 日 BIAS</option></select></label><label>情境 <select id="biasStudySide"><option value="low">極端負乖離（超跌）</option><option value="high">極端正乖離（超漲）</option><option value="all">全部門檻</option></select></label><a class="btn" href="./data/research/bias_turning_points/latest.json" target="_blank" rel="noopener">查看完整研究 JSON</a></div>
+ <p id="biasStudyBaseline" class="bias-info" style="margin:12px 0 0">全體市場基準載入中…</p>
+</div>
+<div class="card">
+ <h3>門檻比較｜5／20／60 日事後表現</h3>
+ <p class="bias-info">點選表格可看每次事件日期與結果。「10MA 確認」採 MA10 連續兩日不下降、當日收漲且收盤不低於 MA5，從觸發日起最多等待 30 根 K；確認後報酬自次日收盤起算，因此兩欄不是相同進場時點的直接策略績效比較。</p>
+ <div class="scroll" style="margin-top:10px"><table><thead><tr><th>觸發條件</th><th>樣本數</th><th>後5日平均</th><th>後20日平均</th><th>後20日上漲比例</th><th>後20日最差</th><th>後60日平均</th><th>10MA 確認數</th><th>平均等待</th><th>確認後20日平均</th><th>確認後20日上漲比例</th></tr></thead><tbody id="biasStudyRows"><tr><td colspan="11">載入中…</td></tr></tbody></table></div>
+</div>
+<div class="card">
+ <h3 id="biasStudySelected">歷史事件明細</h3>
+ <div class="scroll" style="margin-top:10px"><table><thead><tr><th>訊號日</th><th>指數收盤</th><th>BIAS10</th><th>BIAS20</th><th>後5日</th><th>後20日</th><th>後60日</th><th>10MA 確認日</th><th>等待交易日</th><th>確認後20日</th></tr></thead><tbody id="biasStudyEvents"><tr><td colspan="10">點選上表條件</td></tr></tbody></table></div>
+</div>
+<div class="card">
+ <h3>結論與使用限制</h3>
+ <div class="bias-info" style="margin-top:9px">BIAS10 跌破 -10% 可作為「追空風險增加」的事件警示，不代表當天止跌或一定能獲利。BIAS10 跌破 -13% 的歷史樣本極少，樣本中的 100% 不代表實際勝率。正乖離亦未證實可作為直接放空訊號。10MA 走平適合設成可選的趨勢確認條件，但本研究未驗證其能提高策略報酬。<b>尚未把 BIAS 與 BASS 六指標整合做成本後、樣本外的完整策略回測</b>。</div>
+ <div class="bias-links"><a href="https://github.com/petroniocandido/FuzzyTimeSeries/blob/master/DataSets/TAIEX.csv" target="_blank" rel="noopener">1995–2014 原始歷史資料</a><a href="./data/research/market_history_extended/summary.json" target="_blank" rel="noopener">2015–2023 既有資料品質</a><a href="./data/research/g_regime_3y/market_risk_daily.csv" target="_blank" rel="noopener">2023–2026 原始大盤資料</a></div>
+ <p class="bias-info">事件研究使用首次跨越門檻、20 根 K 冷卻期，不同門檻事件可能重疊；報酬使用收盤價、未扣手續費／滑價，沒有實際進出場策略與風險調整後績效；早期社群歷史數據與官方修訂價格可能存在差異。</p>
+</div>
+</section>
+</div>
+<script src="./bias-study.js"></script>
+</body>
+</html>
