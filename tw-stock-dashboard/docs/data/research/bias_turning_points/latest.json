@@ -1,0 +1,3640 @@
+{
+  "study": "台股加權指數 BIAS10／BIAS20 極端值與 MA10 走平事件研究",
+  "version": "1.0",
+  "calculatedOn": "2026-11-24",
+  "coverage": {
+    "from": "1995-01-05",
+    "to": "2026-10-08",
+    "distinctDailyBars": 7892,
+    "sourceBreakdown": {
+      "legacyRows": 5035,
+      "siteYearRows": 2129,
+      "site3YearRows": 728,
+      "missingOfficial2016Dates": 1
+    },
+    "limitation": "此份研究資料尚未包含2026-10-09至2026-11-23，勿將統計當作11/23的即時判讀。"
+  },
+  "dataSources": [
+    {
+      "period": "1995-2014",
+      "url": "https://github.com/petroniocandido/FuzzyTimeSeries/blob/master/DataSets/TAIEX.csv",
+      "note": "社群歷史資料；若官方價格修訂可能造成細微差異"
+    },
+    {
+      "period": "2015-2023-10-10",
+      "url": "https://github.com/jacky-168168/Tradingview-testing/tree/main/tw-stock-dashboard/docs/data/research/market_history_extended/years",
+      "note": "網站既有逐年市場資料，2016年官方上漲下跌家數有一日缺漏，但收盤價欄位存在"
+    },
+    {
+      "period": "2023-10-11至2026-10-08",
+      "url": "https://github.com/jacky-168168/Tradingview-testing/blob/main/tw-stock-dashboard/docs/data/research/g_regime_3y/market_risk_daily.csv",
+      "note": "網站既有三年市場風險檔"
+    }
+  ],
+  "methodology": {
+    "biasFormula": "(Close/SMA(Close,N)-1)*100",
+    "trigger": "僅計算從門檻另一側首次穿越當日收盤；同一週期+門檻事件之間至少隔21根K（20根冷卻）",
+    "initialForward": "訊號當日收盤到第5/10/20/60個交易日收盤之指數漲跌幅，不是可以在訊號收盤成交的實際策略淨利",
+    "confirmation": "僅對負乖離事件，在訊號後第1至30根K尋找MA10連續2日不下降、收盤>=MA5且當日收漲，取第一個符合日",
+    "confirmationForward": "確認訊號後下1根日K收盤作為假設價格，再持有5/20/60個交易日收盤（不含成本，非次日開盤實際成交）",
+    "eventsOverlap": "10日/20日及不同門檻高度重疊；同一歷史崩盤可能出現在多張表，不能把門檻樣本加總為獨立樣本",
+    "noLookahead": "觸發和MA確認條件僅用當日及既有日線；後續報酬僅事後評估",
+    "statisticalCaveat": "極端門檻樣本非常少；沒有P值或樣本外驗證，不能宣稱具有穩健勝率；未測試完整BASS六指標策略或含手續費交易績效"
+  },
+  "baseline": {
+    "indexCloseForward": {
+      "d5": {
+        "n": 7783,
+        "winPct": 55.5,
+        "meanPct": 0.175,
+        "medianPct": 0.339,
+        "worstPct": -16.704
+      },
+      "d10": {
+        "n": 7783,
+        "winPct": 56.7,
+        "meanPct": 0.346,
+        "medianPct": 0.638,
+        "worstPct": -24.607
+      },
+      "d20": {
+        "n": 7783,
+        "winPct": 57.1,
+        "meanPct": 0.696,
+        "medianPct": 0.997,
+        "worstPct": -27.949
+      },
+      "d60": {
+        "n": 7783,
+        "winPct": 61.6,
+        "meanPct": 2.233,
+        "medianPct": 2.549,
+        "worstPct": -41.275
+      }
+    }
+  },
+  "tests": [
+    {
+      "period": 10,
+      "threshold": -8,
+      "direction": "oversold",
+      "sampleCount": 17,
+      "signalCloseForward": {
+        "d5": {
+          "n": 17,
+          "winPct": 70.6,
+          "meanPct": 3.103,
+          "medianPct": 3.077,
+          "worstPct": -10.6
+        },
+        "d10": {
+          "n": 17,
+          "winPct": 47.1,
+          "meanPct": 0.318,
+          "medianPct": -0.656,
+          "worstPct": -11.648
+        },
+        "d20": {
+          "n": 17,
+          "winPct": 52.9,
+          "meanPct": 1.255,
+          "medianPct": 1.42,
+          "worstPct": -11.823
+        },
+        "d60": {
+          "n": 17,
+          "winPct": 52.9,
+          "meanPct": 3.9,
+          "medianPct": 6.319,
+          "worstPct": -23.397
+        }
+      },
+      "confirmation": {
+        "confirmedCount": 15,
+        "confirmedRatePct": 88.2,
+        "meanLagTradingDays": 16.5,
+        "nextCloseForward": {
+          "d5": {
+            "n": 15,
+            "winPct": 40,
+            "meanPct": -0.91,
+            "medianPct": -1.088,
+            "worstPct": -9.453
+          },
+          "d20": {
+            "n": 15,
+            "winPct": 46.7,
+            "meanPct": 0.633,
+            "medianPct": -0.122,
+            "worstPct": -8.546
+          },
+          "d60": {
+            "n": 15,
+            "winPct": 66.7,
+            "meanPct": 5.927,
+            "medianPct": 1.871,
+            "worstPct": -12.243
+          }
+        }
+      },
+      "events": [
+        {
+          "date": "1997-10-20",
+          "close": 7316.78,
+          "bias10Pct": -10.37,
+          "bias20Pct": -13.982,
+          "belowMa44": true,
+          "ma10SlopePct": -1.473,
+          "forward": {
+            "d5": 4.725,
+            "d10": 6.404,
+            "d20": 5.311,
+            "d60": 7.255
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 4.725,
+              "maxFavorableClosePct": 6.946
+            },
+            "d20": {
+              "maxAdverseClosePct": -3.105,
+              "maxFavorableClosePct": 10.387
+            }
+          },
+          "confirmation": {
+            "date": "1997-11-05",
+            "lagTradingDays": 11,
+            "close": 7864.22,
+            "nextCloseForward": {
+              "d5": -7.353,
+              "d20": 1.116,
+              "d60": 7.882
+            }
+          }
+        },
+        {
+          "date": "1998-09-01",
+          "close": 6335.09,
+          "bias10Pct": -8.028,
+          "bias20Pct": -11.183,
+          "belowMa44": true,
+          "ma10SlopePct": -1.214,
+          "forward": {
+            "d5": 9.584,
+            "d10": 8.254,
+            "d20": 8.672,
+            "d60": 15.549
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -1.321,
+              "maxFavorableClosePct": 9.584
+            },
+            "d20": {
+              "maxAdverseClosePct": -1.321,
+              "maxFavorableClosePct": 11.032
+            }
+          },
+          "confirmation": {
+            "date": "1998-09-16",
+            "lagTradingDays": 11,
+            "close": 6972.54,
+            "nextCloseForward": {
+              "d5": -0.294,
+              "d20": -1.371,
+              "d60": -0.91
+            }
+          }
+        },
+        {
+          "date": "1999-07-16",
+          "close": 7411.58,
+          "bias10Pct": -10.214,
+          "bias20Pct": -11.253,
+          "belowMa44": true,
+          "ma10SlopePct": -1.386,
+          "forward": {
+            "d5": 4.222,
+            "d10": 0.021,
+            "d20": 2.894,
+            "d60": 6.319
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.333,
+              "maxFavorableClosePct": 5.333
+            },
+            "d20": {
+              "maxAdverseClosePct": -7.934,
+              "maxFavorableClosePct": 5.333
+            }
+          },
+          "confirmation": {
+            "date": "1999-08-16",
+            "lagTradingDays": 21,
+            "close": 8018.47,
+            "nextCloseForward": {
+              "d5": -1.225,
+              "d20": 0.106,
+              "d60": -5.904
+            }
+          }
+        },
+        {
+          "date": "2000-04-17",
+          "close": 8993.68,
+          "bias10Pct": -8.293,
+          "bias20Pct": -6.248,
+          "belowMa44": true,
+          "ma10SlopePct": -0.948,
+          "forward": {
+            "d5": -2.064,
+            "d10": -3.946,
+            "d20": -2.956,
+            "d60": -10.384
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -2.064,
+              "maxFavorableClosePct": 3.484
+            },
+            "d20": {
+              "maxAdverseClosePct": -7.158,
+              "maxFavorableClosePct": 3.484
+            }
+          },
+          "confirmation": {
+            "date": "2000-05-17",
+            "lagTradingDays": 21,
+            "close": 9085.74,
+            "nextCloseForward": {
+              "d5": -7.143,
+              "d20": -2.807,
+              "d60": -12.243
+            }
+          }
+        },
+        {
+          "date": "2000-10-02",
+          "close": 6024.07,
+          "bias10Pct": -9.157,
+          "bias20Pct": -14.099,
+          "belowMa44": true,
+          "ma10SlopePct": -1.319,
+          "forward": {
+            "d5": 3.077,
+            "d10": -5.34,
+            "d20": -7.966,
+            "d60": -23.397
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.434,
+              "maxFavorableClosePct": 5.471
+            },
+            "d20": {
+              "maxAdverseClosePct": -15.65,
+              "maxFavorableClosePct": 5.471
+            }
+          },
+          "confirmation": {
+            "date": "2000-11-03",
+            "lagTradingDays": 23,
+            "close": 5796.08,
+            "nextCloseForward": {
+              "d5": 2.405,
+              "d20": -8.546,
+              "d60": 1.787
+            }
+          }
+        },
+        {
+          "date": "2000-11-20",
+          "close": 4845.21,
+          "bias10Pct": -15.112,
+          "bias20Pct": -15.349,
+          "belowMa44": true,
+          "ma10SlopePct": -1.403,
+          "forward": {
+            "d5": 12.147,
+            "d10": 6.786,
+            "d20": 4.334,
+            "d60": 18.86
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 5.321,
+              "maxFavorableClosePct": 12.147
+            },
+            "d20": {
+              "maxAdverseClosePct": 4.334,
+              "maxFavorableClosePct": 12.147
+            }
+          },
+          "confirmation": {
+            "date": "2000-12-13",
+            "lagTradingDays": 17,
+            "close": 5384.36,
+            "nextCloseForward": {
+              "d5": -9.453,
+              "d20": 1.118,
+              "d60": 5.7
+            }
+          }
+        },
+        {
+          "date": "2001-09-13",
+          "close": 3952.49,
+          "bias10Pct": -9.024,
+          "bias20Pct": -10.581,
+          "belowMa44": true,
+          "ma10SlopePct": -1.264,
+          "forward": {
+            "d5": -10.6,
+            "d10": -11.648,
+            "d20": -3.425,
+            "d60": 40.147
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -10.6,
+              "maxFavorableClosePct": -4.334
+            },
+            "d20": {
+              "maxAdverseClosePct": -12.808,
+              "maxFavorableClosePct": -3.425
+            }
+          },
+          "confirmation": {
+            "date": "2001-10-11",
+            "lagTradingDays": 16,
+            "close": 3789.93,
+            "nextCloseForward": {
+              "d5": 1.161,
+              "d20": 8.478,
+              "d60": 53.489
+            }
+          }
+        },
+        {
+          "date": "2002-05-06",
+          "close": 5642.48,
+          "bias10Pct": -8.494,
+          "bias20Pct": -8.932,
+          "belowMa44": true,
+          "ma10SlopePct": -1.29,
+          "forward": {
+            "d5": 1.775,
+            "d10": -1.201,
+            "d20": -1.265,
+            "d60": -13.895
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 0.381,
+              "maxFavorableClosePct": 2.921
+            },
+            "d20": {
+              "maxAdverseClosePct": -3.532,
+              "maxFavorableClosePct": 4.753
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2004-05-03",
+          "close": 6029.77,
+          "bias10Pct": -8.044,
+          "bias20Pct": -9.282,
+          "belowMa44": true,
+          "ma10SlopePct": -1.13,
+          "forward": {
+            "d5": -3.395,
+            "d10": -9.069,
+            "d20": -0.861,
+            "d60": -10.467
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -3.395,
+              "maxFavorableClosePct": 2.627
+            },
+            "d20": {
+              "maxAdverseClosePct": -9.069,
+              "maxFavorableClosePct": 2.627
+            }
+          },
+          "confirmation": {
+            "date": "2004-05-25",
+            "lagTradingDays": 16,
+            "close": 5958.38,
+            "nextCloseForward": {
+              "d5": -2.515,
+              "d20": -4.118,
+              "d60": -7.039
+            }
+          }
+        },
+        {
+          "date": "2008-09-16",
+          "close": 5756.59,
+          "bias10Pct": -8.941,
+          "bias20Pct": -13.277,
+          "belowMa44": true,
+          "ma10SlopePct": -1.47,
+          "forward": {
+            "d5": 7.394,
+            "d10": 0.129,
+            "d20": -11.823,
+            "d60": -19.126
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -1.991,
+              "maxFavorableClosePct": 7.394
+            },
+            "d20": {
+              "maxAdverseClosePct": -12.788,
+              "maxFavorableClosePct": 7.394
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2008-10-27",
+          "close": 4366.87,
+          "bias10Pct": -10.859,
+          "bias20Pct": -16.211,
+          "belowMa44": true,
+          "ma10SlopePct": -1.317,
+          "forward": {
+            "d5": 14.385,
+            "d10": 8.551,
+            "d20": -4.725,
+            "d60": -2.723
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 0.758,
+              "maxFavorableClosePct": 14.385
+            },
+            "d20": {
+              "maxAdverseClosePct": -6.342,
+              "maxFavorableClosePct": 14.385
+            }
+          },
+          "confirmation": {
+            "date": "2008-11-28",
+            "lagTradingDays": 24,
+            "close": 4460.49,
+            "nextCloseForward": {
+              "d5": -2.215,
+              "d20": -2.263,
+              "d60": 2.992
+            }
+          }
+        },
+        {
+          "date": "2011-08-05",
+          "close": 7853.13,
+          "bias10Pct": -8.279,
+          "bias20Pct": -8.457,
+          "belowMa44": true,
+          "ma10SlopePct": -1.054,
+          "forward": {
+            "d5": -2.752,
+            "d10": -6.496,
+            "d20": -1.223,
+            "d60": -2.943
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -4.584,
+              "maxFavorableClosePct": -1.487
+            },
+            "d20": {
+              "maxAdverseClosePct": -6.883,
+              "maxFavorableClosePct": -0.43
+            }
+          },
+          "confirmation": {
+            "date": "2011-09-09",
+            "lagTradingDays": 25,
+            "close": 7610.57,
+            "nextCloseForward": {
+              "d5": 1.373,
+              "d20": -0.122,
+              "d60": -4.848
+            }
+          }
+        },
+        {
+          "date": "2015-08-24",
+          "close": 7410.34,
+          "bias10Pct": -8.44,
+          "bias20Pct": -10.898,
+          "belowMa44": true,
+          "ma10SlopePct": -1.289,
+          "forward": {
+            "d5": 10.318,
+            "d10": 7.776,
+            "d20": 12.101,
+            "d60": 14.397
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 3.58,
+              "maxFavorableClosePct": 10.318
+            },
+            "d20": {
+              "maxAdverseClosePct": 3.58,
+              "maxFavorableClosePct": 14.194
+            }
+          },
+          "confirmation": {
+            "date": "2015-09-03",
+            "lagTradingDays": 8,
+            "close": 8095.95,
+            "nextCloseForward": {
+              "d5": 3.815,
+              "d20": 4.918,
+              "d60": 5.71
+            }
+          }
+        },
+        {
+          "date": "2018-10-11",
+          "close": 9806.11,
+          "bias10Pct": -8.218,
+          "bias20Pct": -8.934,
+          "belowMa44": true,
+          "ma10SlopePct": -1.081,
+          "forward": {
+            "d5": 1.505,
+            "d10": -2.91,
+            "d20": 1.42,
+            "d60": -2.201
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 0.969,
+              "maxFavorableClosePct": 2.444
+            },
+            "d20": {
+              "maxAdverseClosePct": -3.232,
+              "maxFavorableClosePct": 2.444
+            }
+          },
+          "confirmation": {
+            "date": "2018-11-07",
+            "lagTradingDays": 19,
+            "close": 9908.35,
+            "nextCloseForward": {
+              "d5": -1.195,
+              "d20": -2.62,
+              "d60": 1.461
+            }
+          }
+        },
+        {
+          "date": "2020-03-13",
+          "close": 10128.87,
+          "bias10Pct": -8.047,
+          "bias20Pct": -10.504,
+          "belowMa44": true,
+          "ma10SlopePct": -1.045,
+          "forward": {
+            "d5": -8.834,
+            "d10": -4.245,
+            "d20": 2.015,
+            "d60": 15.71
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -14.291,
+              "maxFavorableClosePct": -4.059
+            },
+            "d20": {
+              "maxAdverseClosePct": -14.291,
+              "maxFavorableClosePct": 2.015
+            }
+          },
+          "confirmation": {
+            "date": "2020-04-06",
+            "lagTradingDays": 14,
+            "close": 9818.74,
+            "nextCloseForward": {
+              "d5": 3.367,
+              "d20": 7.789,
+              "d60": 19.135
+            }
+          }
+        },
+        {
+          "date": "2024-08-05",
+          "close": 19830.88,
+          "bias10Pct": -10.193,
+          "bias20Pct": -13.687,
+          "belowMa44": true,
+          "ma10SlopePct": -1.59,
+          "forward": {
+            "d5": 9.795,
+            "d10": 13.004,
+            "d20": 12.124,
+            "d60": 15.806
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 3.379,
+              "maxFavorableClosePct": 9.795
+            },
+            "d20": {
+              "maxAdverseClosePct": 3.379,
+              "maxFavorableClosePct": 13.102
+            }
+          },
+          "confirmation": {
+            "date": "2024-08-19",
+            "lagTradingDays": 10,
+            "close": 22409.63,
+            "nextCloseForward": {
+              "d5": -1.088,
+              "d20": -3.345,
+              "d60": 1.871
+            }
+          }
+        },
+        {
+          "date": "2025-04-07",
+          "close": 19232.35,
+          "bias10Pct": -10.51,
+          "bias20Pct": -11.971,
+          "belowMa44": true,
+          "ma10SlopePct": -1.442,
+          "forward": {
+            "d5": 1.46,
+            "d10": -0.656,
+            "d20": 6.709,
+            "d60": 17.395
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -9.57,
+              "maxFavorableClosePct": 1.541
+            },
+            "d20": {
+              "maxAdverseClosePct": -9.57,
+              "maxFavorableClosePct": 8.087
+            }
+          },
+          "confirmation": {
+            "date": "2025-04-23",
+            "lagTradingDays": 12,
+            "close": 19639.14,
+            "nextCloseForward": {
+              "d5": 6.719,
+              "d20": 11.158,
+              "d60": 19.825
+            }
+          }
+        }
+      ]
+    },
+    {
+      "period": 10,
+      "threshold": -10,
+      "direction": "oversold",
+      "sampleCount": 10,
+      "signalCloseForward": {
+        "d5": {
+          "n": 10,
+          "winPct": 80,
+          "meanPct": 5.124,
+          "medianPct": 4.725,
+          "worstPct": -8.518
+        },
+        "d10": {
+          "n": 10,
+          "winPct": 60,
+          "meanPct": 3.204,
+          "medianPct": 6.404,
+          "worstPct": -8.699
+        },
+        "d20": {
+          "n": 10,
+          "winPct": 80,
+          "meanPct": 4.244,
+          "medianPct": 5.311,
+          "worstPct": -4.725
+        },
+        "d60": {
+          "n": 10,
+          "winPct": 90,
+          "meanPct": 13.136,
+          "medianPct": 15.806,
+          "worstPct": -2.723
+        }
+      },
+      "confirmation": {
+        "confirmedCount": 10,
+        "confirmedRatePct": 100,
+        "meanLagTradingDays": 15.8,
+        "nextCloseForward": {
+          "d5": {
+            "n": 10,
+            "winPct": 50,
+            "meanPct": -0.631,
+            "medianPct": 1.161,
+            "worstPct": -9.453
+          },
+          "d20": {
+            "n": 10,
+            "winPct": 60,
+            "meanPct": 1.549,
+            "medianPct": 1.116,
+            "worstPct": -8.546
+          },
+          "d60": {
+            "n": 10,
+            "winPct": 80,
+            "meanPct": 10.193,
+            "medianPct": 5.7,
+            "worstPct": -5.904
+          }
+        }
+      },
+      "events": [
+        {
+          "date": "1997-10-20",
+          "close": 7316.78,
+          "bias10Pct": -10.37,
+          "bias20Pct": -13.982,
+          "belowMa44": true,
+          "ma10SlopePct": -1.473,
+          "forward": {
+            "d5": 4.725,
+            "d10": 6.404,
+            "d20": 5.311,
+            "d60": 7.255
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 4.725,
+              "maxFavorableClosePct": 6.946
+            },
+            "d20": {
+              "maxAdverseClosePct": -3.105,
+              "maxFavorableClosePct": 10.387
+            }
+          },
+          "confirmation": {
+            "date": "1997-11-05",
+            "lagTradingDays": 11,
+            "close": 7864.22,
+            "nextCloseForward": {
+              "d5": -7.353,
+              "d20": 1.116,
+              "d60": 7.882
+            }
+          }
+        },
+        {
+          "date": "1999-07-16",
+          "close": 7411.58,
+          "bias10Pct": -10.214,
+          "bias20Pct": -11.253,
+          "belowMa44": true,
+          "ma10SlopePct": -1.386,
+          "forward": {
+            "d5": 4.222,
+            "d10": 0.021,
+            "d20": 2.894,
+            "d60": 6.319
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.333,
+              "maxFavorableClosePct": 5.333
+            },
+            "d20": {
+              "maxAdverseClosePct": -7.934,
+              "maxFavorableClosePct": 5.333
+            }
+          },
+          "confirmation": {
+            "date": "1999-08-16",
+            "lagTradingDays": 21,
+            "close": 8018.47,
+            "nextCloseForward": {
+              "d5": -1.225,
+              "d20": 0.106,
+              "d60": -5.904
+            }
+          }
+        },
+        {
+          "date": "2000-10-19",
+          "close": 5081.28,
+          "bias10Pct": -12.635,
+          "bias20Pct": -17.378,
+          "belowMa44": true,
+          "ma10SlopePct": -1.552,
+          "forward": {
+            "d5": 16.936,
+            "d10": 10.722,
+            "d20": 7.338,
+            "d60": 5.872
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 6.367,
+              "maxFavorableClosePct": 18.548
+            },
+            "d20": {
+              "maxAdverseClosePct": 6.367,
+              "maxFavorableClosePct": 19.843
+            }
+          },
+          "confirmation": {
+            "date": "2000-11-03",
+            "lagTradingDays": 11,
+            "close": 5796.08,
+            "nextCloseForward": {
+              "d5": 2.405,
+              "d20": -8.546,
+              "d60": 1.787
+            }
+          }
+        },
+        {
+          "date": "2000-11-20",
+          "close": 4845.21,
+          "bias10Pct": -15.112,
+          "bias20Pct": -15.349,
+          "belowMa44": true,
+          "ma10SlopePct": -1.403,
+          "forward": {
+            "d5": 12.147,
+            "d10": 6.786,
+            "d20": 4.334,
+            "d60": 18.86
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 5.321,
+              "maxFavorableClosePct": 12.147
+            },
+            "d20": {
+              "maxAdverseClosePct": 4.334,
+              "maxFavorableClosePct": 12.147
+            }
+          },
+          "confirmation": {
+            "date": "2000-12-13",
+            "lagTradingDays": 17,
+            "close": 5384.36,
+            "nextCloseForward": {
+              "d5": -9.453,
+              "d20": 1.118,
+              "d60": 5.7
+            }
+          }
+        },
+        {
+          "date": "2001-09-14",
+          "close": 3774.62,
+          "bias10Pct": -11.635,
+          "bias20Pct": -13.714,
+          "belowMa44": true,
+          "ma10SlopePct": -1.679,
+          "forward": {
+            "d5": -7.44,
+            "d10": -8.699,
+            "d20": 0.969,
+            "d60": 43.261
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -7.44,
+              "maxFavorableClosePct": 0.174
+            },
+            "d20": {
+              "maxAdverseClosePct": -8.699,
+              "maxFavorableClosePct": 1.126
+            }
+          },
+          "confirmation": {
+            "date": "2001-10-11",
+            "lagTradingDays": 15,
+            "close": 3789.93,
+            "nextCloseForward": {
+              "d5": 1.161,
+              "d20": 8.478,
+              "d60": 53.489
+            }
+          }
+        },
+        {
+          "date": "2008-10-27",
+          "close": 4366.87,
+          "bias10Pct": -10.859,
+          "bias20Pct": -16.211,
+          "belowMa44": true,
+          "ma10SlopePct": -1.317,
+          "forward": {
+            "d5": 14.385,
+            "d10": 8.551,
+            "d20": -4.725,
+            "d60": -2.723
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 0.758,
+              "maxFavorableClosePct": 14.385
+            },
+            "d20": {
+              "maxAdverseClosePct": -6.342,
+              "maxFavorableClosePct": 14.385
+            }
+          },
+          "confirmation": {
+            "date": "2008-11-28",
+            "lagTradingDays": 24,
+            "close": 4460.49,
+            "nextCloseForward": {
+              "d5": -2.215,
+              "d20": -2.263,
+              "d60": 2.992
+            }
+          }
+        },
+        {
+          "date": "2011-08-08",
+          "close": 7552.8,
+          "bias10Pct": -10.606,
+          "bias20Pct": -11.383,
+          "belowMa44": true,
+          "ma10SlopePct": -1.321,
+          "forward": {
+            "d5": 3.53,
+            "d10": -3.18,
+            "d20": -0.016,
+            "d60": 0.604
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.79,
+              "maxFavorableClosePct": 3.53
+            },
+            "d20": {
+              "maxAdverseClosePct": -3.18,
+              "maxFavorableClosePct": 3.53
+            }
+          },
+          "confirmation": {
+            "date": "2011-09-09",
+            "lagTradingDays": 24,
+            "close": 7610.57,
+            "nextCloseForward": {
+              "d5": 1.373,
+              "d20": -0.122,
+              "d60": -4.848
+            }
+          }
+        },
+        {
+          "date": "2020-03-16",
+          "close": 9717.77,
+          "bias10Pct": -10.601,
+          "bias20Pct": -13.333,
+          "belowMa44": true,
+          "ma10SlopePct": -1.319,
+          "forward": {
+            "d5": -8.518,
+            "d10": -0.909,
+            "d20": 7.506,
+            "d60": 18.708
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -10.665,
+              "maxFavorableClosePct": -2.862
+            },
+            "d20": {
+              "maxAdverseClosePct": -10.665,
+              "maxFavorableClosePct": 7.506
+            }
+          },
+          "confirmation": {
+            "date": "2020-04-06",
+            "lagTradingDays": 13,
+            "close": 9818.74,
+            "nextCloseForward": {
+              "d5": 3.367,
+              "d20": 7.789,
+              "d60": 19.135
+            }
+          }
+        },
+        {
+          "date": "2024-08-05",
+          "close": 19830.88,
+          "bias10Pct": -10.193,
+          "bias20Pct": -13.687,
+          "belowMa44": true,
+          "ma10SlopePct": -1.59,
+          "forward": {
+            "d5": 9.795,
+            "d10": 13.004,
+            "d20": 12.124,
+            "d60": 15.806
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 3.379,
+              "maxFavorableClosePct": 9.795
+            },
+            "d20": {
+              "maxAdverseClosePct": 3.379,
+              "maxFavorableClosePct": 13.102
+            }
+          },
+          "confirmation": {
+            "date": "2024-08-19",
+            "lagTradingDays": 10,
+            "close": 22409.63,
+            "nextCloseForward": {
+              "d5": -1.088,
+              "d20": -3.345,
+              "d60": 1.871
+            }
+          }
+        },
+        {
+          "date": "2025-04-07",
+          "close": 19232.35,
+          "bias10Pct": -10.51,
+          "bias20Pct": -11.971,
+          "belowMa44": true,
+          "ma10SlopePct": -1.442,
+          "forward": {
+            "d5": 1.46,
+            "d10": -0.656,
+            "d20": 6.709,
+            "d60": 17.395
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -9.57,
+              "maxFavorableClosePct": 1.541
+            },
+            "d20": {
+              "maxAdverseClosePct": -9.57,
+              "maxFavorableClosePct": 8.087
+            }
+          },
+          "confirmation": {
+            "date": "2025-04-23",
+            "lagTradingDays": 12,
+            "close": 19639.14,
+            "nextCloseForward": {
+              "d5": 6.719,
+              "d20": 11.158,
+              "d60": 19.825
+            }
+          }
+        }
+      ]
+    },
+    {
+      "period": 10,
+      "threshold": -12,
+      "direction": "oversold",
+      "sampleCount": 4,
+      "signalCloseForward": {
+        "d5": {
+          "n": 4,
+          "winPct": 100,
+          "meanPct": 12.202,
+          "medianPct": 12.153,
+          "worstPct": 7.572
+        },
+        "d10": {
+          "n": 4,
+          "winPct": 100,
+          "meanPct": 8.104,
+          "medianPct": 10.722,
+          "worstPct": 1.807
+        },
+        "d20": {
+          "n": 4,
+          "winPct": 100,
+          "meanPct": 11.231,
+          "medianPct": 11.303,
+          "worstPct": 4.334
+        },
+        "d60": {
+          "n": 4,
+          "winPct": 100,
+          "meanPct": 20.093,
+          "medianPct": 23.039,
+          "worstPct": 5.872
+        }
+      },
+      "confirmation": {
+        "confirmedCount": 4,
+        "confirmedRatePct": 100,
+        "meanLagTradingDays": 12.3,
+        "nextCloseForward": {
+          "d5": {
+            "n": 4,
+            "winPct": 75,
+            "meanPct": 0.759,
+            "medianPct": 3.367,
+            "worstPct": -9.453
+          },
+          "d20": {
+            "n": 4,
+            "winPct": 75,
+            "meanPct": 2.88,
+            "medianPct": 7.789,
+            "worstPct": -8.546
+          },
+          "d60": {
+            "n": 4,
+            "winPct": 100,
+            "meanPct": 11.612,
+            "medianPct": 19.135,
+            "worstPct": 1.787
+          }
+        }
+      },
+      "events": [
+        {
+          "date": "2000-10-19",
+          "close": 5081.28,
+          "bias10Pct": -12.635,
+          "bias20Pct": -17.378,
+          "belowMa44": true,
+          "ma10SlopePct": -1.552,
+          "forward": {
+            "d5": 16.936,
+            "d10": 10.722,
+            "d20": 7.338,
+            "d60": 5.872
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 6.367,
+              "maxFavorableClosePct": 18.548
+            },
+            "d20": {
+              "maxAdverseClosePct": 6.367,
+              "maxFavorableClosePct": 19.843
+            }
+          },
+          "confirmation": {
+            "date": "2000-11-03",
+            "lagTradingDays": 11,
+            "close": 5796.08,
+            "nextCloseForward": {
+              "d5": 2.405,
+              "d20": -8.546,
+              "d60": 1.787
+            }
+          }
+        },
+        {
+          "date": "2000-11-20",
+          "close": 4845.21,
+          "bias10Pct": -15.112,
+          "bias20Pct": -15.349,
+          "belowMa44": true,
+          "ma10SlopePct": -1.403,
+          "forward": {
+            "d5": 12.147,
+            "d10": 6.786,
+            "d20": 4.334,
+            "d60": 18.86
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 5.321,
+              "maxFavorableClosePct": 12.147
+            },
+            "d20": {
+              "maxAdverseClosePct": 4.334,
+              "maxFavorableClosePct": 12.147
+            }
+          },
+          "confirmation": {
+            "date": "2000-12-13",
+            "lagTradingDays": 17,
+            "close": 5384.36,
+            "nextCloseForward": {
+              "d5": -9.453,
+              "d20": 1.118,
+              "d60": 5.7
+            }
+          }
+        },
+        {
+          "date": "2020-03-19",
+          "close": 8681.34,
+          "bias10Pct": -14.726,
+          "bias20Pct": -19.774,
+          "belowMa44": true,
+          "ma10SlopePct": -2.708,
+          "forward": {
+            "d5": 12.153,
+            "d10": 13.102,
+            "d20": 21.948,
+            "d60": 32.602
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 2.404,
+              "maxFavorableClosePct": 12.153
+            },
+            "d20": {
+              "maxAdverseClosePct": 2.404,
+              "maxFavorableClosePct": 22.067
+            }
+          },
+          "confirmation": {
+            "date": "2020-04-06",
+            "lagTradingDays": 10,
+            "close": 9818.74,
+            "nextCloseForward": {
+              "d5": 3.367,
+              "d20": 7.789,
+              "d60": 19.135
+            }
+          }
+        },
+        {
+          "date": "2025-04-08",
+          "close": 18459.95,
+          "bias10Pct": -12.579,
+          "bias20Pct": -14.703,
+          "belowMa44": true,
+          "ma10SlopePct": -1.745,
+          "forward": {
+            "d5": 7.572,
+            "d10": 1.807,
+            "d20": 11.303,
+            "d60": 23.039
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -5.787,
+              "maxFavorableClosePct": 7.572
+            },
+            "d20": {
+              "maxAdverseClosePct": -5.787,
+              "maxFavorableClosePct": 12.609
+            }
+          },
+          "confirmation": {
+            "date": "2025-04-23",
+            "lagTradingDays": 11,
+            "close": 19639.14,
+            "nextCloseForward": {
+              "d5": 6.719,
+              "d20": 11.158,
+              "d60": 19.825
+            }
+          }
+        }
+      ]
+    },
+    {
+      "period": 10,
+      "threshold": -13,
+      "direction": "oversold",
+      "sampleCount": 3,
+      "signalCloseForward": {
+        "d5": {
+          "n": 3,
+          "winPct": 100,
+          "meanPct": 12.079,
+          "medianPct": 12.147,
+          "worstPct": 11.938
+        },
+        "d10": {
+          "n": 3,
+          "winPct": 100,
+          "meanPct": 10.937,
+          "medianPct": 12.922,
+          "worstPct": 6.786
+        },
+        "d20": {
+          "n": 3,
+          "winPct": 100,
+          "meanPct": 14.801,
+          "medianPct": 18.121,
+          "worstPct": 4.334
+        },
+        "d60": {
+          "n": 3,
+          "winPct": 100,
+          "meanPct": 27.036,
+          "medianPct": 29.645,
+          "worstPct": 18.86
+        }
+      },
+      "confirmation": {
+        "confirmedCount": 3,
+        "confirmedRatePct": 100,
+        "meanLagTradingDays": 12.3,
+        "nextCloseForward": {
+          "d5": {
+            "n": 3,
+            "winPct": 66.7,
+            "meanPct": 0.211,
+            "medianPct": 3.367,
+            "worstPct": -9.453
+          },
+          "d20": {
+            "n": 3,
+            "winPct": 100,
+            "meanPct": 6.688,
+            "medianPct": 7.789,
+            "worstPct": 1.118
+          },
+          "d60": {
+            "n": 3,
+            "winPct": 100,
+            "meanPct": 14.887,
+            "medianPct": 19.135,
+            "worstPct": 5.7
+          }
+        }
+      },
+      "events": [
+        {
+          "date": "2000-11-20",
+          "close": 4845.21,
+          "bias10Pct": -15.112,
+          "bias20Pct": -15.349,
+          "belowMa44": true,
+          "ma10SlopePct": -1.403,
+          "forward": {
+            "d5": 12.147,
+            "d10": 6.786,
+            "d20": 4.334,
+            "d60": 18.86
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 5.321,
+              "maxFavorableClosePct": 12.147
+            },
+            "d20": {
+              "maxAdverseClosePct": 4.334,
+              "maxFavorableClosePct": 12.147
+            }
+          },
+          "confirmation": {
+            "date": "2000-12-13",
+            "lagTradingDays": 17,
+            "close": 5384.36,
+            "nextCloseForward": {
+              "d5": -9.453,
+              "d20": 1.118,
+              "d60": 5.7
+            }
+          }
+        },
+        {
+          "date": "2020-03-19",
+          "close": 8681.34,
+          "bias10Pct": -14.726,
+          "bias20Pct": -19.774,
+          "belowMa44": true,
+          "ma10SlopePct": -2.708,
+          "forward": {
+            "d5": 12.153,
+            "d10": 13.102,
+            "d20": 21.948,
+            "d60": 32.602
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 2.404,
+              "maxFavorableClosePct": 12.153
+            },
+            "d20": {
+              "maxAdverseClosePct": 2.404,
+              "maxFavorableClosePct": 22.067
+            }
+          },
+          "confirmation": {
+            "date": "2020-04-06",
+            "lagTradingDays": 10,
+            "close": 9818.74,
+            "nextCloseForward": {
+              "d5": 3.367,
+              "d20": 7.789,
+              "d60": 19.135
+            }
+          }
+        },
+        {
+          "date": "2025-04-09",
+          "close": 17391.76,
+          "bias10Pct": -15.757,
+          "bias20Pct": -18.686,
+          "belowMa44": true,
+          "ma10SlopePct": -2.233,
+          "forward": {
+            "d5": 11.938,
+            "d10": 12.922,
+            "d20": 18.121,
+            "d60": 29.645
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 9.247,
+              "maxFavorableClosePct": 14.179
+            },
+            "d20": {
+              "maxAdverseClosePct": 8.059,
+              "maxFavorableClosePct": 19.526
+            }
+          },
+          "confirmation": {
+            "date": "2025-04-23",
+            "lagTradingDays": 10,
+            "close": 19639.14,
+            "nextCloseForward": {
+              "d5": 6.719,
+              "d20": 11.158,
+              "d60": 19.825
+            }
+          }
+        }
+      ]
+    },
+    {
+      "period": 10,
+      "threshold": 8,
+      "direction": "overbought",
+      "sampleCount": 8,
+      "signalCloseForward": {
+        "d5": {
+          "n": 8,
+          "winPct": 87.5,
+          "meanPct": 2.957,
+          "medianPct": 3.814,
+          "worstPct": -0.022
+        },
+        "d10": {
+          "n": 8,
+          "winPct": 100,
+          "meanPct": 3.015,
+          "medianPct": 1.924,
+          "worstPct": 0.66
+        },
+        "d20": {
+          "n": 8,
+          "winPct": 87.5,
+          "meanPct": 5.753,
+          "medianPct": 8.889,
+          "worstPct": -12.966
+        },
+        "d60": {
+          "n": 8,
+          "winPct": 75,
+          "meanPct": 7.71,
+          "medianPct": 11.958,
+          "worstPct": -11.447
+        }
+      },
+      "confirmation": null,
+      "events": [
+        {
+          "date": "1996-04-06",
+          "close": 5581.13,
+          "bias10Pct": 8.148,
+          "bias20Pct": 11.364,
+          "belowMa44": false,
+          "ma10SlopePct": 1.059,
+          "forward": {
+            "d5": 6.521,
+            "d10": 6.48,
+            "d20": 9.911,
+            "d60": 14.894
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 0.154,
+              "maxFavorableClosePct": 6.521
+            },
+            "d20": {
+              "maxAdverseClosePct": 0.154,
+              "maxFavorableClosePct": 10.779
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "1999-02-22",
+          "close": 6313.63,
+          "bias10Pct": 8.878,
+          "bias20Pct": 4.89,
+          "belowMa44": true,
+          "ma10SlopePct": 0.433,
+          "forward": {
+            "d5": -0.022,
+            "d10": 1.874,
+            "d20": 11.556,
+            "d60": 20.145
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -2.102,
+              "maxFavorableClosePct": 0.077
+            },
+            "d20": {
+              "maxAdverseClosePct": -2.102,
+              "maxFavorableClosePct": 11.556
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "1999-08-16",
+          "close": 8018.47,
+          "bias10Pct": 10.492,
+          "bias20Pct": 8.37,
+          "belowMa44": false,
+          "ma10SlopePct": 1.146,
+          "forward": {
+            "d5": 1.266,
+            "d10": 0.66,
+            "d20": 1.998,
+            "d60": -5.904
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.671,
+              "maxFavorableClosePct": 1.266
+            },
+            "d20": {
+              "maxAdverseClosePct": -0.907,
+              "maxFavorableClosePct": 3.178
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2000-03-27",
+          "close": 9807.57,
+          "bias10Pct": 8.544,
+          "bias20Pct": 6.27,
+          "belowMa44": false,
+          "ma10SlopePct": 1.114,
+          "forward": {
+            "d5": 3.86,
+            "d10": 1.059,
+            "d20": -12.966,
+            "d60": -11.447
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.019,
+              "maxFavorableClosePct": 3.86
+            },
+            "d20": {
+              "maxAdverseClosePct": -12.966,
+              "maxFavorableClosePct": 3.86
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2001-01-05",
+          "close": 5295.53,
+          "bias10Pct": 8.588,
+          "bias20Pct": 4.997,
+          "belowMa44": false,
+          "ma10SlopePct": 0.718,
+          "forward": {
+            "d5": 0.828,
+            "d10": 7.261,
+            "d20": 10.415,
+            "d60": 3.252
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -2.021,
+              "maxFavorableClosePct": 2.667
+            },
+            "d20": {
+              "maxAdverseClosePct": -2.021,
+              "maxFavorableClosePct": 14.233
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2001-12-06",
+          "close": 5208.86,
+          "bias10Pct": 11.757,
+          "bias20Pct": 15.55,
+          "belowMa44": false,
+          "ma10SlopePct": 1.655,
+          "forward": {
+            "d5": 3.814,
+            "d10": 1.924,
+            "d20": 8.249,
+            "d60": 16.884
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 1.25,
+              "maxFavorableClosePct": 6.344
+            },
+            "d20": {
+              "maxAdverseClosePct": -1.913,
+              "maxFavorableClosePct": 8.249
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2002-10-18",
+          "close": 4458.17,
+          "bias10Pct": 9.38,
+          "bias20Pct": 7.397,
+          "belowMa44": false,
+          "ma10SlopePct": 0.947,
+          "forward": {
+            "d5": 2.375,
+            "d10": 0.951,
+            "d20": 7.971,
+            "d60": 11.958
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -1.609,
+              "maxFavorableClosePct": 2.954
+            },
+            "d20": {
+              "maxAdverseClosePct": -1.609,
+              "maxFavorableClosePct": 7.971
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2009-05-04",
+          "close": 6330.4,
+          "bias10Pct": 8.131,
+          "bias20Pct": 9.193,
+          "belowMa44": false,
+          "ma10SlopePct": 0.992,
+          "forward": {
+            "d5": 5.009,
+            "d10": 3.908,
+            "d20": 8.889,
+            "d60": 11.899
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 0.783,
+              "maxFavorableClosePct": 5.009
+            },
+            "d20": {
+              "maxAdverseClosePct": 0.533,
+              "maxFavorableClosePct": 9.852
+            }
+          },
+          "confirmation": null
+        }
+      ]
+    },
+    {
+      "period": 10,
+      "threshold": 10,
+      "direction": "overbought",
+      "sampleCount": 2,
+      "signalCloseForward": {
+        "d5": {
+          "n": 2,
+          "winPct": 100,
+          "meanPct": 2.54,
+          "medianPct": 3.814,
+          "worstPct": 1.266
+        },
+        "d10": {
+          "n": 2,
+          "winPct": 100,
+          "meanPct": 1.292,
+          "medianPct": 1.924,
+          "worstPct": 0.66
+        },
+        "d20": {
+          "n": 2,
+          "winPct": 100,
+          "meanPct": 5.123,
+          "medianPct": 8.249,
+          "worstPct": 1.998
+        },
+        "d60": {
+          "n": 2,
+          "winPct": 50,
+          "meanPct": 5.49,
+          "medianPct": 16.884,
+          "worstPct": -5.904
+        }
+      },
+      "confirmation": null,
+      "events": [
+        {
+          "date": "1999-08-16",
+          "close": 8018.47,
+          "bias10Pct": 10.492,
+          "bias20Pct": 8.37,
+          "belowMa44": false,
+          "ma10SlopePct": 1.146,
+          "forward": {
+            "d5": 1.266,
+            "d10": 0.66,
+            "d20": 1.998,
+            "d60": -5.904
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.671,
+              "maxFavorableClosePct": 1.266
+            },
+            "d20": {
+              "maxAdverseClosePct": -0.907,
+              "maxFavorableClosePct": 3.178
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2001-12-06",
+          "close": 5208.86,
+          "bias10Pct": 11.757,
+          "bias20Pct": 15.55,
+          "belowMa44": false,
+          "ma10SlopePct": 1.655,
+          "forward": {
+            "d5": 3.814,
+            "d10": 1.924,
+            "d20": 8.249,
+            "d60": 16.884
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 1.25,
+              "maxFavorableClosePct": 6.344
+            },
+            "d20": {
+              "maxAdverseClosePct": -1.913,
+              "maxFavorableClosePct": 8.249
+            }
+          },
+          "confirmation": null
+        }
+      ]
+    },
+    {
+      "period": 10,
+      "threshold": 13,
+      "direction": "overbought",
+      "sampleCount": 0,
+      "signalCloseForward": {
+        "d5": {
+          "n": 0,
+          "winPct": null,
+          "meanPct": null,
+          "medianPct": null,
+          "worstPct": null
+        },
+        "d10": {
+          "n": 0,
+          "winPct": null,
+          "meanPct": null,
+          "medianPct": null,
+          "worstPct": null
+        },
+        "d20": {
+          "n": 0,
+          "winPct": null,
+          "meanPct": null,
+          "medianPct": null,
+          "worstPct": null
+        },
+        "d60": {
+          "n": 0,
+          "winPct": null,
+          "meanPct": null,
+          "medianPct": null,
+          "worstPct": null
+        }
+      },
+      "confirmation": null,
+      "events": []
+    },
+    {
+      "period": 20,
+      "threshold": -10,
+      "direction": "oversold",
+      "sampleCount": 19,
+      "signalCloseForward": {
+        "d5": {
+          "n": 19,
+          "winPct": 73.7,
+          "meanPct": 3.402,
+          "medianPct": 4.222,
+          "worstPct": -10.6
+        },
+        "d10": {
+          "n": 19,
+          "winPct": 63.2,
+          "meanPct": 2.201,
+          "medianPct": 0.129,
+          "worstPct": -11.648
+        },
+        "d20": {
+          "n": 19,
+          "winPct": 68.4,
+          "meanPct": 3.311,
+          "medianPct": 4.334,
+          "worstPct": -19.342
+        },
+        "d60": {
+          "n": 19,
+          "winPct": 68.4,
+          "meanPct": 7.161,
+          "medianPct": 9.042,
+          "worstPct": -20.053
+        }
+      },
+      "confirmation": {
+        "confirmedCount": 17,
+        "confirmedRatePct": 89.5,
+        "meanLagTradingDays": 13.9,
+        "nextCloseForward": {
+          "d5": {
+            "n": 17,
+            "winPct": 47.1,
+            "meanPct": -0.804,
+            "medianPct": -0.294,
+            "worstPct": -9.453
+          },
+          "d20": {
+            "n": 17,
+            "winPct": 52.9,
+            "meanPct": 2.155,
+            "medianPct": 0.106,
+            "worstPct": -4.118
+          },
+          "d60": {
+            "n": 17,
+            "winPct": 58.8,
+            "meanPct": 5.599,
+            "medianPct": 2.992,
+            "worstPct": -12.243
+          }
+        }
+      },
+      "events": [
+        {
+          "date": "1997-10-20",
+          "close": 7316.78,
+          "bias10Pct": -10.37,
+          "bias20Pct": -13.982,
+          "belowMa44": true,
+          "ma10SlopePct": -1.473,
+          "forward": {
+            "d5": 4.725,
+            "d10": 6.404,
+            "d20": 5.311,
+            "d60": 7.255
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 4.725,
+              "maxFavorableClosePct": 6.946
+            },
+            "d20": {
+              "maxAdverseClosePct": -3.105,
+              "maxFavorableClosePct": 10.387
+            }
+          },
+          "confirmation": {
+            "date": "1997-11-05",
+            "lagTradingDays": 11,
+            "close": 7864.22,
+            "nextCloseForward": {
+              "d5": -7.353,
+              "d20": 1.116,
+              "d60": 7.882
+            }
+          }
+        },
+        {
+          "date": "1998-09-01",
+          "close": 6335.09,
+          "bias10Pct": -8.028,
+          "bias20Pct": -11.183,
+          "belowMa44": true,
+          "ma10SlopePct": -1.214,
+          "forward": {
+            "d5": 9.584,
+            "d10": 8.254,
+            "d20": 8.672,
+            "d60": 15.549
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -1.321,
+              "maxFavorableClosePct": 9.584
+            },
+            "d20": {
+              "maxAdverseClosePct": -1.321,
+              "maxFavorableClosePct": 11.032
+            }
+          },
+          "confirmation": {
+            "date": "1998-09-16",
+            "lagTradingDays": 11,
+            "close": 6972.54,
+            "nextCloseForward": {
+              "d5": -0.294,
+              "d20": -1.371,
+              "d60": -0.91
+            }
+          }
+        },
+        {
+          "date": "1999-02-04",
+          "close": 5514.89,
+          "bias10Pct": -7.21,
+          "bias20Pct": -10.331,
+          "belowMa44": true,
+          "ma10SlopePct": -1.356,
+          "forward": {
+            "d5": 14.483,
+            "d10": 14.458,
+            "d20": 19.646,
+            "d60": 35.532
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.727,
+              "maxFavorableClosePct": 14.483
+            },
+            "d20": {
+              "maxAdverseClosePct": -0.727,
+              "maxFavorableClosePct": 19.646
+            }
+          },
+          "confirmation": {
+            "date": "1999-02-24",
+            "lagTradingDays": 7,
+            "close": 6238.87,
+            "nextCloseForward": {
+              "d5": 1.884,
+              "d20": 10.61,
+              "d60": 21.212
+            }
+          }
+        },
+        {
+          "date": "1999-07-16",
+          "close": 7411.58,
+          "bias10Pct": -10.214,
+          "bias20Pct": -11.253,
+          "belowMa44": true,
+          "ma10SlopePct": -1.386,
+          "forward": {
+            "d5": 4.222,
+            "d10": 0.021,
+            "d20": 2.894,
+            "d60": 6.319
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.333,
+              "maxFavorableClosePct": 5.333
+            },
+            "d20": {
+              "maxAdverseClosePct": -7.934,
+              "maxFavorableClosePct": 5.333
+            }
+          },
+          "confirmation": {
+            "date": "1999-08-16",
+            "lagTradingDays": 21,
+            "close": 8018.47,
+            "nextCloseForward": {
+              "d5": -1.225,
+              "d20": 0.106,
+              "d60": -5.904
+            }
+          }
+        },
+        {
+          "date": "2000-04-26",
+          "close": 8535.96,
+          "bias10Pct": -6.133,
+          "bias20Pct": -10.416,
+          "belowMa44": true,
+          "ma10SlopePct": -1.49,
+          "forward": {
+            "d5": -1.295,
+            "d10": -2.18,
+            "d20": -1.146,
+            "d60": -4.318
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -1.358,
+              "maxFavorableClosePct": 3.379
+            },
+            "d20": {
+              "maxAdverseClosePct": -2.18,
+              "maxFavorableClosePct": 6.839
+            }
+          },
+          "confirmation": {
+            "date": "2000-05-17",
+            "lagTradingDays": 14,
+            "close": 9085.74,
+            "nextCloseForward": {
+              "d5": -7.143,
+              "d20": -2.807,
+              "d60": -12.243
+            }
+          }
+        },
+        {
+          "date": "2000-09-19",
+          "close": 6734.9,
+          "bias10Pct": -7.583,
+          "bias20Pct": -11.045,
+          "belowMa44": true,
+          "ma10SlopePct": -1.445,
+          "forward": {
+            "d5": 0.21,
+            "d10": -8.782,
+            "d20": -19.342,
+            "d60": -20.053
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -1.823,
+              "maxFavorableClosePct": 2.762
+            },
+            "d20": {
+              "maxAdverseClosePct": -19.342,
+              "maxFavorableClosePct": 2.762
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2000-11-20",
+          "close": 4845.21,
+          "bias10Pct": -15.112,
+          "bias20Pct": -15.349,
+          "belowMa44": true,
+          "ma10SlopePct": -1.403,
+          "forward": {
+            "d5": 12.147,
+            "d10": 6.786,
+            "d20": 4.334,
+            "d60": 18.86
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 5.321,
+              "maxFavorableClosePct": 12.147
+            },
+            "d20": {
+              "maxAdverseClosePct": 4.334,
+              "maxFavorableClosePct": 12.147
+            }
+          },
+          "confirmation": {
+            "date": "2000-12-13",
+            "lagTradingDays": 17,
+            "close": 5384.36,
+            "nextCloseForward": {
+              "d5": -9.453,
+              "d20": 1.118,
+              "d60": 5.7
+            }
+          }
+        },
+        {
+          "date": "2001-07-18",
+          "close": 4219.89,
+          "bias10Pct": -6.883,
+          "bias20Pct": -10.186,
+          "belowMa44": true,
+          "ma10SlopePct": -1.133,
+          "forward": {
+            "d5": -1.979,
+            "d10": 6.405,
+            "d20": 11.077,
+            "d60": -9.685
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -4.245,
+              "maxFavorableClosePct": 0.01
+            },
+            "d20": {
+              "maxAdverseClosePct": -4.245,
+              "maxFavorableClosePct": 11.077
+            }
+          },
+          "confirmation": {
+            "date": "2001-08-03",
+            "lagTradingDays": 11,
+            "close": 4530.68,
+            "nextCloseForward": {
+              "d5": 1.119,
+              "d20": -0.357,
+              "d60": -8.728
+            }
+          }
+        },
+        {
+          "date": "2001-09-13",
+          "close": 3952.49,
+          "bias10Pct": -9.024,
+          "bias20Pct": -10.581,
+          "belowMa44": true,
+          "ma10SlopePct": -1.264,
+          "forward": {
+            "d5": -10.6,
+            "d10": -11.648,
+            "d20": -3.425,
+            "d60": 40.147
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -10.6,
+              "maxFavorableClosePct": -4.334
+            },
+            "d20": {
+              "maxAdverseClosePct": -12.808,
+              "maxFavorableClosePct": -3.425
+            }
+          },
+          "confirmation": {
+            "date": "2001-10-11",
+            "lagTradingDays": 16,
+            "close": 3789.93,
+            "nextCloseForward": {
+              "d5": 1.161,
+              "d20": 8.478,
+              "d60": 53.489
+            }
+          }
+        },
+        {
+          "date": "2004-05-05",
+          "close": 5854.23,
+          "bias10Pct": -8.534,
+          "bias20Pct": -11.094,
+          "belowMa44": true,
+          "ma10SlopePct": -1.472,
+          "forward": {
+            "d5": 1.786,
+            "d10": 0.108,
+            "d20": 0.366,
+            "d60": -8.619
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.498,
+              "maxFavorableClosePct": 3.178
+            },
+            "d20": {
+              "maxAdverseClosePct": -6.342,
+              "maxFavorableClosePct": 4.835
+            }
+          },
+          "confirmation": {
+            "date": "2004-05-25",
+            "lagTradingDays": 14,
+            "close": 5958.38,
+            "nextCloseForward": {
+              "d5": -2.515,
+              "d20": -4.118,
+              "d60": -7.039
+            }
+          }
+        },
+        {
+          "date": "2007-08-16",
+          "close": 8201.37,
+          "bias10Pct": -7.558,
+          "bias20Pct": -10.044,
+          "belowMa44": true,
+          "ma10SlopePct": -0.837,
+          "forward": {
+            "d5": 6.48,
+            "d10": 6.948,
+            "d20": 8.853,
+            "d60": 9.042
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -1.354,
+              "maxFavorableClosePct": 6.48
+            },
+            "d20": {
+              "maxAdverseClosePct": -1.354,
+              "maxFavorableClosePct": 9.959
+            }
+          },
+          "confirmation": {
+            "date": "2007-08-30",
+            "lagTradingDays": 10,
+            "close": 8771.21,
+            "nextCloseForward": {
+              "d5": 0.4,
+              "d20": 7.993,
+              "d60": -5.958
+            }
+          }
+        },
+        {
+          "date": "2008-09-16",
+          "close": 5756.59,
+          "bias10Pct": -8.941,
+          "bias20Pct": -13.277,
+          "belowMa44": true,
+          "ma10SlopePct": -1.47,
+          "forward": {
+            "d5": 7.394,
+            "d10": 0.129,
+            "d20": -11.823,
+            "d60": -19.126
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -1.991,
+              "maxFavorableClosePct": 7.394
+            },
+            "d20": {
+              "maxAdverseClosePct": -12.788,
+              "maxFavorableClosePct": 7.394
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2008-10-17",
+          "close": 4960.4,
+          "bias10Pct": -5.882,
+          "bias20Pct": -11.358,
+          "belowMa44": true,
+          "ma10SlopePct": -1.391,
+          "forward": {
+            "d5": -7.676,
+            "d10": -1.809,
+            "d20": -10.235,
+            "d60": -8.629
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -7.676,
+              "maxFavorableClosePct": -0.356
+            },
+            "d20": {
+              "maxAdverseClosePct": -11.965,
+              "maxFavorableClosePct": 0.699
+            }
+          },
+          "confirmation": {
+            "date": "2008-11-28",
+            "lagTradingDays": 30,
+            "close": 4460.49,
+            "nextCloseForward": {
+              "d5": -2.215,
+              "d20": -2.263,
+              "d60": 2.992
+            }
+          }
+        },
+        {
+          "date": "2008-11-20",
+          "close": 4089.93,
+          "bias10Pct": -8.597,
+          "bias20Pct": -10.811,
+          "belowMa44": true,
+          "ma10SlopePct": -1.332,
+          "forward": {
+            "d5": 8.896,
+            "d10": 4.035,
+            "d20": 14.789,
+            "d60": 9.873
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 1.726,
+              "maxFavorableClosePct": 8.896
+            },
+            "d20": {
+              "maxAdverseClosePct": 1.726,
+              "maxFavorableClosePct": 14.789
+            }
+          },
+          "confirmation": {
+            "date": "2008-11-28",
+            "lagTradingDays": 6,
+            "close": 4460.49,
+            "nextCloseForward": {
+              "d5": -2.215,
+              "d20": -2.263,
+              "d60": 2.992
+            }
+          }
+        },
+        {
+          "date": "2011-08-08",
+          "close": 7552.8,
+          "bias10Pct": -10.606,
+          "bias20Pct": -11.383,
+          "belowMa44": true,
+          "ma10SlopePct": -1.321,
+          "forward": {
+            "d5": 3.53,
+            "d10": -3.18,
+            "d20": -0.016,
+            "d60": 0.604
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.79,
+              "maxFavorableClosePct": 3.53
+            },
+            "d20": {
+              "maxAdverseClosePct": -3.18,
+              "maxFavorableClosePct": 3.53
+            }
+          },
+          "confirmation": {
+            "date": "2011-09-09",
+            "lagTradingDays": 24,
+            "close": 7610.57,
+            "nextCloseForward": {
+              "d5": 1.373,
+              "d20": -0.122,
+              "d60": -4.848
+            }
+          }
+        },
+        {
+          "date": "2015-08-24",
+          "close": 7410.34,
+          "bias10Pct": -8.44,
+          "bias20Pct": -10.898,
+          "belowMa44": true,
+          "ma10SlopePct": -1.289,
+          "forward": {
+            "d5": 10.318,
+            "d10": 7.776,
+            "d20": 12.101,
+            "d60": 14.397
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 3.58,
+              "maxFavorableClosePct": 10.318
+            },
+            "d20": {
+              "maxAdverseClosePct": 3.58,
+              "maxFavorableClosePct": 14.194
+            }
+          },
+          "confirmation": {
+            "date": "2015-09-03",
+            "lagTradingDays": 8,
+            "close": 8095.95,
+            "nextCloseForward": {
+              "d5": 3.815,
+              "d20": 4.918,
+              "d60": 5.71
+            }
+          }
+        },
+        {
+          "date": "2020-03-13",
+          "close": 10128.87,
+          "bias10Pct": -8.047,
+          "bias20Pct": -10.504,
+          "belowMa44": true,
+          "ma10SlopePct": -1.045,
+          "forward": {
+            "d5": -8.834,
+            "d10": -4.245,
+            "d20": 2.015,
+            "d60": 15.71
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -14.291,
+              "maxFavorableClosePct": -4.059
+            },
+            "d20": {
+              "maxAdverseClosePct": -14.291,
+              "maxFavorableClosePct": 2.015
+            }
+          },
+          "confirmation": {
+            "date": "2020-04-06",
+            "lagTradingDays": 14,
+            "close": 9818.74,
+            "nextCloseForward": {
+              "d5": 3.367,
+              "d20": 7.789,
+              "d60": 19.135
+            }
+          }
+        },
+        {
+          "date": "2024-08-05",
+          "close": 19830.88,
+          "bias10Pct": -10.193,
+          "bias20Pct": -13.687,
+          "belowMa44": true,
+          "ma10SlopePct": -1.59,
+          "forward": {
+            "d5": 9.795,
+            "d10": 13.004,
+            "d20": 12.124,
+            "d60": 15.806
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 3.379,
+              "maxFavorableClosePct": 9.795
+            },
+            "d20": {
+              "maxAdverseClosePct": 3.379,
+              "maxFavorableClosePct": 13.102
+            }
+          },
+          "confirmation": {
+            "date": "2024-08-19",
+            "lagTradingDays": 10,
+            "close": 22409.63,
+            "nextCloseForward": {
+              "d5": -1.088,
+              "d20": -3.345,
+              "d60": 1.871
+            }
+          }
+        },
+        {
+          "date": "2025-04-07",
+          "close": 19232.35,
+          "bias10Pct": -10.51,
+          "bias20Pct": -11.971,
+          "belowMa44": true,
+          "ma10SlopePct": -1.442,
+          "forward": {
+            "d5": 1.46,
+            "d10": -0.656,
+            "d20": 6.709,
+            "d60": 17.395
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -9.57,
+              "maxFavorableClosePct": 1.541
+            },
+            "d20": {
+              "maxAdverseClosePct": -9.57,
+              "maxFavorableClosePct": 8.087
+            }
+          },
+          "confirmation": {
+            "date": "2025-04-23",
+            "lagTradingDays": 12,
+            "close": 19639.14,
+            "nextCloseForward": {
+              "d5": 6.719,
+              "d20": 11.158,
+              "d60": 19.825
+            }
+          }
+        }
+      ]
+    },
+    {
+      "period": 20,
+      "threshold": -12,
+      "direction": "oversold",
+      "sampleCount": 9,
+      "signalCloseForward": {
+        "d5": {
+          "n": 9,
+          "winPct": 77.8,
+          "meanPct": 3.901,
+          "medianPct": 6.355,
+          "worstPct": -8.518
+        },
+        "d10": {
+          "n": 9,
+          "winPct": 66.7,
+          "meanPct": 1.859,
+          "medianPct": 1.807,
+          "worstPct": -8.699
+        },
+        "d20": {
+          "n": 9,
+          "winPct": 66.7,
+          "meanPct": 1.426,
+          "medianPct": 4.334,
+          "worstPct": -11.823
+        },
+        "d60": {
+          "n": 9,
+          "winPct": 66.7,
+          "meanPct": 8.561,
+          "medianPct": 15.806,
+          "worstPct": -23.397
+        }
+      },
+      "confirmation": {
+        "confirmedCount": 8,
+        "confirmedRatePct": 88.9,
+        "meanLagTradingDays": 15.6,
+        "nextCloseForward": {
+          "d5": {
+            "n": 8,
+            "winPct": 50,
+            "meanPct": -0.807,
+            "medianPct": 1.161,
+            "worstPct": -9.453
+          },
+          "d20": {
+            "n": 8,
+            "winPct": 62.5,
+            "meanPct": 1.938,
+            "medianPct": 1.118,
+            "worstPct": -8.546
+          },
+          "d60": {
+            "n": 8,
+            "winPct": 100,
+            "meanPct": 14.085,
+            "medianPct": 7.882,
+            "worstPct": 1.787
+          }
+        }
+      },
+      "events": [
+        {
+          "date": "1997-10-20",
+          "close": 7316.78,
+          "bias10Pct": -10.37,
+          "bias20Pct": -13.982,
+          "belowMa44": true,
+          "ma10SlopePct": -1.473,
+          "forward": {
+            "d5": 4.725,
+            "d10": 6.404,
+            "d20": 5.311,
+            "d60": 7.255
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 4.725,
+              "maxFavorableClosePct": 6.946
+            },
+            "d20": {
+              "maxAdverseClosePct": -3.105,
+              "maxFavorableClosePct": 10.387
+            }
+          },
+          "confirmation": {
+            "date": "1997-11-05",
+            "lagTradingDays": 11,
+            "close": 7864.22,
+            "nextCloseForward": {
+              "d5": -7.353,
+              "d20": 1.116,
+              "d60": 7.882
+            }
+          }
+        },
+        {
+          "date": "2000-10-02",
+          "close": 6024.07,
+          "bias10Pct": -9.157,
+          "bias20Pct": -14.099,
+          "belowMa44": true,
+          "ma10SlopePct": -1.319,
+          "forward": {
+            "d5": 3.077,
+            "d10": -5.34,
+            "d20": -7.966,
+            "d60": -23.397
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.434,
+              "maxFavorableClosePct": 5.471
+            },
+            "d20": {
+              "maxAdverseClosePct": -15.65,
+              "maxFavorableClosePct": 5.471
+            }
+          },
+          "confirmation": {
+            "date": "2000-11-03",
+            "lagTradingDays": 23,
+            "close": 5796.08,
+            "nextCloseForward": {
+              "d5": 2.405,
+              "d20": -8.546,
+              "d60": 1.787
+            }
+          }
+        },
+        {
+          "date": "2000-11-20",
+          "close": 4845.21,
+          "bias10Pct": -15.112,
+          "bias20Pct": -15.349,
+          "belowMa44": true,
+          "ma10SlopePct": -1.403,
+          "forward": {
+            "d5": 12.147,
+            "d10": 6.786,
+            "d20": 4.334,
+            "d60": 18.86
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 5.321,
+              "maxFavorableClosePct": 12.147
+            },
+            "d20": {
+              "maxAdverseClosePct": 4.334,
+              "maxFavorableClosePct": 12.147
+            }
+          },
+          "confirmation": {
+            "date": "2000-12-13",
+            "lagTradingDays": 17,
+            "close": 5384.36,
+            "nextCloseForward": {
+              "d5": -9.453,
+              "d20": 1.118,
+              "d60": 5.7
+            }
+          }
+        },
+        {
+          "date": "2001-09-14",
+          "close": 3774.62,
+          "bias10Pct": -11.635,
+          "bias20Pct": -13.714,
+          "belowMa44": true,
+          "ma10SlopePct": -1.679,
+          "forward": {
+            "d5": -7.44,
+            "d10": -8.699,
+            "d20": 0.969,
+            "d60": 43.261
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -7.44,
+              "maxFavorableClosePct": 0.174
+            },
+            "d20": {
+              "maxAdverseClosePct": -8.699,
+              "maxFavorableClosePct": 1.126
+            }
+          },
+          "confirmation": {
+            "date": "2001-10-11",
+            "lagTradingDays": 15,
+            "close": 3789.93,
+            "nextCloseForward": {
+              "d5": 1.161,
+              "d20": 8.478,
+              "d60": 53.489
+            }
+          }
+        },
+        {
+          "date": "2008-09-16",
+          "close": 5756.59,
+          "bias10Pct": -8.941,
+          "bias20Pct": -13.277,
+          "belowMa44": true,
+          "ma10SlopePct": -1.47,
+          "forward": {
+            "d5": 7.394,
+            "d10": 0.129,
+            "d20": -11.823,
+            "d60": -19.126
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -1.991,
+              "maxFavorableClosePct": 7.394
+            },
+            "d20": {
+              "maxAdverseClosePct": -12.788,
+              "maxFavorableClosePct": 7.394
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2008-10-24",
+          "close": 4579.62,
+          "bias10Pct": -7.747,
+          "bias20Pct": -13.534,
+          "belowMa44": true,
+          "ma10SlopePct": -1.098,
+          "forward": {
+            "d5": 6.355,
+            "d10": 3.553,
+            "d20": -8.92,
+            "d60": -7.359
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -4.646,
+              "maxFavorableClosePct": 6.355
+            },
+            "d20": {
+              "maxAdverseClosePct": -10.693,
+              "maxFavorableClosePct": 9.071
+            }
+          },
+          "confirmation": {
+            "date": "2008-11-28",
+            "lagTradingDays": 25,
+            "close": 4460.49,
+            "nextCloseForward": {
+              "d5": -2.215,
+              "d20": -2.263,
+              "d60": 2.992
+            }
+          }
+        },
+        {
+          "date": "2020-03-16",
+          "close": 9717.77,
+          "bias10Pct": -10.601,
+          "bias20Pct": -13.333,
+          "belowMa44": true,
+          "ma10SlopePct": -1.319,
+          "forward": {
+            "d5": -8.518,
+            "d10": -0.909,
+            "d20": 7.506,
+            "d60": 18.708
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -10.665,
+              "maxFavorableClosePct": -2.862
+            },
+            "d20": {
+              "maxAdverseClosePct": -10.665,
+              "maxFavorableClosePct": 7.506
+            }
+          },
+          "confirmation": {
+            "date": "2020-04-06",
+            "lagTradingDays": 13,
+            "close": 9818.74,
+            "nextCloseForward": {
+              "d5": 3.367,
+              "d20": 7.789,
+              "d60": 19.135
+            }
+          }
+        },
+        {
+          "date": "2024-08-05",
+          "close": 19830.88,
+          "bias10Pct": -10.193,
+          "bias20Pct": -13.687,
+          "belowMa44": true,
+          "ma10SlopePct": -1.59,
+          "forward": {
+            "d5": 9.795,
+            "d10": 13.004,
+            "d20": 12.124,
+            "d60": 15.806
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 3.379,
+              "maxFavorableClosePct": 9.795
+            },
+            "d20": {
+              "maxAdverseClosePct": 3.379,
+              "maxFavorableClosePct": 13.102
+            }
+          },
+          "confirmation": {
+            "date": "2024-08-19",
+            "lagTradingDays": 10,
+            "close": 22409.63,
+            "nextCloseForward": {
+              "d5": -1.088,
+              "d20": -3.345,
+              "d60": 1.871
+            }
+          }
+        },
+        {
+          "date": "2025-04-08",
+          "close": 18459.95,
+          "bias10Pct": -12.579,
+          "bias20Pct": -14.703,
+          "belowMa44": true,
+          "ma10SlopePct": -1.745,
+          "forward": {
+            "d5": 7.572,
+            "d10": 1.807,
+            "d20": 11.303,
+            "d60": 23.039
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -5.787,
+              "maxFavorableClosePct": 7.572
+            },
+            "d20": {
+              "maxAdverseClosePct": -5.787,
+              "maxFavorableClosePct": 12.609
+            }
+          },
+          "confirmation": {
+            "date": "2025-04-23",
+            "lagTradingDays": 11,
+            "close": 19639.14,
+            "nextCloseForward": {
+              "d5": 6.719,
+              "d20": 11.158,
+              "d60": 19.825
+            }
+          }
+        }
+      ]
+    },
+    {
+      "period": 20,
+      "threshold": -15,
+      "direction": "oversold",
+      "sampleCount": 6,
+      "signalCloseForward": {
+        "d5": {
+          "n": 6,
+          "winPct": 100,
+          "meanPct": 10.214,
+          "medianPct": 12.147,
+          "worstPct": 1.255
+        },
+        "d10": {
+          "n": 6,
+          "winPct": 83.3,
+          "meanPct": 6.969,
+          "medianPct": 8.551,
+          "worstPct": -1.991
+        },
+        "d20": {
+          "n": 6,
+          "winPct": 83.3,
+          "meanPct": 7.981,
+          "medianPct": 7.867,
+          "worstPct": -4.725
+        },
+        "d60": {
+          "n": 6,
+          "winPct": 83.3,
+          "meanPct": 20.445,
+          "medianPct": 22.645,
+          "worstPct": -2.723
+        }
+      },
+      "confirmation": {
+        "confirmedCount": 6,
+        "confirmedRatePct": 100,
+        "meanLagTradingDays": 14.2,
+        "nextCloseForward": {
+          "d5": {
+            "n": 6,
+            "winPct": 66.7,
+            "meanPct": 0.33,
+            "medianPct": 2.405,
+            "worstPct": -9.453
+          },
+          "d20": {
+            "n": 6,
+            "winPct": 66.7,
+            "meanPct": 2.956,
+            "medianPct": 7.789,
+            "worstPct": -8.546
+          },
+          "d60": {
+            "n": 6,
+            "winPct": 100,
+            "meanPct": 17.155,
+            "medianPct": 19.135,
+            "worstPct": 1.787
+          }
+        }
+      },
+      "events": [
+        {
+          "date": "2000-10-19",
+          "close": 5081.28,
+          "bias10Pct": -12.635,
+          "bias20Pct": -17.378,
+          "belowMa44": true,
+          "ma10SlopePct": -1.552,
+          "forward": {
+            "d5": 16.936,
+            "d10": 10.722,
+            "d20": 7.338,
+            "d60": 5.872
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 6.367,
+              "maxFavorableClosePct": 18.548
+            },
+            "d20": {
+              "maxAdverseClosePct": 6.367,
+              "maxFavorableClosePct": 19.843
+            }
+          },
+          "confirmation": {
+            "date": "2000-11-03",
+            "lagTradingDays": 11,
+            "close": 5796.08,
+            "nextCloseForward": {
+              "d5": 2.405,
+              "d20": -8.546,
+              "d60": 1.787
+            }
+          }
+        },
+        {
+          "date": "2000-11-20",
+          "close": 4845.21,
+          "bias10Pct": -15.112,
+          "bias20Pct": -15.349,
+          "belowMa44": true,
+          "ma10SlopePct": -1.403,
+          "forward": {
+            "d5": 12.147,
+            "d10": 6.786,
+            "d20": 4.334,
+            "d60": 18.86
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 5.321,
+              "maxFavorableClosePct": 12.147
+            },
+            "d20": {
+              "maxAdverseClosePct": 4.334,
+              "maxFavorableClosePct": 12.147
+            }
+          },
+          "confirmation": {
+            "date": "2000-12-13",
+            "lagTradingDays": 17,
+            "close": 5384.36,
+            "nextCloseForward": {
+              "d5": -9.453,
+              "d20": 1.118,
+              "d60": 5.7
+            }
+          }
+        },
+        {
+          "date": "2001-09-21",
+          "close": 3591.85,
+          "bias10Pct": -10.939,
+          "bias20Pct": -15.298,
+          "belowMa44": true,
+          "ma10SlopePct": -2.187,
+          "forward": {
+            "d5": 1.255,
+            "d10": -1.991,
+            "d20": 7.867,
+            "d60": 48.369
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -2.73,
+              "maxFavorableClosePct": 1.255
+            },
+            "d20": {
+              "maxAdverseClosePct": -4.053,
+              "maxFavorableClosePct": 8.596
+            }
+          },
+          "confirmation": {
+            "date": "2001-10-11",
+            "lagTradingDays": 12,
+            "close": 3789.93,
+            "nextCloseForward": {
+              "d5": 1.161,
+              "d20": 8.478,
+              "d60": 53.489
+            }
+          }
+        },
+        {
+          "date": "2008-10-27",
+          "close": 4366.87,
+          "bias10Pct": -10.859,
+          "bias20Pct": -16.211,
+          "belowMa44": true,
+          "ma10SlopePct": -1.317,
+          "forward": {
+            "d5": 14.385,
+            "d10": 8.551,
+            "d20": -4.725,
+            "d60": -2.723
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 0.758,
+              "maxFavorableClosePct": 14.385
+            },
+            "d20": {
+              "maxAdverseClosePct": -6.342,
+              "maxFavorableClosePct": 14.385
+            }
+          },
+          "confirmation": {
+            "date": "2008-11-28",
+            "lagTradingDays": 24,
+            "close": 4460.49,
+            "nextCloseForward": {
+              "d5": -2.215,
+              "d20": -2.263,
+              "d60": 2.992
+            }
+          }
+        },
+        {
+          "date": "2020-03-18",
+          "close": 9218.67,
+          "bias10Pct": -11.9,
+          "bias20Pct": -16.003,
+          "belowMa44": true,
+          "ma10SlopePct": -2.035,
+          "forward": {
+            "d5": 4.622,
+            "d10": 4.827,
+            "d20": 14.952,
+            "d60": 22.645
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -5.829,
+              "maxFavorableClosePct": 4.622
+            },
+            "d20": {
+              "maxAdverseClosePct": -5.829,
+              "maxFavorableClosePct": 14.952
+            }
+          },
+          "confirmation": {
+            "date": "2020-04-06",
+            "lagTradingDays": 11,
+            "close": 9818.74,
+            "nextCloseForward": {
+              "d5": 3.367,
+              "d20": 7.789,
+              "d60": 19.135
+            }
+          }
+        },
+        {
+          "date": "2025-04-09",
+          "close": 17391.76,
+          "bias10Pct": -15.757,
+          "bias20Pct": -18.686,
+          "belowMa44": true,
+          "ma10SlopePct": -2.233,
+          "forward": {
+            "d5": 11.938,
+            "d10": 12.922,
+            "d20": 18.121,
+            "d60": 29.645
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 9.247,
+              "maxFavorableClosePct": 14.179
+            },
+            "d20": {
+              "maxAdverseClosePct": 8.059,
+              "maxFavorableClosePct": 19.526
+            }
+          },
+          "confirmation": {
+            "date": "2025-04-23",
+            "lagTradingDays": 10,
+            "close": 19639.14,
+            "nextCloseForward": {
+              "d5": 6.719,
+              "d20": 11.158,
+              "d60": 19.825
+            }
+          }
+        }
+      ]
+    },
+    {
+      "period": 20,
+      "threshold": 10,
+      "direction": "overbought",
+      "sampleCount": 10,
+      "signalCloseForward": {
+        "d5": {
+          "n": 10,
+          "winPct": 50,
+          "meanPct": 1.559,
+          "medianPct": 1.312,
+          "worstPct": -1.986
+        },
+        "d10": {
+          "n": 10,
+          "winPct": 90,
+          "meanPct": 2.629,
+          "medianPct": 2.154,
+          "worstPct": -1.613
+        },
+        "d20": {
+          "n": 10,
+          "winPct": 80,
+          "meanPct": 6.495,
+          "medianPct": 9.911,
+          "worstPct": -9.551
+        },
+        "d60": {
+          "n": 10,
+          "winPct": 80,
+          "meanPct": 10.123,
+          "medianPct": 14.436,
+          "worstPct": -7.409
+        }
+      },
+      "confirmation": null,
+      "events": [
+        {
+          "date": "1996-04-06",
+          "close": 5581.13,
+          "bias10Pct": 8.148,
+          "bias20Pct": 11.364,
+          "belowMa44": false,
+          "ma10SlopePct": 1.059,
+          "forward": {
+            "d5": 6.521,
+            "d10": 6.48,
+            "d20": 9.911,
+            "d60": 14.894
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 0.154,
+              "maxFavorableClosePct": 6.521
+            },
+            "d20": {
+              "maxAdverseClosePct": 0.154,
+              "maxFavorableClosePct": 10.779
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "1999-06-22",
+          "close": 8608.91,
+          "bias10Pct": 6.132,
+          "bias20Pct": 10.382,
+          "belowMa44": false,
+          "ma10SlopePct": 1.004,
+          "forward": {
+            "d5": -1.099,
+            "d10": -1.613,
+            "d20": -9.551,
+            "d60": -7.409
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -3.984,
+              "maxFavorableClosePct": -0.228
+            },
+            "d20": {
+              "maxAdverseClosePct": -14.195,
+              "maxFavorableClosePct": -0.181
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2000-01-05",
+          "close": 8849.87,
+          "bias10Pct": 7.641,
+          "bias20Pct": 10.287,
+          "belowMa44": false,
+          "ma10SlopePct": 1.369,
+          "forward": {
+            "d5": 3.331,
+            "d10": 3.408,
+            "d20": 13.096,
+            "d60": 14.436
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.05,
+              "maxFavorableClosePct": 3.331
+            },
+            "d20": {
+              "maxAdverseClosePct": -0.05,
+              "maxFavorableClosePct": 13.096
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2001-01-16",
+          "close": 5662.94,
+          "bias10Pct": 6.689,
+          "bias20Pct": 11.516,
+          "belowMa44": false,
+          "ma10SlopePct": 1.39,
+          "forward": {
+            "d5": 4.825,
+            "d10": 0.541,
+            "d20": 5.068,
+            "d60": -1.171
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 0.302,
+              "maxFavorableClosePct": 4.825
+            },
+            "d20": {
+              "maxAdverseClosePct": 0.302,
+              "maxFavorableClosePct": 7.793
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2001-11-19",
+          "close": 4548.63,
+          "bias10Pct": 7.063,
+          "bias20Pct": 10.544,
+          "belowMa44": false,
+          "ma10SlopePct": 1.114,
+          "forward": {
+            "d5": 1.312,
+            "d10": 2.154,
+            "d20": 19.952,
+            "d60": 24.347
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -2.168,
+              "maxFavorableClosePct": 1.312
+            },
+            "d20": {
+              "maxAdverseClosePct": -2.364,
+              "maxFavorableClosePct": 21.78
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2002-10-23",
+          "close": 4589.88,
+          "bias10Pct": 8.656,
+          "bias20Pct": 10.046,
+          "belowMa44": false,
+          "ma10SlopePct": 1.503,
+          "forward": {
+            "d5": -1.986,
+            "d10": 2.951,
+            "d20": 1.386,
+            "d60": 7.7
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -1.986,
+              "maxFavorableClosePct": 0.25
+            },
+            "d20": {
+              "maxAdverseClosePct": -1.986,
+              "maxFavorableClosePct": 4.873
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2009-03-25",
+          "close": 5346.38,
+          "bias10Pct": 6.031,
+          "bias20Pct": 11.093,
+          "belowMa44": false,
+          "ma10SlopePct": 1.177,
+          "forward": {
+            "d5": -0.597,
+            "d10": 1.818,
+            "d20": 10.095,
+            "d60": 18.608
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -2.625,
+              "maxFavorableClosePct": 0.829
+            },
+            "d20": {
+              "maxAdverseClosePct": -2.625,
+              "maxFavorableClosePct": 12.173
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2009-05-06",
+          "close": 6566.7,
+          "bias10Pct": 9.76,
+          "bias20Pct": 11.525,
+          "belowMa44": false,
+          "ma10SlopePct": 1.159,
+          "forward": {
+            "d5": -1.242,
+            "d10": 2.085,
+            "d20": 3.052,
+            "d60": 7.782
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -2.043,
+              "maxFavorableClosePct": 1.23
+            },
+            "d20": {
+              "maxAdverseClosePct": -3.084,
+              "maxFavorableClosePct": 5.899
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2022-11-15",
+          "close": 14546.31,
+          "bias10Pct": 7.308,
+          "bias20Pct": 10.094,
+          "belowMa44": false,
+          "ma10SlopePct": 1.126,
+          "forward": {
+            "d5": -0.028,
+            "d10": 1.123,
+            "d20": -0.161,
+            "d60": 6.908
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.666,
+              "maxFavorableClosePct": -0.028
+            },
+            "d20": {
+              "maxAdverseClosePct": -0.666,
+              "maxFavorableClosePct": 3.207
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2026-04-24",
+          "close": 38932.4,
+          "bias10Pct": 4.798,
+          "bias20Pct": 10.257,
+          "belowMa44": false,
+          "ma10SlopePct": 0.955,
+          "forward": {
+            "d5": 4.553,
+            "d10": 7.34,
+            "d20": 12.103,
+            "d60": 15.137
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.015,
+              "maxFavorableClosePct": 4.553
+            },
+            "d20": {
+              "maxAdverseClosePct": -0.015,
+              "maxFavorableClosePct": 12.103
+            }
+          },
+          "confirmation": null
+        }
+      ]
+    },
+    {
+      "period": 20,
+      "threshold": 12,
+      "direction": "overbought",
+      "sampleCount": 3,
+      "signalCloseForward": {
+        "d5": {
+          "n": 3,
+          "winPct": 100,
+          "meanPct": 2.994,
+          "medianPct": 2.951,
+          "worstPct": 2.218
+        },
+        "d10": {
+          "n": 3,
+          "winPct": 66.7,
+          "meanPct": 2.222,
+          "medianPct": 1.924,
+          "worstPct": -0.197
+        },
+        "d20": {
+          "n": 3,
+          "winPct": 66.7,
+          "meanPct": 4.787,
+          "medianPct": 6.301,
+          "worstPct": -0.189
+        },
+        "d60": {
+          "n": 3,
+          "winPct": 66.7,
+          "meanPct": 8.17,
+          "medianPct": 10.611,
+          "worstPct": -2.985
+        }
+      },
+      "confirmation": null,
+      "events": [
+        {
+          "date": "1996-04-10",
+          "close": 5768.03,
+          "bias10Pct": 8.041,
+          "bias20Pct": 12.027,
+          "belowMa44": false,
+          "ma10SlopePct": 1.33,
+          "forward": {
+            "d5": 2.951,
+            "d10": 4.938,
+            "d20": 6.301,
+            "d60": 10.611
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -0.963,
+              "maxFavorableClosePct": 6.145
+            },
+            "d20": {
+              "maxAdverseClosePct": -0.963,
+              "maxFavorableClosePct": 7.189
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2001-01-17",
+          "close": 5769.95,
+          "bias10Pct": 6.942,
+          "bias20Pct": 12.829,
+          "belowMa44": false,
+          "ma10SlopePct": 1.649,
+          "forward": {
+            "d5": 2.218,
+            "d10": -0.197,
+            "d20": -0.189,
+            "d60": -2.985
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": -1.558,
+              "maxFavorableClosePct": 2.881
+            },
+            "d20": {
+              "maxAdverseClosePct": -1.558,
+              "maxFavorableClosePct": 5.794
+            }
+          },
+          "confirmation": null
+        },
+        {
+          "date": "2001-12-06",
+          "close": 5208.86,
+          "bias10Pct": 11.757,
+          "bias20Pct": 15.55,
+          "belowMa44": false,
+          "ma10SlopePct": 1.655,
+          "forward": {
+            "d5": 3.814,
+            "d10": 1.924,
+            "d20": 8.249,
+            "d60": 16.884
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 1.25,
+              "maxFavorableClosePct": 6.344
+            },
+            "d20": {
+              "maxAdverseClosePct": -1.913,
+              "maxFavorableClosePct": 8.249
+            }
+          },
+          "confirmation": null
+        }
+      ]
+    },
+    {
+      "period": 20,
+      "threshold": 15,
+      "direction": "overbought",
+      "sampleCount": 1,
+      "signalCloseForward": {
+        "d5": {
+          "n": 1,
+          "winPct": 100,
+          "meanPct": 3.814,
+          "medianPct": 3.814,
+          "worstPct": 3.814
+        },
+        "d10": {
+          "n": 1,
+          "winPct": 100,
+          "meanPct": 1.924,
+          "medianPct": 1.924,
+          "worstPct": 1.924
+        },
+        "d20": {
+          "n": 1,
+          "winPct": 100,
+          "meanPct": 8.249,
+          "medianPct": 8.249,
+          "worstPct": 8.249
+        },
+        "d60": {
+          "n": 1,
+          "winPct": 100,
+          "meanPct": 16.884,
+          "medianPct": 16.884,
+          "worstPct": 16.884
+        }
+      },
+      "confirmation": null,
+      "events": [
+        {
+          "date": "2001-12-06",
+          "close": 5208.86,
+          "bias10Pct": 11.757,
+          "bias20Pct": 15.55,
+          "belowMa44": false,
+          "ma10SlopePct": 1.655,
+          "forward": {
+            "d5": 3.814,
+            "d10": 1.924,
+            "d20": 8.249,
+            "d60": 16.884
+          },
+          "excursions": {
+            "d5": {
+              "maxAdverseClosePct": 1.25,
+              "maxFavorableClosePct": 6.344
+            },
+            "d20": {
+              "maxAdverseClosePct": -1.913,
+              "maxFavorableClosePct": 8.249
+            }
+          },
+          "confirmation": null
+        }
+      ]
+    }
+  ]
+}
