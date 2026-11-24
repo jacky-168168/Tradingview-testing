@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-23T07:54:50.032Z",
+  "generatedAt": "2026-11-24T00:06:26.955Z",
   "classifierVersionCurrent": "2026-11-09-v1.3",
   "definition": "Immutable observed-at-time conditional news directional hypotheses. Does not backfill older/matured items or predictions from after benchmark start.",
   "minNForWinrate": 30,
@@ -8224,11 +8224,88 @@
           ]
         }
       ]
+    },
+    {
+      "id": "global-980653b9646b5c65",
+      "group": "3c953320f2d4eeb4444f9422",
+      "title": "COMMENTARY: AI bubble burst could put Fed rate cuts on the table",
+      "source": "Reuters",
+      "publishedAt": "2026-11-23T22:08:27+08:00",
+      "frozenAt": "2026-11-24T00:06:26.955Z",
+      "classifierVersion": "2026-11-09-v1.3",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "NASDAQ",
+          "direction": 1,
+          "ruleScore": 60,
+          "ruleIds": [
+            "rate-dove"
+          ]
+        },
+        {
+          "asset": "美債殖利率",
+          "direction": -1,
+          "ruleScore": -55,
+          "ruleIds": [
+            "rate-dove"
+          ]
+        },
+        {
+          "asset": "台股",
+          "direction": 1,
+          "ruleScore": 45,
+          "ruleIds": [
+            "rate-dove"
+          ]
+        },
+        {
+          "asset": "黃金",
+          "direction": 1,
+          "ruleScore": 45,
+          "ruleIds": [
+            "rate-dove"
+          ]
+        },
+        {
+          "asset": "美元",
+          "direction": -1,
+          "ruleScore": -45,
+          "ruleIds": [
+            "rate-dove"
+          ]
+        },
+        {
+          "asset": "美股S&P500",
+          "direction": 1,
+          "ruleScore": 40,
+          "ruleIds": [
+            "rate-dove"
+          ]
+        },
+        {
+          "asset": "白銀",
+          "direction": 1,
+          "ruleScore": 40,
+          "ruleIds": [
+            "rate-dove"
+          ]
+        },
+        {
+          "asset": "WTI原油",
+          "direction": 1,
+          "ruleScore": 10,
+          "ruleIds": [
+            "rate-dove"
+          ]
+        }
+      ]
     }
   ],
   "refresh": {
-    "newRecords": 2,
-    "skippedExpired": 1393,
-    "excludedNoSignal": 63
+    "newRecords": 1,
+    "skippedExpired": 1432,
+    "excludedNoSignal": 80
   }
 }
