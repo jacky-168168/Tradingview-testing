@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-25T08:53:41.412Z",
+  "generatedAt": "2026-11-25T21:51:48.422Z",
   "classifierVersionCurrent": "2026-11-09-v1.3",
   "definition": "Immutable observed-at-time conditional news directional hypotheses. Does not backfill older/matured items or predictions from after benchmark start.",
   "minNForWinrate": 30,
@@ -9137,11 +9137,500 @@
           ]
         }
       ]
+    },
+    {
+      "id": "news-9b4fdecd1effa4a0",
+      "group": "72b8e1a1fddfd3530841b9de",
+      "title": "英鎊走低，因火熱的美國PCE數據蓋過英國央行的偏鷹派信號",
+      "source": "FXStreet",
+      "publishedAt": "2026-11-26T01:12:55+08:00",
+      "frozenAt": "2026-11-25T21:51:48.422Z",
+      "classifierVersion": "2026-11-09-v1.3",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "NASDAQ",
+          "direction": -1,
+          "ruleScore": -65,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "美元",
+          "direction": 1,
+          "ruleScore": 55,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "美債殖利率",
+          "direction": 1,
+          "ruleScore": 55,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "台股",
+          "direction": -1,
+          "ruleScore": -50,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "美股S&P500",
+          "direction": -1,
+          "ruleScore": -45,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "黃金",
+          "direction": -1,
+          "ruleScore": -45,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "白銀",
+          "direction": -1,
+          "ruleScore": -40,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "WTI原油",
+          "direction": -1,
+          "ruleScore": -25,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "global-44c17f395d6868ce",
+      "group": "05d141b985875860bc8de4e5",
+      "title": "Trump unveils new tariffs to fight excess factory capacity, undeterred by midterms defeat",
+      "source": "Reuters",
+      "publishedAt": "2026-11-26T01:07:36+08:00",
+      "frozenAt": "2026-11-25T21:51:48.422Z",
+      "classifierVersion": "2026-11-09-v1.3",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "台股",
+          "direction": -1,
+          "ruleScore": -60,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "NASDAQ",
+          "direction": -1,
+          "ruleScore": -55,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "美股S&P500",
+          "direction": -1,
+          "ruleScore": -35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "黃金",
+          "direction": 1,
+          "ruleScore": 35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "銅",
+          "direction": -1,
+          "ruleScore": -35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "美元",
+          "direction": 1,
+          "ruleScore": 15,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "news-4616de157c8e061c",
+      "group": "d31651fab1eb45a23e33ffdd",
+      "title": "美國核心PCE通膨升溫澆熄降息希望，比特幣跌破5.85萬美元",
+      "source": "BigGo 財經",
+      "publishedAt": "2026-11-26T01:05:00+08:00",
+      "frozenAt": "2026-11-25T21:51:48.422Z",
+      "classifierVersion": "2026-11-09-v1.3",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "WTI原油",
+          "direction": 1,
+          "ruleScore": 8,
+          "ruleIds": [
+            "rate-dove",
+            "cpi-hot"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "global-3921fcbfd87ad402",
+      "group": "3d37f4aaf4da87fbbeece850",
+      "title": "US announces new tariffs on host of countries including China",
+      "source": "BBC News",
+      "publishedAt": "2026-11-26T00:21:34+08:00",
+      "frozenAt": "2026-11-25T21:51:48.422Z",
+      "classifierVersion": "2026-11-09-v1.3",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "台股",
+          "direction": -1,
+          "ruleScore": -60,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "NASDAQ",
+          "direction": -1,
+          "ruleScore": -55,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "美股S&P500",
+          "direction": -1,
+          "ruleScore": -35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "黃金",
+          "direction": 1,
+          "ruleScore": 35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "銅",
+          "direction": -1,
+          "ruleScore": -35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "美元",
+          "direction": 1,
+          "ruleScore": 15,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "news-fcf25a6606f58de4",
+      "group": "7d0f3b0bdf44a7aab639cf54",
+      "title": "美國第3季GDP大幅上修至4.3% 通膨升溫恐推動聯準會升息",
+      "source": "民視財經網",
+      "publishedAt": "2026-11-26T00:18:46+08:00",
+      "frozenAt": "2026-11-25T21:51:48.422Z",
+      "classifierVersion": "2026-11-09-v1.3",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "NASDAQ",
+          "direction": -1,
+          "ruleScore": -60,
+          "ruleIds": [
+            "cpi-hot"
+          ]
+        },
+        {
+          "asset": "美債殖利率",
+          "direction": 1,
+          "ruleScore": 55,
+          "ruleIds": [
+            "cpi-hot"
+          ]
+        },
+        {
+          "asset": "美股S&P500",
+          "direction": -1,
+          "ruleScore": -45,
+          "ruleIds": [
+            "cpi-hot"
+          ]
+        },
+        {
+          "asset": "台股",
+          "direction": -1,
+          "ruleScore": -45,
+          "ruleIds": [
+            "cpi-hot"
+          ]
+        },
+        {
+          "asset": "美元",
+          "direction": 1,
+          "ruleScore": 40,
+          "ruleIds": [
+            "cpi-hot"
+          ]
+        },
+        {
+          "asset": "黃金",
+          "direction": -1,
+          "ruleScore": -20,
+          "ruleIds": [
+            "cpi-hot"
+          ]
+        },
+        {
+          "asset": "白銀",
+          "direction": -1,
+          "ruleScore": -20,
+          "ruleIds": [
+            "cpi-hot"
+          ]
+        },
+        {
+          "asset": "WTI原油",
+          "direction": 1,
+          "ruleScore": 5,
+          "ruleIds": [
+            "cpi-hot"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "news-53cfbdb6411beaa7",
+      "group": "e220c2b79f7d0c2964d96486",
+      "title": "金價跌破3,500美元，因市場押注美聯儲立場偏鷹派且股市暴跌加劇拋售",
+      "source": "FXStreet",
+      "publishedAt": "2026-11-25T23:11:24+08:00",
+      "frozenAt": "2026-11-25T21:51:48.422Z",
+      "classifierVersion": "2026-11-09-v1.3",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "NASDAQ",
+          "direction": -1,
+          "ruleScore": -65,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "美元",
+          "direction": 1,
+          "ruleScore": 55,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "美債殖利率",
+          "direction": 1,
+          "ruleScore": 55,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "台股",
+          "direction": -1,
+          "ruleScore": -50,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "美股S&P500",
+          "direction": -1,
+          "ruleScore": -45,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "白銀",
+          "direction": -1,
+          "ruleScore": -40,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        },
+        {
+          "asset": "WTI原油",
+          "direction": -1,
+          "ruleScore": -25,
+          "ruleIds": [
+            "rate-hawk"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "global-71ddb215559ff5a1",
+      "group": "280388f479a390c7fa8e7dc2",
+      "title": "Trump announces new tariffs, undeterred by midterms defeat",
+      "source": "Reuters",
+      "publishedAt": "2026-11-25T22:30:58+08:00",
+      "frozenAt": "2026-11-25T21:51:48.422Z",
+      "classifierVersion": "2026-11-09-v1.3",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "台股",
+          "direction": -1,
+          "ruleScore": -60,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "NASDAQ",
+          "direction": -1,
+          "ruleScore": -55,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "美股S&P500",
+          "direction": -1,
+          "ruleScore": -35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "黃金",
+          "direction": 1,
+          "ruleScore": 35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "銅",
+          "direction": -1,
+          "ruleScore": -35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "美元",
+          "direction": 1,
+          "ruleScore": 15,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "global-33d7124b0b20280d",
+      "group": "07e42bd7fe6b7673c1f41ec9",
+      "title": "VIEW US proposes new tariffs aimed at factory overcapacity",
+      "source": "Reuters",
+      "publishedAt": "2026-11-25T22:08:58+08:00",
+      "frozenAt": "2026-11-25T21:51:48.422Z",
+      "classifierVersion": "2026-11-09-v1.3",
+      "signalKind": "conditional_news_headline",
+      "predictionIsProbability": false,
+      "signals": [
+        {
+          "asset": "台股",
+          "direction": -1,
+          "ruleScore": -60,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "NASDAQ",
+          "direction": -1,
+          "ruleScore": -55,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "美股S&P500",
+          "direction": -1,
+          "ruleScore": -35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "黃金",
+          "direction": 1,
+          "ruleScore": 35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "銅",
+          "direction": -1,
+          "ruleScore": -35,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        },
+        {
+          "asset": "美元",
+          "direction": 1,
+          "ruleScore": 15,
+          "ruleIds": [
+            "trade-tight"
+          ]
+        }
+      ]
     }
   ],
   "refresh": {
-    "newRecords": 2,
-    "skippedExpired": 1579,
-    "excludedNoSignal": 97
+    "newRecords": 8,
+    "skippedExpired": 1632,
+    "excludedNoSignal": 101
   }
 }
