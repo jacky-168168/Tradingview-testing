@@ -1,0 +1,57 @@
+name: Taiwan Short Daytrade AB Research Pilot
+on:
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/research/short_daytrade_ab_pilot.py'
+      - 'tw-stock-dashboard/tests/test_short_daytrade_ab_pilot.py'
+      - '.github/workflows/tw-short-daytrade-ab-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-market-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install research-only market data reader
+        run: python3 -m pip install 'yfinance>=0.2.65,<2' 'pandas>=2,<4'
+      - name: Verify A/B logic without faking market P&L
+        run: python3 -m unittest discover -s tw-stock-dashboard/tests -p 'test_short_daytrade_ab_pilot.py' -v
+      - name: Execute real Yahoo 5-minute history for fixed 30-stock pilot
+        run: |
+          python3 tw-stock-dashboard/research/short_daytrade_ab_pilot.py \
+            --out=/tmp/short_daytrade_ab/ab_pilot.json
+      - name: Display aggregate A and B separately with risk / data disclaimers
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/tmp/short_daytrade_ab/ab_pilot.json')
+          if not p.exists():
+              print('NO_REPORT: genuine Yahoo data import failed; cannot claim profit.')
+          else:
+              x=json.loads(p.read_text())
+              print('STATUS',x.get('status'))
+              print('SAMPLE_PERIOD',x.get('studyFrom'),x.get('studyTo'),'DAYS',x.get('sampleDays'))
+              print('UNIVERSE_COVERAGE',x.get('symbolsWithValidIntraday'),'OF',x.get('symbolsRequested'))
+              print('DAYTRADE_SHORT_ELIGIBILITY_VERIFIED',x.get('eligibilityByHistoricalDateVerified'))
+              for mode,data in x.get('modes',{}).items():
+                  print('MODE',mode,'FULL',data.get('full'),
+                        'DOUBLE_SLIPPAGE',data.get('doubleSlippage'),
+                        'LATER_30PCT',data.get('later30pct'))
+              print('DOWNLOAD_FAILURES',len(x.get('downloadErrors',{})))
+              print('INTEGRATION_APPROVED',x.get('integrationApproved'))
+          PY
+      - name: Archive researched results and transaction details, NOT site selection data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tw-short-daytrade-ab-research-only
+          path: /tmp/short_daytrade_ab/ab_pilot.json
+          if-no-files-found: warn
+          retention-days: 14
