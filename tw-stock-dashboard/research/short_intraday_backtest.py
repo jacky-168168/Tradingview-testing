@@ -27,7 +27,16 @@ SYMBOLS=(
  "2882.TW","2884.TW","2885.TW","2886.TW","2891.TW","1301.TW","1303.TW",
  "1326.TW","2002.TW","2014.TW","3481.TW","2409.TW","2301.TW","2324.TW",
  "3034.TW","3017.TW","2379.TW","1504.TW","1519.TW","1605.TW","2356.TW",
- "2492.TW","5269.TWO","3324.TWO","8299.TWO"
+ "2492.TW","5269.TW","3324.TWO","8299.TWO",
+ "2327.TW","2337.TW","2344.TW","2347.TW","2352.TW","2353.TW","2354.TW",
+ "2368.TW","2371.TW","2377.TW","2383.TW","2385.TW","2392.TW","2404.TW",
+ "2412.TW","2449.TW","2451.TW","2458.TW","2474.TW","2481.TW","2498.TW",
+ "3005.TW","3006.TW","3008.TW","3013.TW","3023.TW","3035.TW","3042.TW",
+ "3044.TW","3045.TW","3059.TW","3189.TW","3227.TWO","3374.TWO","3406.TW",
+ "3532.TW","3533.TW","3653.TW","3706.TW","3715.TW","4904.TW","4919.TW",
+ "4958.TW","4966.TWO","5274.TWO","5347.TWO","5439.TWO","5483.TWO",
+ "6147.TWO","6182.TWO","6213.TW","6223.TWO","6274.TWO","6414.TW",
+ "6442.TW","6669.TW","6756.TW","8046.TW","8150.TW","8210.TW","8996.TW"
 )
 BENCHMARK="0050.TW"
 MODES=("A_WEAK_CONTINUATION","B_GAPUP_FAILURE")
@@ -41,6 +50,9 @@ MIN_AVG_TURNOVER_TWD=3e8
 MAX_TRADES_PER_DAY=3
 STOP_MULTIPLE=0.1
 TARGET_R=1.8
+STRICT_PROFILE=False
+EXIT_CLOCK="13:20"
+ENTRY_CUTOFF="12:15"
 
 def finite(x):
     try:
@@ -143,7 +155,7 @@ def prev_features(d,days,market,benchmark):
     recent=prev[-20:]
     prev20_twd=statistics.mean(market[x]["turnover"] for x in recent)
     close=market[p]["c"]
-    if not (10<=close<=350 and prev20_twd>=MIN_AVG_TURNOVER_TWD):return None
+    if not (10<=close<=(300 if STRICT_PROFILE else 350) and prev20_twd>=(5e8 if STRICT_PROFILE else MIN_AVG_TURNOVER_TWD)):return None
     trs=[]
     for i in range(-14,0):
         cur=market[prev[i]]
@@ -151,7 +163,7 @@ def prev_features(d,days,market,benchmark):
         trs.append(max(cur["h"]-cur["l"],abs(cur["h"]-prior["c"]),abs(cur["l"]-prior["c"])))
     atr=statistics.mean(trs)
     atr_pct=atr/close
-    if not 0.018<=atr_pct<=0.11:return None
+    if not ((.03 if STRICT_PROFILE else .018)<=atr_pct<=(.08 if STRICT_PROFILE else .11)):return None
     bdays=sorted(x for x in benchmark if x<d)
     if len(bdays)<6 or bdays[-1]!=p:return None
     bnow=benchmark[bdays[-1]]["c"];bold=benchmark[bdays[-6]]["c"]
@@ -161,7 +173,8 @@ def prev_features(d,days,market,benchmark):
     if len(recentopen)<15:return None
     return {"prev_close":close,"atr":atr,"atr_pct":atr_pct,
         "turnover20":prev20_twd,"rel5":relative5,
-        "open15median":statistics.median(recentopen)}
+        "open15median":statistics.median(recentopen),
+        "prev_return":close/market[prev[-2]]["c"]-1}
 
 def simulate_exit(seq,entry_clock,sell_px,stop,tp,commission,slip):
     """Entry next 5m open; exit at first stop/TP touch, stop FIRST if both touch.
@@ -171,8 +184,8 @@ def simulate_exit(seq,entry_clock,sell_px,stop,tp,commission,slip):
     if idx is None:return None
     for bar in seq[idx:]:
         when=bar["at"].strftime("%H:%M")
-        if when>="13:20":
-            cover=bar["o"]*(1+slip);reason="time_exit_1320"
+        if when>=EXIT_CLOCK:
+            cover=bar["o"]*(1+slip);reason="time_exit_"+EXIT_CLOCK.replace(":","")
             break
         # Overnight / gap through stop: use adverse opening, not stop price.
         if bar["o"]>=stop:
@@ -203,12 +216,13 @@ def one_day(symbol,d,day,features,commission=STANDARD_COMMISSION,slip=SLIPPAGE):
     firstopen=opening[0]["o"]
     gap=firstopen/features["prev_close"]-1
     rv=day["open15volume"]/features["open15median"]
-    if rv<1.3:return []
+    if rv<(1.5 if STRICT_PROFILE else 1.3):return []
     has_upper_wick=any(
         (x["h"]-max(x["o"],x["c"]))/max(x["h"]-x["l"],1e-10)>=.27
         for x in opening)
-    a_gate=-.035<=gap<=.01 and features["rel5"]<=-.02
+    a_gate=-.035<=gap<=.01 and features["rel5"]<=(-.03 if STRICT_PROFILE else -.02)
     b_gate=.015<=gap<=.065 and first15hi>=firstopen*1.005 and has_upper_wick
+    if STRICT_PROFILE:b_gate=b_gate and features.get("prev_return",0)>=.03
     if not(a_gate or b_gate):return []
     seq=day["seq"]
     cumulative_pv=0.;cumulative_vol=0.
@@ -217,11 +231,11 @@ def one_day(symbol,d,day,features,commission=STANDARD_COMMISSION,slip=SLIPPAGE):
         cumulative_pv+=((bar["h"]+bar["l"]+bar["c"])/3)*bar["v"]
         cumulative_vol+=bar["v"]
         when=bar["at"].strftime("%H:%M")
-        if when<"09:15" or when>"12:15" or cumulative_vol<=0:continue
+        if when<"09:15" or when>("10:55" if STRICT_PROFILE else ENTRY_CUTOFF) or cumulative_vol<=0:continue
         if bar["c"]>=first15lo or bar["c"]>=cumulative_pv/cumulative_vol:continue
         nextbar=seq[i+1]
         next_time=nextbar["at"].strftime("%H:%M")
-        if (nextbar["at"]-bar["at"])!=timedelta(minutes=5) or next_time>="13:20":continue
+        if (nextbar["at"]-bar["at"])!=timedelta(minutes=5) or next_time>=EXIT_CLOCK:continue
         # No signal-bar close fill: this order is placed only for next 5min opening.
         next_o=nextbar["o"]
         if not .992<=next_o/bar["c"]<=1.008:continue
@@ -316,9 +330,45 @@ def evaluate(raw,official_daily=None):
         "slippage_pct_per_side":SLIPPAGE*100,
         "cost_model":"gross sell fill - adverse entry and exit slippage - both commissions - sell tax",
         "entry":"after completed 5m signal at next 5m bar open; stops evaluated on next and following bars",
-        "exit":"1.8R take-profit, worst-case intrabar stop-first; force buyback 13:20 open",
+        "exit":f"{TARGET_R}R take-profit, worst-case intrabar stop-first; force buyback {EXIT_CLOCK} open",
         "scope_warning":"Fixed present-day symbol pool; survivorship and selection bias. 5m OHLC cannot reproduce tick execution, limit-up unfillable cover, broker availability, or historical eligibility.",
         "selection_counts":counts,"models":sections}
+
+def round2_profiles(raw, official_daily):
+    """Fixed candidate profiles, chronological train selection, untouched holdout reporting.
+    All profiles are exploratory; reused pilot dates are not a fresh independent OOS.
+    """
+    global STRICT_PROFILE, TARGET_R, EXIT_CLOCK, ENTRY_CUTOFF
+    profiles=[]
+    configs=[("expanded_baseline",False,1.8,"13:20","12:15")]
+    configs += [(f"{'strict' if strict else 'pilot'}_R{r}_{exit_at.replace(':','')}",
+                 strict,r,exit_at,"12:15")
+                for strict in (False,True) for r in (1.0,1.3,1.8)
+                for exit_at in ("11:30","12:30","13:20")
+                if (strict,r,exit_at)!=(False,1.8,"13:20")]
+    try:
+        for name,strict,r,exit_at,cutoff in configs:
+            STRICT_PROFILE,TARGET_R,EXIT_CLOCK,ENTRY_CUTOFF=strict,r,exit_at,cutoff
+            report=evaluate(raw,official_daily)
+            profiles.append({"profile":name,"strict":strict,"target_r":r,
+                "force_exit":exit_at,"status":report["status"],
+                "models":{k:{seg:v[seg] for seg in ("full","train","validation","status")}
+                          for k,v in report.get("models",{}).items()}})
+        selected={}
+        for mode in MODES:
+            eligible=[x for x in profiles if mode in x["models"]
+                      and x["models"][mode]["train"]["trades"]>=20]
+            if eligible:
+                best=max(eligible,key=lambda x:x["models"][mode]["train"]["net_twd"])
+                selected[mode]={"profile":best["profile"],**best["models"][mode]}
+            else:selected[mode]={"status":"insufficient_train_trades"}
+        return {"profiles":profiles,"selected_using_train_only":selected,
+                "caveat":"Pilot-period holdout already examined; expanded current candidate pool is not a point-in-time universe. No production approval. Strict profile approximates original criteria with opening-range breakdown only, and prior-day rise >=3% for B.",
+                "strict_parameters":{"price":[10,300],"turnover20_min":500000000,
+                    "atr_pct":[3,8],"first15_rvol_min":1.5,"A_relative5_pctpt_max":-3,
+                    "B_previous_day_return_pct_min":3,"last_signal":"10:55"}}
+    finally:
+        STRICT_PROFILE,TARGET_R,EXIT_CLOCK,ENTRY_CUTOFF=False,1.8,"13:20","12:15"
 
 def main():
     p=argparse.ArgumentParser()
@@ -354,11 +404,13 @@ def main():
         "complete_days_by_current_policy":len(group_daily(bench_bars,official_daily.get(BENCHMARK))),
         "clock_samples":last_sample},ensure_ascii=False),flush=True)
     report=evaluate(raw,official_daily)
+    round2=round2_profiles(raw,official_daily)
+    print("SHORT_AB_ROUND2",json.dumps(round2,ensure_ascii=False,allow_nan=False),flush=True)
     output={"schema":SCHEMA,"generated_at_utc":datetime.now(TZ).astimezone(ZoneInfo("UTC")).isoformat(),
         "source_universe":list(SYMBOLS[:args.max_symbols]),"source_symbols_requested":len(symbols),
         "symbols_with_actual_complete_bars":len(raw),"download_failures":failures,
         "unverified_trade_permission":True,"price_history_not_redistributed":True,
-        "not_approved_for_production":True,**report}
+        "not_approved_for_production":True,"round2":round2,**report}
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(output,ensure_ascii=False,indent=2,allow_nan=False)+"\n",encoding="utf-8")
     print("SHORT_AB_RESEARCH_SUMMARY",json.dumps({

@@ -28,7 +28,7 @@ jobs:
       - name: Download only actually reported 5-minute OHLCV and run A/B historical pilot
         run: |
           python3 tw-stock-dashboard/research/short_intraday_backtest.py \
-            --max-symbols 46 --sleep 0.20 \
+            --max-symbols 107 --sleep 0.20 \
             --output=/tmp/tw-short-ab-pilot/report.json
       - name: Display study-only net profit, sample size and OOS splits
         if: always()
