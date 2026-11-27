@@ -15,6 +15,46 @@ SYMBOLS=(
  "2492.TW","5269.TW","3324.TWO","8299.TWO"
 )
 BENCHMARK="0050.TW"
+MAX_CAPITAL_TWD=20_000_000_000
+def capital_allowed(value):
+    return isinstance(value,(int,float)) and math.isfinite(value) and 0<value<MAX_CAPITAL_TWD
+def parse_company_capital(rows, suffix):
+    result={}
+    for r in rows:
+        if not isinstance(r,dict):continue
+        code=next((r[k] for k in ("公司代號","SecuritiesCompanyCode","Code","股票代號","公司代碼") if r.get(k) not in (None,"")),None)
+        value=next((r[k] for k in ("實收資本額","PaidInCapital","Paidin.Capital.NTDollars","實收資本額(元)") if r.get(k) not in (None,"")),None)
+        try:cap=float(str(value).replace(",",""))
+        except (ValueError,TypeError):continue
+        if code is not None and math.isfinite(cap) and cap>0:result[str(code).strip()+suffix]=cap
+    return result
+def load_capitals(today):
+    import requests
+    caps={};sources={}
+    # Use same official company master sources as the site's main stock pipeline.
+    for suffix,urls in (
+        (".TW",("https://openapi.twse.com.tw/v1/opendata/t187ap03_L",)),
+        (".TWO",("https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap03_O","https://www.tpex.org.tw/openapi/v1/t187ap03_O","https://openapi.twse.com.tw/v1/opendata/t187ap03_O"))):
+        wanted={s for s in SYMBOLS if s.endswith(suffix)}
+        for url in urls:
+            try:
+                r=requests.get(url,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"},timeout=20)
+                r.raise_for_status();got=parse_company_capital(r.json(),suffix)
+                for s in wanted & got.keys():
+                    if s not in caps:caps[s]=got[s];sources[s]=url
+                if wanted<=caps.keys():break
+            except Exception as e:print("CAPITAL_SOURCE_FAILED",url,type(e).__name__,flush=True)
+    # Existing local published company snapshot is a dated backup, not a historical as-of series.
+    fallback=Path(__file__).resolve().parents[1]/"docs/data/stocks/latest.json"
+    if fallback.exists():
+        payload=json.loads(fallback.read_text(encoding="utf-8"))
+        for row in payload.get("stocks",[]):
+            sym=str(row.get("code"))+(".TW" if row.get("market")=="上市" else ".TWO")
+            if sym not in SYMBOLS or sym in caps:continue
+            try:cap=float(row["capitalB"])*100_000_000
+            except (KeyError,TypeError,ValueError):continue
+            if math.isfinite(cap) and cap>0:caps[sym]=cap;sources[sym]="site stock master snapshot "+str(payload.get("dataDate"))
+    return caps,sources
 def two_months_before(d):
     y,m=d.year,d.month-2
     if m<=0:y,m=y-1,m+12
@@ -104,8 +144,13 @@ def main():
     old={}
     if a.output.exists():
         old=json.loads(a.output.read_text()).get("days",{})
+    caps,capital_sources=load_capitals(today)
+    eligible=tuple(s for s in SYMBOLS if capital_allowed(caps.get(s)))
+    missing_capital=[s for s in SYMBOLS if s not in caps]
+    print("SHORT_A_CAPITAL",json.dumps({"known":len(caps),"eligible":len(eligible),"missing":missing_capital},ensure_ascii=False),flush=True)
+    if not eligible:raise SystemExit("No verified eligible paid-in capital below 20 billion TWD; no archive overwrite")
     raw={};failures=[]
-    for sym in (BENCHMARK,*SYMBOLS):
+    for sym in (BENCHMARK,*eligible):
         try:
             ds,op=download(sym,today)
             if len(ds)<25:raise ValueError("missing daily history")
@@ -123,31 +168,31 @@ def main():
     out={}
     for d in target:
         prior=[x for x in sessions if x<d];rows=[];pre=[];valid=0;prevalid=0
-        for sym in SYMBOLS:
+        for sym in eligible:
             if sym not in raw:continue
             ds,op=raw[sym];ok,row=candidate(d,prior,ds,op,bench);valid+=ok
             pok,prow=premarket(d,prior,ds,bench);prevalid+=pok
-            info={"symbol":sym.split(".")[0],"market":"上市" if sym.endswith(".TW") else "上櫃"}
+            info={"symbol":sym.split(".")[0],"market":"上市" if sym.endswith(".TW") else "上櫃","capital_twd":caps[sym],"capital_b":round(caps[sym]/1e8,4)}
             if row:rows.append({**info,**row})
             if prow:pre.append({**info,**prow})
         def top(values):
             return [{"rank":i+1,**x} for i,x in enumerate(sorted(values,key=lambda x:(-x["score"],x["symbol"]))[:10])]
-        state="available" if valid/len(SYMBOLS)>=.8 else "insufficient_coverage"
-        snap={"date":d.isoformat(),"status":state,"valid_symbols":valid,"pool_size":len(SYMBOLS),
+        state="available" if valid/len(eligible)>=.8 else "insufficient_coverage"
+        snap={"date":d.isoformat(),"status":state,"valid_symbols":valid,"pool_size":len(eligible),
               "qualified":len(rows),"rows":top(rows),"premarket_valid_symbols":prevalid,
               "benchmark_missing_dates":[x.isoformat() for x in (prior[-1],prior[-6]) if x not in bench] if len(prior)>=6 else [],
-              "premarket_qualified":len(pre),"premarket_rows":top(pre)}
+              "premarket_qualified":len(pre),"premarket_rows":top(pre),"capital_snapshot_twd":{s:caps[s] for s in eligible}}
         previous=old.get(d.isoformat())
-        if previous and "premarket_rows" in previous:
+        if previous and "premarket_rows" in previous and previous.get("capital_snapshot_twd")=={s:caps[s] for s in eligible}:
             if previous["valid_symbols"]>valid:
                 for k in ("status","valid_symbols","qualified","rows"):snap[k]=previous[k]
             if previous["premarket_valid_symbols"]>prevalid:
                 for k in ("premarket_valid_symbols","premarket_qualified","premarket_rows"):snap[k]=previous[k]
         out[d.isoformat()]=snap
     for k,v in old.items():
-        if start.isoformat()<=k<=today.isoformat() and k not in out:out[k]=v
+        if start.isoformat()<=k<=today.isoformat() and k not in out and v.get("capital_snapshot_twd")=={s:caps[s] for s in eligible}:out[k]=v
     out=dict(sorted(out.items()))
-    result={"schema":"SHORT_A_TOP10_V2","generated_at":now.isoformat(),"start":start.isoformat(),"end":today.isoformat(),"benchmark":BENCHMARK,"source":"Yahoo daily with TWSE benchmark gap repair, completed 09:00 opening 15m from 5m or native 15m","pool_size":len(SYMBOLS),"failed_symbols":failures,"benchmark_official_repaired_dates":benchmark_repaired,"historical_eligibility_verified":False,"days":out}
+    result={"schema":"SHORT_A_TOP10_V3","generated_at":now.isoformat(),"start":start.isoformat(),"end":today.isoformat(),"benchmark":BENCHMARK,"source":"Yahoo daily with TWSE benchmark gap repair, completed 09:00 opening 15m from 5m or native 15m","pool_size":len(eligible),"original_pool_size":len(SYMBOLS),"capital_limit_twd_exclusive":MAX_CAPITAL_TWD,"capital_snapshot_date":today.isoformat(),"capital_historical_point_in_time":False,"capital_sources":capital_sources,"missing_capital_symbols":missing_capital,"failed_symbols":failures,"benchmark_official_repaired_dates":benchmark_repaired,"historical_eligibility_verified":False,"days":out}
     a.output.write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False)+"\n")
-    print("SHORT_A_HISTORY_SUMMARY",json.dumps({"first":min(out),"last":max(out),"dates":len(out),"available":sum(x["status"]=="available" for x in out.values()),"rows":sum(len(x["rows"]) for x in out.values()),"premarket_rows":sum(len(x["premarket_rows"]) for x in out.values()),"premarket_dates":sum(x["premarket_valid_symbols"]>=.8*len(SYMBOLS) for x in out.values()),"latest":out[max(out)]},ensure_ascii=False),flush=True)
+    print("SHORT_A_HISTORY_SUMMARY",json.dumps({"first":min(out),"last":max(out),"dates":len(out),"available":sum(x["status"]=="available" for x in out.values()),"rows":sum(len(x["rows"]) for x in out.values()),"premarket_rows":sum(len(x["premarket_rows"]) for x in out.values()),"premarket_dates":sum(x["premarket_valid_symbols"]>=.8*len(eligible) for x in out.values()),"latest":out[max(out)]},ensure_ascii=False),flush=True)
 if __name__=="__main__":main()

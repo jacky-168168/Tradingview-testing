@@ -2,7 +2,7 @@ import sys, unittest
 from pathlib import Path
 from datetime import date,timedelta
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"research"))
-from short_a_candidates import candidate,premarket,two_months_before,official_daily_rows
+from short_a_candidates import capital_allowed,parse_company_capital,candidate,premarket,two_months_before,official_daily_rows
 class TestCandidate(unittest.TestCase):
     def test_date_window(self):
         self.assertEqual(two_months_before(date(2026,11,27)),date(2026,9,27))
@@ -28,3 +28,8 @@ class TestCandidate(unittest.TestCase):
     def test_official_benchmark_parser(self):
         payload={"stat":"OK","data":[["115/11/26","1,000","10,000","60","62","59","61"],["115/11/27","1,000","10,000","61","63","60","62"],["115/10/26","100","100","60","62","59","61"]]}
         self.assertEqual(official_daily_rows(payload,date(2026,11,27),(2026,11)),{date(2026,11,26):(60.,62.,59.,61.,1000.)})
+    def test_capital_is_paid_in_and_strictly_below_200_100m(self):
+        self.assertTrue(capital_allowed(19_999_999_999))
+        for value in (None,0,-1,20_000_000_000,20_000_000_001):
+            self.assertFalse(capital_allowed(value))
+        self.assertEqual(parse_company_capital([{"公司代號":"1234","實收資本額":"19,900,000,000"}],".TW"),{"1234.TW":19_900_000_000.})
