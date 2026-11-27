@@ -1,12 +1,15 @@
 {
   "schema": "SHORT_A_TOP10_V2",
-  "generated_at": "2026-11-27T11:00:23.519940+08:00",
+  "generated_at": "2026-11-27T11:04:39.268376+08:00",
   "start": "2026-09-27",
   "end": "2026-11-27",
   "benchmark": "0050.TW",
-  "source": "Yahoo daily and completed 09:00 opening 15m from 5m or native 15m",
+  "source": "Yahoo daily with TWSE benchmark gap repair, completed 09:00 opening 15m from 5m or native 15m",
   "pool_size": 46,
   "failed_symbols": [],
+  "benchmark_official_repaired_dates": [
+    "2026-11-26"
+  ],
   "historical_eligibility_verified": false,
   "days": {
     "2026-09-29": {
@@ -17,6 +20,7 @@
       "qualified": 0,
       "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 20,
       "premarket_rows": [
         {
@@ -136,21 +140,33 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 1,
+      "qualified": 2,
       "rows": [
         {
           "rank": 1,
           "symbol": "2324",
           "market": "上市",
-          "score": 6.3194,
+          "score": 6.94613,
           "relative5_pctpt": -5.697,
           "gap_pct": 0.693,
-          "rvol": 2.075,
+          "rvol": 4.164,
           "atr_pct": 2.487,
           "turnover20_twd": 1941765681
+        },
+        {
+          "rank": 2,
+          "symbol": "2603",
+          "market": "上市",
+          "score": 2.97067,
+          "relative5_pctpt": -2.359,
+          "gap_pct": 0.63,
+          "rvol": 2.039,
+          "atr_pct": 2.521,
+          "turnover20_twd": 2067716707
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 15,
       "premarket_rows": [
         {
@@ -270,21 +286,10 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 1,
-      "rows": [
-        {
-          "rank": 1,
-          "symbol": "2882",
-          "market": "上市",
-          "score": 2.92283,
-          "relative5_pctpt": -2.399,
-          "gap_pct": 0.901,
-          "rvol": 1.746,
-          "atr_pct": 2.928,
-          "turnover20_twd": 2362086904
-        }
-      ],
+      "qualified": 0,
+      "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 13,
       "premarket_rows": [
         {
@@ -404,9 +409,33 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 0,
-      "rows": [],
+      "qualified": 2,
+      "rows": [
+        {
+          "rank": 1,
+          "symbol": "2885",
+          "market": "上市",
+          "score": 5.89202,
+          "relative5_pctpt": -5.471,
+          "gap_pct": -0.593,
+          "rvol": 1.403,
+          "atr_pct": 2.289,
+          "turnover20_twd": 1392742337
+        },
+        {
+          "rank": 2,
+          "symbol": "2324",
+          "market": "上市",
+          "score": 2.48799,
+          "relative5_pctpt": -2.018,
+          "gap_pct": 0.136,
+          "rvol": 1.567,
+          "atr_pct": 2.465,
+          "turnover20_twd": 1871440547
+        }
+      ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 12,
       "premarket_rows": [
         {
@@ -529,6 +558,7 @@
       "qualified": 0,
       "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 5,
       "premarket_rows": [
         {
@@ -593,76 +623,22 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 6,
+      "qualified": 1,
       "rows": [
         {
           "rank": 1,
-          "symbol": "2356",
-          "market": "上市",
-          "score": 6.22519,
-          "relative5_pctpt": -5.829,
-          "gap_pct": -0.172,
-          "rvol": 1.321,
-          "atr_pct": 2.193,
-          "turnover20_twd": 867485098
-        },
-        {
-          "rank": 2,
-          "symbol": "2382",
-          "market": "上市",
-          "score": 5.88067,
-          "relative5_pctpt": -5.374,
-          "gap_pct": 0.453,
-          "rvol": 1.689,
-          "atr_pct": 1.899,
-          "turnover20_twd": 4784295896
-        },
-        {
-          "rank": 3,
-          "symbol": "2891",
-          "market": "上市",
-          "score": 5.18677,
-          "relative5_pctpt": -4.764,
-          "gap_pct": 0.148,
-          "rvol": 1.409,
-          "atr_pct": 2.321,
-          "turnover20_twd": 2048364921
-        },
-        {
-          "rank": 4,
-          "symbol": "2885",
-          "market": "上市",
-          "score": 5.00281,
-          "relative5_pctpt": -4.603,
-          "gap_pct": 0.587,
-          "rvol": 1.333,
-          "atr_pct": 2.21,
-          "turnover20_twd": 1333385944
-        },
-        {
-          "rank": 5,
           "symbol": "2303",
           "market": "上市",
-          "score": 4.52528,
+          "score": 4.53324,
           "relative5_pctpt": -4.132,
           "gap_pct": -2.295,
-          "rvol": 1.311,
+          "rvol": 1.337,
           "atr_pct": 4.801,
           "turnover20_twd": 27064232642
-        },
-        {
-          "rank": 6,
-          "symbol": "2882",
-          "market": "上市",
-          "score": 2.69756,
-          "relative5_pctpt": -2.253,
-          "gap_pct": 0.448,
-          "rvol": 1.482,
-          "atr_pct": 2.691,
-          "turnover20_twd": 2160913202
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 14,
       "premarket_rows": [
         {
@@ -782,43 +758,32 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 7,
+      "qualified": 5,
       "rows": [
         {
           "rank": 1,
           "symbol": "2303",
           "market": "上市",
-          "score": 8.97421,
+          "score": 8.9825,
           "relative5_pctpt": -8.581,
           "gap_pct": 0.678,
-          "rvol": 1.311,
+          "rvol": 1.338,
           "atr_pct": 4.867,
           "turnover20_twd": 28396187105
         },
         {
           "rank": 2,
-          "symbol": "2356",
-          "market": "上市",
-          "score": 6.18472,
-          "relative5_pctpt": -5.686,
-          "gap_pct": 0.341,
-          "rvol": 1.662,
-          "atr_pct": 2.121,
-          "turnover20_twd": 812121498
-        },
-        {
-          "rank": 3,
           "symbol": "2891",
           "market": "上市",
-          "score": 6.05756,
+          "score": 5.8078,
           "relative5_pctpt": -5.109,
-          "gap_pct": 0.146,
-          "rvol": 3.162,
+          "gap_pct": 0.585,
+          "rvol": 2.329,
           "atr_pct": 2.235,
           "turnover20_twd": 2050754663
         },
         {
-          "rank": 4,
+          "rank": 3,
           "symbol": "2603",
           "market": "上市",
           "score": 5.78026,
@@ -829,29 +794,18 @@
           "turnover20_twd": 1708592469
         },
         {
-          "rank": 5,
+          "rank": 4,
           "symbol": "2882",
           "market": "上市",
-          "score": 4.79943,
+          "score": 4.66703,
           "relative5_pctpt": -4.224,
           "gap_pct": 0.446,
-          "rvol": 1.918,
+          "rvol": 1.477,
           "atr_pct": 2.455,
           "turnover20_twd": 2160707078
         },
         {
-          "rank": 6,
-          "symbol": "2881",
-          "market": "上市",
-          "score": 3.09928,
-          "relative5_pctpt": -2.692,
-          "gap_pct": 0.0,
-          "rvol": 1.358,
-          "atr_pct": 2.358,
-          "turnover20_twd": 2292328989
-        },
-        {
-          "rank": 7,
+          "rank": 5,
           "symbol": "2317",
           "market": "上市",
           "score": 3.01332,
@@ -863,6 +817,7 @@
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 16,
       "premarket_rows": [
         {
@@ -982,21 +937,10 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 1,
-      "rows": [
-        {
-          "rank": 1,
-          "symbol": "3231",
-          "market": "上市",
-          "score": 3.70268,
-          "relative5_pctpt": -3.299,
-          "gap_pct": -0.541,
-          "rvol": 1.346,
-          "atr_pct": 2.683,
-          "turnover20_twd": 8017877569
-        }
-      ],
+      "qualified": 0,
+      "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 13,
       "premarket_rows": [
         {
@@ -1122,10 +1066,10 @@
           "rank": 1,
           "symbol": "2317",
           "market": "上市",
-          "score": 4.23538,
+          "score": 4.22351,
           "relative5_pctpt": -3.784,
           "gap_pct": -1.606,
-          "rvol": 1.505,
+          "rvol": 1.465,
           "atr_pct": 2.008,
           "turnover20_twd": 8232604885
         },
@@ -1133,10 +1077,10 @@
           "rank": 2,
           "symbol": "3231",
           "market": "上市",
-          "score": 3.51248,
+          "score": 3.47201,
           "relative5_pctpt": -2.866,
           "gap_pct": -0.265,
-          "rvol": 2.155,
+          "rvol": 2.02,
           "atr_pct": 2.747,
           "turnover20_twd": 7305862835
         },
@@ -1144,15 +1088,16 @@
           "rank": 3,
           "symbol": "2882",
           "market": "上市",
-          "score": 2.87794,
+          "score": 2.7376,
           "relative5_pctpt": -2.268,
           "gap_pct": 0.0,
-          "rvol": 2.033,
+          "rvol": 1.565,
           "atr_pct": 2.403,
           "turnover20_twd": 2134249070
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 14,
       "premarket_rows": [
         {
@@ -1272,21 +1217,10 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 1,
-      "rows": [
-        {
-          "rank": 1,
-          "symbol": "2382",
-          "market": "上市",
-          "score": 5.18592,
-          "relative5_pctpt": -4.785,
-          "gap_pct": -1.242,
-          "rvol": 1.336,
-          "atr_pct": 1.974,
-          "turnover20_twd": 3937309560
-        }
-      ],
+      "qualified": 0,
+      "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 7,
       "premarket_rows": [
         {
@@ -1373,21 +1307,10 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 1,
-      "rows": [
-        {
-          "rank": 1,
-          "symbol": "2317",
-          "market": "上市",
-          "score": 2.98037,
-          "relative5_pctpt": -2.45,
-          "gap_pct": 0.625,
-          "rvol": 1.768,
-          "atr_pct": 2.128,
-          "turnover20_twd": 8633985912
-        }
-      ],
+      "qualified": 0,
+      "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 4,
       "premarket_rows": [
         {
@@ -1447,15 +1370,16 @@
           "rank": 1,
           "symbol": "2317",
           "market": "上市",
-          "score": 2.54591,
+          "score": 3.10643,
           "relative5_pctpt": -2.074,
           "gap_pct": -1.235,
-          "rvol": 1.573,
+          "rvol": 3.441,
           "atr_pct": 2.19,
           "turnover20_twd": 8747447197
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 2,
       "premarket_rows": [
         {
@@ -1487,21 +1411,10 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 1,
-      "rows": [
-        {
-          "rank": 1,
-          "symbol": "2301",
-          "market": "上市",
-          "score": 4.89699,
-          "relative5_pctpt": -4.506,
-          "gap_pct": 0.373,
-          "rvol": 1.303,
-          "atr_pct": 3.825,
-          "turnover20_twd": 4405908445
-        }
-      ],
+      "qualified": 0,
+      "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 2,
       "premarket_rows": [
         {
@@ -1536,6 +1449,7 @@
       "qualified": 0,
       "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 2,
       "premarket_rows": [
         {
@@ -1570,6 +1484,7 @@
       "qualified": 0,
       "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 3,
       "premarket_rows": [
         {
@@ -1612,21 +1527,10 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 1,
-      "rows": [
-        {
-          "rank": 1,
-          "symbol": "1301",
-          "market": "上市",
-          "score": 3.26773,
-          "relative5_pctpt": -2.835,
-          "gap_pct": 0.801,
-          "rvol": 1.442,
-          "atr_pct": 6.361,
-          "turnover20_twd": 5907818215
-        }
-      ],
+      "qualified": 0,
+      "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 3,
       "premarket_rows": [
         {
@@ -1675,15 +1579,16 @@
           "rank": 1,
           "symbol": "2615",
           "market": "上市",
-          "score": 3.1123,
+          "score": 3.08817,
           "relative5_pctpt": -2.508,
           "gap_pct": 0.858,
-          "rvol": 2.014,
+          "rvol": 1.934,
           "atr_pct": 4.384,
           "turnover20_twd": 1647966813
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 7,
       "premarket_rows": [
         {
@@ -1773,6 +1678,7 @@
       "qualified": 0,
       "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 5,
       "premarket_rows": [
         {
@@ -1840,6 +1746,7 @@
       "qualified": 0,
       "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 6,
       "premarket_rows": [
         {
@@ -1918,6 +1825,7 @@
       "qualified": 0,
       "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 4,
       "premarket_rows": [
         {
@@ -1977,10 +1885,10 @@
           "rank": 1,
           "symbol": "2301",
           "market": "上市",
-          "score": 4.29111,
+          "score": 4.22961,
           "relative5_pctpt": -3.817,
           "gap_pct": -3.175,
-          "rvol": 1.58,
+          "rvol": 1.375,
           "atr_pct": 4.478,
           "turnover20_twd": 3937805894
         },
@@ -1988,15 +1896,16 @@
           "rank": 2,
           "symbol": "2376",
           "market": "上市",
-          "score": 3.80281,
+          "score": 3.79865,
           "relative5_pctpt": -3.38,
           "gap_pct": -3.207,
-          "rvol": 1.409,
+          "rvol": 1.395,
           "atr_pct": 3.374,
           "turnover20_twd": 2081725658
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 4,
       "premarket_rows": [
         {
@@ -2050,21 +1959,10 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 3,
+      "qualified": 2,
       "rows": [
         {
           "rank": 1,
-          "symbol": "2303",
-          "market": "上市",
-          "score": 10.36271,
-          "relative5_pctpt": -9.932,
-          "gap_pct": -2.242,
-          "rvol": 1.436,
-          "atr_pct": 5.573,
-          "turnover20_twd": 20375772739
-        },
-        {
-          "rank": 2,
           "symbol": "3481",
           "market": "上市",
           "score": 9.70716,
@@ -2075,18 +1973,19 @@
           "turnover20_twd": 8156416662
         },
         {
-          "rank": 3,
+          "rank": 2,
           "symbol": "2301",
           "market": "上市",
-          "score": 6.90748,
+          "score": 6.74506,
           "relative5_pctpt": -5.77,
-          "gap_pct": 0.416,
-          "rvol": 3.792,
+          "gap_pct": 0.624,
+          "rvol": 3.25,
           "atr_pct": 5.123,
           "turnover20_twd": 4030574971
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 9,
       "premarket_rows": [
         {
@@ -2195,43 +2094,22 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 3,
+      "qualified": 1,
       "rows": [
         {
           "rank": 1,
-          "symbol": "2303",
-          "market": "上市",
-          "score": 10.15046,
-          "relative5_pctpt": -9.731,
-          "gap_pct": -0.909,
-          "rvol": 1.398,
-          "atr_pct": 5.747,
-          "turnover20_twd": 20307444872
-        },
-        {
-          "rank": 2,
           "symbol": "2301",
           "market": "上市",
-          "score": 3.30793,
+          "score": 2.71623,
           "relative5_pctpt": -2.077,
           "gap_pct": -2.259,
-          "rvol": 4.103,
+          "rvol": 2.131,
           "atr_pct": 5.236,
           "turnover20_twd": 4181352367
-        },
-        {
-          "rank": 3,
-          "symbol": "3481",
-          "market": "上市",
-          "score": 2.51925,
-          "relative5_pctpt": -2.087,
-          "gap_pct": -2.469,
-          "rvol": 1.441,
-          "atr_pct": 5.596,
-          "turnover20_twd": 7160723741
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 5,
       "premarket_rows": [
         {
@@ -2299,6 +2177,7 @@
       "qualified": 0,
       "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 10,
       "premarket_rows": [
         {
@@ -2424,10 +2303,10 @@
           "rank": 1,
           "symbol": "2303",
           "market": "上市",
-          "score": 10.05361,
+          "score": 10.13586,
           "relative5_pctpt": -9.479,
           "gap_pct": -2.844,
-          "rvol": 1.915,
+          "rvol": 2.19,
           "atr_pct": 6.229,
           "turnover20_twd": 20307593894
         },
@@ -2435,10 +2314,10 @@
           "rank": 2,
           "symbol": "3481",
           "market": "上市",
-          "score": 8.2253,
+          "score": 8.32765,
           "relative5_pctpt": -7.484,
           "gap_pct": -1.467,
-          "rvol": 2.471,
+          "rvol": 2.812,
           "atr_pct": 6.505,
           "turnover20_twd": 5960917687
         },
@@ -2446,10 +2325,10 @@
           "rank": 3,
           "symbol": "2301",
           "market": "上市",
-          "score": 6.2417,
+          "score": 6.16002,
           "relative5_pctpt": -5.476,
           "gap_pct": -2.212,
-          "rvol": 2.552,
+          "rvol": 2.28,
           "atr_pct": 6.005,
           "turnover20_twd": 4366535820
         },
@@ -2468,10 +2347,10 @@
           "rank": 5,
           "symbol": "2324",
           "market": "上市",
-          "score": 4.67675,
+          "score": 4.75694,
           "relative5_pctpt": -4.285,
           "gap_pct": -1.504,
-          "rvol": 1.306,
+          "rvol": 1.573,
           "atr_pct": 3.878,
           "turnover20_twd": 1289515536
         },
@@ -2479,15 +2358,16 @@
           "rank": 6,
           "symbol": "2356",
           "market": "上市",
-          "score": 3.97961,
+          "score": 4.00333,
           "relative5_pctpt": -3.499,
           "gap_pct": 0.0,
-          "rvol": 1.602,
+          "rvol": 1.681,
           "atr_pct": 4.192,
           "turnover20_twd": 964225847
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 8,
       "premarket_rows": [
         {
@@ -2588,6 +2468,7 @@
       "qualified": 0,
       "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 9,
       "premarket_rows": [
         {
@@ -2699,6 +2580,7 @@
       "qualified": 0,
       "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 5,
       "premarket_rows": [
         {
@@ -2769,15 +2651,16 @@
           "rank": 1,
           "symbol": "2609",
           "market": "上市",
-          "score": 4.59514,
+          "score": 4.85053,
           "relative5_pctpt": -3.768,
           "gap_pct": 0.87,
-          "rvol": 2.757,
+          "rvol": 3.608,
           "atr_pct": 3.975,
           "turnover20_twd": 1734319717
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 9,
       "premarket_rows": [
         {
@@ -2892,43 +2775,43 @@
           "rank": 1,
           "symbol": "2376",
           "market": "上市",
-          "score": 6.98802,
+          "score": 7.00681,
           "relative5_pctpt": -5.986,
           "gap_pct": -0.657,
-          "rvol": 3.34,
+          "rvol": 3.403,
           "atr_pct": 4.996,
           "turnover20_twd": 1690130962
         },
         {
           "rank": 2,
-          "symbol": "2356",
+          "symbol": "3481",
           "market": "上市",
-          "score": 4.626,
-          "relative5_pctpt": -3.126,
-          "gap_pct": -2.914,
-          "rvol": 5.065,
-          "atr_pct": 5.569,
-          "turnover20_twd": 1011354898
+          "score": 4.54655,
+          "relative5_pctpt": -3.96,
+          "gap_pct": 0.51,
+          "rvol": 1.955,
+          "atr_pct": 7.781,
+          "turnover20_twd": 5565170641
         },
         {
           "rank": 3,
-          "symbol": "3481",
+          "symbol": "2356",
           "market": "上市",
-          "score": 4.49804,
-          "relative5_pctpt": -3.96,
-          "gap_pct": 0.51,
-          "rvol": 1.793,
-          "atr_pct": 7.781,
-          "turnover20_twd": 5565170641
+          "score": 4.51243,
+          "relative5_pctpt": -3.126,
+          "gap_pct": -2.914,
+          "rvol": 4.621,
+          "atr_pct": 5.569,
+          "turnover20_twd": 1011354898
         },
         {
           "rank": 4,
           "symbol": "2382",
           "market": "上市",
-          "score": 4.16423,
+          "score": 4.13411,
           "relative5_pctpt": -3.279,
           "gap_pct": -0.838,
-          "rvol": 2.951,
+          "rvol": 2.85,
           "atr_pct": 4.032,
           "turnover20_twd": 4080120063
         },
@@ -2945,6 +2828,7 @@
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 12,
       "premarket_rows": [
         {
@@ -3064,21 +2948,33 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 1,
+      "qualified": 2,
       "rows": [
         {
           "rank": 1,
+          "symbol": "2615",
+          "market": "上市",
+          "score": 7.6795,
+          "relative5_pctpt": -7.251,
+          "gap_pct": -0.45,
+          "rvol": 1.428,
+          "atr_pct": 5.212,
+          "turnover20_twd": 1765132055
+        },
+        {
+          "rank": 2,
           "symbol": "2382",
           "market": "上市",
-          "score": 5.57463,
+          "score": 5.49798,
           "relative5_pctpt": -4.843,
           "gap_pct": -1.342,
-          "rvol": 2.439,
+          "rvol": 2.183,
           "atr_pct": 3.931,
           "turnover20_twd": 4125979989
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 17,
       "premarket_rows": [
         {
@@ -3198,98 +3094,44 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 8,
+      "qualified": 3,
       "rows": [
         {
           "rank": 1,
-          "symbol": "2356",
-          "market": "上市",
-          "score": 19.94967,
-          "relative5_pctpt": -19.184,
-          "gap_pct": 0.858,
-          "rvol": 2.552,
-          "atr_pct": 7.066,
-          "turnover20_twd": 1099740707
-        },
-        {
-          "rank": 2,
           "symbol": "2376",
           "market": "上市",
-          "score": 12.71265,
+          "score": 12.164,
           "relative5_pctpt": -11.419,
           "gap_pct": 0.518,
-          "rvol": 4.312,
+          "rvol": 2.483,
           "atr_pct": 5.465,
           "turnover20_twd": 1752879328
         },
         {
-          "rank": 3,
-          "symbol": "2324",
-          "market": "上市",
-          "score": 12.0562,
-          "relative5_pctpt": -11.462,
-          "gap_pct": 1.0,
-          "rvol": 1.981,
-          "atr_pct": 5.143,
-          "turnover20_twd": 1289815174
-        },
-        {
-          "rank": 4,
-          "symbol": "2615",
-          "market": "上市",
-          "score": 9.65498,
-          "relative5_pctpt": -9.221,
-          "gap_pct": 0.935,
-          "rvol": 1.447,
-          "atr_pct": 5.474,
-          "turnover20_twd": 1632599963
-        },
-        {
-          "rank": 5,
-          "symbol": "2603",
-          "market": "上市",
-          "score": 7.63259,
-          "relative5_pctpt": -6.807,
-          "gap_pct": 0.398,
-          "rvol": 2.752,
-          "atr_pct": 3.891,
-          "turnover20_twd": 2978438443
-        },
-        {
-          "rank": 6,
+          "rank": 2,
           "symbol": "2002",
           "market": "上市",
-          "score": 6.6241,
+          "score": 6.27524,
           "relative5_pctpt": -5.758,
           "gap_pct": 0.0,
-          "rvol": 2.887,
+          "rvol": 1.724,
           "atr_pct": 2.112,
           "turnover20_twd": 904981322
         },
         {
-          "rank": 7,
-          "symbol": "1504",
-          "market": "上市",
-          "score": 4.80991,
-          "relative5_pctpt": -4.385,
-          "gap_pct": 0.951,
-          "rvol": 1.416,
-          "atr_pct": 4.958,
-          "turnover20_twd": 389278788
-        },
-        {
-          "rank": 8,
+          "rank": 3,
           "symbol": "2891",
           "market": "上市",
-          "score": 4.2842,
+          "score": 3.86714,
           "relative5_pctpt": -3.244,
           "gap_pct": 0.531,
-          "rvol": 3.467,
+          "rvol": 2.077,
           "atr_pct": 3.448,
           "turnover20_twd": 3263175922
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 15,
       "premarket_rows": [
         {
@@ -3409,32 +3251,55 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 2,
+      "qualified": 4,
       "rows": [
         {
           "rank": 1,
           "symbol": "2376",
           "market": "上市",
-          "score": 16.18158,
+          "score": 16.18017,
           "relative5_pctpt": -15.509,
           "gap_pct": 0.704,
-          "rvol": 2.242,
+          "rvol": 2.237,
           "atr_pct": 5.634,
           "turnover20_twd": 1931068856
         },
         {
           "rank": 2,
+          "symbol": "2615",
+          "market": "上市",
+          "score": 11.28426,
+          "relative5_pctpt": -10.811,
+          "gap_pct": 0.0,
+          "rvol": 1.578,
+          "atr_pct": 5.316,
+          "turnover20_twd": 1472340936
+        },
+        {
+          "rank": 3,
+          "symbol": "2609",
+          "market": "上市",
+          "score": 5.65459,
+          "relative5_pctpt": -5.207,
+          "gap_pct": 0.0,
+          "rvol": 1.492,
+          "atr_pct": 4.193,
+          "turnover20_twd": 1133033205
+        },
+        {
+          "rank": 4,
           "symbol": "2317",
           "market": "上市",
-          "score": 3.88692,
+          "score": 3.93147,
           "relative5_pctpt": -3.461,
           "gap_pct": -1.245,
-          "rvol": 1.42,
+          "rvol": 1.568,
           "atr_pct": 3.912,
           "turnover20_twd": 10262734167
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 17,
       "premarket_rows": [
         {
@@ -3560,10 +3425,10 @@
           "rank": 1,
           "symbol": "2356",
           "market": "上市",
-          "score": 22.52261,
+          "score": 22.08175,
           "relative5_pctpt": -21.636,
           "gap_pct": 0.0,
-          "rvol": 2.955,
+          "rvol": 1.486,
           "atr_pct": 7.55,
           "turnover20_twd": 1129840353
         },
@@ -3571,10 +3436,10 @@
           "rank": 2,
           "symbol": "2324",
           "market": "上市",
-          "score": 14.09028,
+          "score": 13.70807,
           "relative5_pctpt": -13.303,
           "gap_pct": 0.0,
-          "rvol": 2.624,
+          "rvol": 1.35,
           "atr_pct": 5.669,
           "turnover20_twd": 1256848590
         },
@@ -3582,10 +3447,10 @@
           "rank": 3,
           "symbol": "2382",
           "market": "上市",
-          "score": 10.63991,
+          "score": 10.16115,
           "relative5_pctpt": -9.766,
           "gap_pct": -0.567,
-          "rvol": 2.913,
+          "rvol": 1.317,
           "atr_pct": 4.658,
           "turnover20_twd": 4430721681
         },
@@ -3593,10 +3458,10 @@
           "rank": 4,
           "symbol": "2376",
           "market": "上市",
-          "score": 10.58771,
+          "score": 9.97095,
           "relative5_pctpt": -9.313,
           "gap_pct": -1.441,
-          "rvol": 4.249,
+          "rvol": 2.193,
           "atr_pct": 5.637,
           "turnover20_twd": 2025449603
         },
@@ -3604,10 +3469,10 @@
           "rank": 5,
           "symbol": "2317",
           "market": "上市",
-          "score": 8.6678,
+          "score": 8.23259,
           "relative5_pctpt": -7.551,
           "gap_pct": -0.686,
-          "rvol": 3.723,
+          "rvol": 2.272,
           "atr_pct": 4.936,
           "turnover20_twd": 10534600891
         },
@@ -3615,10 +3480,10 @@
           "rank": 6,
           "symbol": "3481",
           "market": "上市",
-          "score": 8.10469,
+          "score": 7.95728,
           "relative5_pctpt": -7.423,
           "gap_pct": -1.102,
-          "rvol": 2.272,
+          "rvol": 1.781,
           "atr_pct": 8.953,
           "turnover20_twd": 5675125347
         },
@@ -3626,10 +3491,10 @@
           "rank": 7,
           "symbol": "1504",
           "market": "上市",
-          "score": 7.4916,
+          "score": 7.21847,
           "relative5_pctpt": -6.748,
           "gap_pct": 0.826,
-          "rvol": 2.479,
+          "rvol": 1.568,
           "atr_pct": 5.478,
           "turnover20_twd": 385265243
         },
@@ -3637,10 +3502,10 @@
           "rank": 8,
           "symbol": "1605",
           "market": "上市",
-          "score": 7.0002,
+          "score": 6.7867,
           "relative5_pctpt": -6.32,
           "gap_pct": -0.647,
-          "rvol": 2.267,
+          "rvol": 1.556,
           "atr_pct": 6.657,
           "turnover20_twd": 770428711
         },
@@ -3648,15 +3513,16 @@
           "rank": 9,
           "symbol": "3231",
           "market": "上市",
-          "score": 5.53684,
+          "score": 5.21744,
           "relative5_pctpt": -4.612,
           "gap_pct": -1.887,
-          "rvol": 3.083,
+          "rvol": 2.018,
           "atr_pct": 5.728,
           "turnover20_twd": 6327422680
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 10,
       "premarket_rows": [
         {
@@ -3782,15 +3648,16 @@
           "rank": 1,
           "symbol": "2382",
           "market": "上市",
-          "score": 6.85303,
+          "score": 6.86896,
           "relative5_pctpt": -6.343,
           "gap_pct": 0.762,
-          "rvol": 1.7,
+          "rvol": 1.753,
           "atr_pct": 4.912,
           "turnover20_twd": 4475298994
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 12,
       "premarket_rows": [
         {
@@ -3910,43 +3777,22 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 3,
+      "qualified": 1,
       "rows": [
         {
           "rank": 1,
-          "symbol": "1303",
-          "market": "上市",
-          "score": 10.71849,
-          "relative5_pctpt": -10.192,
-          "gap_pct": -1.578,
-          "rvol": 1.755,
-          "atr_pct": 10.975,
-          "turnover20_twd": 29777581537
-        },
-        {
-          "rank": 2,
-          "symbol": "2301",
-          "market": "上市",
-          "score": 4.78558,
-          "relative5_pctpt": -4.153,
-          "gap_pct": 0.962,
-          "rvol": 2.109,
-          "atr_pct": 8.413,
-          "turnover20_twd": 3611211781
-        },
-        {
-          "rank": 3,
           "symbol": "2884",
           "market": "上市",
-          "score": 4.132,
+          "score": 4.07045,
           "relative5_pctpt": -2.632,
           "gap_pct": -1.779,
-          "rvol": 8.662,
+          "rvol": 4.795,
           "atr_pct": 4.406,
           "turnover20_twd": 1679906302
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 5,
       "premarket_rows": [
         {
@@ -4011,54 +3857,33 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 4,
+      "qualified": 2,
       "rows": [
         {
           "rank": 1,
           "symbol": "2884",
           "market": "上市",
-          "score": 5.08196,
+          "score": 4.56258,
           "relative5_pctpt": -3.864,
           "gap_pct": -1.983,
-          "rvol": 4.06,
+          "rvol": 2.329,
           "atr_pct": 4.78,
           "turnover20_twd": 1795074374
         },
         {
           "rank": 2,
-          "symbol": "2356",
-          "market": "上市",
-          "score": 2.96788,
-          "relative5_pctpt": -2.334,
-          "gap_pct": -1.85,
-          "rvol": 2.113,
-          "atr_pct": 8.006,
-          "turnover20_twd": 1119569004
-        },
-        {
-          "rank": 3,
-          "symbol": "2303",
-          "market": "上市",
-          "score": 2.87547,
-          "relative5_pctpt": -2.024,
-          "gap_pct": -3.401,
-          "rvol": 2.838,
-          "atr_pct": 7.629,
-          "turnover20_twd": 15163839122
-        },
-        {
-          "rank": 4,
           "symbol": "1605",
           "market": "上市",
-          "score": 2.51746,
+          "score": 2.41841,
           "relative5_pctpt": -2.002,
           "gap_pct": -2.241,
-          "rvol": 1.718,
+          "rvol": 1.388,
           "atr_pct": 7.857,
           "turnover20_twd": 747741302
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 7,
       "premarket_rows": [
         {
@@ -4145,21 +3970,33 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 1,
+      "qualified": 2,
       "rows": [
         {
           "rank": 1,
           "symbol": "3481",
           "market": "上市",
-          "score": 7.84138,
+          "score": 7.90874,
           "relative5_pctpt": -7.422,
           "gap_pct": 0.0,
-          "rvol": 1.398,
+          "rvol": 1.622,
           "atr_pct": 10.637,
           "turnover20_twd": 5999818028
+        },
+        {
+          "rank": 2,
+          "symbol": "1504",
+          "market": "上市",
+          "score": 2.6942,
+          "relative5_pctpt": -2.298,
+          "gap_pct": -0.771,
+          "rvol": 1.321,
+          "atr_pct": 7.514,
+          "turnover20_twd": 398339687
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 7,
       "premarket_rows": [
         {
@@ -4249,6 +4086,7 @@
       "qualified": 0,
       "rows": [],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 11,
       "premarket_rows": [
         {
@@ -4368,16 +4206,16 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 4,
+      "qualified": 6,
       "rows": [
         {
           "rank": 1,
           "symbol": "2615",
           "market": "上市",
-          "score": 11.29133,
+          "score": 11.53045,
           "relative5_pctpt": -10.635,
           "gap_pct": -1.339,
-          "rvol": 2.188,
+          "rvol": 2.985,
           "atr_pct": 6.665,
           "turnover20_twd": 1532017168
         },
@@ -4385,15 +4223,26 @@
           "rank": 2,
           "symbol": "2609",
           "market": "上市",
-          "score": 8.28249,
+          "score": 8.67039,
           "relative5_pctpt": -7.819,
           "gap_pct": -3.02,
-          "rvol": 1.545,
+          "rvol": 2.838,
           "atr_pct": 5.532,
           "turnover20_twd": 1094527881
         },
         {
           "rank": 3,
+          "symbol": "2882",
+          "market": "上市",
+          "score": 8.08861,
+          "relative5_pctpt": -7.664,
+          "gap_pct": -0.478,
+          "rvol": 1.415,
+          "atr_pct": 5.981,
+          "turnover20_twd": 3398799750
+        },
+        {
+          "rank": 4,
           "symbol": "2885",
           "market": "上市",
           "score": 7.8701,
@@ -4404,18 +4253,30 @@
           "turnover20_twd": 2129508303
         },
         {
-          "rank": 4,
+          "rank": 5,
           "symbol": "2881",
           "market": "上市",
-          "score": 7.05178,
+          "score": 7.29836,
           "relative5_pctpt": -6.46,
           "gap_pct": -2.439,
-          "rvol": 1.973,
+          "rvol": 2.795,
           "atr_pct": 6.247,
           "turnover20_twd": 3693019812
+        },
+        {
+          "rank": 6,
+          "symbol": "2610",
+          "market": "上市",
+          "score": 4.8037,
+          "relative5_pctpt": -4.406,
+          "gap_pct": -1.333,
+          "rvol": 1.326,
+          "atr_pct": 4.984,
+          "turnover20_twd": 1061287501
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 18,
       "premarket_rows": [
         {
@@ -4535,32 +4396,44 @@
       "status": "available",
       "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 2,
+      "qualified": 3,
       "rows": [
         {
           "rank": 1,
           "symbol": "2615",
           "market": "上市",
-          "score": 5.82569,
+          "score": 5.93918,
           "relative5_pctpt": -5.421,
           "gap_pct": 0.0,
-          "rvol": 1.349,
+          "rvol": 1.727,
           "atr_pct": 6.51,
           "turnover20_twd": 1628189269
         },
         {
           "rank": 2,
+          "symbol": "2609",
+          "market": "上市",
+          "score": 4.24302,
+          "relative5_pctpt": -3.73,
+          "gap_pct": 0.538,
+          "rvol": 1.71,
+          "atr_pct": 5.492,
+          "turnover20_twd": 1122207074
+        },
+        {
+          "rank": 3,
           "symbol": "2317",
           "market": "上市",
-          "score": 3.10525,
+          "score": 3.1507,
           "relative5_pctpt": -2.523,
           "gap_pct": 0.969,
-          "rvol": 1.941,
+          "rvol": 2.092,
           "atr_pct": 6.607,
           "turnover20_twd": 11324465704
         }
       ],
       "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
       "premarket_qualified": 17,
       "premarket_rows": [
         {
@@ -4677,14 +4550,149 @@
     },
     "2026-11-27": {
       "date": "2026-11-27",
-      "status": "insufficient_coverage",
-      "valid_symbols": 0,
+      "status": "available",
+      "valid_symbols": 46,
       "pool_size": 46,
-      "qualified": 0,
-      "rows": [],
-      "premarket_valid_symbols": 0,
-      "premarket_qualified": 0,
-      "premarket_rows": []
+      "qualified": 2,
+      "rows": [
+        {
+          "rank": 1,
+          "symbol": "2886",
+          "market": "上市",
+          "score": 12.99445,
+          "relative5_pctpt": -12.582,
+          "gap_pct": -0.518,
+          "rvol": 1.375,
+          "atr_pct": 5.788,
+          "turnover20_twd": 2192835142
+        },
+        {
+          "rank": 2,
+          "symbol": "2618",
+          "market": "上市",
+          "score": 4.12096,
+          "relative5_pctpt": -3.692,
+          "gap_pct": -1.086,
+          "rvol": 1.43,
+          "atr_pct": 5.204,
+          "turnover20_twd": 1604175570
+        }
+      ],
+      "premarket_valid_symbols": 46,
+      "benchmark_missing_dates": [],
+      "premarket_qualified": 16,
+      "premarket_rows": [
+        {
+          "rank": 1,
+          "symbol": "2886",
+          "market": "上市",
+          "score": 12.58212,
+          "relative5_pctpt": -12.582,
+          "gap_pct": null,
+          "rvol": null,
+          "atr_pct": 5.788,
+          "turnover20_twd": 2192835142
+        },
+        {
+          "rank": 2,
+          "symbol": "2881",
+          "market": "上市",
+          "score": 9.35684,
+          "relative5_pctpt": -9.357,
+          "gap_pct": null,
+          "rvol": null,
+          "atr_pct": 6.472,
+          "turnover20_twd": 3878278279
+        },
+        {
+          "rank": 3,
+          "symbol": "2891",
+          "market": "上市",
+          "score": 8.68347,
+          "relative5_pctpt": -8.683,
+          "gap_pct": null,
+          "rvol": null,
+          "atr_pct": 6.521,
+          "turnover20_twd": 4141823833
+        },
+        {
+          "rank": 4,
+          "symbol": "2615",
+          "market": "上市",
+          "score": 6.31956,
+          "relative5_pctpt": -6.32,
+          "gap_pct": null,
+          "rvol": null,
+          "atr_pct": 6.036,
+          "turnover20_twd": 1636609360
+        },
+        {
+          "rank": 5,
+          "symbol": "2610",
+          "market": "上市",
+          "score": 6.04903,
+          "relative5_pctpt": -6.049,
+          "gap_pct": null,
+          "rvol": null,
+          "atr_pct": 4.669,
+          "turnover20_twd": 1104046087
+        },
+        {
+          "rank": 6,
+          "symbol": "2317",
+          "market": "上市",
+          "score": 4.75198,
+          "relative5_pctpt": -4.752,
+          "gap_pct": null,
+          "rvol": null,
+          "atr_pct": 6.005,
+          "turnover20_twd": 11590912858
+        },
+        {
+          "rank": 7,
+          "symbol": "2609",
+          "market": "上市",
+          "score": 4.68312,
+          "relative5_pctpt": -4.683,
+          "gap_pct": null,
+          "rvol": null,
+          "atr_pct": 5.011,
+          "turnover20_twd": 1116769223
+        },
+        {
+          "rank": 8,
+          "symbol": "2002",
+          "market": "上市",
+          "score": 4.35837,
+          "relative5_pctpt": -4.358,
+          "gap_pct": null,
+          "rvol": null,
+          "atr_pct": 2.614,
+          "turnover20_twd": 843476642
+        },
+        {
+          "rank": 9,
+          "symbol": "2324",
+          "market": "上市",
+          "score": 3.87076,
+          "relative5_pctpt": -3.871,
+          "gap_pct": null,
+          "rvol": null,
+          "atr_pct": 6.484,
+          "turnover20_twd": 1125916582
+        },
+        {
+          "rank": 10,
+          "symbol": "2884",
+          "market": "上市",
+          "score": 3.80533,
+          "relative5_pctpt": -3.805,
+          "gap_pct": null,
+          "rvol": null,
+          "atr_pct": 5.08,
+          "turnover20_twd": 1939500488
+        }
+      ]
     }
   }
 }
