@@ -31,18 +31,18 @@ jobs:
           python-version: '3.12'
       - run: python -m unittest discover -s tw-stock-dashboard/tests -p test_short_a_candidates.py -v
       - run: pip install 'yfinance>=0.2.65,<2'
-      - run: python tw-stock-dashboard/research/short_a_candidates.py --output tw-stock-dashboard/docs/data/short_a/history.json
+      - run: python tw-stock-dashboard/research/short_a_candidates.py --output tw-stock-dashboard/docs/data/short_a/history-v2.json
       - uses: actions/upload-artifact@v4
         with:
           name: short-a-top10-history
-          path: tw-stock-dashboard/docs/data/short_a/history.json
+          path: tw-stock-dashboard/docs/data/short_a/history-v2.json
           retention-days: 30
       - name: Publish derived candidates only
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tw-stock-dashboard/docs/data/short_a/history.json
+          git add tw-stock-dashboard/docs/data/short_a/history-v2.json
           git diff --cached --quiet && exit 0
           git commit -m "data: archive Short A top ten candidates"
           for attempt in 1 2 3; do
