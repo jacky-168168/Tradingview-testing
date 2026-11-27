@@ -280,7 +280,12 @@ def portfolio(trades,mode):
     train=[x for x in chosen if x["date"]<splitDate]
     test=[x for x in chosen if x["date"]>=splitDate]
     verified=[x for x in chosen if x["exchangeEligibility"]=="eligible"]
+    independent_split=(len(train)>=30 and len(test)>=30)
     return {"mode":mode,"selection":"one highest signal score per trading day, 100k TWD notional",
+      "chronologicalHoldout":{"available":independent_split,
+         "earlyTrades":len(train),"laterTrades":len(test),
+         "reason":"Fewer than 30 trades in either earlier/later segment; not a validated independent OOS test"
+                   if not independent_split else "Fixed calendar split; parameter-selection independence still unverified"},
       "train":calculate_metrics(train),"laterPeriod":calculate_metrics(test),
       "allConditional":calculate_metrics(chosen),"exchangeQualifiedOnly":calculate_metrics(verified),
       "exchangeQualifiedTradeCount":len(verified),"unknownEligibilityCount":
@@ -351,6 +356,9 @@ def self_test():
     assert met["trades"]==2 and met["sumNetTwdPer100k"]==-1000
     assert met["maxPeakToTroughTwd"]==-2000 and met["profitFactor"]==.5
     assert universe() and all(len(x)==4 for x in universe())
+    empty=portfolio([],"A_weak_continuation")
+    assert empty["chronologicalHoldout"]["available"] is False
+    assert empty["integrationReady"] is False
     print("SELF_TEST_PASS")
 
 if __name__=="__main__":
