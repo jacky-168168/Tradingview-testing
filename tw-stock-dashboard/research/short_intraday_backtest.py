@@ -78,7 +78,35 @@ def load_yahoo_5m(ticker,attempts=2):
             if attempt+1<attempts:clock.sleep(1.5*(attempt+1))
     return [],";".join(errors[-2:])
 
-def group_daily(rows):
+def load_yahoo_daily(ticker,attempts=2):
+    """Independent daily close, includes the TW closing auction missing in some 5m feeds."""
+    import yfinance as yf
+    errors=[]
+    for attempt in range(attempts):
+        try:
+            frame=yf.Ticker(ticker).history(period="6mo",interval="1d",
+                auto_adjust=False,prepost=False,raise_errors=True,timeout=18)
+            if frame is None or frame.empty:raise ValueError("No daily OHLCV")
+            out={}
+            for at,item in frame.iterrows():
+                stamp=at.to_pydatetime()
+                if stamp.tzinfo is None:continue
+                stamp=stamp.astimezone(TZ)
+                d=stamp.date()
+                if d>=datetime.now(TZ).date() or d.weekday()>=5:continue
+                vals=[finite(item.get(k)) for k in ("Open","High","Low","Close","Volume")]
+                if any(v is None for v in vals):continue
+                o,h,l,c,v=vals
+                if not (0<l<=min(o,c)<=max(o,c)<=h and v>0):continue
+                out[d]={"o":o,"h":h,"l":l,"c":c,"v":v}
+            if len(out)<25:raise ValueError("Fewer than 25 valid independent daily closes")
+            return out,None
+        except Exception as exc:
+            errors.append(type(exc).__name__+":"+str(exc)[:130])
+            if attempt+1<attempts:clock.sleep(1.2*(attempt+1))
+    return {}, ";".join(errors[-2:])
+
+def group_daily(rows,daily_closes=None):
     byday=defaultdict(dict)
     for bar in rows:
         key=bar["at"].date()
@@ -88,13 +116,22 @@ def group_daily(rows):
     for d,bars in sorted(byday.items()):
         opening=("09:00","09:05","09:10")
         # Refuse partial sessions and stale/unsynchronized timestamps.
-        if len(bars)<45 or any(x not in bars for x in opening) or "13:20" not in bars or "13:25" not in bars:continue
+        if len(bars)<45 or any(x not in bars for x in opening) or "13:20" not in bars:continue
+        # Yahoo sometimes has no 13:25 minute bar because the exchange uses a closing auction.
+        # Do NOT use 13:20 close as an official EOD close: attach independent daily OHLC.
+        ref=(daily_closes or {}).get(d)
+        if daily_closes is not None and ref is None:continue
         arr=[bars[k] for k in sorted(bars)]
         first=arr[0];last=arr[-1]
+        day_h=ref["h"] if ref is not None else max(b["h"] for b in arr)
+        day_l=ref["l"] if ref is not None else min(b["l"] for b in arr)
+        day_c=ref["c"] if ref is not None else last["c"]
+        day_v=ref["v"] if ref is not None else sum(b["v"] for b in arr)
+        # Different split/corporate-action price scales should never be silently mixed.
+        if ref is not None and abs(last["c"]/day_c-1)>.06:continue
         out[d]={"bars":bars,"seq":arr,"o":first["o"],
-            "h":max(b["h"] for b in arr),"l":min(b["l"] for b in arr),
-            "c":last["c"],"v":sum(b["v"] for b in arr),
-            "turnover":sum(((b["h"]+b["l"]+b["c"])/3)*b["v"] for b in arr),
+            "h":day_h,"l":day_l,"c":day_c,"v":day_v,
+            "turnover":day_c*day_v,
             "open15volume":sum(bars[k]["v"] for k in opening)}
     return out
 
@@ -230,8 +267,9 @@ def metrics(trades,capital_per_trade=100000):
       "reason_counts":dict((why,sum(x["exit_reason"]==why for x in ordered))
                          for why in sorted(set(x["exit_reason"] for x in ordered)))}
 
-def evaluate(raw):
-    daily={sym:group_daily(bars) for sym,bars in raw.items()}
+def evaluate(raw,official_daily=None):
+    daily={sym:group_daily(bars,(official_daily or {}).get(sym) if official_daily is not None else None)
+           for sym,bars in raw.items()}
     benchmark=daily.get(BENCHMARK,{})
     days=sorted(set().union(*(set(v) for k,v in daily.items() if k!=BENCHMARK)))
     if len(benchmark)<23 or len(days)<25:
@@ -266,7 +304,8 @@ def evaluate(raw):
                         "validation":metrics(validation),
                         "status":"exploratory" if len(validation)>=12 and len(vals)>=30 else "insufficient_sample",
                         "trades":vals}
-    return {"status":"exploratory_only","source":"Yahoo Finance publicly available 5-minute OHLCV via yfinance",
+    return {"status":"exploratory_only","source":"Yahoo Finance 5-minute OHLCV plus independently fetched daily OHLCV via yfinance",
+        "daily_close_source":"Yahoo independent daily OHLCV, not 13:20 five-minute proxy",
         "period_start":days[0].isoformat(),"period_end":days[-1].isoformat(),
         "split_date":split.isoformat(),"bar_interval":"5m",
         "trading_eligibility_historically_verified":False,
@@ -288,16 +327,21 @@ def main():
     p.add_argument("--sleep",type=float,default=.15)
     args=p.parse_args()
     raw={}
+    official_daily={}
     failures={}
     symbols=[BENCHMARK]+list(SYMBOLS[:max(0,min(args.max_symbols,len(SYMBOLS)))])
     for i,ticker in enumerate(symbols,1):
         bars,error=load_yahoo_5m(ticker)
-        if error:failures[ticker]=error
-        else:raw[ticker]=bars
+        daily_quotes,daily_error=load_yahoo_daily(ticker) if not error else ({}, "5m_missing")
+        if error or daily_error:
+            failures[ticker]=(error or "")+"; daily: "+(daily_error or "")
+        else:
+            raw[ticker]=bars
+            official_daily[ticker]=daily_quotes
         print("DATA_COVERAGE",i,"of",len(symbols),ticker,
-              "completed_5m_bars",len(bars),"error",error or "none",flush=True)
+              "completed_5m_bars",len(bars),"independent_1d_days",len(daily_quotes),
+              "error",error or daily_error or "none",flush=True)
         if args.sleep:clock.sleep(args.sleep)
-    report=evaluate(raw)
     bench_bars=raw.get(BENCHMARK,[])
     audit_dates=sorted({x["at"].date() for x in bench_bars})
     last_sample=[]
@@ -307,9 +351,9 @@ def main():
             "last_bar_clocks":labels[-6:],"first_bar_clocks":labels[:3]})
     print("BENCHMARK_5M_AUDIT",json.dumps({
         "n_raw_bars":len(bench_bars),"calendar_dates":len(audit_dates),
-        "complete_days_by_current_policy":len(group_daily(bench_bars)),
+        "complete_days_by_current_policy":len(group_daily(bench_bars,official_daily.get(BENCHMARK))),
         "clock_samples":last_sample},ensure_ascii=False),flush=True)
-    report=evaluate(raw)
+    report=evaluate(raw,official_daily)
     output={"schema":SCHEMA,"generated_at_utc":datetime.now(TZ).astimezone(ZoneInfo("UTC")).isoformat(),
         "source_universe":list(SYMBOLS[:args.max_symbols]),"source_symbols_requested":len(symbols),
         "symbols_with_actual_complete_bars":len(raw),"download_failures":failures,
