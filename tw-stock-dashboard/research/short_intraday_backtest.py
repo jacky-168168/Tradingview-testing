@@ -298,6 +298,18 @@ def main():
               "completed_5m_bars",len(bars),"error",error or "none",flush=True)
         if args.sleep:clock.sleep(args.sleep)
     report=evaluate(raw)
+    bench_bars=raw.get(BENCHMARK,[])
+    audit_dates=sorted({x["at"].date() for x in bench_bars})
+    last_sample=[]
+    for d in audit_dates[-3:]:
+        labels=sorted(x["at"].strftime("%H:%M") for x in bench_bars if x["at"].date()==d)
+        last_sample.append({"day":d.isoformat(),"count":len(labels),
+            "last_bar_clocks":labels[-6:],"first_bar_clocks":labels[:3]})
+    print("BENCHMARK_5M_AUDIT",json.dumps({
+        "n_raw_bars":len(bench_bars),"calendar_dates":len(audit_dates),
+        "complete_days_by_current_policy":len(group_daily(bench_bars)),
+        "clock_samples":last_sample},ensure_ascii=False),flush=True)
+    report=evaluate(raw)
     output={"schema":SCHEMA,"generated_at_utc":datetime.now(TZ).astimezone(ZoneInfo("UTC")).isoformat(),
         "source_universe":list(SYMBOLS[:args.max_symbols]),"source_symbols_requested":len(symbols),
         "symbols_with_actual_complete_bars":len(raw),"download_failures":failures,
@@ -306,7 +318,8 @@ def main():
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(output,ensure_ascii=False,indent=2,allow_nan=False)+"\n",encoding="utf-8")
     print("SHORT_AB_RESEARCH_SUMMARY",json.dumps({
-        "status":report["status"],"source_coverage":len(raw),
+        "status":report["status"],"reason":report.get("reason"),"days_seen":report.get("days_seen"),
+        "benchmark_complete_days":report.get("benchmark_complete_days"),"source_coverage":len(raw),
         "date_span":[report.get("period_start"),report.get("period_end")],
         "split_date":report.get("split_date"),
         "models":{k:{seg:v[seg] for seg in ("full","train","validation","status")}
