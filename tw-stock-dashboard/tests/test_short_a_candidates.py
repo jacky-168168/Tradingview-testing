@@ -2,7 +2,7 @@ import sys, unittest
 from pathlib import Path
 from datetime import date,timedelta
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"research"))
-from short_a_candidates import candidate,premarket,two_months_before
+from short_a_candidates import candidate,premarket,two_months_before,official_daily_rows
 class TestCandidate(unittest.TestCase):
     def test_date_window(self):
         self.assertEqual(two_months_before(date(2026,11,27)),date(2026,9,27))
@@ -25,3 +25,6 @@ class TestCandidate(unittest.TestCase):
         ok,row=premarket(d,p,days,b)
         self.assertTrue(ok);self.assertIsNotNone(row);self.assertIsNone(row["rvol"]);self.assertIsNone(row["gap_pct"])
         self.assertEqual(candidate(d,p,days,{},b),(False,None))
+    def test_official_benchmark_parser(self):
+        payload={"stat":"OK","data":[["115/11/26","1,000","10,000","60","62","59","61"],["115/11/27","1,000","10,000","61","63","60","62"],["115/10/26","100","100","60","62","59","61"]]}
+        self.assertEqual(official_daily_rows(payload,date(2026,11,27),(2026,11)),{date(2026,11,26):(60.,62.,59.,61.,1000.)})

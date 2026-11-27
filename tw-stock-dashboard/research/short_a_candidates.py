@@ -1,5 +1,5 @@
 """S-A opening candidate archive. No future bars used, no raw OHLCV published."""
-from datetime import datetime, time, timedelta
+from datetime import date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 from pathlib import Path
 import argparse, calendar, json, math, statistics, time as clock
@@ -51,6 +51,34 @@ def download(symbol,today):
             print("OPEN_SOURCE",symbol,interval,len(got),flush=True)
         except Exception as e:print("OPEN_FAILED",symbol,interval,type(e).__name__,flush=True)
     return days,opens
+def official_daily_rows(payload, today, requested_month):
+    """Parse TWSE STOCK_DAY response with ROC dates. Never use incomplete today."""
+    out={}
+    if payload.get("stat")!="OK":return out
+    for row in payload.get("data",[]):
+        try:
+            y,m,d=map(int,row[0].split("/")); day=date(y+1911,m,d)
+            if day>=today or (day.year,day.month)!=requested_month:continue
+            v,o,h,l,c=(float(str(row[i]).replace(",","")) for i in (1,3,4,5,6))
+            if all(map(math.isfinite,(o,h,l,c,v))) and 0<l<=min(o,c)<=max(o,c)<=h and v>0:out[day]=(o,h,l,c,v)
+        except (IndexError,ValueError,TypeError):continue
+    return out
+def fill_benchmark_gaps(bench, sessions, today):
+    import requests
+    missing={d for d in sessions if d<today and d not in bench}
+    repaired=[]
+    for y,m in sorted({(d.year,d.month) for d in missing}):
+        try:
+            r=requests.get("https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY",
+                params={"date":f"{y:04d}{m:02d}01","stockNo":"0050","response":"json"},
+                headers={"User-Agent":"Mozilla/5.0"},timeout=20)
+            r.raise_for_status()
+            official=official_daily_rows(r.json(),today,(y,m))
+            for d in sorted(missing & official.keys()):
+                bench[d]=official[d];repaired.append(d.isoformat())
+        except Exception as e:print("BENCHMARK_OFFICIAL_FAILED",y,m,type(e).__name__,flush=True)
+    print("BENCHMARK_OFFICIAL_REPAIRED",repaired,"remaining",[str(d) for d in sorted(missing-set(bench))],flush=True)
+    return repaired
 def premarket(d,prior,days,bench):
     if len(prior)<22 or prior[-1] not in bench or prior[-6] not in bench:return False,None
     if any(x not in days for x in prior[-22:]):return False,None
@@ -86,6 +114,7 @@ def main():
         clock.sleep(.15)
     if BENCHMARK not in raw:raise SystemExit("Benchmark unavailable; no overwrite")
     bench,market_open=raw[BENCHMARK];sessions=sorted(set().union(*(set(ds) for ds,op in raw.values())))
+    benchmark_repaired=fill_benchmark_gaps(bench,sessions,today)
     print("SHORT_A_BENCHMARK",len(bench),len(market_open),len(sessions),[str(x) for x in sessions[-5:]],flush=True)
     for sym,(ds,op) in list(raw.items())[:5]:
         print("SHORT_A_SOURCE",sym,len(ds),len(op),len(set(ds)&set(op)),[str(x) for x in sorted(op)[-3:]],flush=True)
@@ -106,6 +135,7 @@ def main():
         state="available" if valid/len(SYMBOLS)>=.8 else "insufficient_coverage"
         snap={"date":d.isoformat(),"status":state,"valid_symbols":valid,"pool_size":len(SYMBOLS),
               "qualified":len(rows),"rows":top(rows),"premarket_valid_symbols":prevalid,
+              "benchmark_missing_dates":[x.isoformat() for x in (prior[-1],prior[-6]) if x not in bench] if len(prior)>=6 else [],
               "premarket_qualified":len(pre),"premarket_rows":top(pre)}
         previous=old.get(d.isoformat())
         if previous and "premarket_rows" in previous:
@@ -117,7 +147,7 @@ def main():
     for k,v in old.items():
         if start.isoformat()<=k<=today.isoformat() and k not in out:out[k]=v
     out=dict(sorted(out.items()))
-    result={"schema":"SHORT_A_TOP10_V2","generated_at":now.isoformat(),"start":start.isoformat(),"end":today.isoformat(),"benchmark":BENCHMARK,"source":"Yahoo daily and completed 09:00 opening 15m from 5m or native 15m","pool_size":len(SYMBOLS),"failed_symbols":failures,"historical_eligibility_verified":False,"days":out}
+    result={"schema":"SHORT_A_TOP10_V2","generated_at":now.isoformat(),"start":start.isoformat(),"end":today.isoformat(),"benchmark":BENCHMARK,"source":"Yahoo daily with TWSE benchmark gap repair, completed 09:00 opening 15m from 5m or native 15m","pool_size":len(SYMBOLS),"failed_symbols":failures,"benchmark_official_repaired_dates":benchmark_repaired,"historical_eligibility_verified":False,"days":out}
     a.output.write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False)+"\n")
     print("SHORT_A_HISTORY_SUMMARY",json.dumps({"first":min(out),"last":max(out),"dates":len(out),"available":sum(x["status"]=="available" for x in out.values()),"rows":sum(len(x["rows"]) for x in out.values()),"premarket_rows":sum(len(x["premarket_rows"]) for x in out.values()),"premarket_dates":sum(x["premarket_valid_symbols"]>=.8*len(SYMBOLS) for x in out.values()),"latest":out[max(out)]},ensure_ascii=False),flush=True)
 if __name__=="__main__":main()
