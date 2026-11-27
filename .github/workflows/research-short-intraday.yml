@@ -1,0 +1,63 @@
+name: Research TW Intraday Short A B Pilot (No Publishing)
+
+on:
+  pull_request:
+    paths:
+      - 'tw-stock-dashboard/research/short_intraday_backtest.py'
+      - 'tw-stock-dashboard/research/README_SHORT_INTRADAY.md'
+      - 'tw-stock-dashboard/tests/test_short_intraday_backtest.py'
+      - '.github/workflows/research-short-intraday.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  short-study:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run strict deterministic A/B execution and cost regression
+        run: python3 -m unittest discover -s tw-stock-dashboard/tests -p 'test_short_intraday_backtest.py' -v
+      - name: Install public Yahoo historical bar client
+        run: python3 -m pip install 'yfinance>=0.2.65,<2'
+      - name: Download only actually reported 5-minute OHLCV and run A/B historical pilot
+        run: |
+          python3 tw-stock-dashboard/research/short_intraday_backtest.py \
+            --max-symbols 46 --sleep 0.20 \
+            --output=/tmp/tw-short-ab-pilot/report.json
+      - name: Display study-only net profit, sample size and OOS splits
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path('/tmp/tw-short-ab-pilot/report.json')
+          if not path.exists():
+              print('SHORT_STUDY_NOT_RUN: data failure or test error; no claimed return')
+              raise SystemExit(0)
+          x=json.loads(path.read_text())
+          print('TW_SHORT_AB_DATA_STATUS', x.get('status'),
+                'realPriceSymbols',x.get('symbols_with_actual_complete_bars'),
+                'requested',x.get('source_symbols_requested'))
+          print('ELIGIBILITY_HISTORICAL_VERIFIED', not x['unverified_trade_permission'])
+          for name,group in x.get('models',{}).items():
+              print('SHORT_BACKTEST',name,'status',group['status'],
+                    'train',group['train'],'holdout',group['validation'],'full',group['full'])
+              if group['status']!='exploratory':
+                  print('::warning::',name,'insufficient trade sample for interpreting the estimated net return')
+          if x.get('status')=='unavailable':
+              print('::warning::No valid historical short-strategy returns: external 5min source inadequate')
+          PY
+      - name: Archive derived trade events and analysis (NO raw licensed 5m OHLCV)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tw-short-ab-pilot-research-not-live-picks
+          path: /tmp/tw-short-ab-pilot/report.json
+          retention-days: 7
+          if-no-files-found: warn
