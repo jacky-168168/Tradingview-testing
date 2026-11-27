@@ -6,7 +6,7 @@ on:
     # Sunday 11:30 Asia/Taipei: fallback redeploy after TDCC 09:35 weekly collector.
     - cron: '30 3 * * 0'
   workflow_run:
-    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'Taiwan VIXTWN Homepage Data', 'Financial Astrology Research V1']
+    workflows: ['Six Agent Gemini LLM Debate', 'LUNA Public Social Sentiment', 'ORION Taiwanese Financial News', 'Taiwan VIXTWN Homepage Data', 'Financial Astrology Research V1', 'TW Short A Candidate Archive']
     types: [completed]
     branches: [main]
   push:
@@ -63,6 +63,7 @@ on:
       - 'tw-stock-dashboard/docs/data/research/market_ml_audit/**'
       - 'tw-stock-dashboard/docs/site-access.js'
       - 'tw-stock-dashboard/docs/stock-selection.js'
+      - 'tw-stock-dashboard/docs/data/short_a/**'
       - 'tw-stock-dashboard/docs/g-rank-export.js'
       - 'tw-stock-dashboard/tests/test_g_rank_export.cjs'
       - 'tw-stock-dashboard/docs/g-theme-leaders.js'
