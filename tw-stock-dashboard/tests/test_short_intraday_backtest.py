@@ -29,6 +29,10 @@ def make_day(d=BASE,price=100,gap=0):
 class ShortResearchTests(unittest.TestCase):
     def test_costs_on_flat_trade_are_negative_and_sell_tax_only(self):
         bars=make_day()
+        # Exact flat forced buyback isolates only commission and sell-side tax.
+        for bar in bars:
+            if bar["at"].strftime("%H:%M")=="13:20":
+                bar["o"]=100.;bar["h"]=100.;bar["l"]=100.;bar["c"]=100.
         sample=bt.simulate_exit(bars,"13:20",100,110,80,bt.STANDARD_COMMISSION,0)
         self.assertIsNotNone(sample)
         self.assertAlmostEqual(sample["net_pct"],-.435,places=3)
