@@ -40,7 +40,11 @@ def download(symbol,today):
     return days,opens
 def candidate(d,prior,days,opens,bench):
     """Returns (has sufficient input, candidate or None). Prior dates fixed by benchmark."""
-    if len(prior)<22 or d not in opens or any(x not in days for x in prior[-22:]):return False,None
+    if len(prior)<22 or d not in opens:return False,None
+    # Use the stock’s own observed prior sessions; require alignment on previous day and 5-day benchmark.
+    prev_session=prior[-1]
+    prior=[x for x in prior if x in days]
+    if len(prior)<22 or prior[-1]!=prev_session:return False,None
     prev=prior[-1]; close=days[prev][3]
     past=prior[-20:]; vol=[opens[x][1] for x in past if x in opens]
     if len(vol)<15:return False,None
@@ -66,8 +70,11 @@ def main():
         except Exception as e:failures.append(sym);print("FAILED",sym,type(e).__name__,flush=True)
         clock.sleep(.15)
     if BENCHMARK not in raw:raise SystemExit("Benchmark unavailable; no overwrite")
-    bench,market_open=raw[BENCHMARK];sessions=sorted(bench)
-    target=sorted({d for d in sessions if start<=d<today}|({today} if today in market_open and now.time()>=time(9,20) else set()))
+    bench,market_open=raw[BENCHMARK];sessions=sorted(set(bench)&set(market_open))
+    print("SHORT_A_BENCHMARK",len(bench),len(market_open),len(sessions),[str(x) for x in sessions[-5:]],flush=True)
+    for sym,(ds,op) in list(raw.items())[:5]:
+        print("SHORT_A_SOURCE",sym,len(ds),len(op),len(set(ds)&set(op)),[str(x) for x in sorted(op)[-3:]],flush=True)
+    target=sorted({d for d in bench if start<=d<today}|({today} if today in market_open and now.time()>=time(9,20) else set()))
     if not target:raise SystemExit("No market dates; no overwrite")
     out={}
     for d in target:
