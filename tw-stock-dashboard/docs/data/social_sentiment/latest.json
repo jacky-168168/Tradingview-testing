@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-28T13:12:58.040819Z",
+  "generatedAt": "2026-11-28T17:29:10.190128Z",
   "sources": {
     "PTT": {
       "status": "ok",
@@ -8,12 +8,12 @@
       "url": "https://www.ptt.cc/atom/stock.xml",
       "freshCount": 12,
       "timestampBasis": "Atom 發布時間",
-      "boardFreshCount": 1,
-      "pushLabelsFound": 4
+      "boardFreshCount": 2,
+      "pushLabelsFound": 6
     },
     "Bluesky": {
       "status": "ok",
-      "freshCount": 33,
+      "freshCount": 32,
       "queryHealth": {
         "queriesAttempted": 10,
         "queriesSucceeded": 10,
@@ -43,34 +43,34 @@
     },
     "新聞": {
       "status": "ok",
-      "freshCount": 71
+      "freshCount": 67
     }
   },
   "social": {
-    "sample": 16,
+    "sample": 15,
     "bull": 1,
     "bear": 0,
-    "neutral": 15,
+    "neutral": 14,
     "directional": 1,
     "status": "已有樣本｜偏多討論較多",
     "method": "僅將具投資語境的非轉載標題計入多空樣本；保留無關／轉載原文供核對。依保守文字規則判讀，不能代表市場共識，未經 LLM 語意分類。",
     "rawSample": 80,
-    "investmentDiscussion": 16,
-    "originalDiscussion": 16,
-    "repostedNews": 55,
+    "investmentDiscussion": 15,
+    "originalDiscussion": 15,
+    "repostedNews": 56,
     "unrelated": 9,
     "platformCounts": {
       "PTT": 1,
-      "Bluesky": 15,
+      "Bluesky": 14,
       "Threads": 0,
       "Instagram": 0
     }
   },
   "news": {
-    "sample": 71,
+    "sample": 67,
     "bull": 3,
     "bear": 0,
-    "neutral": 68,
+    "neutral": 64,
     "directional": 3,
     "status": "已有樣本｜偏多討論較多",
     "method": "只要有一篇有效公開貼文就視為已有樣本；關鍵詞僅供觀察，篇數少不代表市場共識，也不是留言全文分析"
@@ -81,6 +81,57 @@
     "method": "僅 G 前20名、文章標題完全對上股票代號或公司名稱；無命中不列榜。至少3篇非新聞轉載且價量延伸才顯示過熱觀察，不代表買賣訊號"
   },
   "items": [
+    {
+      "platform": "Bluesky",
+      "title": "選舉隔天只跌 1.5%，一天砸 4.8% 的卻是 11/25。 2018 選後首日 +1.01%、2022 −1.5%；2022 選後收 14,556，11/27 收 39,308（指數不含股息）。 歷史資料，不預測週一，非投資建議。你抱著還是跑？ #台股 #選後 出處：中央社、證交所 本片由 AI 生成",
+      "url": "https://bsky.app/profile/michael0857.bsky.social/post/3n3f2v3lbcs2a",
+      "publishedAt": "2026-11-28T15:55:52.863000Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "非投資內容",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "高",
+        "evidence": "歷史資料，不預測週一，非投資建議。",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
+    {
+      "platform": "PTT",
+      "title": "[新聞] NVIDIA 風暴是矽谷「變形」縮影？從賈伯",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1795880384.A.A24.html",
+      "publishedAt": "2026-11-28T15:39:44Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）"
+    },
+    {
+      "platform": "Bluesky",
+      "title": "台股美股都在山頂哈哈哈哈哈哈哈",
+      "url": "https://bsky.app/profile/weiii1997.bsky.social/post/3n3etysdua22o",
+      "publishedAt": "2026-11-28T13:52:41.206000Z",
+      "stance": "中立／難判",
+      "contentType": "投資討論",
+      "investmentEligible": true,
+      "tone": "未驗證",
+      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
+      "semantic": {
+        "model": "gemini-3.5-flash-lite",
+        "intent": "非投資內容",
+        "stance": "中立／難判",
+        "emotion": "中性／難判",
+        "confidence": "中",
+        "evidence": "台股美股都在山頂哈哈哈哈哈哈哈",
+        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
+      }
+    },
     {
       "platform": "Bluesky",
       "title": "奇怪明明一堆人整天台股台股啊還喜歡投國冥黨我真的好受不了",
@@ -1048,75 +1099,15 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）"
-    },
-    {
-      "platform": "Bluesky",
-      "title": "台灣焦點：台股反彈後交割風險受關注　26日申報違約買賣總額約1.95億元 看點： 1. 既有脈絡：00981A違約交割曝光：既有摘要記錄00981A遭申報違約交割約1億380萬元；本輪中央社搜尋結果亦確認金額及兩家申報券商。節點沿用既有報導時間。 2. 新增核實：當日市場申報約1.95億元：知新聞引述證交所統計，報導",
-      "url": "https://bsky.app/profile/surltw.bsky.social/post/3n3ahuul3gl23",
-      "publishedAt": "2026-11-26T20:05:05.329000Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "新聞轉載",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "台灣焦點：台股反彈後交割風險受關注　26日申報違約買賣總額約1.95億元",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "Bluesky",
-      "title": "再過不到30小時就開始投票了 從小到大都聽說選舉會有行情 那最後一天台股會上漲嗎？ www.youtube.com/live/nvd2AET... 在用手投票前，一起用腳投票吧 #蛸音Live #投機實作 #台灣Vtuber",
-      "url": "https://bsky.app/profile/aoiheart.bsky.social/post/3n3abvatxt22l",
-      "publishedAt": "2026-11-26T18:17:55.887000Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "非投資內容",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "再過不到30小時就開始投票了 從小到大都聽說選舉會有行情 那最後一天台股會上漲嗎？",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
-    },
-    {
-      "platform": "Bluesky",
-      "title": "📢 台股今天漲956.38點，收在39151.81點，外資及陸資賣超新台幣491.81億元，連續9個交易日賣超，累計提款超過4708億元；今天外資主要減碼玻璃傳產及金融股，以台玻賣超8.14萬張最多，同時賣超台積電1.81萬張。",
-      "url": "https://bsky.app/profile/cnataiwan.nzcow.com/post/3n3a6y2w3442f",
-      "publishedAt": "2026-11-26T17:25:49.037820Z",
-      "stance": "中立／難判",
-      "contentType": "投資討論",
-      "investmentEligible": true,
-      "tone": "未驗證",
-      "method": "Bluesky 官方公開搜尋 API（最多160字摘要；規則判讀全文，不含留言）",
-      "semantic": {
-        "model": "gemini-3.5-flash-lite",
-        "intent": "新聞轉載",
-        "stance": "中立／難判",
-        "emotion": "中性／難判",
-        "confidence": "高",
-        "evidence": "台股今天漲956.38點，收在39151.81點，外資及陸資賣超新台幣491.81億元",
-        "method": "Google Gemini 對公開摘要的逐篇語意研判，非真實留言情緒或市場共識"
-      }
     }
   ],
   "creatorMedia": [
     {
       "platform": "YouTube",
-      "title": "第一層解析：所謂三成持股｜大盤(TSE)台積電(2330)0050",
-      "url": "https://www.youtube.com/watch?v=rKUQj9F3jxs",
-      "publishedAt": "2026-11-28T13:00:13Z",
-      "sourceName": "ALLIN聊股票",
+      "title": "台股突破了，可以追嗎？先看量能，再找停損｜英雄哥",
+      "url": "https://www.youtube.com/watch?v=iWMaQxzz5HQ",
+      "publishedAt": "2026-11-28T16:47:48Z",
+      "sourceName": "現金流夢想天地 - 一掌四式投資法 ~",
       "contentType": "創作者影片標題",
       "method": "YouTube Data API search.list（僅標題、發布時間與頻道名稱；非觀眾或散戶情緒）"
     }
@@ -1454,6 +1445,17 @@
     }
   ],
   "pttNewsItems": [
+    {
+      "platform": "PTT",
+      "title": "[新聞] NVIDIA 風暴是矽谷「變形」縮影？從賈伯",
+      "url": "https://www.ptt.cc/bbs/Stock/M.1795880384.A.A24.html",
+      "publishedAt": "2026-11-28T15:39:44Z",
+      "stance": "中立／難判",
+      "contentType": "新聞轉載",
+      "investmentEligible": false,
+      "tone": "未驗證",
+      "method": "標題規則（非留言全文）"
+    },
     {
       "platform": "PTT",
       "title": "[新聞] 台灣星巴克封插座惹議！美國卻砸逾10億美",
@@ -1882,17 +1884,6 @@
       "investmentEligible": false,
       "tone": "未驗證",
       "method": "標題規則（非留言全文）"
-    },
-    {
-      "platform": "PTT",
-      "title": "[新聞] 沙國煉油廠遇襲！出口復甦蒙陰影 布蘭特9",
-      "url": "https://www.ptt.cc/bbs/Stock/M.1795738019.A.191.html",
-      "publishedAt": "2026-11-27T00:06:59Z",
-      "stance": "中立／難判",
-      "contentType": "新聞轉載",
-      "investmentEligible": false,
-      "tone": "未驗證",
-      "method": "標題規則（非留言全文）"
     }
   ],
   "notes": [
@@ -1908,19 +1899,19 @@
     "status": "verified",
     "model": "gemini-3.5-flash-lite",
     "inferenceCalls": 1,
-    "cachedClassifications": 14,
+    "cachedClassifications": 13,
     "newlyClassified": 2,
     "unclassified": 0,
-    "updatedAt": "2026-11-28T13:13:01.398Z",
+    "updatedAt": "2026-11-28T17:29:13.791Z",
     "error": null,
     "method": "真實 Gemini 模型判讀另行統計；未覆蓋規則式偏多偏空及 TITAN 風控",
-    "candidateCount": 16,
-    "classifiedCount": 16,
+    "candidateCount": 15,
+    "classifiedCount": 15,
     "investmentCount": 1,
     "bullish": 1,
     "bearish": 0,
     "neutral": 0,
-    "originalRuleCount": 16,
+    "originalRuleCount": 15,
     "noTrade": true
   }
 }
